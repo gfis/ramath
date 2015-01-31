@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="US-ASCII" ?>
+<deployment xmlns="http://xml.apache.org/axis/wsdd/"
+            xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+	<service name="RaMathService" provider="java:RPC">
+		<parameter name="className" value="org.teherba.ramath.RaMathService"/>
+		<parameter name="allowedMethods" value="getResponse"/>
+	<!-- for Trace with SOAPMonitor 
+		<requestFlow>
+			<handler type="soapmonitor"/>
+		</requestFlow>
+		<responseFlow>
+			<handler type="soapmonitor"/>
+		</responseFlow>
+	-->
+	</service>
+</deployment>

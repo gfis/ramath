@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Copyright 2006 Dr. Georg Fischer <punctum at punctum dot kom>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+-->
+<!-- WSDL originally created by Apache Axis version: 1.2.1
+    @(#) $Id: ramath.wsdl 74 2009-01-09 06:55:45Z gfis $
+    2005-11-15: copied from checkdig
+-->
+<wsdl:definitions targetNamespace="http://localhost:8080/axis/services/RaMathService" 
+    xmlns:apachesoap="http://xml.apache.org/xml-soap" 
+    xmlns:impl="http://localhost:8080/axis/services/RaMathService" 
+    xmlns:intf="http://localhost:8080/axis/services/RaMathService" 
+    xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" 
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+    xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" 
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    
+    <wsdl:message  name="ResponseMessage">
+        <wsdl:part name="result"    type="xsd:string"/>
+    </wsdl:message>
+    
+    <wsdl:message name="RequestMessage">
+        <wsdl:part name="from"  	type="xsd:string"/>
+        <wsdl:part name="to"    	type="xsd:string"/>
+    </wsdl:message>
+    
+    <wsdl:portType name="PortType">
+        <wsdl:operation name="getResponse" parameterOrder="from to">
+            <wsdl:input  message="impl:RequestMessage"  name="RequestMessage" />
+            <wsdl:output message="impl:ResponseMessage" name="ResponseMessage"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    
+    <wsdl:binding name="ServiceBinding" type="impl:PortType">
+        <wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="getResponse">
+            <wsdlsoap:operation soapAction=""/>
+            <wsdl:input  name="RequestMessage">
+                <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
+                    namespace="http://localhost:8080/axis/services/RaMathService" use="encoded"/>
+            </wsdl:input>
+            <wsdl:output name="ResponseMessage">
+                <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
+                    namespace="http://localhost:8080/axis/services/RaMathService" use="encoded"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    
+    <wsdl:service name="RaMathService">
+        <wsdl:port binding="impl:ServiceBinding" name="ServicePort">
+            <wsdlsoap:address location="http://localhost:8080/axis/services/RaMathService"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

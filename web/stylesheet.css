@@ -1,0 +1,20 @@
+/*	dbat.css - Cascaded Style Sheet
+	@(#) $Id: stylesheet.css 74 2009-01-09 06:55:45Z gfis $
+	2007-01-08: colors for table column highlighting
+	2003-03-22:	without HTML comments and tags
+	2000-11-20,	Georg Fischer
+*/
+.grn	{ color:black    ; background-color: lightgreen      }
+.red	{ color:black    ; background-color: lightsalmon     }
+
+body,p,h1,h2,h3,h4,dl,dd,dt,ul,ol,li,div,td,th,address,blockquote,nobr,b,i,a,br,img
+	{ font-family:Verdana,Arial,sans-serif; }
+dt	
+	{ font-weight: bold }
+tt
+	{ font-family:Courier; }
+td
+	{ vertical-align:top }
+body
+	{ background-color:white }
+

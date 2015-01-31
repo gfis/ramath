@@ -1,0 +1,14 @@
+   =========================================================================
+   ==  NOTICE file corresponding to the section 4 d of                    ==
+   ==  the Apache License, Version 2.0,                                   ==
+   ==  in this case for the Java Sample Applications at teherba.org       ==
+   =========================================================================
+
+   This product includes software developed by
+   The Apache Software Foundation (http://www.apache.org/).
+   
+   This product includes software developed by 
+   MySQL AB, especially the MySQL 5.0.3 Connector/J (JDBC driver)
+
+   Please read the different LICENSE files present in the root directory of
+   this distribution.

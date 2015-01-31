@@ -1,0 +1,719 @@
+# Collection of Testcases for Ramath
+# @(#) $Id: simple.tests 955 2012-06-05 07:22:59Z gfis $
+# 2014-04-05, Dr. Georg Fischer: extracted from all.tests
+#-----------------------------------
+# Caution:
+# (1) Adjust the following line: URL where Ramath was deployed
+URL=http://localhost:8080/ramath/servlet
+# (2) Adjust the following line: default commandline arguments
+ARGS=
+#======================================================================
+ECHO 000
+#-------------------------
+# Symbolic Matrix Algebra
+PACKAGE=org.teherba.ramath.symbolic
+
+TEST S01 PolyVector inner product
+CALL PolyVector -read "a-b" "a+b" "c+d"
+
+TEST S02 PolyMatrix identity(4)
+CALL PolyMatrix 4
+
+TEST S03 PolyMatrix determinant(3), (4)
+CALL PolyMatrix
+
+TEST S04 PolyMatrix characteristic polynomial
+CALL PolyMatrix -char 3
+#-------------------------
+# EEC array generation
+PACKAGE=org.teherba.ramath
+
+TEST E02 EEC 2,2,1
+CALL EulersExtendedConjecture run 512 2 2 1
+
+TEST E03 EEC 3,3,1
+CALL EulersExtendedConjecture run 256 3 3 1
+
+TEST E04 EEC 4,4,1
+CALL EulersExtendedConjecture run 256 4 4 1
+
+TEST E05 EEC 5,5,1
+CALL EulersExtendedConjecture run 32  5 5 1
+
+TEST E06 generate from Vieta's formula
+CALL EulersExtendedConjecture vieta3   1024 3 4
+
+TEST E07 generate from Korneck's formula
+CALL EulersExtendedConjecture korneck3 4096 3 4
+
+TEST E08 generate from Dutch's formula 1
+CALL EulersExtendedConjecture dutch1   4096 3 8
+
+TEST E09 generate from Dutch's formula 2
+CALL EulersExtendedConjecture dutch2   4096 3 8
+
+#-------------------------
+# Tests of linear algebra classes
+PACKAGE=org.teherba.ramath.linear
+
+TEST L01 Elementary matrices of size 4
+CALL Matrix 4
+
+TEST L02
+CALL Vector -pow 3 4 5
+
+TEST L03
+CALL Vector -pow 3 4 5 6
+
+TEST L04
+CALL Vector -pow 3 4 5 6 7
+
+TEST L05 Vector multiplication and determinants
+DATA
+. twice: 10 3 18 19 => 16 23 41 44, determinant -35?
+3 2 1 -2
+-1 -1 2 0
+-2 2 2 1
+2 2 1 0
+. twice: 14 17 7 20 => 37 27 30 46, determinant -66?
+3 2 3 -3
+-2 2 3 0
+2 -3 -1 3
+3 -1 3 0
+. twice: 19 18 21 28 => 97 86 95 134, determinant -1!
+3 3 2 -2
+1 1 1 1
+0 1 1 2
+2 3 2 0
+. unknown: 1 2 3 => 1 2 3, determinant -9999
+1 2 3
+4 5 6
+7 8 9
+. unknown: 1 2   => 1 2  , determinant -9999
+1 2
+4 5
+. unknown: 7     => 7    , determinant -9999
+7
+CALL Matrix -f $(DATA)
+
+TEST L06 multiply 6 elementary matrices
+CALL Matrix -elem 3
+
+TEST L07 multiply 20 elementary matrices
+CALL Matrix -elem 4
+
+# TEST L08 division of 2 vectors
+# CALL Vector -div 4   3 4 5 6  19 18 21 28
+#
+# TEST L09 division of 2 vectors, 1st and 3rd element exchanged
+# CALL Vector -div 4   3 4 5 6  21 18 19 28
+#
+# TEST L10 unimodular matrices from 2 vectors
+# CALL Matrix -div 4   3 4 5 6  19 18 21 28
+#
+# TEST L11 unimodular matrices from 2 vectors, 1st and 3rd element exchanged
+# CALL Matrix -div 4   3 4 5 6  21 18 19 28
+#
+# TEST L12 unimodular matrices with permutations -2
+# CALL Matrix -many -2
+#
+# TEST L13 unimodular matrices from many -3
+# CALL Matrix -many -3
+#
+# TEST L14 unimodular matrices from many -4
+# CALL Matrix -many -4
+#
+# TEST L15 unimodular matrices from many -5
+# CALL Matrix -many -5
+#
+# TEST L16 unimodular matrices from many -6
+# CALL Matrix -many -6
+#
+# TEST L17 unimodular matrices from many -7
+# CALL Matrix -many -7
+#
+# TEST L18 unimodular matrices from many -8
+# CALL Matrix -many -8
+#
+# TEST L19 unimodular matrices from many -9
+# CALL Matrix -many -0
+#
+# TEST L20 unimodular matrices from many -10
+# CALL Matrix -many -10
+
+TEST L31 gcd of a vector
+CALL Vector -gcd 33 44 55 66
+
+TEST L32 read a vector
+CALL Vector -read (-1,+5,6,7)
+#-------------------------
+# Tests of utility classes
+PACKAGE=org.teherba.ramath.util
+
+TEST U01 modulo generator
+CALL ModoMeter 4
+
+TEST U02 read expression
+DATA
+ 2.718281828459045235360287471
+ 35266249775724709369995957496696762772407
+ 663035354759457138217852516642742746639193200305992181741360027482234
+ 93348905414085151150263440892702877807403983408368897113419263142110356543
+CALL ExpressionReader -f $(DATA)
+
+TEST U03 permute
+CALL Permutator 4
+
+TEST U05 Expander
+CALL Expander 3 4
+
+TEST U06 MonotoneExpander
+CALL MonotoneExpander 3 8
+
+TEST U07 modulo generator also with negative values
+CALL ModoMeter 3 2 -1
+
+TEST U08 IntegerExpander
+CALL IntegerExpander 3 4 -1
+
+#--------
+TEST U18 read b-file
+DATA
+ 1 0
+ 2 1
+ 3 1
+ 4 1
+ 5 2
+ 6 1
+ 7 2
+ 8 2
+ 9 2
+ 10 2
+ 11 3
+ 12 3
+ 13 3
+ 14 2
+ 15 3
+ 16 2
+ 17 4
+ 18 4
+ 19 2
+ 20 3
+ 21 4
+ 22 3
+ 23 4
+ 24 5
+ 25 4
+ 26 3
+ 27 5
+ 28 3
+ 29 4
+ 30 6
+ 31 3
+ 32 5
+CALL BFileReader -f $(DATA)
+
+TEST U19 read expressions
+DATA
+ x<sup>3</sup> + y^4
+ x<sup>2</sup> + y^5<br>
+CALL ExpressionReader " a + b " -f $(DATA)
+
+TEST D01 ModoMeter
+CALL DispenserFactory modo   3 3 64
+
+TEST D03 Permutator
+CALL DispenserFactory perm   4 4 64
+
+TEST D05 Expander
+CALL DispenserFactory exp    3 4 128
+
+TEST D06 MonotoneExpander
+CALL DispenserFactory monexp 3 8 128
+
+TEST D07 IntegerExpander
+CALL DispenserFactory intexp 3 8 128
+
+#-------------------------------------------------
+# Generating Identities
+PACKAGE=org.teherba.ramath
+
+TEST H01 Simple linear attempt x1
+CALL ParameterExhauster x1 -l 6
+
+TEST H02 Quadratic univariate x2
+CALL ParameterExhauster x2 -l 7
+
+TEST H03 Quadratic bivariate xy2
+CALL ParameterExhauster xy2 -l 7
+
+TEST H04 Quadratic bivariate x210y210
+CALL ParameterExhauster x210y210 -l 3
+
+TEST H05 Cubic univariate x3
+CALL ParameterExhauster x3 -l 3
+
+# TEST H06 Cubic univariate x3
+# CALL ParameterExhauster x3 -l 4
+#
+# TEST H07 Cubic univariate x3
+# CALL ParameterExhauster x3 -l 5
+
+# TEST H15 Generate for H05
+# CALL PowerSumGenerator -l 5 -f test/H05.sort.tmp
+
+# TEST H16 Generate for H06
+# CALL PowerSumGenerator -l 5 -f test/H06.sort.tmp
+
+#-------------------------------------------------
+# Continued Fraction Tests
+PACKAGE=org.teherba.ramath
+
+TEST CF1 continued fraction: sqrt
+CALL ContinuedFraction -sqrt 1947
+
+TEST CF2 continued fraction: Pell equation
+CALL ContinuedFraction -pell 1947
+
+TEST CF3 continued fraction of e
+DATA
+ 2.718281828459045235360287471
+ 35266249775724709369995957496696762772407
+ 663035354759457138217852516642742746639193200305992181741360027482234
+ 93348905414085151150263440892702877807403983408368897113419263142110356543
+CALL ContinuedFraction -cf -f $(DATA)
+
+TEST CF4 continued fraction of sqrt(114)
+DATA
+ 10.677078252031311210811523965595710626282287769
+ 46058011397810604284900898365140801704064843595778374
+CALL ContinuedFraction -cf -f $(DATA)
+
+TEST CF5 continued fraction of gamma
+DATA
+ 0.577215664901532860606512090082402431042159335939923598805767234884867726777664670936947063291746749
+CALL ContinuedFraction -cf -f $(DATA)
+
+TEST CF6 continued fraction of kintchine100
+DATA
+ 2.685452001065306445309714835481795693820382293994462953051152345
+ 55721885953715200280114117493184769799515
+CALL ContinuedFraction -cf -f $(DATA)
+
+TEST CF7 continued fraction of kintchine1024
+# 1024 digits: Pflouffe, http://www.worldwideschool.org/library/books/sci/math/MiscellaneousMathematicalConstants/chap50.html
+DATA
+ 2.685452001065306445309714835481795693820382293994462953051152345
+ 5572188595371520028011411749318476979951534659052880900828976777
+ 1641096305179253348325966838185231542133211949962603932852204481
+ 9409618068664166428930847788062036073705350103367263357728904990
+ 4270702723451702625237023545810686318501032374655803775026442524
+ 8528694682341899491573066189872079941372355000579357366989339508
+ 7902124464207528974145914769301844905060179349938522547040420337
+ 7985639831015709022233910000220772509651332460444439191691460859
+ 6823482128324622829271012690697418234847767545734898625420339266
+ 2351862086778136650969658314699527183744805401219536666604964826
+ 9890827548115254721177330319675947383719393578106059230401890711
+ 3496246737068412217946810740608918276695667117166837405904739368
+ 8095345048999704717639045134323237715103219651503824698888324870
+ 9353994696082647818120566349467125784366645797409778483662049777
+ 7486827656970871631929385128993141995186116737926546205635059513
+ 8571376169712687229980532767327871051376395637190231452890030581
+CALL ContinuedFraction -cf -f $(DATA)
+
+TEST CF8 continued fraction from b-file
+# sqrt(114)
+DATA
+1 1
+2 2
+3 10
+4 2
+5 1
+6 20
+7 1
+8 2
+9 10
+10 2
+11 1
+12 20
+13 1
+14 2
+15 10
+16 2
+CALL ContinuedFraction -eval $(DATA)
+
+TEST CF9 continued fraction: Pell equation
+CALL ContinuedFraction -pell 109
+
+#--------------------------------
+# Gröbner bases
+
+PACKAGE=org.teherba.ramath.symbolic
+
+TEST G01 Buchberger's S-Polynomial
+CALL Polynomial -spoly "a^2+2*a*b+b^2" "a+b"
+
+TEST G02 Buchberger's S-Polynomial
+CALL Polynomial -spoly "x^2+1" "x"
+
+TEST G03 multivariate division: rest = 0
+CALL Polynomial -mdiv "(a+b)^5" "(a+b)^2"
+
+TEST G04 multivariate division: rest != 0
+CALL Polynomial -mdiv "(a+b)^5" "(a-b)^2"
+
+TEST G05 multivariate division: rest != 0
+CALL Polynomial -mdiv "x^2 + 1" "x"
+
+TEST G06 multivariate division (Mencinger)
+CALL Polynomial -mdiv "x^2 + x*y + 2*x^3" "x*y - x^3" "x + y^2"
+
+TEST G07 multivariate division: rest != 0
+CALL Polynomial -mdiv "x^2 + x*y + 2*x^3" "x*y - x^3" "x + y^2"
+
+TEST G08 S-Polynomial of G11
+DATA
+ x * y -  2*y
+ 2 * y^2 - x^2
+CALL Polynomial -spoly -f $(DATA)
+
+TEST G10 Groebner Basis (+1)
+CALL Polynomial -groebner "x^2 + 1" "x"
+
+# TEST G11 Groebner Basis (Buchberger)
+# CALL Polynomial -groebner "x*y - 2*y" "2*y^2 - x^2"
+#
+# TEST G12 Groebner Basis (Gauss: x=1, y=2, z=3)
+# DATA
+#  2*x + 1*y - 1*z - 1 = 0
+#  6*x - 1*y - 1*z - 1 = 0
+#  3*z - 4*y - 1       = 0
+# CALL Polynomial -groebner -f $(DATA)
+#
+# TEST G13 Groebner Basis (Mencinger Fig. 4b)
+# DATA
+#  5*x*y^3 - x^2*y - 3
+#  2*x^4*y + x*y + 7
+# CALL Polynomial -groebner -f $(DATA)
+#
+# TEST G14 Groebner Basis (Mencinger)
+# DATA
+#  - x^3 + y
+#  x^2*y - y^2
+# CALL Polynomial -groebner -f $(DATA)
+#
+# TEST G15 Groebner Basis (Mencinger Fig. 8)
+# DATA
+#  x^2 + y*z + x
+#  z^2 + x*y + z
+#  y^2 + x*z + y
+# CALL Polynomial -groebner -f $(DATA)
+
+TEST G16 Groebner Basis (http://de.wikipedia.org/wiki/Gr%C3%B6bnerbasis)
+DATA
+ x^2 + y^2 + z^2 - 1 = 0
+ x^2 - y + z^2 = 0
+ x - z = 0
+CALL Polynomial -groebner -f $(DATA)
+
+TEST G17 Groebner Basis (de.wikipedia.org, x <-> z)
+DATA
+ z^2 + y^2 + x^2 - 1 = 0
+ z^2 - y + x^2 = 0
+ z - x = 0
+CALL Polynomial -groebner -f $(DATA)
+
+TEST G19 Groebner Basis monomes of Euklid / specialization
+DATA
+ (m^2 - n^2)^2 - (m^2 - 1^2)^2 = 0
+ (2*m*n)^2     - (2*m*1)^2     = 0
+ (m^2 + n^2)^2 - (m^2 + 1^2)^2 = 0
+CALL Polynomial -groebner -f $(DATA)
+
+# gfis@nunki:~/work/gits/ramath$ Singular
+# > ring r1=0, (m,n), lp;
+# > poly f0=(m^2-n^2)^2 - (m^2 - 1)^2;
+# > poly f1=(m^2+n^2)^2 - (m^2 + 1)^2;
+# > poly f2=(2*m*n)^2 - (2*m)^2;
+# > ideal I=f0,f1,f2;
+# > ideal G=groebner(I);
+# > G;
+# G[1]=n4-1
+# G[2]=m2n2-m2
+#
+
+## TEST G20 Groebner for ParameterExhauster quadratic univariate
+## DATA
+##  a2^2 + b2^2 - c2^2
+##                       2*(a2*a1 + b2*b1 - c2*c1)
+##  a1^2 + b1^2 - c1^2 + 2*(a2*a0 + b2*b0 - c2*c0)
+##                       2*(a1*a0 + b1*b0 - c1*c0)
+##  a0^2 + b0^2 - c0^2
+## CALL Polynomial -groebner -f $(DATA)
+
+## TEST G21 Groebner for Barning's B: 6 equations with 9 variables
+## DATA
+##  2*a11*a12 + 2*a21*a22 - 2*a31*a32
+##  2*a11*a12 + 2*a21*a23 - 2*a31*a33
+##  2*a12*a13 + 2*a22*a23 - 2*a32*a33
+## -1 + a11^2 + a21^2 - a31^2
+## -1 + a12^2 + a22^2 - a32^2
+##  1 + a13^2 + a23^2 - a33^2
+## CALL Polynomial -groebner -f $(DATA)
+
+## TEST G22 Groebner for Pythagoras generator - simple linear
+## DATA
+##  a1^2 + b1^2 - c1^2
+##                       2*(a1*a0 + b1*b0 - c1*c0)
+##  a0^2 + b0^2 - c0^2
+##  (a1*1 + a0)^2 + (b1*1 + b0)^2 - (c1*1 + c0)^2
+##  (a1*2 + a0)^2 + (b1*2 + b0)^2 - (c1*2 + c0)^2
+##  (a1*3 + a0)^2 + (b1*3 + b0)^2 - (c1*3 + c0)^2
+##  (a1*5 + a0)^2 + (b1*5 + b0)^2 - (c1*5 + c0)^2
+## CALL Polynomial -groebner -f $(DATA)
+##
+## TEST G23 Groebner for Pythagoras generator - univariate pow 2
+## DATA
+##  a2^2 + b2^2 - c2^2
+##                       2*(a2*a1 + b2*b1 - c2*c1)
+##  a1^2 + b1^2 - c1^2 + 2*(a2*a0 + b2*b0 - c2*c0)
+##                       2*(a1*a0 + b1*b0 - c1*c0)
+##  a0^2 + b0^2 - c0^2
+##  (a2*2^2 + a1*2 + a0)^2 + (b2*2^2 + b1*2 + b0)^2 - (c2*2^2 + c1*2 + c0)^2
+##  (a2*3^2 + a1*3 + a0)^2 + (b2*3^2 + b1*3 + b0)^2 - (c2*3^2 + c1*3 + c0)^2
+##  (a2*5^2 + a1*5 + a0)^2 + (b2*5^2 + b1*5 + b0)^2 - (c2*5^2 + c1*5 + c0)^2
+##  (a2*7^2 + a1*7 + a0)^2 + (b2*7^2 + b1*7 + b0)^2 - (c2*7^2 + c1*7 + c0)^2
+## CALL Polynomial -groebner -f $(DATA)
+##
+## TEST G24 Dutch 1
+## DATA ( 1*m^2 + 16*m - 21)^3
+##    + (-1*m^2 + 16*m + 21)^3
+##    + ( 2*m^2 -  4*m + 42)^3
+##    - ( 2*m^2 +  4*m + 42)^3
+## CALL Polynomial -groebner -f $(DATA)
+##
+## TEST G25 Vieta
+## DATA
+## + (m^4 - 2*n^3*m)^3
+## + (2*n*m^3 - n^4)^3
+## + (  n*m^3 + n^4)^3
+## - (m^4 +   n^3*m)^3
+## CALL Polynomial -groebner -f $(DATA)
+##
+#-------------------------------
+# c.f. http://planetmath.org/encyclopedia/InfiniteDescent.html
+PACKAGE=org.teherba.ramath.symbolic
+
+TEST I01 infinite descent, sqrt(2)
+CALL InfiniteDescent "2*q^2-p^2"
+
+TEST I02 infinite descent, sqrt(2), 3 iterations
+CALL InfiniteDescent "2*q^2-p^2" 2 3
+
+TEST I03 infinite descent, mixed Fermat
+CALL InfiniteDescent "a^2+b^2-3*(c^2+d^2)"
+
+TEST I04 infinite descent, biquadratic
+CALL InfiniteDescent "x^4-y^4-z^2"
+
+TEST I05 infinite descent, Pythagoras
+CALL InfiniteDescent "x^2 + y^2 - z^2"
+
+TEST I06 infinite descent, Fermat(3) shifted
+CALL InfiniteDescent "(x-27)^3 + (y-64)^3 - (z-125)^3"
+
+#-------------------------------
+# Mixed Tests
+PACKAGE=org.teherba.ramath
+
+TEST R01 BigRational
+CALL BigRational
+
+TEST R02 limiting corridor
+CALL Corridor 3
+
+TEST R03 generate some a^3 + b^3 + c^3 = d^3
+CALL Ferm3
+
+TEST R04 Series which computes Euler's number 2.718281828459045235360287471...
+CALL Series
+#-----------------------------------
+PACKAGE=org.teherba.ramath
+
+TEST X01 - expand Pythagoras for a^2 + b^2 = c^2; 0=0
+DATA
++ (m^2 - n^2)^2
++ (2*m*n    )^2
+- (m^2 + n^2)^2
+CALL ParameterEquation -expand -f $(DATA) -l 8 -w 2 -e 2 -t Pythagoras.X01
+TEST X01S - sort
+SORT test/X01.this.tst
+
+TEST X02 - expand Korneck plus "K" 0=0 (t != m)
+DATA
+     ( 6*m^3*t*f  + t*(t+m)*(m^4 + m^2*t^2 + t^4) + 3*t*(t-m)*f^2)^3
+   + ( 6*m^3*t*f  - t*(t+m)*(m^4 + m^2*t^2 + t^4) - 3*t*(t-m)*f^2)^3
+   + (-6*t^3*m*f  + m*(m+t)*(m^4 + m^2*t^2 + t^4) + 3*m*(m-t)*f^2)^3
+   - ( 6*t^3*m*f  + m*(m+t)*(m^4 + m^2*t^2 + t^4) + 3*m*(m-t)*f^2)^3
+CALL ParameterEquation -expand -f $(DATA) -l -4 -w 3 -e 3 -t Korneck-plus.X02
+TEST X02S - sort
+SORT test/X02.this.tst
+
+TEST X03 - expand Dutch1 m -> (w+2)
+DATA
+     ( 1*(w-3)^2 + 16*(w-3) - 21)^3
+   + (-1*(w-3)^2 + 16*(w-3) + 21)^3
+   + ( 2*(w-3)^2 -  4*(w-3) + 42)^3
+   - ( 2*(w-3)^2 +  4*(w-3) + 42)^3
+CALL ParameterEquation -expand -f $(DATA) -l -16 -w 1 -e 3 -t Dutch.X03
+TEST X03S - sort
+SORT test/X03.this.tst
+
+TEST X04 - expand Dutch1 m -> (w-1)
+DATA
+     ( 1*(w-1)^2 + 16*(w-1) - 21)^3
+   + (-1*(w-1)^2 + 16*(w-1) + 21)^3
+   + ( 2*(w-1)^2 -  4*(w-1) + 42)^3
+   - ( 2*(w-1)^2 +  4*(w-1) + 42)^3
+CALL ParameterEquation -expand -f $(DATA) -l -16 -w 1 -e 3 -t Dutch.X04
+TEST X04S - sort
+SORT test/X04.this.tst
+
+TEST X05 - expand Dutch1 m -> (w+1)
+DATA
+     ( 1*(w+1)^2 + 16*(w+1) - 21)^3
+   + (-1*(w+1)^2 + 16*(w+1) + 21)^3
+   + ( 2*(w+1)^2 -  4*(w+1) + 42)^3
+   - ( 2*(w+1)^2 +  4*(w+1) + 42)^3
+CALL ParameterEquation -expand -f $(DATA) -l -16 -w 1 -e 3 -t Dutch.X05
+TEST X05S - sort
+SORT test/X05.this.tst
+
+TEST X06 - expand Korneck minus 0=0 (t != m)
+DATA
+     ( 6*m^3*t*f  + t*(t-m)*(m^4 + m^2*t^2 + t^4) + 3*t*(t+m)*f^2)^3
+   + ( 6*m^3*t*f  - t*(t-m)*(m^4 + m^2*t^2 + t^4) - 3*t*(t+m)*f^2)^3
+   + (-6*t^3*m*f  + m*(m-t)*(m^4 + m^2*t^2 + t^4) + 3*m*(m+t)*f^2)^3
+   - ( 6*t^3*m*f  + m*(m-t)*(m^4 + m^2*t^2 + t^4) + 3*m*(m+t)*f^2)^3
+CALL ParameterEquation -expand -f $(DATA) -l -4 -w 3 -e 3 -t Korneck-minus.X06
+TEST X06S - sort
+SORT test/X06.this.tst
+
+TEST X07 - expand Schwering/Kuehne "S" 0=0
+DATA
+     ( 3*(p^2 + p*q + q^2)*p*r - 9*r^4)^3
+   + (-3*(p^2 + p*q + q^2)*q*r + 9*r^4)^3
+   + (-9*p*r^3 + (p^2 + p*q + q^2)^2)^3
+   + ( 9*q*r^3 - (p^2 + p*q + q^2)^2)^3
+CALL ParameterEquation -expand -f $(DATA)           -l -4 -w 3 -e 3 -t Schwering-Kuehne.X07
+TEST X07S - sort
+SORT test/X07.this.tst
+TEST X07H - shift
+CALL ParameterEquation -shift -f test/X07.data.tmp  -l -2 -w 3 -e 3 -t Schwering-Kuehne.X07
+
+TEST X08 - expand Euler/Binet "B" 0=0
+DATA
+     ( 1 - (p - 3*q)*(p^2 + 3*q^2)  )^3
+   + (-1 + (p + 3*q)*(p^2 + 3*q^2)  )^3
+   - (     (p + 3*q)-(p^2 + 3*q^2)^2)^3
+   - (   - (p - 3*q)+(p^2 + 3*q^2)^2)^3
+CALL ParameterEquation -expand -f $(DATA)           -l -6 -w 2 -e 3 -t Euler-Binet.X08
+TEST X08S - sort
+SORT test/X08.this.tst
+TEST X08H - shift
+CALL ParameterEquation -shift -f test/X08.data.tmp  -l -4 -w 2 -e 3 -t Euler-Binet.X08
+
+TEST X09 - expand Ramanujan "R" 0=0
+DATA
+     (3*m^2 + 5*m*n - 5*n^2)^3
+   + (4*m^2 - 4*m*n + 6*n^2)^3
+   + (5*m^2 - 5*m*n - 3*n^2)^3
+   - (6*m^2 - 4*m*n + 4*n^2)^3
+CALL ParameterEquation -expand -f $(DATA)           -l -6 -w 2 -e 3 -t Ramanujan.X09
+TEST X09S - sort
+SORT test/X09.this.tst
+TEST X09H - shift
+CALL ParameterEquation -shift -f test/X09.data.tmp  -l -4 -w 2 -e 3 -t Ramanujan.X09
+
+TEST X10 - expand Vieta "V" 0=0
+DATA
+     (m*(1*m^3 - 2*n^3))^3
+   + (n*(2*m^3 - 1*n^3))^3
+   + (n*(1*m^3 + 1*n^3))^3
+   - (m*(1*m^3 + 1*n^3))^3
+CALL ParameterEquation -expand -f $(DATA)           -l -6 -w 2 -e 3 -t Vieta.X10
+TEST X10S - sort
+SORT test/X10.this.tst
+TEST X10H - shift
+CALL ParameterEquation -shift -f test/X10.data.tmp  -l -4 -w 2 -e 3 -t Vieta.X10
+
+TEST X11 - expand Dutch1 "W" 0=0
+DATA
+     ( 1*m^2 + 16*m - 21)^3
+   + (-1*m^2 + 16*m + 21)^3
+   + ( 2*m^2 -  4*m + 42)^3
+   - ( 2*m^2 +  4*m + 42)^3
+CALL ParameterEquation -expand -f $(DATA)           -l -16 -w 1 -e 3 -t Dutch.X11
+TEST X11S - sort
+SORT test/X11.this.tst
+TEST X11H - shift
+CALL ParameterEquation -shift -f test/X11.data.tmp  -l  -8 -w 1 -e 3 -t Dutch.X11
+
+TEST X12 - expand Dutch2 "X" 0=0
+DATA
+     ((2*m - 1)*(2*m^3 -  6*m^2 + 0*m - 1))^3
+   + ((1*m + 1)*(5*m^3 -  9*m^2 + 3*m - 1))^3
+   + ((1*m + 1)*(3*m^3 -  3*m^2 + 3*m    ))^3
+   - ((2*m - 1)*(3*m^3 -  3*m^2 + 3*m    ))^3
+CALL ParameterEquation -expand -f $(DATA)           -l -12 -w 1 -e 3 -t Dutch.X12
+TEST X12S - sort
+SORT test/X12.this.tst
+TEST X12H - shift
+CALL ParameterEquation -shift -f test/X12.data.tmp  -l  -8 -w 1 -e 3 -t Dutch.X12
+
+TEST X13H - shift Dutch1 (back)
+DATA
+   ( - 36 + 14*m + m^2)^3
+ + (4 + 18*m - m^2    )^3
+ + (48 - 8*m + 2*m^2  )^3
+ - (40 + 2*m^2        )^3
+CALL ParameterEquation -shift -f $(DATA) 			-l  -8 -w 1 -e 3 -t Dutch.X11.back
+
+#-----------------------------------------
+TEST Y01 - different Pythagoras formulas
+DATA
++ (1 + 2*x)^2
++ (2*x + 2*x^2)^2
+- (1 + 2*x + 2*x^2)^2
+CALL ParameterEquation -expand -f $(DATA) -l 16 -w 1 -e 2 -t Pythagoras.Y01
+TEST Y01S - sort
+SORT test/Y01.this.tst
+
+TEST Y02 - different Pythagoras formulas
+DATA
++ ( - 1 - 2*x - 2*y - x^2 - 2*x*y)^2
++ ( - 2*y - 2*y^2 - 2*x*y)^2
+- ( - 1 - 2*x - 2*y - x^2 - 2*y^2 - 2*x*y)
+CALL ParameterEquation -expand -f $(DATA) -l 16 -w 2 -e 2 -t Pythagoras.Y02
+TEST Y02S - sort
+SORT test/Y02.this.tst
+
+TEST Y03 - cubic with coeff <= 2
+DATA
++ (2 + 2*x + x^2 + x^3)^3
++ (1 - 2*x - x^2 - x^3)^3
++ ( - 1 - 2*x - x^2)^3
+- (2 + x + 2*x^2)^3
+CALL ParameterEquation -expand -f $(DATA) -l -16 -w 1 -e 3 -t Cubic.Y03
+TEST Y03S - sort
+SORT test/Y03.this.tst
+
+TEST Y04 - cubic
+DATA
++ (1 - 2*x - x^2 - x^3)^3
+- ( - 2 - 2*x - x^2 - x^3)^3
+- (1 + 2*x + x^2)^3
+- (2 + x + 2*x^2)^3
+CALL ParameterEquation -expand -f $(DATA) -l -16 -w 1 -e 3 -t Cubic.Y04
+TEST Y04S - sort
+SORT test/Y04.this.tst

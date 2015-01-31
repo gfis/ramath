@@ -1,0 +1,383 @@
+# Collection of Testcases for Ramath
+# @(#) $Id: all.tests 955 2012-06-05 07:22:59Z gfis $
+# 2013-07-28: linear algebra
+# 2013-07-05: Dxx = DispenserFactory for all dispensers; tests shortened and reordered
+# 2013-02-01: web/spec/test/fragment01.xml
+# 2013-01-05: rm U0*, add TL1-4, UR1-7
+# 2012-11-24: for RegressionTester
+# 2012-11-22: new H03, H04, TN1, TN2; explicit QUERY_STRING
+# 2012-10-19: <counter> tests
+# 2012-06-19: GREP ... d{2})T => d{2})T
+# 2012-06-12: all clean again for github
+# 2012-05-08: V0% pass with method="post"; A01 FAILED, 156 passed tests
+# 2011-10-10: <choose> conditional compilation
+# 2011-08-10, Dr. Georg Fischer: extracted from batch_test.pl
+#-----------------------------------
+# Caution:
+# (1) Adjust the following line: URL where Ramath was deployed
+URL=http://localhost:8080/ramath/servlet
+# (2) Adjust the following line: default commandline arguments
+ARGS=
+#======================================================================
+ECHO 000
+#--------------------------------
+# Tests of symbolic classes
+PACKAGE=org.teherba.ramath.symbolic
+
+TEST T01 factor
+CALL Factor
+
+TEST T02 monomial
+CALL Monomial
+
+TEST PH1 HighTerms - z^2
+CALL Polynomial -hiterms "-1+2*x+12*x^2+32*x^3+32*x^4-32*y^4-3*z-2*z^2=0"
+
+TEST PH2 HighTerms - z^1
+CALL Polynomial -hiterms "-1+2*x+12*x^2+32*x^3+32*x^4-32*y^4-3*z=0"
+
+TEST PR1 Rest - univariate
+CALL Polynomial -rest 2 "-1+2*x+12*x^2+32*x^3+32*x^4-32*y^4-3*z-2*z^2=0"
+
+TEST PR2 Rest - constant
+CALL Polynomial -rest 2 "-1+2*x+12*x^2+32*x^3+32*x^4-32*y^4-2*z^2=0"
+
+TEST PR3 Rest - empty
+CALL Polynomial -rest 2 "2*x+12*x^2+32*x^3+32*x^4-32*y^4-2*z^2=0"
+
+TEST PR4 Rest - all monomials
+CALL Polynomial -rest 2 "x^4 - y^4 - z^2"
+
+TEST RR1 Rest - univariate
+CALL RelationSet -rest 2 "-1+2*x+12*x^2+32*x^3+32*x^4-32*y^4-3*z-2*z^2=0"
+
+TEST RR4 Rest - all polynomials
+CALL RelationSet -rest 2 "x^4 - y^4 - z^2 = 0"
+
+TEST VM1 VariableMap
+CALL VariableMap
+
+TEST P00 constant
+CALL Polynomial "1"
+
+TEST P01 binomial: 3rd power with 3 variables
+CALL Polynomial "(a+b+c)^3"
+
+TEST P02 polynomial equivalence
+CALL Polynomial -equiv "3*(a^2+b^2)-c^2-d^2" "a^2+b^2-3*(d^2-c^2)"
+
+TEST P03 polynomial equivalence
+# runs into an infinite loop in Permutator?
+CALL Polynomial -equiv "3*(a^2+b^2)-c^2-d^2" "a^2+b^2-3*(d^2+c^2)"
+
+TEST P04 Korneck polynomial
+CALL Polynomial "(6*t^3*m*f  + m*(t+m)*(m^4 + m^2*t^2 + t^4) + 3*m*(m-t)*f^2)^3 - (6*m^3*t*f  + t*(t+m)*(m^4 + m^2*t^2 + t^4) + 3*t*(t-m)*f^2)^3 - (6*m^3*t*f  - t*(t+m)*(m^4 + m^2*t^2 + t^4) - 3*t*(t-m)*f^2)^3 - (-6*t^3*m*f + m*(t+m)*(m^4 + m^2*t^2 + t^4) + 3*m*(m-t)*f^2)^3"
+
+TEST P05 binomial: 5th power with 5 variables
+CALL Polynomial "(a+b+c+d+e)^5"
+
+TEST W05 binomial: 6th power with 3 variables
+HTTP view=upper area=poly opt= form1=(a%2Bb%2Bc)^6
+
+TEST P06 binomial: 3rd power with 3 variables
+CALL Polynomial "(a+b+c)^3"
+
+TEST P07 abstract matrix times Pythagorean generator
+DATA
+ (a11*(a^2 - b^2) + 2*a12*a*b + a13*(a^2 + b^2))^2
++(a21*(a^2 - b^2) + 2*a22*a*b + a23*(a^2 + b^2))^2
+-(a31*(a^2 - b^2) + 2*a32*a*b + a33*(a^2 + b^2))^2
+CALL Polynomial -f $(DATA)
+
+TEST P08 Barning's B matrix times Pythagorean generator
+DATA
+ (  1*(a^2 - b^2) +   2*2*a*b +   2*(a^2 + b^2))^2
++(  2*(a^2 - b^2) +   1*2*a*b +   2*(a^2 + b^2))^2
+-(  2*(a^2 - b^2) +   2*2*a*b +   3*(a^2 + b^2))^2
+CALL Polynomial -var "a,b,c" $(DATA)
+
+TEST P09 abstract matrix times (a,b,c) is powersum  a^2 + b^2 - c^2
+DATA
+ (a11*a + a12*b + a13*c)^2
++(a21*a + a22*b + a23*c)^2
+-(a31*a + a32*b + a33*c)^2
+CALL Polynomial -var "a,b,c" $(DATA)
+
+TEST P10 abstract matrix times (3,4,5,6)
+DATA
+ (a11*3 + a12*4 + a13*5 + a14*6)^3
++(a21*3 + a22*4 + a23*5 + a24*6)^3
++(a31*3 + a32*4 + a33*5 + a34*6)^3
+-(a41*3 + a42*4 + a43*5 + a44*6)^3
+CALL Polynomial -f $(DATA)
+
+TEST P11 abstract matrix times (a,b,c,d) is powersum  a^3 + b^3 + c^3 - d^3
+DATA
+ (a11*a + a12*b + a13*c + a14*d)^3
++(a21*a + a22*b + a23*c + a24*d)^3
++(a31*a + a32*b + a33*c + a34*d)^3
+-(a41*a + a42*b + a43*c + a44*d)^3
+-(a^3   +   b^3 +   c^3 -   d^3)
+CALL Polynomial -var "a,b,c,d" $(DATA)
+
+TEST P12 GF.C matrix times (a,b,c,d) yields powersum  a^3 + b^3 + c^3 - d^3 ?
+DATA
+ (  1*a +   2*b +   2*c +   0*d)^3
++(  1*a +   1*b +   1*c +   1*d)^3
++(  2*a +   2*b +   1*c +   0*d)^3
+-(  2*a +   3*b +   2*c +   0*d)^3
+-(a^3   +   b^3 +   c^3 -   d^3)
+CALL Polynomial -f $(DATA)
+
+TEST P13 GF.P matrix times (a,b,c,d) yields powersum  a^3 + b^3 + c^3 - d^3 ?
+DATA
+ ( -2*a +   3*b    -1*c +   1*d)^3
++( -3*a +   4*b    -2*c +   2*d)^3
++( -3*a +   6*b +   0*c +   1*d)^3
+-( -3*a +   6*b    -1*c +   2*d)^3
+CALL Polynomial -var "a,b,c,d" $(DATA)
+
+TEST P14 Price's  A' matrix times (a,b,c) yields powersum  4*a^2 + 4*b^2 - 4*c^2
+DATA
+ (  2*a +   1*b    -1*c)^2
++( -2*a +   2*b +   2*c)^2
+-( -2*a +   1*b +   3*c)^2
+CALL Polynomial -var "a,b,c,d" $(DATA)
+
+TEST P16 Polynomial parsing
+CALL PolynomialParser
+
+TEST P17 Polynomial with GT_0
+CALL Polynomial "(a + b) > 0"
+
+TEST P18 groupBy a constant
+DATA
+ 28+90*a+81*b-121*d+108*a²+162*a*b+81*b²
+CALL Polynomial -var "9" $(DATA)
+
+TEST P19 monomial divided by constant
+CALL Polynomial "20*x / 7"
+
+TEST P20 monomial divided by constant
+CALL Polynomial "20*x / 4"
+
+TEST P21 monomial divided by constant
+CALL Polynomial "20 / 4"
+
+TEST PM1 affineMap
+CALL Polynomial -affine   "x^4 - y^4 - z^2"       "16*x^4 - 16*y^4 - z^2"
+
+TEST PM2 affineMap
+CALL Polynomial -affine   "16*x^4 - 16*y^4 - z^2" "x^4 - y^4 - z^2"
+
+TEST PM3 isMappableTo 2*x,2*y,z
+CALL Polynomial -mappable "16*x^4 - 16*y^4 -    z^2" "x^4 - y^4 -z^2"        
+
+TEST PM4 isMappableTo x,y,4*z
+CALL Polynomial -mappable "16*x^4 - 16*y^4 - 16*z^2" "16*x^4 - 16*y^4 - z^2"
+
+TEST PM5 isMappableTo x,y,4*z+1
+CALL Polynomial -mappable "16*x^4 - 16*y^4 - 16*z^2 - 8*z - 1" "16*x^4 - 16*y^4 - z^2"
+
+TEST PM6  from Q04: [15] -> [59]
+CALL Polynomial -mappable "-19+2*x+24*x^2+128*x^3+256*x^4-128*y-384*y^2-512*y^3-256*y^4-7*z-4*z^2" " - 1 + 2*x + 12*x^2 + 32*x^3 + 32*x^4 - 32*y^4 - 3*z - 2*z^2"
+      
+TEST PM7  from Q04: [15] -> [59]
+CALL Polynomial -mappable " - 1 + 2*x + 12*x^2 + 32*x^3 + 32*x^4 - 32*y^4 - 3*z - 2*z^2" "-19+2*x+24*x^2+128*x^3+256*x^4-128*y-384*y^2-512*y^3-256*y^4-7*z-4*z^2"
+ 
+TEST PM8A from Q04: [1] -> [4]
+CALL Polynomial -mappable  "4 + 32*x + 96*x^2 + 128*x^3 + 64*x^4 - 64*y^4 - 4*z^2" "4*x^4 - 4*y^4 - 1*z^2"     
+
+TEST PM8B from Q04: [1] -> [4]
+CALL Polynomial -mappable  "4*x^4 - 4*y^4 - 1*z^2" "4 + 32*x + 96*x^2 + 128*x^3 + 64*x^4 - 64*y^4 - 4*z^2"    
+#
+#-------------------------------
+# Relation Sets
+
+TEST RS1 without arguments
+CALL RelationSet
+
+TEST RS2 with set in argument
+CALL RelationSet "a+b>0, a-b>0, a>0"
+
+#---------------------------------------
+PACKAGE=org.teherba.ramath.symbolic
+
+TEST M01 monadic solver, sqrt(2)
+CALL MonadicSolver -l 2 -e "2*q^2 - p^2"
+
+TEST M02 monadic solver, sqrt(5)
+CALL MonadicSolver -l 2 -e "5*q^2 - p^2"
+
+TEST M03 monadic solver
+CALL MonadicSolver -l 2 -e "a^2 + b^2 - 3*(c^2 + d^2)"
+
+TEST M04 monadic solver, biquadratic
+CALL MonadicSolver -l 2 -e "x^4-y^4-z^2"
+
+# Singular:
+# ring r1=0, (a,b,c), lp;
+# poly f1=1 + 2*a + 2*b + 2*a^2 + 2*b^2 - 2*c^2 ;
+# poly f2=a - c + a^2 + b^2 - c^2 ;
+# poly f3=b - c + a^2 + b^2 - c^2 ;
+# ideal I=f1,f2,f3;
+# groebner(I);
+
+TEST M05 monadic solver, modified Fermat^3 mod 2
+CALL MonadicSolver -b 2 -l 2 -e "a^3 + 3*b^3 - 9*c^3"
+
+TEST M06 monadic solver, modified Fermat^3 mod 3
+CALL MonadicSolver -b 3 -l 2 -e "a^3 + 3*b^3 - 9*c^3"
+
+TEST M07 monadic solver, Fermat(4) mod 3
+CALL MonadicSolver -b 2 -l 2 -e "a^4+b^4-c^4"
+
+TEST M08 monadic solver, biquadratic mod 3
+CALL MonadicSolver -b 3 -l 1 -e "x^4-y^4-z^2"
+
+# TEST M09 monadic solver, Fermat(3) mod 6
+# CALL MonadicSolver -b 6 -l 1 -e "a^3+b^3-c^3"
+
+TEST M45 binary, Pythagoras
+CALL MonadicSolver -b 2 -l 3 -e "(a)^2 + (b)^2 - (c)^2"
+
+#===================================================
+TEST Q01 queuing solver, sqrt(2)
+CALL QueuingSolver -l 2 -e "2*q^2 - p^2"
+
+TEST Q02 queuing solver, sqrt(5)
+CALL QueuingSolver -l 2 -e "5*q^2 - p^2"
+
+TEST Q03 queuing solver
+CALL QueuingSolver -l 2 -e "a^2 + b^2 - 3*(c^2 + d^2)"
+
+TEST Q04 queuing solver, biquadratic
+CALL QueuingSolver -l 2 -e "x^4-y^4-z^2"
+
+TEST Q05 modif. Pythagoras
+CALL QueuingSolver -l 3 -e "x^2 + y^2 - 2*z^2"
+
+TEST Q06 Euler
+CALL QueuingSolver -l 2 -e "x^3 + 2*y^3 - 4*z^3"
+
+TEST Q07 Fermat^3 mod 2
+CALL QueuingSolver -l 3 -e "a^3 + b^3 - c^3"
+
+# TEST Q08 Fermat(3) distance mod 6
+# CALL QueuingSolver -b 6 -l 1 -e "a^3 + (a+b)^3 - (a+b+c)^3"
+
+# TEST Q09 Fermat(3) distance mod 3
+# CALL QueuingSolver -b 3 -l 2 -e "a^3 + (a+b)^3 - (a+b+c)^3"
+
+TEST Q10 Fermat(4) mod 2
+CALL QueuingSolver -b 2 -l 2 -e "a^6 + b^6 - c^6"
+
+TEST Q11 EEC(3) mod 2
+CALL QueuingSolver -b 2 -l 1 -e "a^3 + b^3 + c^3 - d^3"
+
+# TEST Q12 EEC(3) mod 3
+# CALL QueuingSolver -b 3 -l 1 -e "a^3 + b^3 + c^3 - d^3"
+
+EXIT
+#===================================================
+PACKAGE=org.teherba.ramath.symbolic
+
+TEST M10 monadic solver, Fermat(4) mod 4
+CALL MonadicSolver -b 4 -l 1 -e "a^4 + b^4 - c^4"
+
+TEST M11 monadic solver, Fermat(3) distance mod 3
+CALL MonadicSolver -b 3 -l 1 -e "a^3 + (a+b)^3 - (a+b+c)^3"
+
+TEST M12 monadic solver, EEC(3) mod 3
+CALL MonadicSolver -b 3 -l 1 -e "a^3 + b^3 + c^3 - d^3"
+
+TEST M13 monadic solver, EEC(3) increasing mod 3
+CALL MonadicSolver -b 3 -l 2 -e "(a)^3 + (a+b)^3 + (a+b+c)^3 - (a+b+c+d)^3"
+
+TEST M14 monadic solver, EEC(3) increasing mod 2
+CALL MonadicSolver -b 2 -l 2 -e "(a)^3 + (a+b)^3 + (a+b+c)^3 - (a+b+c+d)^3"
+
+TEST M15 monadic solver, part of EEC(3) increasing mod 2
+CALL MonadicSolver -b 3 -l 1 -e "(b)^3 - (b+d)^3 + 3*k = 0"
+
+TEST M16 monadic solver, Fermat(3) increasing mod 2
+CALL MonadicSolver -b 2 -l 2 -e "(a)^3 + (a+b)^3 - (a+b+c)^3 = 0"
+
+TEST M17 http://mathoverflow.net/questions/134352/the-modular-arithmetic-contradiction-trick-for-diophantine-equations
+CALL MonadicSolver -b 3 -l 2 -e "x^2 + y^2 - 3*z^2"
+
+TEST M18 http://mathoverflow.net/questions/134352/the-modular-arithmetic-contradiction-trick-for-diophantine-equations
+CALL MonadicSolver -b 2 -l 2 -e "x^2 + y^2 - 3*z^2"
+
+TEST M19 http://mathoverflow.net/questions/134352/the-modular-arithmetic-contradiction-trick-for-diophantine-equations
+CALL MonadicSolver -b 4 -l 2 -e "x^2 + y^2 - 3*z^2"
+
+TEST M20 http://mathoverflow.net/questions/134352/the-modular-arithmetic-contradiction-trick-for-diophantine-equations
+CALL MonadicSolver -b 3 -l 3 -e "x^3 - 117*y^3 - 5"
+
+TEST M21 http://mathoverflow.net/questions/134352/the-modular-arithmetic-contradiction-trick-for-diophantine-equations
+CALL MonadicSolver -b 6 -l 2 -e "3*x^3 + 4*y^3 - 5*z^3"
+
+TEST M22 http://math.berkeley.edu/~ribet/Articles/icfs.pdf; -pell x=158070671986249, y=15140424455100
+CALL MonadicSolver -b 6 -l 2 -e "x^2 - 109*y^2 - 1"
+
+TEST M23 monadic solver, Pythagoras mod 2 increasing
+CALL MonadicSolver -b 3 -l 2 -e "(a)^2 + (a+b)^2 - (a+b+c)^2"
+
+TEST M24 monadic solver, Pythagoras mod 2 increasing
+CALL MonadicSolver -b 4 -l 2 -e "(a)^2 + (a+b)^2 - (a+b+c)^2"
+
+PACKAGE=org.teherba.ramath.symbolic
+TEST M25 monadic solver, Fermat(3) mod 2
+CALL MonadicSolver -b 2 -l 2 -e "a^3 + b^3 - c^3"
+PACKAGE=org.teherba.ramath
+TEST M25H shift
+# expanding [1]*2: 1+3*a+6*a²+4*a³+3*b+6*b²+4*b³-4*c³=0
+DATA
+ + (7+27*a+36*a²+16*a³+3*b+12*b²+16*b³-16*c³)^3
+ + (7+3*a+12*a²+16*a³+27*b+36*b²+16*b³-16*c³)^3
+ + (5+27*a+36*a²+16*a³+3*b+12*b²+16*b³-12*c-24*c²-16*c³)^3
+ + (5+3*a+12*a²+16*a³+27*b+36*b²+16*b³-12*c-24*c²-16*c³)^3
+CALL ParameterEquation -shift -f $(DATA)  -l -4 -w 3 -e 3 -t Fermat3.M25
+
+PACKAGE=org.teherba.ramath.symbolic
+TEST M26 monadic solver, Fermat(3) mod 3
+CALL MonadicSolver -b 3 -l 1 -e "a^3 + b^3 - c^3"
+PACKAGE=org.teherba.ramath
+TEST M26H shift, line "-> [4]"
+# expanding [1]*3: 1+4*a+6*a²+3*a³+b+3*b²+3*b³-3*c³=0
+DATA
+ + (19+64*a+72*a²+27*a³+b+9*b²+27*b³-27*c³)^3
+ + (7+25*a+45*a²+27*a³+16*b+36*b²+27*b³-27*c³)^3
+ + (13+4*a+18*a²+27*a³+49*b+63*b²+27*b³-27*c³)^3
+ + ( 18+64*a+72*a²+27*a³+b+9*b²+27*b³-9*c-27*c²-27*c³)^3
+ + ( 6+25*a+45*a²+27*a³+16*b+36*b²+27*b³-9*c-27*c²-27*c³)^3
+ + ( 12+4*a+18*a²+27*a³+49*b+63*b²+27*b³-9*c-27*c²-27*c³)^3
+ + ( 11+64*a+72*a²+27*a³+b+9*b²+27*b³-36*c-54*c²-27*c³)^3
+ + ( -1+25*a+45*a²+27*a³+16*b+36*b²+27*b³-36*c-54*c²-27*c³)^3
+ + ( 5+4*a+18*a²+27*a³+49*b+63*b²+27*b³-36*c-54*c²-27*c³)^3
+CALL ParameterEquation -shift -f $(DATA)  -l -3 -w 3 -e 3 -t Fermat3.M26
+
+PACKAGE=org.teherba.ramath.symbolic
+TEST M27 Fermat(3) shifted
+CALL MonadicSolver -b 2 -l 3 -e "(x+1)^3 + (y+1)^3 - (z+1)^3"
+
+TEST M28 Fermat(3) shifted
+CALL MonadicSolver -b 2 -l 3 -e "(x+0)^3 + (y+0)^3 - (z+0)^3"
+
+TEST M29 monadic solver, biquadratic
+CALL MonadicSolver -l 2 -e "x^4 - y^4 - z^2"
+#----
+
+TEST M41 binary solver, sqrt(2)
+CALL MonadicSolver -l 2 -e 2*q^2-p^2
+
+TEST M42 binary solver, cubic
+CALL MonadicSolver -l 2  -e a^3+b^3-c^3-d^3
+
+TEST M43 binary solver, mixed Fermat
+CALL MonadicSolver -l 2 -e a^2+b^2-3*(c^2+d^2)
+
+TEST M44 binary solver, biquadratic
+CALL MonadicSolver -l 2 -e x^4-y^4-z^2
+
