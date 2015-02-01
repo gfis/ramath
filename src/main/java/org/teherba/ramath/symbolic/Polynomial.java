@@ -356,9 +356,6 @@ public class Polynomial implements Cloneable, Serializable {
         while (iter.hasNext()) {
             String sig = iter.next();
             buffer.append(monomials.get(sig).toString(full));
-            if (debug >= 2) {
-                System.out.println(sig + " => " + monomials.get(sig).toString(full));
-            }
         } // while iter
         if (buffer.length() == 0) {
             buffer.append("0");
@@ -396,7 +393,7 @@ public class Polynomial implements Cloneable, Serializable {
         Iterator<String> iter = monomials.keySet().iterator();
         while (iter.hasNext()) {
             String sig = iter.next();
-            buffer.append(monomials.get(sig).toString());
+            buffer.append(monomials.get(sig).toFactoredString(factor));
         } // while iter
         if (buffer.length() == 0) {
             buffer.append("0");

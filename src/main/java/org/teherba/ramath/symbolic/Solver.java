@@ -243,12 +243,12 @@ public class Solver {
         Matcher matcher = pattern.matcher("raw");
         StringBuffer result = new StringBuffer(256);
         while (matcher.find()) {
-        	BigInteger constant = new BigInteger(raw.substring(matcher.start(), matcher.end()));
-        	BigInteger[] divRest  = constant.divideAndRemainder(factor);
-            matcher.appendReplacement(result, divRest[1].equals(BigInteger.ZERO) 
-            		? factor.toString() + "*" + divRest[0].toString()
-            		: constant.toString()
-            		);
+            BigInteger constant = new BigInteger(raw.substring(matcher.start(), matcher.end()));
+            BigInteger[] divRest  = constant.divideAndRemainder(factor);
+            matcher.appendReplacement(result, divRest[1].equals(BigInteger.ZERO)
+                    ? factor.toString() + "*" + divRest[0].toString()
+                    : constant.toString()
+                    );
         } // while find
         matcher.appendTail(result);
         return result.toString();
@@ -258,8 +258,8 @@ public class Solver {
      *  @param raw raw formula string
      *  @return polished formula
      */
-    protected static String polish(String raw) {
-        return raw
+    protected static String polish(RelationSet rset, BigInteger factor) {
+        return rset.toFactoredString(factor)
            //   .replaceAll("_\\d+", "")
                 .replaceAll("[_ ]", "") // maybe "*" also
            //   .replaceAll("\\^2", "²")

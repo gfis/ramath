@@ -540,7 +540,7 @@ public class Monomial implements Cloneable, Serializable {
                 } else {
                     result = null; // not divisible
                     /*
-                    throw new IllegalArgumentException("divisor may not be null: "
+                        throw new IllegalArgumentException("divisor may not be null: "
                             + this.toString() + " / " + name2 + "^" + String.valueOf(exp2));
                     */
                 }
@@ -689,51 +689,75 @@ public class Monomial implements Cloneable, Serializable {
      *  @return "x*y^3", for example if full = false, "+ 1*x^1*y^3" if full = true
      */
     public String toString(boolean full) {
+        String number = coefficient.toString();
+        return toStringCommon(full, number);
+    } // toString(full)
+
+    /** Returns a string representation of the monomial
+     *  @param factor factor to be extracted from the constant, if possible
+     *  @return "3*4*x*y^3" for example for factor 4 and monomial 12*x*x^3
+     */
+    public String toFactoredString(BigInteger factor) {
+        BigInteger coeff = coefficient;
+        String number = null;
+        if (coeff.gcd(factor).equals(factor)) {
+        	number = coeff.divide(factor).toString() + "*" + factor.toString();
+        } else {
+        	number = coeff.toString();
+        }
+        return toStringCommon(false, number);
+    } // toFactoredString(full)
+
+    /** Returns a string representation of the monomial, either compressed or full
+     *  @param full whether to return a complete representation suitable for substitution
+     *  @param number string representation of the coefficient, either empty, a number, or a product
+     *  @return "x*y^3", for example if full = false, "+ 1*x^1*y^3" if full = true
+     */
+    public String toStringCommon(boolean full, String number) {
         StringBuffer result = new StringBuffer(32);
         try {
-        // result.append(sign >= 0 ? " + " : " - ");
-        String number = coefficient.toString();
-        if (vars.size() == 0) { // coefficient only
-            if (number.startsWith("-")) {
-                result.append(number.replace("-", " - "));
-            } else {
-                result.append(" + ");
-                result.append(number);
-            }
-        } else { // with variable(s)
-            if (number.equals(" + 0")) {
-                result.append(number);
-                vars.clear(); // just for safety
-            } else if (! full && number.equals("1")) {
-                result.append(" + ");
-            } else if (! full && number.equals("-1")) {
-                result.append(" - ");
-            } else {
+            // result.append(sign >= 0 ? " + " : " - ");
+            if (vars.size() == 0) { // no variables, coefficient only
                 if (number.startsWith("-")) {
                     result.append(number.replace("-", " - "));
-                    result.append("*");
                 } else {
                     result.append(" + ");
                     result.append(number);
-                    result.append("*");
                 }
-            }
-            Iterator<String> iter = vars.keySet().iterator();
-            int count = 0;
-            while (iter.hasNext()) {
-                count ++;
-                if (count > 1) {
-                    result.append("*");
+            } else { // with variable(s)
+                if (number.equals(" + 0")) {
+                    result.append(number);
+                    vars.clear(); // just for safety
+                } else if (! full && number.equals("1")) {
+                    result.append(" + ");
+                } else if (! full && number.equals("-1")) {
+                    result.append(" - ");
+                } else {
+                    if (number.startsWith("-")) {
+                        result.append(number.replace("-", " - "));
+                        result.append("*");
+                    } else {
+                        result.append(" + ");
+                        result.append(number);
+                        result.append("*");
+                    }
                 }
-                String name = iter.next();
-                result.append(name);
-                int exp = this.getExponent(name);
-                if (full || exp > 1) {
-                    result.append("^");
-                    result.append(exp);
-                }
-            } // while iter
-        } // with variable(s)
+                Iterator<String> iter = vars.keySet().iterator();
+                int count = 0;
+                while (iter.hasNext()) {
+                    count ++;
+                    if (count > 1) {
+                        result.append("*");
+                    }
+                    String name = iter.next();
+                    result.append(name);
+                    int exp = this.getExponent(name);
+                    if (full || exp > 1) {
+                        result.append("^");
+                        result.append(exp);
+                    }
+                } // while iter
+            } // with variable(s)
         } catch (Exception exc) {
             System.out.println(exc.getMessage());
             exc.printStackTrace();

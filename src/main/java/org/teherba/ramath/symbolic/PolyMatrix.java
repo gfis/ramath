@@ -1,5 +1,6 @@
 /*  PolyMatrix: a square matrix with Polynomial elements
  *  @(#) $Id: PolyMatrix.java 744 2011-07-26 06:29:20Z gfis $
+ *  2015-01-01: Barnings B identity
  *  2013-08-23: Serializable
  *  2013-08-15, Georg Fischer: copied from linear.Matrix
  */
@@ -423,22 +424,22 @@ public class PolyMatrix implements Cloneable, Serializable {
 
     /** Euclid's formula for the generation of Pythagorean triples */
     private static PolyVector pgen = new PolyVector(3, 0, new String[]
-    		{ "m^2 - n^2"
-    		, "2*m*n"
-    		, "m^2 + n^2"
-    		} );
+            { "m^2 - n^2"
+            , "2*m*n"
+            , "m^2 + n^2"
+            } );
 
     /** Print the results of some matrix tests
-     *	@param title a description of the matrix to be tested
-     *	@param amat the matrix to be tested
+     *  @param title a description of the matrix to be tested
+     *  @param amat the matrix to be tested
      */
     private static void printTest(String title, PolyMatrix amat) {
-    	System.out.println(title + " = "       + amat.toString(","));
-    	System.out.println("determinant = "    + amat.determinant().toString());
-    	System.out.println("characteristic = " + amat.characteristic("x").toString());
-    	PolyVector next = amat.multiply(pgen);
-       	System.out.println("next vector " + next.toString(",")
-       			+ " is " + (next.isPowerSum(2, 2, 1) ? "a " : "no ") + "sum of powers");
+        System.out.println(title + " = "       + amat.toString(","));
+        System.out.println("determinant = "    + amat.determinant().toString());
+        System.out.println("characteristic = " + amat.characteristic("x").toString());
+        PolyVector next = amat.multiply(pgen);
+        System.out.println("next vector " + next.toString(",")
+                + " is " + (next.isPowerSum(2, 2, 1) ? "a " : "no ") + "sum of powers");
     } // printTest
 
     /** Test method, shows some fixed matrices with no arguments, or the
@@ -489,19 +490,22 @@ public class PolyMatrix implements Cloneable, Serializable {
                 } else if (opt.startsWith("-div")) {
                     // -div
                 } else if (opt.startsWith("-char")) {
-                	// c.f. http://en.wikipedia.org/wiki/Tree_of_Pythagorean_triples
-                	System.out.println("Generator " + pgen.toString(",")
-			       			+ " is" + (pgen.isPowerSum(2, 2, 1) ? " " : "no ") + "sum of powers");
+                    // c.f. http://en.wikipedia.org/wiki/Tree_of_Pythagorean_triples
+                    System.out.println("Generator " + pgen.toString(",")
+                            + " is" + (pgen.isPowerSum(2, 2, 1) ? " " : "no ") + "sum of powers");
+                    // (u+2*v+2*w)^2+(2*u+v+2*w)^2-(2*u+2*v+3*w)^2 = 0 --> u^2 + v^2 - w^2 = 0
                     printTest("Barning\'s B", new PolyMatrix(3, new String[]
                             { "1", "2", "2"
                             , "2", "1", "2"
                             , "2", "2", "3"
                             } ));
+                    // (u-2*v+2*w)^2+(2*u-v+2*w)^2-(2*u-2*v+3*w)^2 --> u^2 + v^2 - w^2        
                     printTest("Barning\'s A", new PolyMatrix(3, new String[]
                             { "1", "-2", "2"
                             , "2", "-1", "2"
                             , "2", "-2", "3"
                             } ));
+                    // (-u+2*v+2*w)^2+(-2*u+v+2*w)^2-(-2*u+2*v+3*w)^2 --> u^2 + v^2 - w^2
                     printTest("Barning\'s C", new PolyMatrix(3, new String[]
                             { "-1", "2", "2"
                             , "-2", "1", "2"
@@ -532,5 +536,5 @@ public class PolyMatrix implements Cloneable, Serializable {
             log.error(exc.getMessage(), exc);
         }
     } // main
-
+    
 } // PolyMatrix

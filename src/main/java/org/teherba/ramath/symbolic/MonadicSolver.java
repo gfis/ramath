@@ -179,15 +179,17 @@ public class MonadicSolver extends Solver {
     public void expand(int queueIndex) {
         RelationSet rset1 = get(queueIndex); // expand this parent element
         int curLevel = rset1.getNestingLevel() + 1;
+        int base =  getModBase();
         VariableMap varMap1 = rset1.getVariableMap(null, getUpperSubst()); // parent variable names mapped to null
         BigInteger tupleShift2 = rset1.getTupleShift();
         int varNo = varMap1.size(); // total number of variables to be substituted
         ModoMeter meter = new ModoMeter(varNo, getModBase()); // for n-adic expansion, e.g. x_i -> 0+2*x_j, 1+2*x_j
+        BigInteger factor = BigInteger.valueOf(base).pow(curLevel);
         if (debug >= 1) {
             trace.println();
             trace.println("expanding [" + queueIndex + "]"
                     + "*"  + tupleShift2.toString()
-                    + ": " + polish(rset1.toString()));
+                    + ": " + polish(rset1, factor));
         }
         while (meter.hasNext()) { // over all constant combinations - generate all children
             int[] mods = meter.toArray();
@@ -202,7 +204,7 @@ public class MonadicSolver extends Solver {
                     trace.print(meter.toString() + ": ");
                     trace.print(tupleStr);
                     trace.print(decision);
-                    trace.println(" " + polish(rset2.toString()));
+                    trace.println(" " + polish(rset2, factor));
                 }
             } else { // UNKNOWN || SUCCESS
                 String similiar = findSimiliar(rset2);
@@ -211,7 +213,7 @@ public class MonadicSolver extends Solver {
                         trace.print(meter.toString() + ": ");
                         trace.print(tupleStr);
                         trace.print(VariableMap.SIMILIAR + " to " + similiar);
-                        trace.println(" " + polish(rset2.toString()));
+                        trace.println(" " + polish(rset2, factor));
                     }
                 } else { // no similiar RelationSet found
                     if (debug >= 1) {
@@ -221,7 +223,7 @@ public class MonadicSolver extends Solver {
                         if (! rset2.hasConstant() && tupleStr.indexOf("=0") < 0) {
                             trace.print(", const=0 ");
                         }
-                        trace.println(" " + polish(rset2.toString()));
+                        trace.println(" " + polish(rset2, factor));
                     }
                     add(rset2);
                 } // no similiar

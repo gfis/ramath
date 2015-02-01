@@ -150,12 +150,13 @@ public class QueuingSolver extends Solver {
             im ++;
         } // while iter1
         // meter now ready for n-adic expansion, e.g. x -> 2*x+0, 2*x+1
+        BigInteger factor = BigInteger.valueOf(base).pow(curLevel);
         if (debug >= 1) {
             trace.println();
             trace.println("expanding queue[" + queueIndex + "]: "
                     + (rset1.toString())
                     + " modulo " + meter.toBaseList()
-                    + " *" + BigInteger.valueOf(base).pow(curLevel).toString()
+                    + " *" + factor.toString()
                 //  + ", vmap1=" + vmap1.toString()
                 //  + ", vmapr=" + vmapr.toString()
                     );
@@ -178,7 +179,7 @@ public class QueuingSolver extends Solver {
                         if (debug >= 1) {
                             trace.print(vmap2.toVector() + ": ");
                             trace.print(VariableMap.SAME + " as");
-                            trace.print(" " + polish(rset2.toString()));
+                            trace.print(" " + polish(rset2, factor));
                         //  trace.print(" -> [" + size() + "]");
                             trace.println();
                         }
@@ -188,7 +189,7 @@ public class QueuingSolver extends Solver {
                         if (debug >= 1) {
                             trace.print(vmap2.toVector() + ": ");
                             trace.print(VariableMap.SIMILIAR + " to " + similiar);
-                            trace.print(" " + polish(rset2.toString()));
+                            trace.print(" " + polish(rset2, factor));
                         //  trace.print(" -> [" + size() + "]");
                             trace.println();
                         }
@@ -197,7 +198,7 @@ public class QueuingSolver extends Solver {
                         if (debug >= 1) {
                             trace.print(vmap2.toVector() + ": ");
                             trace.print(decision);
-                            trace.print(" " + polish(rset2.toString()));
+                            trace.print(" " + polish(rset2, factor));
                             trace.print(" -> [" + size() + "]");
                             trace.println();
                         }

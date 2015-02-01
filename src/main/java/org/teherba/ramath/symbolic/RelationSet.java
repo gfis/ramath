@@ -290,6 +290,25 @@ public class RelationSet implements Cloneable, Serializable {
         return buffer.toString();
     } // toString
 
+    /** Returns a string representation of the polynomial, with leading sign,
+     *  in compressed representation, without the relation.
+     *  @param factor if the constant of a monomial is divisible by this factor &gt; 1,
+     *  the constant is written as "factor*factor2"
+     *  @return "4*4*x^2+4*4*y^2-32*4*x*y*z+4*4*z^2" (factor 4), for example
+     */
+    public String toFactoredString(BigInteger factor) {
+        StringBuffer buffer = new StringBuffer(2048);
+        int ipoly = 0;
+        while (ipoly < this.size()) {
+            if (ipoly > 0) {
+                buffer.append("; ");
+            }
+            buffer.append(this.get(ipoly).toFactoredString(factor));
+            ipoly ++;
+        } // while ipoly
+        return buffer.toString();
+    } // toFactoredString
+
     /** Returns lines with string representations of the {@link Polynomial}s in the relation set,
      *  either compressed or full
      *  @param full whether to return a complete representation suitable for substitution
