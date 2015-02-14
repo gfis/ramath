@@ -892,7 +892,7 @@ x^2 + 3*x^3 + 2*x^4
     /** Gets a map from all variable names (key) to <em>null</em> (value).
      *  @return map of variable names mapped to <em>null</em>
      */
-    public TreeMap<String, String> getVariableMap() {
+    public VariableMap getVariableMap() {
         return getVariableMap(true);
     } // getVariableMap()
 
@@ -901,7 +901,7 @@ x^2 + 3*x^3 + 2*x^4
      *  @param upperSubst whether uppercase variables should be returned in the map
      *  @return map of variable names mapped to <em>null</em>
      */
-    public TreeMap<String, String> getVariableMap(boolean upperSubst) {
+    public VariableMap getVariableMap(boolean upperSubst) {
         return getVariableMap(null, upperSubst);
     } // getVariableMap(boolean)
 
@@ -911,7 +911,7 @@ x^2 + 3*x^3 + 2*x^4
      *  it is replaced by the variable's name
      *  @return map of variable names mapped to a string
      */
-    public TreeMap<String, String> getVariableMap(String value) {
+    public VariableMap getVariableMap(String value) {
         return getVariableMap(value, true);
     } // getVariableMap(String)
 
@@ -924,8 +924,8 @@ x^2 + 3*x^3 + 2*x^4
      *  (default: true)
      *  @return map of variable names mapped to a string
      */
-    public TreeMap<String, String> getVariableMap(String value, boolean upperSubst) {
-        TreeMap<String, String> result = new TreeMap<String, String>();
+    public VariableMap getVariableMap(String value, boolean upperSubst) {
+        VariableMap result = new VariableMap();
         Iterator <String> titer = monomials.keySet().iterator();
         while (titer.hasNext()) { // over all signatures of these monomials
             String tsig = titer.next();
@@ -993,9 +993,9 @@ x^2 + 3*x^3 + 2*x^4
      */
     public VariableMap getVariableMap(String factor, Polynomial poly2) {
         boolean upperSubst = true;
-        VariableMap             result = new VariableMap();
-        TreeMap<String, String> map1   = this .getVariableMap(upperSubst);
-        TreeMap<String, String> map2   = poly2.getVariableMap(upperSubst);
+        VariableMap result = new VariableMap();
+        VariableMap map1   = this .getVariableMap(upperSubst);
+        VariableMap map2   = poly2.getVariableMap(upperSubst);
         if (map1.size() == map2.size()) {
             Iterator <String> iter1 = map1.keySet().iterator();
             Iterator <String> iter2 = map2.keySet().iterator();
@@ -1243,7 +1243,7 @@ x^2 + 3*x^3 + 2*x^4
      */
     public VariableMap affineMap(Polynomial poly2) {
         boolean success = true;
-        VariableMap result = new VariableMap(this.getVariableMap());
+        VariableMap result = this.getVariableMap();
         try {
             Set<String> set1 = this .keySet();
             Set<String> set2 = poly2.keySet();
@@ -1521,10 +1521,8 @@ x^2 + 3*x^3 + 2*x^4
                 }
                 // failure
             } else { // signSums match or are 0
-                TreeMap<String, String>
-                renameMap1 = this .getVariableMap(); // variables of 'this' mapped to null
-                TreeMap<String, String>
-                renameMap2 = poly2.getVariableMap(); // variables of 'poly2' mapped to null
+                VariableMap renameMap1 = this .getVariableMap(); // variables of 'this' mapped to null
+                VariableMap renameMap2 = poly2.getVariableMap(); // variables of 'poly2' mapped to null
                 if (renameMap1.size() != renameMap2.size()) {
                     if (debug >= 1) {
                         System.out.println("#vsize " + renameMap1.size() + " != " + renameMap2.size());
@@ -1614,11 +1612,6 @@ x^2 + 3*x^3 + 2*x^4
      *  @return a new polynomial
      */
     public Polynomial substitute(int number, boolean upperSubst) {
-    /*
-        String result = this.toString(true) // full representation contains "*var^" for all variables
-                .replaceAll("[a-zA-Z_][a-zA-Z_0-9]*", String.valueOf(number));
-        return (new Polynomial()).parse(result);
-    */
         return substitute(getVariableMap(String.valueOf(number), upperSubst));
     } // substitute(int, boolean)
 
@@ -1647,8 +1640,8 @@ x^2 + 3*x^3 + 2*x^4
      *  @return the polynomial with all variables replaced by a single variable.
      */
     public Polynomial mergeVariables() {
-        TreeMap<String, String> varMap = this.getVariableMap();
-        Iterator<String>        viter  = varMap.keySet().iterator();
+        VariableMap      varMap = this.getVariableMap();
+        Iterator<String> viter  = varMap.keySet().iterator();
         String expr = "x_y_z"; // user should (can) not enter underscores, and solvers generate at most one '_'
         while (viter.hasNext()) { // over all variables in the map
             varMap.put(viter.next(), expr); // replace all by a unique variable
@@ -1835,7 +1828,7 @@ x^2 + 3*x^3 + 2*x^4
                 poly2 = poly1.pow(exp);
                 System.out.println(poly2.toString());
             } // for int
-            TreeMap<String, String> varMap = poly1.getVariableMap();
+            VariableMap varMap = poly1.getVariableMap();
             varMap.put("c", "0");
             varMap.put("a", "5*a+1");
             varMap.put("b", "5*b+1");
