@@ -1,5 +1,7 @@
 /*  Dispenser: creates an "increasing" sequence of different number tuples in a systematic way
  *  @(#) $Id: Dispenser.java 744 2011-07-26 06:29:20Z  $
+ *  2015-02-13: getVector, nextVector; post-op +10
+ *  2015-02-08: Dispenser instead of ModoMeter in VariableMap
  *  2014-04-06: get(im)
  *  2013-09-10: parameters base and with interchanged
  *  2013-09-09: Serializable
@@ -21,6 +23,7 @@
  * limitations under the License.
  */
 package org.teherba.ramath.util;
+import  org.teherba.ramath.linear.Vector;
 import  java.util.Iterator;
 import  java.io.Serializable;
 
@@ -77,6 +80,14 @@ public abstract class Dispenser implements Iterator<int[]>, Serializable {
      *  @return base of digits which roll
      */
     public int getBase() {
+        return this.base;
+    } // getBase
+
+    /** Gets the base with index - fake method, for compatibility with {@link ModoMeter} only
+     *  @param im index of the digit whose bese should be returned.
+     *  @return base of digits which roll
+     */
+    public int getBase(int im) {
         return this.base;
     } // getBase
 
@@ -220,19 +231,6 @@ public abstract class Dispenser implements Iterator<int[]>, Serializable {
         return result;
     } // isZeroes
 
-    /** Reads the current setting of the Dispenser.
-     *  @return an array with the <em>original</em> digits
-     */
-    public int[] toArray() {
-        int[] result = new int[width];
-        int im = 0;
-        while (im < width) { // copy first
-            result[im] = (signs[im] >= 0) ? meter[im] : (- meter[im]);
-            im ++;
-        } // while im
-        return result;
-    } // toArray
-
     /** Toggles into the next combination of signs if the Dispenser yields negative values.
      *  This works like a simple odometer for the values {0, -1},
      *  but positions where the <em>meter</em> is zero are skipped.
@@ -262,6 +260,26 @@ public abstract class Dispenser implements Iterator<int[]>, Serializable {
         return busy; // true iff the highest digit rolled over
     } // toggleSigns
 
+    /** Reads the current setting of the Dispenser.
+     *  @return an array with the <em>original</em> digits
+     */
+    public int[] toArray() {
+        int[] result = new int[width];
+        int im = 0;
+        while (im < width) { // copy first
+            result[im] = (signs[im] >= 0) ? meter[im] : (- meter[im]);
+            im ++;
+        } // while im
+        return result;
+    } // toArray
+
+    /** Reads the current setting of the Dispenser.
+     *  @return a {@link Vector} with the <em>original</em> digits
+     */
+    public Vector getVector() {
+        return new Vector(toArray());
+    } // getVector
+
     /** Rolls the least significant digit up by one, and
      *  eventually rolls carries into higher positions.
      *  This is the default implementation for a {@link ModoMeter}, but
@@ -289,6 +307,16 @@ public abstract class Dispenser implements Iterator<int[]>, Serializable {
         } // while iterating
         return result;
     } // next
+
+    /** Rolls the least significant digit up by one, and
+     *  eventually rolls carries into higher positions.
+     *  This is the default implementation for a {@link ModoMeter}, but
+     *  other Dispensers will implement different methods.
+     *  @return a {@link Vector} with the <em>original</em> digits tuple <em>before</em> rolling
+     */
+    public Vector nextVector() {
+        return new Vector(next());
+    } // nextVector
 
     /** Needed for Iterator interface, not implemented -
      *  Dispensers do never change the underlying data structure.

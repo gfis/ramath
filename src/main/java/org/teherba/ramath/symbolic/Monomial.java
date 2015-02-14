@@ -34,7 +34,7 @@ import  java.util.TreeMap;
 
 /** Bean for a {@link Polynomial} with only one summand (term).
  *  A monomial consists of a product with a signed {@link BigInteger} coefficient
- *  and optional exponentiated variable(s).
+ *  and optional variable(s) with positive exponents.
  *  Initially, a monomial has the value +1^1 (0^1 may also be set).
  *  A monomial may consist of the constant zero.
  *  @author Dr. Georg Fischer
@@ -46,8 +46,8 @@ public class Monomial implements Cloneable, Serializable {
     /** BigInteger factor of the product of variables */
     private BigInteger coefficient;
 
-    /** The sorted map for all variables in lexicographic and exponent order;
-     *  variable names are mapped to exponent values
+    /** The sorted map for all variables in lexicographic order of their 
+     *  names which are mapped to (positive) exponent values
      */
     private TreeMap<String, Integer> vars;
 
@@ -90,7 +90,7 @@ public class Monomial implements Cloneable, Serializable {
         }
     } // Constructor(name, exponent)
 
-    /** Constructor with a name only.
+    /** Constructor with a single name only.
      *  @param name variable name or integer constant
      */
     public Monomial(String name) {

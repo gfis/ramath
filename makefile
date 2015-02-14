@@ -30,7 +30,9 @@ recr1:
 	grep -E '> FAILED' regression*.log.tmp | cut -f 3 -d ' ' | xargs -l -iﬂﬂ rm -v test/ﬂﬂ.prev.tst
 regr2:
 	make regression TEST=$(TEST)
-#---------------------------------
+#---------------------------------------------------
+jfind:
+	find src -iname "*.java" | xargs -l grep -iH $(JF)
 xsort3:
 	sort \
 	test/X02.this.tst \

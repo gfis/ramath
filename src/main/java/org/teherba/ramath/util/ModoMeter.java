@@ -114,6 +114,14 @@ public class ModoMeter extends Dispenser {
         return this.bases[0];
     } // getBase
 
+    /** Gets the specific base of some digit
+     *  @param im index of the digit
+     *  @return individual base
+     */
+    public int getBase(int im) {
+        return this.bases[im];
+    } // getBase(int)
+
     /** Sets the base to a unique value.
      *  @param base base of digits which roll
      */
@@ -123,14 +131,6 @@ public class ModoMeter extends Dispenser {
             this.bases[ibase] = base;
         } // for ibase
     } // setBase
-
-    /** Gets the specific base of some digit
-     *  @param im index of the digit
-     *  @return individual base
-     */
-    public int getBase(int im) {
-        return this.bases[im];
-    } // getBase(int)
 
     /** Sets the specific base of some digit
      *  @param im index of the digit

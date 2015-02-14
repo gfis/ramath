@@ -1,5 +1,6 @@
 /*  VariableMap: maps a set of variables to their values or substitution formulas
  *  @(#) $Id: VariableMap.java 538 2010-09-08 15:08:36Z gfis $
+ *  2015-02-08: Dispenser instead of ModoMeter
  *  2014-06-02: SAME
  *  2014-04-04: triviality, refineExpressions
  *  2013-09-23: renamed from ValueMap
@@ -23,7 +24,8 @@
  * limitations under the License.
  */
 package org.teherba.ramath.symbolic;
-import  org.teherba.ramath.util.ModoMeter;
+import  org.teherba.ramath.util.Dispenser;
+import  org.teherba.ramath.util.ModoMeter; // for test only
 import  java.io.Serializable;
 import  java.math.BigInteger;
 import  java.util.Iterator;
@@ -165,6 +167,20 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
         return buffer.toString();
     } // toVector
 
+    /** Gets a sorted array of the variable names
+     *  @return ["a", "b", "c"], for example
+     */
+    public String[] getNameArray() {
+    	String[] result = new String[this.size()];
+        int ind = 0;
+        Iterator<String> iter = this.keySet().iterator();
+        while (iter.hasNext()) {
+            String name = iter.next();
+            result[ind ++] = name;
+        } // while iter
+        return result;
+    } // getNameArray
+
     /** Determines a code for the triviality of the mapping:
      *  <ul>
      *  <li>1: one of the variables maps to zero</li>
@@ -197,16 +213,17 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
 
     /** Refines the expressions in <em>this</em> VariableMap
      *  by one level of modulus expansion.
-     *  @param meter current state of a {@link ModoMeter} containing the
+     *  @param dispenser current state of a {@link Dispenser} containing the
      *  factors (the bases) and the constants (the values) for the modification
-     *  of the mapped expressions.
-     *  For a mapping x -> a*x+b, and corresponding meter value m mod n,
+     *  of the mapped expressions. 
+     *  The underlying integer array is parallel to the sorted list of variable names.
+     *  For a mapping x -> a*x+b, and corresponding dispenser value m mod n,
      *  the new expression is a*(n*x+m) + b = a*n*x + a*m + b.
      *  @return a new VariableMap with the variables mapped to the refined expressions
      */
-    public VariableMap refineExpressions(ModoMeter meter) {
+    public VariableMap refineExpressions(Dispenser dispenser) {
         VariableMap result = new VariableMap();
-        // System.out.println(this.toString() + ".refineExpressions(meter)");
+        // System.out.println(this.toString() + ".refineExpressions(dispenser)");
         Iterator<String> iter = this.keySet().iterator();
         int im = 0;
         while (iter.hasNext()) {
@@ -214,8 +231,8 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
             String value = this.get(key); // this has the form "a*x+b"
             int starPos  = value.indexOf('*');
             int plusPos  = value.indexOf('+');
-            BigInteger base     = BigInteger.valueOf(meter.getBase(im));
-            BigInteger modulus  = BigInteger.valueOf(meter.get    (im));
+            BigInteger base     = BigInteger.valueOf(dispenser.getBase(im));
+            BigInteger modulus  = BigInteger.valueOf(dispenser.get    (im));
             BigInteger factor   = (new BigInteger(value.substring(0, starPos)));
             BigInteger constant = (new BigInteger(value.substring(plusPos + 1))).add(factor.multiply(modulus));
             result.put(key, factor.multiply(base).toString()
@@ -247,11 +264,12 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
         vmap.put("c" , "2*c+0");
         vmap.put("d2", "2*d2+1");
         ModoMeter meter = new ModoMeter(4); // binary
-        for (int iloop = 0; iloop < 15; iloop ++) {
+        for (int iloop = 0; iloop < 15; iloop ++) { // turn it several times
             meter.next();
         } // while
         System.out.print(vmap.toString()); // before refinement
-        System.out.println(" refined by [" + meter.toString() + "]: " + vmap.refineExpressions(meter).toString());
+        System.out.println(" refined by [" + meter.toString() + "]: "
+        		+ vmap.refineExpressions(meter).toString());
     } // main
 
 } // VariableMap

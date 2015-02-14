@@ -1,5 +1,6 @@
 /*  QueuingSolver: tries to solve a Diophantine equation by monadic variable expansion
  *  @(#) $Id: QueuingSolver.java 970 2012-10-25 16:49:32Z gfis $
+ *  2015-02-07: try to treat variable name equivalences classes; Pforzheim 4th day post; Dorothea's 105th birthday
  *  2014-04-05, Georg Fischer: copied from and replacing MonadicSolver.java
  *
  *  Limitation: only positive values for variables can be found
@@ -33,14 +34,14 @@ import  java.util.Vector; // essentially a java.util.Queue (Java 1.6)
 /** Tries to solve a set of Diophantine inequalities (a {@link RelationSet})
  *  by some systematic variable tree expansion.
  *  A single Diophantine equation is represented by a {@link Polynomial} compared to zero.
- *  The procedure tries successive, systematic substitutions of all variables in the equation set.
+ *  The procedure tries successive, systematic substitutions of all variables in the relation set.
  *  <p>
  *  On some level of the tree expansion:
  *  <ul>
  *  <li>all undecided nodes from the previous level are investigated,</li>
  *  <li>the variable set is expanded (somehow, for example with all possible
  *  combinations of one additional bit),</li>
- *  <li>the resulting nodes (equation sets) are filtered through a series of tests,
+ *  <li>the resulting nodes (relation sets) are filtered through a series of tests,
  *  for example modulo checks or size estimations,</li>
  *  <li>only the nodes which could not be decided are stored for the next iteration.</li>
  *  </ul>
@@ -218,7 +219,7 @@ public class QueuingSolver extends Solver {
      *  @param args command line arguments, see {@link Solver#getArguments}.
      *  <ul>
      *  <li>-b modulo base (default 2)</li>
-     *  <li>-e equation set (enclosed in quotes)</li>
+     *  <li>-e relation set (enclosed in quotes)</li>
      *  <li>-f fileName (for a file containing the polynomial)</li>
      *  <li>-l maximum nesting level (default 4)</li>
      *  <li>-m maximum size of queue (default 256)</li>

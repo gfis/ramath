@@ -1,6 +1,7 @@
 /*  Polynomial: a symbolic, multivariate polynomial with addition, multiplication
  *  and exponentiation
  *  @(#) $Id: Polynomial.java 744 2011-07-26 06:29:20Z gfis $
+ *  2015-02-13: getEciVector
  *  2014-04-04: getIndivisiblePart(2)
  *  2013-09-20: BigRational -> BigIntegerUtil
  *  2013-08-30: property modulus, serialVersionUID = 2L
@@ -34,6 +35,7 @@ import  org.teherba.ramath.symbolic.PolynomialParser;
 import  org.teherba.ramath.symbolic.RelationSet;
 import  org.teherba.ramath.symbolic.VariableMap;
 import  org.teherba.ramath.BigIntegerUtil;
+import  org.teherba.ramath.linear.EciVector;
 import  org.teherba.ramath.util.ExpressionReader;
 import  org.teherba.ramath.util.Permutator;
 import  java.io.Serializable;
@@ -95,7 +97,7 @@ public class Polynomial implements Cloneable, Serializable {
 
     /** relation with zero */
     private Relator relation;
-    /** The Polynomial must be congruent 0 modulus this number for {@link Polynomial.Relator} 
+    /** The Polynomial must be congruent 0 modulus this number for {@link Polynomial.Relator}
      *  {@link Polynomial.Relator#MOD0}.
      *  For other relators, the modulus is irrelevant, and its default value is 0.
      */
@@ -437,17 +439,6 @@ public class Polynomial implements Cloneable, Serializable {
         return result;
     } // hasVariable
 
-    /** Determines whether there are one or more variables in the {@link Monomial}s of the polynomial.
-     *  @param upperSubst whether uppercase variables should be counted
-     *  @return true if there is at least one variable, or false otherwise
-     */
-/*
-    public boolean hasVariable(boolean upperSubst) {
-        boolean result = false;
-        result = getVariableMap(upperSubst).size() > 0;
-        return result;
-    } // hasVariable(boolean)
-*/
     /** Determines whether the polynomial is zero (represented by no monomials)
      *  @return true if the polynomial is zero, or false otherwise
      */
@@ -895,6 +886,8 @@ x^2 + 3*x^3 + 2*x^4
     public Polynomial parse(String input) {
         return (new PolynomialParser()).parseFrom(input);
     } // parse
+    
+    //-----------------------------------------------
 
     /** Gets a map from all variable names (key) to <em>null</em> (value).
      *  @return map of variable names mapped to <em>null</em>
@@ -991,7 +984,7 @@ x^2 + 3*x^3 + 2*x^4
         return result;
     } // getExpressionMap(String, boolean)
 
-    /** Gets a map from all variable names (key) int <em>this</em> Polynomial
+    /** Gets a map from all variable names (key) in <em>this</em> Polynomial
      *  to the variable names in another Polynomial. Both sets of
      *  variables must have the same size and order.
      *  @param factor linear factor for <em>var2</em>
@@ -1015,6 +1008,8 @@ x^2 + 3*x^3 + 2*x^4
         return result;
     } // getVariableMap(Poly)
 
+    //-----------------------------------------------
+
     /** Determines the number of different variables in the polynomial.
      *  @return count of different variables, &gt;= 0
      */
@@ -1022,15 +1017,6 @@ x^2 + 3*x^3 + 2*x^4
         return getVariableMap().size();
     } // getVariableCount
 
-    /** Determines the number of different variables in the polynomial.
-     *  @param upperSubst whether uppercase variables should be counted
-     *  @return count of different variables, &gt;= 0
-     */
-/*
-    public int getVariableCount(boolean upperSubst) {
-        return getVariableMap(upperSubst).size();
-    } // getVariableCount(boolean)
-*/
     /** Determines whether there is exactly one variable in the polynomial.
      *  @return true if there is only one variable, false otherwise
      */
@@ -1038,15 +1024,6 @@ x^2 + 3*x^3 + 2*x^4
         return getVariableMap().size() == 1;
     } // isUniVariate
 
-    /** Determines whether there is exactly one variable in the polynomial.
-     *  @param upperSubst whether uppercase variables should be counted
-     *  @return true if there is only one variable, false otherwise
-     */
-/*
-    public boolean isUniVariate(boolean upperSubst) {
-        return getVariableMap(upperSubst).size() == 1;
-    } // isUniVariate(boolean)
-*/
     /** Gets the greatest common divisor of the coefficients of all variable monomials,
      *  if they are integral, or 1.
      *  @return common divisor
@@ -1079,6 +1056,55 @@ x^2 + 3*x^3 + 2*x^4
     } // gcdCoefficients
 
     /*---------------- heavyweight methods ----------------------*/
+    /** Determine whether two variable names of <em>this</em> Polynomial
+     *	are interchangeable (equivalent).
+     *	@param name1 name of 1st variable
+     *	@param name2 name of 2nd variable
+	 *  @return true of the two variable names can be interchanged in the polynomial
+	 *	without loss of structure
+	 */
+	private boolean areInterchangeable(String name1, String name2) {
+		boolean result = false;
+		
+		return result;
+	} // areInterchangeable
+
+    /** Determines the equivalence classes (subsets) of variables
+     *  which can be interchanged (renamed) in
+     *  <em>this</em> Polynomial,
+     *  while the polynomial's structure is still maintained.
+     *  @return an {@link EciVector} of indexes into a fictitious array of the sorted variable names of
+     *  <em>this</em> Polynomial. The indexes start with 0.
+     *  Two variable names having the same index may be interchanged/renamed in the Polynomial
+     *  without loss of structure.
+     */
+    public EciVector getEciVector() {
+        return getEciVector(this.getVariableMap());
+    } // getEciVector()
+
+    /** Determines the equivalence classes (subsets) of variables
+     *  which can be interchanged (renamed) in
+     *  <em>this</em> Polynomial,
+     *  while the polynomial's structure is still maintained.
+     *  @param treeMap a (complete) map for the variables of <em>this</em> Polynomial
+     *  @return an {@link EciVector} of indexes into a fictitious array of the sorted variable names of
+     *  <em>this</em> Polynomial. The indexes start with 0.
+     *  Two variable names having the same index may be interchanged/renamed in the Polynomial
+     *  without loss of structure.
+     */
+    public EciVector getEciVector(TreeMap<String, String> treeMap) {
+        int len = treeMap.size();
+        int[] result = new int[len];
+        int ecInd = 0;
+        Iterator<String> iter = treeMap.keySet().iterator();
+        while (iter.hasNext()) {
+            String name = iter.next();
+            
+            ecInd ++;
+        } // while iter 
+        return new EciVector(result);
+    } // getEciVector(treeMap)
+
     /** Takes all variables from <em>monomial</em> and
      *  creates a sum of monomials for all different powers of these variables
      *  occurring in <em>this</em> polynomial.
@@ -1330,12 +1356,12 @@ x^2 + 3*x^3 + 2*x^4
      ------------------------------------------------
       poly2   .isMappableTo(this ) = { x -> 2*x, y -> 2*y, z ->   z }  AND
      (16*this).isMappableTo(poly2) = { x ->   x, y ->   y, z -> 4*z }
-     
+
      ("4 + 32*x + 96*x^2 + 128*x^3 + 64*x^4 - 64*y^4 - 4*z^2").isMappableTo("4*x^4 - 4*y^4 - z^2") = {x=2*x+1,y=2*y+0,z=2*z+0}
      </pre>
      */
     public VariableMap isMappableTo(Polynomial poly2) {
-    	int debugLimit = 1;
+        int debugLimit = 1;
         VariableMap result = new VariableMap();
         boolean busy = true;
         VariableMap vmap1 = this .getExpressionMap();
@@ -1388,8 +1414,8 @@ x^2 + 3*x^3 + 2*x^4
                                     // root exists
                                 } else { // no root
                                     if (debug >= debugLimit) {
-                                        System.out.println("isMappableTo: root, " 
-                                            + hit1[1].getCoefficient().toString() + "/" 
+                                        System.out.println("isMappableTo: root, "
+                                            + hit1[1].getCoefficient().toString() + "/"
                                             + hit2[1].getCoefficient().toString() + " = " + quotRest[0].toString());
                                     }
                                 }
@@ -1612,7 +1638,6 @@ x^2 + 3*x^3 + 2*x^4
                 if (expr != null) {
                     result = result.replaceAll("\\*" + name + "\\^", "*(" + expr + ")^");
                 }
-                // System.err.println(result);
             } // if valid mapping
         } // while viter
         return (new Polynomial()).parse(result);
