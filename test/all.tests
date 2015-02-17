@@ -164,6 +164,15 @@ CALL Polynomial "20*x / 4"
 TEST P21 monomial divided by constant
 CALL Polynomial "20 / 4"
 
+TEST PC1 eci
+CALL Polynomial -eci   "a^3 + b^3 + c^3 - d^3"  
+
+TEST PC2 eci
+CALL Polynomial -eci   "a^3 + 2*b^3 + 3*c^3 - d^3"  
+
+TEST PC3 eci
+CALL Polynomial -eci   "4*e - 4*f"  
+
 TEST PM1 affineMap
 CALL Polynomial -affine   "x^4 - y^4 - z^2"       "16*x^4 - 16*y^4 - z^2"
 

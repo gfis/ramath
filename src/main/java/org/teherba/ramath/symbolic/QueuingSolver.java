@@ -135,11 +135,11 @@ public class QueuingSolver extends Solver {
      */
     public void expand(int queueIndex) {
         RelationSet rset1 = get(queueIndex); // expand this element (the "parent")
-        int curLevel = rset1.getNestingLevel() + 1;
-        int base =  getModBase();
+        int curLevel      = rset1.getNestingLevel() + 1;
+        int base          =  getModBase();
         VariableMap vmap1 = rset1.getTuple();
-        int varNo = vmap1.size(); // total number of variables to be substituted
-        ModoMeter meter = new ModoMeter(varNo, 1); // assume that all variables are not involved
+        int varNo         = vmap1.size(); // total number of variables to be substituted
+        ModoMeter meter   = new ModoMeter(varNo, 1); // assume that all variables are not involved
         VariableMap vmapr = rset1.getRest(base).getExpressionMap();
         Iterator<String> iter1 = vmap1.keySet().iterator();
         int im = 0;

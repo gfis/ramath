@@ -886,7 +886,7 @@ x^2 + 3*x^3 + 2*x^4
     public Polynomial parse(String input) {
         return (new PolynomialParser()).parseFrom(input);
     } // parse
-    
+
     //-----------------------------------------------
 
     /** Gets a map from all variable names (key) to <em>null</em> (value).
@@ -1057,53 +1057,57 @@ x^2 + 3*x^3 + 2*x^4
 
     /*---------------- heavyweight methods ----------------------*/
     /** Determine whether two variable names of <em>this</em> Polynomial
-     *	are interchangeable (equivalent).
-     *	@param name1 name of 1st variable
-     *	@param name2 name of 2nd variable
-	 *  @return true of the two variable names can be interchanged in the polynomial
-	 *	without loss of structure
-	 */
-	private boolean areInterchangeable(String name1, String name2) {
-		boolean result = false;
-		
-		return result;
-	} // areInterchangeable
+     *  are interchangeable (equivalent).
+     *  @param name1 name of 1st variable
+     *  @param name2 name of 2nd variable
+     *  @return true of the two variable names can be interchanged in the polynomial
+     *  without loss of structure
+     */
+    private boolean areInterchangeable(String name1, String name2) {
+        VariableMap varm2 = new VariableMap();
+        varm2.put(name1, name2);
+        varm2.put(name2, name1);
+        Polynomial poly2 = substitute(varm2);
+        return (this.add(poly2).isZero() || this.subtract(poly2).isZero());
+    } // areInterchangeable
 
     /** Determines the equivalence classes (subsets) of variables
      *  which can be interchanged (renamed) in
      *  <em>this</em> Polynomial,
      *  while the polynomial's structure is still maintained.
      *  @return an {@link EciVector} of indexes into a fictitious array of the sorted variable names of
-     *  <em>this</em> Polynomial. The indexes start with 0.
+     *  <em>this</em> Polynomial. The indexes start with 0, but they are not necessarily consecutive.
      *  Two variable names having the same index may be interchanged/renamed in the Polynomial
      *  without loss of structure.
+     *  Examples: 
+     *  <pre>
+     *  (new Polynomial("a^3 +   b^3 +   c^3 - d^3 = 0")).getEciVector() -> [0, 0, 0, 3]
+     *  (new Polynomial("a^3 + 2*b^3 + 3*c^3 - d^3 = 0")).getEciVector() -> [0, 1, 2, 3]
+     *  </pre>
      */
     public EciVector getEciVector() {
-        return getEciVector(this.getVariableMap());
+        VariableMap varmt = getVariableMap();
+        String [] names = varmt.getNameArray();
+        int len = names.length;
+        EciVector result = new EciVector(len);
+        int ieci = 0;
+        while (ieci < len) { // preset to default: no equivalent names found
+            result.set(ieci, ieci);
+            ieci ++;
+        } // while presetting
+        ieci = 0;       
+        while (ieci < len) { // search for interchangeable names
+            int jeci = ieci + 1;
+            while (jeci < len) {
+                if (result.get(jeci) >= jeci && areInterchangeable(names[ieci], names[jeci])) {
+                    result.set(jeci, ieci);
+                } // areInterchangeable
+                jeci ++;
+            } // while jeci         
+            ieci ++;
+        } // while searching
+        return result;
     } // getEciVector()
-
-    /** Determines the equivalence classes (subsets) of variables
-     *  which can be interchanged (renamed) in
-     *  <em>this</em> Polynomial,
-     *  while the polynomial's structure is still maintained.
-     *  @param treeMap a (complete) map for the variables of <em>this</em> Polynomial
-     *  @return an {@link EciVector} of indexes into a fictitious array of the sorted variable names of
-     *  <em>this</em> Polynomial. The indexes start with 0.
-     *  Two variable names having the same index may be interchanged/renamed in the Polynomial
-     *  without loss of structure.
-     */
-    public EciVector getEciVector(TreeMap<String, String> treeMap) {
-        int len = treeMap.size();
-        int[] result = new int[len];
-        int ecInd = 0;
-        Iterator<String> iter = treeMap.keySet().iterator();
-        while (iter.hasNext()) {
-            String name = iter.next();
-            
-            ecInd ++;
-        } // while iter 
-        return new EciVector(result);
-    } // getEciVector(treeMap)
 
     /** Takes all variables from <em>monomial</em> and
      *  creates a sum of monomials for all different powers of these variables
@@ -1842,6 +1846,11 @@ x^2 + 3*x^3 + 2*x^4
                 poly1.printProperties();
             } else { // some option
                 if (false) {
+
+                } else if (opt.startsWith("-eci")) {
+                    poly1 = poly1.parse(args[iarg ++]);
+                    System.out.println("getEciVector(\"" + poly1.toString() + "\") = "
+                            + poly1.getEciVector().toString());
 
                 } else if (opt.startsWith("-equiv")) {
                     poly1 = poly1.parse(args[iarg ++]);

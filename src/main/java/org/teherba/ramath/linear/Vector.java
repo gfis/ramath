@@ -162,6 +162,14 @@ public class Vector implements Cloneable, Serializable {
         return vector[icol];
     } // get
 
+    /** Sets an element of the Vector
+     *  @param icol number of the element (zero based)
+     *  @param value a small number
+     */
+    public void set(int icol, int value) {
+        vector[icol] = value;
+    } // set
+
     /*-------------- lightweight derived methods -----------------------------*/
 
     /** Computes some power of an integer
