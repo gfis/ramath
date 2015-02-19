@@ -1063,12 +1063,14 @@ x^2 + 3*x^3 + 2*x^4
      *  @return true of the two variable names can be interchanged in the polynomial
      *  without loss of structure
      */
-    private boolean areInterchangeable(String name1, String name2) {
+    protected boolean areInterchangeable(String name1, String name2) {
+    	boolean result = true; // irrelevant
         VariableMap varm2 = new VariableMap();
         varm2.put(name1, name2);
         varm2.put(name2, name1);
         Polynomial poly2 = substitute(varm2);
-        return (this.add(poly2).isZero() || this.subtract(poly2).isZero());
+        result = this.add(poly2).isZero() || this.subtract(poly2).isZero();
+        return result;
     } // areInterchangeable
 
     /** Determines the equivalence classes (subsets) of variables

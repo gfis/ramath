@@ -209,6 +209,15 @@ CALL RelationSet
 TEST RS2 with set in argument
 CALL RelationSet "a+b>0, a-b>0, a>0"
 
+TEST RC1 eci
+CALL RelationSet -eci   "a^3 + b^3 + c^3 - d^3 = 0"  
+
+TEST RC2 eci
+CALL RelationSet -eci   "a^3 + 2*b^3 + 3*c^3 - d^3 = 0"  
+
+TEST RC3 eci
+CALL RelationSet -eci   "4*e - 4*f = 0"  
+
 #---------------------------------------
 PACKAGE=org.teherba.ramath.symbolic
 

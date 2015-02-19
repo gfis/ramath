@@ -1,5 +1,6 @@
 /*  RelationSet: a set of polynomials which relate to zero
  *  @(#) $Id: RelationSet.java 970 2012-10-25 16:49:32Z  $
+ *  2015-02-17: getEciVector; Durbach.2
  *  2014-04-04: getIndivisibleParts
  *  2013-09-17: isLike forwarded to Polynomial.isLike
  *  2013-09-13: normalize
@@ -26,6 +27,7 @@
 package org.teherba.ramath.symbolic;
 import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.VariableMap;
+import  org.teherba.ramath.linear.EciVector;
 import  org.teherba.ramath.util.ExpressionReader;
 import  java.io.Serializable;
 import  java.math.BigInteger;
@@ -455,6 +457,67 @@ public class RelationSet implements Cloneable, Serializable {
         return result;
     } // getExpressionMap(String, boolean)
 
+    /** Determine whether two variable names of <em>this</em> Polynomial
+     *  are interchangeable (equivalent).
+     *  @param name1 name of 1st variable
+     *  @param name2 name of 2nd variable
+     *  @return true of the two variable names can be interchanged in the polynomial
+     *  without loss of structure
+     */
+    protected boolean areInterchangeable(String name1, String name2) {
+        boolean result = true; // assume success
+        VariableMap varm2 = new VariableMap();
+        varm2.put(name1, name2);
+        varm2.put(name2, name1);
+        RelationSet rset2 = substitute(varm2);
+        int ipoly = 0;
+        while (ipoly < this.size()) { // over all relations
+            Polynomial poly1 = this .get(ipoly);
+            Polynomial poly2 = rset2.get(ipoly);
+            result = result && (poly1.add(poly2).isZero() || poly1.subtract(poly2).isZero());
+            ipoly ++;
+        } // while ipoly
+        return result;
+    } // areInterchangeable
+
+    /** Determines the equivalence classes (subsets) of variables
+     *  which can be interchanged (renamed) in
+     *  <em>this</em> Polynomial,
+     *  while the polynomial's structure is still maintained.
+     *  @return an {@link EciVector} of indexes into a fictitious array of the sorted variable names of
+     *  <em>this</em> Polynomial. The indexes start with 0, but they are not necessarily consecutive.
+     *  Two variable names having the same index may be interchanged/renamed in the Polynomial
+     *  without loss of structure.
+     *  Examples: 
+     *  <pre>
+     *  (new Polynomial("a^3 +   b^3 +   c^3 - d^3 = 0")).getEciVector() -> [0, 0, 0, 3]
+     *  (new Polynomial("a^3 + 2*b^3 + 3*c^3 - d^3 = 0")).getEciVector() -> [0, 1, 2, 3]
+     *  </pre>
+     */
+    public EciVector getEciVector() {
+        VariableMap varmt = getVariableMap();
+        String [] names = varmt.getNameArray();
+        int len = names.length;
+        EciVector result = new EciVector(len);
+        int ieci = 0;
+        while (ieci < len) { // preset to default: no equivalent names found
+            result.set(ieci, ieci);
+            ieci ++;
+        } // while presetting
+        ieci = 0;       
+        while (ieci < len) { // search for interchangeable names
+            int jeci = ieci + 1;
+            while (jeci < len) {
+                if (result.get(jeci) >= jeci && areInterchangeable(names[ieci], names[jeci])) {
+                    result.set(jeci, ieci);
+                } // areInterchangeable
+                jeci ++;
+            } // while jeci         
+            ieci ++;
+        } // while searching
+        return result;
+    } // getEciVector()
+
     /** Determines the number of different variables in the relation set.
      *  @return count of different variables, &gt;= 0
      */
@@ -625,21 +688,28 @@ evaluate: unknown
             varMap.put("c", "5*c_2");
             rset2 = rset1.substitute(varMap);
             System.out.println(rset2);
-        } else if (args.length == 1) {
+        } else if (args.length == 1 && ! args[0].startsWith("-")) {
             rset1 = rset1.parse(args[iarg ++]);
             System.out.println(rset1.toString());
             System.out.println("evaluate: " + rset1.evaluate(null));
-        } else if (args.length == 2 && args[0].equals("-f")) {
-            String fileName = args[1];
-            rset1 = rset1.parse((new ExpressionReader()).read(fileName));
-            System.out.println(rset1.toString());
-            System.out.println("evaluate: " + rset1.evaluate(null));
-        } else if (args.length >= 2 && args[0].equals("-rest")) {
-            iarg ++;
-            String factor = args[iarg ++];
-            rset1 = rset1.parse(args[iarg ++]);
-            System.out.println(rset1.toString());
-            System.out.println("rest: " + rset1.getRest(new BigInteger(factor)));
+        } else if (args.length >= 2) {
+            String opt = args[iarg ++];
+            if (false) {
+            } else if (opt.equals("-eci")   ) {
+                rset1 = rset1.parse(args[iarg ++]);
+                System.out.println("getEciVector(\"" + rset1.toString() + "\") = "
+                        + rset1.getEciVector().toString());
+            } else if (opt.equals("-f")     ) {
+                String fileName = args[1];
+                rset1 = rset1.parse((new ExpressionReader()).read(fileName));
+                System.out.println(rset1.toString());
+                System.out.println("evaluate: " + rset1.evaluate(null));
+            } else if (opt.equals("-rest")  ) {
+                String factor = args[iarg ++];
+                rset1 = rset1.parse(args[iarg ++]);
+                System.out.println(rset1.toString());
+                System.out.println("rest: " + rset1.getRest(new BigInteger(factor)));
+            } 
         } // with args
     } // main
 
