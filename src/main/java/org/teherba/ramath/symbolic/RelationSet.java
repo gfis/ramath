@@ -1,5 +1,6 @@
 /*  RelationSet: a set of polynomials which relate to zero
  *  @(#) $Id: RelationSet.java 970 2012-10-25 16:49:32Z  $
+ *  2015-02-19: extends Polynomial; inherit a number of methods from there
  *  2015-02-17: getEciVector; Durbach.2
  *  2014-04-04: getIndivisibleParts
  *  2013-09-17: isLike forwarded to Polynomial.isLike
@@ -45,7 +46,7 @@ import  java.util.Map;
  *  and the variables can only have values &gt;= 0.
  *  @author Dr. Georg Fischer
  */
-public class RelationSet implements Cloneable, Serializable {
+public class RelationSet extends Polynomial implements Cloneable, Serializable {
     private static final long serialVersionUID = 3L;
     public final static String CVSID = "@(#) $Id: RelationSet.java 970 2012-10-25 16:49:32Z  $";
 
@@ -127,7 +128,7 @@ public class RelationSet implements Cloneable, Serializable {
         RelationSet result = new RelationSet();
         int ipoly = 0;
         while (ipoly < this.polynomials.size()) {
-            result.add(this.get(ipoly).clone());
+            result.insert(this.get(ipoly).clone());
             ipoly ++;
         } // while ipoly
         result.setNestingLevel  (this.getNestingLevel   ());
@@ -156,12 +157,12 @@ public class RelationSet implements Cloneable, Serializable {
         return polynomials.get(index);
     } // get
 
-    /** Adds a {@link Polynomial}s to the set
-     *  @param poly add this Polynomial
+    /** Appends a {@link Polynomial} to the array
+     *  @param poly append this Polynomial
      */
-    public void add(Polynomial poly) {
+    public void insert(Polynomial poly) {
         polynomials.add(poly);
-    } // add
+    } // insert
 
     /** Inserts a {@link Polynomial} at some position in the array
      *  @param index insert at this position and move this and all following elements one up
@@ -383,29 +384,6 @@ public class RelationSet implements Cloneable, Serializable {
         return new RelationSet(input);
     } // parse
 
-    /** Gets a map from all variable names (key) to <em>null</em> (value).
-     *  @return map of variable names mapped to <em>null</em>
-     */
-    public VariableMap getVariableMap() {
-        return getVariableMap(null, true);
-    } // getVariableMap()
-
-    /** Gets a map from all variable names (key) to <em>null</em> (value).
-     *  @param upperSubst whether uppercase variables should be returned in the map
-     *  @return map of variable names mapped to <em>null</em>
-     */
-    public VariableMap getVariableMap(boolean upperSubst) {
-        return getVariableMap(null, upperSubst);
-    } // getVariableMap(boolean)
-
-    /** Gets a map from all variable names (key) to some string value.
-     *  @param value all variable names are mapped to this constant value, or null
-     *  @return map of variable names mapped to a string
-     */
-    public VariableMap getVariableMap(String value) {
-        return getVariableMap(value, true);
-    } // getVariableMap(String)
-
     /** Gets a map from all variable names (key) to some string value.
      *  @param value all variable names are mapped to this constant value, or null
      *  @param upperSubst whether uppercase variables should be returned in the map
@@ -421,23 +399,6 @@ public class RelationSet implements Cloneable, Serializable {
         } // while ipoly
         return result;
     } // getVariableMap(String, boolean)
-
-    /** Gets a map from all variable names in <em>this</em> RelationSet (the key)
-     *  to an expression involving this variable.
-     *  @return map of variable names mapped to an expression string
-     */
-    public VariableMap getExpressionMap() {
-        return getExpressionMap("1*x+0", true);
-    } // getExpressionMap()
-
-    /** Gets a map from all variable names in <em>this</em> RelationSet (the key)
-     *  to an expression involving this variable.
-     *  @param value expression with "x" as placeholder for the variable name
-     *  @return map of variable names mapped to an expression string
-     */
-    public VariableMap getExpressionMap(String value) {
-        return getExpressionMap(value, true);
-    } // getExpressionMap(String)
 
     /** Gets a map from all variable names in <em>this</em> RelationSet (the key)
      *  to an expression involving this variable.
@@ -480,51 +441,7 @@ public class RelationSet implements Cloneable, Serializable {
         return result;
     } // areInterchangeable
 
-    /** Determines the equivalence classes (subsets) of variables
-     *  which can be interchanged (renamed) in
-     *  <em>this</em> Polynomial,
-     *  while the polynomial's structure is still maintained.
-     *  @return an {@link EciVector} of indexes into a fictitious array of the sorted variable names of
-     *  <em>this</em> Polynomial. The indexes start with 0, but they are not necessarily consecutive.
-     *  Two variable names having the same index may be interchanged/renamed in the Polynomial
-     *  without loss of structure.
-     *  Examples: 
-     *  <pre>
-     *  (new Polynomial("a^3 +   b^3 +   c^3 - d^3 = 0")).getEciVector() -> [0, 0, 0, 3]
-     *  (new Polynomial("a^3 + 2*b^3 + 3*c^3 - d^3 = 0")).getEciVector() -> [0, 1, 2, 3]
-     *  </pre>
-     */
-    public EciVector getEciVector() {
-        VariableMap varmt = getVariableMap();
-        String [] names = varmt.getNameArray();
-        int len = names.length;
-        EciVector result = new EciVector(len);
-        int ieci = 0;
-        while (ieci < len) { // preset to default: no equivalent names found
-            result.set(ieci, ieci);
-            ieci ++;
-        } // while presetting
-        ieci = 0;       
-        while (ieci < len) { // search for interchangeable names
-            int jeci = ieci + 1;
-            while (jeci < len) {
-                if (result.get(jeci) >= jeci && areInterchangeable(names[ieci], names[jeci])) {
-                    result.set(jeci, ieci);
-                } // areInterchangeable
-                jeci ++;
-            } // while jeci         
-            ieci ++;
-        } // while searching
-        return result;
-    } // getEciVector()
-
-    /** Determines the number of different variables in the relation set.
-     *  @return count of different variables, &gt;= 0
-     */
-    public int getVariableCount() {
-        return getVariableMap().size();
-    } // getVariableCount
-
+    // public EciVector getEciVector() is inherited from Polynomial, but uses local 'areInterchangeable'
     /** Extracts a new {@link RelationSet} consisting of the
      *  indivisible parts of the underlying {@link Polynomial}s.
      *  @param factor the common constant factor
@@ -534,7 +451,7 @@ public class RelationSet implements Cloneable, Serializable {
         RelationSet result = new RelationSet();
         int ipoly = 0;
         while (ipoly < this.size()) {
-            result.add(this.get(ipoly).getRest(factor));
+            result.insert(this.get(ipoly).getRest(factor));
             ipoly ++;
         } // while ipoly
         return result;
@@ -549,13 +466,6 @@ public class RelationSet implements Cloneable, Serializable {
         return getRest(BigInteger.valueOf(factor));
     } // getRest(int)
 
-    /** Determines whether there is exactly one variable in the relation set.
-     *  @return true if there is only one variable, false otherwise
-     */
-    public boolean isUniVariate() {
-        return getVariableMap().size() == 1;
-    } // isUniVariate
-
     /** Determines whether there exists a non-zero constant {@link Monomial}
      *  in any of the polynomials
      *  @return true if there is a constant monomial, or false otherwise
@@ -569,25 +479,6 @@ public class RelationSet implements Cloneable, Serializable {
         } // while ipoly
         return result;
     } // hasConstant
-
-    /** Substitutes all variable names with a constant number (0, 1 and so on),
-     *  and returns a new RelationSet.
-     *  @param number value for all variables
-     *  @return a new RelationSet
-     */
-    public RelationSet substitute(int number) {
-        return substitute(getVariableMap(String.valueOf(number), true));
-    } // substitute(int)
-
-    /** Substitutes all variable names with a constant number (0, 1 and so on),
-     *  and returns a new RelationSet.
-     *  @param number value for all variables
-     *  @param upperSubst whether uppercase variables should be substituted
-     *  @return a new RelationSet
-     */
-    public RelationSet substitute(int number, boolean upperSubst) {
-        return substitute(this.getVariableMap(String.valueOf(number), upperSubst));
-    } // substitute(int, boolean)
 
     /** Substitutes variable names with the expressions from a map (if they are not null),
      *  and returns a new RelationSet.

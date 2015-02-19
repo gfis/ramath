@@ -1156,7 +1156,7 @@ x^2 + 3*x^3 + 2*x^4
                 }
             } // while titer
             poly4.setFactor(monomial3);
-            result.add(poly4);
+            result.insert(poly4);
         } // while titer
         return result;
     } // groupBy
