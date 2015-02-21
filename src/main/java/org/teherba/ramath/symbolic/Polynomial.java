@@ -1064,7 +1064,7 @@ x^2 + 3*x^3 + 2*x^4
      *  without loss of structure
      */
     protected boolean areInterchangeable(String name1, String name2) {
-    	boolean result = true; // irrelevant
+        boolean result = true; // irrelevant
         VariableMap varm2 = new VariableMap();
         varm2.put(name1, name2);
         varm2.put(name2, name1);
@@ -1081,7 +1081,7 @@ x^2 + 3*x^3 + 2*x^4
      *  <em>this</em> Polynomial. The indexes start with 0, but they are not necessarily consecutive.
      *  Two variable names having the same index may be interchanged/renamed in the Polynomial
      *  without loss of structure.
-     *  Examples: 
+     *  Examples:
      *  <pre>
      *  (new Polynomial("a^3 +   b^3 +   c^3 - d^3 = 0")).getEciVector() -> [0, 0, 0, 3]
      *  (new Polynomial("a^3 + 2*b^3 + 3*c^3 - d^3 = 0")).getEciVector() -> [0, 1, 2, 3]
@@ -1092,27 +1092,28 @@ x^2 + 3*x^3 + 2*x^4
         String [] names = varmt.getNameArray();
         int len = names.length;
         EciVector result = new EciVector(len);
+
         int ieci = 0;
         while (ieci < len) { // preset to default: no equivalent names found
             result.set(ieci, ieci);
             ieci ++;
         } // while presetting
-        ieci = 0;       
+        ieci = 0;
         while (ieci < len) { // search for interchangeable names
             int jeci = ieci + 1;
-            while (jeci < len) {
+            while (jeci < len) { //  those not yet investigated
                 if (result.get(jeci) >= jeci && areInterchangeable(names[ieci], names[jeci])) {
                     result.set(jeci, ieci);
                 } // areInterchangeable
                 jeci ++;
-            } // while jeci         
+            } // while jeci
             ieci ++;
         } // while searching
         return result;
     } // getEciVector()
 
     /** Takes all variables from <em>monomial</em> and
-     *  creates a sum of monomials for all different powers of these variables
+     *  creates a sum of {@link Monomial}s for all different powers of these variables
      *  occurring in <em>this</em> polynomial.
      *  @param monomial2 a multiplication of all desired variables (names with exponent 1 and constant +1)
      *  @return polynomial whose monomials have constant &gt;= +1, and which consists of

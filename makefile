@@ -20,6 +20,11 @@ simple:
 	java -cp dist/ramath.jar org.teherba.common.RegressionTester $(TESTDIR)/simple.tests $(TEST) 2>&1 \
 	| tee regression.log.tmp
 	grep FAILED regression.log.tmp
+solver:
+	java -cp dist/ramath.jar org.teherba.common.RegressionTester $(TESTDIR)/solver.tests $(TEST) 2>&1 \
+	| tee regression.log.tmp
+	grep FAILED regression.log.tmp
+#
 # Recreate all testcases which failed (i.e. remove xxx.prev.tst)
 # Handle with care!
 # Failing testcases are turned into "passed" and are manifested by this target!

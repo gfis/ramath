@@ -1,5 +1,6 @@
-/*  Solver: base class for solvers of Diophantine realtion sets, with bean properties
+/*  Solver: base class for solvers of Diophantine relation sets, with bean properties
  *  @(#) $Id: Solver.java 970 2012-10-25 16:49:32Z gfis $
+ *  2015-02-21: extends Vector<RelationSet>
  *  2013-09-01: polish; Caution: must be UTF-8, äöüÄÖÜß ² ³
  *  2009-08-28, Georg Fischer: copied from BinarySolver.java
  *  References:
@@ -30,30 +31,31 @@ import  java.util.Vector; // essentially a java.util.Queue (Java 1.6)
 import  java.util.regex.Matcher;
 import  java.util.regex.Pattern;
 
-/** Superclass for solvers for Diophantine relation sets, with bean properties
- *  and commandline arguments processing.
- *  The solver maintains a queue of derived {@link RelationSet}s which is
- *  used during an iterative search for solutions.
+/** Superclass for solvers for Diophantine {@link RelationSet}s, 
+ *  with bean properties and commandline arguments processing.
+ *  The solvers maintain a queue (resp. flattened tree) of unresolved, 
+ *  derived {@link RelationSet}s which is used during an iterative search for solutions. 
+ *  The queue could have been a stack, but we want to walk the tree width-first.
  *  @author Dr. Georg Fischer
  */
-public class Solver {
+public class Solver extends Vector<RelationSet> {
     public final static String CVSID = "@(#) $Id: Solver.java 970 2012-10-25 16:49:32Z gfis $";
-
     /** Debugging switch: 0 = no, 1 = moderate, 2 = more, 3 = maximum verbosity */
     private int debug = 0;
-    /** Queue for unresolved equation sets (could have been a stack, but we want to walk it width-first). */
-    private   Vector<RelationSet> queue;
-    /** index into queue for unresolved equation sets */
+
+    /** index into queue for unresolved {@link RelationSet}s */
     protected int queueHead;
-
-    /* ------------------ Construction ------------------- */
-
+    
     /*  Writer for proof trace.
      *  The printer is still used in {@link MonadicSolver}, but
      *  modern solvers should normally not print any output except for debugging.
      *  @deprecated
      */
     protected PrintWriter trace;
+
+    //--------------
+    // Construction
+    //--------------
 
     /** No-args Constructor - prints on {@link java.lang.System#out}f
      */
@@ -65,6 +67,7 @@ public class Solver {
      *  @param writer where to write the proof trace
     */
     public Solver(PrintWriter writer) {
+    	super(256, 256); // increase capacity in bigger chunks
         this.trace = writer;
         initialize();
     } // Constructor(writer)
@@ -81,43 +84,22 @@ public class Solver {
         setExpansionMode    (1);
         setFindMode         (FIND_IN_PREVIOUS);
         setMaxLevel         (4);
-        setMaxQueue         (256);
         setModBase          (2); // for n-adic modulo expansion (here: binary)
         setSubsetting       (false);
         setUpperSubst       (true);
-        queue = new Vector<RelationSet>(getMaxQueue(), getMaxQueue());
         queueHead = 0;
     } // initialize
-
-    /** Adds a {@link RelationSet} to the queue
-     *  @param rset equation set to be added
-     */
-    public void add(RelationSet rset) {
-        queue.add(rset);
-    } // add
-
-    /** Gets a {@link RelationSet} from the queue
-     *  @param index element position (0 based) in the queue
-     */
-    public RelationSet get(int index) {
-        return queue.get(index);
-    } // get
 
     /** Gets the {@link RelationSet} to be solved
      *  @return initial RelationSet to be solved
      */
     public RelationSet getStartSet() {
-        return queue.get(0);
+        return this.get(0);
     } // getStartSet
 
-    /** Returns the current size  of the queue
-     *  @return number of elements in the queue
-     */
-    public int size() {
-        return queue.size();
-    } // size
-
-    /* ------------------ Bean methods ------------------- */
+    //-----------------------------
+    // Bean properties and methods 
+    //-----------------------------
 
     /** How to expand: 0 = no solutions, 1 (default) = non-trivial solutions, 2 = all  */
     private int expansionMode;
@@ -154,22 +136,7 @@ public class Solver {
         this.findMode = findMode;
     } // setFindMode
 
-    /** Maximum number of elements in queue */
-    private int maxQueue;
-    /** Gets the maximum number of queue elements
-     *  @return number of queue elements
-     */
-    public int getMaxQueue() {
-        return maxQueue;
-    } // getMaxQueue
-    /** Sets the maximum number of queue elements
-     *  @param maxQueue number of queue elements
-     */
-    public void setMaxQueue(int maxQueue) {
-        this.maxQueue = maxQueue;
-    } // setMaxQueue
-
-    /** Maximum stack level */
+    /** Maximum nesting (tree height) level */
     private int maxLevel;
     /** Gets the maximum level of nesting
      *  @return number of nested proof steps
@@ -203,7 +170,7 @@ public class Solver {
     /** Whether to substitute subsets of variables */
     private boolean subsetting;
     /** Gets the modus of variable subsetting
-     *  @return subsetting whether to substitute subsets
+     *  @return whether to substitute subsets
      */
     public boolean getSubsetting() {
         return subsetting;
@@ -230,9 +197,9 @@ public class Solver {
         this.upperSubst = upperSubst;
     } // setUpperSubst
 
-    //==================
+    //-----------------
     // Utility methods
-    //==================
+    //-----------------
 
     /** Try to separate a factor in the constants of a string representation of a {@link Polynomial}.
      *  @param raw raw formula string
@@ -267,75 +234,11 @@ public class Solver {
                 ;
     } // polish
 
-    /** Sets the properties from commandline options, and returns the first
-     *  non-option string expression, or the contents of a filename argument.
-     *  @param iargs index of first commandline argument to be processed
-     *  @param args array of commandline arguments: options, filenames, expressions.
-     *  The following options are processed:
-     *  <ul>
-     *  <li>-b modulo base (default 2)</li>
-     *  <li>-e equation set (enclosed in quotes)</li>
-     *  <li>-f filename (for a file containing the polynomial)</li>
-     *  <li>-l maximum nesting level (default 4)</li>
-     *  <li>-m maximum size of queue (default 256)</li>
-     *  <li>-q find mode (default 0)</li>
-     *  <li>-u do not substitute uppercase variables (default: all variables)</li>
-     *  <li>-x expansion mode (default 1)</li>
-     *  </ul>
-     *  @return content of file option or explicit expression string
-     */
-    public String getArguments(int iargs, String[] args) {
-        String result = null;
-        boolean busy = true; // while processing options
-        while (busy && iargs < args.length) {
-            String arg = args[iargs ++];
-            if (arg.startsWith("-")) { // option
-                if (false) {
-                } else if (arg.startsWith("-b") && iargs < args.length) {
-                    try {
-                        setModBase(Integer.parseInt(args[iargs ++]));
-                    } catch (Exception exc) {
-                    }
-                } else if (arg.startsWith("-e") && iargs < args.length) {
-                    result = args[iargs ++];
-                } else if (arg.startsWith("-f") && iargs < args.length) {
-                    result = (new ExpressionReader()).read(args[iargs ++]);
-                } else if (arg.startsWith("-l") && iargs < args.length) {
-                    try {
-                        setMaxLevel(Integer.parseInt(args[iargs ++]));
-                    } catch (Exception exc) {
-                    }
-                } else if (arg.startsWith("-m") && iargs < args.length) {
-                    try {
-                        setMaxQueue(Integer.parseInt(args[iargs ++]));
-                    } catch (Exception exc) {
-                    }
-                } else if (arg.startsWith("-q")                       ) {
-                    setFindMode(1);
-                } else if (arg.startsWith("-u")                       ) {
-                    setUpperSubst(false);
-                } else if (arg.startsWith("-x") && iargs < args.length) {
-                    try {
-                        setExpansionMode(Integer.parseInt(args[iargs ++]));
-                    } catch (Exception exc) {
-                    }
-                } else {
-                    System.err.println("Solver: invalid option \"" + arg + "\"");
-                }
-            } else { // first non-option string - stop loop
-                result = arg;
-                busy = false;
-            }
-        } // while iargs
-        if (getSubsetting()) {
-            setModBase(getModBase() + 1); // 2 (for 2-adic) suppresses the substitution
-        }
-        return result;
-    } // getArguments
+    //-----------------------------------------------
+    // Pseudo-abstract methods common to all Solvers
+    //-----------------------------------------------
 
-    /* ------------------ Iteration ------------------- */
-
-    /** Try to find a similiar RelationSet in the solver's history,
+    /** Tries to find a similiar {@link RelationSet} in the solver's history,
      *  either in the parents or in all queue elements (depending on the findMode)
      *  @param rset2 RelationSet to be looked up
      *  @return index of similiar element in queue, or "[-1]" if none was found
@@ -388,9 +291,73 @@ public class Solver {
         return exhausted;
     } // solve
 
-    //==============
+    //------------------------
+    // Commandline processing
+    //------------------------
+    /** Sets the properties from commandline options, and returns the first
+     *  non-option string expression, or the contents of a filename argument.
+     *  @param iargs index of first commandline argument to be processed
+     *  @param args array of commandline arguments: options, filenames, expressions.
+     *  The following options are processed:
+     *  <ul>
+     *  <li>-b modulo base (default 2)</li>
+     *  <li>-e equation set (enclosed in quotes)</li>
+     *  <li>-f filename (for a file containing the polynomial)</li>
+     *  <li>-l maximum nesting level (default 4)</li>
+     *  <li>-m maximum size of queue (default 256)</li>
+     *  <li>-q find mode (default 0)</li>
+     *  <li>-u do not substitute uppercase variables (default: all variables)</li>
+     *  <li>-x expansion mode (default 1)</li>
+     *  </ul>
+     *  @return content of file option or explicit expression string
+     */
+    public String getArguments(int iargs, String[] args) {
+        String result = null;
+        boolean busy = true; // while processing options
+        while (busy && iargs < args.length) {
+            String arg = args[iargs ++];
+            if (arg.startsWith("-")) { // option
+                if (false) {
+                } else if (arg.startsWith("-b") && iargs < args.length) {
+                    try {
+                        setModBase(Integer.parseInt(args[iargs ++]));
+                    } catch (Exception exc) {
+                    }
+                } else if (arg.startsWith("-e") && iargs < args.length) {
+                    result = args[iargs ++];
+                } else if (arg.startsWith("-f") && iargs < args.length) {
+                    result = (new ExpressionReader()).read(args[iargs ++]);
+                } else if (arg.startsWith("-l") && iargs < args.length) {
+                    try {
+                        setMaxLevel(Integer.parseInt(args[iargs ++]));
+                    } catch (Exception exc) {
+                    }
+                } else if (arg.startsWith("-q")                       ) {
+                    setFindMode(1);
+                } else if (arg.startsWith("-u")                       ) {
+                    setUpperSubst(false);
+                } else if (arg.startsWith("-x") && iargs < args.length) {
+                    try {
+                        setExpansionMode(Integer.parseInt(args[iargs ++]));
+                    } catch (Exception exc) {
+                    }
+                } else {
+                    System.err.println("Solver: invalid option \"" + arg + "\"");
+                }
+            } else { // first non-option string - stop loop
+                result = arg;
+                busy = false;
+            }
+        } // while iargs
+        if (getSubsetting()) {
+            setModBase(getModBase() + 1); // 2 (for 2-adic) suppresses the substitution
+        }
+        return result;
+    } // getArguments
+
+    //-------------
     // Test driver
-    //==============
+    //-------------
 
     /** Test method.
      *  @param args command line arguments, see {@link Solver#getArguments}.
@@ -399,7 +366,6 @@ public class Solver {
      *  <li>-e equation set (enclosed in quotes)</li>
      *  <li>-f fileName (for a file containing the polynomial)</li>
      *  <li>-l maximum nesting level (default 4)</li>
-     *  <li>-m maximum size of queue (default 256)</li>
      *  <li>-s substitute subsets of variables (default: all variables)</li>
      *  <li>-u do not substitute uppercase variables (default: all variables)</li>
      *  </ul>

@@ -11,15 +11,7 @@ TEST M03 monadic solver
 CALL MonadicSolver -l 2 -e "a^2 + b^2 - 3*(c^2 + d^2)"
 
 TEST M04 monadic solver, biquadratic
-CALL MonadicSolver -l 2 -e "x^4-y^4-z^2"
-
-# Singular:
-# ring r1=0, (a,b,c), lp;
-# poly f1=1 + 2*a + 2*b + 2*a^2 + 2*b^2 - 2*c^2 ;
-# poly f2=a - c + a^2 + b^2 - c^2 ;
-# poly f3=b - c + a^2 + b^2 - c^2 ;
-# ideal I=f1,f2,f3;
-# groebner(I);
+CALL MonadicSolver -l 1 -e "x^4-y^4-z^2"
 
 TEST M05 monadic solver, modified Fermat^3 mod 2
 CALL MonadicSolver -b 2 -l 2 -e "a^3 + 3*b^3 - 9*c^3"
@@ -30,14 +22,14 @@ CALL MonadicSolver -b 3 -l 2 -e "a^3 + 3*b^3 - 9*c^3"
 TEST M07 monadic solver, Fermat(4) mod 3
 CALL MonadicSolver -b 2 -l 2 -e "a^4+b^4-c^4"
 
-TEST M08 monadic solver, biquadratic mod 3
-CALL MonadicSolver -b 3 -l 1 -e "x^4-y^4-z^2"
+# TEST M08 monadic solver, biquadratic mod 3
+# CALL MonadicSolver -b 3 -l 1 -e "x^4-y^4-z^2"
 
 # TEST M09 monadic solver, Fermat(3) mod 6
 # CALL MonadicSolver -b 6 -l 1 -e "a^3+b^3-c^3"
 
-TEST M45 binary, Pythagoras
-CALL MonadicSolver -b 2 -l 3 -e "(a)^2 + (b)^2 - (c)^2"
+# TEST M45 binary, Pythagoras
+# CALL MonadicSolver -b 2 -l 3 -e "(a)^2 + (b)^2 - (c)^2"
 
 #===================================================
 TEST Q01 queuing solver, sqrt(2)
@@ -54,9 +46,9 @@ TEST Q33 queuing solver (proof in 1 step)
 CALL QueuingSolver -l 2 -e "(a+1)^2 + (b+1)^2 - 3*((c+1)^2 + (d+1)^2)"
 
 TEST Q04 queuing solver, biquadratic
-CALL QueuingSolver -l 2 -e "x^4-y^4-z^2"
+CALL QueuingSolver -l 1 -e "x^4-y^4-z^2"
 TEST Q34 queuing solver, biquadratic
-CALL QueuingSolver -l 2 -e "(x+1)^4-(y+1)^4-(z+1)^2"
+CALL QueuingSolver -l 1 -e "(x+1)^4-(y+1)^4-(z+1)^2"
 
 TEST Q05 modif. Pythagoras
 CALL QueuingSolver -l 3 -e "x^2 + y^2 - 2*z^2"
@@ -69,12 +61,14 @@ TEST Q36 Euler (proof in 1 step)
 CALL QueuingSolver -l 2 -e "(x+1)^3 + 2*(y+1)^3 - 4*(z+1)^3"
 
 TEST Q07 Fermat^3 mod 2
-CALL QueuingSolver -l 3 -e "a^3 + b^3 - c^3"
+CALL QueuingSolver -b 2 -l 2 -e "a^3 + b^3 - c^3"
 TEST Q37 Fermat^3 mod 2 distance
 CALL QueuingSolver -b 2 -l 2 -e "(a+1)^3 + (a+b+1)^3 - (a+b+c+1)^3"
 TEST Q47 Fermat^4 mod 2 distance
-CALL QueuingSolver -b 3 -l 2 -e "(a+1)^4 + (a+b)^4 - (a+b+c)^4"
+CALL QueuingSolver -b 2 -l 1 -e "(a+1)^4 + (a+b)^4 - (a+b+c)^4"
 
+EXIT
+#=======================================================
 TEST Q07b Fermat^3 mod 3
 CALL QueuingSolver -l 2 -b 3 -e "a^3 + b^3 - c^3"
 

@@ -74,7 +74,9 @@ public class QueuingSolver extends Solver {
     /** Debugging switch: 0 = no, 1 = moderate, 2 = more, 3 = extreme verbosity */
     private int debug = 1;
 
-    /*----------------- construction ----------------------*/
+    //--------------
+    // Construction
+    //--------------
 
     /** No-args Constructor - prints on {@link java.lang.System#out}
      */
@@ -89,9 +91,11 @@ public class QueuingSolver extends Solver {
         super(writer); // this will also initialize the optional parameters
     } // Constructor(printer)
 
-    /*----------------- heavyweight methods ----------------------*/
+    //---------------------
+    // Heavyweight Methods
+    //---------------------
 
-    /** Try to find a similiar RelationSet in the solver's history,
+    /** Tries to find a similiar {@link RelationSet} in the solver's history,
      *  either in the parents or in all queue elements (depending on the findMode)
      *  @param rset2 RelationSet to be looked up
      *  @return index of similiar element in queue, or "[-1]" if none was found
@@ -211,9 +215,9 @@ public class QueuingSolver extends Solver {
         } // while meter.hasNext() - generate all children
     } // expand
 
-    //==============
+    //-------------
     // Test driver
-    //==============
+    //-------------
 
     /** Test method.
      *  @param args command line arguments, see {@link Solver#getArguments}.
@@ -222,7 +226,6 @@ public class QueuingSolver extends Solver {
      *  <li>-e relation set (enclosed in quotes)</li>
      *  <li>-f fileName (for a file containing the polynomial)</li>
      *  <li>-l maximum nesting level (default 4)</li>
-     *  <li>-m maximum size of queue (default 256)</li>
      *  <li>-s substitute subsets of variables (default: all variables)</li>
      *  <li>-u do not substitute uppercase variables (default: all variables)</li>
      *  </ul>
