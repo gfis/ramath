@@ -162,8 +162,6 @@ public class TreeSolver extends Solver {
                     + (rset1.toString())
                     + " modulo " + meter.toBaseList()
                     + " *" + factor.toString()
-                //  + ", vmap1=" + vmap1.toString()
-                //  + ", vmapr=" + vmapr.toString()
                     );
         }
         while (meter.hasNext()) { // over all constant combinations - generate all children
@@ -172,11 +170,9 @@ public class TreeSolver extends Solver {
             rset2.setNestingLevel   (curLevel); // + 1);
             rset2.setParentIndex    (queueIndex);
             rset2.setTuple          (vmap2);
-            // set(queueIndex, rset2);
-            // String decision = reasons.check(this, queueIndex);
             int qpos = size(); // position where the next queue element is stored
             add(rset2);
-            String decision = rset2.evaluate(vmap2);
+            String decision = reasons.check(this, qpos);
             remove(qpos);
             
             if (! decision.startsWith(VariableMap.UNKNOWN) && ! decision.startsWith(VariableMap.SUCCESS)) {

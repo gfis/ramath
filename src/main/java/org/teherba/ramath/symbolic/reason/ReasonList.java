@@ -70,8 +70,6 @@ public class ReasonList extends ArrayList<BaseReason> {
         BaseReason result = null; // assume success
         if (false) {
         } else if (code.equals("base"   )) { result = addReasonClass("BaseReason"       );
-        } else if (code.equals("base"   )) { result = addReasonClass("BaseReason"       );
-        } else if (code.equals("base"   )) { result = addReasonClass("BaseReason"       );
         }
         if (result == null) {
             System.err.println("** Reason code " + code + " is not known or class cannot be instantiated");
@@ -98,7 +96,8 @@ public class ReasonList extends ArrayList<BaseReason> {
         boolean busy = true;
         while (busy && ireas < size()) {
             result = this.get(ireas).check(solver, queueIndex);
-            busy = ! result.startsWith(VariableMap.FAILURE); // continue if UNKNoWN or SUCCESS
+            busy = 	result.startsWith(VariableMap.UNKNOWN) ||
+            		result.startsWith(VariableMap.SUCCESS); // continue if UNKNoWN or SUCCESS
             ireas ++;
         } // while
         return result;
