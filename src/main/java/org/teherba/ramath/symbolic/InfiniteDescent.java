@@ -30,7 +30,7 @@ import  java.util.TreeMap;
 
 /** Solve Diophantine equations by the infinite descent proof procedure.
  *  <p>c.f. http://en.wikipedia.org/wiki/InfiniteDescent.
- *  A Diophantine equation is represented by a {@link Polynomial} that should evaluate to zero.
+ *  A Diophantine equation is represented by a {@link Polynomial} which should evaluate to zero.
  *  The procedure tries systematic substitutions of all variables in the polynomial
  *  with modulo replacements by the aid of a {@link ModoMeter}.
  *  The resulting polynomials are developped in a tree, and are checked for several cases:
@@ -47,7 +47,7 @@ public class InfiniteDescent {
     /** Debugging switch */
     private int debug = 0;
 
-    /** Whether to evaluate subsets of the polynomial's variables */
+    /** Whether to evaluate subsets of the {@link Polynomial}'s variables */
     private boolean subsetting = false;
 
     /*  Writer for proof trace */
@@ -239,9 +239,9 @@ public class InfiniteDescent {
             Polynomial poly2 = proofStep.substitute(subsetMap);
             boolean success = true;
             if (varNo == subsetNo && zeroes && ! poly2.hasConstant()) { // all variables have a common factor - not primitive
-                success = evaluate(message, 1, new ProofStep(poly2.normalize()));
+                success = evalEquation(message, 1, new ProofStep(poly2.normalize()));
             } else {
-                success = evaluate(message, 0, new ProofStep(poly2.normalize()));
+                success = evalEquation(message, 0, new ProofStep(poly2.normalize()));
             }
             result = result && success;
         } // while hasNext
@@ -289,7 +289,7 @@ public class InfiniteDescent {
      *  @param poly polynomial to be evaluated
      *  @return whether the equation was (negatively) decided
      */
-    private boolean evaluate(StringBuffer message, int decision, ProofStep poly) {
+    private boolean evalEquation(StringBuffer message, int decision, ProofStep poly) {
         boolean success = true; // assume definitive result
         BigInteger constant = poly.getConstant();
         BigInteger  varGCD   = poly.gcdVariables();
@@ -340,7 +340,7 @@ public class InfiniteDescent {
             success = prove(new ProofStep(poly));
         }
         return success;
-    } // evaluate
+    } // evaluateEquation
 
     /** Test method.
      *  @param args command line arguments

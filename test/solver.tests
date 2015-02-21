@@ -1,4 +1,41 @@
-﻿#---------------------------------------
+﻿#===================================================
+PACKAGE=org.teherba.ramath.symbolic
+
+TEST T01 tree solver, sqrt(2)
+CALL TreeSolver -l 2 -e "2*q^2 - p^2"
+
+TEST T02 tree solver, sqrt(5) (proof in 2 steps)
+CALL TreeSolver -l 2 -e "5*q^2 - p^2"
+
+TEST T03 tree solver (proof in 2 steps)
+CALL TreeSolver -l 2 -e "a^2 + b^2 - 3*(c^2 + d^2)"
+
+TEST T04 tree solver, biquadratic
+CALL TreeSolver -l 2 -e "x^4-y^4-z^2"
+
+TEST T07 Fermat^3 mod 2
+CALL TreeSolver -b 2 -l 2 -e "a^3 + b^3 - c^3"
+
+#-------------------------------
+# c.f. http://planetmath.org/encyclopedia/InfiniteDescent.html
+PACKAGE=org.teherba.ramath.symbolic
+
+TEST I01 infinite descent, sqrt(2)
+CALL InfiniteDescent "2*q^2-p^2"
+
+TEST I02 infinite descent, sqrt(2), 3 iterations
+CALL InfiniteDescent "2*q^2-p^2" 2 3
+
+TEST I03 infinite descent, mixed Fermat
+CALL InfiniteDescent "a^2+b^2-3*(c^2+d^2)"
+
+# TEST I04 infinite descent, biquadratic
+# CALL InfiniteDescent "x^4-y^4-z^2"
+
+TEST I05 infinite descent, Pythagoras
+CALL InfiniteDescent "x^2 + y^2 - z^2"
+
+#---------------------------------------
 PACKAGE=org.teherba.ramath.symbolic
 
 TEST M01 monadic solver, sqrt(2)

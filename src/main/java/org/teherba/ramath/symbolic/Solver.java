@@ -24,6 +24,7 @@
 package org.teherba.ramath.symbolic;
 import  org.teherba.ramath.symbolic.RelationSet;
 import  org.teherba.ramath.symbolic.VariableMap;
+import  org.teherba.ramath.symbolic.reason.ReasonList;
 import  org.teherba.ramath.util.ExpressionReader;
 import  java.io.PrintWriter;
 import  java.math.BigInteger;
@@ -46,12 +47,14 @@ public class Solver extends Vector<RelationSet> {
     /** index into queue for unresolved {@link RelationSet}s */
     protected int queueHead;
     
-    /*  Writer for proof trace.
+    /** Writer for proof trace.
      *  The printer is still used in {@link MonadicSolver}, but
      *  modern solvers should normally not print any output except for debugging.
-     *  @deprecated
      */
     protected PrintWriter trace;
+
+    /** List of reasons for tree truncation to be checked during the tree expansion */
+    protected ReasonList reasons;
 
     //--------------
     // Construction
@@ -67,7 +70,7 @@ public class Solver extends Vector<RelationSet> {
      *  @param writer where to write the proof trace
     */
     public Solver(PrintWriter writer) {
-    	super(256, 256); // increase capacity in bigger chunks
+        super(256, 256); // increase capacity in bigger chunks
         this.trace = writer;
         initialize();
     } // Constructor(writer)
@@ -87,7 +90,9 @@ public class Solver extends Vector<RelationSet> {
         setModBase          (2); // for n-adic modulo expansion (here: binary)
         setSubsetting       (false);
         setUpperSubst       (true);
-        queueHead = 0;
+        queueHead           = 0;
+        reasons             = new ReasonList();
+        reasons.addReason("base"); // always do the simple zero and modulus checks
     } // initialize
 
     /** Gets the {@link RelationSet} to be solved
@@ -305,6 +310,7 @@ public class Solver extends Vector<RelationSet> {
      *  <li>-f filename (for a file containing the polynomial)</li>
      *  <li>-l maximum nesting level (default 4)</li>
      *  <li>-m maximum size of queue (default 256)</li>
+     *  <li>-r reason code</li>
      *  <li>-q find mode (default 0)</li>
      *  <li>-u do not substitute uppercase variables (default: all variables)</li>
      *  <li>-x expansion mode (default 1)</li>
@@ -332,6 +338,9 @@ public class Solver extends Vector<RelationSet> {
                         setMaxLevel(Integer.parseInt(args[iargs ++]));
                     } catch (Exception exc) {
                     }
+                } else if (arg.startsWith("-r") && iargs < args.length) {
+                    String code = args[iargs ++];
+                    reasons.addReason(code);
                 } else if (arg.startsWith("-q")                       ) {
                     setFindMode(1);
                 } else if (arg.startsWith("-u")                       ) {
@@ -361,14 +370,6 @@ public class Solver extends Vector<RelationSet> {
 
     /** Test method.
      *  @param args command line arguments, see {@link Solver#getArguments}.
-     *  <ul>
-     *  <li>-b modulo base (default 2)</li>
-     *  <li>-e equation set (enclosed in quotes)</li>
-     *  <li>-f fileName (for a file containing the polynomial)</li>
-     *  <li>-l maximum nesting level (default 4)</li>
-     *  <li>-s substitute subsets of variables (default: all variables)</li>
-     *  <li>-u do not substitute uppercase variables (default: all variables)</li>
-     *  </ul>
      */
     public static void main(String[] args) {
         Solver solver = new Solver();

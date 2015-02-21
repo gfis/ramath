@@ -20,10 +20,11 @@
  * limitations under the License.
  */
 package org.teherba.ramath.symbolic;
-import  org.teherba.ramath.symbolic.Solver;
-import  org.teherba.ramath.symbolic.RelationSet;
 import  org.teherba.ramath.symbolic.Polynomial;
+import  org.teherba.ramath.symbolic.RelationSet;
+import  org.teherba.ramath.symbolic.Solver;
 import  org.teherba.ramath.symbolic.VariableMap;
+import  org.teherba.ramath.symbolic.reason.ReasonList;
 import  org.teherba.ramath.util.ModoMeter;
 import  java.io.PrintWriter;
 import  java.math.BigInteger;
@@ -171,12 +172,17 @@ public class TreeSolver extends Solver {
             rset2.setNestingLevel   (curLevel); // + 1);
             rset2.setParentIndex    (queueIndex);
             rset2.setTuple          (vmap2);
+            // set(queueIndex, rset2);
+            // String decision = reasons.check(this, queueIndex);
+            int qpos = size(); // position where the next queue element is stored
+            add(rset2);
             String decision = rset2.evaluate(vmap2);
+            remove(qpos);
+            
             if (! decision.startsWith(VariableMap.UNKNOWN) && ! decision.startsWith(VariableMap.SUCCESS)) {
                     if (debug >= 0) {
                         trace.print(vmap2.toVector() + ": ");
                         trace.println(decision);
-                    //  trace.println(" " + polish(rset2.toString()));
                     }
             } else { // UNKNOWN || SUCCESS
                 if (size() == 1 && get(0).toString().equals(rset2.clone().normalize().toString())) { // first queue entry, expanded with [0,0,...0]
@@ -184,7 +190,6 @@ public class TreeSolver extends Solver {
                             trace.print(vmap2.toVector() + ": ");
                             trace.print(VariableMap.SAME + " as");
                             trace.print(" " + polish(rset2, factor));
-                        //  trace.print(" -> [" + size() + "]");
                             trace.println();
                         }
                 } else { // not [0]
@@ -194,10 +199,8 @@ public class TreeSolver extends Solver {
                             trace.print(vmap2.toVector() + ": ");
                             trace.print(VariableMap.SIMILIAR + " to " + similiar);
                             trace.print(" " + polish(rset2, factor));
-                        //  trace.print(" -> [" + size() + "]");
                             trace.println();
                         }
-                        // add(rset2);
                     } else { // "[-1]", no similiar RelationSet found
                         if (debug >= 1) {
                             trace.print(vmap2.toVector() + ": ");
@@ -206,7 +209,7 @@ public class TreeSolver extends Solver {
                             trace.print(" -> [" + size() + "]");
                             trace.println();
                         }
-                        add(rset2);
+			            add(rset2);
                     } // no similiar
                 } // not [0]
             } // unkown
@@ -220,14 +223,6 @@ public class TreeSolver extends Solver {
 
     /** Test method.
      *  @param args command line arguments, see {@link Solver#getArguments}.
-     *  <ul>
-     *  <li>-b modulo base (default 2)</li>
-     *  <li>-e relation set (enclosed in quotes)</li>
-     *  <li>-f fileName (for a file containing the polynomial)</li>
-     *  <li>-l maximum nesting level (default 4)</li>
-     *  <li>-s substitute subsets of variables (default: all variables)</li>
-     *  <li>-u do not substitute uppercase variables (default: all variables)</li>
-     *  </ul>
      */
     public static void main(String[] args) {
         TreeSolver solver = new TreeSolver();

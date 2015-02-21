@@ -508,27 +508,6 @@ CALL Polynomial -groebner -f $(DATA)
 ## - (m^4 +   n^3*m)^3
 ## CALL Polynomial -groebner -f $(DATA)
 ##
-#-------------------------------
-# c.f. http://planetmath.org/encyclopedia/InfiniteDescent.html
-PACKAGE=org.teherba.ramath.symbolic
-
-TEST I01 infinite descent, sqrt(2)
-CALL InfiniteDescent "2*q^2-p^2"
-
-TEST I02 infinite descent, sqrt(2), 3 iterations
-CALL InfiniteDescent "2*q^2-p^2" 2 3
-
-TEST I03 infinite descent, mixed Fermat
-CALL InfiniteDescent "a^2+b^2-3*(c^2+d^2)"
-
-TEST I04 infinite descent, biquadratic
-CALL InfiniteDescent "x^4-y^4-z^2"
-
-TEST I05 infinite descent, Pythagoras
-CALL InfiniteDescent "x^2 + y^2 - z^2"
-
-TEST I06 infinite descent, Fermat(3) shifted
-CALL InfiniteDescent "(x-27)^3 + (y-64)^3 - (z-125)^3"
 
 #-------------------------------
 # Mixed Tests

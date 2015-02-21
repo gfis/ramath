@@ -24,10 +24,10 @@ ECHO 000
 # Tests of symbolic classes
 PACKAGE=org.teherba.ramath.symbolic
 
-TEST T01 factor
+TEST FA1 factor
 CALL Factor
 
-TEST T02 monomial
+TEST MO2 monomial
 CALL Monomial
 
 TEST PH1 HighTerms - z^2

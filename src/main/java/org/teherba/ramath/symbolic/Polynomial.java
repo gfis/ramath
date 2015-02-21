@@ -1656,7 +1656,7 @@ x^2 + 3*x^3 + 2*x^4
         return this.substitute(varMap);
     } // mergeVariables
 
-    /** Evaluates this Polynomial without any proof history, and returns whether
+    /** Evaluates <em>this</em> Polynomial without any proof history, and returns whether
      *  <ul>
      *  <li>its (in)equality holds / is true       =&gt; SUCCESS</li>
      *  <li>the (in)equality fails                 =&gt; FAILURE</li>

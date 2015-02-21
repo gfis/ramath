@@ -520,12 +520,12 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
         while (busy && ipoly < rset1.size()) { // over all Polynomials
             String partRes1 = rset1.get(ipoly).evaluate(varMap);
             if (false) {
-            } else if (partRes1.startsWith(VariableMap.FAILURE)                                           ) {
+            } else if (partRes1.startsWith(VariableMap.FAILURE)                                            ) {
                 result = partRes1;
                 busy = false;
             } else if (partRes1.startsWith(VariableMap.UNKNOWN) && ! result.startsWith(VariableMap.FAILURE)) {
                 result = partRes1;
-            } else if (partRes1.startsWith(VariableMap.SUCCESS)                                           ) {
+            } else if (partRes1.startsWith(VariableMap.SUCCESS)                                            ) {
                 result = partRes1;
             } else { // should never be reached
                 result = partRes1;
