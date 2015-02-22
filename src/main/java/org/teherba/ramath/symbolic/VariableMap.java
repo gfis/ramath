@@ -225,20 +225,19 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
         VariableMap result = new VariableMap();
         // System.out.println(this.toString() + ".refineExpressions(dispenser)");
         Iterator<String> iter = this.keySet().iterator();
-        int im = 0;
+        int idisp = 0;
         while (iter.hasNext()) {
             String key   = iter.next();
             String value = this.get(key); // this has the form "a*x+b"
             int starPos  = value.indexOf('*');
             int plusPos  = value.indexOf('+');
-            BigInteger base     = BigInteger.valueOf(dispenser.getBase(im));
-            BigInteger modulus  = BigInteger.valueOf(dispenser.get    (im));
+            BigInteger base     = BigInteger.valueOf(dispenser.getBase(idisp));
+            BigInteger modulus  = BigInteger.valueOf(dispenser.get    (idisp));
             BigInteger factor   = (new BigInteger(value.substring(0, starPos)));
             BigInteger constant = (new BigInteger(value.substring(plusPos + 1))).add(factor.multiply(modulus));
             result.put(key, factor.multiply(base).toString()
-                    + "*" + key // value.substring(starPos + 1, plusPos)
-                    + "+" + constant.toString());
-            im ++;
+                    + "*" + key + "+" + constant.toString());
+            idisp ++;
         } // while iter
         return result;
     } // refineExpressions

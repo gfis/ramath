@@ -212,15 +212,15 @@ public class Vector implements Cloneable, Serializable {
         boolean result = true;
         int ielem = 0;
         while (result && ielem < vecLen) {
-        	result = ielem == this.vector[ielem];
+            result = ielem == this.vector[ielem];
             ielem ++;
         } // while ielem
         return result;
     } // isMonotone
 
-	//====================
-	// GCD and companions
-	//====================
+    //====================
+    // GCD and companions
+    //====================
     /** Computes the greatest common divisor (GCD) of 2 integers
      *  @param a first integer
      *  @param b second integer
@@ -228,9 +228,9 @@ public class Vector implements Cloneable, Serializable {
      */
     public static int gcd(int a, int b) {
         int result = 1;
-	/* the algorithm exchanges itself
+    /* the algorithm exchanges itself
         if (Math.abs(b) > Math.abs(a)) { // exchange
-        	int temp = b; b = a; a = temp;
+            int temp = b; b = a; a = temp;
         }
     */
         if (b == 0) {
@@ -251,8 +251,8 @@ public class Vector implements Cloneable, Serializable {
      *  @return an integer >= 1
      */
     public int gcd() {
-    	return gcd(this.vector);
-	} // gcd()
+        return gcd(this.vector);
+    } // gcd()
 
     /** Greatest common divisor of some array's elements
      *  @param vector the array
@@ -284,7 +284,7 @@ public class Vector implements Cloneable, Serializable {
      *  @return an integer >= 1
      */
     public int extractGcd() {
-    	return this.extractGcd(this.vector);
+        return this.extractGcd(this.vector);
     } // extractGcd()
 
     /** Determine the greatest common divisor of some array's elements,
@@ -294,13 +294,13 @@ public class Vector implements Cloneable, Serializable {
     public static int extractGcd(int[] vector) {
         int result = Vector.gcd(vector);
         if (result > 1) {
-        	int vecLen = vector.length;
-	        int ielem = 0;
-	        while (ielem < vecLen) {
-	        	vector[ielem] /= result;
-	            ielem ++;
-	        } // while ielem
-    	} // if gcd
+            int vecLen = vector.length;
+            int ielem = 0;
+            while (ielem < vecLen) {
+                vector[ielem] /= result;
+                ielem ++;
+            } // while ielem
+        } // if gcd
         return result;
     } // extractGcd(array)
 
@@ -311,7 +311,7 @@ public class Vector implements Cloneable, Serializable {
         boolean result = vector[0] != 0; // assume success
         int ielem = 1;
         while (result && ielem < vecLen) {
-        	result = vector[ielem] != 0;
+            result = vector[ielem] != 0;
             int kelem = 0;
             while (result && kelem < ielem) {
                 result = gcd(vector[ielem], vector[kelem]) <= 1;
@@ -330,7 +330,7 @@ public class Vector implements Cloneable, Serializable {
         boolean result = vector[0] != 0; // the final result is negated
         int ielem = 1;
         while (result && ielem < vecLen) {
-        	result = vector[ielem] != 0;
+            result = vector[ielem] != 0;
             int kelem = 0;
             while (result && kelem < ielem) {
                 result = vector[ielem] != vector[kelem];

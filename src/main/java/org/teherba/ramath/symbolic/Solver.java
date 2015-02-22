@@ -268,6 +268,7 @@ public class Solver extends Vector<RelationSet> {
      *  @return whether the iteration did stop because the queue was exhausted
      */
     public boolean solve(RelationSet rset) {
+    	reasons.purge(rset);
         boolean exhausted = false;
         queueHead = 0;
         if (rset.getTuple() == null) { // MonadicSolver

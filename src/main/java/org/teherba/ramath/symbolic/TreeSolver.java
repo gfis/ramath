@@ -167,13 +167,10 @@ public class TreeSolver extends Solver {
         while (meter.hasNext()) { // over all constant combinations - generate all children
             VariableMap vmap2 = vmap1.refineExpressions(meter);
             RelationSet rset2 = getStartSet().substitute(vmap2); // .normalize();
-            rset2.setNestingLevel   (curLevel); // + 1);
+            rset2.setNestingLevel   (curLevel); 
             rset2.setParentIndex    (queueIndex);
             rset2.setTuple          (vmap2);
-            int qpos = size(); // position where the next queue element is stored
-            add(rset2);
-            String decision = reasons.check(this, qpos);
-            remove(qpos);
+            String decision = reasons.check(this, rset2);
             
             if (! decision.startsWith(VariableMap.UNKNOWN) && ! decision.startsWith(VariableMap.SUCCESS)) {
                     if (debug >= 0) {
@@ -205,7 +202,7 @@ public class TreeSolver extends Solver {
                             trace.print(" -> [" + size() + "]");
                             trace.println();
                         }
-			            add(rset2);
+                        add(rset2);
                     } // no similiar
                 } // not [0]
             } // unkown

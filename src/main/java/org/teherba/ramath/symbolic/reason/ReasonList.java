@@ -19,9 +19,11 @@
  */
 package org.teherba.ramath.symbolic.reason;
 import  org.teherba.ramath.symbolic.reason.BaseReason;
+import  org.teherba.ramath.symbolic.reason.TransposeReason;
 import  org.teherba.ramath.symbolic.RelationSet;
 import  org.teherba.ramath.symbolic.Solver;
 import  org.teherba.ramath.symbolic.VariableMap;
+import  org.teherba.ramath.linear.Vector;
 import  java.util.ArrayList;
 import  java.util.Iterator;
 
@@ -46,13 +48,15 @@ public class ReasonList extends ArrayList<BaseReason> {
     } // no-args Constructor
 
     /** Attempts to instantiate some reason class
+     *  @param code external code for the reason
      *  @param className name of the class for the reason
      *  @result instance of the reason class, or null if not found
      */
-    private BaseReason addReasonClass(String className) {
+    private BaseReason addReasonClass(String code, String className) {
         BaseReason result = null; // assume that class is not found
         try {
             result = (BaseReason) Class.forName("org.teherba.ramath.symbolic.reason." + className).newInstance();
+            result.setCode(code);
             this.add(result);
         } catch (Exception exc) {
             // ignore any error almost silently - this reason will not be known
@@ -69,37 +73,57 @@ public class ReasonList extends ArrayList<BaseReason> {
     public BaseReason addReason(String code) {
         BaseReason result = null; // assume success
         if (false) {
-        } else if (code.equals("base"   )) { result = addReasonClass("BaseReason"       );
+        } else if (code.equals("base"       )) { result = addReasonClass(code, "BaseReason"       );
+        } else if (code.equals("transpose"  )) { result = addReasonClass(code, "TransposeReason"  );
         }
         if (result == null) {
             System.err.println("** Reason code " + code + " is not known or class cannot be instantiated");
         }
         return result;
     } // addReason(String)
+    
+    /** Remove unnecessary reasons from the list
+     *  @param rset0 initial {@link RelationSet} which is expanded
+     */
+    public void purge(RelationSet rset0) {
+    	// TransposeReason
+        Vector transp = rset0.getTransposition();
+        if (transp.isMonotone()) { // no variable names can be transposed
+            int ireas = size() - 1;
+            while (ireas >= 0) {
+                if (this.get(ireas).getCode().equals("transpose")) {
+                    this.remove(ireas);
+                    ireas = 0; // break loop
+                }
+                ireas --;
+            } // while ireas
+        } // isMonotone
+
+    } // purge
 
     //----------------------------
     // Check all specified reasons
     //----------------------------
 
-    /** Checks a specific expansion of the {@link RelationSet}
+    /** Checks a {@link RelationSet} 
      *  with al stored reasons and determines whether it
      *  <ul>
-     *  <li>can be decided (and be cut from the tree) or</li>
-     *  <li>must be further expanded.</li>
+     *  <li>can be decided (and be cut from the expansion tree) or</li>
+     *  <li>must be further expanded (and therefore will be appended to the queue).</li>
      *  </ul>
      *  @param solver the complete state of the expansion tree
-     *  @param queueIndex position in the queue of the {@link RelationSet} to be expanded, >= 0
+     *  @param rset2 the new {@link RelationSet} to be added to the queue 
      */
-    public String check(Solver solver, int queueIndex) {
+    public String check(Solver solver, RelationSet rset2) {
         String result = VariableMap.UNKNOWN;
         int ireas = 0;
         boolean busy = true;
         while (busy && ireas < size()) {
-            result = this.get(ireas).check(solver, queueIndex);
-            busy = 	result.startsWith(VariableMap.UNKNOWN) ||
-            		result.startsWith(VariableMap.SUCCESS); // continue if UNKNoWN or SUCCESS
+            result = this.get(ireas).check(solver, rset2);
+            busy =  result.startsWith(VariableMap.UNKNOWN) ||
+                    result.startsWith(VariableMap.SUCCESS); // continue if UNKNoWN or SUCCESS
             ireas ++;
-        } // while
+        } // while ireas
         return result;
     } // check
 

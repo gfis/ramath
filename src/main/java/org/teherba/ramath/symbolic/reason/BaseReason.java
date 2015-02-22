@@ -36,6 +36,9 @@ public class BaseReason {
     /** Debugging switch: 0 = no, 1 = moderate, 2 = more, 3 = extreme verbosity */
     private int debug = 0;
 
+    /** External code which identifies <em>this</em> reason */
+    protected String code;
+
     //--------------
     // Construction
     //--------------
@@ -44,22 +47,35 @@ public class BaseReason {
      */
     public BaseReason() {
     } // no-args Constructor
-
+    
+    /** Gets the external code
+     *  @return a string which identifies <em>this</em> reason
+     */
+    public String getCode() {
+        return code;
+    } // getCode
+    
+    /** Sets the external code
+     *  @param code a string which identifies <em>this</em> reason
+     */
+    public void setCode(String code) {
+        this.code = code;
+    } // setCode
+    
     //---------------------------
     // Check the specific reason
     //---------------------------
 
-    /** Checks a specific expansion of the {@link RelationSet} and determines whether it
+    /** Checks a {@link RelationSet} and determines whether it
      *  <ul>
-     *  <li>can be decided (and be cut from the tree) or</li>
-     *  <li>must be further expanded.</li>
+     *  <li>can be decided (and be cut from the expansion tree) or</li>
+     *  <li>must be further expanded (and therefore will be appended to the queue).</li>
      *  </ul>
      *  @param solver the complete state of the expansion tree
-     *  @param queueIndex position in the queue of the {@link RelationSet} to be expanded, >= 0
+     *  @param rset2 the new {@link RelationSet} to be added to the queue 
      */
-    public String check(Solver solver, int queueIndex) {
-        RelationSet rset1 = solver.get(queueIndex);
-        String result = rset1.evaluate(rset1.getTuple());
+    public String check(Solver solver, RelationSet rset2) {
+        String result = rset2.evaluate(rset2.getTuple());
         return result;
     } // check
 
