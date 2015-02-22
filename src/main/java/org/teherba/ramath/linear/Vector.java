@@ -1,5 +1,6 @@
 /*  Vector: a simple, short vector of small numbers
  *  @(#) $Id: Vector.java 744 2011-07-26 06:29:20Z gfis $
+ *  2015-02-22: isMonotone
  *  2013-08-23: Serializable
  *  2013-07-27, Georg Fischer: copied from Vector
  */
@@ -203,6 +204,19 @@ public class Vector implements Cloneable, Serializable {
         }
         return result;
     } // equals
+
+    /** Whether the Vector consists of increasing natural numbers starting at 0
+     *  @return whether the Vector is of the form [0, 1, 2, 3, ...]
+     */
+    public boolean isMonotone() {
+        boolean result = true;
+        int ielem = 0;
+        while (result && ielem < vecLen) {
+        	result = ielem == this.vector[ielem];
+            ielem ++;
+        } // while ielem
+        return result;
+    } // isMonotone
 
 	//====================
 	// GCD and companions

@@ -1,7 +1,7 @@
 /*  RelationSet: a set of polynomials which relate to zero
  *  @(#) $Id: RelationSet.java 970 2012-10-25 16:49:32Z  $
  *  2015-02-19: extends Polynomial; inherit a number of methods from there
- *  2015-02-17: getEciVector; Durbach.2
+ *  2015-02-17: getTransposition; Durbach.2
  *  2014-04-04: getIndivisibleParts
  *  2013-09-17: isLike forwarded to Polynomial.isLike
  *  2013-09-13: normalize
@@ -28,7 +28,6 @@
 package org.teherba.ramath.symbolic;
 import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.VariableMap;
-import  org.teherba.ramath.linear.EciVector;
 import  org.teherba.ramath.util.ExpressionReader;
 import  java.io.Serializable;
 import  java.math.BigInteger;
@@ -422,10 +421,10 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
      *  are interchangeable (equivalent).
      *  @param name1 name of 1st variable
      *  @param name2 name of 2nd variable
-     *  @return true of the two variable names can be interchanged in the polynomial
+     *  @return true of the two variable names can be interchanged in the Polynomial
      *  without loss of structure
      */
-    protected boolean areInterchangeable(String name1, String name2) {
+    protected boolean areTransposable(String name1, String name2) {
         boolean result = true; // assume success
         VariableMap varm2 = new VariableMap();
         varm2.put(name1, name2);
@@ -439,9 +438,10 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
             ipoly ++;
         } // while ipoly
         return result;
-    } // areInterchangeable
+    } // areTransposable
 
-    // public EciVector getEciVector() is inherited from Polynomial, but uses local 'areInterchangeable'
+    // public Vector getTransposition() is inherited from Polynomial, but uses local 'areTransposable'
+    
     /** Extracts a new {@link RelationSet} consisting of the
      *  indivisible parts of the underlying {@link Polynomial}s.
      *  @param factor the common constant factor
@@ -588,8 +588,8 @@ evaluate: unknown
             if (false) {
             } else if (opt.equals("-eci")   ) {
                 rset1 = rset1.parse(args[iarg ++]);
-                System.out.println("getEciVector(\"" + rset1.toString() + "\") = "
-                        + rset1.getEciVector().toString());
+                System.out.println("getTransposition(\"" + rset1.toString() + "\") = "
+                        + rset1.getTransposition().toString());
             } else if (opt.equals("-f")     ) {
                 String fileName = args[1];
                 rset1 = rset1.parse((new ExpressionReader()).read(fileName));

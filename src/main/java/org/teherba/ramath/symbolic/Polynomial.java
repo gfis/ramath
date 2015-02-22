@@ -1,7 +1,7 @@
 /*  Polynomial: a symbolic, multivariate polynomial with addition, multiplication
  *  and exponentiation
  *  @(#) $Id: Polynomial.java 744 2011-07-26 06:29:20Z gfis $
- *  2015-02-13: getEciVector
+ *  2015-02-13: getTransposition
  *  2014-04-04: getIndivisiblePart(2)
  *  2013-09-20: BigRational -> BigIntegerUtil
  *  2013-08-30: property modulus, serialVersionUID = 2L
@@ -34,8 +34,8 @@ import  org.teherba.ramath.symbolic.Monomial;
 import  org.teherba.ramath.symbolic.PolynomialParser;
 import  org.teherba.ramath.symbolic.RelationSet;
 import  org.teherba.ramath.symbolic.VariableMap;
+import  org.teherba.ramath.linear.Vector;
 import  org.teherba.ramath.BigIntegerUtil;
-import  org.teherba.ramath.linear.EciVector;
 import  org.teherba.ramath.util.ExpressionReader;
 import  org.teherba.ramath.util.Permutator;
 import  java.io.Serializable;
@@ -1063,7 +1063,7 @@ x^2 + 3*x^3 + 2*x^4
      *  @return true of the two variable names can be interchanged in the polynomial
      *  without loss of structure
      */
-    protected boolean areInterchangeable(String name1, String name2) {
+    protected boolean areTransposable(String name1, String name2) {
         boolean result = true; // irrelevant
         VariableMap varm2 = new VariableMap();
         varm2.put(name1, name2);
@@ -1071,46 +1071,47 @@ x^2 + 3*x^3 + 2*x^4
         Polynomial poly2 = substitute(varm2);
         result = this.add(poly2).isZero() || this.subtract(poly2).isZero();
         return result;
-    } // areInterchangeable
+    } // areTransposable
 
     /** Determines the equivalence classes (subsets) of variables
      *  which can be interchanged (renamed) in
      *  <em>this</em> Polynomial,
      *  while the polynomial's structure is still maintained.
-     *  @return an {@link EciVector} of indexes into a fictitious array of the sorted variable names of
+     *  @return an {@link Vector} of indexes into a fictitious array of the sorted variable names of
      *  <em>this</em> Polynomial. The indexes start with 0, but they are not necessarily consecutive.
      *  Two variable names having the same index may be interchanged/renamed in the Polynomial
      *  without loss of structure.
+     *  <p>
      *  Examples:
      *  <pre>
-     *  (new Polynomial("a^3 +   b^3 +   c^3 - d^3 = 0")).getEciVector() -> [0, 0, 0, 3]
-     *  (new Polynomial("a^3 + 2*b^3 + 3*c^3 - d^3 = 0")).getEciVector() -> [0, 1, 2, 3]
+     *  (new Polynomial("a^3 +   b^3 +   c^3 - d^3 = 0")).getTransposition() -> [0, 0, 0, 3]
+     *  (new Polynomial("a^3 + 2*b^3 + 3*c^3 - d^3 = 0")).getTransposition() -> [0, 1, 2, 3]
      *  </pre>
      */
-    public EciVector getEciVector() {
+    public Vector getTransposition() {
         VariableMap varmt = getVariableMap();
         String [] names = varmt.getNameArray();
         int len = names.length;
-        EciVector result = new EciVector(len);
+        Vector result = new Vector(len);
 
-        int ieci = 0;
-        while (ieci < len) { // preset to default: no equivalent names found
-            result.set(ieci, ieci);
-            ieci ++;
+        int itran = 0;
+        while (itran < len) { // preset to default (natural, increasing from 0): no equivalent names found
+            result.set(itran, itran);
+            itran ++;
         } // while presetting
-        ieci = 0;
-        while (ieci < len) { // search for interchangeable names
-            int jeci = ieci + 1;
-            while (jeci < len) { //  those not yet investigated
-                if (result.get(jeci) >= jeci && areInterchangeable(names[ieci], names[jeci])) {
-                    result.set(jeci, ieci);
-                } // areInterchangeable
-                jeci ++;
-            } // while jeci
-            ieci ++;
+        itran = 0;
+        while (itran < len) { // search for interchangeable names
+            int jtran = itran + 1;
+            while (jtran < len) { //  those not yet investigated
+                if (result.get(jtran) >= jtran && areTransposable(names[itran], names[jtran])) {
+                    result.set(jtran, itran);
+                } // areTransposable
+                jtran ++;
+            } // while jtran
+            itran ++;
         } // while searching
         return result;
-    } // getEciVector()
+    } // getTransposition()
 
     /** Takes all variables from <em>monomial</em> and
      *  creates a sum of {@link Monomial}s for all different powers of these variables
@@ -1852,8 +1853,8 @@ x^2 + 3*x^3 + 2*x^4
 
                 } else if (opt.startsWith("-eci")) {
                     poly1 = poly1.parse(args[iarg ++]);
-                    System.out.println("getEciVector(\"" + poly1.toString() + "\") = "
-                            + poly1.getEciVector().toString());
+                    System.out.println("getTransposition(\"" + poly1.toString() + "\") = "
+                            + poly1.getTransposition().toString());
 
                 } else if (opt.startsWith("-equiv")) {
                     poly1 = poly1.parse(args[iarg ++]);
