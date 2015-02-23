@@ -57,6 +57,9 @@ CALL RelationSet -rest 2 "x^4 - y^4 - z^2 = 0"
 TEST VM1 VariableMap
 CALL VariableMap
 
+TEST RM1 RefinedMap
+CALL RefinedMap
+
 TEST P00 constant
 CALL Polynomial "1"
 
@@ -173,6 +176,9 @@ CALL Polynomial -transp   "a^3 + 2*b^3 + 3*c^3 - d^3"
 TEST PC3 transp
 CALL Polynomial -transp  "4*e - 4*f"  
 
+TEST PC4 transp
+CALL Polynomial -transp  "x^4 - y^4 - z^2"  
+
 TEST PM1 affineMap
 CALL Polynomial -affine   "x^4 - y^4 - z^2"       "16*x^4 - 16*y^4 - z^2"
 
@@ -188,17 +194,17 @@ CALL Polynomial -mappable "16*x^4 - 16*y^4 - 16*z^2" "16*x^4 - 16*y^4 - z^2"
 TEST PM5 isMappableTo x,y,4*z+1
 CALL Polynomial -mappable "16*x^4 - 16*y^4 - 16*z^2 - 8*z - 1" "16*x^4 - 16*y^4 - z^2"
 
-TEST PM6  from Q04: [15] -> [59]
-CALL Polynomial -mappable "-19+2*x+24*x^2+128*x^3+256*x^4-128*y-384*y^2-512*y^3-256*y^4-7*z-4*z^2" " - 1 + 2*x + 12*x^2 + 32*x^3 + 32*x^4 - 32*y^4 - 3*z - 2*z^2"
+# TEST PM6  from Q04: [15] -> [59]
+# CALL Polynomial -mappable "-19+2*x+24*x^2+128*x^3+256*x^4-128*y-384*y^2-512*y^3-256*y^4-7*z-4*z^2" " - 1 + 2*x + 12*x^2 + 32*x^3 + 32*x^4 - 32*y^4 - 3*z - 2*z^2"
       
-TEST PM7  from Q04: [15] -> [59]
-CALL Polynomial -mappable " - 1 + 2*x + 12*x^2 + 32*x^3 + 32*x^4 - 32*y^4 - 3*z - 2*z^2" "-19+2*x+24*x^2+128*x^3+256*x^4-128*y-384*y^2-512*y^3-256*y^4-7*z-4*z^2"
+# TEST PM7  from Q04: [15] -> [59]
+# CALL Polynomial -mappable " - 1 + 2*x + 12*x^2 + 32*x^3 + 32*x^4 - 32*y^4 - 3*z - 2*z^2" "-19+2*x+24*x^2+128*x^3+256*x^4-128*y-384*y^2-512*y^3-256*y^4-7*z-4*z^2"
  
 TEST PM8A from Q04: [1] -> [4]
 CALL Polynomial -mappable  "4 + 32*x + 96*x^2 + 128*x^3 + 64*x^4 - 64*y^4 - 4*z^2" "4*x^4 - 4*y^4 - 1*z^2"     
 
-TEST PM8B from Q04: [1] -> [4]
-CALL Polynomial -mappable  "4*x^4 - 4*y^4 - 1*z^2" "4 + 32*x + 96*x^2 + 128*x^3 + 64*x^4 - 64*y^4 - 4*z^2"    
+# TEST PM8B from Q04: [1] -> [4]
+# CALL Polynomial -mappable  "4*x^4 - 4*y^4 - 1*z^2" "4 + 32*x + 96*x^2 + 128*x^3 + 64*x^4 - 64*y^4 - 4*z^2"    
 #
 #-------------------------------
 # Relation Sets
@@ -209,12 +215,12 @@ CALL RelationSet
 TEST RS2 with set in argument
 CALL RelationSet "a+b>0, a-b>0, a>0"
 
-TEST RC1 eci
-CALL RelationSet -eci   "a^3 + b^3 + c^3 - d^3 = 0"  
+TEST RC1 transposition EEC(3)
+CALL RelationSet -transp   "a^3 + b^3 + c^3 - d^3 = 0"  
 
-TEST RC2 eci
-CALL RelationSet -eci   "a^3 + 2*b^3 + 3*c^3 - d^3 = 0"  
+TEST RC2 transposition
+CALL RelationSet -transp   "a^3 + 2*b^3 + 3*c^3 - d^3 = 0"  
 
-TEST RC3 eci
-CALL RelationSet -eci   "4*e - 4*f = 0"  
+TEST RC3 transposition
+CALL RelationSet -transp   "4*e - 4*f = 0"  
 

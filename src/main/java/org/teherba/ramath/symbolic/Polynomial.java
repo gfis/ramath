@@ -944,16 +944,17 @@ x^2 + 3*x^3 + 2*x^4
     } // getVariableMap(String, boolean)
 
     /** Gets a map from all variable names in <em>this</em> Polynomial (the key)
-     *  to an expression involving this variable.
+     *  to the expression "0+1*x", where "x" is a placeholder for the variable names.
+     *  Caution: this expression is required by {@link VariableMap#refineExpressions}.
      *  @return map of variable names mapped to an expression string
      */
     public VariableMap getExpressionMap() {
-        return getExpressionMap("1*x+0", true);
+        return getExpressionMap("0+1*x", true);
     } // getExpressionMap()
 
     /** Gets a map from all variable names in <em>this</em> Polynomial (the key)
      *  to an expression involving this variable.
-     *  @param value expression with "x" as placeholder for the variable name
+     *  @param value expression with "x" as placeholder for the variable names
      *  @return map of variable names mapped to an expression string
      */
     public VariableMap getExpressionMap(String value) {
@@ -962,7 +963,7 @@ x^2 + 3*x^3 + 2*x^4
 
     /** Gets a map from all variable names in <em>this</em> Polynomial (the key)
      *  to an expression involving this variable.
-     *  @param value expression with "x" as placeholder for the variable name
+     *  @param value expression with "x" as placeholder for the variable names
      *  @param upperSubst whether uppercase variables should be returned in the map
      *  (default: true)
      *  @return map of variable names mapped to an expression string

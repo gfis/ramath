@@ -129,7 +129,7 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
      *  @return "{a=3,b=4,c=5}", for example
      */
     public String toString() {
-        StringBuffer buffer = new StringBuffer(2048);
+        StringBuffer buffer = new StringBuffer(256);
         buffer.append("{");
         int count = 0;
         Iterator<String> iter = this.keySet().iterator();
@@ -151,7 +151,7 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
      *  @return "[3,4,5]", for example
      */
     public String toVector() {
-        StringBuffer buffer = new StringBuffer(2048);
+        StringBuffer buffer = new StringBuffer(256);
         buffer.append("[");
         int count = 0;
         Iterator<String> iter = this.keySet().iterator();
@@ -171,7 +171,7 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
      *  @return ["a", "b", "c"], for example
      */
     public String[] getNameArray() {
-    	String[] result = new String[this.size()];
+        String[] result = new String[this.size()];
         int ind = 0;
         Iterator<String> iter = this.keySet().iterator();
         while (iter.hasNext()) {
@@ -217,8 +217,9 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
      *  factors (the bases) and the constants (the values) for the modification
      *  of the mapped expressions. 
      *  The underlying integer array is parallel to the sorted list of variable names.
-     *  For a mapping x -> a*x+b, and corresponding dispenser value m mod n,
-     *  the new expression is a*(n*x+m) + b = a*n*x + a*m + b.
+     *  For a mapping x -> c+f*x and corresponding dispenser value m mod b,
+     *  the new expression is c + f*(m+b*x) = (c+f*m) + (f*b)*x 
+     *  Caution: this form of the expression is initiated by {@link Polynomial#getExpressionMap}().
      *  @return a new VariableMap with the variables mapped to the refined expressions
      */
     public VariableMap refineExpressions(Dispenser dispenser) {
@@ -228,15 +229,14 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
         int idisp = 0;
         while (iter.hasNext()) {
             String key   = iter.next();
-            String value = this.get(key); // this has the form "a*x+b"
+            String value = this.get(key); // this has the form "c+f*x"
             int starPos  = value.indexOf('*');
             int plusPos  = value.indexOf('+');
             BigInteger base     = BigInteger.valueOf(dispenser.getBase(idisp));
             BigInteger modulus  = BigInteger.valueOf(dispenser.get    (idisp));
-            BigInteger factor   = (new BigInteger(value.substring(0, starPos)));
-            BigInteger constant = (new BigInteger(value.substring(plusPos + 1))).add(factor.multiply(modulus));
-            result.put(key, factor.multiply(base).toString()
-                    + "*" + key + "+" + constant.toString());
+            BigInteger factor   = (new BigInteger(value.substring(plusPos + 1, starPos)));
+            BigInteger constant = (new BigInteger(value.substring(0, plusPos))).add(factor.multiply(modulus));
+            result.put(key, constant.toString() + "+" + (factor.multiply(base).toString()) + "*" + key);
             idisp ++;
         } // while iter
         return result;
@@ -258,17 +258,17 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
         vmap.put("d2", "0");
         System.out.println("vmap = " + vmap.toString() + "; vmap.triviality() = " + vmap.triviality());
 
-        vmap.put("a" , "4*a+2");
-        vmap.put("b" , "4*b+3");
-        vmap.put("c" , "2*c+0");
-        vmap.put("d2", "2*d2+1");
+        vmap.put("a" , "2+4*a");
+        vmap.put("b" , "3+4*b");
+        vmap.put("c" , "0+2*c");
+        vmap.put("d2", "1+2*d2");
         ModoMeter meter = new ModoMeter(4); // binary
         for (int iloop = 0; iloop < 15; iloop ++) { // turn it several times
             meter.next();
         } // while
         System.out.print(vmap.toString()); // before refinement
         System.out.println(" refined by [" + meter.toString() + "]: "
-        		+ vmap.refineExpressions(meter).toString());
+                + vmap.refineExpressions(meter).toString());
     } // main
 
 } // VariableMap

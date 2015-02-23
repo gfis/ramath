@@ -24,7 +24,7 @@
 package org.teherba.ramath.symbolic;
 import  org.teherba.ramath.symbolic.RelationSet;
 import  org.teherba.ramath.symbolic.VariableMap;
-import  org.teherba.ramath.symbolic.reason.ReasonList;
+import  org.teherba.ramath.symbolic.reason.ReasonFactory;
 import  org.teherba.ramath.linear.Vector;
 import  org.teherba.ramath.util.ExpressionReader;
 import  java.io.PrintWriter;
@@ -54,8 +54,8 @@ public class Solver extends Stack<RelationSet> {
      */
     protected PrintWriter trace;
 
-    /** List of reasons for tree truncation to be checked during the tree expansion */
-    protected ReasonList reasons;
+    /** Factory for reasons to truncate the expansion tree */
+    protected ReasonFactory reasons;
 
     //--------------
     // Construction
@@ -92,8 +92,10 @@ public class Solver extends Stack<RelationSet> {
         setSubsetting       (false);
         setUpperSubst       (true);
         queueHead           = 0;
-        reasons             = new ReasonList();
-        reasons.addReason("base"); // always do the simple zero and modulus checks
+        
+        reasons = new ReasonFactory();
+        reasons.addReason("base"        ); // always do the simple zero and modulus checks
+        reasons.addReason("transpose"   ); // always do the transposition check
     } // initialize
 
     /** Gets the {@link RelationSet} to be solved
@@ -218,6 +220,13 @@ public class Solver extends Stack<RelationSet> {
         this.upperSubst = upperSubst;
     } // setUpperSubst
 
+    /** Gets the print writer for traces
+     *  @return print writer
+     */
+    public PrintWriter getWriter() {
+        return trace;
+    } // getWriter
+
     //-----------------
     // Utility methods
     //-----------------
@@ -281,16 +290,17 @@ public class Solver extends Stack<RelationSet> {
 
     /** Refines and evaluates modulus properties for variables in a {@link RelationSet}.
      *  The maximum queue size breaks the expansion loop in any case.
+     *  @param rset0 start expansion with this {@link RelationSet}.
      *  @return whether the iteration did stop because the queue was exhausted
      */
-    public boolean solve(RelationSet rset) {
-        setTransposables(reasons.purge(rset));
+    public boolean solve(RelationSet rset0) {
+        setTransposables(reasons.purge(rset0));
         boolean exhausted = false;
         queueHead = 0;
-        if (rset.getTuple() == null) { // MonadicSolver
-            rset.setTuple(rset.getVariableMap("0", getUpperSubst())); // tuple is initially (0,0, ... 0)
+        if (rset0.getTuple() == null) { // MonadicSolver
+            rset0.setTuple(rset0.getVariableMap("0", getUpperSubst())); // tuple is initially (0,0, ... 0)
         }
-        add(rset);
+        add(rset0);
         boolean busy = true;
         while (busy) {
             if (queueHead >= size()) { // queue exhausted

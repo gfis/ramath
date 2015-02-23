@@ -1,5 +1,5 @@
-/*  ReasonList: list of reasons to decide that the tree expansion can be truncated
- *  @(#) $Id: ReasonList.java 970 2012-10-25 16:49:32Z gfis $
+/*  ReasonFactory: list of reasons to decide that the tree expansion can be truncated
+ *  @(#) $Id: ReasonFactory.java 970 2012-10-25 16:49:32Z gfis $
  *  2015-02-21, Georg Fischer
  */
 /*
@@ -31,11 +31,11 @@ import  java.util.Iterator;
  *  which decide whether to cut the tree expansion at some point.
  *  @author Dr. Georg Fischer
  */
-public class ReasonList extends ArrayList<BaseReason> {
-    public final static String CVSID = "@(#) $Id: ReasonList.java 970 2012-10-25 16:49:32Z gfis $";
+public class ReasonFactory extends ArrayList<BaseReason> {
+    public final static String CVSID = "@(#) $Id: ReasonFactory.java 970 2012-10-25 16:49:32Z gfis $";
 
     /** Debugging switch: 0 = no, 1 = moderate, 2 = more, 3 = extreme verbosity */
-    private int debug = 1;
+    private int debug = 0;
 
     //--------------
     // Construction
@@ -43,7 +43,7 @@ public class ReasonList extends ArrayList<BaseReason> {
 
     /** No-args Constructor - prints on {@link java.lang.System#out}
      */
-    public ReasonList() {
+    public ReasonFactory() {
         super(16);
     } // no-args Constructor
 
@@ -84,22 +84,25 @@ public class ReasonList extends ArrayList<BaseReason> {
     
     /** Remove unnecessary reasons from the list
      *  @param rset0 initial {@link RelationSet} which is expanded
+     *  @return a {@link Vector} with equivalence classes for variables which can be transposed, if any
      */
     public Vector purge(RelationSet rset0) {
-    	// TransposeReason
+        // TransposeReason
         Vector result = rset0.getTransposableClasses();
         if (result.isMonotone()) { // no variable names can be transposed
             int ireas = size() - 1;
             while (ireas >= 0) {
                 if (this.get(ireas).getCode().equals("transpose")) {
+                    if (debug >= 1) {
+                        System.err.println("class TransposeReason removed from list, vector = " + result.toString());
+                    } // debug >= 1
                     this.remove(ireas);
                     ireas = 0; // break loop
                 }
                 ireas --;
             } // while ireas
         } // isMonotone
-        
-		return result;
+        return result;
     } // purge
 
     //----------------------------
@@ -120,7 +123,8 @@ public class ReasonList extends ArrayList<BaseReason> {
         int ireas = 0;
         boolean busy = true;
         while (busy && ireas < size()) {
-            result = this.get(ireas).check(solver, rset2);
+            BaseReason reason = this.get(ireas);
+            result = reason.check(solver, rset2);
             busy =  result.startsWith(VariableMap.UNKNOWN) ||
                     result.startsWith(VariableMap.SUCCESS); // continue if UNKNoWN or SUCCESS
             ireas ++;
@@ -136,7 +140,7 @@ public class ReasonList extends ArrayList<BaseReason> {
      *  @param args command line arguments, see {@link Solver#getArguments}.
      */
     public static void main(String[] args) {
-        ReasonList reasons = new ReasonList();
+        ReasonFactory reasons = new ReasonFactory();
     } // main
 
-} // ReasonList
+} // ReasonFactory

@@ -19,6 +19,7 @@
  */
 package org.teherba.ramath.symbolic.reason;
 import  org.teherba.ramath.symbolic.reason.BaseReason;
+import  org.teherba.ramath.symbolic.RefinedMap;
 import  org.teherba.ramath.symbolic.RelationSet;
 import  org.teherba.ramath.symbolic.VariableMap;
 import  org.teherba.ramath.symbolic.Solver;
@@ -32,25 +33,14 @@ import  org.teherba.ramath.linear.Vector;
 public class TransposeReason extends BaseReason {
     public final static String CVSID = "@(#) $Id: TransposeReason.java 970 2012-10-25 16:49:32Z gfis $";
 
-    /** No-args Constructor
+    /** Debugging switch: 0 = no, 1 = moderate, 2 = more, 3 = extreme verbosity */
+    private int debug = 0;
+
+     /** No-args Constructor
      */
     public TransposeReason() {
     } // no-args Constructor
     
-    /** Checks whether the {@link VariableMap}s of two {@link RelationSet}s
-     *  can be seen as equivalent because the result by the transposition of 
-     *  one or more variable pair(s)
-     *  @param rset1 1st RelationSet
-     *  @param rset2 2nd RelationSet
-     *  @return null if no transposition is found, or a Vector indicating 
-     *  the variables which must be exchanged 
-     */
-    private Vector checkTranspositions(RelationSet rset1, RelationSet rset2) {
-        Vector result = null;
-        return result;
-    } // checkTranspositions
-        
-
     /** Checks a {@link RelationSet} and determines whether 
      * there is another {@link RelationSet} on the same nesting level
      *  of the expansion tree which differs from the parameter RelationSet only
@@ -62,10 +52,19 @@ public class TransposeReason extends BaseReason {
         String result = VariableMap.UNKNOWN;
         int level2 = rset2.getNestingLevel();
         int iqueue = solver.size() - 1; // last element
+        RefinedMap  rmap2 = rset2.getRefMap();
         RelationSet rset1 = solver.get(iqueue);
         while (iqueue > 0 && rset1.getNestingLevel() == level2) {
-            if (true) { // transposition found
-                
+            RefinedMap rmap1 = rset1.getRefMap();
+            if (debug >= 1) {
+                solver.getWriter().println(""
+                		+ "check " + rmap2.toString() + " against [" + iqueue + "]\n" 
+                		+ "      " + rmap1.toString());
+            }
+            String transposition = rmap1.getTransposition(rmap2);
+            if (transposition.length() > 0) { // transposition found
+                result = VariableMap.FAILURE + " transposition of [" + iqueue + "] " + transposition;
+                iqueue = 1; // break loop
             } // transposition found
             iqueue --;
             rset1 = solver.get(iqueue);

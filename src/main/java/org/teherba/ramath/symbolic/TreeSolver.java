@@ -140,7 +140,7 @@ public class TreeSolver extends Solver {
     public void expand(int queueIndex) {
         RelationSet rset1 = get(queueIndex); // expand this element (the "parent")
         int curLevel      = rset1.getNestingLevel() + 1;
-        int base          =  getModBase();
+        int base          = getModBase();
         VariableMap vmap1 = rset1.getTuple();
         int varNo         = vmap1.size(); // total number of variables to be substituted
         ModoMeter meter   = new ModoMeter(varNo, 1); // assume that all variables are not involved
@@ -169,7 +169,7 @@ public class TreeSolver extends Solver {
             RelationSet rset2 = getStartSet().substitute(vmap2); // .normalize();
             rset2.setNestingLevel   (curLevel); 
             rset2.setParentIndex    (queueIndex);
-            rset2.setTuple          (vmap2);
+            rset2.setTuple          (vmap2, this.getTransposables());
             String decision = reasons.check(this, rset2);
             
             if (! decision.startsWith(VariableMap.UNKNOWN) && ! decision.startsWith(VariableMap.SUCCESS)) {
@@ -224,7 +224,8 @@ public class TreeSolver extends Solver {
         if (expr != null) {
             rset0 = rset0.parse(expr);
         }
-        rset0.setTuple(rset0.getExpressionMap());
+        solver.setTransposables(rset0.getTransposableClasses());
+        rset0.setTuple(rset0.getExpressionMap(), solver.getTransposables());
         solver.solve(rset0);
     } // main
 

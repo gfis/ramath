@@ -28,6 +28,7 @@
 package org.teherba.ramath.symbolic;
 import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.VariableMap;
+import  org.teherba.ramath.linear.Vector;
 import  org.teherba.ramath.util.ExpressionReader;
 import  java.io.Serializable;
 import  java.math.BigInteger;
@@ -69,7 +70,7 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
         polynomials = new ArrayList<Polynomial>(4);
         setNestingLevel (0);
         setParentIndex  (-1); // no parent - [0] is the first real queue element
-        setTuple        (null);
+        // setTuple        (null);
         setTupleShift   (BigInteger.ONE);
         setMessage      ("undefined");
     } // Constructor()
@@ -133,6 +134,7 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
         result.setNestingLevel  (this.getNestingLevel   ());
         result.setParentIndex   (this.getParentIndex    ());
         result.setTuple         (this.getTuple          ());
+        result.setRefMap        (this.getRefMap         ());
         setTupleShift           (this.getTupleShift     ());
         setMessage              (this.getMessage        ());
         return result;
@@ -201,6 +203,21 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
         parentIndex = index;
     } // setParentIndex
 
+    /** Maps refined expressions to original positions in the VariableMap */
+    private RefinedMap refMap;
+    /** Gets the refined map.
+     *  @return map of refined expressions to original positions in the VariableMap
+     */
+    public RefinedMap getRefMap() {
+        return refMap;
+    } // getRefMap
+    /** Sets the refined map.
+     *  @param refMap map of refined expressions to original positions in the VariableMap
+     */
+    public void setRefMap(RefinedMap refMap) {
+        this.refMap = refMap;
+    } // setRefMap
+
     /** Maps variable names to the accumulated digits assigned during the expansion */
     private VariableMap tuple;
     /** Gets the tuple (uncloned).
@@ -209,11 +226,21 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
     public VariableMap getTuple() {
         return tuple;
     } // getTuple
-    /** Sets the tuple.
+    /** Sets the tuple and the {@link RefinedMap}.
      *  @param tuple map of variable names to the accumulated digits assigned during the expansion
      */
     public void setTuple(VariableMap tuple) {
         this.tuple = tuple;
+        setRefMap(new RefinedMap(tuple));
+    } // setTuple
+
+    /** Sets the tuple and the {@link RefinedMap} with equalized variable names.
+     *  @param tuple map of variable names to the accumulated digits assigned during the expansion
+     *  @param transposables a {@link Vector} of variable name equivalence classes
+     */
+    public void setTuple(VariableMap tuple, Vector transposables) {
+        this.tuple = tuple;
+        setRefMap(new RefinedMap(tuple, transposables));
     } // setTuple
 
     /** Multiply {@link org.teherba.ramath.util.ModoMeter ModoMeter} digits by this amount
