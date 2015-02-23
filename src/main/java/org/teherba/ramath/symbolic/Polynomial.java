@@ -1074,8 +1074,7 @@ x^2 + 3*x^3 + 2*x^4
     } // areTransposable
 
     /** Determines the equivalence classes (subsets) of variables
-     *  which can be interchanged (renamed) in
-     *  <em>this</em> Polynomial,
+     *  which can be interchanged (renamed) in <em>this</em> Polynomial,
      *  while the polynomial's structure is still maintained.
      *  @return an {@link Vector} of indexes into a fictitious array of the sorted variable names of
      *  <em>this</em> Polynomial. The indexes start with 0, but they are not necessarily consecutive.
@@ -1088,7 +1087,7 @@ x^2 + 3*x^3 + 2*x^4
      *  (new Polynomial("a^3 + 2*b^3 + 3*c^3 - d^3 = 0")).getTransposition() -> [0, 1, 2, 3]
      *  </pre>
      */
-    public Vector getTransposition() {
+    public Vector getTransposableClasses() {
         VariableMap varmt = getVariableMap();
         String [] names = varmt.getNameArray();
         int len = names.length;
@@ -1111,7 +1110,7 @@ x^2 + 3*x^3 + 2*x^4
             itran ++;
         } // while searching
         return result;
-    } // getTransposition()
+    } // getTransposableClasses()
 
     /** Takes all variables from <em>monomial</em> and
      *  creates a sum of {@link Monomial}s for all different powers of these variables
@@ -1851,10 +1850,10 @@ x^2 + 3*x^3 + 2*x^4
             } else { // some option
                 if (false) {
 
-                } else if (opt.startsWith("-eci")) {
+                } else if (opt.startsWith("-transp")) {
                     poly1 = poly1.parse(args[iarg ++]);
-                    System.out.println("getTransposition(\"" + poly1.toString() + "\") = "
-                            + poly1.getTransposition().toString());
+                    System.out.println("getTransposableClasses(\"" + poly1.toString() + "\") = "
+                            + poly1.getTransposableClasses().toString());
 
                 } else if (opt.startsWith("-equiv")) {
                     poly1 = poly1.parse(args[iarg ++]);

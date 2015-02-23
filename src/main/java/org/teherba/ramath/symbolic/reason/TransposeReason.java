@@ -35,6 +35,20 @@ public class TransposeReason extends BaseReason {
      */
     public TransposeReason() {
     } // no-args Constructor
+    
+    /** Checks whether the {@link VariableMap}s of two {@link RelationSet}s
+     *  can be seen as equivalent because the result by the transposition of 
+     *  one or more variable pair(s)
+     *  @param rset1 1st RelationSet
+     *  @param rset2 2nd RelationSet
+     *  @return null if no transposition is found, or a Vector indicating 
+     *  the variables which must be exchanged 
+     */
+    private Vector checkTranspositions(RelationSet rset1, RelationSet rset2) {
+        Vector result = null;
+        return result;
+    } // checkTranspositions
+        
 
     /** Checks a {@link RelationSet} and determines whether 
      * there is another {@link RelationSet} on the same nesting level

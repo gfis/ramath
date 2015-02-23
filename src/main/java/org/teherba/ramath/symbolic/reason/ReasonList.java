@@ -85,10 +85,10 @@ public class ReasonList extends ArrayList<BaseReason> {
     /** Remove unnecessary reasons from the list
      *  @param rset0 initial {@link RelationSet} which is expanded
      */
-    public void purge(RelationSet rset0) {
+    public Vector purge(RelationSet rset0) {
     	// TransposeReason
-        Vector transp = rset0.getTransposition();
-        if (transp.isMonotone()) { // no variable names can be transposed
+        Vector result = rset0.getTransposableClasses();
+        if (result.isMonotone()) { // no variable names can be transposed
             int ireas = size() - 1;
             while (ireas >= 0) {
                 if (this.get(ireas).getCode().equals("transpose")) {
@@ -98,7 +98,8 @@ public class ReasonList extends ArrayList<BaseReason> {
                 ireas --;
             } // while ireas
         } // isMonotone
-
+        
+		return result;
     } // purge
 
     //----------------------------

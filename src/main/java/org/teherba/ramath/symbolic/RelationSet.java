@@ -440,7 +440,7 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
         return result;
     } // areTransposable
 
-    // public Vector getTransposition() is inherited from Polynomial, but uses local 'areTransposable'
+    // public Vector getTransposableClasses() is inherited from Polynomial, but uses local 'areTransposable'
     
     /** Extracts a new {@link RelationSet} consisting of the
      *  indivisible parts of the underlying {@link Polynomial}s.
@@ -586,10 +586,10 @@ evaluate: unknown
         } else if (args.length >= 2) {
             String opt = args[iarg ++];
             if (false) {
-            } else if (opt.equals("-eci")   ) {
+            } else if (opt.equals("-transp")   ) {
                 rset1 = rset1.parse(args[iarg ++]);
-                System.out.println("getTransposition(\"" + rset1.toString() + "\") = "
-                        + rset1.getTransposition().toString());
+                System.out.println("getTransposableClasses(\"" + rset1.toString() + "\") = "
+                        + rset1.getTransposableClasses().toString());
             } else if (opt.equals("-f")     ) {
                 String fileName = args[1];
                 rset1 = rset1.parse((new ExpressionReader()).read(fileName));

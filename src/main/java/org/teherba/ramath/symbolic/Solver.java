@@ -25,6 +25,7 @@ package org.teherba.ramath.symbolic;
 import  org.teherba.ramath.symbolic.RelationSet;
 import  org.teherba.ramath.symbolic.VariableMap;
 import  org.teherba.ramath.symbolic.reason.ReasonList;
+import  org.teherba.ramath.linear.Vector;
 import  org.teherba.ramath.util.ExpressionReader;
 import  java.io.PrintWriter;
 import  java.math.BigInteger;
@@ -187,6 +188,28 @@ public class Solver extends Vector<RelationSet> {
         this.subsetting = subsetting;
     } // setSubsetting
 
+    /** Variable name equivalence classes  */
+    private Vector transposables;
+    /** Gets the transposables
+     *  @return a Vector of variable name equivalence classes
+     */
+    public Vector getTransposables() {
+        return this.transposables;
+    } // getTransposables
+    /** Sets the transposables
+     *  @param transposables a Vector of variable name equivalence classes
+     */
+    public void   setTransposables(Vector transposables) {
+        this.transposables = transposables;
+    } // setTransposables
+
+    /** Sets the modulo base n for n-adic expansion
+     *  @param modBase = 2 or some other small (preferrably prime) number
+     */
+    public void setModBase(int modBase) {
+        this.modBase = modBase;
+    } // setModBase
+
     /** Whether to substitute uppercase variables */
     private boolean upperSubst;
     /** Gets the modus of variable replacement
@@ -268,7 +291,7 @@ public class Solver extends Vector<RelationSet> {
      *  @return whether the iteration did stop because the queue was exhausted
      */
     public boolean solve(RelationSet rset) {
-    	reasons.purge(rset);
+    	setTransposables(reasons.purge(rset));
         boolean exhausted = false;
         queueHead = 0;
         if (rset.getTuple() == null) { // MonadicSolver
