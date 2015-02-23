@@ -22,6 +22,7 @@ import  org.teherba.ramath.symbolic.reason.BaseReason;
 import  org.teherba.ramath.symbolic.RelationSet;
 import  org.teherba.ramath.symbolic.VariableMap;
 import  org.teherba.ramath.symbolic.Solver;
+import  org.teherba.ramath.linear.Vector;
 
 /** Checks whether there is another {@link RelationSet} on the same nesting level
  *  of the expansions tree which differs from the RelationSet in question only

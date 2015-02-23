@@ -29,7 +29,7 @@ import  org.teherba.ramath.linear.Vector;
 import  org.teherba.ramath.util.ExpressionReader;
 import  java.io.PrintWriter;
 import  java.math.BigInteger;
-import  java.util.Vector; // essentially a java.util.Queue (Java 1.6)
+import  java.util.Stack; // was java.util.Vector;  essentially a java.util.Queue (Java 1.6)
 import  java.util.regex.Matcher;
 import  java.util.regex.Pattern;
 
@@ -40,7 +40,7 @@ import  java.util.regex.Pattern;
  *  The queue could have been a stack, but we want to walk the tree width-first.
  *  @author Dr. Georg Fischer
  */
-public class Solver extends Vector<RelationSet> {
+public class Solver extends Stack<RelationSet> {
     public final static String CVSID = "@(#) $Id: Solver.java 970 2012-10-25 16:49:32Z gfis $";
     /** Debugging switch: 0 = no, 1 = moderate, 2 = more, 3 = maximum verbosity */
     private int debug = 0;
@@ -71,7 +71,7 @@ public class Solver extends Vector<RelationSet> {
      *  @param writer where to write the proof trace
     */
     public Solver(PrintWriter writer) {
-        super(256, 256); // increase capacity in bigger chunks
+        super(); // 256, 256); // increase capacity in bigger chunks
         this.trace = writer;
         initialize();
     } // Constructor(writer)
@@ -203,13 +203,6 @@ public class Solver extends Vector<RelationSet> {
         this.transposables = transposables;
     } // setTransposables
 
-    /** Sets the modulo base n for n-adic expansion
-     *  @param modBase = 2 or some other small (preferrably prime) number
-     */
-    public void setModBase(int modBase) {
-        this.modBase = modBase;
-    } // setModBase
-
     /** Whether to substitute uppercase variables */
     private boolean upperSubst;
     /** Gets the modus of variable replacement
@@ -291,7 +284,7 @@ public class Solver extends Vector<RelationSet> {
      *  @return whether the iteration did stop because the queue was exhausted
      */
     public boolean solve(RelationSet rset) {
-    	setTransposables(reasons.purge(rset));
+        setTransposables(reasons.purge(rset));
         boolean exhausted = false;
         queueHead = 0;
         if (rset.getTuple() == null) { // MonadicSolver
