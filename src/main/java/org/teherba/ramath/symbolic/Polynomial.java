@@ -945,7 +945,7 @@ x^2 + 3*x^3 + 2*x^4
 
     /** Gets a map from all variable names in <em>this</em> Polynomial (the key)
      *  to the expression "0+1*x", where "x" is a placeholder for the variable names.
-     *  Caution: this expression is required by {@link VariableMap#refineExpressions}.
+     *  Caution: this expression is required by {@link VariableMap#Expressions}.
      *  @return map of variable names mapped to an expression string
      */
     public VariableMap getExpressionMap() {
@@ -1074,6 +1074,9 @@ x^2 + 3*x^3 + 2*x^4
         return result;
     } // areTransposable
 
+    /** Denotes transposition equivalence classes which contain only one single element */
+    public final static int LONELY = 1947;
+    
     /** Determines the equivalence classes (subsets) of variables
      *  which can be interchanged (renamed) in <em>this</em> Polynomial,
      *  while the polynomial's structure is still maintained.
@@ -1101,13 +1104,18 @@ x^2 + 3*x^3 + 2*x^4
         } // while presetting
         itran = 0;
         while (itran < len) { // search for interchangeable names
+            boolean lonely = true; // whether the equivalence class contains this element only
             int jtran = itran + 1;
             while (jtran < len) { //  those not yet investigated
                 if (result.get(jtran) >= jtran && areTransposable(names[itran], names[jtran])) {
                     result.set(jtran, itran);
+                    lonely = false;
                 } // areTransposable
                 jtran ++;
             } // while jtran
+            if (false && lonely) { // equivalence class contains this element only
+                result.set(itran, Polynomial.LONELY);
+            } // lonely
             itran ++;
         } // while searching
         return result;

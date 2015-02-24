@@ -19,6 +19,7 @@
  */
 package org.teherba.ramath.symbolic;
 import  org.teherba.ramath.linear.Vector;
+import  org.teherba.ramath.symbolic.Polynomial; // LONELY
 import  java.io.Serializable;
 import  java.util.Iterator;
 import  java.util.Map;
@@ -28,9 +29,12 @@ import  java.util.TreeMap;
  *  to their positions in the original {@link VaraibleMap} from which
  *  it was derived, for Example
  *  <pre>
- *  VariableMap: {a =  3+a*4, b =  1+b*4, c =  0+c*4}
- *  RefinedMap:  {0+x*4 => 2, 1+b*4 => 1, 3+a*4 => 0}
+ *  VariableMap: {a =  3+4*a, b =  1+4*b, c =  0+4*c}
+ *  RefinedMap:  {0/1+4*b => 1, 0/3+4*a => 0, 1947/0+4*c => 1947}
  *  </pre>
+ *  The expressions are prefixed by the index of the equivalence class,
+ *  and there is a special equivalence class index {@link Polynomial#LONELY} 
+ *  when the class contains only one member.
  *  @author Dr. Georg Fischer
  */
 public class RefinedMap extends TreeMap<String, Integer> implements Cloneable , Serializable {
@@ -143,19 +147,19 @@ public class RefinedMap extends TreeMap<String, Integer> implements Cloneable , 
         int count = 0;
         boolean parallel = true; // assume success
         while (iter1.hasNext() && parallel) {
-            String key1 = iter1.next();
+            String key1 = iter1.next(); // of the form "0/3+4*a"
             String key2 = iter2.next();
             int multPos1 = key1.indexOf('*');
             int multPos2 = key2.indexOf('*');
             parallel = key1.substring(0, multPos1).equals(key2.substring(0, multPos2)); // same constants and factors
-            if (parallel) {
+            if (parallel && ! key1.equals(key2)) {
                 count ++;
                 if (count > 1) { // not first
                     result.append(" ");
                 } // not first
-                result.append(key1);
+                result.append(key1.substring(key1.indexOf("/") + 1));
                 result.append('|');
-                result.append(key2);
+                result.append(key2.substring(key2.indexOf("/") + 1));
             } // parallel
         } // while iter1
         if (! parallel) { // difference found

@@ -1,6 +1,6 @@
 /*  Vector: a simple, short vector of small numbers
  *  @(#) $Id: Vector.java 744 2011-07-26 06:29:20Z gfis $
- *  2015-02-22: isMonotone
+ *  2015-02-24: isMonotone, isConstant
  *  2013-08-23: Serializable
  *  2013-07-27, Georg Fischer: copied from Vector
  */
@@ -217,6 +217,20 @@ public class Vector implements Cloneable, Serializable {
         } // while ielem
         return result;
     } // isMonotone
+
+    /** Whether all elements of the Vector have the same value
+     *  @param value tests for this value
+     *  @return whether the Vector is of the form [value, value, ...]
+     */
+    public boolean isConstant(int value) {
+        boolean result = true;
+        int ielem = 0;
+        while (result && ielem < vecLen) {
+            result = value == this.vector[ielem];
+            ielem ++;
+        } // while ielem
+        return result;
+    } // isConstant
 
     //====================
     // GCD and companions

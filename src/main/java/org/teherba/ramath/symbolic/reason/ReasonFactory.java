@@ -20,6 +20,7 @@
 package org.teherba.ramath.symbolic.reason;
 import  org.teherba.ramath.symbolic.reason.BaseReason;
 import  org.teherba.ramath.symbolic.reason.TransposeReason;
+import  org.teherba.ramath.symbolic.Polynomial; // LONELY
 import  org.teherba.ramath.symbolic.RelationSet;
 import  org.teherba.ramath.symbolic.Solver;
 import  org.teherba.ramath.symbolic.VariableMap;
@@ -89,7 +90,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
     public Vector purge(RelationSet rset0) {
         // TransposeReason
         Vector result = rset0.getTransposableClasses();
-        if (result.isMonotone()) { // no variable names can be transposed
+        if (result.isConstant(Polynomial.LONELY)) { // no variable names can be transposed
             int ireas = size() - 1;
             while (ireas >= 0) {
                 if (this.get(ireas).getCode().equals("transpose")) {
@@ -119,14 +120,29 @@ public class ReasonFactory extends ArrayList<BaseReason> {
      *  @param rset2 the new {@link RelationSet} to be added to the queue 
      */
     public String check(Solver solver, RelationSet rset2) {
-        String result = VariableMap.UNKNOWN;
+        String result = "";
         int ireas = 0;
         boolean busy = true;
         while (busy && ireas < size()) {
             BaseReason reason = this.get(ireas);
-            result = reason.check(solver, rset2);
-            busy =  result.startsWith(VariableMap.UNKNOWN) ||
-                    result.startsWith(VariableMap.SUCCESS); // continue if UNKNoWN or SUCCESS
+            String message = reason.check(solver, rset2);
+            if (false) { // message switch
+            } else if (message.startsWith(VariableMap.UNKNOWN)) {
+                if (result.length() > 0) {
+                    result += message.replaceAll("\\A" + VariableMap.UNKNOWN, "");
+                } else {
+                    result += message;
+                }
+            } else if (message.startsWith(VariableMap.SUCCESS)) {
+                if (result.length() > 0) {
+                    result += message.replaceAll("\\A" + VariableMap.SUCCESS, "");
+                } else {
+                    result += message;
+                }
+            } else if (message.startsWith(VariableMap.FAILURE) || true) { // all other messages
+                busy = false;
+                result = message;
+            } // end message switch
             ireas ++;
         } // while ireas
         return result;

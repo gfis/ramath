@@ -58,12 +58,13 @@ public class TransposeReason extends BaseReason {
             RefinedMap rmap1 = rset1.getRefMap();
             if (debug >= 1) {
                 solver.getWriter().println(""
-                		+ "check " + rmap2.toString() + " against [" + iqueue + "]\n" 
-                		+ "      " + rmap1.toString());
+                        + "check " + rmap2.toString() + " against [" + iqueue + "]\n" 
+                        + "      " + rmap1.toString());
             }
             String transposition = rmap1.getTransposition(rmap2);
             if (transposition.length() > 0) { // transposition found
-                result = VariableMap.FAILURE + " transposition of [" + iqueue + "] " + transposition;
+                result = VariableMap.FAILURE + " transposition of [" + iqueue + "] " 
+                        + rmap1.toString() + " by " + transposition;
                 iqueue = 1; // break loop
             } // transposition found
             iqueue --;
