@@ -96,6 +96,8 @@ public class Solver extends Stack<RelationSet> {
         reasons = new ReasonFactory();
         reasons.addReason("base"        ); // always do the simple zero and modulus checks
         reasons.addReason("transpose"   ); // always do the transposition check
+        reasons.addReason("same"        );
+        reasons.addReason("similiar"    );
     } // initialize
 
     /** Gets the {@link RelationSet} to be solved
@@ -129,8 +131,8 @@ public class Solver extends Stack<RelationSet> {
      *  or in parents only (0)
      */
     private int findMode;
-    protected static final int FIND_IN_PARENTS  = 1;
-    protected static final int FIND_IN_PREVIOUS = 0;
+    public static final int FIND_IN_PARENTS  = 1;
+    public static final int FIND_IN_PREVIOUS = 0;
     /** Gets the modus of equivalence searching
      *  @return whether to search in whole queue, or in parents only
      */
@@ -251,8 +253,9 @@ public class Solver extends Stack<RelationSet> {
         return result.toString();
     } // toFactoredString
 
-    /** Polish the string representation of a {@link Polynomial}.
-     *  @param raw raw formula string
+    /** Polish the string representation of a {@link RelationSet}.
+     *  @param rset polish this RelationSet
+     *  @param factor extract this common factor, if possible
      *  @return polished formula
      */
     protected static String polish(RelationSet rset, BigInteger factor) {
@@ -262,8 +265,16 @@ public class Solver extends Stack<RelationSet> {
            //   .replaceAll("\\^2", "²")
            //   .replaceAll("\\^3", "³")
                 ;
-    } // polish
+    } // polish(2)
 
+    /** Polish the string representation of a {@link RelationSet}.
+     *  @param rset polish this RelationSet
+     *  @return polished formula
+     */
+    public    static String polish(RelationSet rset) {
+        return polish(rset, rset.getTupleShift());
+    } // polish(1)
+    
     //-----------------------------------------------
     // Pseudo-abstract methods common to all Solvers
     //-----------------------------------------------

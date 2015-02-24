@@ -20,7 +20,6 @@
 package org.teherba.ramath.symbolic.reason;
 import  org.teherba.ramath.symbolic.reason.BaseReason;
 import  org.teherba.ramath.symbolic.reason.TransposeReason;
-import  org.teherba.ramath.symbolic.Polynomial; // LONELY
 import  org.teherba.ramath.symbolic.RelationSet;
 import  org.teherba.ramath.symbolic.Solver;
 import  org.teherba.ramath.symbolic.VariableMap;
@@ -76,6 +75,8 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         if (false) {
         } else if (code.equals("base"       )) { result = addReasonClass(code, "BaseReason"       );
         } else if (code.equals("transpose"  )) { result = addReasonClass(code, "TransposeReason"  );
+        } else if (code.equals("same"       )) { result = addReasonClass(code, "SameReason"       );
+        } else if (code.equals("similiar"   )) { result = addReasonClass(code, "SimiliarReason"   );
         }
         if (result == null) {
             System.err.println("** Reason code " + code + " is not known or class cannot be instantiated");
@@ -90,7 +91,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
     public Vector purge(RelationSet rset0) {
         // TransposeReason
         Vector result = rset0.getTransposableClasses();
-        if (result.isConstant(Polynomial.LONELY)) { // no variable names can be transposed
+        if (result.isMonotone()) { // no variable names can be transposed
             int ireas = size() - 1;
             while (ireas >= 0) {
                 if (this.get(ireas).getCode().equals("transpose")) {

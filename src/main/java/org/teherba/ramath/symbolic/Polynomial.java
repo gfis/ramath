@@ -1113,9 +1113,11 @@ x^2 + 3*x^3 + 2*x^4
                 } // areTransposable
                 jtran ++;
             } // while jtran
+        /*
             if (false && lonely) { // equivalence class contains this element only
                 result.set(itran, Polynomial.LONELY);
             } // lonely
+        */
             itran ++;
         } // while searching
         return result;
@@ -1743,6 +1745,8 @@ x^2 + 3*x^3 + 2*x^4
                     case GE_0:
                         result.append(VariableMap.SUCCESS);
                         if (varMap != null) {
+                            result.append(" ");
+                            result.append(varMap.getSolution());
                             result.append(" ");
                             int trivial = varMap.triviality();
                             if (trivial == 0) {

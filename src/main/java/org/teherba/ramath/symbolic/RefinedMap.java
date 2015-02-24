@@ -19,7 +19,6 @@
  */
 package org.teherba.ramath.symbolic;
 import  org.teherba.ramath.linear.Vector;
-import  org.teherba.ramath.symbolic.Polynomial; // LONELY
 import  java.io.Serializable;
 import  java.util.Iterator;
 import  java.util.Map;
@@ -32,9 +31,7 @@ import  java.util.TreeMap;
  *  VariableMap: {a =  3+4*a, b =  1+4*b, c =  0+4*c}
  *  RefinedMap:  {0/1+4*b => 1, 0/3+4*a => 0, 1947/0+4*c => 1947}
  *  </pre>
- *  The expressions are prefixed by the index of the equivalence class,
- *  and there is a special equivalence class index {@link Polynomial#LONELY} 
- *  when the class contains only one member.
+ *  The expressions are prefixed by the index of the equivalence class.
  *  @author Dr. Georg Fischer
  */
 public class RefinedMap extends TreeMap<String, Integer> implements Cloneable , Serializable {

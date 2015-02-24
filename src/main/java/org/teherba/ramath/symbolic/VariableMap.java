@@ -129,42 +129,42 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
      *  @return "{a=3,b=4,c=5}", for example
      */
     public String toString() {
-        StringBuffer buffer = new StringBuffer(256);
-        buffer.append("{");
+        StringBuffer result = new StringBuffer(256);
+        result.append("{");
         int count = 0;
         Iterator<String> iter = this.keySet().iterator();
         while (iter.hasNext()) {
             String name = iter.next();
             count ++;
             if (count > 1) {
-                buffer.append(",");
+                result.append(",");
             }
-            buffer.append(name);
-            buffer.append("=");
-            buffer.append(this.get(name).toString());
+            result.append(name);
+            result.append("=");
+            result.append(this.get(name).toString());
         } // while iter
-        buffer.append("}");
-        return buffer.toString();
+        result.append("}");
+        return result.toString();
     } // toString
 
     /** Returns a short string representation of the values in the variable map
      *  @return "[3,4,5]", for example
      */
     public String toVector() {
-        StringBuffer buffer = new StringBuffer(256);
-        buffer.append("[");
+        StringBuffer result = new StringBuffer(256);
+        result.append("[");
         int count = 0;
         Iterator<String> iter = this.keySet().iterator();
         while (iter.hasNext()) {
             String name = iter.next();
             count ++;
             if (count > 1) {
-                buffer.append(",");
+                result.append(",");
             }
-            buffer.append(this.get(name).toString());
+            result.append(this.get(name).toString());
         } // while iter
-        buffer.append("]");
-        return buffer.toString();
+        result.append("]");
+        return result.toString();
     } // toVector
 
     /** Gets a sorted array of the variable names
@@ -181,6 +181,30 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
         return result;
     } // getNameArray
 
+    /** Gets a solution, that
+     *  are the constants of the expressions for refined variables.
+     *  @return [3, 4, 5], for example
+     *  Caution: the form of the expressions must be c+f*x; 
+     *  this is initiated by {@link Polynomial#getExpressionMap}().
+     */
+    public String getSolution() {
+        StringBuffer result = new StringBuffer(256);
+        result.append("[");
+        int count = 0;
+        Iterator<String> iter = this.keySet().iterator();
+        while (iter.hasNext()) {
+            String name = iter.next();
+            count ++;
+            if (count > 1) {
+                result.append(",");
+            }
+            String value = this.get(name).toString(); 
+            result.append(value.substring(0, value.indexOf("+")));
+        } // while iter
+        result.append("]");
+        return result.toString();
+    } // getSolution
+
     /** Determines a code for the triviality of the mapping:
      *  <ul>
      *  <li>1: one of the variables maps to zero</li>
@@ -189,6 +213,8 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
      *  <li>0: none of the conditions above</li>
      *  </ul>
      *  @return a code for the triviality of a solution
+     *  Caution: the form of the expressions must be c+f*x; 
+     *  this is initiated by {@link Polynomial#getExpressionMap}().
      */
     public int triviality() {
         int result = 0;
@@ -197,8 +223,8 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
         while (iter.hasNext()) {
             String key = iter.next();
             String value = this.get(key);
-            int plus1 = value.indexOf('+') + 1; // =0 if not found
-            value = value.substring(plus1);
+            int plus = value.indexOf('+');
+            value = value.substring(0, plus);
             if (value.equals("0")) { // ||
                 result |= 0x01;
             }
