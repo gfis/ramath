@@ -50,7 +50,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
     /** Attempts to instantiate some reason class
      *  @param code external code for the reason
      *  @param className name of the class for the reason
-     *  @result instance of the reason class, or null if not found
+     *  @return instance of the reason class, or null if not found
      */
     private BaseReason addReasonClass(String code, String className) {
         BaseReason result = null; // assume that class is not found
@@ -68,7 +68,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
     /** Determine a reason class from its code and add it to the list.
      *  This is the factory method which appends the applicable reasons to the list.
      *  @param code external code for the reason class
-     *  @result instance of the reason class, or null if not found
+     *  @return instance of the reason class, or null if not found
      */
     public BaseReason addReason(String code) {
         BaseReason result = null; // assume success

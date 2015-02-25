@@ -21,11 +21,10 @@ package org.teherba.ramath.symbolic;
 import  org.teherba.ramath.linear.Vector;
 import  java.io.Serializable;
 import  java.util.Iterator;
-import  java.util.Map;
 import  java.util.TreeMap;
 
 /** Maps a set of (distinct) linear expressions with variables
- *  to their positions in the original {@link VaraibleMap} from which
+ *  to their positions in the original {@link VariableMap} from which
  *  it was derived, for Example
  *  <pre>
  *  VariableMap: {a =  3+4*a, b =  1+4*b, c =  0+4*c}
@@ -144,7 +143,7 @@ public class RefinedMap extends TreeMap<String, Integer> implements Cloneable , 
         int count = 0;
         boolean parallel = true; // assume success
         while (iter1.hasNext() && parallel) {
-            String key1 = iter1.next(); // of the form "0/3+4*a"
+            String key1 = iter1.next(); // REFINED_FORM: "0/3+4*a"
             String key2 = iter2.next();
             int multPos1 = key1.indexOf('*');
             int multPos2 = key2.indexOf('*');
@@ -171,12 +170,12 @@ public class RefinedMap extends TreeMap<String, Integer> implements Cloneable , 
      */
     public static void main(String[] args) {
         RefinedMap rmap1 = new RefinedMap();
-        rmap1.put("3+4*a" , 0);
+        rmap1.put("3+4*a" , 0); // REFINED_FORM
         rmap1.put("1+4*b" , 1);
         rmap1.put("0+4*c" , 2);
         System.out.println("toString: " + rmap1.toString());
         RefinedMap rmap2 = new RefinedMap();
-        rmap2.put("1+4*a" , 0);
+        rmap2.put("1+4*a" , 0); // REFINED_FORM
         rmap2.put("3+4*b" , 1);
         rmap2.put("0+4*c" , 2);
         Vector transposables = new Vector(new int[]{ 0, 0, 2});

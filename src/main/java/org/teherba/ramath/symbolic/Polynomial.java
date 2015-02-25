@@ -945,11 +945,11 @@ x^2 + 3*x^3 + 2*x^4
 
     /** Gets a map from all variable names in <em>this</em> Polynomial (the key)
      *  to the expression "0+1*x", where "x" is a placeholder for the variable names.
-     *  Caution: this expression is required by {@link VariableMap#Expressions}.
+     *  Caution: this expression is required by {@link VariableMap#refineExpressions}.
      *  @return map of variable names mapped to an expression string
      */
     public VariableMap getExpressionMap() {
-        return getExpressionMap("0+1*x", true);
+        return getExpressionMap("0+1*x", true); // REFINED_FORM
     } // getExpressionMap()
 
     /** Gets a map from all variable names in <em>this</em> Polynomial (the key)

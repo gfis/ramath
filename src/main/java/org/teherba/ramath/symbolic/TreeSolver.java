@@ -95,40 +95,6 @@ public class TreeSolver extends Solver {
     // Heavyweight Methods
     //---------------------
 
-    /** Tries to find a similiar {@link RelationSet} in the solver's history,
-     *  either in the parents or in all queue elements (depending on the findMode)
-     *  @param rset2 RelationSet to be looked up
-     *  @return index of similiar element in queue, or "[-1]" if none was found
-     */
-    protected String findSimiliar(RelationSet rset2) {
-        int isimil = -1; // assume not found
-        int iqueue = size() - 1;
-        String message = null;
-        switch (getFindMode()) {
-            default:
-            case FIND_IN_PREVIOUS:
-                while (isimil < 0 && iqueue >= 0) {
-                    message = get(iqueue).similiarity(rset2);
-                    if (message != null) {
-                        isimil = iqueue;
-                    }
-                    iqueue --;
-                } // while iqueue
-                break;
-            case FIND_IN_PARENTS:
-                iqueue = rset2.getParentIndex();
-                while (isimil < 0 && iqueue >= 0) {
-                    message = get(iqueue).similiarity(rset2);
-                    if (message != null) {
-                        isimil = iqueue;
-                    }
-                    iqueue = rset2.getParentIndex();
-                } // while iqueue
-                break;
-        } // switch findMode
-        return "[" + String.valueOf(isimil) + "], " + message;
-    } // findSimiliar
-
     /** Expands one {@link RelationSet} in the queue,
      *  evaluates the expanded children,
      *  and requeues all children with status UNKNOWN or SUCCESS.
@@ -173,47 +139,22 @@ public class TreeSolver extends Solver {
             rset2.setTupleShift     (factor);
             
             String decision = reasons.check(this, rset2);
-            if (! decision.startsWith(VariableMap.UNKNOWN) && ! decision.startsWith(VariableMap.SUCCESS)) {
-                        if (debug >= 0) {
-                            trace.print(vmap2.toVector() + ": ");
-                            trace.println(decision);
-                        }
+            if (! decision.startsWith(VariableMap.UNKNOWN) && 
+                ! decision.startsWith(VariableMap.SUCCESS)) { // FAILURE etc.
+                    if (debug >= 1) {
+                        trace.print(vmap2.toVector() + ": ");
+                        trace.println(decision);
+                    }
             } else { // UNKNOWN || SUCCESS
-           	/*
-                if (size() == 1 && get(0).toString().equals(rset2.clone().normalize().toString())) { // first queue entry, expanded with [0,0,...0]
-                        if (debug >= 1) {
-                            trace.print(vmap2.toVector() + ": ");
-                            trace.print(VariableMap.SAME + " as");
-                            trace.print(" " + polish(rset2));
-                            trace.println();
-                        }
-            */
-            	if (false) {
-                } else { // not [0]
-               	/*
-                    String similiar = findSimiliar(rset2);
-                    if (! similiar.startsWith("[-1]")) { // no index "[-1]" means a similiar RelationSet was found
-                        if (debug >= 1) {
-                            trace.print(vmap2.toVector() + ": ");
-                            trace.print(VariableMap.SIMILIAR + " to " + similiar);
-                            trace.print(" " + polish(rset2));
-                            trace.println();
-                        }
-                */
-                    if (false) {
-                    } else { // "[-1]", no similiar RelationSet found
-                        if (debug >= 1) {
-                            trace.print(vmap2.toVector() + ": ");
-                            trace.print(decision);
-                            trace.print(" " + polish(rset2));
-                            trace.print(" -> [" + size() + "]");
-                            trace.println();
-                        }
-
-                        add(rset2);
-                    } // no similiar
-                } // not [0]
-            } // unkown
+                    if (debug >= 1) {
+                        trace.print(vmap2.toVector() + ": ");
+                        trace.print(decision);
+                        trace.print(" " + polish(rset2));
+                        trace.print(" -> [" + size() + "]");
+                        trace.println();
+                    }
+                    add(rset2);
+            } // unknown
             
             meter.next();
         } // while meter.hasNext() - generate all children

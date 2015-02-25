@@ -199,7 +199,11 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
                 result.append(",");
             }
             String value = this.get(name).toString(); 
-            result.append(value.substring(0, value.indexOf("+")));
+            int plusPos = value.indexOf("+");
+            if (plusPos < 0) {
+                plusPos = value.length();
+            }
+            result.append(value.substring(0, plusPos)); // REFINED_FORM
         } // while iter
         result.append("]");
         return result.toString();
@@ -223,8 +227,11 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
         while (iter.hasNext()) {
             String key = iter.next();
             String value = this.get(key);
-            int plus = value.indexOf('+');
-            value = value.substring(0, plus);
+            int plusPos = value.indexOf('+');
+            if (plusPos < 0) {
+                plusPos = value.length();
+            }
+            value = value.substring(0, plusPos);
             if (value.equals("0")) { // ||
                 result |= 0x01;
             }
@@ -254,9 +261,9 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
         Iterator<String> iter = this.keySet().iterator();
         int idisp = 0;
         while (iter.hasNext()) {
-            String key   = iter.next();
-            String value = this.get(key); // this has the form "c+f*x"
-            int starPos  = value.indexOf('*');
+            String key   = iter.next(); 
+            String value = this.get(key); // REFINED_FORM - this has the form "c+f*x"
+            int starPos  = value.indexOf('*'); 
             int plusPos  = value.indexOf('+');
             BigInteger base     = BigInteger.valueOf(dispenser.getBase(idisp));
             BigInteger modulus  = BigInteger.valueOf(dispenser.get    (idisp));

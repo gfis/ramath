@@ -7,7 +7,7 @@ expanding queue[0]: x^2 + y^2 - 2*z^2 = 0 modulo [2,2,2] *2
 [0+2*x,0+2*y,1+2*z]: failure constant=-2, vgcd=4
 [1+2*x,0+2*y,1+2*z]: failure constant=-1, vgcd=4
 [0+2*x,1+2*y,1+2*z]: failure constant=-1, vgcd=4
-[1+2*x,1+2*y,1+2*z]: success NONTRIVIAL 2*2*x+2*2*x^2+2*2*y+2*2*y^2-4*2*z-4*2*z^2 -> [1]
+[1+2*x,1+2*y,1+2*z]: success [1,1,1] trivial=2 2*2*x+2*2*x^2+2*2*y+2*2*y^2-4*2*z-4*2*z^2 -> [1]
 
 expanding queue[1]: 4*x + 4*x^2 + 4*y + 4*y^2 - 8*z - 8*z^2 = 0 modulo [2,2,2] *4
 [1+4*x,1+4*y,1+4*z]: similiar to [1], affine map: {x=(2*x),y=(2*y),z=(2*z)}  2*4*x+4*4*x^2+2*4*y+4*4*y^2-4*4*z-8*4*z^2
@@ -17,7 +17,7 @@ expanding queue[1]: 4*x + 4*x^2 + 4*y + 4*y^2 - 8*z - 8*z^2 = 0 modulo [2,2,2] *
 [1+4*x,1+4*y,3+4*z]: unknown -4*4+2*4*x+4*4*x^2+2*4*y+4*4*y^2-12*4*z-8*4*z^2 -> [5]
 [3+4*x,1+4*y,3+4*z]: unknown -2*4+6*4*x+4*4*x^2+2*4*y+4*4*y^2-12*4*z-8*4*z^2 -> [6]
 [1+4*x,3+4*y,3+4*z]: unknown -2*4+2*4*x+4*4*x^2+6*4*y+4*4*y^2-12*4*z-8*4*z^2 -> [7]
-[3+4*x,3+4*y,3+4*z]: success NONTRIVIAL 6*4*x+4*4*x^2+6*4*y+4*4*y^2-12*4*z-8*4*z^2 -> [8]
+[3+4*x,3+4*y,3+4*z]: success [3,3,3] trivial=2 6*4*x+4*4*x^2+6*4*y+4*4*y^2-12*4*z-8*4*z^2 -> [8]
 
 expanding queue[2]: 8 + 24*x + 16*x^2 + 8*y + 16*y^2 - 16*z - 32*z^2 = 0 modulo [2,2,2] *8
 [3+8*x,1+8*y,1+8*z]: failure constant=8, vgcd=16
@@ -25,7 +25,7 @@ expanding queue[2]: 8 + 24*x + 16*x^2 + 8*y + 16*y^2 - 16*z - 32*z^2 = 0 modulo 
 [3+8*x,5+8*y,1+8*z]: unknown 4*8+6*8*x+8*8*x^2+10*8*y+8*8*y^2-4*8*z-16*8*z^2 -> [10]
 [7+8*x,5+8*y,1+8*z]: failure constant=72, vgcd=16
 [3+8*x,1+8*y,5+8*z]: failure constant=-40, vgcd=16
-[7+8*x,1+8*y,5+8*z]: success NONTRIVIAL 14*8*x+8*8*x^2+2*8*y+8*8*y^2-20*8*z-16*8*z^2 -> [11]
+[7+8*x,1+8*y,5+8*z]: success [7,1,5] NONTRIVIAL 14*8*x+8*8*x^2+2*8*y+8*8*y^2-20*8*z-16*8*z^2 -> [11]
 [3+8*x,5+8*y,5+8*z]: unknown -2*8+6*8*x+8*8*x^2+10*8*y+8*8*y^2-20*8*z-16*8*z^2 -> [12]
 [7+8*x,5+8*y,5+8*z]: failure constant=24, vgcd=16
 
@@ -36,7 +36,7 @@ expanding queue[3]: 8 + 8*x + 16*x^2 + 24*y + 16*y^2 - 16*z - 32*z^2 = 0 modulo 
 [5+8*x,7+8*y,1+8*z]: failure constant=72, vgcd=16
 [1+8*x,3+8*y,5+8*z]: failure constant=-40, vgcd=16
 [5+8*x,3+8*y,5+8*z]: unknown -2*8+10*8*x+8*8*x^2+6*8*y+8*8*y^2-20*8*z-16*8*z^2 -> [15]
-[1+8*x,7+8*y,5+8*z]: success NONTRIVIAL 2*8*x+8*8*x^2+14*8*y+8*8*y^2-20*8*z-16*8*z^2 -> [16]
+[1+8*x,7+8*y,5+8*z]: success [1,7,5] NONTRIVIAL 2*8*x+8*8*x^2+14*8*y+8*8*y^2-20*8*z-16*8*z^2 -> [16]
 [5+8*x,7+8*y,5+8*z]: failure constant=24, vgcd=16
 
 expanding queue[4]: 16 + 24*x + 16*x^2 + 24*y + 16*y^2 - 16*z - 32*z^2 = 0 modulo [2,2,2] *8
@@ -87,7 +87,7 @@ expanding queue[8]: 24*x + 16*x^2 + 24*y + 16*y^2 - 48*z - 32*z^2 = 0 modulo [2,
 [3+8*x,3+8*y,7+8*z]: unknown -10*8+6*8*x+8*8*x^2+6*8*y+8*8*y^2-28*8*z-16*8*z^2 -> [32]
 [7+8*x,3+8*y,7+8*z]: failure constant=-40, vgcd=16
 [3+8*x,7+8*y,7+8*z]: failure constant=-40, vgcd=16
-[7+8*x,7+8*y,7+8*z]: success NONTRIVIAL 14*8*x+8*8*x^2+14*8*y+8*8*y^2-28*8*z-16*8*z^2 -> [33]
+[7+8*x,7+8*y,7+8*z]: success [7,7,7] trivial=2 14*8*x+8*8*x^2+14*8*y+8*8*y^2-28*8*z-16*8*z^2 -> [33]
 
 expanding queue[9]: 48 + 112*x + 64*x^2 + 16*y + 64*y^2 - 32*z - 128*z^2 = 0 modulo [2,2,2] *16
 [7+16*x,1+16*y,1+16*z]: failure constant=48, vgcd=32
@@ -337,4 +337,4 @@ expanding queue[33]: 112*x + 64*x^2 + 112*y + 64*y^2 - 224*z - 128*z^2 = 0 modul
 [7+16*x,7+16*y,15+16*z]: unknown -22*16+14*16*x+16*16*x^2+14*16*y+16*16*y^2-60*16*z-32*16*z^2 -> [119]
 [15+16*x,7+16*y,15+16*z]: failure constant=-176, vgcd=32
 [7+16*x,15+16*y,15+16*z]: failure constant=-176, vgcd=32
-[15+16*x,15+16*y,15+16*z]: success NONTRIVIAL 30*16*x+16*16*x^2+30*16*y+16*16*y^2-60*16*z-32*16*z^2 -> [120]
+[15+16*x,15+16*y,15+16*z]: success [15,15,15] trivial=2 30*16*x+16*16*x^2+30*16*y+16*16*y^2-60*16*z-32*16*z^2 -> [120]
