@@ -1365,8 +1365,6 @@ x^2 + 3*x^3 + 2*x^4
      *  @param poly2 second comparision operand
      *  @return a map from this set of variables to the 2nd set
      *  in the form (ai*xi + bi) -&gt; xi', or null if no such map exists.
-     *
-     *
      <pre>
      Examples:
      this  = x^4     - y^4    - z^2  = 0
@@ -1468,6 +1466,30 @@ x^2 + 3*x^3 + 2*x^4
         }
         return busy ? result : null;
     } // isMappableTo
+
+    /** Determines whether <em>this</em> Polynomial can be transformed into <em>poly2</em>
+     *  by multiplying the constants of the monomials in <em>poly2</em> by 
+     *  some factors &gt; 1.
+     *  @param poly2 target Polynomial
+     *  @return true if such factors exist, false otherwise
+     */
+    public boolean isGrownFrom(Polynomial poly2) {
+        boolean result = true; // assume success
+        int psize1 =  this .size();
+        if (psize1 == poly2.size()) {
+            Iterator <String> iter1 = this .keySet().iterator();
+            Iterator <String> iter2 = poly2.keySet().iterator();
+            while (result && iter1.hasNext()) {
+                Monomial mono1 = this .get(iter1.next());
+                Monomial mono2 = poly2.get(iter2.next());
+                Monomial factor  = mono1.divide(mono2);
+                if (factor == null || ! factor.isConstant() || factor.getCoefficient().compareTo(BigInteger.ONE) <= 0) { // no factor
+                    result = false; 
+                } // no factor
+            } // while iter1
+        } // same size
+        return result;
+    } // isGrownFrom
 
     /** Determines whether <em>this</em> polynomial can be transformed into <em>poly2</em>
      *  by an affine map from the variables in <em>this</em> to the variables in <em>poly2</em>.
@@ -1721,7 +1743,6 @@ x^2 + 3*x^3 + 2*x^4
                 result.append(constant.toString());
             }
     /* unsure whether biasedness should be tested
-    */
         } else if (isBiased()) { // > 0 or < 0
                 switch (getRelation()) {
                     default:
@@ -1737,6 +1758,7 @@ x^2 + 3*x^3 + 2*x^4
                         break;
                 } // switch relation
                 result.append(" biased");
+    */
 
         } else if (constant.equals(BigInteger.ZERO)) {
                 switch (getRelation()) {
@@ -1746,7 +1768,7 @@ x^2 + 3*x^3 + 2*x^4
                         result.append(VariableMap.SUCCESS);
                         if (varMap != null) {
                             result.append(" ");
-                            result.append(varMap.getSolution());
+                            result.append(varMap.getConstants()); // they are a solution when all variables are set to zero
                             result.append(" ");
                             int trivial = varMap.triviality();
                             if (trivial == 0) {

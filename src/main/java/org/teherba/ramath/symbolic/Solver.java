@@ -94,8 +94,9 @@ public class Solver extends Stack<RelationSet> {
         queueHead           = 0;
         
         reasons = new ReasonFactory();
-        reasons.addReason("base"        ); // always do the simple zero and modulus checks
-        reasons.addReason("transpose"   ); // always do the transposition check
+        reasons.addReason("base"        ); 
+        reasons.addReason("transpose"   ); 
+        reasons.addReason("grow"        );
         reasons.addReason("same"        );
         reasons.addReason("similiar"    );
     } // initialize

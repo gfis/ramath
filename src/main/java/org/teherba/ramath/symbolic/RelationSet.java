@@ -375,6 +375,25 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
     } // normalize
 
     /** Determines whether <em>this</em> RelationSet can be transformed into <em>rset2</em>
+     *  by multiplying the constants of the monomials in <em>rset2</em> by 
+     *  some factors &gt; 1.
+     *  @param rset2 target RelationSet
+     *  @return true if such factors exist, false otherwise
+     */
+    public boolean isGrownFrom(RelationSet rset2) {
+        boolean result = true; // assume success
+        int rsize1 =  this .size();
+        if (rsize1 == rset2.size()) {
+            int ipoly = 0;
+            while (result && ipoly < rsize1) {
+                result = this.get(ipoly).isGrownFrom(rset2.get(ipoly));
+                ipoly ++;
+            } // while ipoly
+        } // same size
+        return result;
+    } // isGrownFrom
+
+    /** Determines whether <em>this</em> RelationSet can be transformed into <em>rset2</em>
      *  by an affine map from the variables in <em>this</em> to the variables in <em>rset2</em>.
      *  @param rset2 target RelationSet
      *  @return string representation of the mapping from <em>this</em> to <em>rset2</em>, or <em>null</em>

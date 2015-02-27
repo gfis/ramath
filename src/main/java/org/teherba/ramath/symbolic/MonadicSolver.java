@@ -112,7 +112,7 @@ public class MonadicSolver extends Solver {
         while (viter1.hasNext()) { // over all variables in the equation set: replace x_i by (2*x_j + k), j = i+1, k=0..base-1
             String varName  = viter1.next();
             StringBuffer expr2 = (new StringBuffer(16)).append('(');
-            if (mods[imod] > 0) { // avoid "0+"
+            if (mods[imod] > 0) { // REFINED_FORM - avoid "0+"
                 expr2   .append(String.valueOf(mods[imod]))
                         .append('+');
             } // avoid "0+"

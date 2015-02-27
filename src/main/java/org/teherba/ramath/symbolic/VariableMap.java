@@ -183,11 +183,11 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
 
     /** Gets a solution, that
      *  are the constants of the expressions for refined variables.
-     *  @return [3, 4, 5], for example
+     *  @return "[3,4,5]", for example
      *  Caution: the form of the expressions must be c+f*x; 
      *  this is initiated by {@link Polynomial#getExpressionMap}().
      */
-    public String getSolution() {
+    public String getConstants() {
         StringBuffer result = new StringBuffer(256);
         result.append("[");
         int count = 0;
@@ -207,7 +207,7 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
         } // while iter
         result.append("]");
         return result.toString();
-    } // getSolution
+    } // getConstants
 
     /** Determines a code for the triviality of the mapping:
      *  <ul>

@@ -1,6 +1,6 @@
 
 expanding queue[0]: a^3 + b^3 - c^3 = 0 modulo [2,2,2] *2
-[0+2*a,0+2*b,0+2*c]: same form as 4*2*a^3+4*2*b^3-4*2*c^3
+[0+2*a,0+2*b,0+2*c]: failure, grown from [0]
 [1+2*a,0+2*b,0+2*c]: failure constant=1, vgcd=2
 [0+2*a,1+2*b,0+2*c]: failure constant=1, vgcd=2
 [1+2*a,1+2*b,0+2*c]: unknown 1*2+3*2*a+6*2*a^2+4*2*a^3+3*2*b+6*2*b^2+4*2*b^3-4*2*c^3 -> [1]
@@ -20,7 +20,7 @@ expanding queue[1]: 2 + 6*a + 12*a^2 + 8*a^3 + 6*b + 12*b^2 + 8*b^3 - 8*c^3 = 0 
 [3+4*a,3+4*b,2+4*c]: failure constant=46, vgcd=4
 
 expanding queue[2]: 6*a + 12*a^2 + 8*a^3 + 8*b^3 - 6*c - 12*c^2 - 8*c^3 = 0 modulo [2,2,2] *4
-[1+4*a,0+4*b,1+4*c]: similiar to  [2], affine map: {a=(2*a),b=(2*b),c=(2*c)}  3*4*a+12*4*a^2+16*4*a^3+16*4*b^3-3*4*c-12*4*c^2-16*4*c^3
+[1+4*a,0+4*b,1+4*c]: failure, grown from [2]
 [3+4*a,0+4*b,1+4*c]: failure constant=26, vgcd=4
 [1+4*a,2+4*b,1+4*c]: unknown 2*4+3*4*a+12*4*a^2+16*4*a^3+12*4*b+24*4*b^2+16*4*b^3-3*4*c-12*4*c^2-16*4*c^3 -> [5]
 [3+4*a,2+4*b,1+4*c]: failure constant=34, vgcd=4
@@ -60,7 +60,7 @@ expanding queue[5]: 8 + 12*a + 48*a^2 + 64*a^3 + 48*b + 96*b^2 + 64*b^3 - 12*c -
 [5+8*a,6+8*b,5+8*c]: unknown 27*8+75*8*a+120*8*a^2+64*8*a^3+108*8*b+144*8*b^2+64*8*b^3-75*8*c-120*8*c^2-64*8*c^3 -> [18]
 
 expanding queue[6]: 108*a + 144*a^2 + 64*a^3 + 64*b^3 - 108*c - 144*c^2 - 64*c^3 = 0 modulo [2,2,2] *8
-[3+8*a,0+8*b,3+8*c]: similiar to  [6], affine map: {a=(2*a),b=(2*b),c=(2*c)}  27*8*a+72*8*a^2+64*8*a^3+64*8*b^3-27*8*c-72*8*c^2-64*8*c^3
+[3+8*a,0+8*b,3+8*c]: failure, grown from [6]
 [7+8*a,0+8*b,3+8*c]: failure constant=316, vgcd=8
 [3+8*a,4+8*b,3+8*c]: unknown 8*8+27*8*a+72*8*a^2+64*8*a^3+48*8*b+96*8*b^2+64*8*b^3-27*8*c-72*8*c^2-64*8*c^3 -> [19]
 [7+8*a,4+8*b,3+8*c]: failure constant=380, vgcd=8

@@ -34,8 +34,14 @@ CALL TreeSolver -l 2 -e "5*q^2 - p^2"
 TEST T03 tree solver (proof in 2 steps)
 CALL TreeSolver -l 2 -e "a^2 + b^2 - 3*(c^2 + d^2)" 
 
-TEST T04 tree solver, biquadratic
-CALL TreeSolver -l 2 -e "x^4-y^4-z^2" 
+TEST T04 tree solver, biquadratic minus
+CALL TreeSolver -l 2 -e "x^4 - y^4 - z^2" 
+
+TEST T05 tree solver, biquadratic plus
+CALL TreeSolver -l 2 -e "x^4 + y^4 - z^2" 
+
+TEST T06 Markov(3, solvable)
+CALL TreeSolver -l 3 -e "x^2 + y^2 + z^2 - 3*x*y*z"
 
 TEST T07 Fermat^3 mod 2
 CALL TreeSolver -b 2 -l 2 -e "a^3 + b^3 - c^3" 
@@ -43,6 +49,37 @@ CALL TreeSolver -b 2 -l 2 -e "a^3 + b^3 - c^3"
 TEST T08 EEC(3) mod 2
 CALL TreeSolver -b 2 -l 2 -e "a^3 + b^3 + c^3 - d^3" 
 
+TEST T09 Markov(2, unsolvable, power)
+CALL TreeSolver -l 6 -e "x^2 + y^2 + z^2 - 2*x*y*z"
+
+TEST T10 Markov(5, unsolvable)
+CALL TreeSolver -l 3 -e "x^2 + y^2 + z^2 - 5*x*y*z"
+
+TEST T11 Markov(4, unsolvable, power)
+CALL TreeSolver -l 4 -e "x^2 + y^2 + z^2 - 4*x*y*z"
+
+TEST T12 proof
+CALL TreeSolver -l 4 -e "x^2 + y^2 - 3*z^2"
+
+TEST T13 modified Fermat^3 mod 2
+CALL TreeSolver -b 2 -l 2 -e "a^3 + 3*b^3 - 9*c^3"
+
+TEST T14 modified Fermat^3 mod 3
+CALL TreeSolver -b 3 -l 2 -e "a^3 + 3*b^3 - 9*c^3"
+
+TEST T15 modified Fermat^3 mod 6
+CALL TreeSolver -b 6 -l 2 -e "a^3 + 3*b^3 - 9*c^3"
+
+TEST T16 Pythagoras
+CALL TreeSolver -b 2 -l 4 -e "a^2 + b^2 - c^2"
+
+TEST T17 modified Fermat^3 mod 2
+CALL TreeSolver -b 2 -l 2 -e "a^3 + 2*b^3 - 4*c^3"
+
+TEST T18 modified Fermat^3 mod 6
+CALL TreeSolver -b 6 -l 2 -e "a^3 + 2*b^3 - 4*c^3"
+
+#
 #-------------------------------
 # c.f. http://planetmath.org/encyclopedia/InfiniteDescent.html
 PACKAGE=org.teherba.ramath.symbolic

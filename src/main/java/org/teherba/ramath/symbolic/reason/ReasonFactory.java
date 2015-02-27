@@ -1,5 +1,6 @@
 /*  ReasonFactory: list of reasons to decide that the tree expansion can be truncated
  *  @(#) $Id: ReasonFactory.java 970 2012-10-25 16:49:32Z gfis $
+ *  2015-02-27: GrowingReason
  *  2015-02-21, Georg Fischer
  */
 /*
@@ -75,6 +76,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         if (false) {
         } else if (code.equals("base"       )) { result = addReasonClass(code, "BaseReason"       );
         } else if (code.equals("transpose"  )) { result = addReasonClass(code, "TransposeReason"  );
+        } else if (code.equals("grow"       )) { result = addReasonClass(code, "GrowingReason"    );
         } else if (code.equals("same"       )) { result = addReasonClass(code, "SameReason"       );
         } else if (code.equals("similiar"   )) { result = addReasonClass(code, "SimiliarReason"   );
         }
