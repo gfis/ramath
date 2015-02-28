@@ -79,6 +79,15 @@ CALL TreeSolver -b 2 -l 2 -e "a^3 + 2*b^3 - 4*c^3"
 TEST T18 modified Fermat^3 mod 6
 CALL TreeSolver -b 6 -l 2 -e "a^3 + 2*b^3 - 4*c^3"
 
+TEST T19 generating Pythagoras
+CALL TreeSolver -b 2 -l 2 -e "(m^2 - n^2)^2 + (2*m*n)^2 - (m^2 + n^2)^2"
+
+# TEST T20 EEC(6,1,5), most wanted on euler.free.net
+# CALL TreeSolver -b 2 -l 2 -e "a^6 + b^6 + c^6 + d^6 + e^6 - f^6"
+
+# TEST T21 EEC(6,1,5), most wanted on euler.free.net, mod 3
+# CALL TreeSolver -b 3 -l 1 -e "a^6 + b^6 + c^6 + d^6 + e^6 - f^6"
+
 #
 #-------------------------------
 # c.f. http://planetmath.org/encyclopedia/InfiniteDescent.html

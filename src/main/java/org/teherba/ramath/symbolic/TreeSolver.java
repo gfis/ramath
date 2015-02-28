@@ -24,7 +24,6 @@ import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.RelationSet;
 import  org.teherba.ramath.symbolic.Solver;
 import  org.teherba.ramath.symbolic.VariableMap;
-import  org.teherba.ramath.symbolic.reason.ReasonList;
 import  org.teherba.ramath.util.ModoMeter;
 import  java.io.PrintWriter;
 import  java.math.BigInteger;
@@ -137,6 +136,7 @@ public class TreeSolver extends Solver {
             rset2.setParentIndex    (queueIndex);
             rset2.setTuple          (vmap2, this.getTransposables());
             rset2.setTupleShift     (factor);
+            rset2.setMeter(meter.toString());
             
             String decision = reasons.check(this, rset2);
             if (! decision.startsWith(VariableMap.UNKNOWN) && 

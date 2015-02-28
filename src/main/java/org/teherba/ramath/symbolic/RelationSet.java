@@ -173,6 +173,36 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
         polynomials.add(index, poly);
     } // insert
 
+    /** Message text from the last evaluation */
+    private String message;
+    /** Gets the message text from the last evaluation
+     *  @return string describing the decision
+     */
+    public String getMessage() {
+        return message;
+    } // getMessage
+    /** Sets the message text from the last evaluation
+     *  @param text message text to be stored
+     */
+    public void setMessage(String text) {
+        message = text;
+    } // setMessage
+
+    /** String denoting the Dispenser values which lead to the refined RelationSet */
+    private String meter;
+    /** Gets the Dispenser values which lead to the refined RelationSet
+     *  @return string describing the meter
+     */
+    public String getMeter() {
+        return meter;
+    } // getMeter
+    /** Sets the Dispenser values which lead to the refined RelationSet
+     *  @param meter string describing the meter
+     */
+    public void setMeter(String meter) {
+        this.meter = meter;
+    } // setMeter
+
     /** Nesting level: 0, 1, 2 and so on - number of variable expansions which did already take place */
     private int nestingLevel;
     /** Gets the nesting level
@@ -261,21 +291,6 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
     public void setTupleShift(BigInteger shift) {
         this.tupleShift = shift;
     } // setTupleShift
-
-    /** Message text from the last evaluation */
-    private String message;
-    /** Gets the message text from the last evaluation
-     *  @return string describing the decision
-     */
-    public String getMessage() {
-        return message;
-    } // getMessage
-    /** Sets the message text from the last evaluation
-     *  @param text message text to be stored
-     */
-    public void setMessage(String text) {
-        message = text;
-    } // setMessage
 
     /*-------------- lightweight derived methods -----------------------------*/
 

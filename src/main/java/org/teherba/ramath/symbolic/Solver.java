@@ -27,16 +27,17 @@ import  org.teherba.ramath.symbolic.VariableMap;
 import  org.teherba.ramath.symbolic.reason.ReasonFactory;
 import  org.teherba.ramath.linear.Vector;
 import  org.teherba.ramath.util.ExpressionReader;
+import  org.teherba.ramath.util.ModoMeter;
 import  java.io.PrintWriter;
 import  java.math.BigInteger;
 import  java.util.Stack; // was java.util.Vector;  essentially a java.util.Queue (Java 1.6)
 import  java.util.regex.Matcher;
 import  java.util.regex.Pattern;
 
-/** Superclass for solvers for Diophantine {@link RelationSet}s, 
+/** Superclass for solvers for Diophantine {@link RelationSet}s,
  *  with bean properties and commandline arguments processing.
- *  The solvers maintain a queue (resp. flattened tree) of unresolved, 
- *  derived {@link RelationSet}s which is used during an iterative search for solutions. 
+ *  The solvers maintain a queue (resp. flattened tree) of unresolved,
+ *  derived {@link RelationSet}s which is used during an iterative search for solutions.
  *  The queue could have been a stack, but we want to walk the tree width-first.
  *  @author Dr. Georg Fischer
  */
@@ -47,7 +48,7 @@ public class Solver extends Stack<RelationSet> {
 
     /** index into queue for unresolved {@link RelationSet}s */
     protected int queueHead;
-    
+
     /** Writer for proof trace.
      *  The printer is still used in {@link MonadicSolver}, but
      *  modern solvers should normally not print any output except for debugging.
@@ -92,11 +93,11 @@ public class Solver extends Stack<RelationSet> {
         setSubsetting       (false);
         setUpperSubst       (true);
         queueHead           = 0;
-        
+
         reasons = new ReasonFactory();
-        reasons.addReason("base"        ); 
-        reasons.addReason("transpose"   ); 
-        reasons.addReason("grow"        );
+        reasons.addReason("base"        );
+        reasons.addReason("transpose"   );
+        reasons.addReason("grow"        ); // related to 'same' and 'similiar'
         reasons.addReason("same"        );
         reasons.addReason("similiar"    );
     } // initialize
@@ -109,7 +110,7 @@ public class Solver extends Stack<RelationSet> {
     } // getStartSet
 
     //-----------------------------
-    // Bean properties and methods 
+    // Bean properties and methods
     //-----------------------------
 
     /** How to expand: 0 = no solutions, 1 (default) = non-trivial solutions, 2 = all  */
@@ -275,7 +276,7 @@ public class Solver extends Stack<RelationSet> {
     public    static String polish(RelationSet rset) {
         return polish(rset, rset.getTupleShift());
     } // polish(1)
-    
+
     //-----------------------------------------------
     // Pseudo-abstract methods common to all Solvers
     //-----------------------------------------------
@@ -309,9 +310,12 @@ public class Solver extends Stack<RelationSet> {
         setTransposables(reasons.purge(rset0));
         boolean exhausted = false;
         queueHead = 0;
-        if (rset0.getTuple() == null) { // MonadicSolver
-            rset0.setTuple(rset0.getVariableMap("0", getUpperSubst())); // tuple is initially (0,0, ... 0)
+        if (rset0.getTuple() == null) { 
+            VariableMap vmap0 = rset0.getVariableMap("0", getUpperSubst());
+            rset0.setTuple(vmap0); // tuple is initially (0,0, ... 0)
         }
+        ModoMeter meter = new ModoMeter(rset0.getTuple().size(), 1); // assume that all variables are not involved
+        rset0.setMeter(meter.toString());
         add(rset0);
         boolean busy = true;
         while (busy) {

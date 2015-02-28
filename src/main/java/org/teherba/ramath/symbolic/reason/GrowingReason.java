@@ -56,7 +56,14 @@ public class GrowingReason extends BaseReason {
         boolean busy = true;
         while (busy && iparent >= 0) {
             RelationSet rset1 = solver.get(iparent);
+            if (debug > 0) {
+                System.err.println("iparent=" + iparent 
+                        + ", rset1.meter=" + rset1.getMeter()
+                        + ", rset2.meter=" + rset2.getMeter()
+                        );
+            }
             if (rset1.getTuple().getConstants().equals(rset2.getTuple().getConstants())) { // condition (1)
+        //  if (rset1.getMeter().equals(rset2.getMeter())) { // condition (1)
                 if (rset2.isGrownFrom(rset1)) {
                     busy = false;
                     result = VariableMap.FAILURE + ", grown from [" + iparent + "]";
