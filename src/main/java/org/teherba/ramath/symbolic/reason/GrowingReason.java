@@ -57,9 +57,11 @@ public class GrowingReason extends BaseReason {
         while (busy && iparent >= 0) {
             RelationSet rset1 = solver.get(iparent);
             if (debug > 0) {
-                System.err.println("iparent=" + iparent 
+                solver.getWriter().println("iparent=" + iparent 
                         + ", rset1.meter=" + rset1.getMeter()
                         + ", rset2.meter=" + rset2.getMeter()
+                        + ", rset1.tuple=" + rset1.getTuple().getConstants()
+                        + ", rset2.tuple=" + rset2.getTuple().getConstants()
                         );
             }
             if (rset1.getTuple().getConstants().equals(rset2.getTuple().getConstants())) { // condition (1)

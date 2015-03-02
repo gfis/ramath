@@ -1483,7 +1483,7 @@ x^2 + 3*x^3 + 2*x^4
                 Monomial mono1 = this .get(iter1.next());
                 Monomial mono2 = poly2.get(iter2.next());
                 Monomial factor  = mono1.divide(mono2);
-                if (factor == null || ! factor.isConstant() || factor.getCoefficient().compareTo(BigInteger.ONE) <= 0) { // no factor
+                if (factor == null || ! factor.isConstant() || factor.getCoefficient().compareTo(BigInteger.ONE) < 0) { // no factor
                     result = false; 
                 } // no factor
             } // while iter1

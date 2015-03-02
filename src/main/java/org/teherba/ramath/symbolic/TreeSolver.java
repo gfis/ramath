@@ -106,21 +106,21 @@ public class TreeSolver extends Solver {
         RelationSet rset1 = get(queueIndex); // expand this element (the "parent")
         int curLevel      = rset1.getNestingLevel() + 1;
         int base          = getModBase();
+        BigInteger factor = BigInteger.valueOf(base).pow(curLevel);
         VariableMap vmap1 = rset1.getTuple();
         int varNo         = vmap1.size(); // total number of variables to be substituted
         ModoMeter meter   = new ModoMeter(varNo, 1); // assume that all variables are not involved
-        VariableMap vmapr = rset1.getRest(base).getExpressionMap();
+        VariableMap vmapr = rset1.getRest(BigInteger.valueOf(base).multiply(factor)).getExpressionMap(); // base if normalized below
         Iterator<String> iter1 = vmap1.keySet().iterator();
         int im = 0;
         while (iter1.hasNext()) {
             String name = iter1.next();
-            if (true || vmapr.get(name) != null) { // name occurs in rest: this will be involved
+            if (false || vmapr.get(name) != null) { // name occurs in rest: this will be involved
                 meter.setBase(im, base); // involve it
             } // name in rest
             im ++;
         } // while iter1
         // meter now ready for n-adic expansion, e.g. x -> 2*x+0, 2*x+1
-        BigInteger factor = BigInteger.valueOf(base).pow(curLevel);
         if (debug >= 1) {
             trace.println();
             trace.println("expanding queue[" + queueIndex + "]: "
@@ -129,6 +129,7 @@ public class TreeSolver extends Solver {
                     + " *" + factor.toString()
                     );
         }
+
         while (meter.hasNext()) { // over all constant combinations - generate all children
             VariableMap vmap2 = vmap1.refineExpressions(meter);
             RelationSet rset2 = getStartSet().substitute(vmap2); // .normalize();

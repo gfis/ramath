@@ -261,7 +261,7 @@ public class Solver extends Stack<RelationSet> {
      *  @return polished formula
      */
     protected static String polish(RelationSet rset, BigInteger factor) {
-        return rset.toFactoredString(factor)
+        return rset.toString() // toFactoredString(factor)
            //   .replaceAll("_\\d+", "")
                 .replaceAll("[_ ]", "") // maybe "*" also
            //   .replaceAll("\\^2", "²")
