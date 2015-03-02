@@ -103,19 +103,20 @@ public class TreeSolver extends Solver {
      *  @param queueIndex position in the queue of the element ({@link RelationSet}) to be expanded, >= 0
      */
     public void expand(int queueIndex) {
+        int skippable = 0; // 1 does not really work
         RelationSet rset1 = get(queueIndex); // expand this element (the "parent")
         int curLevel      = rset1.getNestingLevel() + 1;
-        int base          = getModBase();
-        BigInteger factor = BigInteger.valueOf(base).pow(curLevel);
+        int base          = getModBase() + skippable;
+        BigInteger factor = BigInteger.valueOf(base - skippable).pow(curLevel);
         VariableMap vmap1 = rset1.getTuple();
         int varNo         = vmap1.size(); // total number of variables to be substituted
         ModoMeter meter   = new ModoMeter(varNo, 1); // assume that all variables are not involved
-        VariableMap vmapr = rset1.getRest(BigInteger.valueOf(base).multiply(factor)).getExpressionMap(); // base if normalized below
+        VariableMap vmapr = rset1.getRest(BigInteger.valueOf(base - skippable).multiply(factor)).getExpressionMap(); // base if normalized below
         Iterator<String> iter1 = vmap1.keySet().iterator();
         int im = 0;
         while (iter1.hasNext()) {
             String name = iter1.next();
-            if (false || vmapr.get(name) != null) { // name occurs in rest: this will be involved
+            if (skippable == 1 || vmapr.get(name) != null) { // name occurs in rest: this will be involved
                 meter.setBase(im, base); // involve it
             } // name in rest
             im ++;
@@ -131,31 +132,33 @@ public class TreeSolver extends Solver {
         }
 
         while (meter.hasNext()) { // over all constant combinations - generate all children
-            VariableMap vmap2 = vmap1.refineExpressions(meter);
-            RelationSet rset2 = getStartSet().substitute(vmap2); // .normalize();
-            rset2.setNestingLevel   (curLevel); 
-            rset2.setParentIndex    (queueIndex);
-            rset2.setTuple          (vmap2, this.getTransposables());
-            rset2.setTupleShift     (factor);
-            rset2.setMeter(meter.toString());
-            
-            String decision = reasons.check(this, rset2);
-            if (! decision.startsWith(VariableMap.UNKNOWN) && 
-                ! decision.startsWith(VariableMap.SUCCESS)) { // FAILURE etc.
-                    if (debug >= 1) {
-                        trace.print(vmap2.toVector() + ": ");
-                        trace.println(decision);
-                    }
-            } else { // UNKNOWN || SUCCESS
-                    if (debug >= 1) {
-                        trace.print(vmap2.toVector() + ": ");
-                        trace.print(decision);
-                        trace.print(" " + polish(rset2));
-                        trace.print(" -> [" + size() + "]");
-                        trace.println();
-                    }
-                    add(rset2);
-            } // unknown
+            VariableMap vmap2 = vmap1.refineExpressions(meter, skippable);
+            if (vmap2.size() > 0) {
+                RelationSet rset2 = getStartSet().substitute(vmap2); // .normalize();
+                rset2.setNestingLevel   (curLevel); 
+                rset2.setParentIndex    (queueIndex);
+                rset2.setTuple          (vmap2, this.getTransposables());
+                rset2.setTupleShift     (factor);
+                rset2.setMeter(meter.toString());
+                
+                String decision = reasons.check(this, rset2);
+                if (! decision.startsWith(VariableMap.UNKNOWN) && 
+                    ! decision.startsWith(VariableMap.SUCCESS)) { // FAILURE etc.
+                        if (debug >= 1) {
+                            trace.print(vmap2.toVector() + ": ");
+                            trace.println(decision);
+                        }
+                } else { // UNKNOWN || SUCCESS
+                        if (debug >= 1) {
+                            trace.print(vmap2.toVector() + ": ");
+                            trace.print(decision);
+                            trace.print(" " + polish(rset2));
+                            trace.print(" -> [" + size() + "]");
+                            trace.println();
+                        }
+                        add(rset2);
+                } // unknown
+            } // vmap2.size() > 0
             
             meter.next();
         } // while meter.hasNext() - generate all children

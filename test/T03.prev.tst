@@ -1,3 +1,4 @@
+Expanding for base 2, transposables =    0   0   2   2
 
 expanding queue[0]: a^2 + b^2 - 3*c^2 - 3*d^2 = 0 modulo [2,2,2,2] *2
 [0+2*a,0+2*b,0+2*c,0+2*d]: failure, grown from [0]
@@ -34,4 +35,4 @@ expanding queue[1]:  - 4 + 4*a + 4*a^2 + 4*b + 4*b^2 - 12*c - 12*c^2 - 12*d - 12
 [3+4*a,1+4*b,3+4*c,3+4*d]: failure constant=-44, vgcd=8
 [1+4*a,3+4*b,3+4*c,3+4*d]: failure constant=-44, vgcd=8
 [3+4*a,3+4*b,3+4*c,3+4*d]: failure constant=-36, vgcd=8
-Proof: queue exhausted
+Proof - queue exhausted, queue size = 2

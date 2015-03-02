@@ -1,3 +1,4 @@
+Expanding for base 3, transposables =    0   0   2
 
 expanding queue[0]: a^3 + b^3 - c^3 = 0 modulo [3,3,3] *3
 [0+3*a,0+3*b,0+3*c]: failure, grown from [0]
@@ -263,3 +264,4 @@ expanding queue[10]: 1728*a + 1944*a^2 + 729*a^3 + 27*b^3 - 1728*c - 1944*c^2 - 
 [8+27*a,6+9*b,26+27*c]: unknown -16848+5184*a+17496*a^2+19683*a^3+972*b+1458*b^2+729*b^3-54756*c-56862*c^2-19683*c^3=0 -> [69]
 [17+27*a,6+9*b,26+27*c]: failure constant=-12447, vgcd=81
 [26+27*a,6+9*b,26+27*c]: failure constant=216, vgcd=81
+Maximum level 2 reached, queue size = 70

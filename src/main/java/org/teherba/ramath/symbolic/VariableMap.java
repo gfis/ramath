@@ -1,5 +1,6 @@
 /*  VariableMap: maps a set of variables to their values or substitution formulas
  *  @(#) $Id: VariableMap.java 538 2010-09-08 15:08:36Z gfis $
+ *  2015-03-02: refineExpressions(, skippable)
  *  2015-02-08: Dispenser instead of ModoMeter
  *  2014-06-02: SAME
  *  2014-04-04: triviality, refineExpressions
@@ -249,24 +250,34 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
      *  @param dispenser current state of a {@link Dispenser} containing the
      *  factors (the bases) and the constants (the values) for the modification
      *  of the mapped expressions. 
+     *  @param skippable 1 if the highest meter value indicates that the value should not be used, 0 otherwise.
      *  The underlying integer array is parallel to the sorted list of variable names.
      *  For a mapping x -> c+f*x and corresponding dispenser value m mod b,
-     *  the new expression is c + f*(m+b*x) = (c+f*m) + (f*b)*x 
-     *  Caution: this form of the expression is initiated by {@link Polynomial#getExpressionMap}().
+     *  the new expression is c + f*(m+b*x) = (c+f*m) + (f*b)*x.
+     *  If dispenser.base = 1 then factor = 1, constant = 0, i.e. the variable is unchanged.
+     *  Caution: This form of the expression is initiated by {@link Polynomial#getExpressionMap}().
      *  @return a new VariableMap with the variables mapped to the refined expressions
      */
-    public VariableMap refineExpressions(Dispenser dispenser) {
+    public VariableMap refineExpressions(Dispenser dispenser, int skippable) {
         VariableMap result = new VariableMap();
         // System.out.println(this.toString() + ".refineExpressions(dispenser)");
         Iterator<String> iter = this.keySet().iterator();
         int idisp = 0;
         while (iter.hasNext()) {
+            int b = dispenser.getBase(idisp);
+            int m = dispenser.get    (idisp);
             String key   = iter.next(); 
+            if (skippable == 1 && m == b - 1) { // skipped = not refined
+                b = 1;
+                m = 0;
+            } else {
+            	b = b - skippable;
+            }
+            BigInteger base     = BigInteger.valueOf(b);
+            BigInteger modulus  = BigInteger.valueOf(m);
             String value = this.get(key); // REFINED_FORM - this has the form "c+f*x"
             int starPos  = value.indexOf('*'); 
             int plusPos  = value.indexOf('+');
-            BigInteger base     = BigInteger.valueOf(dispenser.getBase(idisp));
-            BigInteger modulus  = BigInteger.valueOf(dispenser.get    (idisp));
             BigInteger factor   = (new BigInteger(value.substring(plusPos + 1, starPos)));
             BigInteger constant = (new BigInteger(value.substring(0, plusPos))).add(factor.multiply(modulus));
             result.put(key, constant.toString() + "+" + (factor.multiply(base).toString()) + "*" + key);
@@ -301,7 +312,7 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
         } // while
         System.out.print(vmap.toString()); // before refinement
         System.out.println(" refined by [" + meter.toString() + "]: "
-                + vmap.refineExpressions(meter).toString());
+                + vmap.refineExpressions(meter, 0).toString());
     } // main
 
 } // VariableMap

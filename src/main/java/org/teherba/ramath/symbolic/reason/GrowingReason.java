@@ -51,8 +51,9 @@ public class GrowingReason extends BaseReason {
      *  @param rset2 the new {@link RelationSet} to be added to the queue 
      */
     public String check(Solver solver, RelationSet rset2) {
+    	boolean all = false; // whether to examine all queue elements, or the parents only
         String result = VariableMap.UNKNOWN;
-        int iparent = rset2.getParentIndex();
+        int iparent = all ? solver.size() - 1 : rset2.getParentIndex();
         boolean busy = true;
         while (busy && iparent >= 0) {
             RelationSet rset1 = solver.get(iparent);
@@ -71,7 +72,7 @@ public class GrowingReason extends BaseReason {
                     result = VariableMap.FAILURE + ", grown from [" + iparent + "]";
                 } // condition (2)
             } // condition (1)
-            iparent = rset1.getParentIndex();
+            iparent = all ? iparent - 1 : rset1.getParentIndex();
         } // while iparent
         return result;
     } // check

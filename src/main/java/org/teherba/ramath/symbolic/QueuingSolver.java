@@ -167,7 +167,7 @@ public class QueuingSolver extends Solver {
                     );
         }
         while (meter.hasNext()) { // over all constant combinations - generate all children
-            VariableMap vmap2 = vmap1.refineExpressions(meter);
+            VariableMap vmap2 = vmap1.refineExpressions(meter, 0);
             RelationSet rset2 = getStartSet().substitute(vmap2); // .normalize();
             rset2.setNestingLevel   (curLevel); // + 1);
             rset2.setParentIndex    (queueIndex);

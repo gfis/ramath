@@ -1,3 +1,4 @@
+Expanding for base 2, transposables =    0   0   0
 
 expanding queue[0]: x^2 + y^2 - 5*x*y*z + z^2 = 0 modulo [2,2,2] *2
 [0+2*x,0+2*y,0+2*z]: failure, grown from [0]
@@ -130,3 +131,4 @@ expanding queue[14]:  - 1568 - 1848*x + 64*x^2 - 1848*y - 2240*x*y + 64*y^2 - 18
 [15+16*x,7+16*y,15+16*z]: failure transposition of [33] {0/15+16*x,0/15+16*y,0/7+16*z} by 15+16*y|15+16*z 7+16*z|7+16*y
 [7+16*x,15+16*y,15+16*z]: failure transposition of [33] {0/15+16*x,0/15+16*y,0/7+16*z} by 15+16*x|15+16*y 15+16*y|15+16*z 7+16*z|7+16*x
 [15+16*x,15+16*y,15+16*z]: failure constant=-16200, vgcd=16
+Maximum level 3 reached, queue size = 34

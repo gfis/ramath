@@ -308,6 +308,7 @@ public class Solver extends Stack<RelationSet> {
      */
     public boolean solve(RelationSet rset0) {
         setTransposables(reasons.purge(rset0));
+        trace.println("Expanding for base " + getModBase() + ", transposables = " + getTransposables().toString());
         boolean exhausted = false;
         queueHead = 0;
         if (rset0.getTuple() == null) { 
@@ -332,9 +333,11 @@ public class Solver extends Stack<RelationSet> {
             }
         } // while busy
         if (exhausted) {
-            trace.println("Proof: queue exhausted");
+            trace.print("Proof - queue exhausted");
         } else {
+        	trace.print("Maximum level " + getMaxLevel() + " reached");
         }
+        trace.println(", queue size = " + size());
         close();
         return exhausted;
     } // solve

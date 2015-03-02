@@ -1,3 +1,4 @@
+Expanding for base 3, transposables =    0   1   2
 
 expanding queue[0]: a^3 + 3*b^3 - 9*c^3 = 0 modulo [3,3,1] *3
 [0+3*a,0+3*b,0+1*c]: failure, grown from [0]
@@ -9,4 +10,4 @@ expanding queue[0]: a^3 + 3*b^3 - 9*c^3 = 0 modulo [3,3,1] *3
 [0+3*a,2+3*b,0+1*c]: failure constant=24, vgcd=9
 [1+3*a,2+3*b,0+1*c]: failure constant=25, vgcd=9
 [2+3*a,2+3*b,0+1*c]: failure constant=32, vgcd=9
-Proof: queue exhausted
+Proof - queue exhausted, queue size = 1

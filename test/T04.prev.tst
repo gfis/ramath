@@ -1,3 +1,4 @@
+Expanding for base 2, transposables =    0   1   2
 
 expanding queue[0]: x^4 - y^4 - z^2 = 0 modulo [2,2,2] *2
 [0+2*x,0+2*y,0+2*z]: failure, grown from [0]
@@ -84,3 +85,4 @@ expanding queue[12]:  - 160 + 864*x + 3456*x^2 + 6144*x^3 + 4096*x^4 - 128*y - 3
 [11+16*x,2+4*y,15+32*z]: unknown 14400+85184*x+185856*x^2+180224*x^3+65536*x^4-128*y-384*y^2-512*y^3-256*y^4-960*z-1024*z^2=0 -> [21]
 [3+16*x,2+4*y,31+32*z]: unknown -896+1728*x+13824*x^2+49152*x^3+65536*x^4-128*y-384*y^2-512*y^3-256*y^4-1984*z-1024*z^2=0 -> [22]
 [11+16*x,2+4*y,31+32*z]: failure constant=13664, vgcd=64
+Maximum level 4 reached, queue size = 23
