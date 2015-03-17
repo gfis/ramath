@@ -91,6 +91,9 @@ CALL TreeSolver -b 2 -l 2 -e "(m^2 - n^2)^2 + (2*m*n)^2 - (m^2 + n^2)^2"
 TEST T22 Fermat^3 mod 3
 CALL TreeSolver -b 3 -l 2 -e "a^3 + b^3 - c^3" 
 
+TEST T23 Fermat^5 mod 2
+CALL TreeSolver -b 2 -l 2 -e "a^5 + b^5 - c^5" 
+
 #-------------------------------
 # c.f. http://planetmath.org/encyclopedia/InfiniteDescent.html
 PACKAGE=org.teherba.ramath.symbolic
