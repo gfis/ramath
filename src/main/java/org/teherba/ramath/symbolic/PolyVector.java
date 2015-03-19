@@ -1,5 +1,6 @@
 /*  PolyVector: a vector Polynomials
  *  @(#) $Id: PolyVector.java 744 2011-07-26 06:29:20Z gfis $
+ *  2015-03-19: convolve
  *  2013-08-23: Serializable
  *  2013-08-15, Georg Fischer: copied from linear.Vector
  */
@@ -20,6 +21,7 @@
  */
 package org.teherba.ramath.symbolic;
 import  org.teherba.ramath.symbolic.Polynomial;
+import  org.teherba.ramath.symbolic.VariableMap;
 import  org.teherba.ramath.linear.Matrix;
 import  org.teherba.ramath.linear.Vector;
 import  org.teherba.ramath.util.IntegerExpander;
@@ -122,6 +124,22 @@ public class PolyVector implements Cloneable, Serializable {
         return vecLen;
     } // size
 
+    /** Returns an element of the Vector
+     *  @param icol number of the element (zero based)
+     *  @return a Polynomial
+     */
+    public Polynomial get(int icol) {
+        return vector[icol];
+    } // get
+
+    /** Sets an element of the Vector
+     *  @param icol number of the element (zero based)
+     *  @param value a Polynomial
+     */
+    public void set(int icol, Polynomial value) {
+        vector[icol] = value;
+    } // set
+
     /*-------------- lightweight derived methods -----------------------------*/
 
     /** Equality of 2 Vectors
@@ -167,7 +185,7 @@ public class PolyVector implements Cloneable, Serializable {
         return result.toString();
     } // toString()
 
-    /*-------------- arithmetic operations -------------------------*/
+    /*-------------- heavyweight operations -------------------------*/
 
     /** Gets the innerproduct of two Vectors
      *  @param vect2 multiply by this PolyVector
@@ -192,6 +210,25 @@ public class PolyVector implements Cloneable, Serializable {
         }
         return result;
     } // multiply
+
+    /** Replaces the variables in the parameter {@link Polynomial}
+     *  by the elements of <em>this</em> PolyVector.
+     *  The lexicographical order of the names of the variables
+     *  corresponds to the order of element numbers in the PolyVector.
+     *  @param pschema replace the variables in this Polynomial
+     *  @return a new Polynomial with substituted variables.
+     */
+    public Polynomial convolve(Polynomial pschema) {
+        VariableMap vmap = pschema.getVariableMap();
+        Iterator<String> viter = vmap.keySet().iterator();
+        int ielem = 0;
+        while (viter.hasNext()) {
+            String vname = viter.next();
+            vmap.put(vname, this.get(ielem).toString());
+            ielem ++;
+        } // while viter
+        return pschema.substitute(vmap);
+    } // convolve
 
     public boolean isPowerSum(int exp, int left, int right) {
         Polynomial leftSum  = new Polynomial();
@@ -237,6 +274,8 @@ public class PolyVector implements Cloneable, Serializable {
                 vect1 = new PolyVector(args.length - iarg, iarg, args);
                 System.out.println("read Polyvector: " + vect1.toString(","));
                 System.out.println("inner product:   " + vect1.multiply(vect1).toString());
+                System.out.println("convolve(\"u^2+v^2-w^2\"): "
+                        + vect1.convolve(new Polynomial("u^2+v^2-w^2")).toString());
                 // -read
             } // if opt
         } // more than 1 argument

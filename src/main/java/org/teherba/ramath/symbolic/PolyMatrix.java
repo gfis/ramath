@@ -429,6 +429,10 @@ public class PolyMatrix implements Cloneable, Serializable {
             , "m^2 + n^2"
             } );
 
+    /** vector of variables for EEC(2) */
+    private static PolyVector var3 = new PolyVector(3, 0, new String[]
+            { "x", "y", "z" } );
+
     /** Print the results of some matrix tests
      *  @param title a description of the matrix to be tested
      *  @param amat the matrix to be tested
@@ -440,6 +444,8 @@ public class PolyMatrix implements Cloneable, Serializable {
         PolyVector next = amat.multiply(pgen);
         System.out.println("next vector " + next.toString(",")
                 + " is " + (next.isPowerSum(2, 2, 1) ? "a " : "no ") + "sum of powers");
+        System.out.println("convolve(\"u^2+v^2-w^2\"): "
+                + amat.multiply(var3).convolve(new Polynomial("u^2+v^2-w^2")).toString());
     } // printTest
 
     /** Test method, shows some fixed matrices with no arguments, or the
@@ -499,7 +505,7 @@ public class PolyMatrix implements Cloneable, Serializable {
                             , "2", "1", "2"
                             , "2", "2", "3"
                             } ));
-                    // (u-2*v+2*w)^2+(2*u-v+2*w)^2-(2*u-2*v+3*w)^2 --> u^2 + v^2 - w^2        
+                    // (u-2*v+2*w)^2+(2*u-v+2*w)^2-(2*u-2*v+3*w)^2 --> u^2 + v^2 - w^2
                     printTest("Barning\'s A", new PolyMatrix(3, new String[]
                             { "1", "-2", "2"
                             , "2", "-1", "2"
@@ -536,5 +542,5 @@ public class PolyMatrix implements Cloneable, Serializable {
             log.error(exc.getMessage(), exc);
         }
     } // main
-    
+
 } // PolyMatrix
