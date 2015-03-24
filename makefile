@@ -16,6 +16,10 @@ regression:
 	java -cp dist/ramath.jar org.teherba.common.RegressionTester $(TESTDIR)/all.tests $(TEST) 2>&1 \
 	| tee regression.log.tmp
 	grep FAILED regression.log.tmp
+matrix:
+	java -cp dist/ramath.jar org.teherba.common.RegressionTester $(TESTDIR)/matrix.tests $(TEST) 2>&1 \
+	| tee regression.log.tmp
+	grep FAILED regression.log.tmp
 simple:
 	java -cp dist/ramath.jar org.teherba.common.RegressionTester $(TESTDIR)/simple.tests $(TEST) 2>&1 \
 	| tee regression.log.tmp
@@ -108,7 +112,7 @@ eec3:
 	java -cp dist/ramath.jar org.teherba.ramath.linear.Matrix -eec3 10 | tee eec3.tmp
 eec4:
 	java -cp dist/ramath.jar org.teherba.ramath.linear.Matrix -eec4  4 | tee eec4.tmp
-matrix:
+matrix2:
 	java -cp dist/ramath.jar org.teherba.ramath.linear.Matrix -f data/m3uni.dat
 matrix3:
 	java -cp dist/ramath.jar org.teherba.ramath.linear.Matrix -f data/pres3.dat

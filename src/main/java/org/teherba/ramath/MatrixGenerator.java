@@ -83,7 +83,7 @@ public class MatrixGenerator {
      *  @param numVars number of variables to be expanded
      *  @param exp exponent for the final equal sum of like powers = length of a tuple - 1
      *  @param karg index of first coefficients to be processed
-     *  @param args array of coefficient:
+     *  @param args array of coefficients:
      *  for example 3 univariate Pythagorean tuples:
      <pre>
      (c2*x^2 + c1*x + c0)^2 - (a2*x^2 + a1*x + a0)^2 - (b2*x^2 + b1*x + b0)^2

@@ -230,10 +230,26 @@ public class PolyVector implements Cloneable, Serializable {
         return pschema.substitute(vmap);
     } // convolve
 
+    /** Test whether <em>this</em> PolyVector contains a sum of like powers.
+     *  Usual combinations of the parameters are:
+     <pre>
+        exp=2 left=2 right=1
+        exp=3 left=3 right=1
+        exp=3 left=2 right=2
+        exp=4 left=3 right=1
+        exp=4 left=4 right=1
+     </pre>
+     *  @param exp exponent
+     *  @param left  number of leading  elements which represent the left  side
+     *  @param right number of trailing elements which represent the right side
+     *  @return whether the sum of left elements raised to exp equals the sum
+     *  of right elements raised to exp
+     */
     public boolean isPowerSum(int exp, int left, int right) {
         Polynomial leftSum  = new Polynomial();
         Polynomial rightSum = new Polynomial();
-        if (left + right == vecLen) { // check for trivial case: 2 elements are equal
+        if (left + right == vecLen) { 
+            // check for trivial case: 2 elements are equal
             int isum = 0;
             for (isum = left; isum < vecLen; isum ++) {
                 for (int lsum = 0; lsum < left; lsum ++) {
@@ -256,6 +272,41 @@ public class PolyVector implements Cloneable, Serializable {
         }
         return leftSum.subtract(rightSum).isZero();
     } // isPowerSum
+
+    /** Computes a sum of like powers from <em>this</em> Vector.
+     *  Usual combinations of the parameters are:
+     <pre>
+        exp=2 left=2 right=1
+        exp=3 left=3 right=1
+        exp=3 left=2 right=2
+        exp=4 left=3 right=1
+        exp=4 left=4 right=1
+     </pre>
+     *  @param exp exponent
+     *  @param left  number of leading  elements which represent the left  side
+     *  @param right number of trailing elements which represent the right side
+     *  @return sum of left elements raised to exp minus 
+     *  the sum of right elements raised to exp
+     */
+    public Polynomial powerSum(int exp, int left, int right) {
+        Polynomial leftSum  = new Polynomial();
+        Polynomial rightSum = new Polynomial();
+        if (left + right == vecLen) { 
+            int isum = 0;
+            while (isum < left) {
+                leftSum = leftSum  .add(vector[isum].pow(exp));
+                isum ++;
+            } // while < left
+            while (isum < vecLen) {
+                rightSum = rightSum.add(vector[isum].pow(exp));
+                isum ++;
+            } // while < vecLen
+        } else {
+            throw new IllegalArgumentException("cannot test a vector with the wrong size " + vecLen);
+        }
+        return leftSum.subtract(rightSum);
+    } // powerSum
+
     /*-------------------- Test Driver --------------------*/
 
     /** Test method, shows some fixed matrices with no arguments, or the

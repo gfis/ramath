@@ -1,5 +1,6 @@
 /*  PolyMatrix: a square matrix with Polynomial elements
  *  @(#) $Id: PolyMatrix.java 744 2011-07-26 06:29:20Z gfis $
+ *  2015-03-24: new PolyMatrix(Matrix amat)
  *  2015-01-01: Barnings B identity
  *  2013-08-23: Serializable
  *  2013-08-15, Georg Fischer: copied from linear.Matrix
@@ -22,6 +23,7 @@
 package org.teherba.ramath.symbolic;
 import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.PolyVector;
+import  org.teherba.ramath.linear.Matrix;
 import  org.teherba.ramath.linear.Vector;
 import  java.io.BufferedReader;
 import  java.io.File;
@@ -72,6 +74,18 @@ public class PolyMatrix implements Cloneable, Serializable {
         this.colLen = rowLen;
         matrix = new /*Type*/Polynomial[rowLen][colLen];
     } // Constructor(int)
+
+    /** Constructor for a PolyMatrix from a {@link Matrix}
+     *  @param matrix a {@link Matrix} of small integers
+     */
+    public PolyMatrix(Matrix matrix) {
+        this(matrix.size());
+        for (int irow = 0; irow < rowLen; irow ++) {
+            for (int icol = 0; icol < colLen; icol ++) {
+                this.matrix[irow][icol] = new /*Type*/Polynomial(String.valueOf(matrix.get(irow, icol)));
+            } // for icol
+        } // for irow
+    } // Constructor(Matrix)
 
     /** Constructor for a PolyMatrix which initializes it from an array of values
      *  @param rowLen number of rows/columns
@@ -127,8 +141,17 @@ public class PolyMatrix implements Cloneable, Serializable {
      *  @return a small number
      */
     public /*Type*/Polynomial get(int irow, int icol) {
-        return matrix[irow][icol];
+        return this.matrix[irow][icol];
     } // get
+
+    /** Sets an element of the PolyMatrix
+     *  @param irow row    number of the element (zero based)
+     *  @param icol column number of the element (zero based)
+     *  @param value the desired value of the element
+     */
+    public void set(int irow, int icol, Polynomial value) {
+        this.matrix[irow][icol] = value;
+    } // set
 
     /*-------------- lightweight derived methods -----------------------------*/
 

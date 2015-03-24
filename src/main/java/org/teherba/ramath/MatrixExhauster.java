@@ -1,5 +1,6 @@
 /*  Exhaustive generator for power identities
  *  @(#) $Id: MatrixExhauster.java 808 2011-09-20 16:56:14Z gfis $
+ *  2015-03-23: v2
  *  2013-07-28: with linear.Matrix
  *  2013-07-06, Georg Fischer: copied from ParameterGenerator
  */
@@ -22,15 +23,19 @@ package org.teherba.ramath;
 import  org.teherba.ramath.linear.Matrix;
 import  org.teherba.ramath.linear.Vector;
 import  org.teherba.ramath.symbolic.Polynomial;
+import  org.teherba.ramath.symbolic.PolyMatrix;
+import  org.teherba.ramath.symbolic.PolyVector;
 import  org.teherba.ramath.util.ModoMeter;
 import  java.lang.Math; // abs(int)
+import  java.util.ArrayList;
 import  java.util.Date;
 import  java.util.Iterator;
 
 /** Takes an Equal Sum of Like Powers and tries to generate
  *  matrices which yield other sums of the same form.
  *  (see "http://en.wikipedia.org/wiki/Tree_of_Pythagorean_triples"} for the
- *  <em>Tree of primitive Pythagorean triples</em> and the 3 matrices which generates it.
+ *  <em>Tree of primitive Pythagorean triples</em> and the 3 matrices which generates it
+ *  according to Barning and Price.
  *  @author Dr. Georg Fischer
  */
 public class MatrixExhauster {
@@ -40,9 +45,9 @@ public class MatrixExhauster {
     private int[] squares;
     /** array for powers of natural numbers */
     private int[] cubes;
-    /** lowest digit not used for exhaustion by the expander */
+    /** first digit not used for exhaustion by the expander */
     public int maxDigit;
-    /** -maxDigit + 1 */
+    /** first digit used, = -maxDigit + 1 */
     public int minDigit;
 
     /** starting time */
@@ -250,6 +255,8 @@ public class MatrixExhauster {
         int t1 = 3;
         int t2 = 4;
         int t3 = 5; // initial pythagorean tuple: (3, 4, 5)
+        Vector vect1 = new Vector(new int[] { t1, t2, t3} );
+        int alen = 3;
         int r1, r2, r3, r4; // resulting vector of multiplication m*t
         int s1, s2, s3, s4; // resulting vector of multiplication (m*t)*r
         int r1p2, r2p2, r3p2; // squares thereof
@@ -277,16 +284,29 @@ public class MatrixExhauster {
                 s2 = m21*r1 + m22*r2 + m23*r3;
                 s3 = m31*r1 + m32*r2 + m33*r3;
                 if (s1 != 0 && s2 != 0 && s1*s1 + s2*s2 == s3*s3 && Vector.gcd(s1, s2) == 1) {
-                    System.out.println("# twice: " +  r1 + " " + r2 + " " + r3
-                                          + " => " +  s1 + " " + s2 + " " + s3);
-                    System.out.println(m11 + " " + m12 + " " + m13);
-                    System.out.println(m21 + " " + m22 + " " + m23);
-                    System.out.println(m31 + " " + m32 + " " + m33);
+                    Matrix amat = new Matrix(3, new int[]
+                            { m11, m12, m13
+                            , m21, m22, m23
+                            , m31, m32, m33
+                            } );
+                    int maxIter = 8;
+                    ArrayList<Vector> chain = amat.preservedPowerSums(alen - 1, alen - 1, 1, vect1, maxIter);
+                    if (chain.size() == maxIter) {
+                        String amatStr = amat.toString("(,)") 
+                        		+ "                                                        "; // keep these spaces
+                        System.out.print(amatStr.substring(0, 32) + " " 
+                                + (new PolyMatrix(amat)).multiply(new PolyVector(3, 0, new String[] {"x", "y", "z"}))
+                                        .powerSum(alen - 1, alen - 1, 1).toString()
+                                + " preserves "
+                                + chain.size() + " "
+                                + vect1.toString("(,)")
+                                );
+                        for (int ichain = 0; ichain < maxIter - 3; ichain ++) {
+                            System.out.print(" => " + chain.get(ichain).toString("(,)"));
+                        } // for ichain
+                        System.out.println();
+                    } // preserved > 1
                 } else {
-                /*
-                    System.out.println("#  once: " +  t1 + " " + t2 + " " + t3
-                                          + " => " +  r1 + " " + r2 + " " + r3);
-                */
                 } // if == s3*s3
             } // if == r3p2
 
@@ -297,6 +317,11 @@ public class MatrixExhauster {
         } // if r1 > 0
         }}} // for m1i
     } // m2
+
+    /** v2: Pythagorean triples
+     */
+    public void v2() {
+    } // v2
 
     //==========================================================
     /** m3: Cubic quadruples
@@ -635,6 +660,8 @@ public class MatrixExhauster {
             exhauster.elem2(exp, width);
         } else if (oper.equals("m2" )) {
             exhauster.m2();
+        } else if (oper.equals("v2" )) {
+            exhauster.v2();
         } else if (oper.equals("m3" )) {
             exhauster.m3();
         } else if (oper.equals("m3test" )) {
@@ -644,7 +671,7 @@ public class MatrixExhauster {
         } else {
             System.err.println("unknown operation \"" + oper + "\"");
         }
-        System.out.println(" in " + (System.currentTimeMillis() - startMillis) + " ms");
+        System.err.println("elapsed time: " + (System.currentTimeMillis() - startMillis) + " ms");
     } // main
 
 } // MatrixExhauster

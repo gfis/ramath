@@ -753,12 +753,26 @@ Abstract * (a b c) = a^2 + b^2 - c^2
      *  @param exp exponent
      *  @param left  number of leading  elements which represent the left  side
      *  @param right number of trailing elements which represent the right side
-     *  @param base the Vector to start with
+     *  @param base the {@link Vector} to start with
+     *  @return number of times that <em>this</em> Matrix can be multiplied
+     *  by <em>base</em> while maintaining the power sum property.
+     *  A default of 8 iterations is tried
+     */
+    public ArrayList<Vector> preservedPowerSums(int exp, int left, int right, Vector base) {
+        return preservedPowerSums(exp, left, right, base, 8);
+    } // preservedPowerSums(4)
+
+    /** Test whether <em>this</em> Matrix preserves the power sum property
+     *  of the parameter {@link Vector}.
+     *  @param exp exponent
+     *  @param left  number of leading  elements which represent the left  side
+     *  @param right number of trailing elements which represent the right side
+     *  @param base the {@link Vector} to start with
+     *  @param maxIter number of iterations to be tried
      *  @return number of times that <em>this</em> Matrix can be multiplied
      *  by <em>base</em> while maintaining the power sum property
      */
-    public ArrayList<Vector> preservedPowerSums(int exp, int left, int right, Vector base) {
-        int maxIter = 8;
+    public ArrayList<Vector> preservedPowerSums(int exp, int left, int right, Vector base, int maxIter) {
         int iter = 0;
         ArrayList<Vector> result = new ArrayList<Vector>(maxIter);
         Vector next = this.multiply(base);
@@ -772,15 +786,10 @@ Abstract * (a b c) = a^2 + b^2 - c^2
             next = this.multiply(next);
             lastThis = lastNext;
             lastNext = next.vector[next.vecLen - 1];
-        /*
-            if (iter < maxIter / 2) {
-                System.out.println("# next: " + next.toString("(,)"));
-            }
-        */
             iter ++;
         } // while iter
         return result;
-    } // preservedPowerSum
+    } // preservedPowerSums(5)
 
     /** Starts with a powersum {@link Vector} <em> base</em>, multiplies it
      *  with all elements of the array of matrices, and checks

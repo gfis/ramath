@@ -388,7 +388,8 @@ public class Vector implements Cloneable, Serializable {
         long leftSum  = 0L;
         long rightSum = 0L;
         long temp = 0;
-        if (left + right == vecLen) { // check for trivial case: 2 elements are equal
+        if (left + right == vecLen) { 
+        	// check for trivial case: 2 elements are equal
             int isum = 0;
             for (isum = left; isum < vecLen; isum ++) {
                 for (int lsum = 0; lsum < left; lsum ++) {
@@ -442,6 +443,69 @@ public class Vector implements Cloneable, Serializable {
         }
         return leftSum == rightSum;
     } // isPowerSum
+
+    /** Computes a sum of like powers from <em>this</em> Vector.
+     *  Usual combinations of the parameters are:
+     <pre>
+        exp=2 left=2 right=1
+        exp=3 left=3 right=1
+        exp=3 left=2 right=2
+        exp=4 left=3 right=1
+        exp=4 left=4 right=1
+     </pre>
+     *  @param exp exponent
+     *  @param left  number of leading  elements which represent the left  side
+     *  @param right number of trailing elements which represent the right side
+     *  @return sum of left elements raised to exp minus 
+     *  the sum of right elements raised to exp
+     */
+    public long powerSum(int exp, int left, int right) {
+        long leftSum  = 0L;
+        long rightSum = 0L;
+        long temp = 0;
+        if (left + right == vecLen) { 
+            int isum = 0;
+            switch (exp) {
+                case 2:
+                    while (isum < left) {
+                        temp = vector[isum];
+                        leftSum  += temp * temp;
+                        isum ++;
+                    } // while < left
+                    while (isum < vecLen) {
+                        temp = vector[isum];
+                        rightSum += temp * temp;
+                        isum ++;
+                    } // while < vecLen
+                    break;
+                case 3:
+                    while (isum < left) {
+                        temp = vector[isum];
+                        leftSum  += temp * temp * temp;
+                        isum ++;
+                    } // while < left
+                    while (isum < vecLen) {
+                        temp = vector[isum];
+                        rightSum += temp * temp * temp;
+                        isum ++;
+                    } // while < vecLen
+                    break;
+                default:
+                    while (isum < left) {
+                        leftSum += pow(vector[isum], exp);
+                        isum ++;
+                    } // while < left
+                    while (isum < vecLen) {
+                        rightSum += pow(vector[isum], exp);
+                        isum ++;
+                    } // while < vecLen
+                    break;
+            } // switch exp
+        } else {
+            throw new IllegalArgumentException("cannot sum a vector with the wrong size " + vecLen);
+        }
+        return leftSum - rightSum;
+    } // powerSum
 
     /** Returns a string representation of the vector
      *  with 4 places per element in one line

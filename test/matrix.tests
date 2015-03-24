@@ -1,0 +1,22 @@
+# Collection of Testcases for Ramath
+# @(#) $Id: matrix.tests 955 2012-06-05 07:22:59Z gfis $
+# 2015-03-23, Dr. Georg Fischer: extracted from siomple.tests
+#-----------------------------------
+# Caution:
+# (1) Adjust the following line: URL where Ramath was deployed
+URL=http://localhost:8080/ramath/servlet
+# (2) Adjust the following line: default commandline arguments
+ARGS=
+#======================================================================
+#-------------------------
+# MatrixExhauster
+PACKAGE=org.teherba.ramath
+
+TEST MX01 m2 Barning's, Price's and Barning's flipped
+CALL MatrixExhauster m2 -l 4
+
+TEST MX02 m2 6
+CALL MatrixExhauster m2 -l 6
+
+TEST MX03 m2 10
+CALL MatrixExhauster m2 -l 10
