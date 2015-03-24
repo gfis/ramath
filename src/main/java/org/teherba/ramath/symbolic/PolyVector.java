@@ -68,6 +68,26 @@ public class PolyVector implements Cloneable, Serializable {
         vector = new /*Type*/Polynomial[vecLen];
     } // Constructor(int)
 
+	/** lowercase letters for variable generation */
+	private static final String letters = "abcdefghijklmnopqrstuvwxyz";
+	
+    /** Constructor for a PolyVector of some length,
+     *  initialized with successive variable names.
+     *  @param numElems number of elements
+     *  @param varName starting lowercase letter which is lexicographically incremented.
+     )
+     */
+    public PolyVector(int numElems, String varName) {
+        this(numElems);
+        int ipos = letters.indexOf(varName);
+        if (ipos < 0) { // not found 
+        	ipos = 0; // assume "a"
+        }
+        for (int ivect = 0; ivect < vecLen && ipos + ivect < letters.length(); ivect ++) {
+            this.vector[ivect] = new /*Type*/Polynomial(letters.substring(ipos + ivect, ipos + ivect + 1));
+        } // for ivect
+    } // Constructor(int, String)
+
     /** Constructor for a PolyVector from a tuple of integers
      *  @param tuple array of integers
      */

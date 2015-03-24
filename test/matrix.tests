@@ -20,3 +20,15 @@ CALL MatrixExhauster m2 -l 6
 
 TEST MX03 m2 10
 CALL MatrixExhauster m2 -l 10
+
+TEST MX04 m3 4
+CALL MatrixExhauster m3 -l 4
+
+TEST MX05 v2 6
+CALL MatrixExhauster v2 -l 6 -w 1
+
+TEST MX06 v2 12
+CALL MatrixExhauster v2 -l 12 -w 1
+
+TEST MX07 v2 12
+CALL MatrixExhauster v2 -l 12 -w 2
