@@ -441,7 +441,11 @@ public class Vector implements Cloneable, Serializable {
         } else {
             throw new IllegalArgumentException("cannot test a vector with the wrong size " + vecLen);
         }
-        return leftSum == rightSum;
+        boolean result = leftSum == rightSum;
+        if (! result &&              left - 1 >= right + 1) {
+        	result = isPowerSum(exp, left - 1,   right + 1);
+        }
+        return result;
     } // isPowerSum
 
     /** Computes a sum of like powers from <em>this</em> Vector.

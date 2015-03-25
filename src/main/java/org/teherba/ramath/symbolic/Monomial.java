@@ -1,5 +1,6 @@
 /*  Monomial: a product with a signed numeric coefficient and optional exponentiated variable(s)
  *  @(#) $Id: Monomial.java 522 2010-07-26 07:14:48Z gfis $
+ *  2015-03-25: firstName
  *  2013-09-20: BigRational -> BigIntegerUtil
  *  2013-08-20: renamed from Term
  *  2013-08-12: getVariablePowers
@@ -176,6 +177,17 @@ public class Monomial implements Cloneable, Serializable {
     public BigInteger getCoefficient() {
         return this.coefficient;
     } // getCoefficient
+
+    /** Gets the name of the first variable, if any.
+     *  @return name of the first variable or null
+     */
+    public String firstName() {
+        String result = null; // if no variable is present
+        if (vars.size() >= 1) {
+            result = vars.firstKey();
+        }
+        return result;
+    } // firstName
 
     /** Gets the exponent of a variable.
      *  @param name variable's name
@@ -701,9 +713,9 @@ public class Monomial implements Cloneable, Serializable {
         BigInteger coeff = coefficient;
         String number = null;
         if (coeff.gcd(factor).equals(factor)) {
-        	number = coeff.divide(factor).toString() + "*" + factor.toString();
+            number = coeff.divide(factor).toString() + "*" + factor.toString();
         } else {
-        	number = coeff.toString();
+            number = coeff.toString();
         }
         return toStringCommon(false, number);
     } // toFactoredString(full)

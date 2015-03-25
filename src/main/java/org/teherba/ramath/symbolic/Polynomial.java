@@ -1,6 +1,7 @@
 /*  Polynomial: a symbolic, multivariate polynomial with addition, multiplication
  *  and exponentiation
  *  @(#) $Id: Polynomial.java 744 2011-07-26 06:29:20Z gfis $
+ *  2015-03-25: isPowerSum
  *  2015-02-13: getTransposition
  *  2014-04-04: getIndivisiblePart(2)
  *  2013-09-20: BigRational -> BigIntegerUtil
@@ -498,6 +499,36 @@ public class Polynomial implements Cloneable, Serializable {
         return result;
     } // polarity
 
+    /** Determines whether the Polynomial is a sum of like powers 
+     *  of different variables, without a constant, for example 4*a^2 + 4*b^2 -4*c^2 = 0
+     *  @return 0 if the Polynomial is no sum of like powers,
+     *  or the common factor &gt;= 1 of all variables with the same exponent (4 in the example)
+     */
+    public BigInteger isPowerSum() {
+        BigInteger result = null;
+        int exp          = 0;
+        boolean first    = true;
+        boolean busy     = true;
+        Iterator<String> iter1 = this.keySet().iterator();
+        while (busy && iter1.hasNext()) {
+            Monomial mono = this.get(iter1.next());
+            if (mono.size() != 1) { // =0 : hasConstant, >1: more than 1 variable
+                busy = false;
+            } else { // a single variable
+                if (first) {
+                    first  = false;
+                    result = mono.getCoefficient();
+                    exp    = mono.getExponent(mono.firstName());
+                } else { // ! first
+                    if (! result.equals(mono.getCoefficient())
+                            || exp !=   mono.getExponent(mono.firstName())) {
+                        busy = false;
+                    }
+                } // ! first
+            } // a single variable
+        } // while iter1
+        return result;
+    } // isPowerSum
     /*-------------- arithmetic operations -------------------------*/
 
     /** Adds a {@link Monomial} to this polynomial.

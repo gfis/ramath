@@ -18,17 +18,32 @@ CALL MatrixExhauster m2 -l 4
 TEST MX02 m2 6
 CALL MatrixExhauster m2 -l 6
 
-TEST MX03 m2 10
-CALL MatrixExhauster m2 -l 10
+# TEST MX03 m2 10
+# CALL MatrixExhauster m2 -l 10
 
-TEST MX04 m3 4
-CALL MatrixExhauster m3 -l 4
+# TEST MX04 m3 4
+# CALL MatrixExhauster m3 -l 4
 
 TEST MX05 v2 6
-CALL MatrixExhauster v2 -l 6 -w 1
+CALL MatrixExhauster v2 -l 6
 
-TEST MX06 v2 12
-CALL MatrixExhauster v2 -l 12 -w 1
+TEST MX06 v2 9
+CALL MatrixExhauster v2 -l 9
 
-TEST MX07 v2 12
-CALL MatrixExhauster v2 -l 12 -w 2
+TEST MX07 pEC331 
+CALL MatrixExhauster pEC331 -l 4
+
+TEST MX08 pEC331 
+CALL MatrixExhauster pEC331 -l 5
+
+TEST MX09 pEC331 
+CALL MatrixExhauster pEC331 -l 6
+# finds chain 8, fact 27 [[5,5,0,-3][3,0,-5,5][0,3,5,-5][5,5,-3,0]] [3,4,5,6] => [17,14,7,20] => [95,116,-23,134] => [653,1070,-437,1124] => [5243,9764,-4595,9926] => [45257,88334,-43313,88820] => [401495,796436,-395663,797894] => [3595973,7172270,-3578477,7176644] => [32311283,64563524,-32258795,64576646]
+#    3*a^3   + 3*b^3    + 3*c^3    - 3*d^3
+# + 10*a^2*c + 10*a*c^2 + 10*b*c^2 - 10*a^2*d 
+# + 40*a*d^2 + 40*b^2*c - 40*b^2*d + 40*b*d^2
+# + 50*a*b*c - 50*a*c*d - 50*b*c*d - 50*a*b*d
+                    
+
+TEST MX10 pEC331 
+CALL MatrixExhauster pEC331 -l 9
