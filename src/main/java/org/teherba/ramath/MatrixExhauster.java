@@ -698,20 +698,20 @@ public class MatrixExhauster {
         for (m14 = minDigit; m14 < maxDigit; m14 ++) {
         int col41 =          m14*m14*m14;
         r1 = m11*t1 + m12*t2 + m13*t3 + m14*t4;
-        if (r1 > 0) {
+        if (true) {
         for (m24 = minDigit; m24 < maxDigit; m24 ++) {
         int col42 = col41 +  m24*m24*m24;
         r2 = m21*t1 + m22*t2 + m23*t3 + m24*t4;
-        if (r2 > 0 && r2 != r1 && Vector.gcd(r1, r2) == 1) {
+        if (true && r2 != r1 && Vector.gcd(r1, r2) == 1) {
         for (m34 = minDigit; m34 < maxDigit; m34 ++) {
         int col43 = col42 +  m34*m34*m34;
         r3 = m31*t1 + m32*t2 + m33*t3 + m34*t4;
-        if (r3 > 0 && r3 != r2 && r3 != r1) {
+        if (true && r3 != r2 && r3 != r1) {
         for (m44 = minDigit; m44 < maxDigit; m44 ++) {
         int col44 = col43 +  m44*m44*m44;
         if (col44 - fact == 0) { // 4th column is powersum "-"
         r4 = m41*t1 + m42*t2 + m43*t3 + m44*t4;
-        if (r4 > 0 && r4 != r3 && r4 != r2 && r4 != r1) {
+        if (true && r4 != r3 && r4 != r2 && r4 != r1) {
         r1p = r1*r1*r1;
         r2p = r2*r2*r2;
         r3p = r3*r3*r3;

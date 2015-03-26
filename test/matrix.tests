@@ -39,6 +39,8 @@ CALL PolyMatrix -mult [[5,5,0,-3],[3,0,5,5],[0,-3,5,5],[5,5,3,0]] [a,b,c,d]
 #-------------------------
 # MatrixExhauster
 PACKAGE=org.teherba.ramath
+#-----------
+# Pythagoras
 
 TEST MX01 m2 Barning's, Price's and Barning's flipped
 CALL MatrixExhauster m2 -l 4
@@ -57,6 +59,8 @@ CALL MatrixExhauster v2 -l 6
 
 TEST MX06 v2 9
 CALL MatrixExhauster v2 -l 9
+#-----------
+# EC(3)
 
 TEST MX07            pEC331 
 CALL MatrixExhauster pEC331 -l 4
@@ -80,8 +84,25 @@ CALL MatrixExhauster pEC322 -l 6
 # found chain 8, fact 27 [[5,5,0,-3][3,0,5,5][0,-3,5,5][5,5,3,0]] [9,10,1,12] => [59,92,35,98] => [461,842,389,860] => ...
 
 TEST MX40            pEC340
-CALL MatrixExhauster pEC340 -l 4
+CALL MatrixExhauster pEC340 -l 4 -v [3,4,5,-6]
 
 TEST MX41            pEC340 
-CALL MatrixExhauster pEC340 -l 6
+CALL MatrixExhauster pEC340 -l 6 -v [9,10,-1,-12]
 
+TEST MX42            pEC340
+CALL MatrixExhauster pEC340 -l 4 -v [1,6,8,-9]
+#----------
+PACKAGE=org.teherba.ramath.linear
+
+TEST MX12            chain 
+CALL Matrix -chain [[5,5,0,-3],[3,0,5,5],[0,-3,5,5],[5,5,3,0]] [1,12,9,10] 2 2
+#    [9,10,1,12] passed
+#    [1,12,9,10] passed
+#    16      2     15     9  failed
+#    27     10     24    19  failed
+
+TEST MX13            chain 
+CALL Matrix -chain [[5,5,0,-3],[3,0,-5,5],[0,3,5,-5],[5,5,-3,0]] [3,4,5,6] 3 1
+
+TEST MX14            chain 
+CALL Matrix -chain [[0,1,3,-3],[2,2,0,-1],[1,0,-3,3],[2,2,-1,0]] 	[3,4,5,6]	3 1

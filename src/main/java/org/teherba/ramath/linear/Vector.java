@@ -21,6 +21,7 @@
  */
 package org.teherba.ramath.linear;
 import  org.teherba.ramath.util.IntegerExpander;
+import  java.lang.Math; // abs(int)
 import  java.io.Serializable;
 import  java.util.ArrayList;
 import  java.util.Arrays;
@@ -197,6 +198,13 @@ public class Vector implements Cloneable, Serializable {
     public void set(int icol, int value) {
         this.vector[icol] = value;
     } // set
+
+    /** Returns the last element of the Vector
+     *  @return a small number
+     */
+    public /*Type*/int getLast() {
+        return this.vector[vecLen - 1];
+    } // getLast
 
     /*-------------- lightweight derived methods -----------------------------*/
 
@@ -540,6 +548,19 @@ public class Vector implements Cloneable, Serializable {
         }
         return leftSum - rightSum;
     } // powerSum
+
+    /** Computes the sum of absolute elements of <em>this</em> Vector
+     *  @return sum of all absolute elements
+     */
+    public long norm2() {
+        long result = 0L;
+        int ivect = 0;
+        while (ivect < this.vecLen) {
+        	result += Math.abs(this.vector[ivect]);
+        	ivect ++;
+        } // while ivect
+        return result;
+    } // norm2
 
     /** Returns a string representation of the vector
      *  with 4 places per element in one line

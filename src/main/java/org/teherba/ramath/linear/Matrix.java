@@ -471,6 +471,8 @@ public class Matrix implements Cloneable, Serializable {
                     result.vector[irow] = (/*Type*/int) sum;
             } // for irow
         } else {
+        	System.out.println();
+        	System.out.println("wrong sizes: " + this.toString(",") + " * " + vect2.toString(","));
             throw new IllegalArgumentException("cannot multiply a matrix and a vector of different size " + this.rowLen);
         }
         return result;
@@ -813,13 +815,13 @@ Abstract * (a b c) = a^2 + b^2 - c^2
      *  @param exp exponent
      *  @param left  number of leading  elements which represent the left  side
      *  @param right number of trailing elements which represent the right side
-     *  @param base the {@link Vector} to start with
+     *  @param vect0 the {@link Vector} to start with
      *  @return number of times that <em>this</em> Matrix can be multiplied
      *  by <em>base</em> while maintaining the power sum property.
      *  A default of 8 iterations is tried
      */
-    public ArrayList<Vector> preservedPowerSums(int exp, int left, int right, Vector base) {
-        return preservedPowerSums(exp, left, right, base, 8);
+    public ArrayList<Vector> preservedPowerSums(int exp, int left, int right, Vector vect0) {
+        return preservedPowerSums(exp, left, right, vect0, 8);
     } // preservedPowerSums(4)
 
     /** Test whether <em>this</em> Matrix preserves the power sum property
@@ -827,46 +829,46 @@ Abstract * (a b c) = a^2 + b^2 - c^2
      *  @param exp exponent
      *  @param left  number of leading  elements which represent the left  side
      *  @param right number of trailing elements which represent the right side
-     *  @param base the {@link Vector} to start with
+     *  @param vect0 the {@link Vector} to start with
      *  @param maxIter number of iterations to be tried
      *  @return number of times that <em>this</em> Matrix can be multiplied
-     *  by <em>base</em> while maintaining the power sum property
+     *  by <em>vect0</em> while maintaining the power sum property
      */
-    public ArrayList<Vector> preservedPowerSums(int exp, int left, int right, Vector base, int maxIter) {
+    public ArrayList<Vector> preservedPowerSums(int exp, int left, int right, Vector vect0, int maxIter) {
         ArrayList<Vector> result = new ArrayList<Vector>(maxIter);
-        Vector next = this.multiply(base);
-        int lastThis = base.vector[base.vecLen - 1];
-        int lastNext = next.vector[next.vecLen - 1];
+        Vector vecti = this.multiply(vect0);
+        long norm0 = vect0.norm2();
+        long normi = vecti.norm2();
         int iter = 0;
-        while (    lastThis < lastNext
-                && Math.abs(next.gcd()) <= 1
-                && next.isPowerSum(exp, left, right)
+        while (    (false || norm0 < normi)
+                && Math.abs(vecti.gcd()) <= 1
+                && vecti.isPowerSum(exp, left, right)
                 && iter < maxIter) {
-            result.add(next);
-            next = this.multiply(next);
-            lastThis = lastNext;
-            lastNext = next.vector[next.vecLen - 1];
+            result.add(vecti);
+            vecti = this.multiply(vecti);
+            norm0 = normi;
+            normi = vecti.norm2();
             iter ++;
         } // while iter
         return result;
     } // preservedPowerSums(5)
 
     /** Show <em>this</em> {@link Matrix} , and how it preserves the power sum property
-     *  @param vect1 initial {@link Vector} to be used in the preservation chain
+     *  @param vect0 initial {@link Vector} to be used in the preservation chain
      *  @param left  number of variables on the left  of the equation
      *  @param rigth number of variables on the right of the equation
      *  @param fact  factor of the chained polynomial
      */
-    public void printPreservedChain(Vector vect1, int fact, int left, int right) {
+    public void printPreservedChain(Vector vect0, int fact, int left, int right) {
         int maxIter = 8;
-        int alen    = vect1.size();
-        ArrayList<Vector> chain = this.preservedPowerSums(alen - 1, left, right, vect1, maxIter);
+        int alen    = vect0.size();
+        ArrayList<Vector> chain = this.preservedPowerSums(alen - 1, left, right, vect0, maxIter);
         if (chain.size() >= 2) { // == maxIter) {
             System.out.print(""
                     + "chain " + chain.size()
                     + ", fact " + fact + " "
                     + String.format("%-32s ", this.toString("(,)"))
-                    + vect1.toString("(,)")
+                    + vect0.toString("(,)")
                     );
             int maxShow = maxIter - (alen - 1 == 2 ? 5 : 0);
             if (maxShow > chain.size()) {
@@ -1152,13 +1154,6 @@ Abstract * (a b c) = a^2 + b^2 - c^2
                     }
                     // opt -f, -queue, -prim
 
-                } else if (opt.startsWith("-mult")) {
-
-                    System.out.println(amat.toString("(,)") + " * "
-                            + vect1.toString("(,)") + " = "
-                            + amat.multiply(vect1).toString("(,)"));
-                    // -mult
-
                 } else if (opt.equals("-chain")) {
                     amat  = new Matrix(args[iarg ++]); // may not contain spaces
                     vect1 = new Vector(args[iarg ++]); // may not contain spaces
@@ -1324,6 +1319,12 @@ Abstract * (a b c) = a^2 + b^2 - c^2
                         } // for iv1
                     } // for iv0
                     // -many
+
+                } else if (opt.startsWith("-mult")) {
+                    System.out.println(amat.toString("(,)") + " * "
+                            + vect1.toString("(,)") + " = "
+                            + amat.multiply(vect1).toString("(,)"));
+                    // -mult
 
                 } else if (opt.equals("-eec3")) {
                     int maxIter = 4;
