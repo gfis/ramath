@@ -1,5 +1,5 @@
 /*  CommandTokenizer.java - some strange conversion (we don't comment it)
- *  @(#) $Id: CommandTokenizer.java 745 2011-07-27 15:56:35Z gfis $
+ *  @(#) $Id: 1a3eafc4d216d852b608e7b7224ad20467bfa96c $
  *  2013-01-05: split()
  *  2012-11-24: handling of '.' and '/'
  *  2012-11-09: remove superfluous code
@@ -41,7 +41,7 @@ import  org.apache.log4j.Logger;
  *  @author Dr. Georg Fischer
  */
 public class CommandTokenizer implements Serializable {
-    public final static String CVSID = "@(#) $Id: CommandTokenizer.java 745 2011-07-27 15:56:35Z gfis $";
+    public final static String CVSID = "@(#) $Id: 1a3eafc4d216d852b608e7b7224ad20467bfa96c $";
 
     /** log4j logger (category) */
     private static Logger log = Logger.getLogger(CommandTokenizer.class.getName());;

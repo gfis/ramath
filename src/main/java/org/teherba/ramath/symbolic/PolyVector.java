@@ -212,18 +212,18 @@ public class PolyVector implements Cloneable, Serializable {
     } // toString()
 
     /** Returns a string representation of the vector
-     *  @param format specification of the layout: "," or " "
+     *  @param sep specification of the layout: "," or " "
      *  @return a one-dimensional array of {@link Polynomial}s
      */
     public String toString(String format) {
-        String sep = format + " ";
+        String sep = ",";
         StringBuffer result = new StringBuffer(256);
         result.append('[');
         for (int icol = 0; icol < this.vecLen; icol ++) {
             if (icol > 0) {
                 result.append(sep);
             }
-            result.append(this.vector[icol].toString());
+            result.append(this.vector[icol].toString().replaceAll("\\s" ,""));
         } // for icol
         result.append(']');
         return result.toString();
@@ -367,9 +367,13 @@ public class PolyVector implements Cloneable, Serializable {
         } else { // arguments
             String opt = args[iarg ++];
             if (false) {
+            } else if (opt.startsWith("-psum")) {
+                vect1 = new PolyVector(args.length - iarg, iarg, args);
+                System.out.println(vect1.toString(",") + ".powerSum(2, 2, 1) = " + vect1.powerSum(2,2,1));
+                // -psum
             } else if (opt.startsWith("-read")) {
                 vect1 = new PolyVector(args.length - iarg, iarg, args);
-                System.out.println("read Polyvector: " + vect1.toString(","));
+                System.out.println("read PolyVector: " + vect1.toString(","));
                 System.out.println("inner product:   " + vect1.multiply(vect1).toString());
                 System.out.println("convolve(\"u^2+v^2-w^2\"): "
                         + vect1.convolve(new Polynomial("u^2+v^2-w^2")).toString());

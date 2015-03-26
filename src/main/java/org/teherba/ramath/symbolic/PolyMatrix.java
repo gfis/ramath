@@ -275,7 +275,7 @@ public class PolyMatrix implements Cloneable, Serializable {
                     if (icol > 0) {
                         result.append(sep);
                     }
-                    result.append(this.matrix[irow][icol].toString());
+                    result.append(this.matrix[irow][icol].toString().replaceAll("\\s" ,""));
                 } // for icol
                 if (format.indexOf(sep) >= 0) {
                     result.append(']');
@@ -283,7 +283,7 @@ public class PolyMatrix implements Cloneable, Serializable {
             } else {
                 for (int icol = 0; icol < this.colLen; icol ++) {
                     // result.append(' ');
-                    result.append(this.matrix[irow][icol].toString());
+                    result.append(this.matrix[irow][icol].toString().replaceAll("\\s" ,""));
                 } // for icol
                 result.append(newline);
             }
@@ -536,7 +536,7 @@ public class PolyMatrix implements Cloneable, Serializable {
             } else if (args.length == 0) {
                 amat = new              PolyMatrix ("[[x^2, y^2, - z^2],[x,y,z], [4,3,5]]");
                 System.out.println("new PolyMatrix(\"[[x^2, y^2, - z^2],[x,y,z], [4,3,5]]\") = " 
-                		+ amat.toString(","));
+                        + amat.toString(","));
                 
                 amat = new PolyMatrix(3, new String[]
                         { "a11", "a12", "a13"
@@ -610,6 +610,13 @@ public class PolyMatrix implements Cloneable, Serializable {
                             , "2", "1", "3"
                             } ));
                     // -char
+                } else if (opt.startsWith("-mult")) {
+                    amat  = new PolyMatrix(args[iarg ++]); // may not contain spaces
+                    vect1 = new PolyVector(args[iarg ++]); // may not contain spaces
+                    System.out.println(amat.toString("(,)") + " * " 
+                            + vect1.toString("(,)") + " = "
+                            + amat.multiply(vect1).toString("(,)"));
+                    // -mult
                 } else {
                     System.err.println("invalid option " + opt);
                 } // options

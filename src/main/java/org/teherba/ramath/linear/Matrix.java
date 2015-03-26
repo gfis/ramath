@@ -124,7 +124,7 @@ public class Matrix implements Cloneable, Serializable {
     /** Constructor for a Matrix which initializes it from a matrix expression.
      *  If the number of elements is no square number, the next lower square
      *  number is taken, and some elements at the end are ignored.
-     *  @param matExpr comma-separated array of {@link PolyVector}s in square brackets, 
+     *  @param matExpr comma-separated array of {@link PolyVector}s in square brackets,
      *  for example "[[a,b,c],[f,g,h],[k,l,m]]"
      */
     public Matrix(String matExpr) {
@@ -348,6 +348,9 @@ public class Matrix implements Cloneable, Serializable {
         result.append('[');
         for (int irow = 0; irow < this.rowLen; irow ++) {
             if (format != null && format.length() > 0) {
+                if (irow > 0) {
+                    result.append(sep);
+                }
                 if (format.indexOf(sep) >= 0) {
                     result.append('[');
                 }
@@ -830,12 +833,12 @@ Abstract * (a b c) = a^2 + b^2 - c^2
      *  by <em>base</em> while maintaining the power sum property
      */
     public ArrayList<Vector> preservedPowerSums(int exp, int left, int right, Vector base, int maxIter) {
-        int iter = 0;
         ArrayList<Vector> result = new ArrayList<Vector>(maxIter);
         Vector next = this.multiply(base);
         int lastThis = base.vector[base.vecLen - 1];
         int lastNext = next.vector[next.vecLen - 1];
-        while (lastThis < lastNext
+        int iter = 0;
+        while (    lastThis < lastNext
                 && Math.abs(next.gcd()) <= 1
                 && next.isPowerSum(exp, left, right)
                 && iter < maxIter) {
@@ -847,6 +850,37 @@ Abstract * (a b c) = a^2 + b^2 - c^2
         } // while iter
         return result;
     } // preservedPowerSums(5)
+
+    /** Show <em>this</em> {@link Matrix} , and how it preserves the power sum property
+     *  @param vect1 initial {@link Vector} to be used in the preservation chain
+     *  @param left  number of variables on the left  of the equation
+     *  @param rigth number of variables on the right of the equation
+     *  @param fact  factor of the chained polynomial
+     */
+    public void printPreservedChain(Vector vect1, int fact, int left, int right) {
+        int maxIter = 8;
+        int alen    = vect1.size();
+        ArrayList<Vector> chain = this.preservedPowerSums(alen - 1, left, right, vect1, maxIter);
+        if (chain.size() >= 2) { // == maxIter) {
+            System.out.print(""
+                    + "chain " + chain.size()
+                    + ", fact " + fact + " "
+                    + String.format("%-32s ", this.toString("(,)"))
+                    + vect1.toString("(,)")
+                    );
+            int maxShow = maxIter - (alen - 1 == 2 ? 5 : 0);
+            if (maxShow > chain.size()) {
+                maxShow = chain.size();
+            }
+            for (int ichain = 0; ichain < maxShow; ichain ++) {
+                System.out.print(" => " + chain.get(ichain).toString("(,)"));
+            } // for ichain
+            if (chain.size() < maxIter) { // premature end
+                System.out.print(" ?? " + this.multiply(chain.get(chain.size() - 1)).toString("(,)"));
+            } // premature end
+            System.out.println();
+        } // preserved > 1
+    } // printPreservedChain
 
     /** Starts with a powersum {@link Vector} <em> base</em>, multiplies it
      *  with all elements of the array of matrices, and checks
@@ -983,7 +1017,7 @@ Abstract * (a b c) = a^2 + b^2 - c^2
         Vector vect2 = null;
         try {
             if (args.length == 0) {
-                System.out.println("new Matrix(\"[[3, 4], [5, 6]]\") = " 
+                System.out.println("new Matrix(\"[[3, 4], [5, 6]]\") = "
                         + (new Matrix          ("[[3, 4], [5, 6]]")).toString("(,)"));
             } else if (args.length == 1) {
                 alen = 3;
@@ -1117,6 +1151,35 @@ Abstract * (a b c) = a^2 + b^2 - c^2
                         // multiply with a list of primitives
                     }
                     // opt -f, -queue, -prim
+
+                } else if (opt.startsWith("-mult")) {
+
+                    System.out.println(amat.toString("(,)") + " * "
+                            + vect1.toString("(,)") + " = "
+                            + amat.multiply(vect1).toString("(,)"));
+                    // -mult
+
+                } else if (opt.equals("-chain")) {
+                    amat  = new Matrix(args[iarg ++]); // may not contain spaces
+                    vect1 = new Vector(args[iarg ++]); // may not contain spaces
+                    int maxIter = 8;
+                    int vlen  = vect1.size();
+                    int left  = vlen - 1;
+                    if (iarg < args.length) {
+                        try {
+                            left  = Integer.parseInt(args[iarg ++]);
+                        } catch (Exception exc) {
+                        }
+                    }
+                    int right = vlen - left;
+                    if (iarg < args.length) {
+                        try {
+                            right = Integer.parseInt(args[iarg ++]);
+                        } catch (Exception exc) {
+                        }
+                    }
+                    amat.printPreservedChain(vect1, 0, left, right);
+                    // opt -chain
 
                 } else if (opt.startsWith("-div")) {
                     int dim = 4;

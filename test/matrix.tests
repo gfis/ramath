@@ -27,6 +27,15 @@ CALL PolyMatrix
 TEST S04 PolyMatrix characteristic polynomial
 CALL PolyMatrix -char 3
 
+TEST PV1 PolyVector.powerSum
+CALL PolyVector -psum m^2-n^2 (2*m*n) m^2+n^2
+
+TEST PV2 PolyVector.powerSum
+CALL PolyVector -psum a b c 
+
+TEST PMA1 PolyMatrix.multiply
+CALL PolyMatrix -mult [[5,5,0,-3],[3,0,5,5],[0,-3,5,5],[5,5,3,0]] [a,b,c,d]
+
 #-------------------------
 # MatrixExhauster
 PACKAGE=org.teherba.ramath
@@ -57,7 +66,7 @@ CALL MatrixExhauster pEC331 -l 5
 
 TEST MX09            pEC331 
 CALL MatrixExhauster pEC331 -l 6
-# finds chain 8, fact 27 [[5,5,0,-3][3,0,-5,5][0,3,5,-5][5,5,-3,0]] [3,4,5,6] => [17,14,7,20] => [95,116,-23,134] => [653,1070,-437,1124] => [5243,9764,-4595,9926] => [45257,88334,-43313,88820] => [401495,796436,-395663,797894] => [3595973,7172270,-3578477,7176644] => [32311283,64563524,-32258795,64576646]
+# found chain 8, fact 27 [[5,5,0,-3],[3,0,-5,5],[0,3,5,-5],[5,5,-3,0]] [3,4,5,6] => [17,14,7,20] => [95,116,-23,134] => [653,1070,-437,1124] => [5243,9764,-4595,9926] => [45257,88334,-43313,88820] => [401495,796436,-395663,797894] => [3595973,7172270,-3578477,7176644] => [32311283,64563524,-32258795,64576646]
 #    3*a^3   + 3*b^3    + 3*c^3    - 3*d^3
 # + 10*a^2*c + 10*a*c^2 + 10*b*c^2 - 10*a^2*d 
 # + 40*a*d^2 + 40*b^2*c - 40*b^2*d + 40*b*d^2
@@ -68,11 +77,11 @@ CALL MatrixExhauster pEC322 -l 4
 
 TEST MX11            pEC322 
 CALL MatrixExhauster pEC322 -l 6
-# finds chain 8, fact 27 [[5,5,0,-3][3,0,5,5][0,-3,5,5][5,5,3,0]] [9,10,1,12] => [59,92,35,98] => [461,842,389,860] => ...
+# found chain 8, fact 27 [[5,5,0,-3][3,0,5,5][0,-3,5,5][5,5,3,0]] [9,10,1,12] => [59,92,35,98] => [461,842,389,860] => ...
 
 TEST MX40            pEC340
 CALL MatrixExhauster pEC340 -l 4
 
-TEST MX41            pEC341 
-CALL MatrixExhauster pEC341 -l 6
+TEST MX41            pEC340 
+CALL MatrixExhauster pEC340 -l 6
 

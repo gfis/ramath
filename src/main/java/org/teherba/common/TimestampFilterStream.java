@@ -1,6 +1,7 @@
 /*  PrintStream which replaces some patterns (ISO timestamps) by constant strings for RegressionTester
- *  @(#) $Id: ExpressionReader.java 744 2011-07-26 06:29:20Z gfis $
- *  2013-01-06: hashmap for replacement patterns
+ *  @(#) $Id: 8a56fd679ad2c3735b27cd57e55e629195fbeaea $
+ *  2014-11-16: pattern for milliseconds
+ *  2013-01-06: HashMap for replacement patterns
  *  2013-01-05: redefine write methods
  *  2012-11-09, Georg Fischer: "Wende" in Germany 23 years ago
  */
@@ -36,7 +37,7 @@ import  java.text.SimpleDateFormat;
  *  @author Dr. Georg Fischer
  */
 public class TimestampFilterStream extends PrintStream {
-    public final static String CVSID = "@(#) $Id: ExpressionReader.java 744 2011-07-26 06:29:20Z gfis $";
+    public final static String CVSID = "@(#) $Id: 8a56fd679ad2c3735b27cd57e55e629195fbeaea $";
 
     /** local copy of the parent stream */
     private static PrintStream tfStream;
@@ -44,29 +45,29 @@ public class TimestampFilterStream extends PrintStream {
     private String encoding;
     /** replacement patterns and their substitutions in consecutive elements */
     private String[] replacements = null;
-    
+
     /** Constructor with output file
      *  @param fileName name of the file to be written
      *  @param enc character set name
      */
-    public TimestampFilterStream(String fileName, String enc) 
+    public TimestampFilterStream(String fileName, String enc)
             throws FileNotFoundException,
             UnsupportedEncodingException {
-        this(fileName, enc, new String[] 
-        		{ " \\d{4}\\-\\d{2}\\-\\d{2} \\d{2}\\:\\d{2}\\:\\d{2}([.,0-9]*)?"
-        		, " yyyy-mm-dd hh:mm:ss"
-				, " rows in \\d+ ms"
-				, " rows in ... ms"
-				}
-        		);
+        this(fileName, enc, new String[]
+                { " \\d{4}\\-\\d{2}\\-\\d{2} \\d{2}\\:\\d{2}\\:\\d{2}[\\.0-9]*"
+                , " yyyy-mm-dd hh:mm:ss"
+                , " rows in \\d+ ms"
+                , " rows in ... ms"
+                }
+                );
     } // Constructor(2)
 
     /** Constructor with file and replacements
      *  @param fileName name of the file to be written
      *  @param enc character set name
-     *  @param replacements replacement patterns and their substitutions in consecutive elements 
+     *  @param replacements replacement patterns and their substitutions in consecutive elements
      */
-    public TimestampFilterStream(String fileName, String enc, String[] replacements) 
+    public TimestampFilterStream(String fileName, String enc, String[] replacements)
             throws FileNotFoundException,
             UnsupportedEncodingException {
         super(fileName, enc);
@@ -75,20 +76,20 @@ public class TimestampFilterStream extends PrintStream {
         this.replacements = replacements;
     } // Constructor(3)
 
-	/** Replaces a set of patterns by constant strings
-	 *  @param str input string where replacements take place
-	 *  @return output string with constants
-	 */
-	private String replacePatterns(String str) {
-		int irepl = 0;
-		String result = str;
-		while (irepl < replacements.length) {
-			result = result.replaceAll(replacements[irepl], replacements[irepl + 1]);
-			irepl += 2;
-		} // while irepl
-		return result;
-	} // replacePatterns
-	
+    /** Replaces a set of patterns by constant strings
+     *  @param str input string where replacements take place
+     *  @return output string with constants
+     */
+    private String replacePatterns(String str) {
+        int irepl = 0;
+        String result = str;
+        while (irepl < replacements.length) {
+            result = result.replaceAll(replacements[irepl], replacements[irepl + 1]);
+            irepl += 2;
+        } // while irepl
+        return result;
+    } // replacePatterns
+
     /** Flushes the stream
      */
     public void flush() {
@@ -111,47 +112,47 @@ public class TimestampFilterStream extends PrintStream {
 
     /** Writes b.length bytes from the specified byte array to this file output stream.
      *  @param b byte array containing the bytes to be written to the stream.
-  	 */
-	public void write(byte[] b) {
-		try {
-			tfStream.write('[');
-			tfStream.write(b);
-			tfStream.write(64);
-			tfStream.write(b);
-			tfStream.write(']');
-		} catch (Exception exc) {
-		}
-	} // write(byte[])
-	
-    /** Writes <em>len</em> bytes from the specified byte array to this file output stream, 
+     */
+    public void write(byte[] b) {
+        try {
+            tfStream.write('[');
+            tfStream.write(b);
+            tfStream.write(64);
+            tfStream.write(b);
+            tfStream.write(']');
+        } catch (Exception exc) {
+        }
+    } // write(byte[])
+
+    /** Writes <em>len</em> bytes from the specified byte array to this file output stream,
      *  starting at offset <em>off</em>.
      *  @param b byte array containing the bytes to be written to the stream.
-     *  @param off offset (0 based) of first byte to be written 
+     *  @param off offset (0 based) of first byte to be written
      *  @param len number of bytes to be written
      */
-	public void write(byte[] b, int off, int len) {
-		try {
-			// tfStream.write('(');
-			byte[] b2 = replacePatterns(new String(b, off, len, encoding)).getBytes(encoding);
-			int len2 = b2.length;
-			int off2 = 0;
-			while (len2 > 0) {
-				tfStream.write(b2[off2 ++]);
-				len2 --;
-			} // while len2
-			// tfStream.write(')');
-		} catch (Exception exc) {
-		}
-	} // write(byte[],int,int)
-    
+    public void write(byte[] b, int off, int len) {
+        try {
+            // tfStream.write('(');
+            byte[] b2 = replacePatterns(new String(b, off, len, encoding)).getBytes(encoding);
+            int len2 = b2.length;
+            int off2 = 0;
+            while (len2 > 0) {
+                tfStream.write(b2[off2 ++]);
+                len2 --;
+            } // while len2
+            // tfStream.write(')');
+        } catch (Exception exc) {
+        }
+    } // write(byte[],int,int)
+
     /** Writes b.length bytes from the specified byte array to this file output stream.
-	*/
-	public void write(int b) {
-		try {
-			tfStream.write(b);
-			tfStream.write('.');
-		} catch (Exception exc) {
-		}
-	} // write(byte)
-	
+    */
+    public void write(int b) {
+        try {
+            tfStream.write(b);
+            tfStream.write('.');
+        } catch (Exception exc) {
+        }
+    } // write(byte)
+
 } // TimestampFilterStream

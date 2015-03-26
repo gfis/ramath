@@ -236,40 +236,6 @@ public class MatrixExhauster {
         } // while meter
     } // elem2
     //==========================================================
-    /** Show the generated matrix, and how it preserves the power sum property
-     *  @param amat the {@link Matrix} to be shown
-     *  @param vect1 initial {@link Vector} to be used in the preservation chain
-     *  @param fact factor of the chained polynomial
-     */
-    private void showMatrix(Matrix amat, Vector vect1, int fact, int left, int right) {
-        int maxIter = 8;
-        int alen    = vect1.size();
-        ArrayList<Vector> chain = amat.preservedPowerSums(alen - 1, left, right, vect1, maxIter);
-        if (chain.size() >= 2) { // == maxIter) {
-            System.out.print(""
-                    + "chain " + chain.size()
-                    + ", fact " + fact + " "
-                    + String.format("%-32s ", amat.toString("(,)")) 
-            /*
-                    + String.format(" %-24s", (new PolyMatrix(amat)).multiply(new PolyVector(alen, "a"))
-                            .powerSum(alen - 1, alen - 1, 1).toString().replaceAll("\\s", ""))
-            */
-                    + vect1.toString("(,)")
-                    );
-            int maxShow = maxIter - (alen - 1 == 2 ? 5 : 0);
-            if (maxShow > chain.size()) {
-                maxShow = chain.size();
-            }
-            for (int ichain = 0; ichain < maxShow; ichain ++) {
-                System.out.print(" => " + chain.get(ichain).toString("(,)"));
-            } // for ichain
-            if (chain.size() < maxIter) { // premature end
-                System.out.print(" ?? " + amat.multiply(chain.get(chain.size() - 1)).toString("(,)"));
-            } // premature end
-            System.out.println();
-        } // preserved > 1
-    } // showMatrix
-
     /** Generate 3x3 matrixes for Pythagorean triples
      */
     public void m2() {
@@ -313,7 +279,7 @@ public class MatrixExhauster {
                             , m21, m22, m23
                             , m31, m32, m33
                             } );
-                    showMatrix(amat, vect1, 0, 2, 1);
+                    amat.printPreservedChain(vect1, 0, 2, 1);
                 } // if == s3*s3
             } // if == r3p2
 
@@ -401,7 +367,7 @@ public class MatrixExhauster {
                     , m21, m22, m23
                     , m31, m32, m33
                     } );
-            showMatrix(amat, vect1, fact, 2, 1);
+            amat.printPreservedChain(vect1, fact, 2, 1);
         } // preserves once
 
         } // if r3 > 0
@@ -518,7 +484,7 @@ public class MatrixExhauster {
                     , m31, m32, m33, m34
                     , m41, m42, m43, m44
                     } );
-            showMatrix(amat, vect1, fact, 3, 1);
+            amat.printPreservedChain(vect1, fact, 3, 1);
         } // preserves once
 
         } // if r4 > 0
@@ -638,7 +604,7 @@ public class MatrixExhauster {
                     , m31, m32, m33, m34
                     , m41, m42, m43, m44
                     } );
-            showMatrix(amat, vect1, fact, 2, 2);
+            amat.printPreservedChain(vect1, fact, 2, 2);
         } // preserves once
 
         } // if r4 > 0
@@ -758,7 +724,7 @@ public class MatrixExhauster {
                     , m31, m32, m33, m34
                     , m41, m42, m43, m44
                     } );
-            showMatrix(amat, vect1, fact, 4, 0);
+            amat.printPreservedChain(vect1, fact, 4, 0);
         } // preserves once
 
         } // if r4 > 0
@@ -845,7 +811,7 @@ public class MatrixExhauster {
                             , m31, m32, m33, m34
                             , m41, m42, m43, m44
                             } );
-                    showMatrix(amat, vect1, 0, 3, 1);
+                    amat.printPreservedChain(vect1, 0, 3, 1);
                 } // if == s4*s4*s4
             } // if == r4p3
 

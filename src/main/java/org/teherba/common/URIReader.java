@@ -1,5 +1,5 @@
 /*  Reader for a URL or data URI source
-    @(#) $Id: URIReader.java 860 2012-01-17 11:58:39Z gfis $
+    @(#) $Id: 662096ff3e2d74af4f150ad456ad013960a4ae70 $
     2013-08-14: URL encoding by URI(3 parameter) constructor
     2013-01-04: gopher repaired
     2011-08-06: extended to InputStream interface
@@ -69,7 +69,7 @@ import  org.apache.log4j.Logger;
  *  @author Dr. Georg Fischer
  */
 public class URIReader {
-    public final static String CVSID = "@(#) $Id: URIReader.java 860 2012-01-17 11:58:39Z gfis $";
+    public final static String CVSID = "@(#) $Id: 662096ff3e2d74af4f150ad456ad013960a4ae70 $";
 
     /** log4j logger (category) */
     private Logger log;
