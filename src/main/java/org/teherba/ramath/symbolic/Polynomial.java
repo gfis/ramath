@@ -506,23 +506,25 @@ public class Polynomial implements Cloneable, Serializable {
      */
     public BigInteger isPowerSum() {
         BigInteger result = null;
-        int exp          = 0;
-        boolean first    = true;
-        boolean busy     = true;
+        int exp           = 0;
+        boolean first     = true;
+        boolean busy      = true;
         Iterator<String> iter1 = this.keySet().iterator();
         while (busy && iter1.hasNext()) {
             Monomial mono = this.get(iter1.next());
             if (mono.size() != 1) { // =0 : hasConstant, >1: more than 1 variable
-                busy = false;
+                busy   = false;
+                result = null;
             } else { // a single variable
                 if (first) {
                     first  = false;
-                    result = mono.getCoefficient();
+                    result = mono.getCoefficient().abs();
                     exp    = mono.getExponent(mono.firstName());
                 } else { // ! first
-                    if (! result.equals(mono.getCoefficient())
+                    if (! result.equals(mono.getCoefficient().abs())
                             || exp !=   mono.getExponent(mono.firstName())) {
-                        busy = false;
+                        busy   = false;
+                        result = null;
                     }
                 } // ! first
             } // a single variable
@@ -1916,10 +1918,11 @@ x^2 + 3*x^3 + 2*x^4
             } else { // some option
                 if (false) {
 
-                } else if (opt.startsWith("-transp")) {
+                } else if (opt.startsWith("-affine")) {
                     poly1 = poly1.parse(args[iarg ++]);
-                    System.out.println("getTransposableClasses(\"" + poly1.toString() + "\") = "
-                            + poly1.getTransposableClasses().toString());
+                    poly2 = poly2.parse(args[iarg ++]);
+                    System.out.println("(\"" + poly1.toString() + "\").affineMap(\""    + poly2.toString() + "\") = "
+                            + poly1.affineMap   (poly2));
 
                 } else if (opt.startsWith("-equiv")) {
                     poly1 = poly1.parse(args[iarg ++]);
@@ -1931,58 +1934,6 @@ x^2 + 3*x^3 + 2*x^4
                     poly1 = poly1.parse(ereader.read(args[iarg ++]));
                     System.out.println(poly1.toString());
                     poly1.printProperties();
-
-                } else if (opt.startsWith("-hiter")) {
-                    poly1 = poly1.parse(args[iarg ++]);
-                    VariableMap vmap = poly1.getExpressionMap("1", true);
-                    Iterator<String> viter = vmap.keySet().iterator();
-                    while (viter.hasNext()) {
-                        String vname = viter.next();
-                        Monomial highTerms[] = poly1.getHighTerms(vname);
-                        System.out.print("(\"" + poly1.toString() + "\").getHighTerms(\"" + vname + "\") = ");
-                        System.out.println(highTerms[0].toString() + ", " + highTerms[1].toString());
-                    } // while iter1
-
-                } else if (opt.startsWith("-affine")) {
-                    poly1 = poly1.parse(args[iarg ++]);
-                    poly2 = poly2.parse(args[iarg ++]);
-                    System.out.println("(\"" + poly1.toString() + "\").affineMap(\""    + poly2.toString() + "\") = "
-                            + poly1.affineMap   (poly2));
-
-                } else if (opt.startsWith("-map")) {
-                    poly1 = poly1.parse(args[iarg ++]);
-                    poly2 = poly2.parse(args[iarg ++]);
-                    System.out.println("(\"" + poly1.toString() + "\").isMappableTo(\"" + poly2.toString() + "\") = "
-                            + poly1.isMappableTo(poly2));
-
-                } else if (opt.startsWith("-var")) { // getVariablePowers and groupBy
-                    String varStr = args[iarg ++];
-                    String[] vars = varStr.split("\\W"); // non-word characters
-                    poly1 = poly1.parse(ereader.read(args[iarg ++]));
-                    System.out.println(poly1.toString());
-                    Monomial monomial4 = new Monomial(vars);
-                    System.out.println("getVariablePowers(" + varStr + ")="   + poly1.getVariablePowers(monomial4));
-                    System.out.println(          "groupBy(" + varStr + ")=\n" + poly1.groupBy          (monomial4).toList(false));
-
-                } else if (opt.startsWith("-spoly")) {
-                    exprs = ereader.getArguments(iarg, args);
-                    poly1 = poly1.parse(exprs[0]);
-                    poly2 = poly2.parse(exprs[1]);
-                    System.out.println("S(" + poly1.toString() + ", " + poly2.toString() + ") = "
-                            + poly1.s_Polynomial(poly2).toString());
-
-                } else if (opt.startsWith("-mdiv")) {
-                    exprs = ereader.getArguments(iarg, args);
-                    ipoly = 0;
-                    poly1 = (new PolynomialParser()).parseFrom(exprs[ipoly]);
-                    ipoly ++;
-                    polys = new ArrayList<Polynomial>(16);
-                    while (ipoly < exprs.length) {
-                        polys.add((new PolynomialParser()).parseFrom(exprs[ipoly]));
-                        ipoly ++;
-                    } // while ipoly
-                    System.out.println("multiDivide(" + poly1.toString() + ") = "
-                            + poly1.multiDivide(polys, true).toString());
 
                 } else if (opt.startsWith("-groebner")) {
                     exprs = ereader.getArguments(iarg, args);
@@ -2002,11 +1953,67 @@ x^2 + 3*x^3 + 2*x^4
                         ipoly ++;
                     } // while ipoly
 
+                } else if (opt.startsWith("-hiter")) {
+                    poly1 = poly1.parse(args[iarg ++]);
+                    VariableMap vmap = poly1.getExpressionMap("1", true);
+                    Iterator<String> viter = vmap.keySet().iterator();
+                    while (viter.hasNext()) {
+                        String vname = viter.next();
+                        Monomial highTerms[] = poly1.getHighTerms(vname);
+                        System.out.print("(\"" + poly1.toString() + "\").getHighTerms(\"" + vname + "\") = ");
+                        System.out.println(highTerms[0].toString() + ", " + highTerms[1].toString());
+                    } // while iter1
+
+                } else if (opt.startsWith("-map")) {
+                    poly1 = poly1.parse(args[iarg ++]);
+                    poly2 = poly2.parse(args[iarg ++]);
+                    System.out.println("(\"" + poly1.toString() + "\").isMappableTo(\"" + poly2.toString() + "\") = "
+                            + poly1.isMappableTo(poly2));
+
+                } else if (opt.startsWith("-mdiv")) {
+                    exprs = ereader.getArguments(iarg, args);
+                    ipoly = 0;
+                    poly1 = (new PolynomialParser()).parseFrom(exprs[ipoly]);
+                    ipoly ++;
+                    polys = new ArrayList<Polynomial>(16);
+                    while (ipoly < exprs.length) {
+                        polys.add((new PolynomialParser()).parseFrom(exprs[ipoly]));
+                        ipoly ++;
+                    } // while ipoly
+                    System.out.println("multiDivide(" + poly1.toString() + ") = "
+                            + poly1.multiDivide(polys, true).toString());
+
+                } else if (opt.startsWith("-psum")) {
+                    poly1 = poly1.parse(args[iarg ++]);
+                    System.out.println("(\"" + poly1.toString() + "\").isPowerSum() = "
+                            + poly1.isPowerSum());
+
                 } else if (opt.startsWith("-rest")) { // factor, poly
                     String factor = args[iarg ++];
                     poly1 = poly1.parse(args[iarg ++]);
                     System.out.println("getRest(" + poly1.toString() + ", " + factor + ") -> "
                             +  poly1.getRest(new BigInteger(factor)).toString());
+
+                } else if (opt.startsWith("-spoly")) {
+                    exprs = ereader.getArguments(iarg, args);
+                    poly1 = poly1.parse(exprs[0]);
+                    poly2 = poly2.parse(exprs[1]);
+                    System.out.println("S(" + poly1.toString() + ", " + poly2.toString() + ") = "
+                            + poly1.s_Polynomial(poly2).toString());
+
+                } else if (opt.startsWith("-transp")) {
+                    poly1 = poly1.parse(args[iarg ++]);
+                    System.out.println("getTransposableClasses(\"" + poly1.toString() + "\") = "
+                            + poly1.getTransposableClasses().toString());
+
+                } else if (opt.startsWith("-var")) { // getVariablePowers and groupBy
+                    String varStr = args[iarg ++];
+                    String[] vars = varStr.split("\\W"); // non-word characters
+                    poly1 = poly1.parse(ereader.read(args[iarg ++]));
+                    System.out.println(poly1.toString());
+                    Monomial monomial4 = new Monomial(vars);
+                    System.out.println("getVariablePowers(" + varStr + ")="   + poly1.getVariablePowers(monomial4));
+                    System.out.println(          "groupBy(" + varStr + ")=\n" + poly1.groupBy          (monomial4).toList(false));
 
                 } else {
                     System.err.println("invalid option " + opt);

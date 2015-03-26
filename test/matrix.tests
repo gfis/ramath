@@ -8,6 +8,25 @@ URL=http://localhost:8080/ramath/servlet
 # (2) Adjust the following line: default commandline arguments
 ARGS=
 #======================================================================
+
+# Symbolic Matrix Algebra
+PACKAGE=org.teherba.ramath.symbolic
+
+TEST S00 PolyVector from expression
+CALL PolyVector
+
+TEST S01 PolyVector inner product
+CALL PolyVector -read "a-b" "a+b" "c+d"
+
+TEST S02 PolyMatrix identity(4)
+CALL PolyMatrix 4
+
+TEST S03 PolyMatrix determinant(3), (4)
+CALL PolyMatrix
+
+TEST S04 PolyMatrix characteristic polynomial
+CALL PolyMatrix -char 3
+
 #-------------------------
 # MatrixExhauster
 PACKAGE=org.teherba.ramath
@@ -30,13 +49,13 @@ CALL MatrixExhauster v2 -l 6
 TEST MX06 v2 9
 CALL MatrixExhauster v2 -l 9
 
-TEST MX07 pEC331 
+TEST MX07            pEC331 
 CALL MatrixExhauster pEC331 -l 4
 
-TEST MX08 pEC331 
+TEST MX08            pEC331 
 CALL MatrixExhauster pEC331 -l 5
 
-TEST MX09 pEC331 
+TEST MX09            pEC331 
 CALL MatrixExhauster pEC331 -l 6
 # finds chain 8, fact 27 [[5,5,0,-3][3,0,-5,5][0,3,5,-5][5,5,-3,0]] [3,4,5,6] => [17,14,7,20] => [95,116,-23,134] => [653,1070,-437,1124] => [5243,9764,-4595,9926] => [45257,88334,-43313,88820] => [401495,796436,-395663,797894] => [3595973,7172270,-3578477,7176644] => [32311283,64563524,-32258795,64576646]
 #    3*a^3   + 3*b^3    + 3*c^3    - 3*d^3
@@ -44,6 +63,16 @@ CALL MatrixExhauster pEC331 -l 6
 # + 40*a*d^2 + 40*b^2*c - 40*b^2*d + 40*b*d^2
 # + 50*a*b*c - 50*a*c*d - 50*b*c*d - 50*a*b*d
                     
+TEST MX10            pEC322 
+CALL MatrixExhauster pEC322 -l 4
 
-TEST MX10 pEC331 
-CALL MatrixExhauster pEC331 -l 9
+TEST MX11            pEC322 
+CALL MatrixExhauster pEC322 -l 6
+# finds chain 8, fact 27 [[5,5,0,-3][3,0,5,5][0,-3,5,5][5,5,3,0]] [9,10,1,12] => [59,92,35,98] => [461,842,389,860] => ...
+
+TEST MX40            pEC340
+CALL MatrixExhauster pEC340 -l 4
+
+TEST MX41            pEC341 
+CALL MatrixExhauster pEC341 -l 6
+

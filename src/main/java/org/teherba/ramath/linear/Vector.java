@@ -54,24 +54,24 @@ public class Vector implements Cloneable, Serializable {
     /** No-args Constructor
      */
     public Vector() {
-        vecLen = 0;
+        this.vecLen = 0;
     } // no-args Constructor
 
     /** Constructor for a Vector of some length
      *  @param numElems number of elements
      */
     public Vector(int numElems) {
-        vecLen = numElems;
-        vector = new /*Type*/int[vecLen];
+        this.vecLen = numElems;
+        this.vector = new /*Type*/int[this.vecLen];
     } // Constructor(int)
 
     /** Constructor for a Vector from a tuple of integers
      *  @param tuple array of integers
      */
     public Vector(int[] tuple) {
-        vecLen = tuple.length;
-        vector = new /*Type*/int[vecLen];
-        for (int itup = 0; itup < vecLen; itup ++) {
+        this.vecLen = tuple.length;
+        this.vector = new /*Type*/int[this.vecLen];
+        for (int itup = 0; itup < this.vecLen; itup ++) {
             this.vector[itup] = (/*Type*/int) tuple[itup];
         } // for itup
     } // Constructor(int[])
@@ -84,23 +84,50 @@ public class Vector implements Cloneable, Serializable {
     public Vector(int numElems, int iarg, String[] args) {
         this(numElems);
         int ivect = 0;
-        while (ivect < vecLen) {
-            vector[ivect] = 0;
+        while (ivect < this.vecLen) {
+            this.vector[ivect] = 0;
             try {
-                vector[ivect] = Integer.parseInt(args[iarg ++]);
+                this.vector[ivect] = Integer.parseInt(args[iarg ++]);
             } catch (Exception exc) {
             }
             ivect ++;
         } // while ivect
     } // Constructor(3)
 
+    /** Constructor for a Vector from an array of integers
+     *  @param numElems number of elements
+     *  @param values array of integers as strings
+     */
+    public Vector(int numElems, String[] values) {
+        this(numElems, 0, values);
+    } // Constructor(3)
+
+    /** Constructor for a Vector from a vector expression
+     *  @param vectExpr an array of comma-separated elements in square brackets,
+     *  for example "[3, 4, 5]"
+     */
+    public Vector(String vectExpr) {
+        String[] values = vectExpr.replaceAll("[\\[\\]\\s]+","").split("\\,");
+        this.vecLen = values.length;
+        this.vector = new /*Type*/int[this.vecLen];
+        int ivect = 0;
+        while (ivect < this.vecLen) {
+            this.vector[ivect] = 0;
+            try {
+                this.vector[ivect] = Integer.parseInt(values[ivect]);
+            } catch (Exception exc) {
+            }
+            ivect ++;
+        } // while ivect
+    } // Constructor(String)
+
     /** Deep copy of the Vector and its properties.
      *  @return independant copy of the Vector
      */
     public Vector clone() {
-        Vector result = new Vector(vecLen);
-        for (int ielem = 0; ielem < vecLen; ielem ++) {
-            result.vector[ielem] = vector[ielem];
+        Vector result = new Vector(this.vecLen);
+        for (int ielem = 0; ielem < this.vecLen; ielem ++) {
+            result.vector[ielem] = this.vector[ielem];
         } // for ielem
         return result;
     } // clone
@@ -109,9 +136,9 @@ public class Vector implements Cloneable, Serializable {
      *  @return independant copy of the Vector
      */
     public Vector sort() {
-        int[] result = new int[vector.length];
-        for (int ielem = 0; ielem < vecLen; ielem ++) {
-            result[ielem] = vector[ielem];
+        int[] result = new int[this.vector.length];
+        for (int ielem = 0; ielem < this.vecLen; ielem ++) {
+            result[ielem] = this.vector[ielem];
         } // for ielem
         Arrays.sort(result);
         return new Vector(result);
@@ -152,7 +179,7 @@ public class Vector implements Cloneable, Serializable {
      *  @return a small number
      */
     public int size() {
-        return vecLen;
+        return this.vecLen;
     } // size
 
     /** Returns an element of the Vector
@@ -160,7 +187,7 @@ public class Vector implements Cloneable, Serializable {
      *  @return a small number
      */
     public /*Type*/int get(int icol) {
-        return vector[icol];
+        return this.vector[icol];
     } // get
 
     /** Sets an element of the Vector
@@ -168,7 +195,7 @@ public class Vector implements Cloneable, Serializable {
      *  @param value a small number
      */
     public void set(int icol, int value) {
-        vector[icol] = value;
+        this.vector[icol] = value;
     } // set
 
     /*-------------- lightweight derived methods -----------------------------*/
@@ -193,14 +220,14 @@ public class Vector implements Cloneable, Serializable {
      */
     public boolean equals(Vector vect2) {
         boolean result = true;
-        if (vect2.size() == vecLen) {
+        if (vect2.size() == this.vecLen) {
             int ielem = 0;
-            while (ielem < vecLen && this.vector[ielem] == vect2.vector[ielem]) {
+            while (ielem < this.vecLen && this.vector[ielem] == vect2.vector[ielem]) {
                 ielem ++;
             } // while ielem
-            result = ielem == vecLen; // false if the loop stopped before because of a difference
+            result = ielem == this.vecLen; // false if the loop stopped before because of a difference
         } else {
-            throw new IllegalArgumentException("cannot compare two vectors of different size " + vecLen);
+            throw new IllegalArgumentException("cannot compare two vectors of different size " + this.vecLen);
         }
         return result;
     } // equals
@@ -211,7 +238,7 @@ public class Vector implements Cloneable, Serializable {
     public boolean isMonotone() {
         boolean result = true;
         int ielem = 0;
-        while (result && ielem < vecLen) {
+        while (result && ielem < this.vecLen) {
             result = ielem == this.vector[ielem];
             ielem ++;
         } // while ielem
@@ -225,7 +252,7 @@ public class Vector implements Cloneable, Serializable {
     public boolean isConstant(int value) {
         boolean result = true;
         int ielem = 0;
-        while (result && ielem < vecLen) {
+        while (result && ielem < this.vecLen) {
             result = value == this.vector[ielem];
             ielem ++;
         } // while ielem
@@ -269,16 +296,16 @@ public class Vector implements Cloneable, Serializable {
     } // gcd()
 
     /** Greatest common divisor of some array's elements
-     *  @param vector the array
+     *  @param vect the array
      *  @return an integer >= 1
      */
-    public static int gcd(int[] vector) {
-        int result = Math.abs(vector[0]);
-        int vecLen = vector.length;
+    public static int gcd(int[] vect) {
+        int result = Math.abs(vect[0]);
+        int vlen = vect.length;
         int ielem = 1;
-        while (result > 1 && ielem < vecLen) {
+        while (result > 1 && ielem < vlen) {
             int p = result;
-            int q = vector[ielem];
+            int q = vect[ielem];
             while (q != 0) {
                 int temp = q;
                 q = p % q;
@@ -303,15 +330,16 @@ public class Vector implements Cloneable, Serializable {
 
     /** Determine the greatest common divisor of some array's elements,
      *  and divide all elements by this gcd if it is > 1
+     *  @param vect extract the GCD from this array
      *  @return an integer >= 1
      */
-    public static int extractGcd(int[] vector) {
-        int result = Vector.gcd(vector);
+    public static int extractGcd(int[] vect) {
+        int result = Vector.gcd(vect);
         if (result > 1) {
-            int vecLen = vector.length;
+            int vlen = vect.length;
             int ielem = 0;
-            while (ielem < vecLen) {
-                vector[ielem] /= result;
+            while (ielem < vlen) {
+                vect[ielem] /= result;
                 ielem ++;
             } // while ielem
         } // if gcd
@@ -322,13 +350,13 @@ public class Vector implements Cloneable, Serializable {
      *  @return true if they are coprime, false otherwise
      */
     public boolean isCoprime() {
-        boolean result = vector[0] != 0; // assume success
+        boolean result = this.vector[0] != 0; // assume success
         int ielem = 1;
-        while (result && ielem < vecLen) {
-            result = vector[ielem] != 0;
+        while (result && ielem < this.vecLen) {
+            result = this.vector[ielem] != 0;
             int kelem = 0;
             while (result && kelem < ielem) {
-                result = gcd(vector[ielem], vector[kelem]) <= 1;
+                result = gcd(this.vector[ielem], this.vector[kelem]) <= 1;
                 kelem ++;
             } // while kelem
             ielem ++;
@@ -343,11 +371,11 @@ public class Vector implements Cloneable, Serializable {
     public boolean isTrivial() {
         boolean result = vector[0] != 0; // the final result is negated
         int ielem = 1;
-        while (result && ielem < vecLen) {
-            result = vector[ielem] != 0;
+        while (result && ielem < this.vecLen) {
+            result = this.vector[ielem] != 0;
             int kelem = 0;
             while (result && kelem < ielem) {
-                result = vector[ielem] != vector[kelem];
+                result = this.vector[ielem] != this.vector[kelem];
                 kelem ++;
             } // while kelem
             ielem ++;
@@ -361,10 +389,10 @@ public class Vector implements Cloneable, Serializable {
      */
     public boolean lessLast(Vector vect2) {
         boolean result = true;
-        if (vect2.size() == vecLen) {
-            result = Math.abs(this.vector[vecLen - 1]) < Math.abs(vect2.vector[vecLen - 1]);
+        if (vect2.size() == this.vecLen) {
+            result = Math.abs(this.vector[this.vecLen - 1]) < Math.abs(vect2.vector[this.vecLen - 1]);
         } else {
-            throw new IllegalArgumentException("cannot compare two vectors of different size " + vecLen);
+            throw new IllegalArgumentException("cannot compare two vectors of different size " + this.vecLen);
         }
         return result;
     } // lessLast
@@ -388,12 +416,12 @@ public class Vector implements Cloneable, Serializable {
         long leftSum  = 0L;
         long rightSum = 0L;
         long temp = 0;
-        if (left + right == vecLen) { 
-        	// check for trivial case: 2 elements are equal
+        if (left + right == this.vecLen) {
+            // check for trivial case: 2 elements are equal
             int isum = 0;
-            for (isum = left; isum < vecLen; isum ++) {
+            for (isum = left; isum < this.vecLen; isum ++) {
                 for (int lsum = 0; lsum < left; lsum ++) {
-                    if (vector[isum] == vector[lsum]) {
+                    if (this.vector[isum] == this.vector[lsum]) {
                         return false;
                     }
                 } // for lsum
@@ -405,46 +433,48 @@ public class Vector implements Cloneable, Serializable {
             switch (exp) {
                 case 2:
                     while (isum < left) {
-                        temp = vector[isum];
+                        temp = this.vector[isum];
                         leftSum  += temp * temp;
                         isum ++;
                     } // while < left
-                    while (isum < vecLen) {
-                        temp = vector[isum];
+                    while (isum < this.vecLen) {
+                        temp = this.vector[isum];
                         rightSum += temp * temp;
                         isum ++;
-                    } // while < vecLen
+                    } // while < this.vecLen
                     break;
                 case 3:
                     while (isum < left) {
-                        temp = vector[isum];
+                        temp = this.vector[isum];
                         leftSum  += temp * temp * temp;
                         isum ++;
                     } // while < left
-                    while (isum < vecLen) {
-                        temp = vector[isum];
+                    while (isum < this.vecLen) {
+                        temp = this.vector[isum];
                         rightSum += temp * temp * temp;
                         isum ++;
-                    } // while < vecLen
+                    } // while < this.vecLen
                     break;
                 default:
                     while (isum < left) {
-                        leftSum += pow(vector[isum], exp);
+                        leftSum += pow(this.vector[isum], exp);
                         isum ++;
                     } // while < left
-                    while (isum < vecLen) {
-                        rightSum += pow(vector[isum], exp);
+                    while (isum < this.vecLen) {
+                        rightSum += pow(this.vector[isum], exp);
                         isum ++;
-                    } // while < vecLen
+                    } // while < this.vecLen
                     break;
             } // switch exp
         } else {
-            throw new IllegalArgumentException("cannot test a vector with the wrong size " + vecLen);
+            throw new IllegalArgumentException("cannot test a vector with the wrong size " + this.vecLen);
         }
         boolean result = leftSum == rightSum;
+    /*
         if (! result &&              left - 1 >= right + 1) {
-        	result = isPowerSum(exp, left - 1,   right + 1);
+            result = isPowerSum(exp, left - 1,   right + 1);
         }
+    */
         return result;
     } // isPowerSum
 
@@ -460,53 +490,53 @@ public class Vector implements Cloneable, Serializable {
      *  @param exp exponent
      *  @param left  number of leading  elements which represent the left  side
      *  @param right number of trailing elements which represent the right side
-     *  @return sum of left elements raised to exp minus 
+     *  @return sum of left elements raised to exp minus
      *  the sum of right elements raised to exp
      */
     public long powerSum(int exp, int left, int right) {
         long leftSum  = 0L;
         long rightSum = 0L;
         long temp = 0;
-        if (left + right == vecLen) { 
+        if (left + right == this.vecLen) {
             int isum = 0;
             switch (exp) {
                 case 2:
                     while (isum < left) {
-                        temp = vector[isum];
+                        temp = this.vector[isum];
                         leftSum  += temp * temp;
                         isum ++;
                     } // while < left
-                    while (isum < vecLen) {
-                        temp = vector[isum];
+                    while (isum < this.vecLen) {
+                        temp = this.vector[isum];
                         rightSum += temp * temp;
                         isum ++;
-                    } // while < vecLen
+                    } // while < this.vecLen
                     break;
                 case 3:
                     while (isum < left) {
-                        temp = vector[isum];
+                        temp = this.vector[isum];
                         leftSum  += temp * temp * temp;
                         isum ++;
                     } // while < left
-                    while (isum < vecLen) {
-                        temp = vector[isum];
+                    while (isum < this.vecLen) {
+                        temp = this.vector[isum];
                         rightSum += temp * temp * temp;
                         isum ++;
-                    } // while < vecLen
+                    } // while < this.vecLen
                     break;
                 default:
                     while (isum < left) {
-                        leftSum += pow(vector[isum], exp);
+                        leftSum += pow(this.vector[isum], exp);
                         isum ++;
                     } // while < left
-                    while (isum < vecLen) {
-                        rightSum += pow(vector[isum], exp);
+                    while (isum < this.vecLen) {
+                        rightSum += pow(this.vector[isum], exp);
                         isum ++;
-                    } // while < vecLen
+                    } // while < this.vecLen
                     break;
             } // switch exp
         } else {
-            throw new IllegalArgumentException("cannot sum a vector with the wrong size " + vecLen);
+            throw new IllegalArgumentException("cannot sum a vector with the wrong size " + this.vecLen);
         }
         return leftSum - rightSum;
     } // powerSum
@@ -517,7 +547,7 @@ public class Vector implements Cloneable, Serializable {
      */
     public String toString() {
         StringBuffer result = new StringBuffer(256);
-        for (int ielem = 0; ielem < vecLen; ielem ++) {
+        for (int ielem = 0; ielem < this.vecLen; ielem ++) {
             result.append(String.format(" %3d", vector[ielem]));
         } // for ielem
         return result.toString();
@@ -534,19 +564,19 @@ public class Vector implements Cloneable, Serializable {
             if (format.indexOf(sep) >= 0) {
                 result.append('[');
             }
-            for (int icol = 0; icol < vecLen; icol ++) {
+            for (int icol = 0; icol < this.vecLen; icol ++) {
                 if (icol > 0) {
                     result.append(sep);
                 }
-                result.append(String.valueOf(vector[icol]));
+                result.append(String.valueOf(this.vector[icol]));
             } // for icol
             if (format.indexOf(sep) >= 0) {
                 result.append(']');
             }
         } else {
-            for (int icol = 0; icol < vecLen; icol ++) {
+            for (int icol = 0; icol < this.vecLen; icol ++) {
                 // result.append(' ');
-                result.append(String.format(" %3d", vector[icol]));
+                result.append(String.format(" %3d", this.vector[icol]));
             } // for icol
             result.append(newline);
         }
@@ -564,11 +594,11 @@ public class Vector implements Cloneable, Serializable {
      *  @return the minimum value
      */
     public int min() {
-        int result = vector[0];
+        int result = this.vector[0];
         int icol = 1;
-        while (icol < vecLen) {
-            if (vector[icol] < result) {
-                result = vector[icol];
+        while (icol < this.vecLen) {
+            if (this.vector[icol] < result) {
+                result = this.vector[icol];
             }
             icol ++;
         } // while icol
@@ -579,11 +609,11 @@ public class Vector implements Cloneable, Serializable {
      *  @return the maximum value
      */
     public int max() {
-        int result = vector[0];
+        int result = this.vector[0];
         int icol = 1;
-        while (icol < vecLen) {
-            if (vector[icol] > result) {
-                result = vector[icol];
+        while (icol < this.vecLen) {
+            if (this.vector[icol] > result) {
+                result = this.vector[icol];
             }
             icol ++;
         } // while icol
@@ -594,10 +624,10 @@ public class Vector implements Cloneable, Serializable {
      *  @return sum of absolute values
      */
     public int absSum() {
-        int result = Math.abs(vector[0]);
+        int result = Math.abs(this.vector[0]);
         int icol = 1;
-        while (icol < vecLen) {
-            result += Math.abs(vector[icol]);
+        while (icol < this.vecLen) {
+            result += Math.abs(this.vector[icol]);
             icol ++;
         } // while icol
         return result;
@@ -609,8 +639,8 @@ public class Vector implements Cloneable, Serializable {
     public int lastBitSum() {
         int result = 0;
         int icol = 0;
-        while (icol < vecLen) {
-            result += vector[icol] & 1;
+        while (icol < this.vecLen) {
+            result += this.vector[icol] & 1;
             icol ++;
         } // while icol
         return result;
@@ -625,14 +655,14 @@ public class Vector implements Cloneable, Serializable {
      */
     public int multiply(Vector vect2) {
         int result = 0;
-        if (vect2.size() == vecLen) {
+        if (vect2.size() == this.vecLen) {
             int ielem = 0;
-            while (ielem < vecLen) {
+            while (ielem < this.vecLen) {
                 result += this.vector[ielem] * vect2.vector[ielem];
                 ielem ++;
             } // while ielem
         } else {
-            throw new IllegalArgumentException("cannot multiply two vectors of different size " + vecLen);
+            throw new IllegalArgumentException("cannot multiply two vectors of different size " + this.vecLen);
         }
         return result;
     } // multiply
@@ -643,7 +673,7 @@ public class Vector implements Cloneable, Serializable {
      */
     public Vector divideBy(int divisor) {
         int ielem = 0;
-        while (ielem < vecLen) {
+        while (ielem < this.vecLen) {
             this.vector[ielem] /= divisor;
             ielem ++;
         } // while ielem
@@ -658,14 +688,14 @@ public class Vector implements Cloneable, Serializable {
      */
     public ArrayList<ArrayList<Vector>> divide(Vector vect2, int maxDigit) {
         ArrayList<ArrayList<Vector>> result = new ArrayList<ArrayList<Vector>>(4);
-        if (vect2.size() == vecLen) {
+        if (vect2.size() == this.vecLen) {
             int min2 = vect2.min();
-            for (int icol = 0; icol < vecLen; icol ++) {
+            for (int icol = 0; icol < this.vecLen; icol ++) {
                 int target = this.vector[icol];
                 int base = target / min2 + 1;
                 base = maxDigit;
                 ArrayList<Vector> subarray = new ArrayList<Vector>(64);
-                IntegerExpander meter = new IntegerExpander(vecLen, base);
+                IntegerExpander meter = new IntegerExpander(this.vecLen, base);
                 while (meter.hasNext()) {
                     Vector vect3 = new Vector(meter.next());
                     if (debug > 0) {
@@ -681,7 +711,7 @@ public class Vector implements Cloneable, Serializable {
                 result.add(subarray);
             } // for icol
         } else {
-            throw new IllegalArgumentException("cannot divide two vectors of different size " + vecLen);
+            throw new IllegalArgumentException("cannot divide two vectors of different size " + this.vecLen);
         }
         return result;
     } // divide
@@ -698,16 +728,16 @@ public class Vector implements Cloneable, Serializable {
         ArrayList<Vector> result = new ArrayList<Vector>(64);
         int x0, x1, x2, x3, x4;
         int sum0, sum1, sum2, sum3, sum4;
-        int maxElem = (- minElem > vecLen) ? - minElem : vecLen;
-        switch (vecLen) {
+        int maxElem = (- minElem > this.vecLen) ? - minElem : this.vecLen;
+        switch (this.vecLen) {
             case 3:
                 x0 = minElem;
-                while (x0 <= maxElem && (sum0 = x0 * vector[0]) <= target) {
+                while (x0 <= maxElem && (sum0 = x0 * this.vector[0]) <= target) {
                     x1 = minElem;
-                    while (x1 <= maxElem && (sum1 = x1 * vector[1] + sum0) <= target) {
+                    while (x1 <= maxElem && (sum1 = x1 * this.vector[1] + sum0) <= target) {
                         sum2 = target - sum1;
-                        x2 = sum2 / vector[2];
-                        if (x2 <= maxElem && x2 * vector[2] == sum2) { // divides evenly
+                        x2 = sum2 / this.vector[2];
+                        if (x2 <= maxElem && x2 * this.vector[2] == sum2) { // divides evenly
                             result.add(new Vector(new int[]{ x0, x1, x2     }));
                         } // if x2
                         x1 ++;
@@ -718,14 +748,14 @@ public class Vector implements Cloneable, Serializable {
             default:
             case 4:
                 x0 = minElem;
-                while (x0 <= maxElem && (sum0 = x0 * vector[0]) <= target) {
+                while (x0 <= maxElem && (sum0 = x0 * this.vector[0]) <= target) {
                     x1 = minElem;
-                    while (x1 <= maxElem && (sum1 = x1 * vector[1] + sum0) <= target) {
+                    while (x1 <= maxElem && (sum1 = x1 * this.vector[1] + sum0) <= target) {
                         x2 = minElem;
-                        while (x2 <= maxElem && (sum2 = x2 * vector[2] + sum1) <= target) {
+                        while (x2 <= maxElem && (sum2 = x2 * this.vector[2] + sum1) <= target) {
                             sum3 = target - sum2;
-                            x3 = sum3 / vector[3];
-                            if (x3 <= maxElem && x3 * vector[3] == sum3) { // divides evenly
+                            x3 = sum3 / this.vector[3];
+                            if (x3 <= maxElem && x3 * this.vector[3] == sum3) { // divides evenly
                                 result.add(new Vector(new int[]{ x0, x1, x2, x3 }));
                             } // if x3
                             x2 ++;
@@ -737,16 +767,16 @@ public class Vector implements Cloneable, Serializable {
                 break;
             case 5:
                 x0 = minElem;
-                while (x0 <= maxElem && (sum0 = x0 * vector[0]) <= target) {
+                while (x0 <= maxElem && (sum0 = x0 * this.vector[0]) <= target) {
                     x1 = minElem;
-                    while (x1 <= maxElem && (sum1 = x1 * vector[1] + sum0) <= target) {
+                    while (x1 <= maxElem && (sum1 = x1 * this.vector[1] + sum0) <= target) {
                         x2 = minElem;
-                        while (x2 <= maxElem && (sum2 = x2 * vector[2] + sum1) <= target) {
+                        while (x2 <= maxElem && (sum2 = x2 * this.vector[2] + sum1) <= target) {
                             x3 = minElem;
-                            while (x3 <= maxElem && (sum3 = x3 * vector[3] + sum2) <= target) {
+                            while (x3 <= maxElem && (sum3 = x3 * this.vector[3] + sum2) <= target) {
                                 sum4 = target - sum3;
-                                x4 = sum4 / vector[4];
-                                if (x4 <= maxElem && x4 * vector[4] == sum4) { // divides evenly
+                                x4 = sum4 / this.vector[4];
+                                if (x4 <= maxElem && x4 * this.vector[4] == sum4) { // divides evenly
                                     result.add(new Vector(new int[]{ x0, x1, x2, x3, x4 }));
                                 } // if x4
                                 x3 ++;
@@ -758,7 +788,7 @@ public class Vector implements Cloneable, Serializable {
                     x0 ++;
                 } // while x0
                 break;
-        } // switch vecLen
+        } // switch this.vecLen
         return result.toArray(new Vector[0]);
     } // divide
 
@@ -771,51 +801,12 @@ public class Vector implements Cloneable, Serializable {
     public static void main(String[] args) {
         int iarg = 0;
         Vector vect1 = new Vector();
-        Vector vect2 = new Vector();
-        if (false) {
+        Vector vect2 = new Vector("[3 ,4,5,6 ]");
+        if (args.length == 0) {
+            System.out.println("new Vector(\"[3 ,4,5,6 ]\") = " + vect2.toString("(,)"));
         } else { // arguments
             String opt = args[iarg ++];
             if (false) {
-            } else if (opt.startsWith("-gcd")) {
-                int alen = args.length - iarg;
-                vect1 = new Vector(alen);
-                int ivect = 0;
-                while (iarg < args.length) {
-                    vect1.vector[ivect] = (/*Type*/int) 0;
-                    try {
-                        vect1.vector[ivect] = (/*Type*/int) Integer.parseInt(args[iarg]);
-                    } catch (Exception exc) {
-                    }
-                    iarg ++;
-                    ivect ++;
-                } // while iarg
-                System.out.println("Vector " + vect1.toString("(,)") + ".gcd() = " + vect1.gcd());
-                int gcd = vect1.extractGcd();
-                System.out.println("Vector " + vect1.toString("(,)") + ".extractGcd() = " + gcd);
-                // -gcd
-
-            } else if (opt.startsWith("-pow")) {
-                int alen = args.length - iarg;
-                vect1 = new Vector(alen);
-                int ivect = 0;
-                while (iarg < args.length) {
-                    vect1.vector[ivect] = (/*Type*/int) 0;
-                    try {
-                        vect1.vector[ivect] = (/*Type*/int) Integer.parseInt(args[iarg]);
-                    } catch (Exception exc) {
-                    }
-                    iarg ++;
-                    ivect ++;
-                } // while iarg
-                System.out.println("Vector " + vect1.toString() + " is"
-                        + (vect1.isPowerSum(vect1.size() - 1, vect1.size() - 1, 1) ? "" : " no")
-                        + " sum of like powers");
-                // -pow
-
-            } else if (opt.startsWith("-read")) {
-                String line = args[iarg ++];
-                System.out.println("read " + (Vector.read(line)).toString("(,)"));
-                // -read
 
             } else if (opt.startsWith("-div")) {
                 int dim = 4;
@@ -874,6 +865,47 @@ public class Vector implements Cloneable, Serializable {
                 } // for ir1
                 } // for ir0
                 // -div
+
+            } else if (opt.startsWith("-gcd")) {
+                int alen = args.length - iarg;
+                vect1 = new Vector(alen);
+                int ivect = 0;
+                while (iarg < args.length) {
+                    vect1.vector[ivect] = (/*Type*/int) 0;
+                    try {
+                        vect1.vector[ivect] = (/*Type*/int) Integer.parseInt(args[iarg]);
+                    } catch (Exception exc) {
+                    }
+                    iarg ++;
+                    ivect ++;
+                } // while iarg
+                System.out.println("Vector " + vect1.toString("(,)") + ".gcd() = " + vect1.gcd());
+                int gcd = vect1.extractGcd();
+                System.out.println("Vector " + vect1.toString("(,)") + ".extractGcd() = " + gcd);
+                // -gcd
+
+            } else if (opt.startsWith("-pow")) {
+                int alen = args.length - iarg;
+                vect1 = new Vector(alen);
+                int ivect = 0;
+                while (iarg < args.length) {
+                    vect1.vector[ivect] = (/*Type*/int) 0;
+                    try {
+                        vect1.vector[ivect] = (/*Type*/int) Integer.parseInt(args[iarg]);
+                    } catch (Exception exc) {
+                    }
+                    iarg ++;
+                    ivect ++;
+                } // while iarg
+                System.out.println("Vector " + vect1.toString() + " is"
+                        + (vect1.isPowerSum(vect1.size() - 1, vect1.size() - 1, 1) ? "" : " no")
+                        + " sum of like powers");
+                // -pow
+
+            } else if (opt.startsWith("-read")) {
+                String line = args[iarg ++];
+                System.out.println("read " + (Vector.read(line)).toString("(,)"));
+                // -read
 
             } // if opt
         } // more than 1 argument

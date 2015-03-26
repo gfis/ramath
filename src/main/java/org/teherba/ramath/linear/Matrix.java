@@ -64,41 +64,98 @@ public class Matrix implements Cloneable, Serializable {
     /** No-args Constructor
      */
     public Matrix() {
-        rowLen = 0;
-        colLen = rowLen;
+        this.rowLen = 0;
+        this.colLen = this.rowLen;
     } // no-args Constructor
 
     /** Constructor for an empty square Matrix of some size
-     *  @param rowLen number of rows/columns
+     *  @param rlen number of rows/columns
      */
-    public Matrix(int rowLen) {
-        this.rowLen = rowLen;
-        this.colLen = rowLen;
-        matrix = new /*Type*/int[rowLen][colLen];
+    public Matrix(int rlen) {
+        this.rowLen = rlen;
+        this.colLen = this.rowLen;
+        this.matrix = new /*Type*/int[this.rowLen][this.colLen];
     } // Constructor(int)
 
     /** Constructor for a Matrix which initializes it from an array of values
-     *  @param rowLen number of rows/columns
+     *  @param rlen number of rows/columns
      *  @param values linearized array of row values
      */
-    public Matrix(int rowLen, int[] values) {
-        this(rowLen);
+    public Matrix(int rlen, int[] values) {
+        this(rlen);
         int ival = 0;
-        for (int irow = 0; irow < rowLen; irow ++) {
-            for (int icol = 0; icol < colLen; icol ++) {
-                matrix[irow][icol] = (/*Type*/int) values[ival ++];
+        for (int irow = 0; irow < this.rowLen; irow ++) {
+            for (int icol = 0; icol < this.colLen; icol ++) {
+                this.matrix[irow][icol] = (/*Type*/int) values[ival ++];
             } // for icol
         } // for irow
     } // Constructor(int)
+
+    /** Constructor for a Matrix which initializes it from an array of values.
+     *  If the number of elements is no square number, the next lower square
+     *  number is taken, and some elements at the end are ignored.
+     *  @param values linearized array of rows of arrays of column values
+     */
+    public Matrix(String[] values) {
+        int numElem = values.length;
+        int rlen = 0;
+        while (rlen * rlen < numElem) {
+            rlen ++;
+        } // while squaring
+        if (rlen * rlen > numElem) {
+            rlen --;
+        }
+        this.rowLen = rlen;
+        this.colLen = rlen;
+        this.matrix = new /*Type*/int[rowLen][colLen];
+        int ival = 0;
+        for (int irow = 0; irow < this.rowLen; irow ++) {
+            for (int icol = 0; icol < this.colLen; icol ++) {
+                this.matrix[irow][icol] = 0;
+                try {
+                    this.matrix[irow][icol] = Integer.parseInt(values[ival]);
+                } catch (Exception exc) {
+                }
+                ival ++;
+            } // for icol
+        } // for irow
+    } // Constructor(String[])
+
+    /** Constructor for a Matrix which initializes it from a matrix expression.
+     *  If the number of elements is no square number, the next lower square
+     *  number is taken, and some elements at the end are ignored.
+     *  @param matExpr comma-separated array of {@link PolyVector}s in square brackets, 
+     *  for example "[[a,b,c],[f,g,h],[k,l,m]]"
+     */
+    public Matrix(String matExpr) {
+        String vectExpr = matExpr.substring(0, matExpr.indexOf("]"));
+        String[] values = vectExpr.replaceAll("[\\[\\]\\s]+","").split("\\,");
+        int rlen = values.length;
+        values          = matExpr .replaceAll("[\\[\\]\\s]+","").split("\\,");
+        this.rowLen = rlen;
+        this.colLen = this.rowLen;
+        this.matrix = new /*Type*/int[rowLen][colLen];
+        int ival = 0;
+        for (int irow = 0; irow < this.rowLen; irow ++) {
+            for (int icol = 0; icol < this.colLen; icol ++) {
+                this.matrix[irow][icol] = 0;
+                try {
+                    this.matrix[irow][icol] = Integer.parseInt(values[ival]);
+                } catch (Exception exc) {
+                }
+                ival ++;
+            } // for icol
+        } // for irow
+    } // Constructor(String)
 
     /** Deep copy of the Matrix and its properties.
      *  @return independant copy of the Matrix
      */
     public Matrix clone() {
-        Matrix result = new Matrix(rowLen);
-        for (int irow = 0; irow < rowLen; irow ++) {
-            for (int icol = 0; icol < colLen; icol ++) {
-                result.matrix[irow][icol] = matrix[irow][icol];
+        Matrix result = new Matrix(this.rowLen);
+        for (int irow = 0; irow < this.rowLen; irow ++) {
+            for (int icol = 0; icol < this.colLen; icol ++) {
+                result.matrix[irow][icol] = this.matrix[irow][icol];
             } // for icol
         } // for irow
         return result;
@@ -143,9 +200,9 @@ public class Matrix implements Cloneable, Serializable {
      *  ones in the main diagonal and zeroes elsewhere.
      */
     public void setIdentity() {
-        for (int irow = 0; irow < rowLen; irow ++) {
-            for (int icol = 0; icol < colLen; icol ++) {
-                matrix[irow][icol] = (irow == icol) ? (/*Type*/int) 1 : (/*Type*/int) 0;
+        for (int irow = 0; irow < this.rowLen; irow ++) {
+            for (int icol = 0; icol < this.colLen; icol ++) {
+                this.matrix[irow][icol] = (irow == icol) ? (/*Type*/int) 1 : (/*Type*/int) 0;
              } // for icol
         } // for irow
     } // setIdentity
@@ -161,15 +218,15 @@ public class Matrix implements Cloneable, Serializable {
      *  </dl>
      */
     public void setElementary(int seqNo) {
-        int nelem = rowLen * (rowLen - 1); // number of zeroes in the identity matrix
+        int nelem = this.rowLen * (this.rowLen - 1); // number of zeroes in the identity matrix
         int iseq = 0;
         /*Type*/int unit = 1;
         if (seqNo >= nelem) {
             seqNo -= nelem;
             unit = -1;
         }
-        for (int irow = 0; irow < rowLen; irow ++) {
-            for (int icol = 0; icol < colLen; icol ++) {
+        for (int irow = 0; irow < this.rowLen; irow ++) {
+            for (int icol = 0; icol < this.colLen; icol ++) {
                 /*Type*/int elem = (irow == icol) ? (/*Type*/int) 1 : (/*Type*/int) 0; // set identity matrix
                 if (elem == 0) {
                     if (iseq == seqNo) {
@@ -177,7 +234,7 @@ public class Matrix implements Cloneable, Serializable {
                     }
                     iseq ++;
                 }
-                matrix[irow][icol] = elem;
+                this.matrix[irow][icol] = elem;
             } // for icol
         } // for irow
     } // setElementary
@@ -188,12 +245,12 @@ public class Matrix implements Cloneable, Serializable {
      */
     public Matrix toggleSigns(int[] values) {
         int ival = 0;
-        Matrix result = new Matrix(rowLen);
-        for (int irow = 0; irow < rowLen; irow ++) {
-            for (int icol = 0; icol < colLen; icol ++) {
+        Matrix result = new Matrix(this.rowLen);
+        for (int irow = 0; irow < this.rowLen; irow ++) {
+            for (int icol = 0; icol < this.colLen; icol ++) {
                 result.matrix[irow][icol] = values[ival] == 0
-                        ?   matrix[irow][icol]
-                        : - matrix[irow][icol];
+                        ?   this.matrix[irow][icol]
+                        : - this.matrix[irow][icol];
                 ival ++;
             } // for icol
         } // for irow
@@ -206,7 +263,7 @@ public class Matrix implements Cloneable, Serializable {
      *  @return a small number
      */
     public int size() {
-        return rowLen;
+        return this.rowLen;
     } // size
 
     /** Returns an element of the Matrix
@@ -215,7 +272,7 @@ public class Matrix implements Cloneable, Serializable {
      *  @return a small number
      */
     public /*Type*/int get(int irow, int icol) {
-        return matrix[irow][icol];
+        return this.matrix[irow][icol];
     } // get
 
     /*-------------- lightweight derived methods -----------------------------*/
@@ -225,9 +282,9 @@ public class Matrix implements Cloneable, Serializable {
      *  @return a Vector containing the elements of the matrix' row
      */
     public Vector getRow(int rowNo) {
-        Vector result = new Vector(colLen);
-        for (int icol = 0; icol < colLen; icol ++) {
-            result.vector[icol] = matrix[rowNo][icol];
+        Vector result = new Vector(this.colLen);
+        for (int icol = 0; icol < this.colLen; icol ++) {
+            result.vector[icol] = this.matrix[rowNo][icol];
         } // for icol
         return result;
     } // getRow
@@ -238,7 +295,7 @@ public class Matrix implements Cloneable, Serializable {
      */
     public void setRow(int rowNo, Vector vect1) {
         for (int icol = 0; icol < rowNo; icol ++) {
-            matrix[rowNo][icol] = vect1.vector[icol];
+            this.matrix[rowNo][icol] = vect1.vector[icol];
         } // for icol
     } // setRow
 
@@ -247,9 +304,9 @@ public class Matrix implements Cloneable, Serializable {
      *  @return a Vector containing the elements of the matrix' column
      */
     public Vector getColumn(int colNo) {
-        Vector result = new Vector(rowLen);
-        for (int irow = 0; irow < rowLen; irow ++) {
-            result.vector[irow] = matrix[irow][colNo];
+        Vector result = new Vector(this.rowLen);
+        for (int irow = 0; irow < this.rowLen; irow ++) {
+            result.vector[irow] = this.matrix[irow][colNo];
         } // for irow
         return result;
     } // getColumn
@@ -259,8 +316,8 @@ public class Matrix implements Cloneable, Serializable {
      *  @param vect1 Vector containing the elements of the matrix' column
      */
     public void setColumn(int colNo, Vector vect1) {
-        for (int irow = 0; irow< rowLen; irow ++) {
-            matrix[irow][colNo] = vect1.vector[irow];
+        for (int irow = 0; irow< this.rowLen; irow ++) {
+            this.matrix[irow][colNo] = vect1.vector[irow];
         } // for irow
     } // setColumn
 
@@ -270,10 +327,10 @@ public class Matrix implements Cloneable, Serializable {
      */
     public String toString() {
         StringBuffer result = new StringBuffer(256);
-        for (int irow = 0; irow < rowLen; irow ++) {
-            for (int icol = 0; icol < colLen; icol ++) {
+        for (int irow = 0; irow < this.rowLen; irow ++) {
+            for (int icol = 0; icol < this.colLen; icol ++) {
                 // result.append(' ');
-                result.append(String.format(" %3d", matrix[irow][icol]));
+                result.append(String.format(" %3d", this.matrix[irow][icol]));
             } // for icol
             result.append(newline);
         } // for irow
@@ -289,24 +346,24 @@ public class Matrix implements Cloneable, Serializable {
         String sep = ",";
         StringBuffer result = new StringBuffer(256);
         result.append('[');
-        for (int irow = 0; irow < rowLen; irow ++) {
+        for (int irow = 0; irow < this.rowLen; irow ++) {
             if (format != null && format.length() > 0) {
                 if (format.indexOf(sep) >= 0) {
                     result.append('[');
                 }
-                for (int icol = 0; icol < colLen; icol ++) {
+                for (int icol = 0; icol < this.colLen; icol ++) {
                     if (icol > 0) {
                         result.append(sep);
                     }
-                    result.append(String.valueOf(matrix[irow][icol]));
+                    result.append(String.valueOf(this.matrix[irow][icol]));
                 } // for icol
                 if (format.indexOf(sep) >= 0) {
                     result.append(']');
                 }
             } else {
-                for (int icol = 0; icol < colLen; icol ++) {
+                for (int icol = 0; icol < this.colLen; icol ++) {
                     // result.append(' ');
-                    result.append(String.format(" %3d", matrix[irow][icol]));
+                    result.append(String.format(" %3d", this.matrix[irow][icol]));
                 } // for icol
                 result.append(newline);
             }
@@ -321,9 +378,9 @@ public class Matrix implements Cloneable, Serializable {
     public boolean isZero() {
             boolean result = true;
             int irow = 0;
-            while (result && irow < rowLen) {
+            while (result && irow < this.rowLen) {
                 int icol = 0;
-                while (result && icol < colLen) {
+                while (result && icol < this.colLen) {
                     result = this.matrix[irow][icol] == 0;
                     icol ++;
                 } // for icol
@@ -338,18 +395,18 @@ public class Matrix implements Cloneable, Serializable {
      */
     public boolean equals(Matrix matr2) {
         boolean result = true;
-        if (matr2.size() == rowLen) {
+        if (matr2.size() == this.rowLen) {
             int irow = 0;
-            while (result && irow < rowLen) {
+            while (result && irow < this.rowLen) {
                 int icol = 0;
-                while (result && icol < colLen) {
+                while (result && icol < this.colLen) {
                     result = this.matrix[irow][icol] == matr2.matrix[irow][icol];
                     icol ++;
                 } // for icol
                 irow ++;
             } // for irow
         } else {
-            throw new IllegalArgumentException("cannot compare matrices of different size " + rowLen);
+            throw new IllegalArgumentException("cannot compare matrices of different size " + this.rowLen);
         }
         return result;
     } // equals
@@ -361,15 +418,15 @@ public class Matrix implements Cloneable, Serializable {
      *  @return reference to a new object, the sum
      */
     public Matrix add(Matrix matr2) {
-        Matrix result = new Matrix(rowLen);
-        if (matr2.size() == rowLen) {
-            for (int irow = 0; irow < rowLen; irow ++) {
-                for (int icol = 0; icol < colLen; icol ++) {
+        Matrix result = new Matrix(this.rowLen);
+        if (matr2.size() == this.rowLen) {
+            for (int irow = 0; irow < this.rowLen; irow ++) {
+                for (int icol = 0; icol < this.colLen; icol ++) {
                     result.matrix[irow][icol] = (/*Type*/int) (this.matrix[irow][icol] + matr2.matrix[irow][icol]);
                 } // for icol
             } // for irow
         } else {
-            throw new IllegalArgumentException("cannot add matrices of different size " + rowLen);
+            throw new IllegalArgumentException("cannot add matrices of different size " + this.rowLen);
         }
         return result;
     } // add(Matrix)
@@ -379,19 +436,19 @@ public class Matrix implements Cloneable, Serializable {
      *  @return reference to new object, the matrix product
      */
     public Matrix multiply(Matrix matr2) {
-        Matrix result = new Matrix(rowLen);
-        if (matr2.size() == rowLen) {
-            for (int irow = 0; irow < rowLen; irow ++) {
-                for (int icol = 0; icol < colLen; icol ++) {
+        Matrix result = new Matrix(this.rowLen);
+        if (matr2.size() == this.rowLen) {
+            for (int irow = 0; irow < this.rowLen; irow ++) {
+                for (int icol = 0; icol < this.colLen; icol ++) {
                     int sum = 0;
-                    for (int kvec = 0; kvec < rowLen; kvec ++) {
+                    for (int kvec = 0; kvec < this.rowLen; kvec ++) {
                         sum += this.matrix[irow][kvec] * matr2.matrix[kvec][icol];
                     } // for kvec
                     result.matrix[irow][icol] = (/*Type*/int) sum;
                 } // for icol
             } // for irow
         } else {
-            throw new IllegalArgumentException("cannot multiply matrices of different size " + rowLen);
+            throw new IllegalArgumentException("cannot multiply matrices of different size " + this.rowLen);
         }
         return result;
     } // multiply(Matrix)
@@ -401,17 +458,17 @@ public class Matrix implements Cloneable, Serializable {
      *  @return reference to new Vector, the right product
      */
     public Vector multiply(Vector vect2) {
-        Vector result = new Vector(rowLen);
-        if (vect2.size() == rowLen) {
-            for (int irow = 0; irow < rowLen; irow ++) {
+        Vector result = new Vector(this.rowLen);
+        if (vect2.size() == this.rowLen) {
+            for (int irow = 0; irow < this.rowLen; irow ++) {
                     int sum = 0;
-                    for (int kvec = 0; kvec < rowLen; kvec ++) {
+                    for (int kvec = 0; kvec < this.rowLen; kvec ++) {
                         sum += this.matrix[irow][kvec] * vect2.vector[kvec];
                     } // for kvec
                     result.vector[irow] = (/*Type*/int) sum;
             } // for irow
         } else {
-            throw new IllegalArgumentException("cannot multiply a matrix and a vector of different size " + rowLen);
+            throw new IllegalArgumentException("cannot multiply a matrix and a vector of different size " + this.rowLen);
         }
         return result;
     } // multiply(Vector)
@@ -459,42 +516,42 @@ Abstract * (a b c) = a^2 + b^2 - c^2
 */
     public int determinant() {
         int result = 0;
-        switch (rowLen) {
+        switch (this.rowLen) {
             case 0:
                 result = 0;
                 break;
             case 1:
-                result = matrix[0][0];
+                result = this.matrix[0][0];
                 break;
             case 2:
-                result =  matrix[0][0] * matrix[1][1]
-                        - matrix[0][1] * matrix[1][0]
+                result =  this.matrix[0][0] * this.matrix[1][1]
+                        - this.matrix[0][1] * this.matrix[1][0]
                         ;
                 break;
             case 3:
-                result =  matrix[0][0] * matrix[1][1] * matrix[2][2]
-                        - matrix[0][2] * matrix[1][1] * matrix[2][0]
-                        + matrix[0][1] * matrix[1][2] * matrix[2][0]
-                        - matrix[0][1] * matrix[1][0] * matrix[2][2]
-                        + matrix[0][2] * matrix[1][0] * matrix[2][1]
+                result =  this.matrix[0][0] * this.matrix[1][1] * this.matrix[2][2]
+                        - this.matrix[0][2] * this.matrix[1][1] * this.matrix[2][0]
+                        + this.matrix[0][1] * this.matrix[1][2] * this.matrix[2][0]
+                        - this.matrix[0][1] * this.matrix[1][0] * this.matrix[2][2]
+                        + this.matrix[0][2] * this.matrix[1][0] * matrix[2][1]
                         - matrix[0][0] * matrix[1][2] * matrix[2][1]
                         ;
                 break;
         /*
         */
             default: // recursive Laplace expansion over minors of the first row
-                Matrix minor = new Matrix(rowLen - 1);
+                Matrix minor = new Matrix(this.rowLen - 1);
                 int irow, icol;
                 // populate minor for 1st column
-                for (irow = 1; irow < rowLen; irow ++) { // omit row 0
-                    for (icol = 1; icol < colLen; icol ++) { // omit column 0
+                for (irow = 1; irow < this.rowLen; irow ++) { // omit row 0
+                    for (icol = 1; icol < this.colLen; icol ++) { // omit column 0
                         minor.matrix[irow - 1][icol - 1] = this.matrix[irow][icol];
                     } // for icol
                 } // for irow
                 // now expand minors over row 0
-                for (icol = 0; icol < colLen; icol ++) {
+                for (icol = 0; icol < this.colLen; icol ++) {
                     if (icol > 0) { // repair 1st column of minor
-                        for (int irow2 = 1; irow2 < rowLen; irow2 ++) {
+                        for (int irow2 = 1; irow2 < this.rowLen; irow2 ++) {
                             minor.matrix[irow2 - 1][icol - 1] = this.matrix[irow2][icol - 1];
                         } // for irow2
                     }
@@ -510,7 +567,7 @@ Abstract * (a b c) = a^2 + b^2 - c^2
                     }
                 } // for icol
                 break;
-        } // switch rowLen
+        } // switch this.rowLen
         return result;
     } // determinant
 
@@ -522,35 +579,35 @@ Abstract * (a b c) = a^2 + b^2 - c^2
      *  @return Vector of determinant values of the minors with alternating signs
      */
     public Vector getSubDeterminants() {
-        Vector result = new Vector(rowLen);
-        switch (rowLen) {
+        Vector result = new Vector(this.rowLen);
+        switch (this.rowLen) {
             case 0:
                 break;
             case 1:
                 result.vector[0] =    1;
                 break;
             case 2:
-                result.vector[0] =    (matrix[1][1]);
-                result.vector[1] =  - (matrix[1][0]);
+                result.vector[0] =    (this.matrix[1][1]);
+                result.vector[1] =  - (this.matrix[1][0]);
                 break;
             case 3:
-                result.vector[0] =    (matrix[1][1] * matrix[2][2] - matrix[2][1] * matrix[1][2]);
-                result.vector[1] =  - (matrix[1][0] * matrix[2][2] - matrix[2][0] * matrix[1][2]);
-                result.vector[2] =    (matrix[1][0] * matrix[2][1] - matrix[1][1] * matrix[2][0]);
+                result.vector[0] =    (this.matrix[1][1] * this.matrix[2][2] - this.matrix[2][1] * this.matrix[1][2]);
+                result.vector[1] =  - (this.matrix[1][0] * this.matrix[2][2] - this.matrix[2][0] * this.matrix[1][2]);
+                result.vector[2] =    (this.matrix[1][0] * this.matrix[2][1] - this.matrix[1][1] * this.matrix[2][0]);
                 break;
             default: // recursive Laplace expansion over minors of the first row
-                Matrix minor = new Matrix(rowLen - 1);
+                Matrix minor = new Matrix(this.rowLen - 1);
                 int irow, icol;
                 // populate minor for 1st column
-                for (irow = 1; irow < rowLen; irow ++) { // omit row 0
-                    for (icol = 1; icol < colLen; icol ++) { // omit column 0
+                for (irow = 1; irow < this.rowLen; irow ++) { // omit row 0
+                    for (icol = 1; icol < this.colLen; icol ++) { // omit column 0
                         minor.matrix[irow - 1][icol - 1] = this.matrix[irow][icol];
                     } // for icol
                 } // for irow
                 // now expand minors over row 0
-                for (icol = 0; icol < rowLen; icol ++) {
+                for (icol = 0; icol < this.rowLen; icol ++) {
                     if (icol > 0) { // repair 1st column of minor
-                        for (int irow2 = 1; irow2 < rowLen; irow2 ++) {
+                        for (int irow2 = 1; irow2 < this.rowLen; irow2 ++) {
                             minor.matrix[irow2 - 1][icol - 1] = this.matrix[irow2][icol - 1];
                         } // for irow2
                     }
@@ -566,7 +623,7 @@ Abstract * (a b c) = a^2 + b^2 - c^2
                     }
                 } // for icol
                 break;
-        } // switch rowLen
+        } // switch this.rowLen
         return result;
     } // getSubDeterminants
 
@@ -925,8 +982,9 @@ Abstract * (a b c) = a^2 + b^2 - c^2
         Vector vect1 = null;
         Vector vect2 = null;
         try {
-            if (false) {
-            } else if (args.length == 0) {
+            if (args.length == 0) {
+                System.out.println("new Matrix(\"[[3, 4], [5, 6]]\") = " 
+                        + (new Matrix          ("[[3, 4], [5, 6]]")).toString("(,)"));
             } else if (args.length == 1) {
                 alen = 3;
                 try {

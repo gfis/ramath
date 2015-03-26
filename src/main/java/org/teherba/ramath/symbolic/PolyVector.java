@@ -1,5 +1,6 @@
 /*  PolyVector: a vector Polynomials
  *  @(#) $Id: PolyVector.java 744 2011-07-26 06:29:20Z gfis $
+ *  2015-03-26: construct from expression
  *  2015-03-19: convolve
  *  2013-08-23: Serializable
  *  2013-08-15, Georg Fischer: copied from linear.Vector
@@ -57,20 +58,20 @@ public class PolyVector implements Cloneable, Serializable {
     /** No-args Constructor
      */
     public PolyVector() {
-        vecLen = 0;
+        this.vecLen = 0;
     } // no-args Constructor
 
     /** Constructor for a PolyVector of some length
      *  @param numElems number of elements
      */
     public PolyVector(int numElems) {
-        vecLen = numElems;
-        vector = new /*Type*/Polynomial[vecLen];
+        this.vecLen = numElems;
+        this.vector = new /*Type*/Polynomial[vecLen];
     } // Constructor(int)
 
-	/** lowercase letters for variable generation */
-	private static final String letters = "abcdefghijklmnopqrstuvwxyz";
-	
+    /** lowercase letters for variable generation */
+    private static final String letters = "abcdefghijklmnopqrstuvwxyz";
+    
     /** Constructor for a PolyVector of some length,
      *  initialized with successive variable names.
      *  @param numElems number of elements
@@ -81,9 +82,9 @@ public class PolyVector implements Cloneable, Serializable {
         this(numElems);
         int ipos = letters.indexOf(varName);
         if (ipos < 0) { // not found 
-        	ipos = 0; // assume "a"
+            ipos = 0; // assume "a"
         }
-        for (int ivect = 0; ivect < vecLen && ipos + ivect < letters.length(); ivect ++) {
+        for (int ivect = 0; ivect < this.vecLen && ipos + ivect < letters.length(); ivect ++) {
             this.vector[ivect] = new /*Type*/Polynomial(letters.substring(ipos + ivect, ipos + ivect + 1));
         } // for ivect
     } // Constructor(int, String)
@@ -93,22 +94,22 @@ public class PolyVector implements Cloneable, Serializable {
      */
     public PolyVector(int[] tuple) {
         this(tuple.length);
-        for (int itup = 0; itup < vecLen; itup ++) {
+        for (int itup = 0; itup < this.vecLen; itup ++) {
             this.vector[itup] = new /*Type*/Polynomial(String.valueOf(tuple[itup]));
         } // for itup
     } // Constructor(int[])
 
     /** Constructor for a PolyVector from a {@link Vector}
-     *  @param vector a {@link Vector} of small integers
+     *  @param vect2 a {@link Vector} of small integers
      */
-    public PolyVector(Vector vector) {
-        this(vector.size());
-        for (int ivect = 0; ivect < vecLen; ivect ++) {
-            this.vector[ivect] = new /*Type*/Polynomial(String.valueOf(vector.get(ivect)));
+    public PolyVector(Vector vect2) {
+        this(vect2.size());
+        for (int ivect = 0; ivect < this.vecLen; ivect ++) {
+            this.vector[ivect] = new /*Type*/Polynomial(String.valueOf(vect2.get(ivect)));
         } // for ivect
     } // Constructor(Vector)
 
-    /** Constructor for a PolyVector from a array of strings
+    /** Constructor for a PolyVector from an array of strings
      *  @param numElems number of elements
      *  @param iarg starting index in <em>args</em>
      *  @param args array of numbers as strings
@@ -116,21 +117,44 @@ public class PolyVector implements Cloneable, Serializable {
     public PolyVector(int numElems, int iarg, String[] args) {
         this(numElems);
         int ivect = 0;
-        while (ivect < vecLen) {
-            vector[ivect] = new Polynomial(args[iarg ++]);
+        while (ivect < this.vecLen) {
+            this.vector[ivect] = new Polynomial(args[iarg ++]);
             ivect ++;
         } // while ivect
     } // Constructor(3)
+
+    /** Constructor for a PolyVector from an array of {@link Polynomial}s
+     *  @param numElems number of elements
+     *  @param values array of {@link Polynomial}s as strings
+     */
+    public PolyVector(int numElems, String[] values) {
+        this(numElems, 0, values);
+    } // Constructor(3)
+
+    /** Constructor for a PolyVector from a vector expression
+     *  @param vectExpr an array of comma-separated elements in square brackets,
+     *  for example "[x^2,4*y,y*z*3]"
+     */
+    public PolyVector(String vectExpr) {
+        String[] values = vectExpr.replaceAll("[\\[\\]\\s]+","").split("\\,");
+        this.vecLen = values.length;
+        this.vector = new /*Type*/Polynomial[vecLen];
+        int ivect = 0;
+        while (ivect < this.vecLen) {
+            this.vector[ivect] = new Polynomial(values[ivect]);
+            ivect ++;
+        } // while ivect
+    } // Constructor(String)
 
     /** Deep copy of the PolyVector and its properties.
      *  @return independant copy of the PolyVector
      */
     public PolyVector clone() {
         PolyVector result = new PolyVector();
-        result.vecLen = vecLen;
+        result.vecLen = this.vecLen;
         result.vector = new /*Type*/Polynomial[vecLen];
-        for (int ielem = 0; ielem < vecLen; ielem ++) {
-            result.vector[ielem] = vector[ielem];
+        for (int ielem = 0; ielem < this.vecLen; ielem ++) {
+            result.vector[ielem] = this.vector[ielem];
         } // for ielem
         return result;
     } // clone
@@ -141,7 +165,7 @@ public class PolyVector implements Cloneable, Serializable {
      *  @return a small number
      */
     public int size() {
-        return vecLen;
+        return this.vecLen;
     } // size
 
     /** Returns an element of the Vector
@@ -149,7 +173,7 @@ public class PolyVector implements Cloneable, Serializable {
      *  @return a Polynomial
      */
     public Polynomial get(int icol) {
-        return vector[icol];
+        return this.vector[icol];
     } // get
 
     /** Sets an element of the Vector
@@ -157,7 +181,7 @@ public class PolyVector implements Cloneable, Serializable {
      *  @param value a Polynomial
      */
     public void set(int icol, Polynomial value) {
-        vector[icol] = value;
+        this.vector[icol] = value;
     } // set
 
     /*-------------- lightweight derived methods -----------------------------*/
@@ -168,14 +192,14 @@ public class PolyVector implements Cloneable, Serializable {
      */
     public boolean equals(PolyVector vect2) {
         boolean result = true;
-        if (vect2.size() == vecLen) {
+        if (vect2.size() == this.vecLen) {
             int ielem = 0;
-            while (ielem < vecLen && this.vector[ielem].equals(vect2.vector[ielem])) {
+            while (ielem < this.vecLen && this.vector[ielem].equals(vect2.vector[ielem])) {
                 ielem ++;
             } // while ielem
-            result = ielem == vecLen; // false if the loop stopped before because of a difference
+            result = ielem == this.vecLen; // false if the loop stopped before because of a difference
         } else {
-            throw new IllegalArgumentException("cannot compare two vectors of different size " + vecLen);
+            throw new IllegalArgumentException("cannot compare two vectors of different size " + this.vecLen);
         }
         return result;
     } // equals
@@ -195,11 +219,11 @@ public class PolyVector implements Cloneable, Serializable {
         String sep = format + " ";
         StringBuffer result = new StringBuffer(256);
         result.append('[');
-        for (int icol = 0; icol < vecLen; icol ++) {
+        for (int icol = 0; icol < this.vecLen; icol ++) {
             if (icol > 0) {
                 result.append(sep);
             }
-            result.append(vector[icol].toString());
+            result.append(this.vector[icol].toString());
         } // for icol
         result.append(']');
         return result.toString();
@@ -214,9 +238,9 @@ public class PolyVector implements Cloneable, Serializable {
      */
     public Polynomial multiply(PolyVector vect2) {
         Polynomial result = new Polynomial();
-        if (vect2.size() == vecLen) {
+        if (vect2.size() == this.vecLen) {
             int ielem = 0;
-            while (ielem < vecLen) {
+            while (ielem < this.vecLen) {
                 Polynomial poly2 = this.vector[ielem].multiply(vect2.vector[ielem]);
                 Iterator/*<1.5*/<String>/*1.5>*/ iter2 = poly2.keySet().iterator();
                 while (iter2.hasNext()) {
@@ -226,7 +250,7 @@ public class PolyVector implements Cloneable, Serializable {
                 ielem ++;
             } // while ielem
         } else {
-            throw new IllegalArgumentException("cannot multiply two vectors of different size " + vecLen);
+            throw new IllegalArgumentException("cannot multiply two vectors of different size " + this.vecLen);
         }
         return result;
     } // multiply
@@ -266,29 +290,29 @@ public class PolyVector implements Cloneable, Serializable {
      *  of right elements raised to exp
      */
     public boolean isPowerSum(int exp, int left, int right) {
-        Polynomial leftSum  = new Polynomial();
-        Polynomial rightSum = new Polynomial();
-        if (left + right == vecLen) { 
+        Polynomial leftSum  = new Polynomial("0");
+        Polynomial rightSum = new Polynomial("0");
+        if (left + right == this.vecLen) { 
             // check for trivial case: 2 elements are equal
             int isum = 0;
-            for (isum = left; isum < vecLen; isum ++) {
+            for (isum = left; isum < this.vecLen; isum ++) {
                 for (int lsum = 0; lsum < left; lsum ++) {
-                    if (vector[isum].equals(vector[lsum])) {
+                    if (this.vector[isum].equals(this.vector[lsum])) {
                         return false;
                     }
                 } // for lsum
             } // for isum
             isum = 0;
             while (isum < left) {
-                leftSum = leftSum  .add(vector[isum].pow(exp));
+                leftSum = leftSum  .add(this.vector[isum].pow(exp));
                 isum ++;
             } // while < left
-            while (isum < vecLen) {
-                rightSum = rightSum.add(vector[isum].pow(exp));
+            while (isum < this.vecLen) {
+                rightSum = rightSum.add(this.vector[isum].pow(exp));
                 isum ++;
-            } // while < vecLen
+            } // while < this.vecLen
         } else {
-            throw new IllegalArgumentException("cannot test a vector with the wrong size " + vecLen);
+            throw new IllegalArgumentException("cannot test a vector with the wrong size " + this.vecLen);
         }
         return leftSum.subtract(rightSum).isZero();
     } // isPowerSum
@@ -309,20 +333,20 @@ public class PolyVector implements Cloneable, Serializable {
      *  the sum of right elements raised to exp
      */
     public Polynomial powerSum(int exp, int left, int right) {
-        Polynomial leftSum  = new Polynomial();
-        Polynomial rightSum = new Polynomial();
-        if (left + right == vecLen) { 
+        Polynomial leftSum  = new Polynomial("0");
+        Polynomial rightSum = new Polynomial("0");
+        if (left + right == this.vecLen) { 
             int isum = 0;
             while (isum < left) {
-                leftSum = leftSum  .add(vector[isum].pow(exp));
+                leftSum = leftSum  .add(this.vector[isum].pow(exp));
                 isum ++;
             } // while < left
-            while (isum < vecLen) {
-                rightSum = rightSum.add(vector[isum].pow(exp));
+            while (isum < this.vecLen) {
+                rightSum = rightSum.add(this.vector[isum].pow(exp));
                 isum ++;
-            } // while < vecLen
+            } // while < this.vecLen
         } else {
-            throw new IllegalArgumentException("cannot test a vector with the wrong size " + vecLen);
+            throw new IllegalArgumentException("cannot test a vector with the wrong size " + this.vecLen);
         }
         return leftSum.subtract(rightSum);
     } // powerSum
@@ -335,9 +359,11 @@ public class PolyVector implements Cloneable, Serializable {
      */
     public static void main(String[] args) {
         int iarg = 0;
-        PolyVector vect1 = new PolyVector();
-        PolyVector vect2 = new PolyVector();
-        if (false) {
+        PolyVector vect1 =      new PolyVector();
+        PolyVector vect2 =      new PolyVector (" [ x^2 ,4 * y, y * z * 3 ] ");
+        if (args.length == 0) {
+            System.out.println("new PolyVector(\" [ x^2 ,4 * y, y * z * 3 ] \") = "
+            		+ vect2.toString());
         } else { // arguments
             String opt = args[iarg ++];
             if (false) {

@@ -1,3 +1,4 @@
+new PolyMatrix("[[x^2, y^2, - z^2],[x,y,z], [4,3,5]]") = [[x^2,y^2, - z^2],[x,y,z],[4,3,5]]
 PolyMatrix [[a11,a12,a13],[a21,a22,a23],[a31,a32,a33]]
 determinant =  - a13*a22*a31 + a12*a23*a31 + a13*a21*a32 - a11*a23*a32 - a12*a21*a33 + a11*a22*a33
 PolyMatrix [[a11,a12,a13,a14],[a21,a22,a23,a24],[a31,a32,a33,a34],[a41,a42,a43,a44]]

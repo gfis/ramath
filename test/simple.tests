@@ -10,21 +10,6 @@ ARGS=
 #======================================================================
 ECHO 000
 #-------------------------
-# Symbolic Matrix Algebra
-PACKAGE=org.teherba.ramath.symbolic
-
-TEST S01 PolyVector inner product
-CALL PolyVector -read "a-b" "a+b" "c+d"
-
-TEST S02 PolyMatrix identity(4)
-CALL PolyMatrix 4
-
-TEST S03 PolyMatrix determinant(3), (4)
-CALL PolyMatrix
-
-TEST S04 PolyMatrix characteristic polynomial
-CALL PolyMatrix -char 3
-#-------------------------
 # EEC array generation
 PACKAGE=org.teherba.ramath
 
@@ -140,6 +125,12 @@ CALL Matrix -elem 4
 #
 # TEST L20 unimodular matrices from many -10
 # CALL Matrix -many -10
+
+TEST L21 Vector as String
+CALL Vector
+
+TEST L22 Matrix as String
+CALL Matrix
 
 TEST L31 gcd of a vector
 CALL Vector -gcd 33 44 55 66

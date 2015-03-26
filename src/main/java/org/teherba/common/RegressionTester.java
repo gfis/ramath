@@ -1,5 +1,6 @@
 /*  Reader for text file, returns a string without any whitespace
  *  @(#) $Id: RegressionTester.java 744 2011-07-26 06:29:20Z gfis $
+ *  2015-03-26: cat after cp (if *.prev.tst did not exist)
  *  2014-03-30: diff -Z
  *  2014-02-16: encoding for all BufferedReaders
  *  2013-09-13: EXIT effective only if testNamePattern != "*"
@@ -326,7 +327,7 @@ public class RegressionTester {
                                         while ((line = reader.readLine()) != null) {
                                             System.out.println(line);
                                             iline ++;
-                                        } // while iline
+                                        } // while readLine
                                         reader.close();
                                         passed = iline == 0;
                                         if (passed) {
@@ -339,6 +340,13 @@ public class RegressionTester {
                                         cmd = "cp "         + thisName + " " + prevName;
                                         process = runtime.exec(cmd);
                                         System.out.println(cmd);
+                                        cmd = "cat "         + thisName;
+                                        process = runtime.exec(cmd);
+                                        reader = new BufferedReader(new InputStreamReader(process.getInputStream(), logEncoding));
+                                        while ((line = reader.readLine()) != null) {
+                                            System.out.println(line);
+                                        } // while readLine
+                                        reader.close();
                                         recreatedCount ++;
                                         realStdOut.println("========> recreated  "                          + testName + " " + testDesc);
                                     } // copy
@@ -437,11 +445,9 @@ public class RegressionTester {
                             realStdOut.println(logText);
                             process = runtime.exec(cmd);
                             reader = new BufferedReader(new InputStreamReader(process.getInputStream(), logEncoding));
-                            int iline = 0;
                             while ((line = reader.readLine()) != null) {
                                 thisStream.println(line);
-                                iline ++;
-                            } // while iline
+                            } // while readLine
                             reader.close();
 
                         } else if (verb.equals("XSLT")) {
@@ -450,11 +456,9 @@ public class RegressionTester {
                             realStdOut.println(logText);
                             process = runtime.exec(cmd);
                             reader = new BufferedReader(new InputStreamReader(process.getInputStream(), logEncoding));
-                            int iline = 0;
                             while ((line = reader.readLine()) != null) {
                                 thisStream.println(line);
-                                iline ++;
-                            } // while iline
+                            } // while readLine
                             reader.close();
 
                         } else { // maybe it is a defined macro activation
