@@ -6,6 +6,7 @@
 # 2011-07-06, Dr. Georg Fischer
 TEST=
 TESTDIR=test
+WROB=../../mater/ramath/eec/wroblewski
 
 all: regression
 
@@ -42,6 +43,30 @@ regr2:
 #---------------------------------------------------
 jfind:
 	find src -iname "*.java" | xargs -l grep -iH $(JF)
+#----------
+ec221:
+	perl data/genpEC.pl 2 2 1 > ec221.txt
+	diff -C0 pEC221.tmp pEC221.txt
+ec331:
+	perl data/genpEC.pl 3 3 1 > ec331.txt
+ec340:
+	perl data/genpEC.pl 3 4 0 > ec340.txt
+genec2:
+	perl data/genec2.pl 3 3 1 > genec2.txt
+#----------
+grep3x:
+	grep "chain 8" test/MX3*.this.tst \
+	| cut -b 36- > mx3.tmp
+	cmd /c uedit32 mx3.tmp
+# prepare Wroblewski data
+prewrob3: wr1 wr2
+wr1:
+	rm -f prewrob3.tmp
+	perl data/prewrob3.pl $(WROB)/313-100K.TXT >> prewrob3.tmp
+	perl data/prewrob3.pl $(WROB)/322-100K.TXT >> prewrob3.tmp
+wr2:
+	sort -n prewrob3.tmp | sed -e "s/	/,/g" > data/prewrob3.dat
+	wc data/prewrob3.dat
 xsort3:
 	sort \
 	test/X02.this.tst \
@@ -75,13 +100,13 @@ q1:
 q2:
 	java -cp dist/ramath.jar org.teherba.ramath.linear.Matrix -queue queue.tmp | tee queue2.tmp
 rel313:
-	perl data/relations3.pl ~/work/mater/ramath/eec/wroblewski/313-100K.TXT | tee 313.tmp
+	perl data/relations3.pl $(WROB)/313-100K.TXT | tee 313.tmp
 r313:
 	perl data/extract.pl "b+1=c" 313.tmp | tee r313.tmp
 #	perl data/extract.pl "b+1=c" 313.tmp | tee r314.tmp
 #	perl data/extract.pl "a+2=b c" 313.tmp | tee r313.tmp
 rel322:
-	perl data/relations3.pl ~/work/mater/ramath/eec/wroblewski/322-100K.TXT | tee 322.tmp
+	perl data/relations3.pl $(WROB)/322-100K.TXT | tee 322.tmp
 r322:
 	perl data/extract.pl "a+b=9" 322.tmp | tee r322.tmp
 x1:

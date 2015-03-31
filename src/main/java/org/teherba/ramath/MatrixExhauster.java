@@ -64,13 +64,15 @@ public class MatrixExhauster {
 
     /** can compute square roots up to this number */
     private static final int MAXPOW = 8;
+    /** limit for determination of 'fact' */
+    private static final int LIMFACT = 5;
 
     /** Constructor with limit
      *  @param limit minimum digit not yet used for expansion
      */
     public MatrixExhauster(int limit) {
-        maxDigit = limit;
-        minDigit = - maxDigit + 1;
+        maxDigit = limit + 1;
+        minDigit = - limit;
         squares = new int[MAXPOW]; 
         cubes   = new int[MAXPOW];
         int isq = 0;
@@ -326,7 +328,7 @@ public class MatrixExhauster {
         boolean busy = true;
         ipow = 1;
         int fact = 0;
-        while (busy && ipow < MAXPOW) {
+        while (busy && ipow < LIMFACT) {
             if (col13 - powers[ipow] == 0) {
                 fact = powers[ipow];
                 busy = false;
@@ -381,6 +383,366 @@ public class MatrixExhauster {
         }}} // for mi1
     } // v2
 
+    /** ec221: Generate matrices which preserve tuples for Euler's conjecture
+     *  @param vect0 initial vector which represents a sum of like powers
+     */
+    public void ec221(Vector vect0) {
+        int MAXPOW = 16; // matrix elements must be smaller
+        int powers[] = new int[MAXPOW]; 
+        int ipow = 0;
+        while (ipow < MAXPOW) {
+        powers[ipow] = ipow*ipow;
+            ipow ++;
+        } // while 1
+        int alen = vect0.size();
+        // desired matrix, exhausted for all values minDigit <= v < maxDigit
+        int m11, m12, m13;
+        int m21, m22, m23;
+        int m31, m32, m33;
+        int t1 = vect0.get(0);
+        int t2 = vect0.get(1);
+        int t3 = vect0.get(2);
+        int r1, r2, r3; // resulting vector of multiplication m*t
+        int r1p, r2p, r3p; // (2nd, 3rd ...) powers thereof
+        for (m13 = minDigit; m13 < maxDigit; m13 ++) {
+        int m13p2 =          m13*m13;
+        for (m23 = minDigit; m23 < maxDigit; m23 ++) {
+        int m23p2 =          m23*m23;
+        for (m33 = minDigit; m33 < maxDigit; m33 ++) {
+        int m33p2 =          m33*m33;
+        if (true) { // column 3
+        for (m12 = minDigit; m12 < maxDigit; m12 ++) {
+        int m12p2 =          m12*m12;
+        for (m22 = minDigit; m22 < maxDigit; m22 ++) {
+        int m22p2 =          m22*m22;
+        for (m32 = minDigit; m32 < maxDigit; m32 ++) {
+        int m32p2 =          m32*m32;
+        int c2r1 = m12 + m13;
+        int c2r2 = m22 + m23;
+        int c2r3 = m32 + m33;
+        if (c2r1*c2r1 + c2r2*c2r2 - c2r3*c2r3 == 0) { // column 2
+        for (m11 = minDigit; m11 < maxDigit; m11 ++) {
+        int m11p2 =          m11*m11;
+        for (m21 = minDigit; m21 < maxDigit; m21 ++) {
+        int m21p2 =          m21*m21;
+        for (m31 = minDigit; m31 < maxDigit; m31 ++) {
+        int m31p2 =          m31*m31;
+        int c1r1 = m11 + m13;
+        int c1r2 = m21 + m23;
+        int c1r3 = m31 + m33;
+        if (c1r1*c1r1 + c1r2*c1r2 - c1r3*c1r3 == 0) { // column 1
+        r1 = m11*t1 + m12*t2 + m13*t3;
+        if (r1 > 0) {
+        r2 = m21*t1 + m22*t2 + m23*t3;
+        if (r2 > 0 && r2 != r1) {
+        r3 = m31*t1 + m32*t2 + m33*t3;
+        if (r3 > 0 && r3 != r2 && r3 != r1) {
+        r1p = r1*r1;
+        r2p = r2*r2;
+        r3p = r3*r3;
+        if (Vector.gcd(r1, r2) == 1) {
+        if (r1p + r2p - r3p == 0) { // preserves once
+            Matrix amat = new Matrix(alen, new int[]
+        { m11, m12, m13
+        , m21, m22, m23
+        , m31, m32, m33
+                    } );
+            amat.printPreservedChain(vect0, 1, 2, 1);
+        } // preserves once
+        } // Vector.gcd
+        } // if r3 > 0
+        } // if r2 > 0
+        } // if r1 > 0
+        } // column 3
+        }}} // for mi3
+        } // column 2
+        }}} // for mi2
+        } // column 1
+        }}} // for mi1
+    } // ec221
+
+    /** pEC221: Pythagorean triples - like v2,
+     *  but ensure *[0,1,1] = 0, *[1,0,1] = 0, and later [3,4,5] = 0
+     */
+    public void pEC221(Vector vect0) {
+        int powers[] = new int[MAXPOW]; 
+        int ipow = 0;
+        while (ipow < MAXPOW) {
+            powers[ipow] = ipow*ipow*ipow;
+            ipow ++;
+        } // while 1
+        // desired matrix, exhausted for all values minDigit <= v < maxDigit
+        int m11, m12, m13, m14
+          , m21, m22, m23, m24
+          , m31, m32, m33, m34
+          , m41, m42, m43, m44
+          ;
+        Vector vect1 = vect0 != null ? vect0 : new Vector(new int[] { 3, 4, 5 } );
+        if (! vect1.isPowerSum(2, 2, 1)) {
+            System.err.println(vect1.toString(",") + " not isPowerSum(2, 2, 1)");
+            return;
+        }
+        int t1 = vect1.get(0);
+        int t2 = vect1.get(1);
+        int t3 = vect1.get(2); 
+        // int t4 = vect1.get(3);
+        int alen = vect1.size();
+        int r1,  r2,  r3,  r4;  // resulting vector of multiplication m*t
+        int r1p, r2p, r3p, r4p; // (2nd, 3rd) powers thereof
+        int fact = 1;
+        
+        for (m13 = minDigit; m13 < maxDigit; m13 ++) {
+        int m13p2 =          m13*m13;
+        for (m23 = minDigit; m23 < maxDigit; m23 ++) {
+        int m23p2 =          m23*m23;
+        for (m33 = minDigit; m33 < maxDigit; m33 ++) {
+        int m33p2 =          m33*m33;
+        if (true) { // 3rd column
+
+        for (m12 = minDigit; m12 < maxDigit; m12 ++) {
+        int m12p2 =          m12*m12;
+        for (m22 = minDigit; m22 < maxDigit; m22 ++) {
+        int m22p2 =          m22*m22;
+        for (m32 = minDigit; m32 < maxDigit; m32 ++) {
+        int m32p2 =          m32*m32;
+        // try [0,1,1]
+        int v1 = m12 + m13;
+        int v2 = m22 + m23;
+        int v3 = m32 + m33;
+        if (v1*v1 + v2*v2 - v3*v3 == 0) { // 2nd column
+
+        for (m11 = minDigit; m11 < maxDigit; m11 ++) {
+        int m11p2 =          m11*m11;
+        for (m21 = minDigit; m21 < maxDigit; m21 ++) {
+        int m21p2 =          m21*m21;
+        for (m31 = minDigit; m31 < maxDigit; m31 ++) {
+        int m31p2 =          m31*m31;
+        // try [1,0,1]
+        int u1 = m11 + m13;
+        int u2 = m21 + m23;
+        int u3 = m31 + m33;
+        if (u1*u1 + u2*u2 - u3*u3 == 0) { // 1st column
+        
+        r1 = m11*t1 + m12*t2 + m13*t3;
+        if (r1 > 0) {
+        r2 = m21*t1 + m22*t2 + m23*t3;
+        if (r2 > 0 && r2 != r1 && Vector.gcd(r1, r2) == 1) {
+        r3 = m31*t1 + m32*t2 + m33*t3;
+        if (r3 > 0 && r3 != r2 && r3 != r1) {
+        r1p = r1*r1;
+        r2p = r2*r2;
+        r3p = r3*r3;
+
+        if (r1p + r2p - r3p == 0) { // preserves once
+            Matrix amat = new Matrix(alen, new int[]
+                    { m11, m12, m13
+                    , m21, m22, m23
+                    , m31, m32, m33
+                    } );
+            amat.printPreservedChain(vect1, fact, 2, 1);
+        } // preserves once
+
+        } // if r3 > 0
+        } // if r2 > 0
+        } // if r1 > 0
+        } // 1st column
+        }}} // for mi1
+        } // 2nd column
+        }}} // for mi2
+        } // 3rd column
+        }}} // for mi3
+    } // pEC221
+
+    /** ec331: Generate matrices which preserve tuples for Euler's conjecture
+     *  @param vect0 initial vector which represents a sum of like powers
+     */
+    public void ec331(Vector vect0) {
+        int MAXPOW = 16; // matrix elements must be smaller
+        int powers[] = new int[MAXPOW]; 
+        int ipow = 0;
+        while (ipow < MAXPOW) {
+            powers[ipow] = ipow*ipow*ipow;
+            ipow ++;
+        } // while 1
+        int alen = vect0.size();
+        // desired matrix, exhausted for all values minDigit <= v < maxDigit
+        int m11, m12, m13, m14;
+        int m21, m22, m23, m24;
+        int m31, m32, m33, m34;
+        int m41, m42, m43, m44;
+        int t1 = vect0.get(0);
+        int t2 = vect0.get(1);
+        int t3 = vect0.get(2);
+        int t4 = vect0.get(3);
+        int r1, r2, r3, r4; // resulting vector of multiplication m*t
+        int r1p, r2p, r3p, r4p; // (2nd, 3rd ...) powers thereof
+        for (m14 = minDigit; m14 < maxDigit; m14 ++) {
+        int m14p3 =          m14*m14*m14;
+        for (m24 = minDigit; m24 < maxDigit; m24 ++) {
+        int m24p3 =          m24*m24*m24;
+        for (m34 = minDigit; m34 < maxDigit; m34 ++) {
+        int m34p3 =          m34*m34*m34;
+        for (m44 = minDigit; m44 < maxDigit; m44 ++) {
+        int m44p3 =          m44*m44*m44;
+        if (true) { // column 4
+        for (m13 = minDigit; m13 < maxDigit; m13 ++) {
+        int m13p3 =          m13*m13*m13;
+        for (m23 = minDigit; m23 < maxDigit; m23 ++) {
+        int m23p3 =          m23*m23*m23;
+        for (m33 = minDigit; m33 < maxDigit; m33 ++) {
+        int m33p3 =          m33*m33*m33;
+        for (m43 = minDigit; m43 < maxDigit; m43 ++) {
+        int m43p3 =          m43*m43*m43;
+        int c3r1 = m13 + m14;
+        int c3r2 = m23 + m24;
+        int c3r3 = m33 + m34;
+        int c3r4 = m43 + m44;
+        if (0 == 0) { // column 3
+        for (m12 = minDigit; m12 < maxDigit; m12 ++) {
+        int m12p3 =          m12*m12*m12;
+        for (m22 = minDigit; m22 < maxDigit; m22 ++) {
+        int m22p3 =          m22*m22*m22;
+        for (m32 = minDigit; m32 < maxDigit; m32 ++) {
+        int m32p3 =          m32*m32*m32;
+        for (m42 = minDigit; m42 < maxDigit; m42 ++) {
+        int m42p3 =          m42*m42*m42;
+        int c2r1 = m12 + m14;
+        int c2r2 = m22 + m24;
+        int c2r3 = m32 + m34;
+        int c2r4 = m42 + m44;
+        if (0 == 0) { // column 2
+        for (m11 = minDigit; m11 < maxDigit; m11 ++) {
+        int m11p3 =          m11*m11*m11;
+        for (m21 = minDigit; m21 < maxDigit; m21 ++) {
+        int m21p3 =          m21*m21*m21;
+        for (m31 = minDigit; m31 < maxDigit; m31 ++) {
+        int m31p3 =          m31*m31*m31;
+        for (m41 = minDigit; m41 < maxDigit; m41 ++) {
+        int m41p3 =          m41*m41*m41;
+        int c1r1 = m11 + m14;
+        int c1r2 = m21 + m24;
+        int c1r3 = m31 + m34;
+        int c1r4 = m41 + m44;
+        if (0 == 0) { // column 1
+        r1 = m11*t1 + m12*t2 + m13*t3 + m14*t4;
+        if (r1 > 0) {
+        r2 = m21*t1 + m22*t2 + m23*t3 + m24*t4;
+        if (r2 > 0 && r2 != r1) {
+        r3 = m31*t1 + m32*t2 + m33*t3 + m34*t4;
+        if (r3 > 0 && r3 != r2 && r3 != r1) {
+        r4 = m41*t1 + m42*t2 + m43*t3 + m44*t4;
+        if (r4 > 0 && r4 != r3 && r4 != r2 && r4 != r1) {
+        r1p = r1*r1*r1;
+        r2p = r2*r2*r2;
+        r3p = r3*r3*r3;
+        r4p = r4*r4*r4;
+        if (Vector.gcd(r1, r2) == 1) {
+        if (r1p + r2p + r3p - r4p == 0) { // preserves once
+            Matrix amat = new Matrix(alen, new int[]
+                    { m11, m12, m13, m14
+                    , m21, m22, m23, m24
+                    , m31, m32, m33, m34
+                    , m41, m42, m43, m44
+                    } );
+            amat.printPreservedChain(vect0, 1, 3, 1);
+        } // preserves once
+        } // Vector.gcd
+        } // if r4 > 0
+        } // if r3 > 0
+        } // if r2 > 0
+        } // if r1 > 0
+        } // column 4
+        }}}} // for mi4
+        } // column 3
+        }}}} // for mi3
+        } // column 2
+        }}}} // for mi2
+        } // column 1
+        }}}} // for mi1
+    } // ec331
+
+    /** ec340: Generate matrices which preserve tuples for Euler's conjecture
+     *  @param vect0 initial vector which represents a sum of like powers
+     *  Caution: This Java method was generated on 2015-03-31 23:59:48 by ramath/data/genpEC.pl.
+     *  Do   N O T   E D I T   here!
+     */
+    public void ec340(Vector vect0) {
+        int MAXPOW = 16; // matrix elements must be smaller
+        int powers[] = new int[MAXPOW]; 
+        int ipow = 0;
+        while (ipow < MAXPOW) {
+            powers[ipow] = ipow*ipow*ipow;
+            ipow ++;
+        } // while 1
+        int alen = vect0.size();
+        // desired matrix, exhausted for all values minDigit <= v < maxDigit
+        int m11, m12, m13, m14;
+        int m21, m22, m23, m24;
+        int m31, m32, m33, m34;
+        int m41, m42, m43, m44;
+        int t1 = vect0.get(0);
+        int t2 = vect0.get(1);
+        int t3 = vect0.get(2);
+        int t4 = vect0.get(3);
+        int r1, r2, r3, r4; // resulting vector of multiplication m*t
+        int r1p, r2p, r3p, r4p; // (2nd, 3rd ...) powers thereof
+        for (m14 = minDigit; m14 < maxDigit; m14 ++) {
+        for (m24 = minDigit; m24 < maxDigit; m24 ++) {
+        for (m34 = minDigit; m34 < maxDigit; m34 ++) {
+        for (m44 = minDigit; m44 < maxDigit; m44 ++) {
+        if (true) { // column 4
+        for (m13 = minDigit; m13 < maxDigit; m13 ++) {
+        for (m23 = minDigit; m23 < maxDigit; m23 ++) {
+        for (m33 = minDigit; m33 < maxDigit; m33 ++) {
+        for (m43 = minDigit; m43 < maxDigit; m43 ++) {
+        if (0 == 0) { // column 3
+        for (m12 = minDigit; m12 < maxDigit; m12 ++) {
+        for (m22 = minDigit; m22 < maxDigit; m22 ++) {
+        for (m32 = minDigit; m32 < maxDigit; m32 ++) {
+        for (m42 = minDigit; m42 < maxDigit; m42 ++) {
+        if (0 == 0) { // column 2
+        for (m11 = minDigit; m11 < maxDigit; m11 ++) {
+        for (m21 = minDigit; m21 < maxDigit; m21 ++) {
+        for (m31 = minDigit; m31 < maxDigit; m31 ++) {
+        for (m41 = minDigit; m41 < maxDigit; m41 ++) {
+        if (0 == 0) { // column 1
+        r1 = m11*t1 + m12*t2 + m13*t3 + m14*t4;
+        if (r1 != 0) {
+        r2 = m21*t1 + m22*t2 + m23*t3 + m24*t4;
+        if (r2 != 0 && r2 != r1) {
+        r3 = m31*t1 + m32*t2 + m33*t3 + m34*t4;
+        if (r3 != 0 && r3 != r2 && r3 != r1) {
+        r4 = m41*t1 + m42*t2 + m43*t3 + m44*t4;
+        if (r4 != 0 && r4 != r3 && r4 != r2 && r4 != r1) {
+        r1p = r1*r1*r1;
+        r2p = r2*r2*r2;
+        r3p = r3*r3*r3;
+        r4p = r4*r4*r4;
+        if (Vector.gcd(r1, r2) == 1) {
+        if (r1p + r2p + r3p + r4p == 0) { // preserves once
+            Matrix amat = new Matrix(alen, new int[]
+                    { m11, m12, m13, m14
+                    , m21, m22, m23, m24
+                    , m31, m32, m33, m34
+                    , m41, m42, m43, m44
+                    } );
+            amat.printPreservedChain(vect0, 1, 4, 0);
+        } // preserves once
+        } // Vector.gcd
+        } // if r4 > 0
+        } // if r3 > 0
+        } // if r2 > 0
+        } // if r1 > 0
+        } // column 4
+        }}}} // for mi4
+        } // column 3
+        }}}} // for mi3
+        } // column 2
+        }}}} // for mi2
+        } // column 1
+        }}}} // for mi1
+    } // ec340
+
     /** Euler's Conjecture, primitive tuples for exponent 3: a^3 + b^3 + c^3 - d^3 = 0
      *  @param vect0 start vector, or default if null
      */
@@ -398,6 +760,10 @@ public class MatrixExhauster {
           , m41, m42, m43, m44
           ;
         Vector vect1 = vect0 != null ? vect0 : new Vector(new int[] { 3,4,5,6 } );
+        if (! vect1.isPowerSum(3, 3, 1)) {
+            System.err.println(vect1.toString(",") + " not isPowerSum(3,4,0)");
+            return;
+        }
         int t1 = vect1.get(0);
         int t2 = vect1.get(1);
         int t3 = vect1.get(2); 
@@ -418,7 +784,7 @@ public class MatrixExhauster {
         ipow = 1;
         int fact = 0;
         // busy = false; fact = 1;
-        while (busy && ipow < 4) {
+        while (busy && ipow < LIMFACT) {
             if (col14 - powers[ipow] == 0) {
                 fact = powers[ipow];
                 busy = false;
@@ -518,6 +884,10 @@ public class MatrixExhauster {
           , m41, m42, m43, m44
           ;
         Vector vect1 = vect0 != null ? vect0 : new Vector(new int[] { 9, 10, 1, 12 } );
+        if (! vect1.isPowerSum(3, 2, 2)) {
+            System.err.println(vect1.toString(",") + " not isPowerSum(3,4,0)");
+            return;
+        }
         int t1 = vect1.get(0);
         int t2 = vect1.get(1);
         int t3 = vect1.get(2); 
@@ -538,7 +908,7 @@ public class MatrixExhauster {
         ipow = 1;
         int fact = 0;
         // busy = false; fact = 1;
-        while (busy && ipow < 4) {
+        while (busy && ipow < LIMFACT) {
             if (col14 - powers[ipow] == 0) {
                 fact = powers[ipow];
                 busy = false;
@@ -578,20 +948,20 @@ public class MatrixExhauster {
         for (m14 = minDigit; m14 < maxDigit; m14 ++) {
         int col41 =          m14*m14*m14;
         r1 = m11*t1 + m12*t2 + m13*t3 + m14*t4;
-        if (r1 > 0) {
+        if (r1 > t1) {
         for (m24 = minDigit; m24 < maxDigit; m24 ++) {
         int col42 = col41 +  m24*m24*m24;
         r2 = m21*t1 + m22*t2 + m23*t3 + m24*t4;
-        if (r2 > 0 && r2 != r1 && Vector.gcd(r1, r2) == 1) {
+        if (r2 > t2 && r2 != r1 && Vector.gcd(r1, r2) == 1) {
         for (m34 = minDigit; m34 < maxDigit; m34 ++) {
         int col43 = col42 -  m34*m34*m34;
         r3 = m31*t1 + m32*t2 + m33*t3 + m34*t4;
-        if (r3 > 0 && r3 != r2 && r3 != r1) {
+        if (r3 > t3 && r3 != r2 && r3 != r1) {
         for (m44 = minDigit; m44 < maxDigit; m44 ++) {
         int col44 = col43 -  m44*m44*m44;
         if (col44 + fact == 0) { // 4th column is powersum "+"
         r4 = m41*t1 + m42*t2 + m43*t3 + m44*t4;
-        if (r4 > 0 && r4 != r3 && r4 != r2 && r4 != r1) {
+        if (r4 > t4 && r4 != r3 && r4 != r2 && r4 != r1) {
         r1p = r1*r1*r1;
         r2p = r2*r2*r2;
         r3p = r3*r3*r3;
@@ -621,6 +991,74 @@ public class MatrixExhauster {
         }}}} // for mi1
     } // pEC322
 
+/*====================================================================================
+Following are the 1st 64 tuples in "Wroblewski" order.
+They yield a sum of zero if raised to the 3rd power.
+6,-3,-5,-4
+9,-1,-8,-6
+12,1,-10,-9
+16,2,-15,-9
+19,-3,-18,-10
+20,-7,-17,-14
+25,-4,-22,-17
+27,10,-24,-19
+28,-18,-21,-19
+29,-11,-27,-15
+34,2,-33,-15
+34,9,-33,-16
+39,17,-36,-26
+40,12,-33,-31
+41,-2,-40,-17
+41,-6,-33,-32
+44,-16,-41,-23
+46,-27,-37,-30
+46,-3,-37,-36
+51,12,-43,-38
+53,-29,-44,-34
+53,8,-50,-29
+54,-12,-53,-19
+55,17,-54,-24
+58,-15,-49,-42
+58,9,-57,-22
+60,3,-59,-22
+67,-22,-54,-51
+67,30,-58,-51
+69,-36,-61,-38
+69,42,-61,-56
+70,-7,-57,-54
+71,-14,-70,-23
+72,-34,-65,-39
+75,-38,-66,-43
+76,-31,-72,-33
+76,17,-73,-38
+76,5,-69,-48
+80,15,-71,-54
+81,-25,-74,-48
+82,-19,-69,-60
+82,51,-75,-64
+84,-28,-75,-53
+85,-50,-64,-61
+87,-20,-79,-54
+87,-26,-78,-55
+87,-38,-79,-48
+88,-21,-84,-43
+88,-25,-86,-31
+89,-17,-86,-40
+89,2,-86,-41
+90,-25,-87,-38
+90,-58,-69,-59
+93,-32,-85,-54
+93,11,-92,-30
+94,23,-84,-63
+96,-19,-90,-53
+96,50,-93,-59
+97,-45,-79,-69
+97,20,-96,-33
+97,47,-90,-66
+98,24,-89,-63
+98,35,-92,-59
+99,29,-92,-60
+*/
     /** Euler's Conjecture, primitive tuples for exponent 3: a^3 + b^3 + c^3 + d^3 = 0
      *  @param vect0 start vector, or default if null
      */
@@ -638,6 +1076,10 @@ public class MatrixExhauster {
           , m41, m42, m43, m44
           ;
         Vector vect1 = vect0 != null ? vect0 : new Vector(new int[] { 3, 4, 5, -6 } );
+        if (! vect1.isPowerSum(3, 4, 0)) {
+            System.err.println(vect1.toString(",") + " not isPowerSum(3,4,0)");
+            return;
+        }
         int t1 = vect1.get(0);
         int t2 = vect1.get(1);
         int t3 = vect1.get(2); 
@@ -658,7 +1100,7 @@ public class MatrixExhauster {
         ipow = 1;
         int fact = 0;
         // busy = false; fact = 1;
-        while (busy && ipow < 4) {
+        while (busy && ipow < LIMFACT) {
             if (col14 - powers[ipow] == 0) {
                 fact = powers[ipow];
                 busy = false;
@@ -698,11 +1140,11 @@ public class MatrixExhauster {
         for (m14 = minDigit; m14 < maxDigit; m14 ++) {
         int col41 =          m14*m14*m14;
         r1 = m11*t1 + m12*t2 + m13*t3 + m14*t4;
-        if (true) {
+        if (r1 > 0 && r1 > t1) {
         for (m24 = minDigit; m24 < maxDigit; m24 ++) {
         int col42 = col41 +  m24*m24*m24;
         r2 = m21*t1 + m22*t2 + m23*t3 + m24*t4;
-        if (true && r2 != r1 && Vector.gcd(r1, r2) == 1) {
+        if (true && r2 != r1) {
         for (m34 = minDigit; m34 < maxDigit; m34 ++) {
         int col43 = col42 +  m34*m34*m34;
         r3 = m31*t1 + m32*t2 + m33*t3 + m34*t4;
@@ -718,6 +1160,7 @@ public class MatrixExhauster {
         r4p = r4*r4*r4;
 
         if (r1p + r2p + r3p + r4p == 0) { // preserves once
+            // System.out.println(vect1.toString() + " > [" + r1 + "," + r2 + "," + r3 + "," + r4 + "]");
             Matrix amat = new Matrix(alen, new int[]
                     { m11, m12, m13, m14
                     , m21, m22, m23, m24
@@ -743,20 +1186,26 @@ public class MatrixExhauster {
 
     //==========================================================
     /** m3: Cubic quadruples
+     *  @param vect0 start vector, or default if null
      */
-    public void m3() {
+    public void m331(Vector vect0) {
         int m11, m12, m13, m14
           , m21, m22, m23, m24
           , m31, m32, m33, m34
           , m41, m42, m43, m44; // desired matrix, exhausted for all values minDigit <= v < maxDigit
-        int t1 = 3;
-        int t2 = 4;
-        int t3 = 5;
-        int t4 = 6; // initial cubic tuple
-        Vector vect1 = new Vector(new int[] { t1, t2, t3, t4 } );
+        Vector vect1 = vect0 != null ? vect0 : new Vector(new int[] { 3, 4, 5, -6 } );
+        if (! vect1.isPowerSum(3, 3, 1)) {
+            System.err.println(vect1.toString(",") + " not isPowerSum(3,3,1)");
+            return;
+        }
+        int t1 = vect1.get(0);
+        int t2 = vect1.get(1);
+        int t3 = vect1.get(2); 
+        int t4 = vect1.get(3);
         int alen = vect1.size();
-        int r1, r2, r3, r4; // resulting vector of multiplication m*t
-        int r1p3, r2p3, r3p3, r4p3; // cubes thereof
+        int r1,  r2,  r3,  r4;  // resulting vector of multiplication m*t
+        int r1p, r2p, r3p, r4p; // (2nd, 3rd) powers thereof
+
         int s1, s2, s3, s4; // resulting vector of multiplication (m*t)*r
         for (m11 = minDigit; m11 < maxDigit; m11 ++) {
         for (m12 = minDigit; m12 < maxDigit; m12 ++) {
@@ -764,14 +1213,14 @@ public class MatrixExhauster {
         for (m14 = minDigit; m14 < maxDigit; m14 ++) {
         r1 = m11*t1 + m12*t2 + m13*t3 + m14*t4;
         if (r1 > 0) {
-        r1p3 = r1*r1*r1;
+        r1p = r1*r1*r1;
         for (m21 = minDigit; m21 < maxDigit; m21 ++) {
         for (m22 = minDigit; m22 < maxDigit; m22 ++) {
         for (m23 = minDigit; m23 < maxDigit; m23 ++) {
         for (m24 = minDigit; m24 < maxDigit; m24 ++) {
         r2 = m21*t1 + m22*t2 + m23*t3 + m24*t4;
         if (r2 > 0 && r2 != r1 && Vector.gcd(r1, r2) == 1) {
-        r2p3 = r2*r2*r2;
+        r2p = r2*r2*r2;
         for (m31 = minDigit; m31 < maxDigit; m31 ++) {
         int r31 =       m31*t1;
         for (m32 = minDigit; m32 < maxDigit; m32 ++) {
@@ -781,7 +1230,7 @@ public class MatrixExhauster {
         for (m34 = minDigit; m34 < maxDigit; m34 ++) {
         r3 =      r33 + m34*t4;
         if (r3 > 0 && r3 != r2 && r3 != r1) {
-        r3p3 = r3*r3*r3;
+        r3p = r3*r3*r3;
         for (m41 = minDigit; m41 < maxDigit; m41 ++) {
         int r41  =      m41*t1;
         for (m42 = minDigit; m42 < maxDigit; m42 ++) {
@@ -793,9 +1242,10 @@ public class MatrixExhauster {
         if (r4 > 0 && r4 != r3 && r4 != r2 && r4 != r1 &&
             r1 + r2 + r3 + r4 != t1 + t2 + t3 + t4
             ) {
-        r4p3 = r4*r4*r4;
+        r4p = r4*r4*r4;
 
-            if (r1p3 + r2p3 + r3p3 == r4p3) {
+            if (r1p + r2p + r3p - r4p == 0) {
+            /*
                 s1 = m11*r1 + m12*r2 + m13*r3 + m14*r4;
                 s2 = m21*r1 + m22*r2 + m23*r3 + m24*r4;
                 s3 = m31*r1 + m32*r2 + m33*r3 + m34*r4;
@@ -805,6 +1255,7 @@ public class MatrixExhauster {
                     s1 + s2 + s3 + s4 != r1 + r2 + r3 + r4 &&
                     s1*s1*s1 + s2*s2*s2 + s3*s3*s3 == s4*s4*s4 && Vector.gcd(s1, s2) == 1
                     ) {
+            */
                     Matrix amat = new Matrix(alen, new int[]
                             { m11, m12, m13, m14
                             , m21, m22, m23, m24
@@ -812,7 +1263,9 @@ public class MatrixExhauster {
                             , m41, m42, m43, m44
                             } );
                     amat.printPreservedChain(vect1, 0, 3, 1);
+            /*
                 } // if == s4*s4*s4
+            */
             } // if == r4p3
 
         } // if r4 > 0
@@ -823,7 +1276,7 @@ public class MatrixExhauster {
         }}}} // for m2i
         } // if r1 > 0
         }}}} // for m1i
-    } // m3
+    } // m331
 
     //==========================================================
     /** m3test: 12 loops
@@ -1062,7 +1515,7 @@ public class MatrixExhauster {
                     } catch (Exception exc) {
                     }
                 } else if (op.equals("v")) {
-                	vect0 = new Vector(args[iarg ++]);
+                    vect0 = new Vector(args[iarg ++]);
                 } else if (op.equals("w")) {
                     try {
                         width = Integer.parseInt(args[iarg ++]);
@@ -1087,10 +1540,19 @@ public class MatrixExhauster {
             exhauster.m2();
         } else if (oper.equals("v2" )) {
             exhauster.v2();
-/*
-        } else if (oper.equals("m3" )) {
-            exhauster.m3();
-*/
+        } else if (oper.equals("ec221" )) {
+            exhauster          .ec221(vect0);
+        } else if (oper.equals("ec331" )) {
+            exhauster          .ec331(vect0);
+        } else if (oper.equals("ec322" )) {
+        //    exhauster          .ec322(vect0);
+        } else if (oper.equals("ec340" )) {
+            exhauster          .ec340(vect0);
+
+        } else if (oper.equals("pEC221" )) {
+            exhauster          .pEC221(vect0);
+        } else if (oper.equals("m331" )) {
+            exhauster          .m331  (vect0);
         } else if (oper.equals("pEC331" )) {
             exhauster          .pEC331(vect0);
         } else if (oper.equals("pEC322" )) {

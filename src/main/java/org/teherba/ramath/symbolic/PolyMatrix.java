@@ -567,6 +567,16 @@ public class PolyMatrix implements Cloneable, Serializable {
             } else if (args.length >= 2) { // syntax is: -opt filename
                 String opt = args[iarg ++];
                 if (false) {
+                } else if (opt.startsWith("-abst")) { // multiply with vector of abstract variables
+                    amat  = new PolyMatrix(args[iarg ++]); // may not contain spaces
+                    alen = amat.size();
+                    vect1 = new PolyVector(alen, "a"); // the abstract vector
+                    System.out.println(amat.toString("(,)") + " * " 
+                            + vect1.toString("(,)") + " = "
+                            + amat.multiply(vect1).powerSum(alen - 1, alen, 0)
+                            .toString().replaceAll("\\s", "")                   
+                            );
+                    // -abst
                 } else if (opt.equals ("-f") || opt.equals("-queue") || opt.equals("-prim")) {
                     // opt -f, -queue, -prim
                 } else if (opt.startsWith("-div")) {

@@ -34,7 +34,7 @@ import  java.util.regex.Pattern;
  *  Typically a Vector will have no more than 8 elements.
  *  @author Dr. Georg Fischer
  */
-public class Vector implements Cloneable, Serializable {
+public class Vector implements Cloneable, Comparable<Vector>, Serializable {
     private static final long serialVersionUID = 1L;
     public final static String CVSID = "@(#) $Id: Vector.java 744 2011-07-26 06:29:20Z gfis $";
 
@@ -240,6 +240,69 @@ public class Vector implements Cloneable, Serializable {
         return result;
     } // equals
 
+    /** Computes the norm, that is the square root of 
+     *  the innerproduct of the Vector with itself.
+     *  @return sqrt(sum of all elements^2)
+     */
+    public double norm() {
+        double result = 0.0;
+        int ivect = 0;
+        while (ivect < this.vecLen) {
+            result += this.vector[ivect] * this.vector[ivect];
+            ivect ++;
+        } // while ivect
+        return Math.sqrt(result);
+    } // norm
+
+    /** Computes the sum of absolute elements of <em>this</em> Vector
+     *  @return sum of all absolute elements
+     */
+    public long norm2() {
+        long result = 0L;
+        int ivect = 0;
+        while (ivect < this.vecLen) {
+            result += Math.abs(this.vector[ivect]);
+            ivect ++;
+        } // while ivect
+        return result;
+    } // norm2
+
+    /** Computes the sum of squares of the elements of <em>this</em> Vector
+     *  @return sum of elements ^2
+     */
+    public long norm4() {
+        long result = 0L;
+        int ivect = 0;
+        while (ivect < this.vecLen) {
+        	long val = this.vector[ivect];
+            result += val * val;
+            ivect ++;
+        } // while ivect
+        return result;
+    } // norm4
+
+    /** Compares 2 Vectors respectively their {@link #norm}s.
+     *  @param vect2 compare <em>this</em> Vector with vect2
+     *  @return this "-" vect2 as -1, 0, or +1
+     */
+    public int compareTo(Vector vect2) {
+        int result = 0;
+        if (vect2.size() == this.vecLen) {
+            double normt = this .norm();
+            double norm2 = vect2.norm();
+            if (       normt == norm2) {
+            	// result = 0 already set
+            } else if (normt <  norm2) {
+                result = -1;
+            } else if (normt >  norm2) {
+                result = 1;
+            } 
+        } else {
+            throw new IllegalArgumentException("cannot compare two vectors of different size " + this.vecLen);
+        }
+        return result;
+    } // compareTo
+
     /** Whether the Vector consists of increasing natural numbers starting at 0
      *  @return whether the Vector is of the form [0, 1, 2, 3, ...]
      */
@@ -425,8 +488,9 @@ public class Vector implements Cloneable, Serializable {
         long rightSum = 0L;
         long temp = 0;
         if (left + right == this.vecLen) {
-            // check for trivial case: 2 elements are equal
             int isum = 0;
+        /*
+            // check for trivial case: 2 elements are equal
             for (isum = left; isum < this.vecLen; isum ++) {
                 for (int lsum = 0; lsum < left; lsum ++) {
                     if (this.vector[isum] == this.vector[lsum]) {
@@ -437,6 +501,7 @@ public class Vector implements Cloneable, Serializable {
             if (Math.abs(gcd()) > 1) { // common gcd: another trival case
                 return false;
             }
+        */
             isum = 0;
             switch (exp) {
                 case 2:
@@ -548,19 +613,6 @@ public class Vector implements Cloneable, Serializable {
         }
         return leftSum - rightSum;
     } // powerSum
-
-    /** Computes the sum of absolute elements of <em>this</em> Vector
-     *  @return sum of all absolute elements
-     */
-    public long norm2() {
-        long result = 0L;
-        int ivect = 0;
-        while (ivect < this.vecLen) {
-        	result += Math.abs(this.vector[ivect]);
-        	ivect ++;
-        } // while ivect
-        return result;
-    } // norm2
 
     /** Returns a string representation of the vector
      *  with 4 places per element in one line

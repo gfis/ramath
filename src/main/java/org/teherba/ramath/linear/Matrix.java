@@ -471,8 +471,8 @@ public class Matrix implements Cloneable, Serializable {
                     result.vector[irow] = (/*Type*/int) sum;
             } // for irow
         } else {
-        	System.out.println();
-        	System.out.println("wrong sizes: " + this.toString(",") + " * " + vect2.toString(","));
+            System.out.println();
+            System.out.println("wrong sizes: " + this.toString(",") + " * " + vect2.toString(","));
             throw new IllegalArgumentException("cannot multiply a matrix and a vector of different size " + this.rowLen);
         }
         return result;
@@ -836,18 +836,21 @@ Abstract * (a b c) = a^2 + b^2 - c^2
      */
     public ArrayList<Vector> preservedPowerSums(int exp, int left, int right, Vector vect0, int maxIter) {
         ArrayList<Vector> result = new ArrayList<Vector>(maxIter);
-        Vector vecti = this.multiply(vect0);
-        long norm0 = vect0.norm2();
-        long normi = vecti.norm2();
+        Vector vect1 = vect0;;
+        Vector vect2 = this.multiply(vect1);
         int iter = 0;
-        while (    (false || norm0 < normi)
-                && Math.abs(vecti.gcd()) <= 1
-                && vecti.isPowerSum(exp, left, right)
+        while ( true
+        /*
+                && ! vect1.equals(vect2)
+                && ! vect0.equals(vect2)
+        */
+        		&& vect1.norm4() != vect2.norm4()
+                && Math.abs(vect2.gcd()) <= 1
+                && vect2.isPowerSum(exp, left, right)
                 && iter < maxIter) {
-            result.add(vecti);
-            vecti = this.multiply(vecti);
-            norm0 = normi;
-            normi = vecti.norm2();
+            result.add(vect2);
+            vect1 = vect2;
+            vect2 = this.multiply(vect2);
             iter ++;
         } // while iter
         return result;
@@ -868,6 +871,10 @@ Abstract * (a b c) = a^2 + b^2 - c^2
                     + "chain " + chain.size()
                     + ", fact " + fact + " "
                     + String.format("%-32s ", this.toString("(,)"))
+                /*
+                    + String.format(" %-24s", (new PolyMatrix(amat)).multiply(new PolyVector(alen, "a"))
+                        .powerSum(alen - 1, left, right).toString().replaceAll("\\s", ""))                   
+                */
                     + vect0.toString("(,)")
                     );
             int maxShow = maxIter - (alen - 1 == 2 ? 5 : 0);
