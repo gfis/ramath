@@ -73,7 +73,7 @@ public class MatrixExhauster {
     public MatrixExhauster(int limit) {
         maxDigit = limit + 1;
         minDigit = - limit;
-        squares = new int[MAXPOW]; 
+        squares = new int[MAXPOW];
         cubes   = new int[MAXPOW];
         int isq = 0;
         while (isq < squares.length) {
@@ -297,7 +297,7 @@ public class MatrixExhauster {
      *  but ensure power sums -+ factor^2 in columns
      */
     public void v2() {
-        int powers[] = new int[MAXPOW]; 
+        int powers[] = new int[MAXPOW];
         int ipow = 0;
         while (ipow < MAXPOW) {
             powers[ipow] = ipow*ipow;
@@ -318,7 +318,7 @@ public class MatrixExhauster {
         int alen = vect1.size();
         int r1,  r2,  r3,  r4;  // resulting vector of multiplication m*t
         int r1p, r2p, r3p, r4p; // (2nd, 3rd) powers thereof
-        
+
         for (m11 = minDigit; m11 < maxDigit; m11 ++) {
         int col11 =          m11*m11;
         for (m21 = minDigit; m21 < maxDigit; m21 ++) {
@@ -352,7 +352,7 @@ public class MatrixExhauster {
         for (m33 = minDigit; m33 < maxDigit; m33 ++) {
         int col33 = col32 -  m33*m33;
         if (col33 + fact == 0) { // 3rd column is powersum "+"
-        
+
         r1 = m11*t1 + m12*t2 + m13*t3;
         if (r1 > 0) {
         r1p = r1*r1;
@@ -388,7 +388,7 @@ public class MatrixExhauster {
      */
     public void ec221(Vector vect0) {
         int MAXPOW = 16; // matrix elements must be smaller
-        int powers[] = new int[MAXPOW]; 
+        int powers[] = new int[MAXPOW];
         int ipow = 0;
         while (ipow < MAXPOW) {
         powers[ipow] = ipow*ipow;
@@ -465,7 +465,7 @@ public class MatrixExhauster {
      *  but ensure *[0,1,1] = 0, *[1,0,1] = 0, and later [3,4,5] = 0
      */
     public void pEC221(Vector vect0) {
-        int powers[] = new int[MAXPOW]; 
+        int powers[] = new int[MAXPOW];
         int ipow = 0;
         while (ipow < MAXPOW) {
             powers[ipow] = ipow*ipow*ipow;
@@ -484,13 +484,13 @@ public class MatrixExhauster {
         }
         int t1 = vect1.get(0);
         int t2 = vect1.get(1);
-        int t3 = vect1.get(2); 
+        int t3 = vect1.get(2);
         // int t4 = vect1.get(3);
         int alen = vect1.size();
         int r1,  r2,  r3,  r4;  // resulting vector of multiplication m*t
         int r1p, r2p, r3p, r4p; // (2nd, 3rd) powers thereof
         int fact = 1;
-        
+
         for (m13 = minDigit; m13 < maxDigit; m13 ++) {
         int m13p2 =          m13*m13;
         for (m23 = minDigit; m23 < maxDigit; m23 ++) {
@@ -522,7 +522,7 @@ public class MatrixExhauster {
         int u2 = m21 + m23;
         int u3 = m31 + m33;
         if (u1*u1 + u2*u2 - u3*u3 == 0) { // 1st column
-        
+
         r1 = m11*t1 + m12*t2 + m13*t3;
         if (r1 > 0) {
         r2 = m21*t1 + m22*t2 + m23*t3;
@@ -558,7 +558,7 @@ public class MatrixExhauster {
      */
     public void ec331(Vector vect0) {
         int MAXPOW = 16; // matrix elements must be smaller
-        int powers[] = new int[MAXPOW]; 
+        int powers[] = new int[MAXPOW];
         int ipow = 0;
         while (ipow < MAXPOW) {
             powers[ipow] = ipow*ipow*ipow;
@@ -668,58 +668,239 @@ public class MatrixExhauster {
      */
     public void ec340(Vector vect0) {
         int MAXPOW = 16; // matrix elements must be smaller
-        int powers[] = new int[MAXPOW]; 
+        int powers[] = new int[MAXPOW];
         int ipow = 0;
         while (ipow < MAXPOW) {
             powers[ipow] = ipow*ipow*ipow;
             ipow ++;
         } // while 1
         int alen = vect0.size();
-        // desired matrix, exhausted for all values minDigit <= v < maxDigit
-        int m11, m12, m13, m14;
-        int m21, m22, m23, m24;
-        int m31, m32, m33, m34;
-        int m41, m42, m43, m44;
+/*
+EC33.this.tst:
+elapsed time: nn s
+chain 8, fact 1 [[0,-2,1,-2],[-2,0,-2,1],[2,1,2,0]   ,[1,2,0,2]]    [6,-3,-4,-5] => [12,-9,1,-10] => [39,-36,17,-26] => [141,-138,76,-85] => [522,-519,296,-305] => [1944,-1941,1117,-1126] => [7251,-7248,4181,-4190] => [27057,-27054,15616,-15625] => [100974,-100971,58292,-58301]
+chain 8, fact 1 [[0,-2,1,-2],[-2,0,-2,1],[2,1,2,0]   ,[-2,-1,-1,1]] [6,-3,-4,-5] => [12,-9,1,-10] => [39,-36,17,-26] => [141,-138,76,-85] => [522,-519,296,-305] => [1944,-1941,1117,-1126] => [7251,-7248,4181,-4190] => [27057,-27054,15616,-15625] => [100974,-100971,58292,-58301]
+chain 8, fact 1 [[0,-2,1,-2],[-2,0,-2,1],[-1,-2,1,-1],[1,2,0,2]]    [6,-3,-4,-5] => [12,-9,1,-10] => [39,-36,17,-26] => [141,-138,76,-85] => [522,-519,296,-305] => [1944,-1941,1117,-1126] => [7251,-7248,4181,-4190] => [27057,-27054,15616,-15625] => [100974,-100971,58292,-58301]
+chain 8, fact 1 [[0,-2,1,-2],[-2,0,-2,1],[-1,-2,1,-1],[-2,-1,-1,1]] [6,-3,-4,-5] => [12,-9,1,-10] => [39,-36,17,-26] => [141,-138,76,-85] => [522,-519,296,-305] => [1944,-1941,1117,-1126] => [7251,-7248,4181,-4190] => [27057,-27054,15616,-15625] => [100974,-100971,58292,-58301]
+
+chain 8, fact 1 [[0,-2,-2,1],[-2,0,1,-2],[1,2,2,0]   ,[2,1,0,2]]    [6,-3,-4,-5] => [9,-6,-8,-1] => [27,-24,-19,10] => [96,-93,-59,50] => [354,-351,-208,199] => [1317,-1314,-764,755] => [4911,-4908,-2839,2830] => [18324,-18321,-10583,10574] => [68382,-68379,-39484,39475]
+chain 8, fact 1 [[0,-2,-2,1],[-2,0,1,-2],[1,2,2,0]   ,[-1,-2,-1,1]] [6,-3,-4,-5] => [9,-6,-8,-1] => [27,-24,-19,10] => [96,-93,-59,50] => [354,-351,-208,199] => [1317,-1314,-764,755] => [4911,-4908,-2839,2830] => [18324,-18321,-10583,10574] => [68382,-68379,-39484,39475]
+chain 8, fact 1 [[0,-2,-2,1],[-2,0,1,-2],[-2,-1,1,-1],[2,1,0,2]]    [6,-3,-4,-5] => [9,-6,-8,-1] => [27,-24,-19,10] => [96,-93,-59,50] => [354,-351,-208,199] => [1317,-1314,-764,755] => [4911,-4908,-2839,2830] => [18324,-18321,-10583,10574] => [68382,-68379,-39484,39475]
+chain 8, fact 1 [[0,-2,-2,1],[-2,0,1,-2],[-2,-1,1,-1],[-1,-2,-1,1]] [6,-3,-4,-5] => [9,-6,-8,-1] => [27,-24,-19,10] => [96,-93,-59,50] => [354,-351,-208,199] => [1317,-1314,-764,755] => [4911,-4908,-2839,2830] => [18324,-18321,-10583,10574] => [68382,-68379,-39484,39475]
+
+C:\Users\gfis\work\gits\ramath\test\eec>perl powmod.pl 3 63
+   0:   24
+   1:   74
+   8:   74
+  27:   74
+  28:   25
+  35:   24
+  36:   72
+  55:   72
+  62:   73
+gain: 54
+*/
+        int TMOD = 63;
+        boolean tmodset[] = new boolean[TMOD];
+        for (int itmod = 0; itmod < TMOD; itmod ++) {
+            tmodset[itmod] = false;
+        }
+        tmodset[ 0] = true;
+        tmodset[ 1] = true;
+        tmodset[ 8] = true;
+        tmodset[27] = true;
+        tmodset[28] = true;
+        tmodset[35] = true;
+        tmodset[36] = true;
+        tmodset[55] = true;
+        tmodset[62] = true;
+        
+/* ramath/data/prewob3.dat:
+6,-3,-5,-4
+9,-1,-8,-6
+12,1,-10,-9
+16,2,-15,-9
+19,-3,-18,-10
+20,-7,-17,-14
+25,-4,-22,-17
+27,10,-24,-19
+28,-18,-21,-19
+29,-11,-27,-15
+34,2,-33,-15
+34,9,-33,-16
+39,17,-36,-26
+40,12,-33,-31
+41,-2,-40,-17
+41,-6,-33,-32
+44,-16,-41,-23
+46,-27,-37,-30
+46,-3,-37,-36
+51,12,-43,-38
+53,-29,-44,-34
+53,8,-50,-29
+54,-12,-53,-19
+55,17,-54,-24
+58,-15,-49,-42
+58,9,-57,-22
+60,3,-59,-22
+*/
+/*
+67,-22,-54,-51
+67,30,-58,-51
+69,-36,-61,-38
+69,42,-61,-56
+70,-7,-57,-54
+71,-14,-70,-23
+72,-34,-65,-39
+75,-38,-66,-43
+76,-31,-72,-33
+76,17,-73,-38
+76,5,-69,-48
+80,15,-71,-54
+81,-25,-74,-48
+82,-19,-69,-60
+82,51,-75,-64
+84,-28,-75,-53
+85,-50,-64,-61
+87,-20,-79,-54
+87,-26,-78,-55
+87,-38,-79,-48
+88,-21,-84,-43
+88,-25,-86,-31
+89,-17,-86,-40
+89,2,-86,-41
+90,-25,-87,-38
+90,-58,-69,-59
+93,-32,-85,-54
+93,11,-92,-30
+94,23,-84,-63
+96,-19,-90,-53
+96,50,-93,-59
+97,-45,-79,-69
+97,20,-96,-33
+97,47,-90,-66
+98,24,-89,-63
+98,35,-92,-59
+99,29,-92,-60
+*/      
+        int TFIR = 100;
+        boolean tfirst[] = new boolean[TFIR];
+        for (int itfir = 0; itfir < TFIR; itfir ++) {
+            tfirst[itfir] = false;
+        }
+        tfirst[ 6] = true;
+        tfirst[ 9] = true;
+        tfirst[12] = true;
+        tfirst[16] = true;
+        tfirst[19] = true;
+        tfirst[20] = true;
+        tfirst[25] = true;
+        tfirst[27] = true;
+        tfirst[28] = true;
+        tfirst[29] = true;
+        tfirst[34] = true;
+        tfirst[39] = true;
+        tfirst[40] = true;
+        tfirst[41] = true;
+        tfirst[44] = true;
+        tfirst[46] = true;
+        tfirst[51] = true;
+        tfirst[53] = true;
+        tfirst[54] = true;
+        tfirst[55] = true;
+        tfirst[58] = true;
+        tfirst[60] = true;
+
+		tfirst[67] = true;
+		tfirst[69] = true;
+		tfirst[70] = true;
+		tfirst[71] = true;
+		tfirst[72] = true;
+		tfirst[75] = true;
+		tfirst[76] = true;
+		tfirst[80] = true;
+		tfirst[81] = true;
+		tfirst[82] = true;
+		tfirst[84] = true;
+		tfirst[85] = true;
+		tfirst[87] = true;
+		tfirst[88] = true;
+		tfirst[89] = true;
+		tfirst[90] = true;
+		tfirst[93] = true;
+		tfirst[94] = true;
+		tfirst[96] = true;
+		tfirst[97] = true;
+		tfirst[98] = true;
+		tfirst[99] = true;
+        // mi = desired matrix, exhausted for all values minDigit <= v < maxDigit
         int t1 = vect0.get(0);
         int t2 = vect0.get(1);
         int t3 = vect0.get(2);
         int t4 = vect0.get(3);
-        int r1, r2, r3, r4; // resulting vector of multiplication m*t
+        int t1a = Math.abs(t1);
+        int t2a = Math.abs(t3);
+        int t3a = Math.abs(t4);
+        int t4a = Math.abs(t4);
+        int tu2a = t1a  + t2a;
+        int tu3a = tu2a + t3a;
+        int tu4a = tu3a + t4a;
+        int r1, r2, r3, r4; // resulting 1st vector of multiplication m*t
+        int s1, s2, s3, s4; // resulting 2nd vector of multiplication m*r
         int r1p, r2p, r3p, r4p; // (2nd, 3rd ...) powers thereof
-        for (m14 = minDigit; m14 < maxDigit; m14 ++) {
-        for (m24 = minDigit; m24 < maxDigit; m24 ++) {
-        for (m34 = minDigit; m34 < maxDigit; m34 ++) {
-        for (m44 = minDigit; m44 < maxDigit; m44 ++) {
-        if (true) { // column 4
-        for (m13 = minDigit; m13 < maxDigit; m13 ++) {
-        for (m23 = minDigit; m23 < maxDigit; m23 ++) {
-        for (m33 = minDigit; m33 < maxDigit; m33 ++) {
-        for (m43 = minDigit; m43 < maxDigit; m43 ++) {
-        if (0 == 0) { // column 3
-        for (m12 = minDigit; m12 < maxDigit; m12 ++) {
-        for (m22 = minDigit; m22 < maxDigit; m22 ++) {
-        for (m32 = minDigit; m32 < maxDigit; m32 ++) {
-        for (m42 = minDigit; m42 < maxDigit; m42 ++) {
-        if (0 == 0) { // column 2
-        for (m11 = minDigit; m11 < maxDigit; m11 ++) {
-        for (m21 = minDigit; m21 < maxDigit; m21 ++) {
-        for (m31 = minDigit; m31 < maxDigit; m31 ++) {
-        for (m41 = minDigit; m41 < maxDigit; m41 ++) {
-        if (0 == 0) { // column 1
+        for (int m11 = minDigit; m11 < maxDigit; m11 ++) {
+        for (int m12 = minDigit; m12 < maxDigit; m12 ++) {
+        for (int m13 = minDigit; m13 < maxDigit; m13 ++) {
+        for (int m14 = minDigit; m14 < maxDigit; m14 ++) {
         r1 = m11*t1 + m12*t2 + m13*t3 + m14*t4;
-        if (r1 != 0) {
-        r2 = m21*t1 + m22*t2 + m23*t3 + m24*t4;
-        if (r2 != 0 && r2 != r1) {
-        r3 = m31*t1 + m32*t2 + m33*t3 + m34*t4;
-        if (r3 != 0 && r3 != r2 && r3 != r1) {
-        r4 = m41*t1 + m42*t2 + m43*t3 + m44*t4;
-        if (r4 != 0 && r4 != r3 && r4 != r2 && r4 != r1) {
+        if (t1 < r1 && r1 < TFIR && tfirst[r1]) {
+        int r1a = Math.abs(r1);
         r1p = r1*r1*r1;
+        for (int m21 = minDigit; m21 < maxDigit; m21 ++) {
+        for (int m22 = minDigit; m22 < maxDigit; m22 ++) {
+        for (int m23 = minDigit; m23 < maxDigit; m23 ++) {
+        for (int m24 = minDigit; m24 < maxDigit; m24 ++) {
+        r2 = m21*t1 + m22*t2 + m23*t3 + m24*t4;
+        int r2a = Math.abs(r2);
+        if (r2 != 0 && r2a != r1a) {
+        int ru2a = r1a + r2a;
         r2p = r2*r2*r2;
+        for (int m31 = minDigit; m31 < maxDigit; m31 ++) {
+        for (int m32 = minDigit; m32 < maxDigit; m32 ++) {
+        for (int m33 = minDigit; m33 < maxDigit; m33 ++) {
+        for (int m34 = minDigit; m34 < maxDigit; m34 ++) {
+        r3 = m31*t1 + m32*t2 + m33*t3 + m34*t4;
+        int r3a = Math.abs(r3);
+        if (r3 != 0 && r3a != r2a && r3a != r1a) {
+        int ru3a = ru2a + r3a;
         r3p = r3*r3*r3;
+        int sum3 = r1p + r2p + r3p;
+        int mod3 = Math.abs(sum3) % TMOD;
+        if (tmodset[mod3]) {
+        for (int m41 = minDigit; m41 < maxDigit; m41 ++) {
+        for (int m42 = minDigit; m42 < maxDigit; m42 ++) {
+        for (int m43 = minDigit; m43 < maxDigit; m43 ++) {
+        for (int m44 = minDigit; m44 < maxDigit; m44 ++) {
+        r4 = m41*t1 + m42*t2 + m43*t3 + m44*t4;
+        int r4a = Math.abs(r4);
+        int ru4a = ru3a + r4a;
+        if (r4 != 0  && tu4a < ru4a && r4a != r3a && r4a != r2a && r4a != r1a) {
         r4p = r4*r4*r4;
-        if (Vector.gcd(r1, r2) == 1) {
-        if (r1p + r2p + r3p + r4p == 0) { // preserves once
+        if (sum3 + r4p == 0) { // r preserves once
+            s1 = m11*r1 + m12*r2 + m13*r3 + m14*r4;
+            if (r1 < s1 && s1 < TFIR && tfirst[s1]) {
+            int s1a = Math.abs(s1);
+            s2 = m21*r1 + m22*r2 + m23*r3 + m24*r4;
+            int s2a = Math.abs(s2);
+            if (s2a != s1a) {
+            s3 = m31*r1 + m32*r2 + m33*r3 + m34*r4;
+            int s3a = Math.abs(s3);
+            if (s3a != s2a && s3a != s1a) {
+            s4 = m41*r1 + m42*r2 + m43*r3 + m44*r4;
+            int s4a = Math.abs(s4);
+            if (s4a != s3a && s4a != s2a && s4a != s1a) {
+            if (ru4a < s1a + s2a + s3a + s4a) {
+            if (s1*s1*s1 + s2*s2*s2 + s3*s3*s3 + s4*s4*s4 == 0) { // s preserves twice
             Matrix amat = new Matrix(alen, new int[]
                     { m11, m12, m13, m14
                     , m21, m22, m23, m24
@@ -727,19 +908,21 @@ public class MatrixExhauster {
                     , m41, m42, m43, m44
                     } );
             amat.printPreservedChain(vect0, 1, 4, 0);
-        } // preserves once
-        } // Vector.gcd
-        } // if r4 > 0
+            } // s preserves twice
+            } // ru4a < su4a
+	        } // s4a
+	        } // s3a
+	        } // s2a
+        	} // r1 < s1
+        } // r preserves once
+        } // if tu4a < ru4a
+        } // if tmodset
         } // if r3 > 0
         } // if r2 > 0
         } // if r1 > 0
-        } // column 4
         }}}} // for mi4
-        } // column 3
         }}}} // for mi3
-        } // column 2
         }}}} // for mi2
-        } // column 1
         }}}} // for mi1
     } // ec340
 
@@ -747,7 +930,7 @@ public class MatrixExhauster {
      *  @param vect0 start vector, or default if null
      */
     public void pEC331(Vector vect0) {
-        int powers[] = new int[MAXPOW]; 
+        int powers[] = new int[MAXPOW];
         int ipow = 0;
         while (ipow < MAXPOW) {
             powers[ipow] = ipow*ipow*ipow;
@@ -766,12 +949,12 @@ public class MatrixExhauster {
         }
         int t1 = vect1.get(0);
         int t2 = vect1.get(1);
-        int t3 = vect1.get(2); 
+        int t3 = vect1.get(2);
         int t4 = vect1.get(3);
         int alen = vect1.size();
         int r1,  r2,  r3,  r4;  // resulting vector of multiplication m*t
         int r1p, r2p, r3p, r4p; // (2nd, 3rd) powers thereof
-        
+
         for (m11 = minDigit; m11 < maxDigit; m11 ++) {
         int col11 =          m11*m11*m11;
         for (m21 = minDigit; m21 < maxDigit; m21 ++) {
@@ -794,7 +977,7 @@ public class MatrixExhauster {
         if (fact > 0)      { // 1st column is powersum "-"
 /*
         System.out.println("# v3.fact=" + fact
-                + ",\tcol1=[" + m11 
+                + ",\tcol1=[" + m11
                 + "," + m21
                 + "," + m31
                 + "," + m41
@@ -820,7 +1003,7 @@ public class MatrixExhauster {
         for (m43 = minDigit; m43 < maxDigit; m43 ++) {
         int col34 = col33 -  m43*m43*m43;
         if (col34 - fact == 0) { // 3rd column is powersum "-"
-        
+
         for (m14 = minDigit; m14 < maxDigit; m14 ++) {
         int col41 =          m14*m14*m14;
         r1 = m11*t1 + m12*t2 + m13*t3 + m14*t4;
@@ -871,7 +1054,7 @@ public class MatrixExhauster {
      *  @param vect0 start vector, or default if null
      */
     public void pEC322(Vector vect0) {
-        int powers[] = new int[MAXPOW]; 
+        int powers[] = new int[MAXPOW];
         int ipow = 0;
         while (ipow < MAXPOW) {
             powers[ipow] = ipow*ipow*ipow;
@@ -890,12 +1073,12 @@ public class MatrixExhauster {
         }
         int t1 = vect1.get(0);
         int t2 = vect1.get(1);
-        int t3 = vect1.get(2); 
+        int t3 = vect1.get(2);
         int t4 = vect1.get(3);
         int alen = vect1.size();
         int r1,  r2,  r3,  r4;  // resulting vector of multiplication m*t
         int r1p, r2p, r3p, r4p; // (2nd, 3rd) powers thereof
-        
+
         for (m11 = minDigit; m11 < maxDigit; m11 ++) {
         int col11 =          m11*m11*m11;
         for (m21 = minDigit; m21 < maxDigit; m21 ++) {
@@ -918,7 +1101,7 @@ public class MatrixExhauster {
         if (fact > 0)      { // 1st column is powersum "-"
 /*
         System.out.println("# v3.fact=" + fact
-                + ",\tcol1=[" + m11 
+                + ",\tcol1=[" + m11
                 + "," + m21
                 + "," + m31
                 + "," + m41
@@ -944,7 +1127,7 @@ public class MatrixExhauster {
         for (m43 = minDigit; m43 < maxDigit; m43 ++) {
         int col34 = col33 -  m43*m43*m43;
         if (col34 + fact == 0) { // 3rd column is powersum "+"
-        
+
         for (m14 = minDigit; m14 < maxDigit; m14 ++) {
         int col41 =          m14*m14*m14;
         r1 = m11*t1 + m12*t2 + m13*t3 + m14*t4;
@@ -1063,7 +1246,7 @@ They yield a sum of zero if raised to the 3rd power.
      *  @param vect0 start vector, or default if null
      */
     public void pEC340(Vector vect0) {
-        int powers[] = new int[MAXPOW]; 
+        int powers[] = new int[MAXPOW];
         int ipow = 0;
         while (ipow < MAXPOW) {
             powers[ipow] = ipow*ipow*ipow;
@@ -1082,12 +1265,12 @@ They yield a sum of zero if raised to the 3rd power.
         }
         int t1 = vect1.get(0);
         int t2 = vect1.get(1);
-        int t3 = vect1.get(2); 
+        int t3 = vect1.get(2);
         int t4 = vect1.get(3);
         int alen = vect1.size();
         int r1,  r2,  r3,  r4;  // resulting vector of multiplication m*t
         int r1p, r2p, r3p, r4p; // (2nd, 3rd) powers thereof
-        
+
         for (m11 = minDigit; m11 < maxDigit; m11 ++) {
         int col11 =          m11*m11*m11;
         for (m21 = minDigit; m21 < maxDigit; m21 ++) {
@@ -1110,7 +1293,7 @@ They yield a sum of zero if raised to the 3rd power.
         if (fact > 0)      { // 1st column is powersum "-"
 /*
         System.out.println("# v3.fact=" + fact
-                + ",\tcol1=[" + m11 
+                + ",\tcol1=[" + m11
                 + "," + m21
                 + "," + m31
                 + "," + m41
@@ -1136,7 +1319,7 @@ They yield a sum of zero if raised to the 3rd power.
         for (m43 = minDigit; m43 < maxDigit; m43 ++) {
         int col34 = col33 +  m43*m43*m43;
         if (col34 - fact == 0) { // 3rd column is powersum "-"
-        
+
         for (m14 = minDigit; m14 < maxDigit; m14 ++) {
         int col41 =          m14*m14*m14;
         r1 = m11*t1 + m12*t2 + m13*t3 + m14*t4;
@@ -1200,7 +1383,7 @@ They yield a sum of zero if raised to the 3rd power.
         }
         int t1 = vect1.get(0);
         int t2 = vect1.get(1);
-        int t3 = vect1.get(2); 
+        int t3 = vect1.get(2);
         int t4 = vect1.get(3);
         int alen = vect1.size();
         int r1,  r2,  r3,  r4;  // resulting vector of multiplication m*t
@@ -1566,7 +1749,7 @@ They yield a sum of zero if raised to the 3rd power.
         } else {
             System.err.println("unknown operation \"" + oper + "\"");
         }
-        System.err.println("elapsed time: " 
+        System.err.println("elapsed time: "
                 + (System.currentTimeMillis() - startMillis + 500) / 1000 + " s");
     } // main
 
