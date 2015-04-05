@@ -1,5 +1,6 @@
 /*  Vector: a simple, short vector of small numbers
  *  @(#) $Id: Vector.java 744 2011-07-26 06:29:20Z gfis $
+ *  2015-04-05: gcd, isPowerSum repaired
  *  2015-02-24: isMonotone, isConstant
  *  2013-08-23: Serializable
  *  2013-07-27, Georg Fischer: copied from Vector
@@ -339,23 +340,20 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
      *  @return gcd(a,b)
      */
     public static int gcd(int a, int b) {
-        int result = 1;
-    /* the algorithm exchanges itself
-        if (Math.abs(b) > Math.abs(a)) { // exchange
-            int temp = b; b = a; a = temp;
+        int result = Math.abs(a);
+        if (result > 1) {
+            int p = result;
+            int q = Math.abs(b);
+            while (q != 0) {
+                int temp = q;
+                q = p % q;
+                p = temp;
+            }
+            result = p;
+        } // if > 1
+        if (result == 0) {
+            result = 1;
         }
-    */
-        if (b == 0) {
-            result = a;
-        } else {
-            int rest = a % b;
-            while (rest != 0) {
-                a = b;
-                b = rest;
-                rest = a % b;
-            } // while
-            result = b;
-        } // b != 0
         return Math.abs(result);
     } // gcd(a, b)
 
@@ -376,7 +374,7 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
         int ielem = 1;
         while (result > 1 && ielem < vlen) {
             int p = result;
-            int q = vect[ielem];
+            int q = Math.abs(vect[ielem]);
             while (q != 0) {
                 int temp = q;
                 q = p % q;
@@ -506,36 +504,30 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
             switch (exp) {
                 case 2:
                     while (isum < left) {
-                        temp = this.vector[isum];
+                        temp = this.vector[isum ++];
                         leftSum  += temp * temp;
-                        isum ++;
                     } // while < left
                     while (isum < this.vecLen) {
-                        temp = this.vector[isum];
+                        temp = this.vector[isum ++];
                         rightSum += temp * temp;
-                        isum ++;
                     } // while < this.vecLen
                     break;
                 case 3:
                     while (isum < left) {
-                        temp = this.vector[isum];
+                        temp = this.vector[isum ++];
                         leftSum  += temp * temp * temp;
-                        isum ++;
                     } // while < left
                     while (isum < this.vecLen) {
-                        temp = this.vector[isum];
+                        temp = this.vector[isum ++];
                         rightSum += temp * temp * temp;
-                        isum ++;
                     } // while < this.vecLen
                     break;
                 default:
                     while (isum < left) {
-                        leftSum += pow(this.vector[isum], exp);
-                        isum ++;
+                        leftSum  += pow(this.vector[isum ++], exp);
                     } // while < left
                     while (isum < this.vecLen) {
-                        rightSum += pow(this.vector[isum], exp);
-                        isum ++;
+                        rightSum += pow(this.vector[isum ++], exp);
                     } // while < this.vecLen
                     break;
             } // switch exp
@@ -575,36 +567,30 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
             switch (exp) {
                 case 2:
                     while (isum < left) {
-                        temp = this.vector[isum];
+                        temp = this.vector[isum ++];
                         leftSum  += temp * temp;
-                        isum ++;
                     } // while < left
                     while (isum < this.vecLen) {
-                        temp = this.vector[isum];
+                        temp = this.vector[isum ++];
                         rightSum += temp * temp;
-                        isum ++;
                     } // while < this.vecLen
                     break;
                 case 3:
                     while (isum < left) {
-                        temp = this.vector[isum];
+                        temp = this.vector[isum ++];
                         leftSum  += temp * temp * temp;
-                        isum ++;
                     } // while < left
                     while (isum < this.vecLen) {
-                        temp = this.vector[isum];
+                        temp = this.vector[isum ++];
                         rightSum += temp * temp * temp;
-                        isum ++;
                     } // while < this.vecLen
                     break;
                 default:
                     while (isum < left) {
-                        leftSum += pow(this.vector[isum], exp);
-                        isum ++;
+                        leftSum  += pow(this.vector[isum ++], exp);
                     } // while < left
                     while (isum < this.vecLen) {
-                        rightSum += pow(this.vector[isum], exp);
-                        isum ++;
+                        rightSum += pow(this.vector[isum ++], exp);
                     } // while < this.vecLen
                     break;
             } // switch exp
@@ -974,6 +960,26 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
                         + (vect1.isPowerSum(vect1.size() - 1, vect1.size() - 1, 1) ? "" : " no")
                         + " sum of like powers");
                 // -pow
+
+            } else if (opt.startsWith("-psum")) {
+                vect1 = new Vector(args[iarg ++]);
+                int left = vect1.size();
+                try {
+                    left  = Integer.parseInt(args[iarg]);
+                } catch (Exception exc) {
+                }
+                iarg ++;
+                int right = 0;
+                try {
+                    right = Integer.parseInt(args[iarg]);
+                } catch (Exception exc) {
+                }
+                iarg ++;
+                System.out.println("Vector " + vect1.toString() + " is"
+                        + (vect1.isPowerSum(vect1.size() - 1, left, right) ? "" : " no")
+                        + " sum of like powers");
+                System.out.println(vect1.toString("(,)") + ".gcd() = " + vect1.gcd());
+                // -psum
 
             } else if (opt.startsWith("-read")) {
                 String line = args[iarg ++];

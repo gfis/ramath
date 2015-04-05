@@ -1,1 +1,2 @@
-read [-1,5,6,7]
+Vector [32,-44,55,66].gcd() = 1
+Vector [32,-44,55,66].extractGcd() = 1

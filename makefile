@@ -17,6 +17,10 @@ regression:
 	java -cp dist/ramath.jar org.teherba.common.RegressionTester $(TESTDIR)/all.tests $(TEST) 2>&1 \
 	| tee regression.log.tmp
 	grep FAILED regression.log.tmp
+linear:
+	java -cp dist/ramath.jar org.teherba.common.RegressionTester $(TESTDIR)/linear.tests $(TEST) 2>&1 \
+	| tee regression.log.tmp
+	grep FAILED regression.log.tmp
 matrix:
 	java -cp dist/ramath.jar org.teherba.common.RegressionTester $(TESTDIR)/matrix.tests $(TEST) 2>&1 \
 	| tee regression.log.tmp
@@ -53,6 +57,13 @@ ec340:
 	perl data/genpEC.pl 3 4 0 > ec340.txt
 genec2:
 	perl data/genec2.pl 3 3 1 > genec2.txt
+split_tuple:
+	perl data/split_tuple.pl test/EC34.prev.tst > tuples.prev.tmp
+	perl data/split_tuple.pl test/EC34.this.tst > tuples.this.tmp
+	diff -w -C0 tuples.prev.tmp tuples.this.tmp
+get_maps:
+	perl data/get_maps.pl test/EC34.prev.tst \
+	| sort -n | uniq -c > maps.tmp
 #----------
 grep3x:
 	grep "chain 8" test/MX3*.this.tst \

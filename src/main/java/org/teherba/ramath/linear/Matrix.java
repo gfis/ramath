@@ -1,5 +1,6 @@
 /*  Matrix: a simple, small, square matrix of small numbers
  *  @(#) $Id: Matrix.java 744 2011-07-26 06:29:20Z gfis $
+ *  2015-04-04: permute
  *  2014-04-06: MultiModoMeter incorporated into ModoMeter
  *  2013-08-23: Serializable
  *  2013-08-14: non-square matrices are prepared by colLen
@@ -124,8 +125,8 @@ public class Matrix implements Cloneable, Serializable {
     /** Constructor for a Matrix which initializes it from a matrix expression.
      *  If the number of elements is no square number, the next lower square
      *  number is taken, and some elements at the end are ignored.
-     *  @param matExpr comma-separated array of {@link PolyVector}s in square brackets,
-     *  for example "[[a,b,c],[f,g,h],[k,l,m]]"
+     *  @param matExpr comma-separated array of {@link Vector}s in square brackets,
+     *  for example "[[11,12,13],[21,22,23],[31,32,33]]"
      */
     public Matrix(String matExpr) {
         String vectExpr = matExpr.substring(0, matExpr.indexOf("]"));
@@ -161,7 +162,7 @@ public class Matrix implements Cloneable, Serializable {
         return result;
     } // clone
 
-    /** Sets <em>this</em> Matrix to an elementary transformation
+    /** Computes a Matrix which is an elementary transformation
      *  (column addition, subtraction or identity).
      *  @param elen number of rows/columns
      *  @param seqNo a sequential number for the zeroes in the identity matrix,
@@ -196,8 +197,26 @@ public class Matrix implements Cloneable, Serializable {
         return result;
     } // elementary
 
+    /** Compute a permutation matrix which has exactly one "1" element in each row and column,
+     *  and "0" elements elsewhere. 
+     *  @param  meter definition of the permutation, result of {@link org.teherba.ramath.util.Permutator},
+     *  a permutation of the numbers [0 : n-1] defining, for each row, the column to be set.
+     *  For example, [0,1,2,3] yields the 4x4 identity matrix.
+     *  @return reference to a new matrix
+     */
+    public static Matrix permutation(int[] meter) {
+        int rlen = meter.length;
+        Matrix result = new Matrix(rlen);
+        for (int irow = 0; irow < rlen; irow ++) {
+            for (int icol = 0; icol < rlen; icol ++) {
+                result.matrix[irow][icol] = (meter[irow] == icol) ? (/*Type*/int) 1 : (/*Type*/int) 0;
+            } // for icol
+        } // for irow
+        return result;
+    } // permutation
+
     /** Initializes <em>this</em> Matrix by setting
-     *  ones in the main diagonal and zeroes elsewhere.
+     *  "1" in the main diagonal and "0" elsewhere.
      */
     public void setIdentity() {
         for (int irow = 0; irow < this.rowLen; irow ++) {
@@ -414,6 +433,32 @@ public class Matrix implements Cloneable, Serializable {
         return result;
     } // equals
 
+    /** Determines whether <em>this</em> matrix is a permutation 
+     *  of a second matrix, that is whether there is a {@link permutation}
+     *  matrix such that <em>this=matr2*perm</em>.
+     *  @param matr2 compare with this matrix
+     *  @return null if there is no such permutation matrix, 
+     *  or a {@link Vector} showing the permutation.
+     */
+    public Vector isPermutation(Matrix matr2) {
+        int rlen = matr2.size();
+        Vector result = null; // assume not found
+        if (rlen == this.size()) {
+            boolean busy = true;
+            Permutator permutator = new Permutator(rlen);
+            while (busy && permutator.hasNext()) {
+                int[] meter = permutator.next();
+                if (this.equals(matr2.multiply(Matrix.permutation(meter)))) { // found
+                    busy = false;
+                    result = new Vector(meter);
+                }
+            } // while permutator
+        } else {
+            throw new IllegalArgumentException("cannot compare matrices of different size " + this.rowLen);
+        }
+        return result;
+    } // isPermutation
+
     /*-------------- arithmetic operations -------------------------*/
 
     /** Clone and adds all elements of another matrix to <em>this</em> matrix.
@@ -477,7 +522,6 @@ public class Matrix implements Cloneable, Serializable {
         }
         return result;
     } // multiply(Vector)
-
 
     /*-------------- symbolic ----------------------------------------*/
     /*
@@ -840,12 +884,8 @@ Abstract * (a b c) = a^2 + b^2 - c^2
         Vector vect2 = this.multiply(vect1);
         int iter = 0;
         while ( true
-        /*
-                && ! vect1.equals(vect2)
-                && ! vect0.equals(vect2)
-        */
-        		&& vect1.norm4() != vect2.norm4()
-                && Math.abs(vect2.gcd()) <= 1
+                && vect2.gcd() <= 1
+                && vect1.norm4() != vect2.norm4()
                 && vect2.isPowerSum(exp, left, right)
                 && iter < maxIter) {
             result.add(vect2);
@@ -868,14 +908,14 @@ Abstract * (a b c) = a^2 + b^2 - c^2
         ArrayList<Vector> chain = this.preservedPowerSums(alen - 1, left, right, vect0, maxIter);
         if (chain.size() >= 2) { // == maxIter) {
             System.out.print(""
-                    + "chain " + chain.size()
-                    + ", fact " + fact + " "
-                    + String.format("%-32s ", this.toString("(,)"))
+                //  + ", fact " + fact + " "
+                    + String.format("%-32s ", this.toString("(,)") + ",det=" + this.determinant())
                 /*
                     + String.format(" %-24s", (new PolyMatrix(amat)).multiply(new PolyVector(alen, "a"))
                         .powerSum(alen - 1, left, right).toString().replaceAll("\\s", ""))                   
                 */
                     + vect0.toString("(,)")
+                    + ", chain " + chain.size()
                     );
             int maxShow = maxIter - (alen - 1 == 2 ? 5 : 0);
             if (maxShow > chain.size()) {
@@ -1044,7 +1084,46 @@ Abstract * (a b c) = a^2 + b^2 - c^2
                 String opt = args[iarg ++];
 
                 if (false) {
-                } else if (opt.equals ("-f") || opt.equals("-queue") || opt.equals("-prim")) {
+                } else if (opt.equals("-perms" )) {
+                    // read a list of matrices, and perform some operation with them
+                    ArrayList<Matrix> matList = new ArrayList<Matrix>(32);
+                    String fileName = args[iarg ++];
+                    BufferedReader testReader = null;
+                    if(fileName.equals("-")) { // STDIN
+                        testReader = new BufferedReader(new InputStreamReader(System.in, "UTF-8"));
+                    } else {
+                        File testCases = new File(fileName);
+                        testReader = new BufferedReader(new FileReader(testCases));
+                    } // not STDIN
+                    // System.err.println("fileName=" + fileName + ", directory=" + directory);
+                    int state = 0; // runs from alen down to 0 for subsequent matrix lines
+                    String line = null;
+                    while ((line = testReader.readLine()) != null) { // read and process lines
+                        // System.out.println(line);
+                        int sqpos = line.indexOf("[["); 
+                        if (sqpos >= 0) {
+                            amat = new Matrix(line.substring(sqpos, line.indexOf("]]") + 2));
+                            int imat = 0; 
+                            Vector perm = null;
+                            while (perm == null && imat < matList.size()) {
+                                perm = amat.isPermutation(matList.get(imat));
+                                imat ++;
+                            } // while imat
+                            if (perm == null) {
+                                System.out.println("matList[" + matList.size() + "] = " + amat.toString(","));
+                                matList.add(amat);
+                            } else {
+                                System.out.println("permuted from " + String.valueOf(imat - 1) + " by " + perm.toString(",") 
+                                		+ ": " + amat.toString(","));
+                            }                
+                        } // if sqpos           
+                    } // while line
+                    // opt -perms
+                    
+                } else if (opt.equals("-f"    ) 
+                        || opt.equals("-queue") 
+                        || opt.equals("-prim" )
+                        ) {
                     // read a list of matrices, and perform some operation with them
                     ArrayList<Matrix> matList = new ArrayList<Matrix>(32);
                     String fileName = args[iarg ++];
@@ -1332,6 +1411,17 @@ Abstract * (a b c) = a^2 + b^2 - c^2
                             + vect1.toString("(,)") + " = "
                             + amat.multiply(vect1).toString("(,)"));
                     // -mult
+
+                } else if (opt.equals("-permul")) {
+                    amat  = new Matrix(args[iarg ++]); // may not contain spaces
+                    alen  = amat.size();
+                    Permutator permutator = new Permutator(alen);
+                    while (permutator.hasNext()) {
+                        int[] meter = permutator.next();
+                        System.out.println("*" + (new Vector(meter)).toString(",") + ": " 
+                        		+ amat.multiply(Matrix.permutation(meter)).toString(","));
+                    } // while permutator
+                    // opt -permul
 
                 } else if (opt.equals("-eec3")) {
                     int maxIter = 4;
