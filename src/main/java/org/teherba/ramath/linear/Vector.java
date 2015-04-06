@@ -241,6 +241,30 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
         return result;
     } // equals
 
+    /** Gets the (first) position of an element in <em>this</em> Vector.
+     *  @param elem search for this element
+     *  @return index >= 0 of <em>elem</em> in <em>this</em> Vector, or -1 if not found
+     */
+    public int indexOf(int elem) {
+        int result = -1;
+        int ielem = 0;
+        while (result < 0 && ielem < this.vecLen) {
+            if (elem == this.vector[ielem]) {
+                result = ielem;
+            }
+            ielem ++;
+        } // while ielem
+        return result;
+    } // indexOf
+
+    /** Determines whether <em>this</em> Vector contains a specific element.
+     *  @param elem search for this element
+     *  @return whether <em>elem</em> is an element of <em>this</em> Vector
+     */
+    public boolean contains(int elem) {
+        return this.indexOf(elem) >= 0;
+    } // contains
+
     /** Computes the norm, that is the square root of 
      *  the innerproduct of the Vector with itself.
      *  @return sqrt(sum of all elements^2)
@@ -275,7 +299,7 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
         long result = 0L;
         int ivect = 0;
         while (ivect < this.vecLen) {
-        	long val = this.vector[ivect];
+            long val = this.vector[ivect];
             result += val * val;
             ivect ++;
         } // while ivect
@@ -292,7 +316,7 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
             double normt = this .norm();
             double norm2 = vect2.norm();
             if (       normt == norm2) {
-            	// result = 0 already set
+                // result = 0 already set
             } else if (normt <  norm2) {
                 result = -1;
             } else if (normt >  norm2) {

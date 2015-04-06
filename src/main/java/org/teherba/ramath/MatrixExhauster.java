@@ -71,8 +71,8 @@ public class MatrixExhauster {
      *  @param limit minimum digit not yet used for expansion
      */
     public MatrixExhauster(int limit) {
-        maxDigit = limit + 1;
-        minDigit = - limit;
+        maxDigit = (int) (limit + 1);
+        minDigit = (int) (- limit  );
         squares = new int[MAXPOW];
         cubes   = new int[MAXPOW];
         int isq = 0;
@@ -107,7 +107,7 @@ public class MatrixExhauster {
                 break;
         } // switch exp
         int alen = exp + 1;
-        maxDigit = alen * (alen - 1); // 6 different elementary matrices of size 3, 12 of size 4
+        maxDigit = (int) (alen * (alen - 1)); // 6 different elementary matrices of size 3, 12 of size 4
     //    maxDigit = 2 * alen * (alen - 1) + 0; // 12 different elementary matrices of size 3; +1: with identity
         Matrix amat = new Matrix(alen);
         ModoMeter meter = new ModoMeter(width, maxDigit);
@@ -163,7 +163,7 @@ public class MatrixExhauster {
                 break;
         } // switch exp
         int alen = exp + 1;
-        maxDigit = alen * (alen - 1); // 6 different elementary matrices of size 3, 12 of size 4
+        maxDigit = (int) (alen * (alen - 1)); // 6 different elementary matrices of size 3, 12 of size 4
         int edim = 4; // dimension of 'elems' below
         Matrix  []
                 []
@@ -443,9 +443,9 @@ public class MatrixExhauster {
         if (Vector.gcd(r1, r2) == 1) {
         if (r1p + r2p - r3p == 0) { // preserves once
             Matrix amat = new Matrix(alen, new int[]
-        { m11, m12, m13
-        , m21, m22, m23
-        , m31, m32, m33
+                    { m11, m12, m13
+                    , m21, m22, m23
+                    , m31, m32, m33
                     } );
             amat.printPreservedChain(vect0, 1, 2, 1);
         } // preserves once
@@ -661,87 +661,24 @@ public class MatrixExhauster {
         }}}} // for mi1
     } // ec331
 
-    /** ec340: Generate matrices which preserve tuples for Euler's conjecture
-     *  @param vect0 initial vector which represents a sum of like powers
-     *  Caution: This Java method was generated on 2015-04-04 19:21:04 by ramath/data/genpEC.pl.
-     *  Do   N O T   E D I T   here!
+    /** Gets the (first) position of an element in an <em>int</em> array
+     *  @param arr search in this array
+     *  @param elem search for this element
+     *  @return index >= 0 of <em>elem</em> in <em>arr</em>, or -1 if not found
      */
-    public void ec340_gen(Vector vect0) {
-        int MAXPOW = 16; // matrix elements must be smaller
-        int powers[] = new int[MAXPOW]; 
-        int ipow = 0;
-        while (ipow < MAXPOW) {
-            powers[ipow] = ipow*ipow*ipow;
-            ipow ++;
-        } // while 1
-        int alen = vect0.size();
-        // desired matrix, exhausted for all values minDigit <= v < maxDigit
-        int m11, m12, m13, m14;
-        int m21, m22, m23, m24;
-        int m31, m32, m33, m34;
-        int m41, m42, m43, m44;
-        int t1 = vect0.get(0);
-        int t2 = vect0.get(1);
-        int t3 = vect0.get(2);
-        int t4 = vect0.get(3);
-        int r1, r2, r3, r4; // resulting vector of multiplication m*t
-        int r1p, r2p, r3p, r4p; // (2nd, 3rd ...) powers thereof
-        for (m14 = minDigit; m14 < maxDigit; m14 ++) {
-        for (m24 = minDigit; m24 < maxDigit; m24 ++) {
-        for (m34 = minDigit; m34 < maxDigit; m34 ++) {
-        for (m44 = minDigit; m44 < maxDigit; m44 ++) {
-        if (true) { // column 4
-        for (m13 = minDigit; m13 < maxDigit; m13 ++) {
-        for (m23 = minDigit; m23 < maxDigit; m23 ++) {
-        for (m33 = minDigit; m33 < maxDigit; m33 ++) {
-        for (m43 = minDigit; m43 < maxDigit; m43 ++) {
-        if (0 == 0) { // column 3
-        for (m12 = minDigit; m12 < maxDigit; m12 ++) {
-        for (m22 = minDigit; m22 < maxDigit; m22 ++) {
-        for (m32 = minDigit; m32 < maxDigit; m32 ++) {
-        for (m42 = minDigit; m42 < maxDigit; m42 ++) {
-        if (0 == 0) { // column 2
-        for (m11 = minDigit; m11 < maxDigit; m11 ++) {
-        for (m21 = minDigit; m21 < maxDigit; m21 ++) {
-        for (m31 = minDigit; m31 < maxDigit; m31 ++) {
-        for (m41 = minDigit; m41 < maxDigit; m41 ++) {
-        if (0 == 0) { // column 1
-        r1 = m11*t1 + m12*t2 + m13*t3 + m14*t4;
-        if (r1 > t1) {
-        r2 = m21*t1 + m22*t2 + m23*t3 + m24*t4;
-        if (true && r2 != r1) {
-        r3 = m31*t1 + m32*t2 + m33*t3 + m34*t4;
-        if (true && r3 != r2 && r3 != r1) {
-        r4 = m41*t1 + m42*t2 + m43*t3 + m44*t4;
-        if (true && r4 != r3 && r4 != r2 && r4 != r1) {
-        r1p = r1*r1*r1;
-        r2p = r2*r2*r2;
-        r3p = r3*r3*r3;
-        r4p = r4*r4*r4;
-        if (true || Vector.gcd(r1, r2) == 1) {
-        if (r1p + r2p + r3p + r4p == 0) { // preserves once
-            Matrix amat = new Matrix(alen, new int[]
-                    { m11, m12, m13, m14
-                    , m21, m22, m23, m24
-                    , m31, m32, m33, m34
-                    , m41, m42, m43, m44
-                    } );
-            amat.printPreservedChain(vect0, 1, 4, 0);
-        } // preserves once
-        } // Vector.gcd
-        } // if r4 > 0
-        } // if r3 > 0
-        } // if r2 > 0
-        } // if r1 > 0
-        } // column 4
-        }}}} // for mi4
-        } // column 3
-        }}}} // for mi3
-        } // column 2
-        }}}} // for mi2
-        } // column 1
-        }}}} // for mi1
-    } // ec340
+    public static int indexOf(int[] arr, int elem) {
+        int result = -1;
+        int arrlen = arr.length;
+        int ielem = 0;
+        while (result < 0 && ielem < arrlen) {
+            if (elem == arr[ielem]) {
+                result = ielem;
+            } else {
+                ielem ++;
+            }
+        } // while ielem
+        return result;
+    } // indexOf
 
     /** ec340: Generate matrices which preserve tuples for Euler's conjecture
      *  @param vect0 initial vector which represents a sum of like powers
@@ -798,152 +735,348 @@ gain: 54
         tmodset[55] = true;
         tmodset[62] = true;
         
-        int MAXLIST = 100;
-        Vector[][] vlist = new Vector[MAXLIST][];
+        int MAXLIST = 256;
+        Object[] vlist = new Object[MAXLIST];
         for (int ilist = 0; ilist < MAXLIST; ilist ++) {
             vlist[ilist] = null;
         } // for ilist
         
-        vlist[  0] = new Vector[] { };
-        vlist[  6] = new Vector[] { new Vector(new int[] {  6,-3,-4,-5}) };
-        vlist[  9] = new Vector[] { new Vector(new int[] {  9,-1,-6,-8}) };
-        vlist[ 12] = new Vector[] { new Vector(new int[] { 12,1,-9,-10}) };
-        vlist[ 16] = new Vector[] { new Vector(new int[] { 16,2,-9,-15}) };
-        vlist[ 19] = new Vector[] { new Vector(new int[] { 19,-3,-10,-18}) };
-        vlist[ 20] = new Vector[] { new Vector(new int[] { 20,-7,-14,-17}) };
-        vlist[ 25] = new Vector[] { new Vector(new int[] { 25,-4,-17,-22}) };
-        vlist[ 27] = new Vector[] { new Vector(new int[] { 27,10,-19,-24}) };
-        vlist[ 28] = new Vector[] { new Vector(new int[] { 28,-18,-19,-21}) };
-        vlist[ 29] = new Vector[] { new Vector(new int[] { 29,-11,-15,-27}) };
-        vlist[ 34] = new Vector[] { new Vector(new int[] { 34,2,-15,-33})
-                                  , new Vector(new int[] { 34,9,-16,-33}) };
-        vlist[ 39] = new Vector[] { new Vector(new int[] { 39,17,-26,-36}) };
-        vlist[ 40] = new Vector[] { new Vector(new int[] { 40,12,-31,-33}) };
-        vlist[ 41] = new Vector[] { new Vector(new int[] { 41,-2,-17,-40})
-                                  , new Vector(new int[] { 41,-6,-32,-33}) };
-        vlist[ 44] = new Vector[] { new Vector(new int[] { 44,-16,-23,-41}) };
-        vlist[ 46] = new Vector[] { new Vector(new int[] { 46,-27,-30,-37})
-                                  , new Vector(new int[] { 46,-3,-36,-37}) };
-        vlist[ 51] = new Vector[] { new Vector(new int[] { 51,12,-38,-43}) };
-        vlist[ 53] = new Vector[] { new Vector(new int[] { 53,-29,-34,-44})
-                                  , new Vector(new int[] { 53,8,-29,-50}) };
-        vlist[ 54] = new Vector[] { new Vector(new int[] { 54,-12,-19,-53}) };
-        vlist[ 55] = new Vector[] { new Vector(new int[] { 55,17,-24,-54}) };
-        vlist[ 58] = new Vector[] { new Vector(new int[] { 58,-15,-42,-49})
-                                  , new Vector(new int[] { 58,9,-22,-57}) };
-        vlist[ 60] = new Vector[] { new Vector(new int[] { 60,3,-22,-59}) };
-        vlist[ 67] = new Vector[] { new Vector(new int[] { 67,-22,-51,-54})
-                                  , new Vector(new int[] { 67,30,-51,-58}) };
-        vlist[ 69] = new Vector[] { new Vector(new int[] { 69,-36,-38,-61})
-                                  , new Vector(new int[] { 69,42,-56,-61}) };
-        vlist[ 70] = new Vector[] { new Vector(new int[] { 70,-7,-54,-57}) };
-        vlist[ 71] = new Vector[] { new Vector(new int[] { 71,-14,-23,-70}) };
-        vlist[ 72] = new Vector[] { new Vector(new int[] { 72,-34,-39,-65}) };
-        vlist[ 75] = new Vector[] { new Vector(new int[] { 75,-38,-43,-66}) };
-        vlist[ 76] = new Vector[] { new Vector(new int[] { 76,-31,-33,-72})
-                                  , new Vector(new int[] { 76,17,-38,-73})
-                                  , new Vector(new int[] { 76,5,-48,-69}) };
-        vlist[ 80] = new Vector[] { new Vector(new int[] { 80,15,-54,-71}) };
-        vlist[ 81] = new Vector[] { new Vector(new int[] { 81,-25,-48,-74}) };
-        vlist[ 82] = new Vector[] { new Vector(new int[] { 82,-19,-60,-69})
-                                  , new Vector(new int[] { 82,51,-64,-75}) };
-        vlist[ 84] = new Vector[] { new Vector(new int[] { 84,-28,-53,-75}) };
-        vlist[ 85] = new Vector[] { new Vector(new int[] { 85,-50,-61,-64}) };
-        vlist[ 87] = new Vector[] { new Vector(new int[] { 87,-20,-54,-79})
-                                  , new Vector(new int[] { 87,-26,-55,-78})
-                                  , new Vector(new int[] { 87,-38,-48,-79}) };
-        vlist[ 88] = new Vector[] { new Vector(new int[] { 88,-21,-43,-84})
-                                  , new Vector(new int[] { 88,-25,-31,-86}) };
-        vlist[ 89] = new Vector[] { new Vector(new int[] { 89,-17,-40,-86})
-                                  , new Vector(new int[] { 89,2,-41,-86}) };
-        vlist[ 90] = new Vector[] { new Vector(new int[] { 90,-25,-38,-87})
-                                  , new Vector(new int[] { 90,-58,-59,-69}) };
-        vlist[ 93] = new Vector[] { new Vector(new int[] { 93,-32,-54,-85})
-                                  , new Vector(new int[] { 93,11,-30,-92}) };
-        vlist[ 94] = new Vector[] { new Vector(new int[] { 94,23,-63,-84}) };
-        vlist[ 96] = new Vector[] { new Vector(new int[] { 96,-19,-53,-90})
-                                  , new Vector(new int[] { 96,50,-59,-93}) };
-        vlist[ 97] = new Vector[] { new Vector(new int[] { 97,-45,-69,-79})
-                                  , new Vector(new int[] { 97,20,-33,-96})
-                                  , new Vector(new int[] { 97,47,-66,-90}) };
-        vlist[ 98] = new Vector[] { new Vector(new int[] { 98,24,-63,-89})
-                                  , new Vector(new int[] { 98,35,-59,-92}) };
-        vlist[ 99] = new Vector[] { new Vector(new int[] { 99,29,-60,-92}) };
-        
+        vlist[  0] = new int[] { };
+        vlist[  6] = new int[] { -3,-4,-5 };
+        vlist[  9] = new int[] { -1,-6,-8 };
+        vlist[ 12] = new int[] { 1,-9,-10 };
+        vlist[ 16] = new int[] { 2,-9,-15 };
+        vlist[ 19] = new int[] { -3,-10,-18 };
+        vlist[ 20] = new int[] { -7,-14,-17 };
+        vlist[ 25] = new int[] { -4,-17,-22 };
+        vlist[ 27] = new int[] { 10,-19,-24 };
+        vlist[ 28] = new int[] { -18,-19,-21 };
+        vlist[ 29] = new int[] { -11,-15,-27 };
+        vlist[ 34] = new int[] { 2,-15,-33
+                               , 9,-16,-33 };
+        vlist[ 39] = new int[] { 17,-26,-36 };
+        vlist[ 40] = new int[] { 12,-31,-33 };
+        vlist[ 41] = new int[] { -2,-17,-40
+                               , -6,-32,-33 };
+        vlist[ 44] = new int[] { -16,-23,-41 };
+        vlist[ 46] = new int[] { -27,-30,-37
+                               , -3,-36,-37 };
+        vlist[ 51] = new int[] { 12,-38,-43 };
+        vlist[ 53] = new int[] { -29,-34,-44
+                               , 8,-29,-50 };
+        vlist[ 54] = new int[] { -12,-19,-53 };
+        vlist[ 55] = new int[] { 17,-24,-54 };
+        vlist[ 58] = new int[] { -15,-42,-49
+                               , 9,-22,-57 };
+        vlist[ 60] = new int[] { 3,-22,-59 };
+        vlist[ 67] = new int[] { -22,-51,-54
+                               , 30,-51,-58 };
+        vlist[ 69] = new int[] { -36,-38,-61
+                               , 42,-56,-61 };
+        vlist[ 70] = new int[] { -7,-54,-57 };
+        vlist[ 71] = new int[] { -14,-23,-70 };
+        vlist[ 72] = new int[] { -34,-39,-65 };
+        vlist[ 75] = new int[] { -38,-43,-66 };
+        vlist[ 76] = new int[] { -31,-33,-72
+                               , 17,-38,-73
+                               , 5,-48,-69 };
+        vlist[ 80] = new int[] { 15,-54,-71 };
+        vlist[ 81] = new int[] { -25,-48,-74 };
+        vlist[ 82] = new int[] { -19,-60,-69
+                               , 51,-64,-75 };
+        vlist[ 84] = new int[] { -28,-53,-75 };
+        vlist[ 85] = new int[] { -50,-61,-64 };
+        vlist[ 87] = new int[] { -20,-54,-79
+                               , -26,-55,-78
+                               , -38,-48,-79 };
+        vlist[ 88] = new int[] { -21,-43,-84
+                               , -25,-31,-86 };
+        vlist[ 89] = new int[] { -17,-40,-86
+                               , 2,-41,-86 };
+        vlist[ 90] = new int[] { -25,-38,-87
+                               , -58,-59,-69 };
+        vlist[ 93] = new int[] { -32,-54,-85
+                               , 11,-30,-92 };
+        vlist[ 94] = new int[] { 23,-63,-84 };
+        vlist[ 96] = new int[] { -19,-53,-90
+                               , 50,-59,-93 };
+        vlist[ 97] = new int[] { -45,-69,-79
+                               , 20,-33,-96
+                               , 47,-66,-90 };
+        vlist[ 98] = new int[] { 24,-63,-89
+                               , 35,-59,-92 };
+        vlist[ 99] = new int[] { 29,-60,-92 };
+        vlist[102] = new int[] { 23,-60,-95 };
+        vlist[103] = new int[] { -12,-31,-102
+                               , 1,-64,-94 };
+        vlist[105] = new int[] { -33,-70,-92 };
+        vlist[108] = new int[] { -13,-51,-104
+                               , -15,-82,-89 };
+        vlist[109] = new int[] { 62,-90,-93 };
+        vlist[110] = new int[] { -29,-75,-96
+                               , 4,-67,-101 };
+        vlist[111] = new int[] { -16,-47,-108 };
+        vlist[113] = new int[] { -50,-74,-97
+                               , 55,-92,-94 };
+        vlist[115] = new int[] { -3,-34,-114 };
+        vlist[116] = new int[] { -23,-86,-97 };
+        vlist[120] = new int[] { -9,-55,-116 };
+        vlist[121] = new int[] { -49,-84,-102
+                               , 42,-49,-120 };
+        vlist[122] = new int[] { -19,-92,-101 };
+        vlist[123] = new int[] { -44,-51,-118 };
+        vlist[126] = new int[] { -23,-94,-105 };
+        vlist[127] = new int[] { -13,-65,-121
+                               , 2,-95,-106 };
+        vlist[129] = new int[] { -38,-57,-124 };
+        vlist[132] = new int[] { -5,-76,-123 };
+        vlist[134] = new int[] { -86,-95,-97
+                               , 23,-95,-116 };
+        vlist[137] = new int[] { -44,-73,-128 };
+        vlist[139] = new int[] { -94,-96,-99
+                               , 18,-94,-123 };
+        vlist[141] = new int[] { -72,-85,-122
+                               , 76,-85,-138 };
+        vlist[142] = new int[] { -31,-64,-137
+                               , 10,-103,-121 };
+        vlist[144] = new int[] { -1,-71,-138 };
+        vlist[145] = new int[] { -12,-81,-136 };
+        vlist[147] = new int[] { -22,-75,-140 };
+        vlist[150] = new int[] { -71,-73,-138
+                               , 1,-73,-144
+                               , 2,-83,-141 };
+        vlist[151] = new int[] { -46,-47,-148 };
+        vlist[152] = new int[] { 4,-41,-151 };
+        vlist[153] = new int[] { 18,-121,-122 };
+        vlist[156] = new int[] { -65,-87,-142
+                               , 26,-123,-125 };
+        vlist[159] = new int[] { -3,-121,-131 };
+        vlist[160] = new int[] { -69,-123,-124 };
+        vlist[161] = new int[] { 10,-84,-153 };
+        vlist[162] = new int[] { -59,-93,-148 };
+        vlist[163] = new int[] { 23,-121,-137 };
+        vlist[164] = new int[] { -69,-99,-146 };
+        vlist[165] = new int[] { 24,-86,-157
+                               , 27,-100,-152
+                               , 76,-102,-157 };
+        vlist[166] = new int[] { 32,-129,-135 };
+        vlist[167] = new int[] { -12,-86,-159
+                               , 25,-64,-164 };
+        vlist[170] = new int[] { -96,-107,-141 };
+        vlist[171] = new int[] { -107,-108,-136
+                               , -54,-80,-163 };
+        vlist[172] = new int[] { -1,-135,-138
+                               , 36,-93,-163
+                               , 71,-135,-144
+                               , 99,-120,-163 };
+        vlist[174] = new int[] { -47,-97,-162
+                               , 37,-136,-141 };
+        vlist[176] = new int[] { -25,-92,-167 };
+        vlist[177] = new int[] { -48,-137,-142 };
+        vlist[178] = new int[] { -48,-133,-147
+                               , 51,-115,-162
+                               , 72,-115,-165 };
+        vlist[179] = new int[] { -17,-57,-177
+                               , 40,-107,-166 };
+        vlist[180] = new int[] { 57,-113,-166 };
+        vlist[181] = new int[] { -108,-109,-150 };
+        vlist[184] = new int[] { 10,-67,-181
+                               , 66,-105,-175 };
+        vlist[185] = new int[] { -57,-68,-180
+                               , -68,-113,-166 };
+        vlist[186] = new int[] { -18,-121,-167
+                               , 3,-59,-184 };
+        vlist[187] = new int[] { -58,-131,-160 };
+        vlist[188] = new int[] { -115,-122,-149 };
+        vlist[189] = new int[] { -21,-46,-188 };
+        vlist[190] = new int[] { -56,-133,-163 };
+        vlist[191] = new int[] { -39,-146,-156 };
+        vlist[192] = new int[] { -34,-123,-173
+                               , 93,-149,-166 };
+        vlist[193] = new int[] { -25,-68,-190 };
+        vlist[196] = new int[] { 45,-133,-174 };
+        vlist[197] = new int[] { -53,-58,-194 };
+        vlist[198] = new int[] { -27,-46,-197
+                               , -73,-135,-170 };
+        vlist[199] = new int[] { -6,-127,-180 };
+        vlist[201] = new int[] { -45,-53,-199 };
+        vlist[202] = new int[] { -76,-141,-171
+                               , -85,-138,-171
+                               , 135,-166,-183
+                               , 32,-129,-183 };
+        vlist[203] = new int[] { -81,-147,-167 };
+        vlist[204] = new int[] { 15,-79,-200 };
+        vlist[205] = new int[] { -108,-142,-165 };
+        vlist[206] = new int[] { -35,-77,-202
+                               , -5,-163,-164 };
+        vlist[207] = new int[] { 14,-140,-183 };
+        vlist[209] = new int[] { -113,-146,-166
+                               , -57,-146,-180
+                               , 68,-146,-185 };
+        vlist[210] = new int[] { -42,-83,-205
+                               , 116,-147,-197
+                               , 9,-161,-172 };
+        vlist[213] = new int[] { -56,-61,-210
+                               , 72,-109,-206 };
+        vlist[214] = new int[] { -16,-51,-213
+                               , -58,-157,-179 };
+        vlist[215] = new int[] { 81,-120,-206 };
+        vlist[216] = new int[] { 50,-167,-177 };
+        vlist[217] = new int[] { -46,-126,-201
+                               , 84,-145,-198 };
+        vlist[218] = new int[] { -140,-151,-161
+                               , -93,-155,-180
+                               , 40,-101,-211 };
+        vlist[219] = new int[] { -108,-163,-170
+                               , -50,-67,-216
+                               , -51,-152,-190
+                               , -67,-167,-177
+                               , 64,-163,-186 };
+        vlist[223] = new int[] { 20,-159,-192
+                               , 73,-94,-220 };
+        vlist[225] = new int[] { -31,-95,-219
+                               , 156,-169,-218 };
+        vlist[226] = new int[] { 17,-54,-225
+                               , 24,-55,-225 };
+        vlist[228] = new int[] { -18,-167,-193
+                               , 121,-186,-193 };
+        vlist[229] = new int[] { -102,-157,-192
+                               , -76,-165,-192 };
+        vlist[231] = new int[] { -103,-140,-204
+                               , -56,-102,-223
+                               , -98,-136,-207 };
+        vlist[232] = new int[] { -85,-107,-220 };
+        vlist[233] = new int[] { 10,-108,-225
+                               , 47,-176,-194 };
+        vlist[234] = new int[] { -123,-125,-208 };
+        vlist[235] = new int[] { -54,-163,-204
+                               , -78,-172,-195
+                               , -96,-163,-198
+                               , 80,-171,-204 };
+        vlist[238] = new int[] { -147,-157,-186
+                               , 21,-114,-229 };
+        vlist[239] = new int[] { -15,-114,-230
+                               , -23,-178,-200 };
+        vlist[240] = new int[] { 87,-94,-239 };
+        vlist[241] = new int[] { -113,-124,-220
+                               , 119,-168,-222 };
+        vlist[244] = new int[] { -73,-174,-207 };
+        vlist[246] = new int[] { -113,-166,-207
+                               , 146,-207,-209
+                               , 31,-103,-240
+                               , 45,-173,-214
+                               , 68,-185,-207
+                               , 80,-179,-213 };
+        vlist[249] = new int[] { -4,-57,-248
+                               , 1,-135,-235 };
+        vlist[251] = new int[] { -6,-179,-216 };
+        vlist[254] = new int[] { -163,-164,-197
+                               , 5,-197,-206
+                               , 87,-191,-216 };
+        vlist[255] = new int[] { 18,-151,-236
+                               , 58,-183,-220 };
+
         // mi = desired matrix, exhausted for all values minDigit <= v < maxDigit
-        int t1 = vect0.get(0);
-        int t2 = vect0.get(1);
-        int t3 = vect0.get(2);
-        int t4 = vect0.get(3);
-        int t1a = Math.abs(t1);
-        int t2a = Math.abs(t3);
-        int t3a = Math.abs(t4);
-        int t4a = Math.abs(t4);
-        int tu2a = t1a  + t2a;
-        int tu3a = tu2a + t3a;
-        int tu4a = tu3a + t4a;
-        int r1, r2, r3, r4; // resulting 1st vector of multiplication m*t
-        int s1, s2, s3, s4; // resulting 2nd vector of multiplication m*r
+        /*
+        int           m11, m12, m13, m14
+                    , m21, m22, m23, m24
+                    , m31, m32, m33, m34
+                    , m41, m42, m43, m44
+                    ;
+        */
+        int q1 = vect0.get(0);
+        int q2 = vect0.get(1);
+        int q3 = vect0.get(2);
+        int q4 = vect0.get(3);
+        int q1a = Math.abs(q1);
+        int q2a = Math.abs(q2);
+        int q3a = Math.abs(q3);
+        int q4a = Math.abs(q4);
+        int qu1a = q1a;
+        int qu2a = qu1a + q2a;
+        int qu3a = qu2a + q3a;
+        int qu4a = qu3a + q4a;
+        int r1 , r2 , r3 , r4 ; // resulting 1st vector of multiplication m*t
         int r1p, r2p, r3p, r4p; // (2nd, 3rd ...) powers thereof
+        int r1a, r2a, r3a, r4a; // absolute values
+        int ru1a, ru2a, ru3a, ru4a;
+        int ru1p, ru2p, ru3p, ru4p;
+        int s1 , s2 , s3 , s4 ; // resulting 2nd vector of multiplication m*r
+        int s1p, s2p, s3p, s4p; // (2nd, 3rd ...) powers thereof
+        int s1a, s2a, s3a, s4a; // absolute values
+        int su1a, su2a, su3a, su4a;
+        int su1p, su2p, su3p, su4p;
+        int t1 , t2 , t3 , t4 ; // resulting 3rd vector of multiplication m*r
+        int t1p, t2p, t3p, t4p; // (2nd, 3rd ...) powers thereof
+        int t1a, t2a, t3a, t4a; // absolute values
+        int tu1a, tu2a, tu3a, tu4a;
+        int tu1p, tu2p, tu3p, tu4p;
+        int[] vect = null;
+        int sum3, mod3;
         for (int m11 = minDigit; m11 < maxDigit; m11 ++) {
         for (int m12 = minDigit; m12 < maxDigit; m12 ++) {
         for (int m13 = minDigit; m13 < maxDigit; m13 ++) {
         for (int m14 = minDigit; m14 < maxDigit; m14 ++) {
-        r1 = m11*t1 + m12*t2 + m13*t3 + m14*t4;
-        if (t1 < r1) { // && r1 < MAXLIST && vlist[r1] != null) {
-        int r1a = Math.abs(r1);
-        r1p = r1*r1*r1;
+        r1 = m11*q1 + m12*q2 + m13*q3 + m14*q4;
+        if (q1 < r1 && r1 < MAXLIST && vlist[r1] != null) {
+        vect = (int []) vlist[r1];
+        r1a  = Math.abs(r1);
+        ru1a = r1a;
+        r1p  = r1*r1*r1;
         for (int m21 = minDigit; m21 < maxDigit; m21 ++) {
         for (int m22 = minDigit; m22 < maxDigit; m22 ++) {
         for (int m23 = minDigit; m23 < maxDigit; m23 ++) {
         for (int m24 = minDigit; m24 < maxDigit; m24 ++) {
-        r2 = m21*t1 + m22*t2 + m23*t3 + m24*t4;
-        int r2a = Math.abs(r2);
-        // if (r2 == - r1 + 3) {
-        if (    r2 != 0 && 
-                r2a != r1a) {
-        int ru2a = r1a + r2a;
-        r2p = r2*r2*r2;
+        r2   = m21*q1 + m22*q2 + m23*q3 + m24*q4;
+        if (indexOf(vect, r2) >= 0) {
+        if (r2 != 0 && r2 != r1) {
+        r2a  = Math.abs(r2);
+        ru2a = ru1a + r2a;
+        r2p  = r2*r2*r2;
         for (int m31 = minDigit; m31 < maxDigit; m31 ++) {
         for (int m32 = minDigit; m32 < maxDigit; m32 ++) {
         for (int m33 = minDigit; m33 < maxDigit; m33 ++) {
         for (int m34 = minDigit; m34 < maxDigit; m34 ++) {
-        r3 = m31*t1 + m32*t2 + m33*t3 + m34*t4;
-        int r3a = Math.abs(r3);
-        if ( // r2 < r3 && 
-                r3 != 0 && r3a != r2a && r3a != r1a) {
-        int ru3a = ru2a + r3a;
-        r3p = r3*r3*r3;
-        int sum3 = r1p + r2p + r3p;
-        int mod3 = Math.abs(sum3) % TMOD;
-        if (tmodset[mod3]) {
+        r3   = m31*q1 + m32*q2 + m33*q3 + m34*q4;
+        if (indexOf(vect, r3) >= 0) {
+        if (r3 != 0 && r3 != r2 && r3 != r1) {
+        r3a  = Math.abs(r3);
+        ru3a = ru2a + r3a;
+        r3p  = r3*r3*r3;
+        sum3 = r1p + r2p + r3p;
+        if (tmodset[Math.abs(sum3) % TMOD]) {
         for (int m41 = minDigit; m41 < maxDigit; m41 ++) {
         for (int m42 = minDigit; m42 < maxDigit; m42 ++) {
         for (int m43 = minDigit; m43 < maxDigit; m43 ++) {
         for (int m44 = minDigit; m44 < maxDigit; m44 ++) {
-        r4 = m41*t1 + m42*t2 + m43*t3 + m44*t4;
-        int r4a = Math.abs(r4);
-        int ru4a = ru3a + r4a;
-        if ( // r3 < r4 && 
-                r4 != 0  
-                // && tu4a < ru4a 
-                && r4a != r3a && r4a != r2a && r4a != r1a) {
-        r4p = r4*r4*r4;
+        r4   = m41*q1 + m42*q2 + m43*q3 + m44*q4;
+        if (r4 != 0 && r4 != r3 && r4 != r2 && r4 != r1) {
+        r4a  = Math.abs(r4);
+        ru4a = ru3a + r4a;
+        r4p  = r4*r4*r4;
         if (sum3 + r4p == 0) { // r preserves once
             s1 = m11*r1 + m12*r2 + m13*r3 + m14*r4;
-            if (true) {
-            int s1a = Math.abs(s1);
+            if (s1 > 0 && s1 < MAXLIST && vlist[s1] != null ) {
+            s1a  =        Math.abs(s1);
+            su1a = s1a;
+            su1p =        s1*s1*s1;
             s2 = m21*r1 + m22*r2 + m23*r3 + m24*r4;
-            int s2a = Math.abs(s2);
+            s2a  =        Math.abs(s2);
             if (s2a != s1a) {
+            su2a = su1a + s2a;
+            su2p = su1p + s2*s2*s2;
             s3 = m31*r1 + m32*r2 + m33*r3 + m34*r4;
-            int s3a = Math.abs(s3);
+            s3a  =        Math.abs(s3);
             if (s3a != s2a && s3a != s1a) {
+            su3a = su2a + s3a;
+            su3p = su2p + s3*s3*s3;
             s4 = m41*r1 + m42*r2 + m43*r3 + m44*r4;
-            int s4a = Math.abs(s4);
+            s4a  =        Math.abs(s4);
             if (s4a != s3a && s4a != s2a && s4a != s1a) {
-            if (ru4a < s1a + s2a + s3a + s4a) {
-            if (s1*s1*s1 + s2*s2*s2 + s3*s3*s3 + s4*s4*s4 == 0) { // s preserves twice
+            // su4a = su3a + s4a;
+            if (ru4a < su3a + s4a) {
+            su4p = su3p + s4*s4*s4;
+            if (su4p == 0) { // s preserves twice
             Matrix amat = new Matrix(alen, new int[]
                     { m11, m12, m13, m14
                     , m21, m22, m23, m24
@@ -958,9 +1091,12 @@ gain: 54
             } // s2a
             } // r1 < s1
         } // r preserves once
-        } // if tu4a < ru4a
+        } // if qu4a < ru4a
+        // } // if ! nf4
         } // if tmodset
+        } // if ! nf3
         } // if r3 > 0
+        } // if ! nf2
         } // if r2 > 0
         } // if r1 > 0
         }}}} // for mi4
@@ -969,7 +1105,8 @@ gain: 54
         }}}} // for mi1
     } // ec340
 
-    /** Euler's Conjecture, primitive tuples for exponent 3: a^3 + b^3 + c^3 - d^3 = 0
+    /** Euler's Conjecture, primitive tuples for exponent 3: <em>a^3 + b^3 + c^3 - d^3 = 0</em>.
+     *  Assume that the columns represent powersums.
      *  @param vect0 start vector, or default if null
      */
     public void pEC331(Vector vect0) {
@@ -1018,15 +1155,6 @@ gain: 54
             ipow ++;
         } // while busy
         if (fact > 0)      { // 1st column is powersum "-"
-/*
-        System.out.println("# v3.fact=" + fact
-                + ",\tcol1=[" + m11
-                + "," + m21
-                + "," + m31
-                + "," + m41
-                + "]");
-*/
-
         for (m12 = minDigit; m12 < maxDigit; m12 ++) {
         int col21 =          m12*m12*m12;
         for (m22 = minDigit; m22 < maxDigit; m22 ++) {
@@ -1411,7 +1539,7 @@ They yield a sum of zero if raised to the 3rd power.
     } // pEC340
 
     //==========================================================
-    /** m3: Cubic quadruples
+    /** m331: Cubic quadruples
      *  @param vect0 start vector, or default if null
      */
     public void m331(Vector vect0) {
@@ -1503,89 +1631,6 @@ They yield a sum of zero if raised to the 3rd power.
         } // if r1 > 0
         }}}} // for m1i
     } // m331
-
-    //==========================================================
-    /** m3test: 12 loops
-     */
-    public void m3test() {
-        int m11, m12, m13, m14
-          , m21, m22, m23, m24
-          , m31, m32, m33, m34
-          , m41, m42, m43, m44; // desired matrix, exhausted for all values minDigit <= v < maxDigit
-        int t1 = 3;
-        int t2 = 4;
-        int t3 = 5;
-        int t4 = 6; // initial cubic tuple
-        int r1, r2, r3, r4; // resulting vector of multiplication m*t
-        int s1, s2, s3, s4; // resulting vector of multiplication (m*t)*r
-        int r1p3, r2p3, r3p3, r4p3; // cubes thereof
-        for (m11 = minDigit; m11 < maxDigit; m11 ++) {
-        for (m12 = minDigit; m12 < maxDigit; m12 ++) {
-        for (m13 = minDigit; m13 < maxDigit; m13 ++) {
-        for (m14 = minDigit; m14 < maxDigit; m14 ++) {
-        r1 = m11*t1 + m12*t2 + m13*t3 + m14*t4;
-        if (r1 > 0) {
-        // r1p3 = r1*r1*r1;
-        for (m21 = minDigit; m21 < maxDigit; m21 ++) {
-        for (m22 = minDigit; m22 < maxDigit; m22 ++) {
-        for (m23 = minDigit; m23 < maxDigit; m23 ++) {
-        for (m24 = minDigit; m24 < maxDigit; m24 ++) {
-        r2 = m21*t1 + m22*t2 + m23*t3 + m24*t4;
-        if (r2 > 0 && r2 != r1 && Vector.gcd(r1, r2) == 1) {
-        // r2p3 = r2*r2*r2;
-        for (m31 = minDigit; m31 < maxDigit; m31 ++) {
-        for (m32 = minDigit; m32 < maxDigit; m32 ++) {
-        for (m33 = minDigit; m33 < maxDigit; m33 ++) {
-        for (m34 = minDigit; m34 < maxDigit; m34 ++) {
-        r3 = m31*t1 + m32*t2 + m33*t3 + m34*t4;
-        if (r3 > 0 && r3 != r2 && r3 != r1) {
-        // r3p3 = r3*r3*r3;
-        /*
-        for (m41 = minDigit; m41 < maxDigit; m41 ++) {
-        int r41  = m41*t1;
-        for (m42 = minDigit; m42 < maxDigit; m42 ++) {
-        int r42 = r41 + m42*t2;
-        for (m43 = minDigit; m43 < maxDigit; m43 ++) {
-        int r43 = r42 + m43*t3;
-        for (m44 = minDigit; m44 < maxDigit; m44 ++) {
-        r4      = r43 + m44*t4;
-        if (r4 > 0 && r4 != r3 && r4 != r2 && r4 != r1 &&
-            r1 + r2 + r3 + r4 != t1 + t2 + t3 + t4
-            ) {
-        r4p3 = r4*r4*r4;
-
-            if (r1p3 + r2p3 + r3p3 == r4p3) {
-                s1 = m11*r1 + m12*r2 + m13*r3 + m14*r4;
-                s2 = m21*r1 + m22*r2 + m23*r3 + m24*r4;
-                s3 = m31*r1 + m32*r2 + m33*r3 + m34*r4;
-                s4 = m41*r1 + m42*r2 + m43*r3 + m44*r4;
-                if (s1 >  0 && s2 >  0 && s3 >  0 && s4 >  0 &&
-                    s1 + s2 + s3 + s4 != t1 + t2 + t3 + t4 &&
-                    s1 + s2 + s3 + s4 != r1 + r2 + r3 + r4 &&
-                    s1*s1*s1 + s2*s2*s2 + s3*s3*s3 == s4*s4*s4 && Vector.gcd(s1, s2) == 1
-                    ) {
-                    System.out.println("# twice: " +  r1 + " " + r2 + " " + r3 + " " + r4
-                                          + " => " +  s1 + " " + s2 + " " + s3 + " " + s4);
-                    System.out.println(m11 + " " + m12 + " " + m13 + " " + m14);
-                    System.out.println(m21 + " " + m22 + " " + m23 + " " + m24);
-                    System.out.println(m31 + " " + m32 + " " + m33 + " " + m34);
-                    System.out.println(m41 + " " + m42 + " " + m43 + " " + m44);
-                } else {
-                    System.out.println("#  once: " +  t1 + " " + t2 + " " + t3 + " " + t4
-                                          + " => " +  r1 + " " + r2 + " " + r3 + " " + r4);
-                } // if == s4*s4*s4
-            } // if == r4p3
-
-        } // if r4 > 0
-        }}}} // for m4i
-        */
-        } // if r3 > 0
-        }}}} // for m3i
-        } // if r2 > 0
-        }}}} // for m2i
-        } // if r1 > 0
-        }}}} // for m1i
-    } // m3test
 
     //==========================================================
     /** pps4: Power-preserving matrix of dim 4.
@@ -1774,7 +1819,6 @@ They yield a sum of zero if raised to the 3rd power.
         //    exhauster          .ec322(vect0);
         } else if (oper.equals("ec340" )) {
             exhauster          .ec340(vect0);
-
         } else if (oper.equals("pEC221" )) {
             exhauster          .pEC221(vect0);
         } else if (oper.equals("m331" )) {
@@ -1785,8 +1829,6 @@ They yield a sum of zero if raised to the 3rd power.
             exhauster          .pEC322(vect0);
         } else if (oper.equals("pEC340" )) {
             exhauster          .pEC340(vect0);
-        } else if (oper.equals("m3test" )) {
-            exhauster.m3test();
         } else if (oper.equals("pps4" )) {
             exhauster.pps4();
         } else {

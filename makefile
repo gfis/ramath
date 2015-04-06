@@ -2,35 +2,35 @@
 
 # test Ramath functions
 # @(#) $Id: makefile 741 2011-07-23 12:30:09Z  $
+# 2015-04-06: java -X...
 # 2013-02-27: RegressionTester
 # 2011-07-06, Dr. Georg Fischer
+#--------------------------------
 TEST=
+REGR=java -Xss512m -Xms1024m -Xmx2048m -cp dist/ramath.jar org.teherba.common.RegressionTester
 TESTDIR=test
 WROB=../../mater/ramath/eec/wroblewski
 
 all: regression
 
-push:
-	find src/main/java/org/teherba/common -iname "*.java" -mtime -1 -type f \
-	| xargs -l -i{} cp -v {} ../dbat/src/main/java/org/teherba/common
 regression:
-	java -cp dist/ramath.jar org.teherba.common.RegressionTester $(TESTDIR)/all.tests $(TEST) 2>&1 \
+	$(REGR) test/all.tests 		$(TEST) 2>&1 \
 	| tee regression.log.tmp
 	grep FAILED regression.log.tmp
 linear:
-	java -cp dist/ramath.jar org.teherba.common.RegressionTester $(TESTDIR)/linear.tests $(TEST) 2>&1 \
+	$(REGR) test/linear.tests 	$(TEST) 2>&1 \
 	| tee regression.log.tmp
 	grep FAILED regression.log.tmp
 matrix:
-	java -cp dist/ramath.jar org.teherba.common.RegressionTester $(TESTDIR)/matrix.tests $(TEST) 2>&1 \
+	$(REGR) test/matrix.tests 	$(TEST) 2>&1 \
 	| tee regression.log.tmp
 	grep FAILED regression.log.tmp
 simple:
-	java -cp dist/ramath.jar org.teherba.common.RegressionTester $(TESTDIR)/simple.tests $(TEST) 2>&1 \
+	$(REGR) test/simple.tests 	$(TEST) 2>&1 \
 	| tee regression.log.tmp
 	grep FAILED regression.log.tmp
 solver:
-	java -cp dist/ramath.jar org.teherba.common.RegressionTester $(TESTDIR)/solver.tests $(TEST) 2>&1 \
+	$(REGR) test/solver.tests 	$(TEST) 2>&1 \
 	| tee regression.log.tmp
 	grep FAILED regression.log.tmp
 #
@@ -45,6 +45,9 @@ recr1:
 regr2:
 	make regression TEST=$(TEST)
 #---------------------------------------------------
+push:
+	find src/main/java/org/teherba/common -iname "*.java" -mtime -1 -type f \
+	| xargs -l -i{} cp -v {} ../dbat/src/main/java/org/teherba/common
 jfind:
 	find src -iname "*.java" | xargs -l grep -iH $(JF)
 #----------
@@ -64,6 +67,8 @@ split_tuple:
 get_maps:
 	perl data/get_maps.pl test/EC34.prev.tst \
 	| sort -n | uniq -c > maps.tmp
+genhash:
+	perl data/genhash.pl data/prewrob3.dat > genhash.tmp
 #----------
 grep3x:
 	grep "chain 8" test/MX3*.this.tst \

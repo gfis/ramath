@@ -1084,42 +1084,6 @@ Abstract * (a b c) = a^2 + b^2 - c^2
                 String opt = args[iarg ++];
 
                 if (false) {
-                } else if (opt.equals("-perms" )) {
-                    // read a list of matrices, and perform some operation with them
-                    ArrayList<Matrix> matList = new ArrayList<Matrix>(32);
-                    String fileName = args[iarg ++];
-                    BufferedReader testReader = null;
-                    if(fileName.equals("-")) { // STDIN
-                        testReader = new BufferedReader(new InputStreamReader(System.in, "UTF-8"));
-                    } else {
-                        File testCases = new File(fileName);
-                        testReader = new BufferedReader(new FileReader(testCases));
-                    } // not STDIN
-                    // System.err.println("fileName=" + fileName + ", directory=" + directory);
-                    int state = 0; // runs from alen down to 0 for subsequent matrix lines
-                    String line = null;
-                    while ((line = testReader.readLine()) != null) { // read and process lines
-                        // System.out.println(line);
-                        int sqpos = line.indexOf("[["); 
-                        if (sqpos >= 0) {
-                            amat = new Matrix(line.substring(sqpos, line.indexOf("]]") + 2));
-                            int imat = 0; 
-                            Vector perm = null;
-                            while (perm == null && imat < matList.size()) {
-                                perm = amat.isPermutation(matList.get(imat));
-                                imat ++;
-                            } // while imat
-                            if (perm == null) {
-                                System.out.println("matList[" + matList.size() + "] = " + amat.toString(","));
-                                matList.add(amat);
-                            } else {
-                                System.out.println("permuted from " + String.valueOf(imat - 1) + " by " + perm.toString(",") 
-                                		+ ": " + amat.toString(","));
-                            }                
-                        } // if sqpos           
-                    } // while line
-                    // opt -perms
-                    
                 } else if (opt.equals("-f"    ) 
                         || opt.equals("-queue") 
                         || opt.equals("-prim" )
@@ -1294,6 +1258,121 @@ Abstract * (a b c) = a^2 + b^2 - c^2
                     } // with permutations
                     // -div
 
+                } else if (opt.equals("-eec2")) {
+                    int maxIter = 4;
+                    try {
+                        maxIter = Integer.parseInt(args[iarg ++]);
+                    } catch (Exception exc) {
+                    }
+                    Vector next0 = new Vector(new int[]
+                            { 3, 4, 5 });
+                    int nlen = next0.size();
+                    ModoMeter meter = new ModoMeter(nlen * nlen, maxIter);
+                    while (meter.hasNext()) {
+                        int[] values = meter.next();
+                        amat = new Matrix(nlen, values);
+                        int preserved = amat.preservedPowerSums(nlen - 1, nlen - 1, 1, next0).size();
+                        if  (Math.abs(amat.determinant()) == 1 && preserved > 0) {
+                            System.out.print("preserved " + preserved
+                                    + " power sums, det=" + amat.determinant()
+                                    + " first=" + amat.multiply(next0).toString()
+                                    + "\n" + amat.toString()
+                                    );
+                        } // if amat
+                    } // while hasNext
+                    // opt -eec2
+
+                } else if (opt.equals("-eec3")) {
+                    int maxIter = 4;
+                    try {
+                        maxIter = Integer.parseInt(args[iarg ++]);
+                    } catch (Exception exc) {
+                    }
+                    Vector next0 = new Vector(new int[]
+                            { 3, 4, 5, 6 });
+                    int nlen = next0.size();
+                    amat = new Matrix(4, new int[]
+                            { 2, 2, 1, 0
+                            , 1, 1, 1, 1
+                            , 1, 2, 2, 0
+                            , 2, 3, 2, 0
+                            });
+                    System.out.print("determinant=" + amat.determinant()
+                            + "\n" + amat.toString());
+                    if (false) { // old code
+                        int iter = 0;
+                        while (iter <= maxIter) {
+                            System.out.println(next0.toString()
+                                    + (next0.isPowerSum(3, 3, 1) ? " !" : " ?"));
+                            next0 = amat.multiply(next0);
+                            iter ++;
+                        } // while iter
+                    } else { // new code
+                        System.out.println("preserved power sums "
+                                + amat.preservedPowerSums(3, 3, 1, next0).size() + " times");
+                    }
+                    next0 = new Vector(new int[]
+                            { 3, 4, 5, 6 });
+                    ModoMeter meter = new ModoMeter(nlen * nlen); // binary
+                    while (meter.hasNext()) {
+                        int[] values = meter.next();
+                        Matrix bmat = amat.toggleSigns(values);
+                        if (bmat.preservedPowerSums(3, 3, 1, next0).size() > 0) {
+                            Vector vals = new Vector(values);
+                            System.out.print("this too, det=" + bmat.determinant()
+                                    + " first=" + bmat.multiply(next0).toString()
+                                    + "\n" + vals.toString()
+                                    + "\n" + bmat.toString()
+                                    );
+                        } // if bmat
+                    } // while hasNext
+                    // opt -eec3
+
+                } else if (opt.equals("-eec4")) {
+                    int maxIter = 4;
+                    try {
+                        maxIter = Integer.parseInt(args[iarg ++]);
+                    } catch (Exception exc) {
+                    }
+                    Vector next0 = new Vector(new int[]
+                            { 3, 4, 5, 6 });
+                    int nlen = next0.size();
+                    ModoMeter meter = new ModoMeter(nlen * nlen, maxIter);
+                    while (meter.hasNext()) {
+                        int[] values = meter.next();
+                        amat = new Matrix(nlen, values);
+                        int preserved = amat.preservedPowerSums(nlen - 1, nlen - 1, 1, next0).size();
+                        if  (Math.abs(amat.determinant()) == 1 && preserved > 0) {
+                            System.out.print("preserved " + preserved
+                                    + " power sums, det=" + amat.determinant()
+                                    + " first=" + amat.multiply(next0).toString()
+                                    + "\n" + amat.toString()
+                                    );
+                        } // if amat
+                    } // while hasNext
+                    // opt -eec4
+
+                } else if (opt.equals("-elem")) {
+                    alen = 4;
+                    try {
+                        alen = Integer.parseInt(args[iarg ++]);
+                    } catch (Exception exc) {
+                    }
+                    amat = new Matrix(alen);
+                    amat.setIdentity();
+                    int maxIter = alen * (alen + 1);
+                    int iter = 0;
+                    while (iter <= maxIter) {
+                        Matrix elem = new Matrix(alen);
+                        elem.setElementary(iter);
+                        amat = amat.multiply(elem);
+                        iter ++;
+                    } // while iter
+                    System.out.print("Product of elementary matrices with seqNo = 0.." + maxIter
+                            + ", determinant = " + amat.determinant()
+                            + "\n" + amat.toString());
+                    // opt -elem
+
                 } else if (opt.startsWith("-many")) {
                     int dim = 4;
                     int minElem = -2;
@@ -1423,121 +1502,42 @@ Abstract * (a b c) = a^2 + b^2 - c^2
                     } // while permutator
                     // opt -permul
 
-                } else if (opt.equals("-eec3")) {
-                    int maxIter = 4;
-                    try {
-                        maxIter = Integer.parseInt(args[iarg ++]);
-                    } catch (Exception exc) {
-                    }
-                    Vector next0 = new Vector(new int[]
-                            { 3, 4, 5, 6 });
-                    int nlen = next0.size();
-                    amat = new Matrix(4, new int[]
-                            { 2, 2, 1, 0
-                            , 1, 1, 1, 1
-                            , 1, 2, 2, 0
-                            , 2, 3, 2, 0
-                            });
-                    System.out.print("determinant=" + amat.determinant()
-                            + "\n" + amat.toString());
-                    if (false) { // old code
-                        int iter = 0;
-                        while (iter <= maxIter) {
-                            System.out.println(next0.toString()
-                                    + (next0.isPowerSum(3, 3, 1) ? " !" : " ?"));
-                            next0 = amat.multiply(next0);
-                            iter ++;
-                        } // while iter
-                    } else { // new code
-                        System.out.println("preserved power sums "
-                                + amat.preservedPowerSums(3, 3, 1, next0).size() + " times");
-                    }
-                    next0 = new Vector(new int[]
-                            { 3, 4, 5, 6 });
-                    ModoMeter meter = new ModoMeter(nlen * nlen); // binary
-                    while (meter.hasNext()) {
-                        int[] values = meter.next();
-                        Matrix bmat = amat.toggleSigns(values);
-                        if (bmat.preservedPowerSums(3, 3, 1, next0).size() > 0) {
-                            Vector vals = new Vector(values);
-                            System.out.print("this too, det=" + bmat.determinant()
-                                    + " first=" + bmat.multiply(next0).toString()
-                                    + "\n" + vals.toString()
-                                    + "\n" + bmat.toString()
-                                    );
-                        } // if bmat
-                    } // while hasNext
-                    // opt -eec3
-
-                } else if (opt.equals("-eec2")) {
-                    int maxIter = 4;
-                    try {
-                        maxIter = Integer.parseInt(args[iarg ++]);
-                    } catch (Exception exc) {
-                    }
-                    Vector next0 = new Vector(new int[]
-                            { 3, 4, 5 });
-                    int nlen = next0.size();
-                    ModoMeter meter = new ModoMeter(nlen * nlen, maxIter);
-                    while (meter.hasNext()) {
-                        int[] values = meter.next();
-                        amat = new Matrix(nlen, values);
-                        int preserved = amat.preservedPowerSums(nlen - 1, nlen - 1, 1, next0).size();
-                        if  (Math.abs(amat.determinant()) == 1 && preserved > 0) {
-                            System.out.print("preserved " + preserved
-                                    + " power sums, det=" + amat.determinant()
-                                    + " first=" + amat.multiply(next0).toString()
-                                    + "\n" + amat.toString()
-                                    );
-                        } // if amat
-                    } // while hasNext
-                    // opt -eec2
-
-                } else if (opt.equals("-eec4")) {
-                    int maxIter = 4;
-                    try {
-                        maxIter = Integer.parseInt(args[iarg ++]);
-                    } catch (Exception exc) {
-                    }
-                    Vector next0 = new Vector(new int[]
-                            { 3, 4, 5, 6 });
-                    int nlen = next0.size();
-                    ModoMeter meter = new ModoMeter(nlen * nlen, maxIter);
-                    while (meter.hasNext()) {
-                        int[] values = meter.next();
-                        amat = new Matrix(nlen, values);
-                        int preserved = amat.preservedPowerSums(nlen - 1, nlen - 1, 1, next0).size();
-                        if  (Math.abs(amat.determinant()) == 1 && preserved > 0) {
-                            System.out.print("preserved " + preserved
-                                    + " power sums, det=" + amat.determinant()
-                                    + " first=" + amat.multiply(next0).toString()
-                                    + "\n" + amat.toString()
-                                    );
-                        } // if amat
-                    } // while hasNext
-                    // opt -eec4
-
-                } else if (opt.equals("-elem")) {
-                    alen = 4;
-                    try {
-                        alen = Integer.parseInt(args[iarg ++]);
-                    } catch (Exception exc) {
-                    }
-                    amat = new Matrix(alen);
-                    amat.setIdentity();
-                    int maxIter = alen * (alen + 1);
-                    int iter = 0;
-                    while (iter <= maxIter) {
-                        Matrix elem = new Matrix(alen);
-                        elem.setElementary(iter);
-                        amat = amat.multiply(elem);
-                        iter ++;
-                    } // while iter
-                    System.out.print("Product of elementary matrices with seqNo = 0.." + maxIter
-                            + ", determinant = " + amat.determinant()
-                            + "\n" + amat.toString());
-                    // opt -elem
-
+                } else if (opt.equals("-perms" )) {
+                    // read a list of matrices, and perform some operation with them
+                    ArrayList<Matrix> matList = new ArrayList<Matrix>(32);
+                    String fileName = args[iarg ++];
+                    BufferedReader testReader = null;
+                    if(fileName.equals("-")) { // STDIN
+                        testReader = new BufferedReader(new InputStreamReader(System.in, "UTF-8"));
+                    } else {
+                        File testCases = new File(fileName);
+                        testReader = new BufferedReader(new FileReader(testCases));
+                    } // not STDIN
+                    // System.err.println("fileName=" + fileName + ", directory=" + directory);
+                    int state = 0; // runs from alen down to 0 for subsequent matrix lines
+                    String line = null;
+                    while ((line = testReader.readLine()) != null) { // read and process lines
+                        // System.out.println(line);
+                        int sqpos = line.indexOf("[["); 
+                        if (sqpos >= 0) {
+                            amat = new Matrix(line.substring(sqpos, line.indexOf("]]") + 2));
+                            int imat = 0; 
+                            Vector perm = null;
+                            while (perm == null && imat < matList.size()) {
+                                perm = amat.isPermutation(matList.get(imat));
+                                imat ++;
+                            } // while imat
+                            if (perm == null) {
+                                System.out.println("matList[" + matList.size() + "] = " + amat.toString(","));
+                                matList.add(amat);
+                            } else {
+                                System.out.println("permuted from " + String.valueOf(imat - 1) + " by " + perm.toString(",") 
+                                		+ ": " + amat.toString(","));
+                            }                
+                        } // if sqpos           
+                    } // while line
+                    // opt -perms
+                    
                 } else if (opt.equals("-unimod")) {
                     alen = 3;
                     try {
