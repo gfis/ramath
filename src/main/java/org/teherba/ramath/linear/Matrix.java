@@ -198,7 +198,7 @@ public class Matrix implements Cloneable, Serializable {
     } // elementary
 
     /** Compute a permutation matrix which has exactly one "1" element in each row and column,
-     *  and "0" elements elsewhere. 
+     *  and "0" elements elsewhere.
      *  @param  meter definition of the permutation, result of {@link org.teherba.ramath.util.Permutator},
      *  a permutation of the numbers [0 : n-1] defining, for each row, the column to be set.
      *  For example, [0,1,2,3] yields the 4x4 identity matrix.
@@ -433,11 +433,11 @@ public class Matrix implements Cloneable, Serializable {
         return result;
     } // equals
 
-    /** Determines whether <em>this</em> matrix is a permutation 
+    /** Determines whether <em>this</em> matrix is a permutation
      *  of a second matrix, that is whether there is a {@link permutation}
      *  matrix such that <em>this=matr2*perm</em>.
      *  @param matr2 compare with this matrix
-     *  @return null if there is no such permutation matrix, 
+     *  @return null if there is no such permutation matrix,
      *  or a {@link Vector} showing the permutation.
      */
     public Vector isPermutation(Matrix matr2) {
@@ -912,7 +912,7 @@ Abstract * (a b c) = a^2 + b^2 - c^2
                     + String.format("%-32s ", this.toString("(,)") + ",det=" + this.determinant())
                 /*
                     + String.format(" %-24s", (new PolyMatrix(amat)).multiply(new PolyVector(alen, "a"))
-                        .powerSum(alen - 1, left, right).toString().replaceAll("\\s", ""))                   
+                        .powerSum(alen - 1, left, right).toString().replaceAll("\\s", ""))
                 */
                     + vect0.toString("(,)")
                     + ", chain " + chain.size()
@@ -1084,8 +1084,8 @@ Abstract * (a b c) = a^2 + b^2 - c^2
                 String opt = args[iarg ++];
 
                 if (false) {
-                } else if (opt.equals("-f"    ) 
-                        || opt.equals("-queue") 
+                } else if (opt.equals("-f"    )
+                        || opt.equals("-queue")
                         || opt.equals("-prim" )
                         ) {
                     // read a list of matrices, and perform some operation with them
@@ -1373,6 +1373,70 @@ Abstract * (a b c) = a^2 + b^2 - c^2
                             + "\n" + amat.toString());
                     // opt -elem
 
+                } else if (opt.equals("-gen" )) { // copied from -perms
+                    // read a list of matrices, and an initial powersum preserving tuple
+                    // generate all possible tuples up to some limit
+                    ArrayList<Matrix> matList = new ArrayList<Matrix>(32);
+                    // vect1 = new Vector("[6,-3,-4,-5]");
+                    vect1 = new Vector(args[iarg ++]);
+                    alen = vect1.size();
+                    String fileName =  args[iarg ++];
+                    BufferedReader testReader = null;
+                    if(fileName.equals("-")) { // STDIN
+                        testReader = new BufferedReader(new InputStreamReader(System.in, "UTF-8"));
+                    } else {
+                        File testCases = new File(fileName);
+                        testReader = new BufferedReader(new FileReader(testCases));
+                    } // not STDIN
+                    String line = null;
+                    while ((line = testReader.readLine()) != null) { // read and process lines
+                        int sqpos = line.indexOf("[[");
+                        if (sqpos >= 0) {
+                            amat  = new Matrix(line.substring(sqpos    , line.indexOf("]]") + 2));
+                            matList.add(amat);
+                        } // if sqpos
+                        sqpos = line.indexOf(" [");
+                    /*
+                        if (sqpos >= 0) {
+                            vect1 = new Vector(line.substring(sqpos + 1, line.indexOf("],") + 1));
+                        }
+                    */
+                    } // while line
+                    int maxHash = 1024;
+                    HashMap<String, Vector> hash = new HashMap<String, Vector>(maxHash);
+                    ArrayList<Vector>      queue = new ArrayList<Vector>(maxHash);
+                    String key = vect1.toString();
+                    hash.put(key, vect1);
+                    queue.add(vect1);
+                    int iqueue = 0;
+                    while (iqueue < queue.size() && queue.size() < maxHash) {
+                        vect1 = queue.get(iqueue ++);
+                        int ilist = 0;
+                        while (ilist < matList.size()) {
+                            Permutator permutator = new Permutator(alen);
+                            while (permutator.hasNext()) {
+                                int[] meter = permutator.next();
+	                            Vector vecta = vect1.permute(meter);
+                                vect2 = matList.get(ilist).multiply(vecta);
+                                if (vect2.isNonTrivialPowerSum(alen - 1, alen, 0)) {
+                                    int gcd = vect2.gcd();
+                                    if (gcd > 1) {
+                                        vect2.divideBy(gcd);
+                                    }
+                                    Vector vect3 = vect2.nice();
+                                    key = vect3.toString();
+                                    if (hash.get(key) == null) { // new tuple
+                                        hash.put(key, vect3);
+                                        queue.add(vect3);
+                                        System.out.println(key);
+                                    } // if new tuple
+                                } // if isPowerSum
+                            } // while permutator
+                            ilist ++;
+                        } // while ilist
+                    } // while iqueue
+                    // opt -gen
+
                 } else if (opt.startsWith("-many")) {
                     int dim = 4;
                     int minElem = -2;
@@ -1497,8 +1561,8 @@ Abstract * (a b c) = a^2 + b^2 - c^2
                     Permutator permutator = new Permutator(alen);
                     while (permutator.hasNext()) {
                         int[] meter = permutator.next();
-                        System.out.println("*" + (new Vector(meter)).toString(",") + ": " 
-                        		+ amat.multiply(Matrix.permutation(meter)).toString(","));
+                        System.out.println("*" + (new Vector(meter)).toString(",") + ": "
+                                + amat.multiply(Matrix.permutation(meter)).toString(","));
                     } // while permutator
                     // opt -permul
 
@@ -1514,14 +1578,13 @@ Abstract * (a b c) = a^2 + b^2 - c^2
                         testReader = new BufferedReader(new FileReader(testCases));
                     } // not STDIN
                     // System.err.println("fileName=" + fileName + ", directory=" + directory);
-                    int state = 0; // runs from alen down to 0 for subsequent matrix lines
                     String line = null;
                     while ((line = testReader.readLine()) != null) { // read and process lines
                         // System.out.println(line);
-                        int sqpos = line.indexOf("[["); 
+                        int sqpos = line.indexOf("[[");
                         if (sqpos >= 0) {
                             amat = new Matrix(line.substring(sqpos, line.indexOf("]]") + 2));
-                            int imat = 0; 
+                            int imat = 0;
                             Vector perm = null;
                             while (perm == null && imat < matList.size()) {
                                 perm = amat.isPermutation(matList.get(imat));
@@ -1531,13 +1594,13 @@ Abstract * (a b c) = a^2 + b^2 - c^2
                                 System.out.println("matList[" + matList.size() + "] = " + amat.toString(","));
                                 matList.add(amat);
                             } else {
-                                System.out.println("permuted from " + String.valueOf(imat - 1) + " by " + perm.toString(",") 
-                                		+ ": " + amat.toString(","));
-                            }                
-                        } // if sqpos           
+                                System.out.println("permuted from " + String.valueOf(imat - 1) + " by " + perm.toString(",")
+                                        + ": " + amat.toString(","));
+                            }
+                        } // if sqpos
                     } // while line
                     // opt -perms
-                    
+
                 } else if (opt.equals("-unimod")) {
                     alen = 3;
                     try {

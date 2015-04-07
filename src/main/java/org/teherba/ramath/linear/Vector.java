@@ -146,6 +146,52 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
         return new Vector(result);
     } // sort
 
+    /** Return the a Vector with the elements sorted in descending order
+     *  and possibly multiply by -1 such that the element with the
+     *  greatest absolute value is first.
+     *  @return independant copy of the Vector
+     */
+    public Vector nice() {
+        int[] result = new int[this.vecLen];
+        int imax = 0;
+        for (int ielem = 0; ielem < this.vecLen; ielem ++) {
+        	result[ielem] = this.vector[ielem];
+            if (Math.abs(this.vector[imax]) < Math.abs(this.vector[ielem])) {
+                imax = ielem;
+            }
+        } // for ielem
+        if (this.vector[imax] < 0) { 
+            Arrays.sort(result); // max is first
+            for (int ielem = 0; ielem < this.vecLen; ielem ++) {
+                result[ielem] = - result[ielem];
+            } // for ielem
+        } else { // max > 0
+            for (int ielem = 0; ielem < this.vecLen; ielem ++) {
+                result[ielem] = - result[ielem];
+            } // for ielem
+            Arrays.sort(result); // max is first
+            for (int ielem = 0; ielem < this.vecLen; ielem ++) {
+                result[ielem] = - result[ielem];
+            } // for ielem
+        }
+        return new Vector(result);
+    } // nice
+
+    /** Compute a permutation of <em>this</em> Vector
+     *  @param meter definition of the permutation, result of {@link org.teherba.ramath.util.Permutator},
+     *  a permutation of the numbers [0 : n-1] defining, for each element, the 
+     *  position of the element of <em>this</em> Vector to be taken
+     *  For example, [0,1,2,3] yields the identical vector, and [3,2,1,0] reverses the vector.
+     *  @return reference to a new Vector
+     */
+    public Vector permute(int[] meter) {
+        Vector result = new Vector(this.vecLen);
+        for (int imet = 0; imet < this.vecLen; imet ++) {
+            result.set(imet, this.vector[meter[imet]]);
+        } // for imet
+        return result;
+    } // permute
+
     /** Extracts a Vector from a string.
      *  Only sequences of digits (optionally preceeded by a sign)
      *  are recognized, all other characters are ignored.
@@ -566,6 +612,25 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
     */
         return result;
     } // isPowerSum
+    
+    /** Test whether <em>this</em> Vector contains a sum of like powers.
+     *  @param exp exponent
+     *  @param left  number of leading  elements which represent the left  side
+     *  @param right number of trailing elements which represent the right side
+     *  @return whether the sum of left elements raised to exp equals the sum
+     *  of right elements raised to exp, and the sum of all elements is not zero
+     */
+    public boolean isNonTrivialPowerSum(int exp, int left, int right) {
+        boolean result = isPowerSum(exp, left, right);
+        if (result) {
+            int sum = 0;
+            for (int ielem = 0; ielem < this.vecLen; ielem ++) {
+                sum += vector[ielem];
+            } // for ielem
+            result = sum != 0;
+        } 
+        return result;
+    } // isNonTrivialPowerSum    
 
     /** Computes a sum of like powers from <em>this</em> Vector.
      *  Usual combinations of the parameters are:

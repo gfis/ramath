@@ -3,6 +3,9 @@
  *  2015-03-23: v2
  *  2013-07-28: with linear.Matrix
  *  2013-07-06, Georg Fischer: copied from ParameterGenerator
+ *
+ *  c.f.
+ *  http://www.math.uconn.edu/~kconrad/blurbs/linmultialg/descentPythag.pdf
  */
 /*
  * Copyright 2013 Dr. Georg Fischer <punctum at punctum dot kom>
@@ -1020,9 +1023,9 @@ gain: 54
         r1 = m11*q1 + m12*q2 + m13*q3 + m14*q4;
         if (q1 < r1 && r1 < MAXLIST && vlist[r1] != null) {
         vect = (int []) vlist[r1];
-        r1a  = Math.abs(r1);
-        ru1a = r1a;
-        r1p  = r1*r1*r1;
+        r1a  =        Math.abs(r1);
+        ru1a =        r1a;
+        ru1p =        r1*r1*r1;
         for (int m21 = minDigit; m21 < maxDigit; m21 ++) {
         for (int m22 = minDigit; m22 < maxDigit; m22 ++) {
         for (int m23 = minDigit; m23 < maxDigit; m23 ++) {
@@ -1030,9 +1033,9 @@ gain: 54
         r2   = m21*q1 + m22*q2 + m23*q3 + m24*q4;
         if (indexOf(vect, r2) >= 0) {
         if (r2 != 0 && r2 != r1) {
-        r2a  = Math.abs(r2);
+        r2a  =        Math.abs(r2);
         ru2a = ru1a + r2a;
-        r2p  = r2*r2*r2;
+        ru2p = ru1p + r2*r2*r2;
         for (int m31 = minDigit; m31 < maxDigit; m31 ++) {
         for (int m32 = minDigit; m32 < maxDigit; m32 ++) {
         for (int m33 = minDigit; m33 < maxDigit; m33 ++) {
@@ -1040,25 +1043,24 @@ gain: 54
         r3   = m31*q1 + m32*q2 + m33*q3 + m34*q4;
         if (indexOf(vect, r3) >= 0) {
         if (r3 != 0 && r3 != r2 && r3 != r1) {
-        r3a  = Math.abs(r3);
+        r3a  =        Math.abs(r3);
         ru3a = ru2a + r3a;
-        r3p  = r3*r3*r3;
-        sum3 = r1p + r2p + r3p;
-        if (tmodset[Math.abs(sum3) % TMOD]) {
+        ru3p = ru2p + r3*r3*r3;
+        if (tmodset[Math.abs(ru3p) % TMOD]) {
         for (int m41 = minDigit; m41 < maxDigit; m41 ++) {
         for (int m42 = minDigit; m42 < maxDigit; m42 ++) {
         for (int m43 = minDigit; m43 < maxDigit; m43 ++) {
         for (int m44 = minDigit; m44 < maxDigit; m44 ++) {
         r4   = m41*q1 + m42*q2 + m43*q3 + m44*q4;
         if (r4 != 0 && r4 != r3 && r4 != r2 && r4 != r1) {
-        r4a  = Math.abs(r4);
+        r4a  =        Math.abs(r4);
         ru4a = ru3a + r4a;
-        r4p  = r4*r4*r4;
-        if (sum3 + r4p == 0) { // r preserves once
+        ru4p = ru3p + r4*r4*r4;
+        if (ru4p == 0) { // r preserves once
             s1 = m11*r1 + m12*r2 + m13*r3 + m14*r4;
             if (s1 > 0 && s1 < MAXLIST && vlist[s1] != null ) {
             s1a  =        Math.abs(s1);
-            su1a = s1a;
+            su1a =        s1a;
             su1p =        s1*s1*s1;
             s2 = m21*r1 + m22*r2 + m23*r3 + m24*r4;
             s2a  =        Math.abs(s2);
@@ -1070,13 +1072,39 @@ gain: 54
             if (s3a != s2a && s3a != s1a) {
             su3a = su2a + s3a;
             su3p = su2p + s3*s3*s3;
+            // if (tmodset[Math.abs(su3p) % TMOD]) {
             s4 = m41*r1 + m42*r2 + m43*r3 + m44*r4;
             s4a  =        Math.abs(s4);
             if (s4a != s3a && s4a != s2a && s4a != s1a) {
-            // su4a = su3a + s4a;
-            if (ru4a < su3a + s4a) {
+            su4a = su3a + s4a;
+            if (ru4a < su4a) {
             su4p = su3p + s4*s4*s4;
             if (su4p == 0) { // s preserves twice
+        /*    	
+            t1 = m11*s1 + m12*s2 + m13*s3 + m14*s4;
+            if (t1 > 0) { //  && t1 < MAXLIST && vlist[t1] != null ) {
+            t1a  =        Math.abs(t1);
+            tu1a =        t1a;
+            tu1p =        t1*t1*t1;
+            t2 = m21*s1 + m22*s2 + m23*s3 + m24*s4;
+            t2a  =        Math.abs(t2);
+            if (t2a != t1a) {
+            tu2a = tu1a + t2a;
+            tu2p = tu1p + t2*t2*t2;
+            t3 = m31*s1 + m32*s2 + m33*s3 + m34*s4;
+            t3a  =        Math.abs(t3);
+            if (t3a != t2a && t3a != t1a) {
+            tu3a = tu2a + t3a;
+            tu3p = tu2p + t3*t3*t3;
+            // if (tmodset[Math.abs(tu3p) % TMOD]) {
+            t4 = m41*s1 + m42*s2 + m43*s3 + m44*s4;
+            t4a  =        Math.abs(t4);
+            if (t4a != t3a && t4a != t2a && t4a != t1a) {
+            tu4a = tu3a + t4a;
+            if (su4a < tu4a) {
+            tu4p = tu3p + t4*t4*t4;
+            if (tu4p == 0) { // t preserves 3 times
+		*/
             Matrix amat = new Matrix(alen, new int[]
                     { m11, m12, m13, m14
                     , m21, m22, m23, m24
@@ -1084,9 +1112,20 @@ gain: 54
                     , m41, m42, m43, m44
                     } );
             amat.printPreservedChain(vect0, 1, 4, 0);
+        /*
+            } // t preserves 3 times
+            } // su4a < tu4a
+            } // t4a
+            // } // if tmodset
+            } // t3a
+            } // t2a
+            } // s1 < t1
+		*/
+
             } // s preserves twice
             } // ru4a < su4a
             } // s4a
+            // } // if tmodset
             } // s3a
             } // s2a
             } // r1 < s1
