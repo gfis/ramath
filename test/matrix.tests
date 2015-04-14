@@ -74,6 +74,8 @@ CALL MatrixExhauster ec340 -l 2 -v [6,-5,-3,-4]
 TEST EC34            ec340 -l 3
 CALL MatrixExhauster ec340 -l 3 -v [6,-3,-4,-5]
 # chain 8, fact 1 [[3,1,2,-1],[1,3,-1,2],[2,1,2,0],[1,2,0,2]] [6,-3,-4,-5] => [12,-9,1,-10] => [39,-36,17,-26] => [141,-138,76,-85] => [522,-519,296,-305] => [1944,-1941,1117,-1126] => [7251,-7248,4181,-4190] => [27057,-27054,15616,-15625] => [100974,-100971,58292,-58301]
+#      b=3-a && d=-9-c =>  a^3+(3-a)^3+c^3 +(-9-c)^3
+#      (3*a+b+2*c-d)^3 + (a+3*b-c+2*d)^3 + (2*a+b+2*c+0*d)^3 + (a+2*b+0*c+2*d)^3 - a^3 - b^3 - c^3 - d^3 subst(b=3-a && d=-9-c) => 0
 # chain 8, fact 1 [[3,1,2,-1],[1,3,-1,2],[2,1,2,0],[-2,-1,-1,1]] [6,-3,-4,-5] => [12,-9,1,-10] => [39,-36,17,-26] => [141,-138,76,-85] => [522,-519,296,-305] => [1944,-1941,1117,-1126] => [7251,-7248,4181,-4190] => [27057,-27054,15616,-15625] => [100974,-100971,58292,-58301]
 # chain 8, fact 1 [[3,1,2,-1],[1,3,-1,2],[-1,-2,1,-1],[1,2,0,2]] [6,-3,-4,-5] => [12,-9,1,-10] => [39,-36,17,-26] => [141,-138,76,-85] => [522,-519,296,-305] => [1944,-1941,1117,-1126] => [7251,-7248,4181,-4190] => [27057,-27054,15616,-15625] => [100974,-100971,58292,-58301]
 # chain 8, fact 1 [[3,1,2,-1],[1,3,-1,2],[-1,-2,1,-1],[-2,-1,-1,1]] [6,-3,-4,-5] => [12,-9,1,-10] => [39,-36,17,-26] => [141,-138,76,-85] => [522,-519,296,-305] => [1944,-1941,1117,-1126] => [7251,-7248,4181,-4190] => [27057,-27054,15616,-15625] => [100974,-100971,58292,-58301]
@@ -164,6 +166,25 @@ CALL linear.Matrix -gen [6,-5,-4,-3] test/EC35.this.tst
 TEST EC35G generate
 CALL linear.Matrix -gen [6,-3,-4,-5] test/EC35.this.tst
 
+TEST FS01 generate find_seq.man
+CALL linear.Matrix -gen [6,-3,-4,-5] find_seq.man
+# many
+
+TEST FS02 generate find_seq.man
+CALL linear.Matrix -gen [16,2,-9,-15] find_seq.man
+# few
+
+TEST FS03 generate find_seq.man
+CALL linear.Matrix -gen [19,-3,-10,-18] find_seq.man
+# none
+
+TEST FS04 generate find_seq.man
+CALL linear.Matrix -gen [34,2,-15,-33] find_seq.man
+# none
+
+TEST FL01 -follow
+CALL linear.Matrix -follow find_seq.man data/prewrob3.sub
+
 PACKAGE=org.teherba.ramath.symbolic
 TEST EC34D det=0
 CALL PolyMatrix -abst [[0,-2,-2,1],[1,3,2,-1],[-2,-1,1,-1],[-1,-2,-1,1]]
@@ -178,8 +199,24 @@ CALL MatrixExhauster ec340 -l 4 -v [6,-3,-4,-5]
 TEST EC36            ec340 -l 5
 CALL MatrixExhauster ec340 -l 5 -v [29,-11,-15,-27]
 
-TEST EC37            ec340 -l 5
-CALL MatrixExhauster ec340 -l 5 -v [89,-17,-86,-40]
+TEST EC37            ec340 -l 6
+CALL MatrixExhauster ec340 -l 6 -v [89,-17,-40,-86]
+
+TEST EC38            ec340 -l 7
+CALL MatrixExhauster ec340 -l 7 -v [137,-44,-73,-128]
+# [216,50,-167,-177] -> nothing (819 s)
+
+TEST EC41            ec340 -l 5
+CALL MatrixExhauster ec340 -l 5 -v [34,2,-15,-33]
+
+TEST EC42            ec340 -l 8
+CALL MatrixExhauster ec340 -l 8 -v [251,-6,-179,-216]
+
+TEST EC43            ec340 -l 8
+CALL MatrixExhauster ec340 -l 8 -v [238,21,-114,-229]
+
+TEST EC44            ec340 -l 8
+CALL MatrixExhauster ec340 -l 8 -v [239,-23,-200,-178]
 #-----------
 # EC(3)
 

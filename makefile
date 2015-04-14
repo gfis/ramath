@@ -69,6 +69,10 @@ get_maps:
 	| sort -n | uniq -c > maps.tmp
 genhash:
 	perl data/genhash.pl data/prewrob3.dat > genhash.tmp
+find_seq:
+	grep -h ", chain 8" test/*.this.tst | sort | uniq > find_seq.tmp
+	wc find_seq.tmp
+	perl data/find_seq.pl find_seq.tmp > find_seq2.tmp
 #----------
 grep3x:
 	grep "chain 8" test/MX3*.this.tst \
@@ -83,6 +87,8 @@ wr1:
 wr2:
 	sort -n prewrob3.tmp | sed -e "s/	/,/g" > data/prewrob3.dat
 	wc data/prewrob3.dat
+wr3:
+	head -256 data/prewrob3.dat > data/prewrob3.sub
 xsort3:
 	sort \
 	test/X02.this.tst \

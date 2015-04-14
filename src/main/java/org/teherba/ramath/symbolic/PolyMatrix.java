@@ -1,5 +1,6 @@
 /*  PolyMatrix: a square matrix with Polynomial elements
  *  @(#) $Id: PolyMatrix.java 744 2011-07-26 06:29:20Z gfis $
+ *  2015-04-14: explicit determinant for case 3
  *  2015-03-26: construct from expression
  *  2015-03-24: new PolyMatrix(Matrix amat)
  *  2015-01-01: Barnings B identity
@@ -451,20 +452,17 @@ public class PolyMatrix implements Cloneable, Serializable {
                 result = this.matrix[0][0];
                 break;
             case 2:
-                result = this.matrix[0][0].multiply(this.matrix[1][1]).subtract(
-                         this.matrix[0][1].multiply(this.matrix[1][0]));
+                result =  (this.matrix[0][0].multiply(this.matrix[1][1])).subtract
+                          (this.matrix[0][1].multiply(this.matrix[1][0])) ;
                 break;
-        /*
             case 3:
-                result =  this.matrix[0][0] * this.matrix[1][1] * this.matrix[2][2]
-                        - this.matrix[0][2] * this.matrix[1][1] * this.matrix[2][0]
-                        + this.matrix[0][1] * this.matrix[1][2] * this.matrix[2][0]
-                        - this.matrix[0][1] * this.matrix[1][0] * this.matrix[2][2]
-                        + this.matrix[0][2] * this.matrix[1][0] * this.matrix[2][1]
-                        - this.matrix[0][0] * this.matrix[1][2] * this.matrix[2][1]
-                        ;
+                result =  (this.matrix[0][0].multiply(this.matrix[1][1]).multiply(this.matrix[2][2])).subtract
+                          (this.matrix[0][2].multiply(this.matrix[1][1]).multiply(this.matrix[2][0])).add
+                          (this.matrix[0][1].multiply(this.matrix[1][2]).multiply(this.matrix[2][0])).subtract
+                          (this.matrix[0][1].multiply(this.matrix[1][0]).multiply(this.matrix[2][2])).add
+                          (this.matrix[0][2].multiply(this.matrix[1][0]).multiply(this.matrix[2][1])).subtract
+                          (this.matrix[0][0].multiply(this.matrix[1][2]).multiply(this.matrix[2][1])) ;
                 break;
-        */
             default: // recursive Laplace expansion over minors of the first row
                 PolyMatrix minor = new PolyMatrix(rowLen - 1);
                 int irow, icol;

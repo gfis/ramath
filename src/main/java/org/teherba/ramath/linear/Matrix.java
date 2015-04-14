@@ -1,5 +1,6 @@
 /*  Matrix: a simple, small, square matrix of small numbers
  *  @(#) $Id: Matrix.java 744 2011-07-26 06:29:20Z gfis $
+ *  2015-04-14: inverse
  *  2015-04-04: permute
  *  2014-04-06: MultiModoMeter incorporated into ModoMeter
  *  2013-08-23: Serializable
@@ -398,17 +399,17 @@ public class Matrix implements Cloneable, Serializable {
      *  @return true if the matrix is zero, or false otherwise
      */
     public boolean isZero() {
-            boolean result = true;
-            int irow = 0;
-            while (result && irow < this.rowLen) {
-                int icol = 0;
-                while (result && icol < this.colLen) {
-                    result = this.matrix[irow][icol] == 0;
-                    icol ++;
-                } // for icol
-                irow ++;
-            } // for irow
-            return result;
+        boolean result = true;
+        int irow = 0;
+        while (result && irow < this.rowLen) {
+            int icol = 0;
+            while (result && icol < this.colLen) {
+                result = this.matrix[irow][icol] == 0;
+                icol ++;
+            } // for icol
+            irow ++;
+        } // for irow
+        return result;
     } // isZero
 
     /** Compares <em>this</em> matrix with a second for equal elements
@@ -523,82 +524,54 @@ public class Matrix implements Cloneable, Serializable {
         return result;
     } // multiply(Vector)
 
-    /*-------------- symbolic ----------------------------------------*/
-    /*
-Abstract matrix * Pythagorean generator
- (a11*(m^2-n^2) + 2*a12*m*n + a13*(m^2+n^2))^2
-+(a21*(m^2-n^2) + 2*a22*m*n + a23*(m^2+n^2))^2
--(a31*(m^2-n^2) + 2*a32*m*n + a33*(m^2+n^2))^2
-==
- + a*b^3 * ( - 4*a11*a12 + 4*a12*a13 - 4*a21*a22 + 4*a22*a23 + 4*a31*a32 - 4*a32*a33)
- + a^2*b^2 * ( - 2*a11^2 + 4*a12^2 + 2*a13^2 - 2*a21^2 + 4*a22^2 + 2*a23^2 + 2*a31^2 - 4*a32^2 - 2*a33^2)
- + a^3*b * (4*a11*a12 + 4*a12*a13 + 4*a21*a22 + 4*a22*a23 - 4*a31*a32 - 4*a32*a33)
- + a^4 * (a11^2 + a13^2 + a21^2 + a23^2 - a31^2 - a33^2 + 2*a11*a13 + 2*a21*a23 - 2*a31*a33)
- + b^4 * (a11^2 + a13^2 + a21^2 + a23^2 - a31^2 - a33^2 - 2*a11*a13 - 2*a21*a23 + 2*a31*a33)
-------------------
-Abstract * (a b c) = a^2 + b^2 - c^2
- (a11*a + a12*b + a13*c)^2
-+(a21*a + a22*b + a23*c)^2
--(a31*a + a32*b + a33*c)^2
-==
- + a*b * (2*a11*a12 + 2*a21*a22 - 2*a31*a32)
- + a*c * (2*a11*a13 + 2*a21*a23 - 2*a31*a33)
- + a^2 * ( - 1 + a11^2 + a21^2 - a31^2)
- + b*c * (2*a12*a13 + 2*a22*a23 - 2*a32*a33)
- + b^2 * ( - 1 + a12^2 + a22^2 - a32^2)
- + c^2 * (1 + a13^2 + a23^2 - a33^2)
-    */
     /*-------------- heavyweight methods -----------------------------*/
 
     /** Compute the determinant of <em>this</em> matrix.
+     *  For row lengths >= 4, this method is called recursively.
      *  @return integer determinant value
      */
-/*  Perl code from Matrix.pm:
-    foreach my $col (0..$last) {
-      my $matrix = $self->slice(0..$col-1,$col+1..$last);
-      $matrix = $class->new(@$matrix[1..$last]);
-      my $term += $matrix->determinant();
-      $term *= $self->[0][$col];
-      $term *= $col % 2 ? -1 : 1;
-      $result += $term;
-    }
-*/
     public int determinant() {
         int result = 0;
         switch (this.rowLen) {
             case 0:
-                result = 0;
+                result =  0;
                 break;
             case 1:
-                result = this.matrix[0][0];
+                result =  this.matrix[0][0];
                 break;
             case 2:
-                result =  this.matrix[0][0] * this.matrix[1][1]
-                        - this.matrix[0][1] * this.matrix[1][0]
-                        ;
+                result =  this.matrix[0][0] * this.matrix[1][1] -
+                          this.matrix[0][1] * this.matrix[1][0] ;
                 break;
             case 3:
-                result =  this.matrix[0][0] * this.matrix[1][1] * this.matrix[2][2]
-                        - this.matrix[0][2] * this.matrix[1][1] * this.matrix[2][0]
-                        + this.matrix[0][1] * this.matrix[1][2] * this.matrix[2][0]
-                        - this.matrix[0][1] * this.matrix[1][0] * this.matrix[2][2]
-                        + this.matrix[0][2] * this.matrix[1][0] * matrix[2][1]
-                        - matrix[0][0] * matrix[1][2] * matrix[2][1]
-                        ;
+                result =  this.matrix[0][0] * this.matrix[1][1] * this.matrix[2][2] -
+                          this.matrix[0][2] * this.matrix[1][1] * this.matrix[2][0] +
+                          this.matrix[0][1] * this.matrix[1][2] * this.matrix[2][0] -
+                          this.matrix[0][1] * this.matrix[1][0] * this.matrix[2][2] +
+                          this.matrix[0][2] * this.matrix[1][0] * this.matrix[2][1] -
+                          this.matrix[0][0] * this.matrix[1][2] * this.matrix[2][1] ;
                 break;
-        /*
-        */
+
+            /*  Perl code from Matrix.pm:
+                foreach my $col (0..$last) {
+                  my $matrix = $self->slice(0..$col-1,$col+1..$last);
+                  $matrix = $class->new(@$matrix[1..$last]);
+                  my $term += $matrix->determinant();
+                  $term *= $self->[0][$col];
+                  $term *= $col % 2 ? -1 : 1;
+                  $result += $term;
+                }
+            */
             default: // recursive Laplace expansion over minors of the first row
                 Matrix minor = new Matrix(this.rowLen - 1);
-                int irow, icol;
                 // populate minor for 1st column
-                for (irow = 1; irow < this.rowLen; irow ++) { // omit row 0
-                    for (icol = 1; icol < this.colLen; icol ++) { // omit column 0
+                for (int irow = 1; irow < this.rowLen; irow ++) { // omit row 0
+                    for (int icol = 1; icol < this.colLen; icol ++) { // omit column 0
                         minor.matrix[irow - 1][icol - 1] = this.matrix[irow][icol];
                     } // for icol
                 } // for irow
                 // now expand minors over row 0
-                for (icol = 0; icol < this.colLen; icol ++) {
+                for (int icol = 0; icol < this.colLen; icol ++) {
                     if (icol > 0) { // repair 1st column of minor
                         for (int irow2 = 1; irow2 < this.rowLen; irow2 ++) {
                             minor.matrix[irow2 - 1][icol - 1] = this.matrix[irow2][icol - 1];
@@ -609,9 +582,9 @@ Abstract * (a b c) = a^2 + b^2 - c^2
                                 + (this.matrix[0][icol] * ((icol & 1) == 0 ? -1 : 1))
                                 + "\n" + minor.toString());
                     }
-                    if ((icol & 1) == 0) {
+                    if ((icol & 1) == 0) { // even
                         result +=   minor.determinant() * this.matrix[0][icol];
-                    } else {
+                    } else { // odd
                         result += - minor.determinant() * this.matrix[0][icol];
                     }
                 } // for icol
@@ -620,6 +593,30 @@ Abstract * (a b c) = a^2 + b^2 - c^2
         return result;
     } // determinant
 
+    /*
+        Abstract matrix * Pythagorean generator
+         (a11*(m^2-n^2) + 2*a12*m*n + a13*(m^2+n^2))^2
+        +(a21*(m^2-n^2) + 2*a22*m*n + a23*(m^2+n^2))^2
+        -(a31*(m^2-n^2) + 2*a32*m*n + a33*(m^2+n^2))^2
+        ==
+         + a*b^3 * ( - 4*a11*a12 + 4*a12*a13 - 4*a21*a22 + 4*a22*a23 + 4*a31*a32 - 4*a32*a33)
+         + a^2*b^2 * ( - 2*a11^2 + 4*a12^2 + 2*a13^2 - 2*a21^2 + 4*a22^2 + 2*a23^2 + 2*a31^2 - 4*a32^2 - 2*a33^2)
+         + a^3*b * (4*a11*a12 + 4*a12*a13 + 4*a21*a22 + 4*a22*a23 - 4*a31*a32 - 4*a32*a33)
+         + a^4 * (a11^2 + a13^2 + a21^2 + a23^2 - a31^2 - a33^2 + 2*a11*a13 + 2*a21*a23 - 2*a31*a33)
+         + b^4 * (a11^2 + a13^2 + a21^2 + a23^2 - a31^2 - a33^2 - 2*a11*a13 - 2*a21*a23 + 2*a31*a33)
+        ------------------
+        Abstract * (a b c) = a^2 + b^2 - c^2
+         (a11*a + a12*b + a13*c)^2
+        +(a21*a + a22*b + a23*c)^2
+        -(a31*a + a32*b + a33*c)^2
+        ==
+         + a*b * (2*a11*a12 + 2*a21*a22 - 2*a31*a32)
+         + a*c * (2*a11*a13 + 2*a21*a23 - 2*a31*a33)
+         + a^2 * ( - 1 + a11^2 + a21^2 - a31^2)
+         + b*c * (2*a12*a13 + 2*a22*a23 - 2*a32*a33)
+         + b^2 * ( - 1 + a12^2 + a22^2 - a32^2)
+         + c^2 * (1 + a13^2 + a23^2 - a33^2)
+    */
     /** Compute the determinants of <em>this</em> Matrix
      *  for the minors of the first row, with alternating signs,
      *  as a {@link Vector}.
@@ -675,68 +672,6 @@ Abstract * (a b c) = a^2 + b^2 - c^2
         } // switch this.rowLen
         return result;
     } // getSubDeterminants
-
-    /** Appends to the ArrayList all unimodular matrices A with elements >= 0 such that
-     *  for positive {@link Vector}s <em>vect1, vect2: A * vect1 = vect2</em>
-     *  @param result append to this list of matrices
-     *  @param vect1 multiply this vector with the resulting matrices
-     *  @param vect2 result of all multiplications
-     *  @param minElem minimum element in the result matrices
-     */
-    public static void addMultiplicatorsDeprecated(ArrayList<Matrix> result, Vector vect1, Vector vect2, int minElem) {
-        // ArrayList<Matrix> result = new ArrayList<Matrix>(16);
-        int alen = vect1.size();
-        VectorArray[] cands = new VectorArray[alen];
-        int[] candSizes     = new         int[alen];
-        int
-        icand = alen - 1;
-        boolean noZero = true;
-        while (icand >= 0) {
-            cands[icand] = new VectorArray(vect1.divide(vect2.vector[icand], minElem));
-            candSizes[icand] = cands[icand].varr.length;
-            noZero = noZero && candSizes[icand] > 0;
-            icand --;
-        } // while icand
-        candSizes[0] = 1; // ModoMeter should not iterate over row 0
-        ModoMeter meter = new ModoMeter(candSizes);
-        Matrix amat = new Matrix(alen);
-        while (meter.hasNext() && noZero) {
-            int[] indexes = meter.next();
-            icand = alen - 1;
-            while (icand >= 1) { // row 0 is not yet set
-                amat.setRow(icand, cands[icand].get(indexes[icand]));
-                icand --;
-            } // while icand
-            Vector subDets = amat.getSubDeterminants();
-            int bitSum = subDets.lastBitSum();
-            if (bitSum > 0) { // not only even subdeterminants
-                // now try for all possible rows 0
-                Vector[] cand0 = cands[0].varr; // vect1.divide(vect2.vector[0]);
-                int icand0 = cand0.length - 1;
-                while (icand0 >= 0) {
-                    int det = subDets.multiply(cand0[icand0]);
-                    if (true || det == 1 || det == -1) { // unimodular
-                        amat.setRow(0, cand0[icand0]);
-                        ArrayList<Vector> chain = amat.preservedPowerSums(alen - 1, alen - 1, 1, vect2);
-                        if (chain.size() > 1) {
-                            System.out.println("# addMult: "
-                                    + vect1.toString("(,)")
-                                    + ", " + vect2.toString("(,)")
-                                    + ", det=" + det
-                                    );
-                            for (int ichain = 0; ichain < chain.size() - 2; ichain ++) {
-                                System.out.println("# next[" + ichain + "]: " + chain.get(ichain).toString("(,)"));
-                            } // for ichain
-                            System.out.println(amat.toString());
-                            result.add(amat.clone());
-                        } // preserved > 1
-                    } // unimodular
-                    icand0 --;
-                } // while icand
-            } // bitSum > 0
-        } // while meter.hasNext()
-        // return result.toArray(new Matrix[0]);
-    } // addMultiplicatorsDeprecated
 
     /** Appends to the ArrayList all matrices A with elements >= 0 such that
      *  for positive {@link Vector}s <em>vect1, vect2: A * vect1 = vect2</em>
@@ -803,56 +738,6 @@ Abstract * (a b c) = a^2 + b^2 - c^2
         } // while meter.hasNext()
         // return result.toArray(new Matrix[0]);
     } // addMultiplicators
-
-    /** Appends to the ArrayList all  matrices A with elements >= 0 such that
-     *  for positive {@link Vector}s <em>vect1, vect2: A * vect1 = vect2</em>.
-     *  This variant does not check for unimodularity (abs(det) = 1).
-     *  @param result append to this list of matrices
-     *  @param vect1 multiply this vector with the resulting matrices
-     *  @param vect2 result of all multiplications
-     *  @param minElem minimum element in the result matrices
-     */
-    public static void addMultiplicators22(ArrayList<Matrix> result, Vector vect1, Vector vect2, int minElem) {
-        // ArrayList<Matrix> result = new ArrayList<Matrix>(16);
-        int alen = vect1.size();
-        VectorArray[] cands = new VectorArray[alen];
-        int[] candSizes     = new         int[alen];
-        int
-        icand = alen - 1;
-        boolean noZero = true;
-        while (icand >= 0) {
-            cands[icand] = new VectorArray(vect1.divide(vect2.vector[icand], minElem));
-            candSizes[icand] = cands[icand].varr.length;
-            noZero = noZero && candSizes[icand] > 0;
-            icand --;
-        } // while icand
-        // candSizes[0] = 1; // ModoMeter should not iterate over row 0
-        ModoMeter meter = new ModoMeter(candSizes);
-        Matrix amat = new Matrix(alen);
-        while (meter.hasNext() && noZero) {
-            int[] indexes = meter.next();
-            icand = alen - 1;
-            while (icand >= 0) { // row 0 is set
-                amat.setRow(icand, cands[icand].get(indexes[icand]));
-                icand --;
-            } // while icand
-            ArrayList<Vector> chain = amat.preservedPowerSums(alen - 1, alen - 1, 1, vect2);
-            if (chain.size() > 1) {
-                int det = amat.determinant();
-                System.out.println("# addMult: "
-                        + vect1.toString("(,)")
-                        + ", " + vect2.toString("(,)")
-                        + ", det=" + det
-                        );
-                for (int ichain = 0; ichain < chain.size() - 2; ichain ++) {
-                    System.out.println("# next[" + ichain + "]: " + chain.get(ichain).toString("(,)"));
-                } // for ichain
-                System.out.println(amat.toString());
-                result.add(amat.clone());
-            } // preserved > 1
-        } // while meter.hasNext()
-        // return result.toArray(new Matrix[0]);
-    } // addMultiplicators22
 
     /** Test whether <em>this</em> Matrix preserves the power sum property
      *  of the parameter {@link Vector}.
@@ -1373,8 +1258,71 @@ Abstract * (a b c) = a^2 + b^2 - c^2
                             + "\n" + amat.toString());
                     // opt -elem
 
+                } else if (opt.equals("-follow" )) { // copied from -gen
+                    // read a list of matrices
+                    // and a second file with known tuples
+                    // generate all possible chains up to some limit
+                    String key = null;
+                    ArrayList<Matrix> matList = new ArrayList<Matrix>(32);
+                    String fileName =  args[iarg ++];
+                    BufferedReader testReader = null;
+                    File testCases = new File(fileName);
+                    testReader = new BufferedReader(new FileReader(testCases));
+                    String line = null;
+                    while ((line = testReader.readLine()) != null) { // read and process lines
+                        int sqpos = line.indexOf("[[");
+                        if (sqpos >= 0) {
+                            amat  = new Matrix(line.substring(sqpos    , line.indexOf("]]") + 2));
+                            matList.add(amat);
+                        } // if sqpos
+                        sqpos = line.indexOf(" [");
+                    } // while line
+                    testReader.close();
+                    
+                    fileName = args[iarg ++];
+                    testCases = new File(fileName);
+                    testReader = new BufferedReader(new FileReader(testCases));
+                    int maxHash = 1024;
+                    ArrayList<Vector>      queue = new ArrayList<Vector>(maxHash);
+                    while ((line = testReader.readLine()) != null) { // read and process lines
+                        vect1 = new Vector("[" + line.replaceAll("\\s","") + "]");
+                        if (vect1.size() == 4) {
+                            // System.out.println("vect1=" + vect1.toString(","));
+                            queue.add(vect1);
+                        }
+                    } // while line
+                    testReader.close();
+ 
+                    int iqueue = 0;
+                    while (iqueue < queue.size() && queue.size() < maxHash) {
+                        vect1 = queue.get(iqueue ++);
+                        alen = vect1.size();
+                        System.out.println(vect1.toString(","));
+                        int ilist = 0;
+                        while (ilist < matList.size()) {
+                            Permutator permutator = new Permutator(alen);
+                            while (permutator.hasNext()) {
+                                int[] meter = permutator.next();
+                                Vector vecta = vect1.permute(meter);
+                                amat = matList.get(ilist);
+                                vect2 = amat.multiply(vecta);
+                                if (vect2.isNonTrivialPowerSum(alen - 1, alen, 0)) {
+                                    int gcd = vect2.gcd();
+                                    if (gcd > 1) {
+                                        vect2.divideBy(gcd);
+                                    }
+                                    Vector vect3 = vect2.nice();
+                                    key = vect3.toString(",");
+                                    System.out.println("\t" + vecta.toString(",") + " => " + key + " by " + amat.toString(","));
+                                } // if isPowerSum
+                            } // while permutator
+                            ilist ++;
+                        } // while ilist
+                    } // while iqueue
+                    // opt -follow
+
                 } else if (opt.equals("-gen" )) { // copied from -perms
-                    // read a list of matrices, and an initial powersum preserving tuple
+                    // read an initial powersum preserving tuple, and a list of matrices
                     // generate all possible tuples up to some limit
                     ArrayList<Matrix> matList = new ArrayList<Matrix>(32);
                     // vect1 = new Vector("[6,-3,-4,-5]");
@@ -1396,12 +1344,9 @@ Abstract * (a b c) = a^2 + b^2 - c^2
                             matList.add(amat);
                         } // if sqpos
                         sqpos = line.indexOf(" [");
-                    /*
-                        if (sqpos >= 0) {
-                            vect1 = new Vector(line.substring(sqpos + 1, line.indexOf("],") + 1));
-                        }
-                    */
                     } // while line
+                    testReader.close();
+                    
                     int maxHash = 1024;
                     HashMap<String, Vector> hash = new HashMap<String, Vector>(maxHash);
                     ArrayList<Vector>      queue = new ArrayList<Vector>(maxHash);
@@ -1416,7 +1361,7 @@ Abstract * (a b c) = a^2 + b^2 - c^2
                             Permutator permutator = new Permutator(alen);
                             while (permutator.hasNext()) {
                                 int[] meter = permutator.next();
-	                            Vector vecta = vect1.permute(meter);
+                                Vector vecta = vect1.permute(meter);
                                 vect2 = matList.get(ilist).multiply(vecta);
                                 if (vect2.isNonTrivialPowerSum(alen - 1, alen, 0)) {
                                     int gcd = vect2.gcd();
