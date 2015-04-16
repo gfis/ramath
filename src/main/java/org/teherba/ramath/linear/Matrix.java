@@ -1,6 +1,6 @@
 /*  Matrix: a simple, small, square matrix of small numbers
  *  @(#) $Id: Matrix.java 744 2011-07-26 06:29:20Z gfis $
- *  2015-04-14: inverse
+ *  2015-04-15: inverse
  *  2015-04-04: permute
  *  2014-04-06: MultiModoMeter incorporated into ModoMeter
  *  2013-08-23: Serializable
@@ -48,7 +48,7 @@ public class Matrix implements Cloneable, Serializable {
     public final static String CVSID = "@(#) $Id: Matrix.java 744 2011-07-26 06:29:20Z gfis $";
 
     /** Debugging switch: 0 = no, 1 = moderate, 2 = more, 3 = extreme verbosity */
-    public static int debug = 0;
+    public static int debug = 1;
     /** System dependant newline character sequence */
     protected static String newline = System.getProperty("line.separator");
 
@@ -60,6 +60,8 @@ public class Matrix implements Cloneable, Serializable {
     private int rowLen;
     /** the length of a column, currently always the same as <em>rowLen</em>, that means the matrices are square */
     private int colLen;
+    /** usually 1, but maybe &gt; 1 when the Matrix is the result of {@link #inverse} */
+    protected int fraction;
 
     /*-------------- construction -----------------------------*/
 
@@ -68,6 +70,7 @@ public class Matrix implements Cloneable, Serializable {
     public Matrix() {
         this.rowLen = 0;
         this.colLen = this.rowLen;
+        this.fraction = 1;
     } // no-args Constructor
 
     /** Constructor for an empty square Matrix of some size
@@ -77,6 +80,7 @@ public class Matrix implements Cloneable, Serializable {
         this.rowLen = rlen;
         this.colLen = this.rowLen;
         this.matrix = new /*Type*/int[this.rowLen][this.colLen];
+        this.fraction = 1;
     } // Constructor(int)
 
     /** Constructor for a Matrix which initializes it from an array of values
@@ -91,6 +95,7 @@ public class Matrix implements Cloneable, Serializable {
                 this.matrix[irow][icol] = (/*Type*/int) values[ival ++];
             } // for icol
         } // for irow
+        this.fraction = 1;
     } // Constructor(int)
 
     /** Constructor for a Matrix which initializes it from an array of values.
@@ -121,6 +126,7 @@ public class Matrix implements Cloneable, Serializable {
                 ival ++;
             } // for icol
         } // for irow
+        this.fraction = 1;
     } // Constructor(String[])
 
     /** Constructor for a Matrix which initializes it from a matrix expression.
@@ -148,6 +154,7 @@ public class Matrix implements Cloneable, Serializable {
                 ival ++;
             } // for icol
         } // for irow
+        this.fraction = 1;
     } // Constructor(String)
 
     /** Deep copy of the Matrix and its properties.
@@ -155,6 +162,7 @@ public class Matrix implements Cloneable, Serializable {
      */
     public Matrix clone() {
         Matrix result = new Matrix(this.rowLen);
+        result.fraction = this.fraction;
         for (int irow = 0; irow < this.rowLen; irow ++) {
             for (int icol = 0; icol < this.colLen; icol ++) {
                 result.matrix[irow][icol] = this.matrix[irow][icol];
@@ -295,6 +303,20 @@ public class Matrix implements Cloneable, Serializable {
         return this.matrix[irow][icol];
     } // get
 
+    /** Returns the {@link #fraction}
+     *  @return the divisor when the Matrix was the result of {@link inverse}
+     */
+    public int getFraction() {
+        return this.fraction;
+    } // getFraction
+
+    /** Sets the {@link #fraction}
+     *  @param fraction the divisor when the Matrix was the result of {@link inverse}
+     */
+    public void setFraction(int fraction) {
+        this.fraction = fraction;
+    } // setFraction
+
     /*-------------- lightweight derived methods -----------------------------*/
 
     /** Returns a row as a {@link Vector}.
@@ -314,7 +336,7 @@ public class Matrix implements Cloneable, Serializable {
      *  @param vect1 Vector containing the elements of the matrix' row
      */
     public void setRow(int rowNo, Vector vect1) {
-        for (int icol = 0; icol < rowNo; icol ++) {
+        for (int icol = 0; icol < this.colLen; icol ++) {
             this.matrix[rowNo][icol] = vect1.vector[icol];
         } // for icol
     } // setRow
@@ -336,10 +358,43 @@ public class Matrix implements Cloneable, Serializable {
      *  @param vect1 Vector containing the elements of the matrix' column
      */
     public void setColumn(int colNo, Vector vect1) {
-        for (int irow = 0; irow< this.rowLen; irow ++) {
+        for (int irow = 0; irow < this.rowLen; irow ++) {
             this.matrix[irow][colNo] = vect1.vector[irow];
         } // for irow
     } // setColumn
+
+    /** Returns the main diagonal as a {@link Vector}.
+     *  @return a Vector containing the elements [i,i] of <em>this</em> Matrix
+     */
+    public Vector getDiagonal() {
+        Vector result = new Vector(this.rowLen);
+        for (int irow = 0; irow < this.rowLen; irow ++) {
+            result.vector[irow] = this.matrix[irow][irow];
+        } // for irow
+        return result;
+    } // getDiagonal
+
+    /** Exchanges two rows in <em>this</em> Matrix.
+     *  @param rowNo1 number of the 1st row
+     *  @param rowNo2 number of the 2nd row
+     */
+    public void exchangeRows(int rowNo1, int rowNo2) {
+        Vector row1 = getRow(rowNo1);
+        Vector row2 = getRow(rowNo2);
+        setRow(rowNo2, row1);
+        setRow(rowNo1, row2);
+    } // exchangeRows
+
+    /** Exchanges two columns in <em>this</em> Matrix.
+     *  @param colNo1 number of the 1st column
+     *  @param colNo2 number of the 2nd column
+     */
+    public void exchangeColumns(int colNo1, int colNo2) {
+        Vector col1 = getRow(colNo1);
+        Vector col2 = getRow(colNo2);
+        setRow(colNo2, col1);
+        setRow(colNo1, col2);
+    } // exchangeColumns
 
     /** Returns a string representation of the matrix
      *  with 4 places per element and one line per row
@@ -462,7 +517,7 @@ public class Matrix implements Cloneable, Serializable {
 
     /*-------------- arithmetic operations -------------------------*/
 
-    /** Clone and adds all elements of another matrix to <em>this</em> matrix.
+    /** Clone and adds all elements of another Matrix to <em>this</em> Matrix.
      *  @param matr2 add this matrix
      *  @return reference to a new object, the sum
      */
@@ -480,9 +535,25 @@ public class Matrix implements Cloneable, Serializable {
         return result;
     } // add(Matrix)
 
-    /** Clone and multiply <em>this</em> matrix with another Matrix (on the right).
+    /** Adds all elements of a {@link Vector} to a row of <em>this</em> matrix.
+     *  @param irow add to the row with this number
+     *  @param vect2 add this {@link Vector}
+     *  @return <em>this</em> Matrix
+     */
+    public Matrix addToRow(int irow, Vector vect2) {
+        if (vect2.size() == this.rowLen) {
+            for (int icol = 0; icol < this.colLen; icol ++) {
+                this.matrix[irow][icol] += vect2.get(icol);
+            } // for icol
+        } else {
+            throw new IllegalArgumentException("cannot add vector to matrix of different size " + this.rowLen);
+        }
+        return this;
+    } // addToRow
+
+    /** Clone and multiply <em>this</em> Matrix with another Matrix (on the right).
      *  @param matr2 multiply with this matrix
-     *  @return reference to new object, the matrix product
+     *  @return reference to a new object, the matrix product
      */
     public Matrix multiply(Matrix matr2) {
         Matrix result = new Matrix(this.rowLen);
@@ -502,9 +573,9 @@ public class Matrix implements Cloneable, Serializable {
         return result;
     } // multiply(Matrix)
 
-    /** Multiply <em>this</em> matrix with some {@link Vector} (on the right).
-     *  @param vect2 multiply with this Vector
-     *  @return reference to new Vector, the right product
+    /** Multiply <em>this</em> Matrix with some {@link Vector} (on the right).
+     *  @param vect2 multiply with this {@link Vector}
+     *  @return reference to a new {@link Vector}, the right product
      */
     public Vector multiply(Vector vect2) {
         Vector result = new Vector(this.rowLen);
@@ -593,7 +664,139 @@ public class Matrix implements Cloneable, Serializable {
         return result;
     } // determinant
 
-    /*
+    /** Compute the inverse of <em>this</em> Matrix, if possible.
+     *  C.f. <a href="http://matrix.reshish.com/inverse.php">Online matrix calculator</a>.
+     *  @return a new Matrix, or null if the inverse cannot be computed
+     */
+    public Matrix inverse() {
+    	int debugInverse = 2906;
+        int result = 0;
+        Matrix lmat = this.clone();
+        Matrix rmat = new Matrix(this.rowLen);
+        rmat.setIdentity();
+        if (debug > debugInverse) {
+            System.out.println("start with=" + lmat.toString(",")
+                    + "\t| " + rmat.toString(",")
+                    + ", lmat.determinant()=" + lmat.determinant());
+        }
+        // now always operate on combined matrix L|R
+        boolean pivotFound = true;
+        int irow  = 0;
+        int icol  = 0;
+        int jrow  = 0;
+        int jcol  = 0;
+        int pivot = 0;
+        Vector vpivot = new Vector(this.rowLen);
+        while (pivotFound && irow < this.rowLen) {
+            if (lmat.matrix[irow][irow] == 0) { // no proper pivot element - exchange
+                jrow = irow + 1;
+                while (jrow < this.rowLen && lmat.matrix[jrow][irow] == 0) { // search first non-zero -> pivot
+                    jrow ++;
+                } // while jrow
+                if (jrow < this.rowLen) {
+                    if (debug > debugInverse) {
+                        System.out.println("exchangeRows(" + irow + ", " + jrow + ");");
+                    }
+                    lmat.exchangeRows(irow, jrow);
+                    rmat.exchangeRows(irow, jrow);
+                } else { // no pivot
+                    pivotFound = false;
+                    if (debug > debugInverse) {
+                        System.out.println("no pivot found for irow=" + irow);
+                    }
+                }
+            } // no pivot - exchange
+            if (pivotFound) {
+                pivot = lmat.matrix[irow][irow];
+                if (pivot < 0) { // negate row[irow]
+                    for (icol = 0; icol < this.rowLen; icol ++) {
+                        lmat.matrix[irow][icol] = - lmat.matrix[irow][icol];
+                        rmat.matrix[irow][icol] = - rmat.matrix[irow][icol];
+                    } // for icol
+                    pivot = lmat.matrix[irow][irow];
+                } // negate row
+                vpivot.set(irow, pivot);
+                if (debug > debugInverse) {
+                    System.out.println("irow=" + irow
+                            + ", pivot=" + pivot
+                            );
+                }
+                jrow = 0;
+                while (jrow < this.rowLen) {
+                    if (jrow != irow) {
+                        int stone = lmat.matrix[jrow][irow];
+                        if (stone != 0) { // remove this stone
+                            if (debug > debugInverse) {
+                                System.out.println("subtract row[" + irow + "]*" + stone
+                                                  +   " from row[" + jrow + "]*" + pivot);
+                            }
+                            // subtract rowi * stone from rowj * pivot
+                            for (jcol = 0; jcol < this.colLen; jcol ++) {
+                                lmat.matrix[jrow][jcol] = lmat.matrix[jrow][jcol] * pivot - lmat.matrix[irow][jcol] * stone;
+                                rmat.matrix[jrow][jcol] = rmat.matrix[jrow][jcol] * pivot - rmat.matrix[irow][jcol] * stone;
+                            } // for jcol
+                        } // if stone != 0
+                    } // jrow != irow
+                    jrow ++;
+                } // while jrow
+            } // pivotFound
+            if (debug > debugInverse) {
+                System.out.println("done for irow=" + irow + ": "
+                        + lmat.toString(",") + " | "
+                        + rmat.toString(","));
+            }
+            irow ++;
+        } // for irow
+
+        // normalizing of the diagonal
+        int lcmDiag = 1;
+        for (irow = 0; irow < this.rowLen; irow ++) {
+            pivot = lmat.matrix[irow][irow];
+            if (pivot > 1) {
+                boolean divisible = true;
+                icol = 0;
+                while (divisible && icol < this.colLen) {
+                    if (rmat.matrix[irow][icol] % pivot != 0) {
+                        divisible = false;
+                    }
+                    icol ++;
+                } // while divisible
+                if (divisible) { // now divide
+                    lmat.matrix[irow][irow] /= pivot;
+                    for (icol = 0; icol < this.colLen; icol ++) {
+                        rmat.matrix[irow][icol] /= pivot;
+                    } // for dividing
+                    if (debug > debugInverse) {
+                        System.out.println("divided row[" + irow + "] by " + pivot + ": "
+                                + lmat.toString(",") + " | "
+                                + rmat.toString(","));
+                    }
+                } else { // not divisible
+                    lcmDiag = Vector.lcm(lcmDiag, pivot);
+                } // not divisible
+            } // pivot > 1
+        } // for irow
+        if (lcmDiag > 1) { // scale all rows up to this LCM
+            for (irow = 0; irow < this.rowLen; irow ++) {
+                pivot = lmat.matrix[irow][irow];
+                int ifact = lcmDiag / pivot;
+                lmat.matrix[irow][irow] *= ifact;
+                for (icol = 0; icol < this.colLen; icol ++) {
+                    rmat.matrix[irow][icol] *= ifact;
+                } // for icol
+                if (debug > debugInverse) {
+                    System.out.println("row[" + irow + "] scaled up by " + ifact + ": "
+                            + lmat.toString(",") + " | "
+                            + rmat.toString(","));
+                }
+            } // for irow
+            rmat.setFraction(lcmDiag);
+        } // lcmDiag > 1
+
+        return rmat;
+    } // inverse
+
+    /*  ==============================================
         Abstract matrix * Pythagorean generator
          (a11*(m^2-n^2) + 2*a12*m*n + a13*(m^2+n^2))^2
         +(a21*(m^2-n^2) + 2*a22*m*n + a23*(m^2+n^2))^2
@@ -1278,7 +1481,7 @@ public class Matrix implements Cloneable, Serializable {
                         sqpos = line.indexOf(" [");
                     } // while line
                     testReader.close();
-                    
+
                     fileName = args[iarg ++];
                     testCases = new File(fileName);
                     testReader = new BufferedReader(new FileReader(testCases));
@@ -1292,7 +1495,7 @@ public class Matrix implements Cloneable, Serializable {
                         }
                     } // while line
                     testReader.close();
- 
+
                     int iqueue = 0;
                     while (iqueue < queue.size() && queue.size() < maxHash) {
                         vect1 = queue.get(iqueue ++);
@@ -1346,7 +1549,7 @@ public class Matrix implements Cloneable, Serializable {
                         sqpos = line.indexOf(" [");
                     } // while line
                     testReader.close();
-                    
+
                     int maxHash = 1024;
                     HashMap<String, Vector> hash = new HashMap<String, Vector>(maxHash);
                     ArrayList<Vector>      queue = new ArrayList<Vector>(maxHash);
@@ -1493,6 +1696,13 @@ public class Matrix implements Cloneable, Serializable {
                         } // for iv1
                     } // for iv0
                     // -many
+
+                } else if (opt.startsWith("-inverse")) {
+                    amat = new Matrix(args[iarg ++]);
+                    Matrix rmat = amat.inverse();
+                    System.out.println(amat.toString("(,)") + ".inverse() = "
+                            + rmat.toString("(,)") + ", fraction=" + rmat.getFraction());
+                    // -inverse
 
                 } else if (opt.startsWith("-mult")) {
                     System.out.println(amat.toString("(,)") + " * "

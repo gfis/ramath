@@ -155,7 +155,7 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
         int[] result = new int[this.vecLen];
         int imax = 0;
         for (int ielem = 0; ielem < this.vecLen; ielem ++) {
-        	result[ielem] = this.vector[ielem];
+            result[ielem] = this.vector[ielem];
             if (Math.abs(this.vector[imax]) < Math.abs(this.vector[ielem])) {
                 imax = ielem;
             }
@@ -401,9 +401,9 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
         return result;
     } // isConstant
 
-    //====================
-    // GCD and companions
-    //====================
+    //========================
+    // GCD, LCM and companions
+    //========================
     /** Computes the greatest common divisor (GCD) of 2 integers
      *  @param a first integer
      *  @param b second integer
@@ -427,7 +427,7 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
         return Math.abs(result);
     } // gcd(a, b)
 
-    /** Greatest common divisor of this Vector's elements
+    /** Greatest common divisor of <em>this</em> Vector's elements
      *  @return an integer >= 1
      */
     public int gcd() {
@@ -459,6 +459,38 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
         return Math.abs(result);
     } // gcd(array)
 
+    /** Computes the least common multiple (LCM) of 2 integers
+     *  @param a first integer
+     *  @param b second integer
+     *  @return lcm(a,b)
+     */
+    public static int lcm(int a, int b) {
+        int result = Math.abs(a * b) / gcd(a, b);
+        return result;
+    } // lcm(a, b)
+
+    /** Least common multiple of <em>this</em> Vector's elements
+     *  @return an integer
+     */
+    public int lcm() {
+        return lcm(this.vector);
+    } // lcm()
+
+    /** Least common multiple of some array's elements
+     *  @param vect the array
+     *  @return an integer
+     */
+    public static int lcm(int[] vect) {
+        int result = vect[0];
+        int vlen = vect.length;
+        int ielem = 1;
+        while (ielem < vlen) {
+            result = lcm(result, vect[ielem]);
+            ielem ++;
+        } // while ielem
+        return result;
+    } // lcm(array)
+
     /** Determine the greatest common divisor of this Vector's elements,
      *  and divide all elements by this gcd if it is > 1
      *  @return an integer >= 1
@@ -468,7 +500,7 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
     } // extractGcd()
 
     /** Determine the greatest common divisor of some array's elements,
-     *  and divide all elements by this gcd if it is > 1
+     *  and divide all elements by this GCD if it is > 1
      *  @param vect extract the GCD from this array
      *  @return an integer >= 1
      */
@@ -796,6 +828,21 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
 
     /*-------------- arithmetic operations -------------------------*/
 
+    /** Gets a new Vector which is a multiple of <em>this</em> Vector.
+     *  @param scale multiply by this integer (maybe negative or zero)
+     *  @return this * scale,
+     *  that is a Vector where each element is multiplied by <em>scale</em>
+     */
+    public Vector multiply(int scale) {
+        Vector result = new Vector(this.vecLen);
+        int ielem = 0;
+        while (ielem < this.vecLen) {
+            result.vector[ielem] = this.vector[ielem] * scale;
+            ielem ++;
+        } // while ielem
+        return result;
+    } // multiply(int)
+
     /** Gets the innerproduct of two Vectors
      *  @param vect2 multiply by this Vector
      *  @return this * vect2,
@@ -813,9 +860,9 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
             throw new IllegalArgumentException("cannot multiply two vectors of different size " + this.vecLen);
         }
         return result;
-    } // multiply
+    } // multiply(Vector)
 
-    /** Divides the values of <em>this</em> Vector in place by a constant
+    /** Divides the values of <em>this</em> Vector in place by a constan
      *  @param divisor divide by this constant
      *  @return this Vector with smaller absolute elements
      */
@@ -1015,36 +1062,19 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
                 // -div
 
             } else if (opt.startsWith("-gcd")) {
-                int alen = args.length - iarg;
-                vect1 = new Vector(alen);
-                int ivect = 0;
-                while (iarg < args.length) {
-                    vect1.vector[ivect] = (/*Type*/int) 0;
-                    try {
-                        vect1.vector[ivect] = (/*Type*/int) Integer.parseInt(args[iarg]);
-                    } catch (Exception exc) {
-                    }
-                    iarg ++;
-                    ivect ++;
-                } // while iarg
+                vect1 = new Vector(args[iarg ++]);
                 System.out.println("Vector " + vect1.toString("(,)") + ".gcd() = " + vect1.gcd());
                 int gcd = vect1.extractGcd();
                 System.out.println("Vector " + vect1.toString("(,)") + ".extractGcd() = " + gcd);
                 // -gcd
 
+            } else if (opt.startsWith("-lcm")) {
+                vect1 = new Vector(args[iarg ++]);
+                System.out.println("Vector " + vect1.toString("(,)") + ".lcm() = " + vect1.lcm());
+                // -lcm
+
             } else if (opt.startsWith("-pow")) {
-                int alen = args.length - iarg;
-                vect1 = new Vector(alen);
-                int ivect = 0;
-                while (iarg < args.length) {
-                    vect1.vector[ivect] = (/*Type*/int) 0;
-                    try {
-                        vect1.vector[ivect] = (/*Type*/int) Integer.parseInt(args[iarg]);
-                    } catch (Exception exc) {
-                    }
-                    iarg ++;
-                    ivect ++;
-                } // while iarg
+                vect1 = new Vector(args[iarg ++]);
                 System.out.println("Vector " + vect1.toString() + " is"
                         + (vect1.isPowerSum(vect1.size() - 1, vect1.size() - 1, 1) ? "" : " no")
                         + " sum of like powers");
