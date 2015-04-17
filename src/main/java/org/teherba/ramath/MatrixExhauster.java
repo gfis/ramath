@@ -24,6 +24,7 @@
  */
 package org.teherba.ramath;
 import  org.teherba.ramath.linear.Matrix;
+import  org.teherba.ramath.linear.MatrixTester;
 import  org.teherba.ramath.linear.Vector;
 import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.PolyMatrix;
@@ -284,7 +285,7 @@ public class MatrixExhauster {
                             , m21, m22, m23
                             , m31, m32, m33
                             } );
-                    amat.printPreservedChain(vect1, 0, 2, 1);
+                    MatrixTester.printPreservedChain(amat, vect1, 0, 2, 1);
                 } // if == s3*s3
             } // if == r3p2
 
@@ -372,7 +373,7 @@ public class MatrixExhauster {
                     , m21, m22, m23
                     , m31, m32, m33
                     } );
-            amat.printPreservedChain(vect1, fact, 2, 1);
+            MatrixTester.printPreservedChain(amat, vect1, fact, 2, 1);
         } // preserves once
 
         } // if r3 > 0
@@ -450,7 +451,7 @@ public class MatrixExhauster {
                     , m21, m22, m23
                     , m31, m32, m33
                     } );
-            amat.printPreservedChain(vect0, 1, 2, 1);
+            MatrixTester.printPreservedChain(amat, vect0, 1, 2, 1);
         } // preserves once
         } // Vector.gcd
         } // if r3 > 0
@@ -542,7 +543,7 @@ public class MatrixExhauster {
                     , m21, m22, m23
                     , m31, m32, m33
                     } );
-            amat.printPreservedChain(vect1, fact, 2, 1);
+            MatrixTester.printPreservedChain(amat, vect1, fact, 2, 1);
         } // preserves once
 
         } // if r3 > 0
@@ -647,7 +648,7 @@ public class MatrixExhauster {
                     , m31, m32, m33, m34
                     , m41, m42, m43, m44
                     } );
-            amat.printPreservedChain(vect0, 1, 3, 1);
+            MatrixTester.printPreservedChain(amat, vect0, 1, 3, 1);
         } // preserves once
         } // Vector.gcd
         } // if r4 > 0
@@ -1111,7 +1112,7 @@ gain: 54
                     , m31, m32, m33, m34
                     , m41, m42, m43, m44
                     } );
-            amat.printPreservedChain(vect0, 1, 4, 0);
+            MatrixTester.printPreservedChain(amat, vect0, 1, 4, 0);
         /*
             } // t preserves 3 times
             } // su4a < tu4a
@@ -1243,7 +1244,7 @@ gain: 54
                     , m31, m32, m33, m34
                     , m41, m42, m43, m44
                     } );
-            amat.printPreservedChain(vect1, fact, 3, 1);
+            MatrixTester.printPreservedChain(amat, vect1, fact, 3, 1);
         } // preserves once
 
         } // if r4 > 0
@@ -1367,7 +1368,7 @@ gain: 54
                     , m31, m32, m33, m34
                     , m41, m42, m43, m44
                     } );
-            amat.printPreservedChain(vect1, fact, 2, 2);
+            MatrixTester.printPreservedChain(amat, vect1, fact, 2, 2);
         } // preserves once
 
         } // if r4 > 0
@@ -1560,7 +1561,7 @@ They yield a sum of zero if raised to the 3rd power.
                     , m31, m32, m33, m34
                     , m41, m42, m43, m44
                     } );
-            amat.printPreservedChain(vect1, fact, 4, 0);
+            MatrixTester.printPreservedChain(amat, vect1, fact, 4, 0);
         } // preserves once
 
         } // if r4 > 0
@@ -1655,7 +1656,7 @@ They yield a sum of zero if raised to the 3rd power.
                             , m31, m32, m33, m34
                             , m41, m42, m43, m44
                             } );
-                    amat.printPreservedChain(vect1, 0, 3, 1);
+                    MatrixTester.printPreservedChain(amat, vect1, 0, 3, 1);
             /*
                 } // if == s4*s4*s4
             */
