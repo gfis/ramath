@@ -94,6 +94,12 @@ CALL TreeSolver -b 3 -l 2 -e "a^3 + b^3 - c^3"
 TEST T23 Fermat^5 mod 2
 CALL TreeSolver -b 2 -l 2 -e "a^5 + b^5 - c^5" 
 
+# Smart p. 11 Elliptic Curve; Solutions: x=5,y=+-11; x=2,y=+-2
+# finds x=5,y=11
+# Caution, "grown from" inhibits x=2,y=2 - wrong!
+TEST T24 Smart p. 11 Elliptic Curve
+CALL TreeSolver -b 2 -l 5 -e "y^2 -x^3 + 4 = 0" 
+
 #-------------------------------
 # c.f. http://planetmath.org/encyclopedia/InfiniteDescent.html
 PACKAGE=org.teherba.ramath.symbolic

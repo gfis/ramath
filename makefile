@@ -74,6 +74,8 @@ find_seq:
 	wc find_seq.tmp
 	perl data/find_seq.pl find_seq.tmp > find_seq2.tmp
 #----------
+det1:
+	grep -E ",det=\-?1 " test/*.this.tst | grep chain | cut -b 1-140 | grep -vE "^test/EC2" | grep -vE "^test/MX0" > data/det1.grep
 grep3x:
 	grep "chain 8" test/MX3*.this.tst \
 	| cut -b 36- > mx3.tmp

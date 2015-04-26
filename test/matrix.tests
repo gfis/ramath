@@ -68,6 +68,10 @@ CALL linear.MatrixTester -chain [[0,-2,1,-2],[-2,0,-2,1],[2,1,2,0],[-2,-1,-1,1]]
 TEST CH06 
 CALL linear.MatrixTester -chain [[0,-2,1,-2],[-2,0,-2,1],[2,1,2,0],[-2,-1,-1,1]] [6,-5,-4,-3] 4 0
 
+# test/EC39.this.tst:[[1,3,0,-1],[2,3,2,0],[-4,-4,0,-5],[4,3,3,3]],det=17 [19,-3,-18,-10], chain 2 => [20,-7,-14,-17] => [16,-9,33,-34] ??
+TEST CH07
+CALL linear.MatrixTester -chain [[0,-4,1,-4],[1,4,0,4],[-5,0,-5,1],[5,1,5,0]] [19,-18,-10,-3] 4 0
+
 # EC35.this.tst:[[0,-2,-2,1],[1,3,2,-1],[-2,-1,1,-1],[2,1,0,2]],det=1 [6,-3,-4,-5], chain 8 => [9,-6,-8,-1] => [27,-24,-19,10] =>
 TEST CI01 chain with inverted matrix 
 CALL symbolic.PolyMatrix -mult [[9,7,4,1],[-8,-6,-4,-1],[5,4,3,1],[-5,-4,-2,0]] [6,-3,-4,-5]
@@ -78,6 +82,12 @@ CALL symbolic.PolyMatrix -mult [[9,7,4,1],[-8,-6,-4,-1],[5,4,3,1],[-5,-4,-2,0]] 
 
 TEST CM01 chain with inverted matrix
 CALL linear.MatrixTester  -chain [[9,7,4,1],[-8,-6,-4,-1],[5,4,3,1],[-5,-4,-2,0]] [9,-6,-8,-1] 4 0
+
+TEST AM01 multiply abstract
+CALL symbolic.PolyMatrix -mult [[-6,-8,-4,-1],[7,9,4,1],[4,5,3,1],[-4,-5,-2,0]] [a,b,c,d]
+TEST AM02 multiply abstract block-shuffled
+CALL symbolic.PolyMatrix -mult [[9,7,1,4],[-8,-6,-1,-4],[-5,-4,0,-2],[5,4,1,3]] [a,b,c,d]
+# CALL symbolic.PolyMatrix -mult [[9,7,1,4],[-8,-6,-1,-4],[-5,-4,0,-2],[5,4,1,3]] [b,a,d,c]
 
 
 TEST EC33M 
@@ -172,34 +182,38 @@ DATA
 [[3,1,-1,2],[-2,0,1,-2],[-2,-1,1,-1],[2,1,0,2]],det=1 [6,-3,-4,-5], chain 8 => [9,-6,-8,-1] => [27,-24,-19,10] => [96,-93,-59,50] => [354,-351,-208,199] => [1317,-1314,-764,755] => [4911,-4908,-2839,2830] => [18324,-18321,-10583,10574] => [68382,-68379,-39484,39475]
 [[3,1,-1,2],[-2,0,1,-2],[1,2,2,0],[-1,-2,-1,1]],det=1 [6,-3,-4,-5], chain 8 => [9,-6,-8,-1] => [27,-24,-19,10] => [96,-93,-59,50] => [354,-351,-208,199] => [1317,-1314,-764,755] => [4911,-4908,-2839,2830] => [18324,-18321,-10583,10574] => [68382,-68379,-39484,39475]
 CALL linear.MatrixTester -perms $(DATA)
+#--------
+TEST FL01 -follow
+CALL linear.MatrixTester -follow -mf find_seq.man -vf data/prewrob3.sub
 
-TEST EC34G generate
-CALL linear.MatrixTester -gen [6,-5,-4,-3] test/EC35.this.tst
-TEST EC35G generate
-CALL linear.MatrixTester -gen [6,-3,-4,-5] test/EC35.this.tst
+TEST FL02 -follow inverse matrix
+CALL linear.MatrixTester -follow -mf data/inverse.man -vf data/prewrob3.sub
 
+TEST FL03 prepare determinants +/-1 and their inverses
+CALL linear.MatrixTester -inv -mf data/det1.grep
+
+TEST FL04 -follow with determinants +/-1 
+CALL linear.MatrixTester -follow -mf test/FL03.this.tst -vf data/prewrob3.sub
+
+TEST FL05 -follow =FL01+FL04
+CALL linear.MatrixTester -follow -mf find_seq.man -mf test/FL03.this.tst -vf data/prewrob3.sub
+#--------
 TEST FS01 generate find_seq.man
-CALL linear.MatrixTester -gen [6,-3,-4,-5] find_seq.man
+CALL linear.MatrixTester -gen -mf find_seq.man [6,-3,-4,-5] 
 # many
 
 TEST FS02 generate find_seq.man
-CALL linear.MatrixTester -gen [16,2,-9,-15] find_seq.man
+CALL linear.MatrixTester -gen -mf find_seq.man [16,2,-9,-15] 
 # few
 
 TEST FS03 generate find_seq.man
-CALL linear.MatrixTester -gen [19,-3,-10,-18] find_seq.man
+CALL linear.MatrixTester -gen -mf find_seq.man [19,-3,-10,-18] 
 # none
 
 TEST FS04 generate find_seq.man
-CALL linear.MatrixTester -gen [34,2,-15,-33] find_seq.man
+CALL linear.MatrixTester -gen -mf find_seq.man [34,2,-15,-33] 
 # none
-
-TEST FL01 -follow
-CALL linear.MatrixTester -follow find_seq.man data/prewrob3.sub
-
-TEST FL02 -follow inverse matrix
-CALL linear.MatrixTester -follow data/inverse.man data/prewrob3.sub
-
+#--------
 
 PACKAGE=org.teherba.ramath.symbolic
 TEST EC34D det=0
@@ -222,17 +236,28 @@ TEST EC38            ec340 -l 7
 CALL MatrixExhauster ec340 -l 7 -v [137,-44,-73,-128]
 # [216,50,-167,-177] -> nothing (819 s)
 
+TEST EC39            ec340 
+CALL MatrixExhauster ec340 -l 5 -v [19,-3,-18,-10]
+
+TEST EC40            ec340 
+CALL MatrixExhauster ec340 -l 5 -v [34,9,-33,-16]
+# no chain 8, no det=+/-1
+
 TEST EC41            ec340 -l 5
 CALL MatrixExhauster ec340 -l 5 -v [34,2,-15,-33]
 
-TEST EC42            ec340 -l 8
-CALL MatrixExhauster ec340 -l 8 -v [251,-6,-179,-216]
+TEST EC42            ec340 -l 5
+CALL MatrixExhauster ec340 -l 5 -v [16,2,-15,-9]
 
-TEST EC43            ec340 -l 8
-CALL MatrixExhauster ec340 -l 8 -v [238,21,-114,-229]
+TEST EC43            ec340 
+CALL MatrixExhauster ec340 -l 7 -v [67,30,-51,-58]
+# chain 2 only in 59654 s
 
-TEST EC44            ec340 -l 8
-CALL MatrixExhauster ec340 -l 8 -v [239,-23,-200,-178]
+TEST EC45
+CALL linear.MatrixTester -inv [[1,1,0,-2],[-1,-1,-1,2],[-2,-1,-2,0],[-1,0,2,-1]]
+
+TEST EC46
+CALL linear.MatrixTester -chain [[-5,-6,1,-2],[12,14,-3,4],[-1,-1,0,0],[3,4,-1,1]] [19,-10,-3,-18] 4 0
 #-----------
 # EC(3)
 

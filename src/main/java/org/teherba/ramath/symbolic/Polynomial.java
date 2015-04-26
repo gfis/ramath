@@ -38,6 +38,7 @@ import  org.teherba.ramath.symbolic.VariableMap;
 import  org.teherba.ramath.linear.Vector;
 import  org.teherba.ramath.BigIntegerUtil;
 import  org.teherba.ramath.util.ExpressionReader;
+import  org.teherba.ramath.util.ModoMeter;
 import  org.teherba.ramath.util.Permutator;
 import  java.io.Serializable;
 import  java.math.BigInteger;
@@ -499,7 +500,7 @@ public class Polynomial implements Cloneable, Serializable {
         return result;
     } // polarity
 
-    /** Determines whether the Polynomial is a sum of like powers 
+    /** Determines whether the Polynomial is a sum of like powers
      *  of different variables, without a constant, for example 4*a^2 + 4*b^2 -4*c^2 = 0
      *  @return 0 if the Polynomial is no sum of like powers,
      *  or the common factor &gt;= 1 of all variables with the same exponent (4 in the example)
@@ -976,8 +977,33 @@ x^2 + 3*x^3 + 2*x^4
         return result;
     } // getVariableMap(String, boolean)
 
-    /** Gets a map from all variable names in <em>this</em> Polynomial (the key)
-     *  to the expression "0+1*x", where "x" is a placeholder for the variable names.
+    /** Gets a map from all variable names (key) in <em>this</em> Polynomial
+     *  to the variable names in another Polynomial. Both sets of
+     *  variables must have the same size and order.
+     *  @param factor linear factor for <em>var2</em>
+     *  @param poly2 the variable names in that Polynomial are the new values to be substituted
+     *  @return map of variable names mapped to the variable names of <em>poly2</em>
+     */
+    public VariableMap getVariableMap(String factor, Polynomial poly2) {
+        boolean upperSubst = true;
+        VariableMap result = new VariableMap();
+        VariableMap map1   = this .getVariableMap(upperSubst);
+        VariableMap map2   = poly2.getVariableMap(upperSubst);
+        if (map1.size() == map2.size()) {
+            Iterator <String> iter1 = map1.keySet().iterator();
+            Iterator <String> iter2 = map2.keySet().iterator();
+            while (iter1.hasNext()) { // over all key variables in map1
+                String var1 = iter1.next();
+                String var2 = iter2.next();
+                result.put(var1, "(" + factor + "*" + var2 + ")");
+            } // while iter1
+        } // if sizes ==
+        return result;
+    } // getVariableMap(Poly)
+
+    /** Gets a map from all variable names in <em>this</em> Polynomial (the keys)
+     *  to the expression "0+1*x", where "x" is a placeholder for 
+     *  the corresponding key (= variable name).
      *  Caution: this expression is required by {@link VariableMap#refineExpressions}.
      *  @return map of variable names mapped to an expression string
      */
@@ -1017,30 +1043,6 @@ x^2 + 3*x^3 + 2*x^4
         } // while titer
         return result;
     } // getExpressionMap(String, boolean)
-
-    /** Gets a map from all variable names (key) in <em>this</em> Polynomial
-     *  to the variable names in another Polynomial. Both sets of
-     *  variables must have the same size and order.
-     *  @param factor linear factor for <em>var2</em>
-     *  @param poly2 the variable names in that Polynomial are the new values to be substituted
-     *  @return map of variable names mapped to the variable names of <em>poly2</em>
-     */
-    public VariableMap getVariableMap(String factor, Polynomial poly2) {
-        boolean upperSubst = true;
-        VariableMap result = new VariableMap();
-        VariableMap map1   = this .getVariableMap(upperSubst);
-        VariableMap map2   = poly2.getVariableMap(upperSubst);
-        if (map1.size() == map2.size()) {
-            Iterator <String> iter1 = map1.keySet().iterator();
-            Iterator <String> iter2 = map2.keySet().iterator();
-            while (iter1.hasNext()) { // over all key variables in map1
-                String var1 = iter1.next();
-                String var2 = iter2.next();
-                result.put(var1, "(" + factor + "*" + var2 + ")");
-            } // while iter1
-        } // if sizes ==
-        return result;
-    } // getVariableMap(Poly)
 
     //-----------------------------------------------
 
@@ -1099,17 +1101,17 @@ x^2 + 3*x^3 + 2*x^4
      */
     protected boolean areTransposable(String name1, String name2) {
         boolean result = true; // irrelevant
-        VariableMap varm2 = new VariableMap();
-        varm2.put(name1, name2);
-        varm2.put(name2, name1);
-        Polynomial poly2 = substitute(varm2);
+        VariableMap vmap2 = new VariableMap();
+        vmap2.put(name1, name2);
+        vmap2.put(name2, name1);
+        Polynomial poly2 = substitute(vmap2);
         result = this.add(poly2).isZero() || this.subtract(poly2).isZero();
         return result;
     } // areTransposable
 
     /** Denotes transposition equivalence classes which contain only one single element */
     public final static int LONELY = 1947;
-    
+
     /** Determines the equivalence classes (subsets) of variables
      *  which can be interchanged (renamed) in <em>this</em> Polynomial,
      *  while the polynomial's structure is still maintained.
@@ -1501,7 +1503,7 @@ x^2 + 3*x^3 + 2*x^4
     } // isMappableTo
 
     /** Determines whether <em>this</em> Polynomial can be transformed into <em>poly2</em>
-     *  by multiplying the constants of the monomials in <em>poly2</em> by 
+     *  by multiplying the constants of the monomials in <em>poly2</em> by
      *  some factors &gt; 1.
      *  @param poly2 target Polynomial
      *  @return true if such factors exist, false otherwise
@@ -1517,7 +1519,7 @@ x^2 + 3*x^3 + 2*x^4
                 Monomial mono2 = poly2.get(iter2.next());
                 Monomial factor  = mono1.divide(mono2);
                 if (factor == null || ! factor.isConstant() || factor.getCoefficient().compareTo(BigInteger.ONE) < 0) { // no factor
-                    result = false; 
+                    result = false;
                 } // no factor
             } // while iter1
         } // same size
@@ -1690,17 +1692,17 @@ x^2 + 3*x^3 + 2*x^4
 
     /** Substitutes variable names with the expressions from a map (if they are not null),
      *  and returns a new polynomial.
-     *  @param varMap map of variable names to (expressions or null);
+     *  @param map map of variable names to (expressions or null);
      *  whether uppercase variables should be replaced must already be defined in this map
      *  @return a new polynomial
      */
-    public Polynomial substitute(Map<String, String> varMap) {
+    public Polynomial substitute(Map<String, String> map) {
         String result = this.toString(true); // full representation contains "*var^" for all variables
-        Iterator <String> viter = varMap.keySet().iterator();
+        Iterator <String> viter = map.keySet().iterator();
         while (viter.hasNext()) { // over all variables to be substituted
             String name = viter.next();
             if (name != null) {
-                String expr = varMap.get(name);
+                String expr = map.get(name);
                 if (expr != null) {
                     result = result.replaceAll("\\*" + name + "\\^", "*(" + expr + ")^");
                 }
@@ -1709,17 +1711,17 @@ x^2 + 3*x^3 + 2*x^4
         return (new Polynomial()).parse(result);
     } // substitute(Map)
 
-    /** Replaces all different variables by "x_y_z", and returns the corresponding polynomial.
-     *  @return the polynomial with all variables replaced by a single variable.
+    /** Replaces all different variables by "x_y_z", and returns the corresponding Polynomial.
+     *  @return a new Polynomial with all variables replaced by a single variable.
      */
     public Polynomial mergeVariables() {
-        VariableMap      varMap = this.getVariableMap();
-        Iterator<String> viter  = varMap.keySet().iterator();
+        VariableMap      vmap = this.getVariableMap();
+        Iterator<String> viter  = vmap.keySet().iterator();
         String expr = "x_y_z"; // user should (can) not enter underscores, and solvers generate at most one '_'
         while (viter.hasNext()) { // over all variables in the map
-            varMap.put(viter.next(), expr); // replace all by a unique variable
+            vmap.put(viter.next(), expr); // replace all by a unique variable
         } // while viter
-        return this.substitute(varMap);
+        return this.substitute(vmap);
     } // mergeVariables
 
     /** Evaluates <em>this</em> Polynomial without any proof history, and returns whether
@@ -1734,18 +1736,18 @@ x^2 + 3*x^3 + 2*x^4
      *  <li>bias, that is the polynomial is known to be either greater or less than zero</li>
      *  <li>mismatch of the constant monomial and the greatest common divisor of all variable monomials</li>
      *  </ul>
-     *  @param varMap the map of the variables how they were recently substituted
+     *  @param vmap1 the map of the variables describing how they were recently substituted
      *  in <em>this</em> Polynomial, or <em>null</em>
      *  @return text with the reason for the decision
      */
-    public String evaluate(VariableMap varMap) {
+    public String evaluate(VariableMap vmap1) {
         // this.normalize();
         StringBuffer result = new StringBuffer(64);
         BigInteger constant = this.getConstant();
         if (false) {
-        } else if (isConstant()) {
-            if (isZero()) {
-                switch (getRelation()) {
+        } else if (this.isConstant()) {
+            if (this.isZero()) {
+                switch (this.getRelation()) {
                     default:
                     case EQ_0:
                     case GE_0:
@@ -1759,7 +1761,7 @@ x^2 + 3*x^3 + 2*x^4
                         break;
                 } // switch relation
             } else { // constant, but not 0
-                switch (getRelation()) {
+                switch (this.getRelation()) {
                     default:
                     case EQ_0:
                         result.append(VariableMap.FAILURE);
@@ -1776,8 +1778,8 @@ x^2 + 3*x^3 + 2*x^4
                 result.append(constant.toString());
             }
     /* unsure whether biasedness should be tested
-        } else if (isBiased()) { // > 0 or < 0
-                switch (getRelation()) {
+        } else if (this.isBiased()) { // > 0 or < 0
+                switch (this.getRelation()) {
                     default:
                     case EQ_0:
                         result.append(VariableMap.FAILURE);
@@ -1794,21 +1796,16 @@ x^2 + 3*x^3 + 2*x^4
     */
 
         } else if (constant.equals(BigInteger.ZERO)) {
-                switch (getRelation()) {
+                switch (this.getRelation()) {
                     default:
                     case EQ_0:
                     case GE_0:
                         result.append(VariableMap.SUCCESS);
-                        if (varMap != null) {
+                        if (vmap1 != null) {
                             result.append(" ");
-                            result.append(varMap.getConstants()); // they are a solution when all variables are set to zero
+                            result.append(vmap1.getConstants()); // they are a solution when all variables are set to zero
                             result.append(" ");
-                            int trivial = varMap.triviality();
-                            if (trivial == 0) {
-                                result.append("NONTRIVIAL");
-                            } else {
-                                result.append("trivial=" + String.valueOf(trivial));
-                            }
+                            result.append(vmap1.triviality());
                         } else {
                             result.append(" =0");
                         }
@@ -1825,7 +1822,7 @@ x^2 + 3*x^3 + 2*x^4
             BigInteger  varGCD = this.gcdVariables();
             if (! varGCD.equals(BigInteger.ONE) && ! constant.mod(varGCD).equals(BigInteger.ZERO)) {
                 // constant is not divisible by GCD of variables which is != 1
-                switch (getRelation()) {
+                switch (this.getRelation()) {
                     default:
                     case EQ_0:
                         result.append(VariableMap.FAILURE);
@@ -1842,13 +1839,35 @@ x^2 + 3*x^3 + 2*x^4
                 result.append(constant.toString());
                 result.append(", vgcd=");
                 result.append(varGCD.toString());
-            } else {
-                result.append(VariableMap.UNKNOWN);
-                if (debug >= 3) {
-                    result.append(" varGCD=" + varGCD.toString() + ", constant=" + getConstant().toString()
-                            + ", gcd=" + varGCD.gcd(constant.abs()).toString());
-                }
-            } // UNKNOWN
+            } else { // Test for (x,y,...) elem of {0,1}^n
+                VariableMap vmap2 = vmap1.clone();
+                ModoMeter meter = new ModoMeter(vmap2.size(), 2); // run {0,1} through all variables
+                boolean success = false;
+                while (meter.hasNext()) { 
+                    vmap2.setValues(meter);
+                    Polynomial poly2 = this.substitute(vmap2);
+                    if (poly2.isZero()) {
+                        success = true;
+                        result.append(VariableMap.SUCCESS);
+                        if (vmap1 != null) {
+                            result.append(" ");
+                            result.append(vmap1.getSolutionVector(meter).toString()); 
+                            result.append(" ");
+                            // result.append(vmap1.triviality());
+                        } else {
+                            result.append(" =0");
+                        }
+                    } // isZero
+                    meter.next();
+                } // while meter
+                if (! success) {
+                    result.append(VariableMap.UNKNOWN);
+                    if (debug >= 3) {
+                        result.append(" varGCD=" + varGCD.toString() + ", constant=" + getConstant().toString()
+                                + ", gcd=" + varGCD.gcd(constant.abs()).toString());
+                    }
+                } // UNKNOWN
+            } // Test for (x,y,...) elem of {0,1}^n
         } // not a single constant, not biased
         return result.toString();
     } // evaluate
@@ -1903,11 +1922,11 @@ x^2 + 3*x^3 + 2*x^4
                 poly2 = poly1.pow(exp);
                 System.out.println(poly2.toString());
             } // for int
-            VariableMap varMap = poly1.getVariableMap();
-            varMap.put("c", "0");
-            varMap.put("a", "5*a+1");
-            varMap.put("b", "5*b+1");
-            poly2 = poly1.substitute(varMap);
+            VariableMap vmap1 = poly1.getVariableMap();
+            vmap1.put("c", "0");
+            vmap1.put("a", "5*a+1");
+            vmap1.put("b", "5*b+1");
+            poly2 = poly1.substitute(vmap1);
             System.out.println(poly2.toString(true));
         } else {
             String opt = args[iarg ++];

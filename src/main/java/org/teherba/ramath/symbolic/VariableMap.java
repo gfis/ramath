@@ -1,5 +1,6 @@
 /*  VariableMap: maps a set of variables to their values or substitution formulas
  *  @(#) $Id: VariableMap.java 538 2010-09-08 15:08:36Z gfis $
+ *  2015-04-26: triviality returns String
  *  2015-03-02: refineExpressions(, skippable)
  *  2015-02-08: Dispenser instead of ModoMeter
  *  2014-06-02: SAME
@@ -25,6 +26,7 @@
  * limitations under the License.
  */
 package org.teherba.ramath.symbolic;
+import  org.teherba.ramath.symbolic.PolyVector;
 import  org.teherba.ramath.util.Dispenser;
 import  org.teherba.ramath.util.ModoMeter; // for test only
 import  java.io.Serializable;
@@ -96,6 +98,21 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
     public VariableMap clone() {
         return new VariableMap(this);
     } // clone
+
+    /** Sets the values of <em>this</em> VariableMap.
+     *  @param meter a {@link Dispenser} whose current values are put into the map.
+     *  The width and the elements of the Dispenser must correspond
+     *  to the ordered list of variable names in <em>this</em> VariableMap.
+     */
+    public void setValues(Dispenser meter) {
+        Iterator<String> viter = this.keySet().iterator();
+        int imet = 0;
+        while (viter.hasNext()) {
+            String name  = viter.next();
+            String value = String.valueOf(meter.get(imet ++));
+            this.put(name, value);
+        } // while viter
+    } // setValues
 
     /*-------------- state codes -----------------------------*/
     /** state of the variable mapping during the search for solutions */
@@ -185,7 +202,7 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
     /** Gets a solution, that
      *  are the constants of the expressions for refined variables.
      *  @return "[3,4,5]", for example
-     *  Caution: the form of the expressions must be c+f*x; 
+     *  Caution: the form of the expressions must be c+f*x;
      *  this is initiated by {@link Polynomial#getExpressionMap}().
      */
     public String getConstants() {
@@ -199,7 +216,7 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
             if (count > 1) {
                 result.append(",");
             }
-            String value = this.get(name).toString(); 
+            String value = this.get(name).toString();
             int plusPos = value.indexOf("+");
             if (plusPos < 0) {
                 plusPos = value.length();
@@ -210,19 +227,44 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
         return result.toString();
     } // getConstants
 
-    /** Determines a code for the triviality of the mapping:
+    /** Gets a solution, that
+     *  are the constant expressions when refined variables are substituted from a 
+     *  binary {@link Dispenser}.
+     *  @return "[3,4,5]", for example
+     *  Caution: the form of the expressions must be c+f*x;
+     *  this is initiated by {@link Polynomial#getExpressionMap}().
+     */
+    public PolyVector getSolutionVector(Dispenser meter) {
+        PolyVector result = new PolyVector(this.size());
+        Iterator<String> iter = this.keySet().iterator();
+        int iname = 0;
+        while (iter.hasNext()) {
+            String name  = iter.next();
+            String value = this.get(name);
+            String repl  = String.valueOf(meter.get(iname));
+            int timesPos = value.indexOf("*") + 1;
+            if (timesPos <= 0) {
+                timesPos = value.length();
+            } 
+            result.set(iname, new Polynomial(value.substring(0, timesPos) + String.valueOf(repl)));
+            iname ++;
+        } // while iter
+        return result;
+    } // getSolutionVector
+
+    /** Describes the triviality of the mapping by a code:
      *  <ul>
      *  <li>1: one of the variables maps to zero</li>
      *  <li>2: there are 2 variables which map to the same value</li>
      *  <li>3: both of the conditions above</li>
-     *  <li>0: none of the conditions above</li>
+     *  <li>0: none of the conditions above = NONTRIVIAL</li>
      *  </ul>
-     *  @return a code for the triviality of a solution
-     *  Caution: the form of the expressions must be c+f*x; 
+     *  @return a description for the triviality of a solution
+     *  Caution: the form of the expressions must be c+f*x;
      *  this is initiated by {@link Polynomial#getExpressionMap}().
      */
-    public int triviality() {
-        int result = 0;
+    public String triviality() {
+        int code = 0;
         HashSet<String> valSet = new HashSet<String>(16);
         Iterator<String> iter = this.keySet().iterator();
         while (iter.hasNext()) {
@@ -234,14 +276,18 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
             }
             value = value.substring(0, plusPos);
             if (value.equals("0")) { // ||
-                result |= 0x01;
+                code |= 0x01;
             }
             if (valSet.contains(value)) {
-                result |= 0x02;
+                code |= 0x02;
             } else {
                 valSet.add(value);
             }
         } // while iter
+        String result = "NONTRIVIAL";
+        if (code != 0) {
+            result = "trivial=" + String.valueOf(code);
+        }
         return result;
     } // triviality
 
@@ -249,12 +295,12 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
      *  by one level of modulus expansion.
      *  @param dispenser current state of a {@link Dispenser} containing the
      *  factors (the bases) and the constants (the values) for the modification
-     *  of the mapped expressions. 
+     *  of the mapped expressions.
+     *  If dispenser.base = 1 then factor = 1, constant = 0, i.e. the variable is unchanged.
      *  @param skippable 1 if the highest meter value indicates that the value should not be used, 0 otherwise.
      *  The underlying integer array is parallel to the sorted list of variable names.
      *  For a mapping x -> c+f*x and corresponding dispenser value m mod b,
      *  the new expression is c + f*(m+b*x) = (c+f*m) + (f*b)*x.
-     *  If dispenser.base = 1 then factor = 1, constant = 0, i.e. the variable is unchanged.
      *  Caution: This form of the expression is initiated by {@link Polynomial#getExpressionMap}().
      *  @return a new VariableMap with the variables mapped to the refined expressions
      */
@@ -266,17 +312,17 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
         while (iter.hasNext()) {
             int b = dispenser.getBase(idisp);
             int m = dispenser.get    (idisp);
-            String key   = iter.next(); 
+            String key   = iter.next();
             if (skippable == 1 && m == b - 1) { // skipped = not refined
                 b = 1;
                 m = 0;
             } else {
-            	b = b - skippable;
+                b = b - skippable;
             }
             BigInteger base     = BigInteger.valueOf(b);
             BigInteger modulus  = BigInteger.valueOf(m);
             String value = this.get(key); // REFINED_FORM - this has the form "c+f*x"
-            int starPos  = value.indexOf('*'); 
+            int starPos  = value.indexOf('*');
             int plusPos  = value.indexOf('+');
             BigInteger factor   = (new BigInteger(value.substring(plusPos + 1, starPos)));
             BigInteger constant = (new BigInteger(value.substring(0, plusPos))).add(factor.multiply(modulus));
@@ -306,13 +352,16 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
         vmap.put("b" , "3+4*b");
         vmap.put("c" , "0+2*c");
         vmap.put("d2", "1+2*d2");
-        ModoMeter meter = new ModoMeter(4); // binary
+        ModoMeter meter = new ModoMeter(4, 2); // binary
         for (int iloop = 0; iloop < 15; iloop ++) { // turn it several times
             meter.next();
         } // while
         System.out.print(vmap.toString()); // before refinement
         System.out.println(" refined by [" + meter.toString() + "]: "
                 + vmap.refineExpressions(meter, 0).toString());
+        vmap.setValues(meter);
+        System.out.println(" set to [" + meter.toString() + "]: "
+                + vmap.toString());
     } // main
 
 } // VariableMap

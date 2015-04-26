@@ -1,7 +1,7 @@
 Expanding for base 2, transposables =    0   0   2
 
 expanding queue[0]: a^2 + b^2 - c^2 = 0 modulo [2,2,2] *2
-[0+2*a,0+2*b,0+2*c]: failure, grown from [0]
+[0+2*a,0+2*b,0+2*c]: same form as 4*a^2+4*b^2-4*c^2=0
 [1+2*a,0+2*b,0+2*c]: failure constant=1, vgcd=4
 [0+2*a,1+2*b,0+2*c]: failure constant=1, vgcd=4
 [1+2*a,1+2*b,0+2*c]: failure constant=2, vgcd=4
@@ -11,7 +11,7 @@ expanding queue[0]: a^2 + b^2 - c^2 = 0 modulo [2,2,2] *2
 [1+2*a,1+2*b,1+2*c]: failure constant=1, vgcd=4
 
 expanding queue[1]: 4*a + 4*a^2 + 4*b^2 - 4*c - 4*c^2 = 0 modulo [2,2,2] *4
-[1+4*a,0+4*b,1+4*c]: failure, grown from [1]
+[1+4*a,0+4*b,1+4*c]: similiar to  [1], affine map: {a=(2*a),b=(2*b),c=(2*c)}  8*a+16*a^2+16*b^2-8*c-16*c^2=0
 [3+4*a,0+4*b,1+4*c]: unknown 8+24*a+16*a^2+16*b^2-8*c-16*c^2=0 -> [2]
 [1+4*a,2+4*b,1+4*c]: failure constant=4, vgcd=8
 [3+4*a,2+4*b,1+4*c]: failure constant=12, vgcd=8
@@ -33,7 +33,7 @@ expanding queue[3]:  - 8 + 8*a + 16*a^2 + 16*b^2 - 24*c - 16*c^2 = 0 modulo [2,1
 [5+8*a,0+4*b,7+8*c]: failure constant=-24, vgcd=16
 
 expanding queue[4]: 24*a + 16*a^2 + 16*b^2 - 24*c - 16*c^2 = 0 modulo [2,1,2] *8
-[3+8*a,0+4*b,3+8*c]: failure, grown from [4]
+[3+8*a,0+4*b,3+8*c]: similiar to  [4], affine map: {a=(2*a),b=(1*b),c=(2*c)}  48*a+64*a^2+16*b^2-48*c-64*c^2=0
 [7+8*a,0+4*b,3+8*c]: failure constant=40, vgcd=16
 [3+8*a,0+4*b,7+8*c]: failure constant=-40, vgcd=16
 [7+8*a,0+4*b,7+8*c]: success [7,0,7] trivial=3 112*a+64*a^2+16*b^2-112*c-64*c^2=0 -> [9]
@@ -79,7 +79,7 @@ expanding queue[8]:  - 48 + 16*a + 64*a^2 + 16*b^2 - 112*c - 64*c^2 = 0 modulo [
 [9+16*a,4+8*b,15+16*c]: unknown -128+288*a+256*a^2+64*b+64*b^2-480*c-256*c^2=0 -> [25]
 
 expanding queue[9]: 112*a + 64*a^2 + 16*b^2 - 112*c - 64*c^2 = 0 modulo [2,2,2] *16
-[7+16*a,0+8*b,7+16*c]: failure, grown from [9]
+[7+16*a,0+8*b,7+16*c]: similiar to  [9], affine map: {a=(2*a),b=(2*b),c=(2*c)}  224*a+256*a^2+64*b^2-224*c-256*c^2=0
 [15+16*a,0+8*b,7+16*c]: failure constant=176, vgcd=32
 [7+16*a,4+8*b,7+16*c]: failure constant=16, vgcd=32
 [15+16*a,4+8*b,7+16*c]: unknown 192+480*a+256*a^2+64*b+64*b^2-224*c-256*c^2=0 -> [26]
@@ -95,7 +95,7 @@ expanding queue[10]: 224 + 480*a + 256*a^2 + 64*b^2 - 32*c - 256*c^2 = 0 modulo 
 [31+32*a,0+8*b,17+32*c]: failure constant=672, vgcd=64
 
 expanding queue[11]: 64 + 224*a + 256*a^2 + 64*b + 64*b^2 - 32*c - 256*c^2 = 0 modulo [2,1,2] *32
-[7+32*a,4+8*b,1+32*c]: failure, grown from [11]
+[7+32*a,4+8*b,1+32*c]: similiar to  [11], affine map: {a=(2*a),b=(1*b),c=(2*c)}  64+448*a+1024*a^2+64*b+64*b^2-64*c-1024*c^2=0
 [23+32*a,4+8*b,1+32*c]: failure constant=544, vgcd=64
 [7+32*a,4+8*b,17+32*c]: failure constant=-224, vgcd=64
 [23+32*a,4+8*b,17+32*c]: unknown 256+1472*a+1024*a^2+64*b+64*b^2-1088*c-1024*c^2=0 -> [31]
@@ -119,7 +119,7 @@ expanding queue[14]: 96 + 352*a + 256*a^2 + 64*b^2 - 160*c - 256*c^2 = 0 modulo 
 [27+32*a,0+8*b,21+32*c]: failure constant=288, vgcd=64
 
 expanding queue[15]: 96*a + 256*a^2 + 64*b + 64*b^2 - 160*c - 256*c^2 = 0 modulo [2,1,2] *32
-[3+32*a,4+8*b,5+32*c]: failure, grown from [15]
+[3+32*a,4+8*b,5+32*c]: similiar to  [15], affine map: {a=(2*a),b=(1*b),c=(2*c)}  192*a+1024*a^2+64*b+64*b^2-320*c-1024*c^2=0
 [19+32*a,4+8*b,5+32*c]: failure constant=352, vgcd=64
 [3+32*a,4+8*b,21+32*c]: failure constant=-416, vgcd=64
 [19+32*a,4+8*b,21+32*c]: unknown -64+1216*a+1024*a^2+64*b+64*b^2-1344*c-1024*c^2=0 -> [38]
@@ -155,7 +155,7 @@ expanding queue[20]:  - 96 + 160*a + 256*a^2 + 64*b^2 - 352*c - 256*c^2 = 0 modu
 [21+32*a,0+8*b,27+32*c]: failure constant=-288, vgcd=64
 
 expanding queue[21]: 64 + 416*a + 256*a^2 + 64*b + 64*b^2 - 352*c - 256*c^2 = 0 modulo [2,1,2] *32
-[13+32*a,4+8*b,11+32*c]: failure, grown from [21]
+[13+32*a,4+8*b,11+32*c]: similiar to  [21], affine map: {a=(2*a),b=(1*b),c=(2*c)}  64+832*a+1024*a^2+64*b+64*b^2-704*c-1024*c^2=0
 [29+32*a,4+8*b,11+32*c]: failure constant=736, vgcd=64
 [13+32*a,4+8*b,27+32*c]: failure constant=-544, vgcd=64
 [29+32*a,4+8*b,27+32*c]: unknown 128+1856*a+1024*a^2+64*b+64*b^2-1728*c-1024*c^2=0 -> [49]
@@ -179,19 +179,19 @@ expanding queue[24]:  - 224 + 32*a + 256*a^2 + 64*b^2 - 480*c - 256*c^2 = 0 modu
 [17+32*a,0+8*b,31+32*c]: failure constant=-672, vgcd=64
 
 expanding queue[25]:  - 128 + 288*a + 256*a^2 + 64*b + 64*b^2 - 480*c - 256*c^2 = 0 modulo [2,1,2] *32
-[9+32*a,4+8*b,15+32*c]: failure, grown from [25]
+[9+32*a,4+8*b,15+32*c]: similiar to  [25], affine map: {a=(2*a),b=(1*b),c=(2*c)}  -128+576*a+1024*a^2+64*b+64*b^2-960*c-1024*c^2=0
 [25+32*a,4+8*b,15+32*c]: failure constant=416, vgcd=64
 [9+32*a,4+8*b,31+32*c]: failure constant=-864, vgcd=64
 [25+32*a,4+8*b,31+32*c]: unknown -320+1600*a+1024*a^2+64*b+64*b^2-1984*c-1024*c^2=0 -> [56]
 
 expanding queue[26]: 192 + 480*a + 256*a^2 + 64*b + 64*b^2 - 224*c - 256*c^2 = 0 modulo [2,1,2] *32
-[15+32*a,4+8*b,7+32*c]: failure, grown from [26]
+[15+32*a,4+8*b,7+32*c]: similiar to  [26], affine map: {a=(2*a),b=(1*b),c=(2*c)}  192+960*a+1024*a^2+64*b+64*b^2-448*c-1024*c^2=0
 [31+32*a,4+8*b,7+32*c]: failure constant=928, vgcd=64
 [15+32*a,4+8*b,23+32*c]: failure constant=-288, vgcd=64
 [31+32*a,4+8*b,23+32*c]: unknown 448+1984*a+1024*a^2+64*b+64*b^2-1472*c-1024*c^2=0 -> [57]
 
 expanding queue[27]: 480*a + 256*a^2 + 64*b^2 - 480*c - 256*c^2 = 0 modulo [2,1,2] *32
-[15+32*a,0+8*b,15+32*c]: failure, grown from [27]
+[15+32*a,0+8*b,15+32*c]: similiar to  [27], affine map: {a=(2*a),b=(1*b),c=(2*c)}  960*a+1024*a^2+64*b^2-960*c-1024*c^2=0
 [31+32*a,0+8*b,15+32*c]: failure constant=736, vgcd=64
 [15+32*a,0+8*b,31+32*c]: failure constant=-736, vgcd=64
 [31+32*a,0+8*b,31+32*c]: success [31,0,31] trivial=3 1984*a+1024*a^2+64*b^2-1984*c-1024*c^2=0 -> [58]

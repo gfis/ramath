@@ -1,5 +1,6 @@
 /*  TreeSolver: tries to solve a Diophantine equation by monadic variable expansion
  *  @(#) $Id: TreeSolver.java 970 2012-10-25 16:49:32Z gfis $
+ *	2015-04-26: solution if (xi,yi,..) elem of {0,1}^n
  *  2015-02-20, Georg Fischer: copied from and replacing QueuingSolver.java
  *
  *  Limitation: only positive values for variables can be found

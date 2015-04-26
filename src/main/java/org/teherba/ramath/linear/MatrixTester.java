@@ -18,6 +18,8 @@
  * limitations under the License.
  */
 package org.teherba.ramath.linear;
+import  org.teherba.ramath.linear.Matrix;
+import  org.teherba.ramath.linear.Options;
 import  org.teherba.ramath.linear.Vector;
 import  org.teherba.ramath.linear.VectorArray;
 import  org.teherba.ramath.util.ModoMeter;
@@ -55,102 +57,6 @@ public class MatrixTester implements Serializable {
      */
     public MatrixTester() {
     } // no-args Constructor
-
-
-    /** Index of the current commandline argument string
-     */
-    private static int argIndex = 0;
-
-    /** Starts the command line argument processing by resetting the argument index.
-     */
-    private static void firstArgument() {
-        argIndex = 0;
-    } // firstArgument
-
-    /** Restores the last argument
-     */
-    private static void unshiftArgument() {
-        argIndex --;
-    } // unshiftArgument
-
-    /** Shifts to the next String commandline argument
-     *  @param args array of command line argument strings
-     *  @return index of current argument, which is incremented
-     */
-    private static String nextArgument(String[] args) {
-        String result = null;
-        if (argIndex < args.length) {
-            result = args[argIndex ++];
-        }
-        return result;
-    } // nextArgument
-
-    /** Shifts to the next integer commandline argument
-     *  @param args array of command line argument strings
-     *  @return index of current argument, which is incremented
-     */
-    private static int nextIntArgument(String[] args) {
-        int result = -2906;
-        if (argIndex < args.length) {
-            try {
-                result= Integer.parseInt(args[argIndex ++]);
-            } catch (Exception exc) {
-                // ignore any errors
-            }
-        } 
-        return result;
-    } // nextArgument
-
-    /** Start of a {@link Matrix} literal */
-    private static final String MAT_OPEN  = "[[";
-    /** End   of a {@link Matrix} literal */
-    private static final String MAT_CLOSE = "]]";
-
-    /** Gets matrices either from the command line arguments, or from file(s) specified therein.
-     *  Any argument starting with "[[" is taken as a {@link Matrix} literal
-     *  (it cannot contain spaces).
-     *  For any argument "-f" of "-mf", the next argument is taken as a filename,
-     *  and the matrices are read from the first literal starting with "[[" on each line.
-     *  @param args array of command line argument strings.
-     *  @return an array of matrices
-     */
-    public static Matrix[] readMatrices(String[] args) {
-        ArrayList<Matrix> result = new ArrayList<Matrix>(32);
-        boolean busy = true;
-        while (busy) {
-            String arg = nextArgument(args);
-            if (arg == null) {
-            	busy = false;
-            } else if (arg.startsWith(MAT_OPEN)) {
-            	result.add(new Matrix(arg));
-            } else if (arg.equals("-f") || arg.equals("-mf")) {
-                String fileName = nextArgument(args);
-                try {
-                    BufferedReader matrixReader = null;
-                    if(fileName.equals("-")) { // STDIN
-                        matrixReader = new BufferedReader(new InputStreamReader(System.in, "UTF-8"));
-                    } else {
-                        matrixReader = new BufferedReader(new FileReader(new File(fileName)));
-                    } // not STDIN
-                    String line = null;
-                    while ((line = matrixReader.readLine()) != null) { // read and process lines
-                        int sqpos = line.indexOf(MAT_OPEN);
-                        if (sqpos >= 0) {
-                            Matrix amat  = new Matrix(line.substring(sqpos, line.indexOf("]]") + 2));
-                            result.add(amat);
-                        } // if sqpos
-                    } // while line
-                    matrixReader.close();
-                } catch (Exception exc) {
-                    log.error(exc.getMessage(), exc);
-                }
-            } else {
-                busy = false;
-                unshiftArgument();
-            }
-        } // while busy
-        return result.toArray(new Matrix[0]);
-    } // readMatrices
 
     /*  ==============================================
         Abstract matrix * Pythagorean generator
@@ -444,27 +350,14 @@ public class MatrixTester implements Serializable {
     /** Test method, shows some fixed matrices with no arguments, or the
      *  matrix resulting from the input formula.
      *  @param args command line arguments
-     * Test data: data/m3uni.dat
-     <pre>
-  twice: 1 8 6 9 => 3 10 18 19, determinant -20?
- 3 -3 2 2
-  -1 0 2
- 1 2 -1 1
- 3 -1 2 2
-  twice: 1 8 6 9 => 3 10 18 19, determinant -6?
- 3 -3 2 2
-  -1 0 2
- 1 2 -1 1
-  2 -1 1
- ..
-     </pre>
      */
     public static void main(String[] args) {
-        int iarg = 0;
-        firstArgument();
+        Options options = new Options(args);
+        int iarg = 0; // this collides with Options
         int alen = 0; // size of amat
         Matrix amat = null; // matrix to be tested
-        Matrix[] matArray = null;
+        Matrix[] matArray  = null;
+        Vector[] vectArray = null;
         Vector vect1 = null;
         Vector vect2 = null;
         try {
@@ -473,7 +366,7 @@ public class MatrixTester implements Serializable {
                         + (new Matrix          ("[[3, 4], [5, 6]]")).toString("(,)"));
 
             } else if (args.length == 1) {
-                alen = nextIntArgument(args);
+                alen = options.getInt();
                 for (int seqNo = 2 * alen * (alen - 1); seqNo >= 0; seqNo --) {
                     System.out.println("Elementary Matrix # " + seqNo);
                     amat = new Matrix(alen);
@@ -482,7 +375,7 @@ public class MatrixTester implements Serializable {
                 } // for seqNo
 
             } else if (args.length >= 2) { // syntax is: -opt filename
-                String opt = nextArgument(args);
+                String opt = options.get();
                 iarg ++;
 
                 if (false) {
@@ -492,7 +385,7 @@ public class MatrixTester implements Serializable {
                         ) {
                     // read a list of matrices, and perform some operation with them
                     ArrayList<Matrix> matList = new ArrayList<Matrix>(32);
-                    String fileName = nextArgument(args);
+                    String fileName = options.get();
                     BufferedReader testReader = null;
                     if(fileName.equals("-")) { // STDIN
                         testReader = new BufferedReader(new InputStreamReader(System.in, "UTF-8"));
@@ -779,49 +672,74 @@ public class MatrixTester implements Serializable {
                     // read a list of matrices
                     // and a second file with known tuples
                     // generate all possible chains up to some limit
-                    String key = null;
-                    ArrayList<Matrix> matList = new ArrayList<Matrix>(32);
-                    String fileName =  args[iarg ++];
-                    BufferedReader testReader = null;
-                    File testCases = new File(fileName);
-                    testReader = new BufferedReader(new FileReader(testCases));
-                    String line = null;
-                    while ((line = testReader.readLine()) != null) { // read and process lines
-                        int sqpos = line.indexOf("[[");
-                        if (sqpos >= 0) {
-                            amat  = new Matrix(line.substring(sqpos    , line.indexOf("]]") + 2));
-                            matList.add(amat);
-                        } // if sqpos
-                        sqpos = line.indexOf(" [");
-                    } // while line
-                    testReader.close();
-
-                    fileName = args[iarg ++];
-                    testCases = new File(fileName);
-                    testReader = new BufferedReader(new FileReader(testCases));
-                    int maxHash = 1024;
-                    ArrayList<Vector>      queue = new ArrayList<Vector>(maxHash);
-                    while ((line = testReader.readLine()) != null) { // read and process lines
-                        vect1 = new Vector("[" + line.replaceAll("\\s","") + "]");
-                        if (vect1.size() == 4) {
-                            // System.out.println("vect1=" + vect1.toString(","));
-                            queue.add(vect1);
+                    matArray  = options.getMatrices();
+                    vectArray = options.getVectors();
+                    int count  = 0;
+                    int failed = 0;
+                    int ivect  = 0;
+                    while (ivect < vectArray.length) {
+                    	count ++;
+                        vect1 = vectArray[ivect];
+                        alen = vect1.size();
+                        System.out.print(vect1.toString(","));
+                        int imat = 0;
+                        boolean busy = true;
+                        while (busy && imat < matArray.length) {
+                            amat = matArray[imat];
+                            Permutator vperm = new Permutator(alen);
+                            while (busy && vperm.hasNext()) {
+                                int[] meter = vperm.next();
+                                Vector vecta = vect1.permute(meter);
+                                vect2 = amat.multiply(vecta);
+                                if (vect2.isNonTrivialPowerSum(alen - 1, alen, 0)) {
+                                    busy = false;
+                                    int gcd = vect2.gcd();
+                                    if (gcd > 1) {
+                                        vect2.divideBy(gcd);
+                                    }
+                                    Vector vect3 = vect2.nice();
+                                    String key = vect3.toString(",");
+                                    System.out.println("\t" + vecta.toString(",") + " => " + key + " by " + amat.toString(","));
+                                } // if isPowerSum
+                            } // while vperm
+                            imat ++;
+                        } // while imat
+                        if (busy) {
+                            System.out.println("\tno follower");
+                            failed ++;
                         }
-                    } // while line
-                    testReader.close();
+                        ivect ++;
+                    } // while ivect
+                    System.out.println(failed + " of " + count + " failed, " 
+                    		+ String.format("%4.2f", failed * 100.0 / count) + "%"); 
+                    // opt -follow
 
+                } else if (opt.equals("-gen" )) { // copied from -perms
+                    // read an initial powersum preserving tuple, and a list of matrices
+                    // generate all possible tuples up to some limit
+                    matArray  = options.getMatrices();
+                    vectArray = options.getVectors();
+                    int ivect = 0;
+                    vect1 = vectArray[ivect];
+                    alen = vect1.size();
+                    System.out.println("start with " + vect1.toString(","));
+                    int maxHash = 1024;
+                    HashMap<String, Vector> hash = new HashMap<String, Vector>(maxHash);
+                    ArrayList<Vector>      queue = new ArrayList<Vector>(maxHash);
+                    String key = vect1.toString(",");
+                    hash.put(key, vect1);
+                    queue.add(vect1);
                     int iqueue = 0;
                     while (iqueue < queue.size() && queue.size() < maxHash) {
                         vect1 = queue.get(iqueue ++);
-                        alen = vect1.size();
-                        System.out.println(vect1.toString(","));
-                        int ilist = 0;
-                        while (ilist < matList.size()) {
-                            Permutator permutator = new Permutator(alen);
-                            while (permutator.hasNext()) {
-                                int[] meter = permutator.next();
+                        int imat = 0;
+                        boolean busy = true;
+                        while (busy && imat < matArray.length) {
+                            amat = matArray[imat];
+                            Permutator vperm = new Permutator(alen);
+                            while (busy && vperm.hasNext()) {
+                                int[] meter = vperm.next();
                                 Vector vecta = vect1.permute(meter);
-                                amat = matList.get(ilist);
                                 vect2 = amat.multiply(vecta);
                                 if (vect2.isNonTrivialPowerSum(alen - 1, alen, 0)) {
                                     int gcd = vect2.gcd();
@@ -830,72 +748,17 @@ public class MatrixTester implements Serializable {
                                     }
                                     Vector vect3 = vect2.nice();
                                     key = vect3.toString(",");
-                                    System.out.println("\t" + vecta.toString(",") + " => " + key + " by " + amat.toString(","));
-                                } // if isPowerSum
-                            } // while permutator
-                            ilist ++;
-                        } // while ilist
-                    } // while iqueue
-                    // opt -follow
-
-                } else if (opt.equals("-gen" )) { // copied from -perms
-                    // read an initial powersum preserving tuple, and a list of matrices
-                    // generate all possible tuples up to some limit
-                    ArrayList<Matrix> matList = new ArrayList<Matrix>(32);
-                    // vect1 = new Vector("[6,-3,-4,-5]");
-                    vect1 = new Vector(args[iarg ++]);
-                    alen = vect1.size();
-                    String fileName =  args[iarg ++];
-                    BufferedReader testReader = null;
-                    if(fileName.equals("-")) { // STDIN
-                        testReader = new BufferedReader(new InputStreamReader(System.in, "UTF-8"));
-                    } else {
-                        File testCases = new File(fileName);
-                        testReader = new BufferedReader(new FileReader(testCases));
-                    } // not STDIN
-                    String line = null;
-                    while ((line = testReader.readLine()) != null) { // read and process lines
-                        int sqpos = line.indexOf("[[");
-                        if (sqpos >= 0) {
-                            amat  = new Matrix(line.substring(sqpos    , line.indexOf("]]") + 2));
-                            matList.add(amat);
-                        } // if sqpos
-                        sqpos = line.indexOf(" [");
-                    } // while line
-                    testReader.close();
-
-                    int maxHash = 1024;
-                    HashMap<String, Vector> hash = new HashMap<String, Vector>(maxHash);
-                    ArrayList<Vector>      queue = new ArrayList<Vector>(maxHash);
-                    String key = vect1.toString();
-                    hash.put(key, vect1);
-                    queue.add(vect1);
-                    int iqueue = 0;
-                    while (iqueue < queue.size() && queue.size() < maxHash) {
-                        vect1 = queue.get(iqueue ++);
-                        int ilist = 0;
-                        while (ilist < matList.size()) {
-                            Permutator permutator = new Permutator(alen);
-                            while (permutator.hasNext()) {
-                                int[] meter = permutator.next();
-                                Vector vecta = vect1.permute(meter);
-                                vect2 = matList.get(ilist).multiply(vecta);
-                                if (vect2.isNonTrivialPowerSum(alen - 1, alen, 0)) {
-                                    int gcd = vect2.gcd();
-                                    if (gcd > 1) {
-                                        vect2.divideBy(gcd);
-                                    }
-                                    Vector vect3 = vect2.nice();
-                                    key = vect3.toString();
                                     if (hash.get(key) == null) { // new tuple
                                         hash.put(key, vect3);
                                         queue.add(vect3);
-                                        System.out.println(key);
+                                        System.out.println(key 
+                                        		+ " <= " + vecta.toString(",")
+                                        		+ " by " + amat.toString(",") + ",det=" + amat.determinant());
                                     } // if new tuple
                                 } // if isPowerSum
                             } // while permutator
-                            ilist ++;
-                        } // while ilist
+                            imat ++;
+                        } // while imat
                     } // while iqueue
                     // opt -gen
 
@@ -1012,15 +875,15 @@ public class MatrixTester implements Serializable {
                     // -many
 
                 } else if (opt.startsWith("-inv")) {
-                    matArray = readMatrices(args);
+                    matArray = options.getMatrices();
                     for (int imat = 0; imat < matArray.length; imat ++) {
                         amat = matArray[imat];
                         Matrix rmat = amat.inverse();
                         System.out.println(rmat.toString("(,)")
-                                + ",fraction=" 		+ rmat.getFraction()
-                                + ",det="      		+ rmat.determinant()
+                                + ",fraction="      + rmat.getFraction()
+                                + ",det="           + rmat.determinant()
                                 + " is inverse of " + amat.toString("(,)")
-                                + ",det="      		+ amat.determinant()
+                                + ",det="           + amat.determinant()
                                 + ",identity = "    + amat.multiply(rmat).isIdentity()
                                 );
                     } // for imat

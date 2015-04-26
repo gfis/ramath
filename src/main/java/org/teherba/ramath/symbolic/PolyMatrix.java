@@ -132,7 +132,8 @@ public class PolyMatrix implements Cloneable, Serializable {
     /** Constructor for a PolyMatrix which initializes it from a matrix expression.
      *  If the number of elements is no square number, the next lower square
      *  number is taken, and some elements at the end are ignored.
-     *  @param matExpr comma-separated array of {@link PolyVector}s in square brackets, 
+     *  @param matExpr comma-separated array of {@link PolyVector}s in square brackets
+     *  (which are ignored), 
      *  for example "[[a,b,c],[f,g,h],[k,l,m]]"
      */
     public PolyMatrix(String matExpr) {
@@ -433,11 +434,11 @@ public class PolyMatrix implements Cloneable, Serializable {
      *  @param x the variable for the resulting {@link Polynomial}
      *  @return a single {@link Polynomial} in <em>x</em>
      */
-    public Polynomial characteristic(String x) {
+    public Polynomial characteristicPolynomial(String x) {
         PolyMatrix ident = new PolyMatrix(rowLen);
         ident.setIdentity(x);
         return ident.subtract(this).determinant();
-    } // characteristic
+    } // characteristicPolynomial
 
     /** Compute the determinant of <em>this</em> matrix.
      *  @return symbolic determinant as a single {@link Polynomial}
@@ -507,16 +508,23 @@ public class PolyMatrix implements Cloneable, Serializable {
      *  @param title a description of the matrix to be tested
      *  @param amat the matrix to be tested
      */
-    private static void printTest(String title, PolyMatrix amat) {
+    private static void printPythagoreanTest(String title, PolyMatrix amat) {
         System.out.println(title + " = "       + amat.toString(","));
         System.out.println("determinant = "    + amat.determinant().toString());
-        System.out.println("characteristic = " + amat.characteristic("x").toString());
+        System.out.println("characteristicPolynomial = " + amat.characteristicPolynomial("x").toString());
         PolyVector next = amat.multiply(pgen);
         System.out.println("next vector " + next.toString(",")
                 + " is " + (next.isPowerSum(2, 2, 1) ? "a " : "no ") + "sum of powers");
         System.out.println("convolve(\"u^2+v^2-w^2\"): "
                 + amat.multiply(var3).convolve(new Polynomial("u^2+v^2-w^2")).toString());
-    } // printTest
+        int alen = amat.size();
+        PolyVector vect1 = new PolyVector(alen, "a"); // the abstract vector
+        System.out.println("abstract powersum: "
+                + amat.multiply(vect1).powerSum(alen - 1, alen - 1, 1)
+                .toString().replaceAll("\\s", "")                   
+                );
+        System.out.println("--------");
+    } // printPythagoreanTest
 
     /** Test method, shows some fixed matrices with no arguments, or the
      *  matrix resulting from the input formula.
@@ -575,44 +583,40 @@ public class PolyMatrix implements Cloneable, Serializable {
                             .toString().replaceAll("\\s", "")                   
                             );
                     // -abst
-                } else if (opt.equals ("-f") || opt.equals("-queue") || opt.equals("-prim")) {
-                    // opt -f, -queue, -prim
-                } else if (opt.startsWith("-div")) {
-                    // -div
                 } else if (opt.startsWith("-char")) {
                     // c.f. http://en.wikipedia.org/wiki/Tree_of_Pythagorean_triples
                     System.out.println("Generator " + pgen.toString(",")
                             + " is" + (pgen.isPowerSum(2, 2, 1) ? " " : "no ") + "sum of powers");
                     // (u+2*v+2*w)^2+(2*u+v+2*w)^2-(2*u+2*v+3*w)^2 = 0 --> u^2 + v^2 - w^2 = 0
-                    printTest("Barning\'s B", new PolyMatrix(3, new String[]
+                    printPythagoreanTest("Barning\'s B", new PolyMatrix(3, new String[]
                             { "1", "2", "2"
                             , "2", "1", "2"
                             , "2", "2", "3"
                             } ));
                     // (u-2*v+2*w)^2+(2*u-v+2*w)^2-(2*u-2*v+3*w)^2 --> u^2 + v^2 - w^2
-                    printTest("Barning\'s A", new PolyMatrix(3, new String[]
+                    printPythagoreanTest("Barning\'s A", new PolyMatrix(3, new String[]
                             { "1", "-2", "2"
                             , "2", "-1", "2"
                             , "2", "-2", "3"
                             } ));
                     // (-u+2*v+2*w)^2+(-2*u+v+2*w)^2-(-2*u+2*v+3*w)^2 --> u^2 + v^2 - w^2
-                    printTest("Barning\'s C", new PolyMatrix(3, new String[]
+                    printPythagoreanTest("Barning\'s C", new PolyMatrix(3, new String[]
                             { "-1", "2", "2"
                             , "-2", "1", "2"
                             , "-2", "2", "3"
                             } ));
                     //-----------------------------------
-                    printTest("Price\'s B\'", new PolyMatrix(3, new String[]
+                    printPythagoreanTest("Price\'s B\'", new PolyMatrix(3, new String[]
                             { "2",  "1", "1"
                             , "2", "-2", "2"
                             , "2", "-1", "3"
                             } ));
-                    printTest("Price\'s A\'", new PolyMatrix(3, new String[]
+                    printPythagoreanTest("Price\'s A\'", new PolyMatrix(3, new String[]
                             { "2",  "1", "-1"
                             , "-2", "2", "2"
                             , "-2", "1", "3"
                             } ));
-                    printTest("Price\'s C\'", new PolyMatrix(3, new String[]
+                    printPythagoreanTest("Price\'s C\'", new PolyMatrix(3, new String[]
                             { "2",  "-1", "1"
                             , "2", "2", "2"
                             , "2", "1", "3"

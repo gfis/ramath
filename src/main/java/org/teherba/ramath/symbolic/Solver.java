@@ -97,9 +97,9 @@ public class Solver extends Stack<RelationSet> {
         reasons = new ReasonFactory();
         reasons.addReason("base"        );
         reasons.addReason("transpose"   );
-        reasons.addReason("grow"        ); // related to 'same' and 'similiar'
+    //  reasons.addReason("grow"        ); // related to 'same' and 'similiar'
         reasons.addReason("same"        );
-        reasons.addReason("similiar"    );
+    //  reasons.addReason("similiar"    );
     } // initialize
 
     /** Gets the {@link RelationSet} to be solved
@@ -311,7 +311,7 @@ public class Solver extends Stack<RelationSet> {
         trace.println("Expanding for base " + getModBase() + ", transposables = " + getTransposables().toString());
         boolean exhausted = false;
         queueHead = 0;
-        if (rset0.getTuple() == null) { 
+        if (rset0.getTuple() == null) {
             VariableMap vmap0 = rset0.getVariableMap("0", getUpperSubst());
             rset0.setTuple(vmap0); // tuple is initially (0,0, ... 0)
         }
@@ -335,7 +335,7 @@ public class Solver extends Stack<RelationSet> {
         if (exhausted) {
             trace.print("Proof - queue exhausted");
         } else {
-        	trace.print("Maximum level " + getMaxLevel() + " reached");
+            trace.print("Maximum level " + getMaxLevel() + " reached");
         }
         trace.println(", queue size = " + size());
         close();

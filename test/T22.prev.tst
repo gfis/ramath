@@ -1,7 +1,7 @@
 Expanding for base 3, transposables =    0   0   2
 
 expanding queue[0]: a^3 + b^3 - c^3 = 0 modulo [3,3,3] *3
-[0+3*a,0+3*b,0+3*c]: failure, grown from [0]
+[0+3*a,0+3*b,0+3*c]: same form as 27*a^3+27*b^3-27*c^3=0
 [1+3*a,0+3*b,0+3*c]: failure constant=1, vgcd=9
 [2+3*a,0+3*b,0+3*c]: failure constant=8, vgcd=9
 [0+3*a,1+3*b,0+3*c]: failure constant=1, vgcd=9
@@ -41,7 +41,7 @@ expanding queue[1]: 9 + 36*a + 54*a^2 + 27*a^3 + 9*b + 27*b^2 + 27*b^3 - 27*c^3 
 [8+9*a,7+9*b,0+3*c]: failure constant=855, vgcd=27
 
 expanding queue[2]: 9*a + 27*a^2 + 27*a^3 + 27*b^3 - 9*c - 27*c^2 - 27*c^3 = 0 modulo [3,1,3] *9
-[1+9*a,0+3*b,1+9*c]: failure, grown from [2]
+[1+9*a,0+3*b,1+9*c]: similiar to  [2], affine map: {a=(3*a),b=(1*b),c=(3*c)}  27*a+243*a^2+729*a^3+27*b^3-27*c-243*c^2-729*c^3=0
 [4+9*a,0+3*b,1+9*c]: failure constant=63, vgcd=27
 [7+9*a,0+3*b,1+9*c]: failure constant=342, vgcd=27
 [1+9*a,0+3*b,4+9*c]: failure constant=-63, vgcd=27
@@ -52,7 +52,7 @@ expanding queue[2]: 9*a + 27*a^2 + 27*a^3 + 27*b^3 - 9*c - 27*c^2 - 27*c^3 = 0 m
 [7+9*a,0+3*b,7+9*c]: success [7,0,7] trivial=3 1323*a+1701*a^2+729*a^3+27*b^3-1323*c-1701*c^2-729*c^3=0 -> [8]
 
 expanding queue[3]: 36*a + 54*a^2 + 27*a^3 + 27*b^3 - 36*c - 54*c^2 - 27*c^3 = 0 modulo [3,1,3] *9
-[2+9*a,0+3*b,2+9*c]: failure, grown from [3]
+[2+9*a,0+3*b,2+9*c]: similiar to  [3], affine map: {a=(3*a),b=(1*b),c=(3*c)}  108*a+486*a^2+729*a^3+27*b^3-108*c-486*c^2-729*c^3=0
 [5+9*a,0+3*b,2+9*c]: failure constant=117, vgcd=27
 [8+9*a,0+3*b,2+9*c]: failure constant=504, vgcd=27
 [2+9*a,0+3*b,5+9*c]: failure constant=-117, vgcd=27
@@ -150,7 +150,7 @@ expanding queue[6]: 351 + 108*a + 486*a^2 + 729*a^3 + 1323*b + 1701*b^2 + 729*b^
 [20+27*a,25+27*b,6+9*c]: unknown 23409+32400*a+43740*a^2+19683*a^3+50625*b+54675*b^2+19683*b^3-972*c-1458*c^2-729*c^3=0 -> [37]
 
 expanding queue[7]: 432*a + 972*a^2 + 729*a^3 + 27*b^3 - 432*c - 972*c^2 - 729*c^3 = 0 modulo [3,3,3] *27
-[4+27*a,0+9*b,4+27*c]: failure, grown from [7]
+[4+27*a,0+9*b,4+27*c]: similiar to  [7], affine map: {a=(3*a),b=(3*b),c=(3*c)}  1296*a+8748*a^2+19683*a^3+729*b^3-1296*c-8748*c^2-19683*c^3=0
 [13+27*a,0+9*b,4+27*c]: failure constant=2133, vgcd=81
 [22+27*a,0+9*b,4+27*c]: failure constant=10584, vgcd=81
 [4+27*a,3+9*b,4+27*c]: failure constant=27, vgcd=81
@@ -179,7 +179,7 @@ expanding queue[7]: 432*a + 972*a^2 + 729*a^3 + 27*b^3 - 432*c - 972*c^2 - 729*c
 [22+27*a,6+9*b,22+27*c]: failure constant=216, vgcd=81
 
 expanding queue[8]: 1323*a + 1701*a^2 + 729*a^3 + 27*b^3 - 1323*c - 1701*c^2 - 729*c^3 = 0 modulo [3,3,3] *27
-[7+27*a,0+9*b,7+27*c]: failure, grown from [8]
+[7+27*a,0+9*b,7+27*c]: similiar to  [8], affine map: {a=(3*a),b=(3*b),c=(3*c)}  3969*a+15309*a^2+19683*a^3+729*b^3-3969*c-15309*c^2-19683*c^3=0
 [16+27*a,0+9*b,7+27*c]: failure constant=3753, vgcd=81
 [25+27*a,0+9*b,7+27*c]: failure constant=15282, vgcd=81
 [7+27*a,3+9*b,7+27*c]: failure constant=27, vgcd=81
@@ -208,7 +208,7 @@ expanding queue[8]: 1323*a + 1701*a^2 + 729*a^3 + 27*b^3 - 1323*c - 1701*c^2 - 7
 [25+27*a,6+9*b,25+27*c]: failure constant=216, vgcd=81
 
 expanding queue[9]: 675*a + 1215*a^2 + 729*a^3 + 27*b^3 - 675*c - 1215*c^2 - 729*c^3 = 0 modulo [3,3,3] *27
-[5+27*a,0+9*b,5+27*c]: failure, grown from [9]
+[5+27*a,0+9*b,5+27*c]: similiar to  [9], affine map: {a=(3*a),b=(3*b),c=(3*c)}  2025*a+10935*a^2+19683*a^3+729*b^3-2025*c-10935*c^2-19683*c^3=0
 [14+27*a,0+9*b,5+27*c]: failure constant=2619, vgcd=81
 [23+27*a,0+9*b,5+27*c]: failure constant=12042, vgcd=81
 [5+27*a,3+9*b,5+27*c]: failure constant=27, vgcd=81
@@ -237,7 +237,7 @@ expanding queue[9]: 675*a + 1215*a^2 + 729*a^3 + 27*b^3 - 675*c - 1215*c^2 - 729
 [23+27*a,6+9*b,23+27*c]: failure constant=216, vgcd=81
 
 expanding queue[10]: 1728*a + 1944*a^2 + 729*a^3 + 27*b^3 - 1728*c - 1944*c^2 - 729*c^3 = 0 modulo [3,3,3] *27
-[8+27*a,0+9*b,8+27*c]: failure, grown from [10]
+[8+27*a,0+9*b,8+27*c]: similiar to  [10], affine map: {a=(3*a),b=(3*b),c=(3*c)}  5184*a+17496*a^2+19683*a^3+729*b^3-5184*c-17496*c^2-19683*c^3=0
 [17+27*a,0+9*b,8+27*c]: failure constant=4401, vgcd=81
 [26+27*a,0+9*b,8+27*c]: failure constant=17064, vgcd=81
 [8+27*a,3+9*b,8+27*c]: failure constant=27, vgcd=81
