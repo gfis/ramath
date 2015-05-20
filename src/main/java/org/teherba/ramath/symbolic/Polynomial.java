@@ -1793,7 +1793,6 @@ x^2 + 3*x^3 + 2*x^4
                         break;
                 } // switch relation
                 result.append(" biased");
-    */
 
         } else if (constant.equals(BigInteger.ZERO)) {
                 switch (this.getRelation()) {
@@ -1816,6 +1815,7 @@ x^2 + 3*x^3 + 2*x^4
                         result.append(" !=0");
                         break;
                 } // switch relation
+    */
 
         } else { // not a single constant, not biased
             // check greatest common divisor of variables
@@ -1851,7 +1851,7 @@ x^2 + 3*x^3 + 2*x^4
                         result.append(VariableMap.SUCCESS);
                         if (vmap1 != null) {
                             result.append(" ");
-                            result.append(vmap1.getSolutionVector(meter).toString()); 
+                            result.append(vmap1.getSolutionVector(meter).describe()); 
                             result.append(" ");
                             // result.append(vmap1.triviality());
                         } else {

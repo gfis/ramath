@@ -1,5 +1,6 @@
 /*  PolyVector: a vector Polynomials
  *  @(#) $Id: PolyVector.java 744 2011-07-26 06:29:20Z gfis $
+ *  2015-04-27: triviality(), describe()
  *  2015-03-26: construct from expression
  *  2015-03-19: convolve
  *  2013-08-23: Serializable
@@ -29,6 +30,7 @@ import  org.teherba.ramath.util.IntegerExpander;
 import  org.teherba.ramath.util.ModoMeter;
 import  java.io.Serializable;
 import  java.util.ArrayList;
+import  java.util.HashSet; // for triviality
 import  java.util.Iterator;
 import  java.util.regex.Matcher;
 import  java.util.regex.Pattern;
@@ -229,6 +231,45 @@ public class PolyVector implements Cloneable, Serializable {
         return result.toString();
     } // toString()
 
+    /** Describes the triviality of <em>this</em>PolyVector:
+     *  <ul>
+     *  <li>1: one of the elements is zero</li>
+     *  <li>2: there are 2 elements which are equal</li>
+     *  <li>3: both of the conditions above</li>
+     *  <li>0: none of the conditions above = "NONTRIVIAL"</li>
+     *  </ul>
+     *  @return a description for the triviality of a solution
+     */
+    public String triviality() {
+        int code = 0;
+        HashSet<String> valSet = new HashSet<String>(16);
+        int ielem = 0;
+        while (ielem < this.size()) {
+            Polynomial poly1 = this.vector[ielem];
+            if (poly1.isZero()) {
+                code |= 0x01;
+            }
+            if (valSet.contains(poly1.toString())) {
+                code |= 0x02;
+            } else {
+                valSet.add(poly1.toString());
+            }
+            ielem ++;
+        } // while ielem
+        String result = "NONTRIVIAL";
+        if (code != 0) {
+            result = "trivial(" + String.valueOf(code) + ")";
+        }
+        return result;
+    } // triviality
+
+    /** Returns a readable representation of the vector, with the {@link #triviality} appended
+     *  @return a String, for example "[3,4,5],NONTRIVIAL" 
+     */
+    public String describe() {
+        return this.toString(",") + "," + this.triviality();
+    } // describe()
+
     /*-------------- heavyweight operations -------------------------*/
 
     /** Gets the innerproduct of two Vectors
@@ -363,7 +404,7 @@ public class PolyVector implements Cloneable, Serializable {
         PolyVector vect2 =      new PolyVector (" [ x^2 ,4 * y, y * z * 3 ] ");
         if (args.length == 0) {
             System.out.println("new PolyVector(\" [ x^2 ,4 * y, y * z * 3 ] \") = "
-            		+ vect2.toString());
+                    + vect2.toString());
         } else { // arguments
             String opt = args[iarg ++];
             if (false) {

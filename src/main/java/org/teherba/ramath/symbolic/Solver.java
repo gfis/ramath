@@ -99,7 +99,7 @@ public class Solver extends Stack<RelationSet> {
         reasons.addReason("transpose"   );
     //  reasons.addReason("grow"        ); // related to 'same' and 'similiar'
         reasons.addReason("same"        );
-    //  reasons.addReason("similiar"    );
+        reasons.addReason("similiar"    );
     } // initialize
 
     /** Gets the {@link RelationSet} to be solved
