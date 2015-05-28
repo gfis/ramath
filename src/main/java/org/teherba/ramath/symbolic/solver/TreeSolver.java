@@ -142,7 +142,8 @@ public class TreeSolver extends BaseSolver {
                 rset2.setTuple          (vmap2, this.getTransposables());
                 rset2.setTupleShift     (factor);
                 rset2.setMeter(meter.toString());
-                
+                reasons.printDecision(trace, this, rset2, vmap2);
+            /*
                 String decision = reasons.check(this, rset2);
                 if (! decision.startsWith(VariableMap.UNKNOWN) && 
                     ! decision.startsWith(VariableMap.SUCCESS)) { // FAILURE etc.
@@ -154,12 +155,13 @@ public class TreeSolver extends BaseSolver {
                         if (debug >= 1) {
                             trace.print(vmap2.toVector() + ": ");
                             trace.print(decision);
-                            trace.print(" " + polish(rset2));
-                            trace.print(" -> [" + size() + "]");
+                            trace.print(" " + this.polish(rset2));
+                            trace.print(" -> [" + this.size() + "]");
                             trace.println();
                         }
-                        add(rset2);
+                        this.add(rset2);
                 } // unknown
+            */
             } // vmap2.size() > 0
             
             meter.next();

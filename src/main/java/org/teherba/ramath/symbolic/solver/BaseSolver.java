@@ -261,7 +261,7 @@ public class BaseSolver extends Stack<RelationSet> {
      *  @param factor extract this common factor, if possible
      *  @return polished formula
      */
-    protected static String polish(RelationSet rset, BigInteger factor) {
+    protected String polish(RelationSet rset, BigInteger factor) {
         return rset.toString() // toFactoredString(factor)
            //   .replaceAll("_\\d+", "")
                 .replaceAll("[_ ]", "") // maybe "*" also
@@ -274,7 +274,7 @@ public class BaseSolver extends Stack<RelationSet> {
      *  @param rset polish this RelationSet
      *  @return polished formula
      */
-    public    static String polish(RelationSet rset) {
+    public    String polish(RelationSet rset) {
         return polish(rset, rset.getTupleShift());
     } // polish(1)
 

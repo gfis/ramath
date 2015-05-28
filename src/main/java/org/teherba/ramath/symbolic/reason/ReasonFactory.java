@@ -25,6 +25,7 @@ import  org.teherba.ramath.symbolic.RelationSet;
 import  org.teherba.ramath.symbolic.VariableMap;
 import  org.teherba.ramath.symbolic.solver.BaseSolver;
 import  org.teherba.ramath.linear.Vector;
+import  java.io.PrintWriter;
 import  java.util.ArrayList;
 import  java.util.Iterator;
 
@@ -36,7 +37,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
     public final static String CVSID = "@(#) $Id: ReasonFactory.java 970 2012-10-25 16:49:32Z gfis $";
 
     /** Debugging switch: 0 = no, 1 = moderate, 2 = more, 3 = extreme verbosity */
-    private int debug = 0;
+    private int debug = 1;
 
     //--------------
     // Construction
@@ -97,7 +98,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
             int ireas = size() - 1;
             while (ireas >= 0) {
                 if (this.get(ireas).getCode().equals("transpose")) {
-                    if (debug >= 1) {
+                    if (debug >= 2) {
                         System.err.println("class TransposeReason removed from list, vector = " + result.toString());
                     } // debug >= 1
                     this.remove(ireas);
@@ -150,6 +151,33 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         } // while ireas
         return result;
     } // check
+
+    /** Checks a {@link RelationSet} 
+     *  with all stored reasons and prints the decision
+     *  @param trace print on this writer
+     *  @param solver the complete state of the expansion tree
+     *  @param rset2 the new {@link RelationSet} to be checked
+     *  @param vmap2 variables with refined expressions
+     */
+    public void printDecision(PrintWriter trace, BaseSolver solver, RelationSet rset2, VariableMap vmap2) {
+        String decision = this.check(solver, rset2);
+        if (! decision.startsWith(VariableMap.UNKNOWN) && 
+            ! decision.startsWith(VariableMap.SUCCESS)) { // FAILURE etc.
+                if (debug >= 1) {
+                    trace.print(vmap2.toVector() + ": ");
+                    trace.println(decision);
+                }
+        } else { // UNKNOWN || SUCCESS
+                if (debug >= 1) {
+                    trace.print(vmap2.toVector() + ": ");
+                    trace.print(decision);
+                    trace.print(" " + solver.polish(rset2));
+                    trace.print(" -> [" + solver.size() + "]");
+                    trace.println();
+                }
+                solver.add(rset2);
+        } // unknown
+    } // printDecision
 
     //-------------
     // Test driver
