@@ -22,7 +22,7 @@ import  org.teherba.ramath.symbolic.reason.BaseReason;
 import  org.teherba.ramath.symbolic.RefinedMap;
 import  org.teherba.ramath.symbolic.RelationSet;
 import  org.teherba.ramath.symbolic.VariableMap;
-import  org.teherba.ramath.symbolic.Solver;
+import  org.teherba.ramath.symbolic.solver.BaseSolver;
 import  org.teherba.ramath.linear.Vector;
 
 /** Checks whether there is another {@link RelationSet} on the same nesting level
@@ -48,7 +48,7 @@ public class TransposeReason extends BaseReason {
      *  @param solver the complete state of the expansion tree
      *  @param rset2 the new {@link RelationSet} to be added to the queue 
      */
-    public String check(Solver solver, RelationSet rset2) {
+    public String check(BaseSolver solver, RelationSet rset2) {
         String result = VariableMap.UNKNOWN;
         int level2 = rset2.getNestingLevel();
         int iqueue = solver.size() - 1; // last element

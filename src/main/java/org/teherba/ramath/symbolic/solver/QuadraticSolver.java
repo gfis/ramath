@@ -1,5 +1,6 @@
 /*  QuadraticSolver: tries to solve a quadratic Diophantine equation
  *  @(#) $Id: QuadraticSolver.java 298 2009-11-16 21:54:54Z gfis $
+ *  2015-05-28: subdirectory solver
  *  2014-04-05: no more extending Solver
  *  2009-08-28, Georg Fischer: copied from BinarySolver
  *
@@ -55,11 +56,10 @@ http://en.wikipedia.org/wiki/Quadratic_sieve
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.teherba.ramath.symbolic;
+package org.teherba.ramath.symbolic.solver;
+import  org.teherba.ramath.symbolic.solver.ProofStep;
 import  org.teherba.ramath.ContinuedFraction;
 import  org.teherba.ramath.symbolic.Polynomial;
-import  org.teherba.ramath.symbolic.ProofStep;
-// import  org.teherba.ramath.symbolic.Solver;
 import  org.teherba.ramath.util.ExpressionReader;
 import  java.util.Iterator;
 

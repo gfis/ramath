@@ -21,7 +21,7 @@ package org.teherba.ramath.symbolic.reason;
 import  org.teherba.ramath.symbolic.reason.BaseReason;
 import  org.teherba.ramath.symbolic.RelationSet;
 import  org.teherba.ramath.symbolic.VariableMap;
-import  org.teherba.ramath.symbolic.Solver;
+import  org.teherba.ramath.symbolic.solver.BaseSolver;
 
 /** Checks whether there is a parent of the {@link RelationSet} in question
  *  with the same dispenser values, such that the constants of the
@@ -50,7 +50,7 @@ public class GrowingReason extends BaseReason {
      *  @param solver the complete state of the expansion tree
      *  @param rset2 the new {@link RelationSet} to be added to the queue 
      */
-    public String check(Solver solver, RelationSet rset2) {
+    public String check(BaseSolver solver, RelationSet rset2) {
     	boolean all = false; // whether to examine all queue elements, or the parents only
         String result = VariableMap.UNKNOWN;
         int iparent = all ? solver.size() - 1 : rset2.getParentIndex();

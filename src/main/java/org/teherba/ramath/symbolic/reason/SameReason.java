@@ -21,7 +21,7 @@ package org.teherba.ramath.symbolic.reason;
 import  org.teherba.ramath.symbolic.reason.BaseReason;
 import  org.teherba.ramath.symbolic.RelationSet;
 import  org.teherba.ramath.symbolic.VariableMap;
-import  org.teherba.ramath.symbolic.Solver;
+import  org.teherba.ramath.symbolic.solver.BaseSolver;
 
 /** Checks whether the tree expansion root {@link RelationSet} 
  *  is the same as the RelationSet in question 
@@ -43,7 +43,7 @@ public class SameReason extends BaseReason {
      *  @param solver the complete state of the expansion tree
      *  @param rset2 the new {@link RelationSet} to be added to the queue 
      */
-    public String check(Solver solver, RelationSet rset2) {
+    public String check(BaseSolver solver, RelationSet rset2) {
         String result = VariableMap.UNKNOWN;
         if (solver.size() == 1 && solver.get(0).toString().equals(rset2.clone().normalize().toString())) { 
             // first queue entry, expanded with [0,0,...0]

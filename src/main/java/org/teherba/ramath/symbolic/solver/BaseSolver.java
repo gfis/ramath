@@ -1,5 +1,6 @@
 /*  Solver: base class for solvers of Diophantine relation sets, with bean properties
  *  @(#) $Id: Solver.java 970 2012-10-25 16:49:32Z gfis $
+ *  2015-05-28: subdirectory solver, renamed from Solver.java
  *  2015-02-21: extends Vector<RelationSet>
  *  2013-09-01: polish; Caution: must be UTF-8, äöüÄÖÜß ² ³
  *  2009-08-28, Georg Fischer: copied from BinarySolver.java
@@ -21,10 +22,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.teherba.ramath.symbolic;
+package org.teherba.ramath.symbolic.solver;
+import  org.teherba.ramath.symbolic.reason.ReasonFactory;
 import  org.teherba.ramath.symbolic.RelationSet;
 import  org.teherba.ramath.symbolic.VariableMap;
-import  org.teherba.ramath.symbolic.reason.ReasonFactory;
 import  org.teherba.ramath.linear.Vector;
 import  org.teherba.ramath.util.ExpressionReader;
 import  org.teherba.ramath.util.ModoMeter;
@@ -41,7 +42,7 @@ import  java.util.regex.Pattern;
  *  The queue could have been a stack, but we want to walk the tree width-first.
  *  @author Dr. Georg Fischer
  */
-public class Solver extends Stack<RelationSet> {
+public class BaseSolver extends Stack<RelationSet> {
     public final static String CVSID = "@(#) $Id: Solver.java 970 2012-10-25 16:49:32Z gfis $";
     /** Debugging switch: 0 = no, 1 = moderate, 2 = more, 3 = maximum verbosity */
     private int debug = 0;
@@ -64,14 +65,14 @@ public class Solver extends Stack<RelationSet> {
 
     /** No-args Constructor - prints on {@link java.lang.System#out}f
      */
-    public Solver() {
+    public BaseSolver() {
         this(new PrintWriter(System.out));
     } // no-args Constructor
 
     /** Constructor with writer
      *  @param writer where to write the proof trace
     */
-    public Solver(PrintWriter writer) {
+    public BaseSolver(PrintWriter writer) {
         super(); // 256, 256); // increase capacity in bigger chunks
         this.trace = writer;
         initialize();
@@ -418,7 +419,7 @@ public class Solver extends Stack<RelationSet> {
      *  @param args command line arguments, see {@link Solver#getArguments}.
      */
     public static void main(String[] args) {
-        Solver solver = new Solver();
+        BaseSolver solver = new BaseSolver();
         String expr = solver.getArguments(0, args);
     } // main
 

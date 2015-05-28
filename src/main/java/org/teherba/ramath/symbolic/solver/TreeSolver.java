@@ -1,5 +1,6 @@
 /*  TreeSolver: tries to solve a Diophantine equation by monadic variable expansion
  *  @(#) $Id: TreeSolver.java 970 2012-10-25 16:49:32Z gfis $
+ *  2015-05-28: subdirectory solver
  *	2015-04-26: solution if (xi,yi,..) elem of {0,1}^n
  *  2015-02-20, Georg Fischer: copied from and replacing QueuingSolver.java
  *
@@ -20,10 +21,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.teherba.ramath.symbolic;
+package org.teherba.ramath.symbolic.solver;
+import  org.teherba.ramath.symbolic.solver.BaseSolver;
 import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.RelationSet;
-import  org.teherba.ramath.symbolic.Solver;
 import  org.teherba.ramath.symbolic.VariableMap;
 import  org.teherba.ramath.util.ModoMeter;
 import  java.io.PrintWriter;
@@ -68,7 +69,7 @@ import  java.util.Vector; // essentially a java.util.Queue (Java 1.6)
  *  whereas its anchestor <em>BinarySolver</em> could only solve one {@link Polynomial} = 0.
  *  @author Dr. Georg Fischer
  */
-public class TreeSolver extends Solver {
+public class TreeSolver extends BaseSolver {
     public final static String CVSID = "@(#) $Id: TreeSolver.java 970 2012-10-25 16:49:32Z gfis $";
 
     /** Debugging switch: 0 = no, 1 = moderate, 2 = more, 3 = extreme verbosity */

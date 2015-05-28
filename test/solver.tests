@@ -2,6 +2,7 @@
 #
 # $Id solver.tests $
 # Test cases for modular tree expansion solvers
+# 2015-05-28: subdirectory solver
 # 2015-02-24, Dr. Georg Fischer
 #
 # More diophantine equations:
@@ -23,7 +24,7 @@
 #   x^2 + y^2 + z^2 = k*x*y*z has no solutions except (0,0,0) for any
 #   k different from 1, 3
 #===================================================
-PACKAGE=org.teherba.ramath.symbolic
+PACKAGE=org.teherba.ramath.symbolic.solver
 
 TEST T01 tree solver, sqrt(2)
 CALL TreeSolver -l 4 -e "2*q^2 - p^2" 
@@ -102,7 +103,6 @@ CALL TreeSolver -b 2 -l 5 -e "y^2 -x^3 + 4 = 0"
 
 #-------------------------------
 # c.f. http://planetmath.org/encyclopedia/InfiniteDescent.html
-PACKAGE=org.teherba.ramath.symbolic
 
 TEST I01 infinite descent, sqrt(2)
 CALL InfiniteDescent "2*q^2-p^2"
@@ -120,8 +120,6 @@ TEST I05 infinite descent, Pythagoras
 CALL InfiniteDescent "x^2 + y^2 - z^2"
 
 #---------------------------------------
-PACKAGE=org.teherba.ramath.symbolic
-
 TEST M01 monadic solver, sqrt(2)
 CALL MonadicSolver -l 2 -e "2*q^2 - p^2"
 
@@ -131,17 +129,11 @@ CALL MonadicSolver -l 2 -e "5*q^2 - p^2"
 TEST M03 monadic solver
 CALL MonadicSolver -l 2 -e "a^2 + b^2 - 3*(c^2 + d^2)"
 
-TEST M04 monadic solver, biquadratic
-CALL MonadicSolver -l 1 -e "x^4-y^4-z^2"
-
 TEST M05 monadic solver, modified Fermat^3 mod 2
 CALL MonadicSolver -b 2 -l 2 -e "a^3 + 3*b^3 - 9*c^3"
 
 TEST M06 monadic solver, modified Fermat^3 mod 3
 CALL MonadicSolver -b 3 -l 2 -e "a^3 + 3*b^3 - 9*c^3"
-
-TEST M07 monadic solver, Fermat(4) mod 3
-CALL MonadicSolver -b 2 -l 2 -e "a^4+b^4-c^4"
 
 # TEST M08 monadic solver, biquadratic mod 3
 # CALL MonadicSolver -b 3 -l 1 -e "x^4-y^4-z^2"
@@ -234,7 +226,6 @@ CALL QueuingSolver -l 3 -e "a^2 + b^2 + c^2 - b^2*c^2"
 
 EXIT
 #===================================================
-PACKAGE=org.teherba.ramath.symbolic
 
 TEST M10 monadic solver, Fermat(4) mod 4
 CALL MonadicSolver -b 4 -l 1 -e "a^4 + b^4 - c^4"
@@ -281,9 +272,9 @@ CALL MonadicSolver -b 3 -l 2 -e "(a)^2 + (a+b)^2 - (a+b+c)^2"
 TEST M24 monadic solver, Pythagoras mod 2 increasing
 CALL MonadicSolver -b 4 -l 2 -e "(a)^2 + (a+b)^2 - (a+b+c)^2"
 
-PACKAGE=org.teherba.ramath.symbolic
 TEST M25 monadic solver, Fermat(3) mod 2
 CALL MonadicSolver -b 2 -l 2 -e "a^3 + b^3 - c^3"
+
 PACKAGE=org.teherba.ramath
 TEST M25H shift
 # expanding [1]*2: 1+3*a+6*a²+4*a³+3*b+6*b²+4*b³-4*c³=0
@@ -294,7 +285,7 @@ DATA
  + (5+3*a+12*a²+16*a³+27*b+36*b²+16*b³-12*c-24*c²-16*c³)^3
 CALL ParameterEquation -shift -f $(DATA)  -l -4 -w 3 -e 3 -t Fermat3.M25
 
-PACKAGE=org.teherba.ramath.symbolic
+PACKAGE=org.teherba.ramath.symbolic.solver
 TEST M26 monadic solver, Fermat(3) mod 3
 CALL MonadicSolver -b 3 -l 1 -e "a^3 + b^3 - c^3"
 PACKAGE=org.teherba.ramath
@@ -312,7 +303,7 @@ DATA
  + ( 5+4*a+18*a²+27*a³+49*b+63*b²+27*b³-36*c-54*c²-27*c³)^3
 CALL ParameterEquation -shift -f $(DATA)  -l -3 -w 3 -e 3 -t Fermat3.M26
 
-PACKAGE=org.teherba.ramath.symbolic
+PACKAGE=org.teherba.ramath.symbolic.solver
 TEST M27 Fermat(3) shifted
 CALL MonadicSolver -b 2 -l 3 -e "(x+1)^3 + (y+1)^3 - (z+1)^3"
 
@@ -334,4 +325,3 @@ CALL MonadicSolver -l 2 -e a^2+b^2-3*(c^2+d^2)
 
 TEST M44 binary solver, biquadratic
 CALL MonadicSolver -l 2 -e x^4-y^4-z^2
-

@@ -21,7 +21,7 @@ package org.teherba.ramath.symbolic.reason;
 import  org.teherba.ramath.symbolic.reason.BaseReason;
 import  org.teherba.ramath.symbolic.RelationSet;
 import  org.teherba.ramath.symbolic.VariableMap;
-import  org.teherba.ramath.symbolic.Solver;
+import  org.teherba.ramath.symbolic.solver.BaseSolver;
 
 /** Checks whether {@link RelationSet} 
  *  is similiar to another RelationSet in the tree / queue.
@@ -44,13 +44,13 @@ public class SimiliarReason extends BaseReason {
      *  @param rset2 RelationSet to be looked up
      *  @return index of similiar element in queue, or "[-1]" if none was found
      */
-    protected String findSimiliar(Solver solver, RelationSet rset2) {
+    protected String findSimiliar(BaseSolver solver, RelationSet rset2) {
         int isimil = -1; // assume not found
         int iqueue = solver.size() - 1;
         String message = null;
         switch (solver.getFindMode()) {
             default:
-            case Solver.FIND_IN_PREVIOUS:
+            case BaseSolver.FIND_IN_PREVIOUS:
                 while (isimil < 0 && iqueue >= 0) {
                     message = solver.get(iqueue).similiarity(rset2);
                     if (message != null) {
@@ -59,7 +59,7 @@ public class SimiliarReason extends BaseReason {
                     iqueue --;
                 } // while iqueue
                 break;
-            case Solver.FIND_IN_PARENTS:
+            case BaseSolver.FIND_IN_PARENTS:
                 iqueue = rset2.getParentIndex();
                 while (isimil < 0 && iqueue >= 0) {
                     message = solver.get(iqueue).similiarity(rset2);
@@ -78,7 +78,7 @@ public class SimiliarReason extends BaseReason {
      *  @param solver the complete state of the expansion tree
      *  @param rset2 the new {@link RelationSet} to be added to the queue 
      */
-    public String check(Solver solver, RelationSet rset2) {
+    public String check(BaseSolver solver, RelationSet rset2) {
         String result = VariableMap.UNKNOWN;
         String message = findSimiliar(solver, rset2);
         if (! message.startsWith("[-1]")) { // no index "[-1]" means a similiar RelationSet was found

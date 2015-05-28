@@ -22,8 +22,8 @@ package org.teherba.ramath.symbolic.reason;
 import  org.teherba.ramath.symbolic.reason.BaseReason;
 import  org.teherba.ramath.symbolic.reason.TransposeReason;
 import  org.teherba.ramath.symbolic.RelationSet;
-import  org.teherba.ramath.symbolic.Solver;
 import  org.teherba.ramath.symbolic.VariableMap;
+import  org.teherba.ramath.symbolic.solver.BaseSolver;
 import  org.teherba.ramath.linear.Vector;
 import  java.util.ArrayList;
 import  java.util.Iterator;
@@ -114,7 +114,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
     //----------------------------
 
     /** Checks a {@link RelationSet} 
-     *  with al stored reasons and determines whether it
+     *  with all stored reasons and determines whether it
      *  <ul>
      *  <li>can be decided (and be cut from the expansion tree) or</li>
      *  <li>must be further expanded (and therefore will be appended to the queue).</li>
@@ -122,7 +122,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
      *  @param solver the complete state of the expansion tree
      *  @param rset2 the new {@link RelationSet} to be added to the queue 
      */
-    public String check(Solver solver, RelationSet rset2) {
+    public String check(BaseSolver solver, RelationSet rset2) {
         String result = "";
         int ireas = 0;
         boolean busy = true;

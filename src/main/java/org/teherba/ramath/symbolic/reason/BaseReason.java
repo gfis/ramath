@@ -19,7 +19,7 @@
  */
 package org.teherba.ramath.symbolic.reason;
 import  org.teherba.ramath.symbolic.RelationSet;
-import  org.teherba.ramath.symbolic.Solver;
+import  org.teherba.ramath.symbolic.solver.BaseSolver;
 
 /** Checks some reason why a node (a {@link RelationSet}) in the tree expansion
  *  of a {@link Solver} needs not to be investigated any further.
@@ -74,7 +74,7 @@ public class BaseReason {
      *  @param solver the complete state of the expansion tree
      *  @param rset2 the new {@link RelationSet} to be added to the queue 
      */
-    public String check(Solver solver, RelationSet rset2) {
+    public String check(BaseSolver solver, RelationSet rset2) {
         String result = rset2.evaluate(rset2.getTuple());
         return result;
     } // check

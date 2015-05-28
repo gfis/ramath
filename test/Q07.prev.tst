@@ -6,8 +6,8 @@ expanding queue[0]: a^3 + b^3 - c^3 = 0 modulo [2,2,2] *2
 [0+2*a,1+2*b,0+2*c]: failure constant=1, vgcd=2
 [1+2*a,1+2*b,0+2*c]: unknown 2+6*a+12*a^2+8*a^3+6*b+12*b^2+8*b^3-8*c^3=0 -> [1]
 [0+2*a,0+2*b,1+2*c]: failure constant=-1, vgcd=2
-[1+2*a,0+2*b,1+2*c]: success [1,0,1] trivial=3 6*a+12*a^2+8*a^3+8*b^3-6*c-12*c^2-8*c^3=0 -> [2]
-[0+2*a,1+2*b,1+2*c]: success [0,1,1] trivial=3 8*a^3+6*b+12*b^2+8*b^3-6*c-12*c^2-8*c^3=0 -> [3]
+[1+2*a,0+2*b,1+2*c]: success [1,0,1],trivial(3) success [3,0,3],trivial(3)  6*a+12*a^2+8*a^3+8*b^3-6*c-12*c^2-8*c^3=0 -> [2]
+[0+2*a,1+2*b,1+2*c]: success [0,1,1],trivial(3) success [0,3,3],trivial(3)  8*a^3+6*b+12*b^2+8*b^3-6*c-12*c^2-8*c^3=0 -> [3]
 [1+2*a,1+2*b,1+2*c]: failure constant=1, vgcd=2
 
 expanding queue[1]: 2 + 6*a + 12*a^2 + 8*a^3 + 6*b + 12*b^2 + 8*b^3 - 8*c^3 = 0 modulo [2,2,2] *4
@@ -26,7 +26,7 @@ expanding queue[2]: 6*a + 12*a^2 + 8*a^3 + 8*b^3 - 6*c - 12*c^2 - 8*c^3 = 0 modu
 [1+4*a,2+4*b,1+4*c]: unknown 8+12*a+48*a^2+64*a^3+48*b+96*b^2+64*b^3-12*c-48*c^2-64*c^3=0 -> [8]
 [3+4*a,2+4*b,1+4*c]: failure constant=34, vgcd=4
 [1+4*a,0+4*b,3+4*c]: failure constant=-26, vgcd=4
-[3+4*a,0+4*b,3+4*c]: success [3,0,3] trivial=3 108*a+144*a^2+64*a^3+64*b^3-108*c-144*c^2-64*c^3=0 -> [9]
+[3+4*a,0+4*b,3+4*c]: success [3,0,3],trivial(3) success [7,0,7],trivial(3)  108*a+144*a^2+64*a^3+64*b^3-108*c-144*c^2-64*c^3=0 -> [9]
 [1+4*a,2+4*b,3+4*c]: failure constant=-18, vgcd=4
 [3+4*a,2+4*b,3+4*c]: unknown 8+108*a+144*a^2+64*a^3+48*b+96*b^2+64*b^3-108*c-144*c^2-64*c^3=0 -> [10]
 
@@ -37,7 +37,7 @@ expanding queue[3]: 8*a^3 + 6*b + 12*b^2 + 8*b^3 - 6*c - 12*c^2 - 8*c^3 = 0 modu
 [2+4*a,3+4*b,1+4*c]: failure constant=34, vgcd=4
 [0+4*a,1+4*b,3+4*c]: failure constant=-26, vgcd=4
 [2+4*a,1+4*b,3+4*c]: failure constant=-18, vgcd=4
-[0+4*a,3+4*b,3+4*c]: success [0,3,3] trivial=3 64*a^3+108*b+144*b^2+64*b^3-108*c-144*c^2-64*c^3=0 -> [12]
+[0+4*a,3+4*b,3+4*c]: success [0,3,3],trivial(3) success [0,7,7],trivial(3)  64*a^3+108*b+144*b^2+64*b^3-108*c-144*c^2-64*c^3=0 -> [12]
 [2+4*a,3+4*b,3+4*c]: unknown 8+48*a+96*a^2+64*a^3+108*b+144*b^2+64*b^3-108*c-144*c^2-64*c^3=0 -> [13]
 
 expanding queue[4]: 28 + 108*a + 144*a^2 + 64*a^3 + 12*b + 48*b^2 + 64*b^3 - 64*c^3 = 0 modulo [2,2,2] *8
@@ -96,7 +96,7 @@ expanding queue[9]: 108*a + 144*a^2 + 64*a^3 + 64*b^3 - 108*c - 144*c^2 - 64*c^3
 [3+8*a,4+8*b,3+8*c]: unknown 64+216*a+576*a^2+512*a^3+384*b+768*b^2+512*b^3-216*c-576*c^2-512*c^3=0 -> [33]
 [7+8*a,4+8*b,3+8*c]: failure constant=380, vgcd=8
 [3+8*a,0+8*b,7+8*c]: failure constant=-316, vgcd=8
-[7+8*a,0+8*b,7+8*c]: success [7,0,7] trivial=3 1176*a+1344*a^2+512*a^3+512*b^3-1176*c-1344*c^2-512*c^3=0 -> [34]
+[7+8*a,0+8*b,7+8*c]: success [7,0,7],trivial(3) success [15,0,15],trivial(3)  1176*a+1344*a^2+512*a^3+512*b^3-1176*c-1344*c^2-512*c^3=0 -> [34]
 [3+8*a,4+8*b,7+8*c]: failure constant=-252, vgcd=8
 [7+8*a,4+8*b,7+8*c]: unknown 64+1176*a+1344*a^2+512*a^3+384*b+768*b^2+512*b^3-1176*c-1344*c^2-512*c^3=0 -> [35]
 
@@ -127,7 +127,7 @@ expanding queue[12]: 64*a^3 + 108*b + 144*b^2 + 64*b^3 - 108*c - 144*c^2 - 64*c^
 [4+8*a,7+8*b,3+8*c]: failure constant=380, vgcd=8
 [0+8*a,3+8*b,7+8*c]: failure constant=-316, vgcd=8
 [4+8*a,3+8*b,7+8*c]: failure constant=-252, vgcd=8
-[0+8*a,7+8*b,7+8*c]: success [0,7,7] trivial=3 512*a^3+1176*b+1344*b^2+512*b^3-1176*c-1344*c^2-512*c^3=0 -> [43]
+[0+8*a,7+8*b,7+8*c]: success [0,7,7],trivial(3) success [0,15,15],trivial(3)  512*a^3+1176*b+1344*b^2+512*b^3-1176*c-1344*c^2-512*c^3=0 -> [43]
 [4+8*a,7+8*b,7+8*c]: unknown 64+384*a+768*a^2+512*a^3+1176*b+1344*b^2+512*b^3-1176*c-1344*c^2-512*c^3=0 -> [44]
 
 expanding queue[13]: 8 + 48*a + 96*a^2 + 64*a^3 + 108*b + 144*b^2 + 64*b^3 - 108*c - 144*c^2 - 64*c^3 = 0 modulo [2,2,2] *8

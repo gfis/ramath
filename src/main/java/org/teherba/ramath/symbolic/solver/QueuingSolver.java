@@ -1,13 +1,13 @@
-/*  MonadicSolver: tries to solve a Diophantine equation by monadic variable expansion
- *  @(#) $Id: MonadicSolver.java 970 2012-10-25 16:49:32Z gfis $
- *  2012-10-25: EquationSet replaced by RelationSet
- *  2010-09-01: with solutions
- *  2009-09-30, Georg Fischer: copied from and replacing BinarySolver.java
+/*  QueuingSolver: tries to solve a Diophantine equation by monadic variable expansion
+ *  @(#) $Id: QueuingSolver.java 970 2012-10-25 16:49:32Z gfis $
+ *  2015-05-28: subdirectory solver
+ *  2015-02-07: try to treat variable name equivalences classes; Pforzheim 4th day post; Dorothea's 105th birthday
+ *  2014-04-05, Georg Fischer: copied from and replacing MonadicSolver.java
  *
  *  Limitation: only positive values for variables can be found
  */
 /*
- * Copyright 2009 Dr. Georg Fischer <punctum at punctum dot kom>
+ * Copyright 2014 Dr. Georg Fischer <punctum at punctum dot kom>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.teherba.ramath.symbolic;
-import  org.teherba.ramath.symbolic.Solver;
+package org.teherba.ramath.symbolic.solver;
+import  org.teherba.ramath.symbolic.solver.BaseSolver;
 import  org.teherba.ramath.symbolic.RelationSet;
 import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.VariableMap;
@@ -35,14 +35,14 @@ import  java.util.Vector; // essentially a java.util.Queue (Java 1.6)
 /** Tries to solve a set of Diophantine inequalities (a {@link RelationSet})
  *  by some systematic variable tree expansion.
  *  A single Diophantine equation is represented by a {@link Polynomial} compared to zero.
- *  The procedure tries successive, systematic substitutions of all variables in the equation set.
+ *  The procedure tries successive, systematic substitutions of all variables in the relation set.
  *  <p>
  *  On some level of the tree expansion:
  *  <ul>
  *  <li>all undecided nodes from the previous level are investigated,</li>
  *  <li>the variable set is expanded (somehow, for example with all possible
  *  combinations of one additional bit),</li>
- *  <li>the resulting nodes (equation sets) are filtered through a series of tests,
+ *  <li>the resulting nodes (relation sets) are filtered through a series of tests,
  *  for example modulo checks or size estimations,</li>
  *  <li>only the nodes which could not be decided are stored for the next iteration.</li>
  *  </ul>
@@ -69,8 +69,8 @@ import  java.util.Vector; // essentially a java.util.Queue (Java 1.6)
  *  whereas its anchestor <em>BinarySolver</em> could only solve one {@link Polynomial} = 0.
  *  @author Dr. Georg Fischer
  */
-public class MonadicSolver extends Solver {
-    public final static String CVSID = "@(#) $Id: MonadicSolver.java 970 2012-10-25 16:49:32Z gfis $";
+public class QueuingSolver extends BaseSolver {
+    public final static String CVSID = "@(#) $Id: QueuingSolver.java 970 2012-10-25 16:49:32Z gfis $";
 
     /** Debugging switch: 0 = no, 1 = moderate, 2 = more, 3 = extreme verbosity */
     private int debug = 1;
@@ -81,62 +81,20 @@ public class MonadicSolver extends Solver {
 
     /** No-args Constructor - prints on {@link java.lang.System#out}
      */
-    public MonadicSolver() {
+    public QueuingSolver() {
         super(new PrintWriter(System.out));
     } // no-args Constructor
 
     /** Constructor with writer
      *  @param writer where to write the proof trace
      */
-    public MonadicSolver(PrintWriter writer) {
+    public QueuingSolver(PrintWriter writer) {
         super(writer); // this will also initialize the optional parameters
     } // Constructor(printer)
 
     //---------------------
     // Heavyweight Methods
     //---------------------
-
-    /** Refines the variables of {@link RelationSet} <em>rset1</em>
-     *  by one level of modulus expansion and computes the resulting RelationSet.
-     *  @param rset1 the RelationSet to be refined
-     *  @param varMap1 variables of rset1 mapped to null
-     *  @param tupleShift2 factor for the variables
-     *  @param mods result of a dispenser, modulus constants for the variables
-     *  @return the resulting RelationSet (rset2)
-     */
-    private RelationSet refineVariables(RelationSet rset1, VariableMap varMap1, BigInteger tupleShift2, int[] mods) {
-        VariableMap varMap0 = rset1.getTuple().clone(); // map for constant parts of expressions
-        VariableMap varMap2 = new VariableMap(); // map for variable replacement expressions
-        Iterator<String> viter1 = varMap1.keySet().iterator();
-        int imod = 0;
-        while (viter1.hasNext()) { // over all variables in the equation set: replace x_i by (2*x_j + k), j = i+1, k=0..base-1
-            String varName  = viter1.next();
-            StringBuffer expr2 = (new StringBuffer(16)).append('(');
-            if (mods[imod] > 0) { // REFINED_FORM - avoid "0+"
-                expr2   .append(String.valueOf(mods[imod]))
-                        .append('+');
-            } // avoid "0+"
-            expr2   .append(String.valueOf(getModBase()))
-                    .append('*')
-                    .append(varName)
-                    .append(')')
-                    ;
-            varMap2.put(varName, expr2.toString()); // stored expanded formula for 1 variable
-
-            BigInteger const0 = new BigInteger(varMap0.get(varName));
-            if (mods[imod] > 0) { // avoid "*0"
-                const0 = const0.add((BigInteger.valueOf(mods[imod])).multiply(tupleShift2));
-            } // avoid "*0"
-            varMap0.put(varName, const0.toString()); // store expanded constant for 1 variable
-            imod ++;
-        } // while viter1
-        // varMap2 now contains the complete replacements for one derived equation set
-
-        RelationSet rset2 = rset1.substitute(varMap2).normalize(); // one expanded child
-        rset2.setTupleShift     (tupleShift2.multiply(BigInteger.valueOf(getModBase())));
-        rset2.setTuple          (varMap0);
-        return rset2;
-    } // refineVariables
 
     /** Tries to find a similiar {@link RelationSet} in the solver's history,
      *  either in the parents or in all queue elements (depending on the findMode)
@@ -181,56 +139,78 @@ public class MonadicSolver extends Solver {
      *  @param queueIndex position in the queue of the element ({@link RelationSet}) to be expanded, >= 0
      */
     public void expand(int queueIndex) {
-        RelationSet rset1 = get(queueIndex); // expand this parent element
-        int curLevel = rset1.getNestingLevel() + 1;
-        int base =  getModBase();
-        VariableMap varMap1 = rset1.getVariableMap(null, getUpperSubst()); // parent variable names mapped to null
-        BigInteger tupleShift2 = rset1.getTupleShift();
-        int varNo = varMap1.size(); // total number of variables to be substituted
-        ModoMeter meter = new ModoMeter(varNo, getModBase()); // for n-adic expansion, e.g. x_i -> 0+2*x_j, 1+2*x_j
+        RelationSet rset1 = get(queueIndex); // expand this element (the "parent")
+        int curLevel      = rset1.getNestingLevel() + 1;
+        int base          =  getModBase();
+        VariableMap vmap1 = rset1.getTuple();
+        int varNo         = vmap1.size(); // total number of variables to be substituted
+        ModoMeter meter   = new ModoMeter(varNo, 1); // assume that all variables are not involved
+        VariableMap vmapr = rset1.getRest(base).getExpressionMap();
+        Iterator<String> iter1 = vmap1.keySet().iterator();
+        int im = 0;
+        while (iter1.hasNext()) {
+            String name = iter1.next();
+            if (true || vmapr.get(name) != null) { // name occurs in rest: this will be involved
+                meter.setBase(im, base); // involve it
+            } // name in rest
+            im ++;
+        } // while iter1
+        // meter now ready for n-adic expansion, e.g. x -> 2*x+0, 2*x+1
         BigInteger factor = BigInteger.valueOf(base).pow(curLevel);
         if (debug >= 1) {
             trace.println();
-            trace.println("expanding [" + queueIndex + "]"
-                    + "*"  + tupleShift2.toString()
-                    + ": " + polish(rset1, factor));
+            trace.println("expanding queue[" + queueIndex + "]: "
+                    + (rset1.toString())
+                    + " modulo " + meter.toBaseList()
+                    + " *" + factor.toString()
+                //  + ", vmap1=" + vmap1.toString()
+                //  + ", vmapr=" + vmapr.toString()
+                    );
         }
         while (meter.hasNext()) { // over all constant combinations - generate all children
-            int[] mods = meter.toArray();
-            RelationSet rset2 = refineVariables(rset1, varMap1, tupleShift2, mods);
+            VariableMap vmap2 = vmap1.refineExpressions(meter, 0);
+            RelationSet rset2 = getStartSet().substitute(vmap2); // .normalize();
             rset2.setNestingLevel   (curLevel); // + 1);
             rset2.setParentIndex    (queueIndex);
-            String decision = rset2.evaluate(rset2.getTuple()); // getTuple = varMap0
+            rset2.setTuple          (vmap2);
+            int qpos = size(); // position where the next queue element is stored
+            add(rset2);
+            String decision = rset2.evaluate(vmap2);
+            remove(qpos);
 
-            String tupleStr = rset2.getTuple().toString() + "*" + rset2.getTupleShift().toString() + " ";
             if (! decision.startsWith(VariableMap.UNKNOWN) && ! decision.startsWith(VariableMap.SUCCESS)) {
-                if (debug >= 0) {
-                    trace.print(meter.toString() + ": ");
-                    trace.print(tupleStr);
-                    trace.print(decision);
-                    trace.println(" " + polish(rset2, factor));
-                }
+                    if (debug >= 0) {
+                        trace.print(vmap2.toVector() + ": ");
+                        trace.println(decision);
+                    }
             } else { // UNKNOWN || SUCCESS
-                String similiar = findSimiliar(rset2);
-                if (! similiar.startsWith("[-1]")) { // similiar RelationSet was found
-                    if (debug >= 1) {
-                        trace.print(meter.toString() + ": ");
-                        trace.print(tupleStr);
-                        trace.print(VariableMap.SIMILIAR + " to " + similiar);
-                        trace.println(" " + polish(rset2, factor));
-                    }
-                } else { // no similiar RelationSet found
-                    if (debug >= 1) {
-                        trace.print(meter.toString() + ": ");
-                        trace.print(tupleStr);
-                        trace.print(decision + " -> [" + size() + "]");
-                        if (! rset2.hasConstant() && tupleStr.indexOf("=0") < 0) {
-                            trace.print(", const=0 ");
+                if (size() == 1 && get(0).toString().equals(rset2.clone().normalize().toString())) { // first queue entry, expanded with [0,0,...0]
+                        if (debug >= 1) {
+                            trace.print(vmap2.toVector() + ": ");
+                            trace.print(VariableMap.SAME + " as");
+                            trace.print(" " + polish(rset2, factor));
+                            trace.println();
                         }
-                        trace.println(" " + polish(rset2, factor));
-                    }
-                    add(rset2);
-                } // no similiar
+                } else { // not [0]
+                    String similiar = findSimiliar(rset2);
+                    if (! similiar.startsWith("[-1]")) { // no index "[-1]" means a similiar RelationSet was found
+                        if (debug >= 1) {
+                            trace.print(vmap2.toVector() + ": ");
+                            trace.print(VariableMap.SIMILIAR + " to " + similiar);
+                            trace.print(" " + polish(rset2, factor));
+                            trace.println();
+                        }
+                    } else { // "[-1]", no similiar RelationSet found
+                        if (debug >= 1) {
+                            trace.print(vmap2.toVector() + ": ");
+                            trace.print(decision);
+                            trace.print(" " + polish(rset2, factor));
+                            trace.print(" -> [" + size() + "]");
+                            trace.println();
+                        }
+                        add(rset2);
+                    } // no similiar
+                } // not [0]
             } // unkown
             meter.next();
         } // while meter.hasNext() - generate all children
@@ -242,23 +222,16 @@ public class MonadicSolver extends Solver {
 
     /** Test method.
      *  @param args command line arguments, see {@link Solver#getArguments}.
-     *  <ul>
-     *  <li>-b modulo base (default 2)</li>
-     *  <li>-e equation set (enclosed in quotes)</li>
-     *  <li>-f fileName (for a file containing the polynomial)</li>
-     *  <li>-l maximum nesting level (default 4)</li>
-     *  <li>-s substitute subsets of variables (default: all variables)</li>
-     *  <li>-u do not substitute uppercase variables (default: all variables)</li>
-     *  </ul>
      */
     public static void main(String[] args) {
-        MonadicSolver solver = new MonadicSolver();
+        QueuingSolver solver = new QueuingSolver();
         String expr = solver.getArguments(0, args);
-        RelationSet   rset   = new RelationSet("(3+a)^2+(4+b)^2=(5+c)^2"); // solution a=b=c=0
+        RelationSet rset0 = new RelationSet("(3+a)^2+(4+b)^2=(5+c)^2"); // solution a=b=c=0
         if (expr != null) {
-            rset = rset.parse(expr);
+            rset0 = rset0.parse(expr);
         }
-        solver.solve(rset);
+        rset0.setTuple(rset0.getExpressionMap());
+        solver.solve(rset0);
     } // main
 
-} // MonadicSolver
+} // QueuingSolver
