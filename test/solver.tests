@@ -42,13 +42,13 @@ TEST T05 tree solver, biquadratic plus
 CALL TreeSolver -l 2 -e "x^4 + y^4 - z^2" 
 
 TEST T06 Markov(3, solvable)
-CALL TreeSolver -l 3 -e "x^2 + y^2 + z^2 - 3*x*y*z"
+CALL TreeSolver -l 4 -e "x^2 + y^2 + z^2 - 3*x*y*z"
 
 TEST T07 Fermat^3 mod 2
 CALL TreeSolver -b 2 -l 3 -e "a^3 + b^3 - c^3" 
 
 TEST T08 EEC(3) mod 2
-CALL TreeSolver -b 2 -l 2 -e "a^3 + b^3 + c^3 - d^3" 
+CALL TreeSolver -b 2 -l 3 -e "a^3 + b^3 + c^3 - d^3" 
 
 TEST T09 Markov(2, unsolvable, power)
 CALL TreeSolver -l 6 -e "x^2 + y^2 + z^2 - 2*x*y*z"
@@ -96,10 +96,8 @@ TEST T23 Fermat^5 mod 2
 CALL TreeSolver -b 2 -l 2 -e "a^5 + b^5 - c^5" 
 
 # Smart p. 11 Elliptic Curve; Solutions: x=5,y=+-11; x=2,y=+-2
-# finds x=5,y=11
-# Caution, "grown from" inhibits x=2,y=2 - wrong!
 TEST T24 Smart p. 11 Elliptic Curve
-CALL TreeSolver -b 2 -l 5 -e "y^2 -x^3 + 4 = 0" 
+CALL TreeSolver -b 2 -l 5 -e "y^2 - x^3 + 4 = 0" 
 
 #-------------------------------
 # c.f. http://planetmath.org/encyclopedia/InfiniteDescent.html

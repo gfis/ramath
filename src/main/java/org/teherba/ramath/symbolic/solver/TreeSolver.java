@@ -120,14 +120,19 @@ public class TreeSolver extends BaseSolver {
         ModoMeter meter   = new ModoMeter(varNo, 1); // assume that all variables are not involved
         VariableMap vmapr = rset1.getRest(BigInteger.valueOf(base - skippable).multiply(factor)).getExpressionMap(); // base if normalized below
         Iterator<String> iter1 = vmap1.keySet().iterator();
+        boolean empty = true;
         int im = 0;
         while (iter1.hasNext()) {
             String name = iter1.next();
             if (skippable == 1 || vmapr.get(name) != null) { // name occurs in rest: this will be involved
                 meter.setBase(im, base); // involve it
+                empty = false;
             } // name in rest
             im ++;
         } // while iter1
+        if (empty) { // vmapr was empty
+        	meter = new ModoMeter(varNo, base); // involve all variables / avoid modulo [1,1,1,...]
+        } // vmapr empty
         // meter now ready for n-adic expansion, e.g. x -> 2*x+0, 2*x+1
         if (debug >= 1) {
             trace.println();

@@ -98,9 +98,9 @@ public class BaseSolver extends Stack<RelationSet> {
         reasons = new ReasonFactory();
         reasons.addReason("base"        );
         reasons.addReason("transpose"   );
-    //  reasons.addReason("grow"        ); // related to 'same' and 'similiar'
         reasons.addReason("same"        );
         reasons.addReason("similiar"    );
+        reasons.addReason("grow"        ); // related to 'same' and 'similiar'
     } // initialize
 
     /** Gets the {@link RelationSet} to be solved

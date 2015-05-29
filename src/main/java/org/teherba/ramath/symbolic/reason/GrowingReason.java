@@ -75,7 +75,7 @@ public class GrowingReason extends BaseReason {
         //  if (rset1.getMeter().equals(rset2.getMeter())) { // condition (1)
                 if (rset2.isGrownFrom(rset1)) {
                     busy = false;
-                    result = VariableMap.FAILURE + ", grown from [" + iparent + "]";
+                    result = "grown from [" + iparent + "] " + solver.polish(rset2);;
                 } // condition (2)
             } // condition (1)
             iparent = all ? iparent - 1 : rset1.getParentIndex();

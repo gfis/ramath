@@ -1843,6 +1843,7 @@ x^2 + 3*x^3 + 2*x^4
                 VariableMap vmap2 = vmap1.clone();
                 ModoMeter meter = new ModoMeter(vmap2.size(), 2); // run {0,1} through all variables
                 boolean success = false;
+                // String residues = " ";
                 while (meter.hasNext()) { 
                     vmap2.setValues(meter);
                     Polynomial poly2 = this.substitute(vmap2);
@@ -1857,11 +1858,20 @@ x^2 + 3*x^3 + 2*x^4
                         } else {
                             result.append(" =0");
                         }
-                    } // isZero
+                        // isZero
+                    } else { // ! isZero
+                    /*
+                    	if (residues.length() > 1) {
+                    		residues += "/";
+                    	}
+                    	residues += poly2.toString().replaceAll(" ", "");
+                    */
+                    } // ! isZero
                     meter.next();
                 } // while meter
                 if (! success) {
                     result.append(VariableMap.UNKNOWN);
+                    // result.append(residues);
                     if (debug >= 3) {
                         result.append(" varGCD=" + varGCD.toString() + ", constant=" + getConstant().toString()
                                 + ", gcd=" + varGCD.gcd(constant.abs()).toString());
