@@ -48,28 +48,30 @@ public class SimiliarReason extends BaseReason {
         int isimil = -1; // assume not found
         int iqueue = solver.size() - 1;
         String message = null;
-        switch (solver.getFindMode()) {
-            default:
-            case BaseSolver.FIND_IN_PREVIOUS:
-                while (isimil < 0 && iqueue >= 0) {
-                    message = solver.get(iqueue).similiarity(rset2);
-                    if (message != null) {
-                        isimil = iqueue;
-                    }
-                    iqueue --;
-                } // while iqueue
-                break;
-            case BaseSolver.FIND_IN_PARENTS:
-                iqueue = rset2.getParentIndex();
-                while (isimil < 0 && iqueue >= 0) {
-                    message = solver.get(iqueue).similiarity(rset2);
-                    if (message != null) {
-                        isimil = iqueue;
-                    }
+        if (iqueue >= 0) { // root not similiar to itself
+            switch (solver.getFindMode()) {
+                default:
+                case BaseSolver.FIND_IN_PREVIOUS:
+                    while (isimil < 0 && iqueue >= 0) {
+                        message = solver.get(iqueue).similiarity(rset2);
+                        if (message != null) {
+                            isimil = iqueue;
+                        }
+                        iqueue --;
+                    } // while iqueue
+                    break;
+                case BaseSolver.FIND_IN_PARENTS:
                     iqueue = rset2.getParentIndex();
-                } // while iqueue
-                break;
-        } // switch findMode
+                    while (isimil < 0 && iqueue >= 0) {
+                        message = solver.get(iqueue).similiarity(rset2);
+                        if (message != null) {
+                            isimil = iqueue;
+                        }
+                        iqueue = rset2.getParentIndex();
+                    } // while iqueue
+                    break;
+            } // switch findMode
+    	} // iqueue > 0
         return "[" + String.valueOf(isimil) + "], " + message;
     } // findSimiliar
 
@@ -77,6 +79,12 @@ public class SimiliarReason extends BaseReason {
      *  it is simliar to any other in the tree expansion
      *  @param solver the complete state of the expansion tree
      *  @param rset2 the new {@link RelationSet} to be added to the queue 
+     *  @return a message string starting with one of 
+     *  <ul>
+     *  <li>{@link VariableMap#UNKNOWN} - the RelationSet cannot be decided and must be further expanded</li>
+     *  <li>{@link VariableMap#FAILURE} - the RelationSet is not possible</li>
+     *  <li>{@link VariableMap#SUCCESS} - there is a solution, but the RelationSet must further be expanded</li>
+     *  </ul>
      */
     public String check(BaseSolver solver, RelationSet rset2) {
         String result = VariableMap.UNKNOWN;
@@ -86,16 +94,5 @@ public class SimiliarReason extends BaseReason {
         } // no index "[-1]"
         return result;
     } // check
-
-/* old code in TreeSolver
-                    String similiar = findSimiliar(rset2);
-                    if (! similiar.startsWith("[-1]")) { // no index "[-1]" means a similiar RelationSet was found
-                        if (debug >= 1) {
-                            trace.print(vmap2.toVector() + ": ");
-                            trace.print(VariableMap.SIMILIAR + " to " + similiar);
-                            trace.print(" " + polish(rset2));
-                            trace.println();
-                        }
-*/
 
 } // SimiliarReason

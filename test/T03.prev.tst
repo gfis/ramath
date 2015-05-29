@@ -1,7 +1,7 @@
 Expanding for base 2, transposables =    0   0   2   2
 
 expanding queue[0]: a^2 + b^2 - 3*c^2 - 3*d^2 = 0 modulo [2,2,2,2] *2
-[0+2*a,0+2*b,0+2*c,0+2*d]: same form as 4*a^2+4*b^2-12*c^2-12*d^2=0
+[0+2*a,0+2*b,0+2*c,0+2*d]: same form as 4*a^2+4*b^2-12*c^2-12*d^2=0 success [0,0,0,0],trivial(3) 
 [1+2*a,0+2*b,0+2*c,0+2*d]: failure constant=1, vgcd=4
 [0+2*a,1+2*b,0+2*c,0+2*d]: failure constant=1, vgcd=4
 [1+2*a,1+2*b,0+2*c,0+2*d]: failure constant=2, vgcd=4

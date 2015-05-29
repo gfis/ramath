@@ -107,11 +107,16 @@ public class TreeSolver extends BaseSolver {
     public void expand(int queueIndex) {
         int skippable = 0; // 1 does not really work
         RelationSet rset1 = get(queueIndex); // expand this element (the "parent")
+        VariableMap vmap1 = rset1.getTuple();
+        // reasons.printDecision(trace, this, rset1, vmap1);
         int curLevel      = rset1.getNestingLevel() + 1;
         int base          = getModBase() + skippable;
         BigInteger factor = BigInteger.valueOf(base - skippable).pow(curLevel);
-        VariableMap vmap1 = rset1.getTuple();
         int varNo         = vmap1.size(); // total number of variables to be substituted
+        /*  Variables having at least a coefficient of factor*base 
+            are not involved in the modular expansion.
+            If this feature is not desired, the ModoMeter should be initialized with base.
+        */
         ModoMeter meter   = new ModoMeter(varNo, 1); // assume that all variables are not involved
         VariableMap vmapr = rset1.getRest(BigInteger.valueOf(base - skippable).multiply(factor)).getExpressionMap(); // base if normalized below
         Iterator<String> iter1 = vmap1.keySet().iterator();
@@ -143,25 +148,6 @@ public class TreeSolver extends BaseSolver {
                 rset2.setTupleShift     (factor);
                 rset2.setMeter(meter.toString());
                 reasons.printDecision(trace, this, rset2, vmap2);
-            /*
-                String decision = reasons.check(this, rset2);
-                if (! decision.startsWith(VariableMap.UNKNOWN) && 
-                    ! decision.startsWith(VariableMap.SUCCESS)) { // FAILURE etc.
-                        if (debug >= 1) {
-                            trace.print(vmap2.toVector() + ": ");
-                            trace.println(decision);
-                        }
-                } else { // UNKNOWN || SUCCESS
-                        if (debug >= 1) {
-                            trace.print(vmap2.toVector() + ": ");
-                            trace.print(decision);
-                            trace.print(" " + this.polish(rset2));
-                            trace.print(" -> [" + this.size() + "]");
-                            trace.println();
-                        }
-                        this.add(rset2);
-                } // unknown
-            */
             } // vmap2.size() > 0
             
             meter.next();

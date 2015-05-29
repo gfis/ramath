@@ -1209,7 +1209,7 @@ x^2 + 3*x^3 + 2*x^4
     } // groupBy
 
     /** Extracts a new {@link Polynomial} consisting of all monomials
-     *  whose coefficient is not divisible by the parameter <em>factor</em>.
+     *  whose coefficients are not divisible by the parameter <em>factor</em>.
      *  @param factor the common constant factor of the other monomials
      *  @return polynomial with monomials from <em>this</em> polynomial
      */

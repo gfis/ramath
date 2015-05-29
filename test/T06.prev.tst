@@ -6,8 +6,8 @@ expanding queue[0]: x^2 + y^2 - 3*x*y*z + z^2 = 0 modulo [2,2,2] *2
 [0+2*x,1+2*y,0+2*z]: failure constant=1, vgcd=4
 [1+2*x,1+2*y,0+2*z]: success [1,1,2],trivial(2)  2+4*x+4*x^2+4*y+4*y^2-6*z-12*x*z-12*y*z-24*x*y*z+4*z^2=0 -> [2]
 [0+2*x,0+2*y,1+2*z]: failure constant=1, vgcd=4
-[1+2*x,0+2*y,1+2*z]: failure transposition of [2] {0/0+2*z,0/1+2*x,0/1+2*y} by 0+2*z|0+2*y 1+2*y|1+2*z
-[0+2*x,1+2*y,1+2*z]: failure transposition of [2] {0/0+2*z,0/1+2*x,0/1+2*y} by 0+2*z|0+2*x 1+2*x|1+2*y 1+2*y|1+2*z
+[1+2*x,0+2*y,1+2*z]: failure transposition of [2] {0/0+2*z,0/1+2*x,0/1+2*y} by 0+2*z|0+2*y 1+2*y|1+2*z success [1,2,1],trivial(2) 
+[0+2*x,1+2*y,1+2*z]: failure transposition of [2] {0/0+2*z,0/1+2*x,0/1+2*y} by 0+2*z|0+2*x 1+2*x|1+2*y 1+2*y|1+2*z success [2,1,1],trivial(2) 
 [1+2*x,1+2*y,1+2*z]: success [1,1,1],trivial(2)  -2*x+4*x^2-2*y-12*x*y+4*y^2-2*z-12*x*z-12*y*z-24*x*y*z+4*z^2=0 -> [3]
 
 expanding queue[1]: 4*x^2 + 4*y^2 - 24*x*y*z + 4*z^2 = 0 modulo [2,2,2] *4
@@ -41,7 +41,7 @@ expanding queue[3]:  - 2*x + 4*x^2 - 2*y - 12*x*y + 4*y^2 - 2*z - 12*x*z - 12*y*
 [3+4*x,3+4*y,3+4*z]: failure constant=-54, vgcd=4
 
 expanding queue[4]: 16*x^2 + 16*y^2 - 192*x*y*z + 16*z^2 = 0 modulo [1,1,1] *8
-[0+4*x,0+4*y,0+4*z]: similiar to  [4], same  16*x^2+16*y^2-192*x*y*z+16*z^2=0
+[0+4*x,0+4*y,0+4*z]: similiar to  [4], same  16*x^2+16*y^2-192*x*y*z+16*z^2=0 success [0,0,0],trivial(3) 
 
 expanding queue[5]:  - 16*x + 16*x^2 - 16*y - 96*x*y + 16*y^2 + 4*z - 48*x*z - 48*y*z - 192*x*y*z + 16*z^2 = 0 modulo [1,1,2] *8
 [1+4*x,1+4*y,2+8*z]: success [1,1,2],trivial(2) success [5,1,2],NONTRIVIAL success [1,5,2],NONTRIVIAL  -16*x+16*x^2-16*y-96*x*y+16*y^2+8*z-96*x*z-96*y*z-384*x*y*z+64*z^2=0 -> [10]
@@ -61,8 +61,8 @@ expanding queue[8]:  - 4*x + 16*x^2 - 4*y - 48*x*y + 16*y^2 - 4*z - 48*x*z - 48*
 [1+8*x,5+8*y,1+8*z]: failure constant=12, vgcd=8
 [5+8*x,5+8*y,1+8*z]: success [13,5,1],NONTRIVIAL success [5,13,1],NONTRIVIAL  -24-40*x+64*x^2-40*y-192*x*y+64*y^2-584*z-960*x*z-960*y*z-1536*x*y*z+64*z^2=0 -> [14]
 [1+8*x,1+8*y,5+8*z]: failure constant=12, vgcd=8
-[5+8*x,1+8*y,5+8*z]: failure transposition of [14] {0/1+8*z,0/5+8*x,0/5+8*y} by 1+8*z|1+8*y 5+8*y|5+8*z
-[1+8*x,5+8*y,5+8*z]: failure transposition of [14] {0/1+8*z,0/5+8*x,0/5+8*y} by 1+8*z|1+8*x 5+8*x|5+8*y 5+8*y|5+8*z
+[5+8*x,1+8*y,5+8*z]: failure transposition of [14] {0/1+8*z,0/5+8*x,0/5+8*y} by 1+8*z|1+8*y 5+8*y|5+8*z success [13,1,5],NONTRIVIAL success [5,1,13],NONTRIVIAL 
+[1+8*x,5+8*y,5+8*z]: failure transposition of [14] {0/1+8*z,0/5+8*x,0/5+8*y} by 1+8*z|1+8*x 5+8*x|5+8*y 5+8*y|5+8*z success [1,13,5],NONTRIVIAL success [1,5,13],NONTRIVIAL 
 [5+8*x,5+8*y,5+8*z]: failure constant=-300, vgcd=8
 
 expanding queue[9]:  - 8 - 12*x + 16*x^2 - 12*y - 48*x*y + 16*y^2 - 100*z - 144*x*z - 144*y*z - 192*x*y*z + 16*z^2 = 0 modulo [2,2,2] *8
@@ -78,7 +78,7 @@ expanding queue[9]:  - 8 - 12*x + 16*x^2 - 12*y - 48*x*y + 16*y^2 - 100*z - 144*
 expanding queue[10]:  - 16*x + 16*x^2 - 16*y - 96*x*y + 16*y^2 + 8*z - 96*x*z - 96*y*z - 384*x*y*z + 64*z^2 = 0 modulo [2,2,2] *16
 [1+8*x,1+8*y,2+16*z]: success [1,1,2],trivial(2)  -32*x+64*x^2-32*y-384*x*y+64*y^2+16*z-384*x*z-384*y*z-3072*x*y*z+256*z^2=0 -> [18]
 [5+8*x,1+8*y,2+16*z]: success [5,1,2],NONTRIVIAL  32*x+64*x^2-224*y-384*x*y+64*y^2-176*z-384*x*z-1920*y*z-3072*x*y*z+256*z^2=0 -> [19]
-[1+8*x,5+8*y,2+16*z]: failure transposition of [19] {0/1+8*y,0/2+16*z,0/5+8*x} by 1+8*y|1+8*x 5+8*x|5+8*y
+[1+8*x,5+8*y,2+16*z]: failure transposition of [19] {0/1+8*y,0/2+16*z,0/5+8*x} by 1+8*y|1+8*x 5+8*x|5+8*y success [1,5,2],NONTRIVIAL 
 [5+8*x,5+8*y,2+16*z]: unknown -96-160*x+64*x^2-160*y-384*x*y+64*y^2-1136*z-1920*x*z-1920*y*z-3072*x*y*z+256*z^2=0 -> [20]
 [1+8*x,1+8*y,10+16*z]: failure constant=72, vgcd=16
 [5+8*x,1+8*y,10+16*z]: failure constant=-24, vgcd=16
@@ -118,7 +118,7 @@ expanding queue[13]:  - 8*x + 64*x^2 - 8*y - 192*x*y + 64*y^2 - 8*z - 192*x*z - 
 expanding queue[14]:  - 24 - 40*x + 64*x^2 - 40*y - 192*x*y + 64*y^2 - 584*z - 960*x*z - 960*y*z - 1536*x*y*z + 64*z^2 = 0 modulo [2,2,2] *16
 [5+16*x,5+16*y,1+16*z]: failure constant=-24, vgcd=16
 [13+16*x,5+16*y,1+16*z]: success [13,5,1],NONTRIVIAL  176*x+256*x^2-464*y-768*x*y+256*y^2-3088*z-3840*x*z-9984*y*z-12288*x*y*z+256*z^2=0 -> [30]
-[5+16*x,13+16*y,1+16*z]: failure transposition of [30] {0/1+16*z,0/13+16*x,0/5+16*y} by 13+16*x|13+16*y 5+16*y|5+16*x
+[5+16*x,13+16*y,1+16*z]: failure transposition of [30] {0/1+16*z,0/13+16*x,0/5+16*y} by 13+16*x|13+16*y 5+16*y|5+16*x success [5,13,1],NONTRIVIAL 
 [13+16*x,13+16*y,1+16*z]: failure constant=-168, vgcd=16
 [5+16*x,5+16*y,9+16*z]: unknown -544-2000*x+256*x^2-2000*y-6912*x*y+256*y^2-912*z-3840*x*z-3840*y*z-12288*x*y*z+256*z^2=0 -> [31]
 [13+16*x,5+16*y,9+16*z]: failure constant=-1480, vgcd=16

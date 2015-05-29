@@ -68,8 +68,8 @@ CALL TreeSolver -b 2 -l 2 -e "a^3 + 3*b^3 - 9*c^3"
 TEST T14 modified Fermat^3 mod 3 proof
 CALL TreeSolver -b 3 -l 2 -e "a^3 + 3*b^3 - 9*c^3"
 
-# TEST T15 modified Fermat^3 mod 6
-# CALL TreeSolver -b 6 -l 2 -e "a^3 + 3*b^3 - 9*c^3"
+TEST T15 EEC(3) mod 2
+CALL TreeSolver -b 2 -l 3 -e "a^3 + b^3 + c^3 - d^3" 
 
 TEST T16 Pythagoras
 CALL TreeSolver -b 2 -l 4 -e "a^2 + b^2 - c^2"

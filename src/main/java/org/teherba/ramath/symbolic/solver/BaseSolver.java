@@ -48,7 +48,7 @@ public class BaseSolver extends Stack<RelationSet> {
     private int debug = 0;
 
     /** index into queue for unresolved {@link RelationSet}s */
-    protected int queueHead;
+    public int queueHead;
 
     /** Writer for proof trace.
      *  The printer is still used in {@link MonadicSolver}, but
@@ -274,7 +274,7 @@ public class BaseSolver extends Stack<RelationSet> {
      *  @param rset polish this RelationSet
      *  @return polished formula
      */
-    public    String polish(RelationSet rset) {
+    public String polish(RelationSet rset) {
         return polish(rset, rset.getTupleShift());
     } // polish(1)
 

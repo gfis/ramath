@@ -41,7 +41,7 @@ expanding queue[3]:  - 2 - 6*x + 4*x^2 - 6*y - 20*x*y + 4*y^2 - 6*z - 20*x*z - 2
 [3+4*x,3+4*y,3+4*z]: unknown -108-156*x+16*x^2-156*y-240*x*y+16*y^2-156*z-240*x*z-240*y*z-320*x*y*z+16*z^2=0 -> [9]
 
 expanding queue[4]: 16*x^2 + 16*y^2 - 320*x*y*z + 16*z^2 = 0 modulo [1,1,1] *8
-[0+4*x,0+4*y,0+4*z]: similiar to  [4], same  16*x^2+16*y^2-320*x*y*z+16*z^2=0
+[0+4*x,0+4*y,0+4*z]: similiar to  [4], same  16*x^2+16*y^2-320*x*y*z+16*z^2=0 success [0,0,0],trivial(3) 
 
 expanding queue[5]:  - 4 - 32*x + 16*x^2 - 32*y - 160*x*y + 16*y^2 - 4*z - 80*x*z - 80*y*z - 320*x*y*z + 16*z^2 = 0 modulo [1,1,2] *8
 [1+4*x,1+4*y,2+8*z]: failure constant=-4, vgcd=8

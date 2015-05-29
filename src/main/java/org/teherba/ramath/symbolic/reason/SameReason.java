@@ -39,26 +39,25 @@ public class SameReason extends BaseReason {
     } // no-args Constructor
     
     /** Checks a {@link RelationSet} and determines whether 
-     *  it is the same as the tree expansion root {@link RelationSet}
+     *  it is the same as the {@link RelationSet} at the root of the expansion tree
      *  @param solver the complete state of the expansion tree
      *  @param rset2 the new {@link RelationSet} to be added to the queue 
+     *  @return a message string starting with one of 
+     *  <ul>
+     *  <li>{@link VariableMap#UNKNOWN} - the RelationSet cannot be decided and must be further expanded</li>
+     *  <li>{@link VariableMap#FAILURE} - the RelationSet is not possible</li>
+     *  <li>{@link VariableMap#SUCCESS} - there is a solution, but the RelationSet must further be expanded</li>
+     *  </ul>
      */
     public String check(BaseSolver solver, RelationSet rset2) {
         String result = VariableMap.UNKNOWN;
-        if (solver.size() == 1 && solver.get(0).toString().equals(rset2.clone().normalize().toString())) { 
+        if (solver.size() == 1 
+            //  && rset2.getNestingLevel() > 0 
+                && solver.get(0).toString().equals(rset2.clone().normalize().toString())) { 
             // first queue entry, expanded with [0,0,...0]
             result  = VariableMap.SAME + " form as " + solver.polish(rset2);
         } // same as [0]
         return result;
     } // check
-
-/* old code in TreeSolver
-                if (size() == 1 && get(0).toString().equals(rset2.clone().normalize().toString())) { // first queue entry, expanded with [0,0,...0]
-                        if (debug >= 1) {
-                            trace.print(vmap2.toVector() + ": ");
-                            trace.print(VariableMap.SAME + " as");
-                            trace.print(" " + polish(rset2));
-                            trace.println();
-*/
 
 } // SameReason
