@@ -1002,7 +1002,7 @@ x^2 + 3*x^3 + 2*x^4
     } // getVariableMap(Poly)
 
     /** Gets a map from all variable names in <em>this</em> Polynomial (the keys)
-     *  to the expression "0+1*x", where "x" is a placeholder for 
+     *  to the expression "0+1*x", where "x" is a placeholder for
      *  the corresponding key (= variable name).
      *  Caution: this expression is required by {@link VariableMap#refineExpressions}.
      *  @return map of variable names mapped to an expression string
@@ -1515,12 +1515,16 @@ x^2 + 3*x^3 + 2*x^4
             Iterator <String> iter1 = this .keySet().iterator();
             Iterator <String> iter2 = poly2.keySet().iterator();
             while (result && iter1.hasNext()) {
-                Monomial mono1 = this .get(iter1.next());
-                Monomial mono2 = poly2.get(iter2.next());
-                Monomial factor  = mono1.divide(mono2);
-                if (factor == null || ! factor.isConstant() || factor.getCoefficient().compareTo(BigInteger.ONE) < 0) { // no factor
-                    result = false;
-                } // no factor
+                String sig1 = iter1.next();
+                String sig2 = iter2.next();
+                if (sig1.equals(sig2)) {
+                    Monomial mono1 = this .get(sig1);
+                    Monomial mono2 = poly2.get(sig2);
+                    Monomial factor  = mono1.divide(mono2);
+                    if (factor == null || ! factor.isConstant() || factor.getCoefficient().compareTo(BigInteger.ONE) < 0) { // no factor
+                        result = false;
+                    } // no factor
+                } // sig1 == sig2
             } // while iter1
         } // same size
         return result;
@@ -1840,11 +1844,11 @@ x^2 + 3*x^3 + 2*x^4
                 result.append(", vgcd=");
                 result.append(varGCD.toString());
             } else { // Test for (x,y,...) elem of {0,1}^n
-                VariableMap vmap2 = vmap1.clone();
+                VariableMap vmap2 = vmap1 != null ? vmap1.clone() : new VariableMap();
                 ModoMeter meter = new ModoMeter(vmap2.size(), 2); // run {0,1} through all variables
                 boolean success = false;
                 // String residues = " ";
-                while (meter.hasNext()) { 
+                while (meter.hasNext()) {
                     vmap2.setValues(meter);
                     Polynomial poly2 = this.substitute(vmap2);
                     if (poly2.isZero()) {
@@ -1852,7 +1856,7 @@ x^2 + 3*x^3 + 2*x^4
                         result.append(VariableMap.SUCCESS);
                         if (vmap1 != null) {
                             result.append(" ");
-                            result.append(vmap1.getSolutionVector(meter).describe()); 
+                            result.append(vmap1.getSolutionVector(meter).describe());
                             result.append(" ");
                             // result.append(vmap1.triviality());
                         } else {
@@ -1861,10 +1865,10 @@ x^2 + 3*x^3 + 2*x^4
                         // isZero
                     } else { // ! isZero
                     /*
-                    	if (residues.length() > 1) {
-                    		residues += "/";
-                    	}
-                    	residues += poly2.toString().replaceAll(" ", "");
+                        if (residues.length() > 1) {
+                            residues += "/";
+                        }
+                        residues += poly2.toString().replaceAll(" ", "");
                     */
                     } // ! isZero
                     meter.next();
@@ -1981,6 +1985,12 @@ x^2 + 3*x^3 + 2*x^4
                         System.out.println("GB: " + polys.get(ipoly));
                         ipoly ++;
                     } // while ipoly
+
+                } else if (opt.startsWith("-grow")) {
+                    poly1 = poly1.parse(args[iarg ++]);
+                    poly2 = poly2.parse(args[iarg ++]);
+                    System.out.println("(\"" + poly1.toString() + "\").isGrownFrom\n(\"" + poly2.toString() + "\") = "
+                            + poly1.isGrownFrom(poly2));
 
                 } else if (opt.startsWith("-hiter")) {
                     poly1 = poly1.parse(args[iarg ++]);

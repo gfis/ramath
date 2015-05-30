@@ -1,3 +1,3 @@
 a^2 + b^2 - c^2 = 0;  - a + b > 0;  - b + c > 0
-evaluate: failure !=0
+evaluate: unknown
 9*a_2^2 + 16*b_2^2 - 25*c_2^2 = 0;  - 3*a_2 + 4*b_2 > 0;  - 4*b_2 + 5*c_2 > 0

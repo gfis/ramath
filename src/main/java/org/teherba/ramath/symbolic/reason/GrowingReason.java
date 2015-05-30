@@ -26,14 +26,11 @@ import  org.teherba.ramath.symbolic.solver.BaseSolver;
 /** Checks whether there is a parent of the {@link RelationSet} in question
  *  with the same dispenser values, such that the constants of the
  *  monomial in the relation set result from the corresponding constants
- *  in the parent by multiplication factors.
+ *  in the parent by multiplicative factors &gt; 1.
  *  @author Dr. Georg Fischer
  */
 public class GrowingReason extends BaseReason {
     public final static String CVSID = "@(#) $Id: GrowingReason.java 970 2012-10-25 16:49:32Z gfis $";
-
-    /** Debugging switch: 0 = no, 1 = moderate, 2 = more, 3 = extreme verbosity */
-    private int debug = 0;
 
      /** No-args Constructor
      */
@@ -45,7 +42,7 @@ public class GrowingReason extends BaseReason {
      *  <ol>
      *  <li>which has the same dispenser values, and</li>
      *  <lI>whose monomial coefficients lead to the 
-     *  coefficients in the relation set by multiplication factors.</li>
+     *  coefficients in the relation set by multiplicative factors &gt; 1.</li>
      *  </ol>
      *  @param solver the complete state of the expansion tree
      *  @param rset2 the new {@link RelationSet} to be added to the queue 
@@ -57,25 +54,30 @@ public class GrowingReason extends BaseReason {
      *  </ul>
      */
     public String check(BaseSolver solver, RelationSet rset2) {
-    	boolean all = false; // whether to examine all queue elements, or the parents only
+        boolean all = false; // whether to examine all queue elements, or the parents only
         String result = VariableMap.UNKNOWN;
         int iparent = all ? solver.size() - 1 : rset2.getParentIndex();
         boolean busy = true;
         while (busy && iparent >= 0) {
             RelationSet rset1 = solver.get(iparent);
-            if (debug > 0) {
-                solver.getWriter().println("iparent=" + iparent 
+            if (solver.debug >= 2) {
+                solver.getWriter().println("GrowingReason.check, iparent=" + iparent 
                         + ", rset1.meter=" + rset1.getMeter()
                         + ", rset2.meter=" + rset2.getMeter()
+                    /*
                         + ", rset1.tuple=" + rset1.getTuple().getConstants()
                         + ", rset2.tuple=" + rset2.getTuple().getConstants()
+                    */
                         );
             }
-            if (rset1.getTuple().getConstants().equals(rset2.getTuple().getConstants())) { // condition (1)
-        //  if (rset1.getMeter().equals(rset2.getMeter())) { // condition (1)
+        //  if (rset1.getTuple().getConstants().equals(rset2.getTuple().getConstants())) { // condition (1)
+            if (rset1.getMeter().equals(rset2.getMeter())) { // condition (1)
                 if (rset2.isGrownFrom(rset1)) {
                     busy = false;
-                    result = "grown from [" + iparent + "] " + solver.polish(rset2);;
+                    result = "grown from [" + iparent + "] " + solver.polish(rset2);
+                    if (solver.debug >= 2) {
+                        result += "\n\t\tfrom " + solver.polish(rset1);
+                    }
                 } // condition (2)
             } // condition (1)
             iparent = all ? iparent - 1 : rset1.getParentIndex();

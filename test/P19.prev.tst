@@ -1,4 +1,4 @@
-2*x
-; vgcd=2; gcd=2; isZero=false; hasVariable=true; isBiased=false; mergeVariables=2*x_y_z; relation=EQ_0
+0
+; vgcd=1; gcd=0; isZero=false; hasVariable=false; isBiased=false; mergeVariables=0; relation=EQ_0
 ; evaluate=success =0
-/01;2 -> 2*x
+;0 -> 0

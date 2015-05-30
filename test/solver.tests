@@ -36,10 +36,10 @@ TEST T03 tree solver (proof in 2 steps)
 CALL TreeSolver -l 4 -e "a^2 + b^2 - 3*(c^2 + d^2)" 
 
 TEST T04 tree solver, biquadratic minus
-CALL TreeSolver -l 4 -e "x^4 - y^4 - z^2" 
+CALL TreeSolver -l 4 -e "x^4 - y^4 - z^2"
 
 TEST T05 tree solver, biquadratic plus
-CALL TreeSolver -l 2 -e "x^4 + y^4 - z^2" 
+CALL TreeSolver -l 4 -e "x^4 + y^4 - z^2" 
 
 TEST T06 Markov(3, solvable)
 CALL TreeSolver -l 4 -e "x^2 + y^2 + z^2 - 3*x*y*z"
@@ -51,13 +51,13 @@ TEST T08 EEC(3) mod 2
 CALL TreeSolver -b 2 -l 3 -e "a^3 + b^3 + c^3 - d^3" 
 
 TEST T09 Markov(2, unsolvable, power)
-CALL TreeSolver -l 6 -e "x^2 + y^2 + z^2 - 2*x*y*z"
+CALL TreeSolver -l 6 -e "x^2 + y^2 + z^2 - 2*x*y*z" 
 
 TEST T10 Markov(5, unsolvable)
 CALL TreeSolver -l 3 -e "x^2 + y^2 + z^2 - 5*x*y*z"
 
 TEST T11 Markov(4, unsolvable, power)
-CALL TreeSolver -l 4 -e "x^2 + y^2 + z^2 - 4*x*y*z"
+CALL TreeSolver -l 4 -e "x^2 + y^2 + z^2 - 4*x*y*z" -r transpose,same,grow
 
 TEST T12 proof
 CALL TreeSolver -l 4 -e "x^2 + y^2 - 3*z^2"
@@ -77,14 +77,14 @@ CALL TreeSolver -b 2 -l 4 -e "a^2 + b^2 - c^2"
 TEST T17 modified Fermat^3 mod 2
 CALL TreeSolver -b 2 -l 2 -e "a^3 + 2*b^3 - 4*c^3"
 
-# TEST T18 modified Fermat^3 mod 6
-# CALL TreeSolver -b 6 -l 2 -e "a^3 + 2*b^3 - 4*c^3"
+TEST T18 Markov(2, unsolvable, power)
+CALL TreeSolver -l 6 -e "(x + 1)^2 + (y + 1)^2 + (z + 1)^2 - 2*(x + 1) * (y + 1) * (z + 1)" 
 
-TEST T19 generating Pythagoras
+TEST T19 Markov(2, unsolvable, power)
+CALL TreeSolver -l 6 -e "(x + 2)^2 + (y + 2)^2 + (z + 2)^2 - 2*(x + 2) * (y + 2) * (z + 2)"
+
+TEST T20 generating Pythagoras
 CALL TreeSolver -b 2 -l 2 -e "(m^2 - n^2)^2 + (2*m*n)^2 - (m^2 + n^2)^2"
-
-# TEST T20 EEC(6,1,5), most wanted on euler.free.net
-# CALL TreeSolver -b 2 -l 2 -e "a^6 + b^6 + c^6 + d^6 + e^6 - f^6"
 
 # TEST T21 EEC(6,1,5), most wanted on euler.free.net, mod 3
 # CALL TreeSolver -b 3 -l 1 -e "a^6 + b^6 + c^6 + d^6 + e^6 - f^6"

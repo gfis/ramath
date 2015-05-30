@@ -77,12 +77,12 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         if (false) {
         } else if (code.equals("base"       )) { result = addReasonClass(code, "BaseReason"       );
         } else if (code.equals("transpose"  )) { result = addReasonClass(code, "TransposeReason"  );
-        } else if (code.equals("grow"       )) { result = addReasonClass(code, "GrowingReason"    );
         } else if (code.equals("same"       )) { result = addReasonClass(code, "SameReason"       );
         } else if (code.equals("similiar"   )) { result = addReasonClass(code, "SimiliarReason"   );
+        } else if (code.equals("grow"       )) { result = addReasonClass(code, "GrowingReason"    );
         }
         if (result == null) {
-            System.err.println("** Reason code " + code + " is not known or class cannot be instantiated");
+            System.err.println("** Reason code \"" + code + "\" is not known or class cannot be instantiated");
         }
         return result;
     } // addReason(String)
@@ -98,7 +98,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
             int ireas = size() - 1;
             while (ireas >= 0) {
                 if (this.get(ireas).getCode().equals("transpose")) {
-                    if (debug >= 2) {
+                    if (this.debug >= 2) {
                         System.err.println("class TransposeReason removed from list, vector = " + result.toString());
                     } // debug >= 1
                     this.remove(ireas);
@@ -164,26 +164,25 @@ public class ReasonFactory extends ArrayList<BaseReason> {
 
     /** Checks a {@link RelationSet} 
      *  with all stored reasons and prints the decision
-     *  @param trace print on this writer
      *  @param solver the complete state of the expansion tree
      *  @param rset2 the new {@link RelationSet} to be checked
      *  @param vmap2 variables with refined expressions
      */
-    public void printDecision(PrintWriter trace, BaseSolver solver, RelationSet rset2, VariableMap vmap2) {
+    public void printDecision(BaseSolver solver, RelationSet rset2, VariableMap vmap2) {
         String decision = this.check(solver, rset2);
         if (! decision.startsWith(VariableMap.UNKNOWN) && 
             ! decision.startsWith(VariableMap.SUCCESS)) { // FAILURE etc.
-                if (debug >= 1) {
-                    trace.print(vmap2.toVector() + ": ");
-                    trace.println(decision);
+                if (solver.debug >= 1) {
+                    solver.trace.print(vmap2.toVector() + ": ");
+                    solver.trace.println(decision);
                 }
         } else { // UNKNOWN || SUCCESS
-                if (debug >= 1) {
-                    trace.print(vmap2.toVector() + ": ");
-                    trace.print(decision);
-                    trace.print(" " + solver.polish(rset2));
-                    trace.print(" -> [" + solver.size() + "]");
-                    trace.println();
+                if (solver.debug >= 1) {
+                    solver.trace.print(vmap2.toVector() + ": ");
+                    solver.trace.print(decision);
+                    solver.trace.print(" " + solver.polish(rset2));
+                    solver.trace.print(" -> [" + solver.size() + "]");
+                    solver.trace.println();
                 }
                 solver.add(rset2);
         } // unknown

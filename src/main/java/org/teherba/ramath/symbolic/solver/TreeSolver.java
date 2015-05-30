@@ -1,7 +1,7 @@
 /*  TreeSolver: tries to solve a Diophantine equation by monadic variable expansion
  *  @(#) $Id: TreeSolver.java 970 2012-10-25 16:49:32Z gfis $
  *  2015-05-28: subdirectory solver
- *	2015-04-26: solution if (xi,yi,..) elem of {0,1}^n
+ *  2015-04-26: solution if (xi,yi,..) elem of {0,1}^n
  *  2015-02-20, Georg Fischer: copied from and replacing QueuingSolver.java
  *
  *  Limitation: only positive values for variables can be found
@@ -72,8 +72,7 @@ import  java.util.Vector; // essentially a java.util.Queue (Java 1.6)
 public class TreeSolver extends BaseSolver {
     public final static String CVSID = "@(#) $Id: TreeSolver.java 970 2012-10-25 16:49:32Z gfis $";
 
-    /** Debugging switch: 0 = no, 1 = moderate, 2 = more, 3 = extreme verbosity */
-    private int debug = 1;
+    /* debug is inherited */
 
     //--------------
     // Construction
@@ -108,12 +107,12 @@ public class TreeSolver extends BaseSolver {
         int skippable = 0; // 1 does not really work
         RelationSet rset1 = get(queueIndex); // expand this element (the "parent")
         VariableMap vmap1 = rset1.getTuple();
-        // reasons.printDecision(trace, this, rset1, vmap1);
+        // reasons.printDecision(this, rset1, vmap1);
         int curLevel      = rset1.getNestingLevel() + 1;
         int base          = getModBase() + skippable;
         BigInteger factor = BigInteger.valueOf(base - skippable).pow(curLevel);
         int varNo         = vmap1.size(); // total number of variables to be substituted
-        /*  Variables having at least a coefficient of factor*base 
+        /*  Variables having at least a coefficient of factor*base
             are not involved in the modular expansion.
             If this feature is not desired, the ModoMeter should be initialized with base.
         */
@@ -131,7 +130,7 @@ public class TreeSolver extends BaseSolver {
             im ++;
         } // while iter1
         if (empty) { // vmapr was empty
-        	meter = new ModoMeter(varNo, base); // involve all variables / avoid modulo [1,1,1,...]
+            meter = new ModoMeter(varNo, base); // involve all variables / avoid modulo [1,1,1,...]
         } // vmapr empty
         // meter now ready for n-adic expansion, e.g. x -> 2*x+0, 2*x+1
         if (debug >= 1) {
@@ -147,14 +146,14 @@ public class TreeSolver extends BaseSolver {
             VariableMap vmap2 = vmap1.refineExpressions(meter, skippable);
             if (vmap2.size() > 0) {
                 RelationSet rset2 = getStartSet().substitute(vmap2); // .normalize();
-                rset2.setNestingLevel   (curLevel); 
+                rset2.setNestingLevel   (curLevel);
                 rset2.setParentIndex    (queueIndex);
                 rset2.setTuple          (vmap2, this.getTransposables());
                 rset2.setTupleShift     (factor);
                 rset2.setMeter(meter.toString());
-                reasons.printDecision(trace, this, rset2, vmap2);
+                reasons.printDecision(this, rset2, vmap2);
             } // vmap2.size() > 0
-            
+
             meter.next();
         } // while meter.hasNext() - generate all children
     } // expand
@@ -173,7 +172,7 @@ public class TreeSolver extends BaseSolver {
         if (expr != null) {
             rset0 = rset0.parse(expr);
         }
-        solver.setTransposables(rset0.getTransposableClasses());
+        solver.setTransposables(solver.reasons.purge(rset0)); // rset0.getTransposableClasses());
         rset0.setTuple(rset0.getExpressionMap(), solver.getTransposables());
         solver.solve(rset0);
     } // main

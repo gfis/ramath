@@ -45,7 +45,7 @@ import  java.util.regex.Pattern;
 public class BaseSolver extends Stack<RelationSet> {
     public final static String CVSID = "@(#) $Id: Solver.java 970 2012-10-25 16:49:32Z gfis $";
     /** Debugging switch: 0 = no, 1 = moderate, 2 = more, 3 = maximum verbosity */
-    private int debug = 0;
+    public int debug = 1;
 
     /** index into queue for unresolved {@link RelationSet}s */
     public int queueHead;
@@ -54,7 +54,7 @@ public class BaseSolver extends Stack<RelationSet> {
      *  The printer is still used in {@link MonadicSolver}, but
      *  modern solvers should normally not print any output except for debugging.
      */
-    protected PrintWriter trace;
+    public PrintWriter trace;
 
     /** Factory for reasons to truncate the expansion tree */
     protected ReasonFactory reasons;
@@ -84,25 +84,6 @@ public class BaseSolver extends Stack<RelationSet> {
         trace.close();
     } // close
 
-    /** Initializes the optional parameters
-     */
-    protected void initialize() {
-        setExpansionMode    (1);
-        setFindMode         (FIND_IN_PREVIOUS);
-        setMaxLevel         (4);
-        setModBase          (2); // for n-adic modulo expansion (here: binary)
-        setSubsetting       (false);
-        setUpperSubst       (true);
-        queueHead           = 0;
-
-        reasons = new ReasonFactory();
-        reasons.addReason("base"        );
-        reasons.addReason("transpose"   );
-        reasons.addReason("same"        );
-        reasons.addReason("similiar"    );
-        reasons.addReason("grow"        ); // related to 'same' and 'similiar'
-    } // initialize
-
     /** Gets the {@link RelationSet} to be solved
      *  @return initial RelationSet to be solved
      */
@@ -113,21 +94,6 @@ public class BaseSolver extends Stack<RelationSet> {
     //-----------------------------
     // Bean properties and methods
     //-----------------------------
-
-    /** How to expand: 0 = no solutions, 1 (default) = non-trivial solutions, 2 = all  */
-    private int expansionMode;
-    /** Gets the modus of modulo expansion
-     *  @return expansionMode : 0 = no solutions, 1 (default) = non-trivial solutions, 2 = all
-     */
-    public int getExpansionMode() {
-        return expansionMode;
-    } // getExpansionMode
-    /** Sets the modus of modulo expansion
-     *  @param expansionMode : 0 = no solutions, 1 (default) = non-trivial solutions, 2 = all
-     */
-    public void setExpansionMode(int expansionMode) {
-        this.expansionMode = expansionMode;
-    } // setExpansionMode
 
     /** How to search for a previous equivalent {@link RelationSet}:
      *  in all members queued so far (1),
@@ -308,7 +274,7 @@ public class BaseSolver extends Stack<RelationSet> {
      *  @return whether the iteration did stop because the queue was exhausted
      */
     public boolean solve(RelationSet rset0) {
-        setTransposables(reasons.purge(rset0));
+        setTransposables(reasons.purge(rset0)); // TransposeReason is not checked if there are no transposable variables
         trace.println("Expanding for base " + getModBase() + ", transposables = " + getTransposables().toString());
         boolean exhausted = false;
         queueHead = 0;
@@ -329,7 +295,8 @@ public class BaseSolver extends Stack<RelationSet> {
                 if (rset1.getNestingLevel() > getMaxLevel()) { // nesting too deep - give up
                     busy   = false;
                 } else { // still expanding
-                    expand(queueHead ++);
+                    expand(queueHead);
+                    queueHead ++;
                 }
             }
         } // while busy
@@ -343,6 +310,24 @@ public class BaseSolver extends Stack<RelationSet> {
         return exhausted;
     } // solve
 
+    /** Initializes the optional parameters
+     */
+    protected void initialize() {
+        setFindMode         (FIND_IN_PREVIOUS);
+        setMaxLevel         (4);
+        setModBase          (2); // for n-adic modulo expansion (here: binary)
+        setSubsetting       (false);
+        setUpperSubst       (true);
+        queueHead           = 0;
+
+        reasons = new ReasonFactory();
+        reasons.addReason("base"        );
+        reasons.addReason("transpose"   );
+        reasons.addReason("same"        );
+        reasons.addReason("similiar"    );
+        reasons.addReason("grow"        ); // related to 'same' and 'similiar'
+    } // initialize
+
     //------------------------
     // Commandline processing
     //------------------------
@@ -353,14 +338,14 @@ public class BaseSolver extends Stack<RelationSet> {
      *  The following options are processed:
      *  <ul>
      *  <li>-b modulo base (default 2)</li>
+     *  <li>-d debug level: 0 = none, 1 = some, 2 = more, 3 = extreme verbosity</li>
      *  <li>-e equation set (enclosed in quotes)</li>
      *  <li>-f filename (for a file containing the polynomial)</li>
      *  <li>-l maximum nesting level (default 4)</li>
      *  <li>-m maximum size of queue (default 256)</li>
-     *  <li>-r reason code</li>
+     *  <li>-r list of reason codes separated by commas</li>
      *  <li>-q find mode (default 0)</li>
      *  <li>-u do not substitute uppercase variables (default: all variables)</li>
-     *  <li>-x expansion mode (default 1)</li>
      *  </ul>
      *  @return content of file option or explicit expression string
      */
@@ -376,6 +361,11 @@ public class BaseSolver extends Stack<RelationSet> {
                         setModBase(Integer.parseInt(args[iargs ++]));
                     } catch (Exception exc) {
                     }
+                } else if (arg.startsWith("-d") && iargs < args.length) {
+                    try {
+                        debug = (Integer.parseInt(args[iargs ++]));
+                    } catch (Exception exc) {
+                    }
                 } else if (arg.startsWith("-e") && iargs < args.length) {
                     result = args[iargs ++];
                 } else if (arg.startsWith("-f") && iargs < args.length) {
@@ -386,17 +376,18 @@ public class BaseSolver extends Stack<RelationSet> {
                     } catch (Exception exc) {
                     }
                 } else if (arg.startsWith("-r") && iargs < args.length) {
-                    String code = args[iargs ++];
-                    reasons.addReason(code);
+                    String[] codes = args[iargs ++].split("\\W");
+                    reasons = new ReasonFactory(); // ignore default reason list
+                    reasons.addReason("base"); // this is always used
+                    int icode = 0;
+                    while (icode < codes.length) {
+                        reasons.addReason(codes[icode]);
+                        icode ++;
+                    } // while icode
                 } else if (arg.startsWith("-q")                       ) {
                     setFindMode(1);
                 } else if (arg.startsWith("-u")                       ) {
                     setUpperSubst(false);
-                } else if (arg.startsWith("-x") && iargs < args.length) {
-                    try {
-                        setExpansionMode(Integer.parseInt(args[iargs ++]));
-                    } catch (Exception exc) {
-                    }
                 } else {
                     System.err.println("Solver: invalid option \"" + arg + "\"");
                 }

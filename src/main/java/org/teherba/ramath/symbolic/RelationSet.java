@@ -390,7 +390,7 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
     } // normalize
 
     /** Determines whether <em>this</em> RelationSet can be transformed into <em>rset2</em>
-     *  by multiplying the constants of the monomials in <em>rset2</em> by 
+     *  by multiplying the constants of the monomials in <em>rset2</em> by
      *  some factors &gt; 1.
      *  @param rset2 target RelationSet
      *  @return true if such factors exist, false otherwise
@@ -502,7 +502,7 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
     } // areTransposable
 
     // public Vector getTransposableClasses() is inherited from Polynomial, but uses local 'areTransposable'
-    
+
     /** Extracts a new {@link RelationSet} consisting of the
      *  indivisible parts of the underlying {@link Polynomial}s.
      *  @param factor the common constant factor
@@ -647,21 +647,26 @@ evaluate: unknown
         } else if (args.length >= 2) {
             String opt = args[iarg ++];
             if (false) {
-            } else if (opt.equals("-transp")   ) {
-                rset1 = rset1.parse(args[iarg ++]);
-                System.out.println("getTransposableClasses(\"" + rset1.toString() + "\") = "
-                        + rset1.getTransposableClasses().toString());
             } else if (opt.equals("-f")     ) {
                 String fileName = args[1];
                 rset1 = rset1.parse((new ExpressionReader()).read(fileName));
                 System.out.println(rset1.toString());
                 System.out.println("evaluate: " + rset1.evaluate(null));
+            } else if (opt.startsWith("-grow")) {
+                rset1 = rset1.parse(args[iarg ++]);
+                rset2 = rset2.parse(args[iarg ++]);
+                System.out.println("(\"" + rset1.toString() + "\").isGrownFrom\n(\"" + rset2.toString() + "\") = "
+                        + rset1.isGrownFrom(rset2));
             } else if (opt.equals("-rest")  ) {
                 String factor = args[iarg ++];
                 rset1 = rset1.parse(args[iarg ++]);
                 System.out.println(rset1.toString());
                 System.out.println("rest: " + rset1.getRest(new BigInteger(factor)));
-            } 
+            } else if (opt.equals("-transp")   ) {
+                rset1 = rset1.parse(args[iarg ++]);
+                System.out.println("getTransposableClasses(\"" + rset1.toString() + "\") = "
+                        + rset1.getTransposableClasses().toString());
+            }
         } // with args
     } // main
 

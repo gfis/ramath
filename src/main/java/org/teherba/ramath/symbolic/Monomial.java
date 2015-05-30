@@ -570,7 +570,7 @@ public class Monomial implements Cloneable, Serializable {
      *  but the resulting coefficient may get a denominator different from 1.
      *  The divisor may not be zero, of course.
      *  @param monomial2 divide with this monomial
-     *  @return new object that contains the fraction, or null if the parameter
+     *  @return new object that contains the fraction, or zero if the parameter
      *  does not divide <em>this</em> monomial evently
      *  @throws ArithmeticException if the second monomial is zero
      */
@@ -580,14 +580,19 @@ public class Monomial implements Cloneable, Serializable {
         }
         Monomial result = this.clone();
         try {
-            result.setCoefficient(this.coefficient.divide(monomial2.getCoefficient()));
-            if (! result.getCoefficient().equals(BigInteger.ZERO)) {
-                Iterator<String> iter = monomial2.keySet().iterator();
-                while (iter.hasNext() && result != null) {
-                    String name2 = iter.next();
-                    result = result.divideBy(name2, monomial2.getExponent(name2));
-                } // while iter
-            } // ! ZERO
+            BigInteger[] divRemain = this.coefficient.divideAndRemainder(monomial2.getCoefficient());
+            if (divRemain[1].equals(BigInteger.ZERO)) {
+                result.setCoefficient(divRemain[0]);
+                if (! result.getCoefficient().equals(BigInteger.ZERO)) {
+                    Iterator<String> iter = monomial2.keySet().iterator();
+                    while (iter.hasNext() && result != null) {
+                        String name2 = iter.next();
+                        result = result.divideBy(name2, monomial2.getExponent(name2));
+                    } // while iter
+                } // ! ZERO
+            } else { // did not divide evenly
+                result = new Monomial(BigInteger.ZERO);
+            } //
         } catch (Exception exc) {
             System.out.println(exc.getMessage());
             exc.printStackTrace();
