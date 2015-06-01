@@ -8,7 +8,8 @@
 # 2011-07-06, Dr. Georg Fischer
 #--------------------------------
 TEST=
-REGR=java -Xss512m -Xms1024m -Xmx2048m -cp dist/ramath.jar org.teherba.common.RegressionTester
+# REGR=java -Xss512m -Xms1024m -Xmx2048m -cp dist/ramath.jar org.teherba.common.RegressionTester
+REGR=java -cp dist/ramath.jar org.teherba.common.RegressionTester
 TESTDIR=test
 WROB=../../mater/ramath/eec/wroblewski
 
@@ -30,6 +31,8 @@ solver:
 	$(REGR) test/solver.tests 	$(TEST) 2>&1 \
 	| tee regression.log.tmp
 	grep FAILED regression.log.tmp
+t:
+	make solver TEST=T%
 symbolic:
 	$(REGR) test/symbolic.tests $(TEST) 2>&1 \
 	| tee regression.log.tmp

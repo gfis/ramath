@@ -71,7 +71,7 @@ public class GrowingReason extends BaseReason {
                         );
             }
         //  if (rset1.getTuple().getConstants().equals(rset2.getTuple().getConstants())) { // condition (1)
-            if (rset1.getMeter().equals(rset2.getMeter())) { // condition (1)
+            if (true || rset1.getMeter().equals(rset2.getMeter())) { // condition (1)
                 if (rset2.isGrownFrom(rset1)) {
                     busy = false;
                     result = "grown from [" + iparent + "] " + solver.polish(rset2);

@@ -221,7 +221,7 @@ CALL Polynomial -mappable "a^3+b^3+c^3-d^3" "9 + 6*a + 12*a^2 + 8*a^3 + 36*b + 5
 TEST PMP7 isMappableTo a->2*a+1, b=3*b+2
 CALL Polynomial -mappable "9 + 6*a + 12*a^2 + 8*a^3 + 36*b + 54*b^2 + 27*b^3 + c^3 - d^3" "a^3+b^3+c^3-d^3"
 
-TEST PMP8 isMappableTo 
+TEST PMP8 isMappableTo: WRONG RESULT
 CALL Polynomial -mappable "( - 4 - 32*x + 16*x^2 - 32*y - 160*x*y + 16*y^2 - 4*z - 80*x*z - 80*y*z - 320*x*y*z + 16*z^2)" "- 68 - 96*x + 16*x^2 - 96*y - 160*x*y + 16*y^2 - 164*z - 240*x*z - 240*y*z - 320*x*y*z + 16*z^2"
 
 

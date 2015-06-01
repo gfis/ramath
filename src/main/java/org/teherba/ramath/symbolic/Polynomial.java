@@ -1046,12 +1046,26 @@ x^2 + 3*x^3 + 2*x^4
 
     //-----------------------------------------------
 
-    /** Determines the number of different variables in the polynomial.
+    /** Determines the number of different variables in the Polynomial.
      *  @return count of different variables, &gt;= 0
      */
     public int getVariableCount() {
         return getVariableMap().size();
     } // getVariableCount
+
+    /** Determines whether there is exactly one variable in each {@link Monomial} 
+     *  of <em>this</em> Polynomial.
+     *  @return true if there is only one variable, false otherwise
+     */
+    public boolean isMonoVariate() {
+        boolean result = true;
+        Iterator <String> titer = monomials.keySet().iterator();
+        while (result && titer.hasNext()) {
+            Monomial mono1 = monomials.get(titer.next());
+            result = mono1.size() <= 1;
+        } // while titer
+        return result;
+    } // isMonoVariate
 
     /** Determines whether there is exactly one variable in the polynomial.
      *  @return true if there is only one variable, false otherwise
@@ -1300,7 +1314,7 @@ x^2 + 3*x^3 + 2*x^4
         try {
             Set<String> set1 = this .keySet();
             Set<String> set2 = poly2.keySet();
-            if (set1.size() == set2.size()) {
+            if (set1.size() == set2.size() && poly2.isMonoVariate()) {
                 Iterator <String> iter1 = set1.iterator();
                 Iterator <String> iter2 = set2.iterator();
                 boolean busy = true;
@@ -1365,7 +1379,6 @@ x^2 + 3*x^3 + 2*x^4
      *  @param vname variable name
      *  @return monomials: [0] = max-1 exponent, [1] = max exponent, 
      *  or null if there was a non-univariate Monomial
-     
      */
     public Monomial[] getHighTerms(String vname) {
         Monomial[] result = new Monomial[]{ null, null }; // [0] = max-1, [1] = max exponent
@@ -1381,9 +1394,10 @@ x^2 + 3*x^3 + 2*x^4
                 } // was higher
                 // univariate
             } else {
+            /*
                 univariate = false;
                 maxExp = 0;
-                result = null; // 1 univariate
+            */
             }
         } // while titer
         if (maxExp > 0) {
@@ -1391,14 +1405,12 @@ x^2 + 3*x^3 + 2*x^4
             result[1] = this.get(prefix + String.format("%02x", maxExp    ));
             result[0] = this.get(prefix + String.format("%02x", maxExp - 1));
         } // not "00"
-        if (result != null) {
-            if (result[1] == null) {
-                result[1] =  new Monomial("0");
-            }
-            if (result[0] == null) {
-                result[0] =  new Monomial("0");
-            }
-        } // result != null
+        if (result[1] == null) {
+            result[1] =  new Monomial("0");
+        } // result[1] != null
+        if (result[0] == null) {
+            result[0] =  new Monomial("0");
+        } // result[0] != null
         return result;
     } // getHighTerms
 
@@ -1431,7 +1443,7 @@ x^2 + 3*x^3 + 2*x^4
         VariableMap vmap1 = this .getExpressionMap();
         VariableMap vmap2 = poly2.getExpressionMap();
         try {
-            busy = vmap1.size() == vmap2.size();
+            busy = vmap1.size() == vmap2.size() && poly2.isMonoVariate();
             if (busy) { // same number of variables
                 Iterator <String> iter1 = vmap1.keySet().iterator();
                 Iterator <String> iter2 = vmap2.keySet().iterator();
@@ -1445,14 +1457,14 @@ x^2 + 3*x^3 + 2*x^4
                     if (busy) {
                         Monomial[] hit1 = this .getHighTerms(vname1);
                         Monomial[] hit2 = poly2.getHighTerms(vname2);
-                        busy = hit1 != null && hit2 != null;
-                        if (busy) { // both Polynomials had all univariate Monomials
+                        busy = true;
+                        if (busy) { // both Polynomials had all univariate Monomials ???
                             hits1.put(vname1, hit1);
                             hits2.put(vname2, hit2);
                             // this.isMappableTo(poly2) => a*x1 + b = x2; a = root(x2.coeff / x1.coeff, exp)
                             int exp1 = hit1[1].getExponent(vname1);
                             int exp2 = hit2[1].getExponent(vname2);
-                            busy = exp1 == exp2;
+                            busy = exp1 == exp2 && exp1 > 0;
                             if (busy) { // same exponents
                                 BigInteger pn = hit1[1].getCoefficient();
                                 BigInteger qn = hit2[1].getCoefficient();
@@ -1544,7 +1556,10 @@ x^2 + 3*x^3 + 2*x^4
                     } // no factor
                 } // sig1 == sig2
             } // while iter1
-        } // same size
+            // same size
+        } else { // different size
+        	result = false;
+        }
         return result;
     } // isGrownFrom
 
@@ -1555,40 +1570,38 @@ x^2 + 3*x^3 + 2*x^4
      *  if no mapping could be determined
      */
     public String similiarity(Polynomial poly2) {
-        String message = null;
-        boolean result = this.size() == poly2.size();
-        if (true || result) {
-        //  VariableMap mapt = this.getVariableMap("1", poly2);
+        String result = null;
+        if (true) {
             VariableMap mapt = poly2.getExpressionMap();
-            result = this.substitute(mapt)
+            boolean outcome = this.substitute(mapt)
                     .clone().normalize()
                     .equals(poly2
                     .clone().normalize()
                     );
-            if (! result) {
+            if (! outcome) {
                 if (false) { // old code
                     mapt = this.affineMap   (poly2);
-                    result = mapt != null;
-                    if (result) {
-                        message = "affine map: "     + mapt.toString();
+                    outcome = mapt != null;
+                    if (outcome) {
+                        result = "affine map: "     + mapt.toString();
                     }
                 } else { // new code
                     mapt = this.isMappableTo(poly2); // this is the way to map the new element to one in the queue
-                    result = mapt != null;
-                    if (result) {
-                        message = "is mappable by: " + mapt.toString();
+                    outcome = mapt != null;
+                    if (outcome) {
+                        result = "is mappable by: " + mapt.toString();
                         if (debug >= 2) {
-                            message += " ("  + this .toString()
+                            result += " ("  + this .toString()
                                     + " => " + poly2.toString()
                                     +  ") ";        
                         } // debug
                     }
                 } // new
             } else {
-                message = "same";
+                result = "same";
             }
         } // if sizes ==
-        return message;
+        return result;
     } // similiarity
 
     /** Determines whether two polynomials are equivalent, that is whether
