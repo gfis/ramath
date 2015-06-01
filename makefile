@@ -3,7 +3,7 @@
 # test Ramath functions
 # @(#) $Id: makefile 741 2011-07-23 12:30:09Z  $
 # 2015-06-01: all -> symbolic
-# 2015-04-06: java -X...
+# 2015-04-06: java -X... 
 # 2013-02-27: RegressionTester
 # 2011-07-06, Dr. Georg Fischer
 #--------------------------------
