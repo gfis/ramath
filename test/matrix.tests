@@ -302,8 +302,8 @@ CALL MatrixExhauster pEC322 -l 6 -v [34,2,33,15]
                 
 TEST MX21
 CALL MatrixExhauster pEC331 -l 3 -v [1,0,0,1]
-TEST MX22
-CALL MatrixExhauster pEC340 -l 3 -v [1,0,0,-1]
+# TEST MX22
+# CALL MatrixExhauster pEC340 -l 3 -v [1,0,0,-1]
 TEST MX23
 CALL MatrixExhauster pEC322 -l 3 -v [1,0,0,1]
 TEST MX24

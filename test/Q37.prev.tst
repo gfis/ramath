@@ -1,3 +1,105 @@
+BigInteger divide by zero
+java.lang.ArithmeticException: BigInteger divide by zero
+	at java.math.MutableBigInteger.divide(Unknown Source)
+	at java.math.BigInteger.divideAndRemainder(Unknown Source)
+	at org.teherba.ramath.symbolic.Polynomial.isMappableTo(Polynomial.java:1444)
+	at org.teherba.ramath.symbolic.Polynomial.similiarity(Polynomial.java:1566)
+	at org.teherba.ramath.symbolic.RelationSet.similiarity(RelationSet.java:423)
+	at org.teherba.ramath.symbolic.solver.QueuingSolver.findSimiliar(QueuingSolver.java:112)
+	at org.teherba.ramath.symbolic.solver.QueuingSolver.expand(QueuingSolver.java:195)
+	at org.teherba.ramath.symbolic.solver.BaseSolver.solve(BaseSolver.java:298)
+	at org.teherba.ramath.symbolic.solver.QueuingSolver.main(QueuingSolver.java:234)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.teherba.common.RegressionTester.runTests(RegressionTester.java:479)
+	at org.teherba.common.RegressionTester.main(RegressionTester.java:567)
+BigInteger divide by zero
+java.lang.ArithmeticException: BigInteger divide by zero
+	at java.math.MutableBigInteger.divide(Unknown Source)
+	at java.math.BigInteger.divideAndRemainder(Unknown Source)
+	at org.teherba.ramath.symbolic.Polynomial.isMappableTo(Polynomial.java:1444)
+	at org.teherba.ramath.symbolic.Polynomial.similiarity(Polynomial.java:1566)
+	at org.teherba.ramath.symbolic.RelationSet.similiarity(RelationSet.java:423)
+	at org.teherba.ramath.symbolic.solver.QueuingSolver.findSimiliar(QueuingSolver.java:112)
+	at org.teherba.ramath.symbolic.solver.QueuingSolver.expand(QueuingSolver.java:195)
+	at org.teherba.ramath.symbolic.solver.BaseSolver.solve(BaseSolver.java:298)
+	at org.teherba.ramath.symbolic.solver.QueuingSolver.main(QueuingSolver.java:234)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.teherba.common.RegressionTester.runTests(RegressionTester.java:479)
+	at org.teherba.common.RegressionTester.main(RegressionTester.java:567)
+BigInteger divide by zero
+java.lang.ArithmeticException: BigInteger divide by zero
+	at java.math.MutableBigInteger.divide(Unknown Source)
+	at java.math.BigInteger.divideAndRemainder(Unknown Source)
+	at org.teherba.ramath.symbolic.Polynomial.isMappableTo(Polynomial.java:1444)
+	at org.teherba.ramath.symbolic.Polynomial.similiarity(Polynomial.java:1566)
+	at org.teherba.ramath.symbolic.RelationSet.similiarity(RelationSet.java:423)
+	at org.teherba.ramath.symbolic.solver.QueuingSolver.findSimiliar(QueuingSolver.java:112)
+	at org.teherba.ramath.symbolic.solver.QueuingSolver.expand(QueuingSolver.java:195)
+	at org.teherba.ramath.symbolic.solver.BaseSolver.solve(BaseSolver.java:298)
+	at org.teherba.ramath.symbolic.solver.QueuingSolver.main(QueuingSolver.java:234)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.teherba.common.RegressionTester.runTests(RegressionTester.java:479)
+	at org.teherba.common.RegressionTester.main(RegressionTester.java:567)
+BigInteger divide by zero
+java.lang.ArithmeticException: BigInteger divide by zero
+	at java.math.MutableBigInteger.divide(Unknown Source)
+	at java.math.BigInteger.divideAndRemainder(Unknown Source)
+	at org.teherba.ramath.symbolic.Polynomial.isMappableTo(Polynomial.java:1444)
+	at org.teherba.ramath.symbolic.Polynomial.similiarity(Polynomial.java:1566)
+	at org.teherba.ramath.symbolic.RelationSet.similiarity(RelationSet.java:423)
+	at org.teherba.ramath.symbolic.solver.QueuingSolver.findSimiliar(QueuingSolver.java:112)
+	at org.teherba.ramath.symbolic.solver.QueuingSolver.expand(QueuingSolver.java:195)
+	at org.teherba.ramath.symbolic.solver.BaseSolver.solve(BaseSolver.java:298)
+	at org.teherba.ramath.symbolic.solver.QueuingSolver.main(QueuingSolver.java:234)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.teherba.common.RegressionTester.runTests(RegressionTester.java:479)
+	at org.teherba.common.RegressionTester.main(RegressionTester.java:567)
+BigInteger divide by zero
+java.lang.ArithmeticException: BigInteger divide by zero
+	at java.math.MutableBigInteger.divide(Unknown Source)
+	at java.math.BigInteger.divideAndRemainder(Unknown Source)
+	at org.teherba.ramath.symbolic.Polynomial.isMappableTo(Polynomial.java:1444)
+	at org.teherba.ramath.symbolic.Polynomial.similiarity(Polynomial.java:1566)
+	at org.teherba.ramath.symbolic.RelationSet.similiarity(RelationSet.java:423)
+	at org.teherba.ramath.symbolic.solver.QueuingSolver.findSimiliar(QueuingSolver.java:112)
+	at org.teherba.ramath.symbolic.solver.QueuingSolver.expand(QueuingSolver.java:195)
+	at org.teherba.ramath.symbolic.solver.BaseSolver.solve(BaseSolver.java:298)
+	at org.teherba.ramath.symbolic.solver.QueuingSolver.main(QueuingSolver.java:234)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.teherba.common.RegressionTester.runTests(RegressionTester.java:479)
+	at org.teherba.common.RegressionTester.main(RegressionTester.java:567)
+BigInteger divide by zero
+java.lang.ArithmeticException: BigInteger divide by zero
+	at java.math.MutableBigInteger.divide(Unknown Source)
+	at java.math.BigInteger.divideAndRemainder(Unknown Source)
+	at org.teherba.ramath.symbolic.Polynomial.isMappableTo(Polynomial.java:1444)
+	at org.teherba.ramath.symbolic.Polynomial.similiarity(Polynomial.java:1566)
+	at org.teherba.ramath.symbolic.RelationSet.similiarity(RelationSet.java:423)
+	at org.teherba.ramath.symbolic.solver.QueuingSolver.findSimiliar(QueuingSolver.java:112)
+	at org.teherba.ramath.symbolic.solver.QueuingSolver.expand(QueuingSolver.java:195)
+	at org.teherba.ramath.symbolic.solver.BaseSolver.solve(BaseSolver.java:298)
+	at org.teherba.ramath.symbolic.solver.QueuingSolver.main(QueuingSolver.java:234)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.teherba.common.RegressionTester.runTests(RegressionTester.java:479)
+	at org.teherba.common.RegressionTester.main(RegressionTester.java:567)
 Expanding for base 2, transposables =    0   1   2
 
 expanding queue[0]: 1 + 3*a + 3*a^2 + a^3 - 3*c - 6*a*c - 3*a^2*c - 6*b*c - 6*a*b*c - 3*b^2*c - 3*c^2 - 3*a*c^2 - 3*b*c^2 - c^3 = 0 modulo [2,2,2] *2
@@ -13,8 +115,8 @@ expanding queue[0]: 1 + 3*a + 3*a^2 + a^3 - 3*c - 6*a*c - 3*a^2*c - 6*b*c - 6*a*
 expanding queue[1]: 8 + 24*a + 24*a^2 + 8*a^3 - 54*c - 72*a*c - 24*a^2*c - 72*b*c - 48*a*b*c - 24*b^2*c - 36*c^2 - 24*a*c^2 - 24*b*c^2 - 8*c^3 = 0 modulo [2,2,2] *4
 [1+4*a,1+4*b,0+4*c]: unknown 8+48*a+96*a^2+64*a^3-108*c-288*a*c-192*a^2*c-288*b*c-384*a*b*c-192*b^2*c-144*c^2-192*a*c^2-192*b*c^2-64*c^3=0 -> [4]
 [3+4*a,1+4*b,0+4*c]: unknown 64+192*a+192*a^2+64*a^3-300*c-480*a*c-192*a^2*c-480*b*c-384*a*b*c-192*b^2*c-240*c^2-192*a*c^2-192*b*c^2-64*c^3=0 -> [5]
-[1+4*a,3+4*b,0+4*c]: unknown 8+48*a+96*a^2+64*a^3-300*c-480*a*c-192*a^2*c-480*b*c-384*a*b*c-192*b^2*c-240*c^2-192*a*c^2-192*b*c^2-64*c^3=0 -> [6]
-[3+4*a,3+4*b,0+4*c]: unknown 64+192*a+192*a^2+64*a^3-588*c-672*a*c-192*a^2*c-672*b*c-384*a*b*c-192*b^2*c-336*c^2-192*a*c^2-192*b*c^2-64*c^3=0 -> [7]
+[1+4*a,3+4*b,0+4*c]: similiar to [4], is mappable to: {a=>a}  8+48*a+96*a^2+64*a^3-300*c-480*a*c-192*a^2*c-480*b*c-384*a*b*c-192*b^2*c-240*c^2-192*a*c^2-192*b*c^2-64*c^3=0
+[3+4*a,3+4*b,0+4*c]: similiar to [5], is mappable to: {a=>a}  64+192*a+192*a^2+64*a^3-588*c-672*a*c-192*a^2*c-672*b*c-384*a*b*c-192*b^2*c-336*c^2-192*a*c^2-192*b*c^2-64*c^3=0
 [1+4*a,1+4*b,2+4*c]: failure constant=-90, vgcd=4
 [3+4*a,1+4*b,2+4*c]: failure constant=-154, vgcd=4
 [1+4*a,3+4*b,2+4*c]: failure constant=-210, vgcd=4
@@ -23,140 +125,120 @@ expanding queue[1]: 8 + 24*a + 24*a^2 + 8*a^3 - 54*c - 72*a*c - 24*a^2*c - 72*b*
 expanding queue[2]:  - 6 - 12*a + 8*a^3 - 18*b - 24*a*b - 12*b^2 - 24*c - 48*a*c - 24*a^2*c - 48*b*c - 48*a*b*c - 24*b^2*c - 24*c^2 - 24*a*c^2 - 24*b*c^2 - 8*c^3 = 0 modulo [2,2,2] *4
 [0+4*a,0+4*b,1+4*c]: failure constant=-6, vgcd=4
 [2+4*a,0+4*b,1+4*c]: failure constant=-10, vgcd=4
-[0+4*a,2+4*b,1+4*c]: unknown -36-72*a+64*a^3-84*b-96*a*b-48*b^2-192*c-384*a*c-192*a^2*c-384*b*c-384*a*b*c-192*b^2*c-192*c^2-192*a*c^2-192*b*c^2-64*c^3=0 -> [8]
-[2+4*a,2+4*b,1+4*c]: unknown -64-24*a+96*a^2+64*a^3-132*b-96*a*b-48*b^2-432*c-576*a*c-192*a^2*c-576*b*c-384*a*b*c-192*b^2*c-288*c^2-192*a*c^2-192*b*c^2-64*c^3=0 -> [9]
+[0+4*a,2+4*b,1+4*c]: unknown -36-72*a+64*a^3-84*b-96*a*b-48*b^2-192*c-384*a*c-192*a^2*c-384*b*c-384*a*b*c-192*b^2*c-192*c^2-192*a*c^2-192*b*c^2-64*c^3=0 -> [6]
+[2+4*a,2+4*b,1+4*c]: unknown -64-24*a+96*a^2+64*a^3-132*b-96*a*b-48*b^2-432*c-576*a*c-192*a^2*c-576*b*c-384*a*b*c-192*b^2*c-288*c^2-192*a*c^2-192*b*c^2-64*c^3=0 -> [7]
 [0+4*a,0+4*b,3+4*c]: failure constant=-62, vgcd=4
 [2+4*a,0+4*b,3+4*c]: failure constant=-162, vgcd=4
-[0+4*a,2+4*b,3+4*c]: unknown -188-312*a-96*a^2+64*a^3-324*b-288*a*b-144*b^2-432*c-576*a*c-192*a^2*c-576*b*c-384*a*b*c-192*b^2*c-288*c^2-192*a*c^2-192*b*c^2-64*c^3=0 -> [10]
-[2+4*a,2+4*b,3+4*c]: unknown -360-360*a+64*a^3-468*b-288*a*b-144*b^2-768*c-768*a*c-192*a^2*c-768*b*c-384*a*b*c-192*b^2*c-384*c^2-192*a*c^2-192*b*c^2-64*c^3=0 -> [11]
+[0+4*a,2+4*b,3+4*c]: unknown -188-312*a-96*a^2+64*a^3-324*b-288*a*b-144*b^2-432*c-576*a*c-192*a^2*c-576*b*c-384*a*b*c-192*b^2*c-288*c^2-192*a*c^2-192*b*c^2-64*c^3=0 -> [8]
+[2+4*a,2+4*b,3+4*c]: unknown -360-360*a+64*a^3-468*b-288*a*b-144*b^2-768*c-768*a*c-192*a^2*c-768*b*c-384*a*b*c-192*b^2*c-384*c^2-192*a*c^2-192*b*c^2-64*c^3=0 -> [9]
 
 expanding queue[3]:  - 18 - 24*a + 8*a^3 - 30*b - 24*a*b - 12*b^2 - 54*c - 72*a*c - 24*a^2*c - 72*b*c - 48*a*b*c - 24*b^2*c - 36*c^2 - 24*a*c^2 - 24*b*c^2 - 8*c^3 = 0 modulo [2,2,2] *4
 [0+4*a,1+4*b,1+4*c]: failure constant=-18, vgcd=4
 [2+4*a,1+4*b,1+4*c]: failure constant=-34, vgcd=4
-[0+4*a,3+4*b,1+4*c]: unknown -60-96*a+64*a^3-108*b-96*a*b-48*b^2-300*c-480*a*c-192*a^2*c-480*b*c-384*a*b*c-192*b^2*c-240*c^2-192*a*c^2-192*b*c^2-64*c^3=0 -> [12]
-[2+4*a,3+4*b,1+4*c]: unknown -100-48*a+96*a^2+64*a^3-156*b-96*a*b-48*b^2-588*c-672*a*c-192*a^2*c-672*b*c-384*a*b*c-192*b^2*c-336*c^2-192*a*c^2-192*b*c^2-64*c^3=0 -> [13]
-[0+4*a,1+4*b,3+4*c]: unknown -116-240*a-96*a^2+64*a^3-252*b-288*a*b-144*b^2-300*c-480*a*c-192*a^2*c-480*b*c-384*a*b*c-192*b^2*c-240*c^2-192*a*c^2-192*b*c^2-64*c^3=0 -> [14]
-[2+4*a,1+4*b,3+4*c]: unknown -252-288*a+64*a^3-396*b-288*a*b-144*b^2-588*c-672*a*c-192*a^2*c-672*b*c-384*a*b*c-192*b^2*c-336*c^2-192*a*c^2-192*b*c^2-64*c^3=0 -> [15]
+[0+4*a,3+4*b,1+4*c]: unknown -60-96*a+64*a^3-108*b-96*a*b-48*b^2-300*c-480*a*c-192*a^2*c-480*b*c-384*a*b*c-192*b^2*c-240*c^2-192*a*c^2-192*b*c^2-64*c^3=0 -> [10]
+[2+4*a,3+4*b,1+4*c]: unknown -100-48*a+96*a^2+64*a^3-156*b-96*a*b-48*b^2-588*c-672*a*c-192*a^2*c-672*b*c-384*a*b*c-192*b^2*c-336*c^2-192*a*c^2-192*b*c^2-64*c^3=0 -> [11]
+[0+4*a,1+4*b,3+4*c]: unknown -116-240*a-96*a^2+64*a^3-252*b-288*a*b-144*b^2-300*c-480*a*c-192*a^2*c-480*b*c-384*a*b*c-192*b^2*c-240*c^2-192*a*c^2-192*b*c^2-64*c^3=0 -> [12]
+[2+4*a,1+4*b,3+4*c]: unknown -252-288*a+64*a^3-396*b-288*a*b-144*b^2-588*c-672*a*c-192*a^2*c-672*b*c-384*a*b*c-192*b^2*c-336*c^2-192*a*c^2-192*b*c^2-64*c^3=0 -> [13]
 [0+4*a,3+4*b,3+4*c]: failure constant=-278, vgcd=4
 [2+4*a,3+4*b,3+4*c]: failure constant=-486, vgcd=4
 
 expanding queue[4]: 8 + 48*a + 96*a^2 + 64*a^3 - 108*c - 288*a*c - 192*a^2*c - 288*b*c - 384*a*b*c - 192*b^2*c - 144*c^2 - 192*a*c^2 - 192*b*c^2 - 64*c^3 = 0 modulo [2,2,2] *8
-[1+8*a,1+8*b,0+8*c]: unknown 8+96*a+384*a^2+512*a^3-216*c-1152*a*c-1536*a^2*c-1152*b*c-3072*a*b*c-1536*b^2*c-576*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [16]
-[5+8*a,1+8*b,0+8*c]: unknown 216+864*a+1152*a^2+512*a^3-1176*c-2688*a*c-1536*a^2*c-2688*b*c-3072*a*b*c-1536*b^2*c-1344*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [17]
-[1+8*a,5+8*b,0+8*c]: unknown 8+96*a+384*a^2+512*a^3-1176*c-2688*a*c-1536*a^2*c-2688*b*c-3072*a*b*c-1536*b^2*c-1344*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [18]
-[5+8*a,5+8*b,0+8*c]: unknown 216+864*a+1152*a^2+512*a^3-2904*c-4224*a*c-1536*a^2*c-4224*b*c-3072*a*b*c-1536*b^2*c-2112*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [19]
+[1+8*a,1+8*b,0+8*c]: unknown 8+96*a+384*a^2+512*a^3-216*c-1152*a*c-1536*a^2*c-1152*b*c-3072*a*b*c-1536*b^2*c-576*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [14]
+[5+8*a,1+8*b,0+8*c]: unknown 216+864*a+1152*a^2+512*a^3-1176*c-2688*a*c-1536*a^2*c-2688*b*c-3072*a*b*c-1536*b^2*c-1344*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [15]
+[1+8*a,5+8*b,0+8*c]: similiar to [14], is mappable to: {a=>a}  8+96*a+384*a^2+512*a^3-1176*c-2688*a*c-1536*a^2*c-2688*b*c-3072*a*b*c-1536*b^2*c-1344*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0
+[5+8*a,5+8*b,0+8*c]: similiar to [15], is mappable to: {a=>a}  216+864*a+1152*a^2+512*a^3-2904*c-4224*a*c-1536*a^2*c-4224*b*c-3072*a*b*c-1536*b^2*c-2112*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0
 [1+8*a,1+8*b,4+8*c]: failure constant=-308, vgcd=8
 [5+8*a,1+8*b,4+8*c]: failure constant=-772, vgcd=8
 [1+8*a,5+8*b,4+8*c]: failure constant=-980, vgcd=8
 [5+8*a,5+8*b,4+8*c]: failure constant=-1828, vgcd=8
 
 expanding queue[5]: 64 + 192*a + 192*a^2 + 64*a^3 - 300*c - 480*a*c - 192*a^2*c - 480*b*c - 384*a*b*c - 192*b^2*c - 240*c^2 - 192*a*c^2 - 192*b*c^2 - 64*c^3 = 0 modulo [2,2,2] *8
-[3+8*a,1+8*b,0+8*c]: unknown 64+384*a+768*a^2+512*a^3-600*c-1920*a*c-1536*a^2*c-1920*b*c-3072*a*b*c-1536*b^2*c-960*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [20]
-[7+8*a,1+8*b,0+8*c]: unknown 512+1536*a+1536*a^2+512*a^3-1944*c-3456*a*c-1536*a^2*c-3456*b*c-3072*a*b*c-1536*b^2*c-1728*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [21]
-[3+8*a,5+8*b,0+8*c]: unknown 64+384*a+768*a^2+512*a^3-1944*c-3456*a*c-1536*a^2*c-3456*b*c-3072*a*b*c-1536*b^2*c-1728*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [22]
-[7+8*a,5+8*b,0+8*c]: unknown 512+1536*a+1536*a^2+512*a^3-4056*c-4992*a*c-1536*a^2*c-4992*b*c-3072*a*b*c-1536*b^2*c-2496*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [23]
+[3+8*a,1+8*b,0+8*c]: unknown 64+384*a+768*a^2+512*a^3-600*c-1920*a*c-1536*a^2*c-1920*b*c-3072*a*b*c-1536*b^2*c-960*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [16]
+[7+8*a,1+8*b,0+8*c]: unknown 512+1536*a+1536*a^2+512*a^3-1944*c-3456*a*c-1536*a^2*c-3456*b*c-3072*a*b*c-1536*b^2*c-1728*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [17]
+[3+8*a,5+8*b,0+8*c]: similiar to [16], is mappable to: {a=>a}  64+384*a+768*a^2+512*a^3-1944*c-3456*a*c-1536*a^2*c-3456*b*c-3072*a*b*c-1536*b^2*c-1728*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0
+[7+8*a,5+8*b,0+8*c]: similiar to [17], is mappable to: {a=>a}  512+1536*a+1536*a^2+512*a^3-4056*c-4992*a*c-1536*a^2*c-4992*b*c-3072*a*b*c-1536*b^2*c-2496*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0
 [3+8*a,1+8*b,4+8*c]: failure constant=-540, vgcd=8
 [7+8*a,1+8*b,4+8*c]: failure constant=-956, vgcd=8
 [3+8*a,5+8*b,4+8*c]: failure constant=-1404, vgcd=8
 [7+8*a,5+8*b,4+8*c]: failure constant=-2204, vgcd=8
 
-expanding queue[6]: 8 + 48*a + 96*a^2 + 64*a^3 - 300*c - 480*a*c - 192*a^2*c - 480*b*c - 384*a*b*c - 192*b^2*c - 240*c^2 - 192*a*c^2 - 192*b*c^2 - 64*c^3 = 0 modulo [2,2,2] *8
-[1+8*a,3+8*b,0+8*c]: unknown 8+96*a+384*a^2+512*a^3-600*c-1920*a*c-1536*a^2*c-1920*b*c-3072*a*b*c-1536*b^2*c-960*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [24]
-[5+8*a,3+8*b,0+8*c]: unknown 216+864*a+1152*a^2+512*a^3-1944*c-3456*a*c-1536*a^2*c-3456*b*c-3072*a*b*c-1536*b^2*c-1728*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [25]
-[1+8*a,7+8*b,0+8*c]: unknown 8+96*a+384*a^2+512*a^3-1944*c-3456*a*c-1536*a^2*c-3456*b*c-3072*a*b*c-1536*b^2*c-1728*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [26]
-[5+8*a,7+8*b,0+8*c]: unknown 216+864*a+1152*a^2+512*a^3-4056*c-4992*a*c-1536*a^2*c-4992*b*c-3072*a*b*c-1536*b^2*c-2496*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [27]
-[1+8*a,3+8*b,4+8*c]: failure constant=-596, vgcd=8
-[5+8*a,3+8*b,4+8*c]: failure constant=-1252, vgcd=8
-[1+8*a,7+8*b,4+8*c]: failure constant=-1460, vgcd=8
-[5+8*a,7+8*b,4+8*c]: failure constant=-2500, vgcd=8
-
-expanding queue[7]: 64 + 192*a + 192*a^2 + 64*a^3 - 588*c - 672*a*c - 192*a^2*c - 672*b*c - 384*a*b*c - 192*b^2*c - 336*c^2 - 192*a*c^2 - 192*b*c^2 - 64*c^3 = 0 modulo [2,2,2] *8
-[3+8*a,3+8*b,0+8*c]: unknown 64+384*a+768*a^2+512*a^3-1176*c-2688*a*c-1536*a^2*c-2688*b*c-3072*a*b*c-1536*b^2*c-1344*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [28]
-[7+8*a,3+8*b,0+8*c]: unknown 512+1536*a+1536*a^2+512*a^3-2904*c-4224*a*c-1536*a^2*c-4224*b*c-3072*a*b*c-1536*b^2*c-2112*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [29]
-[3+8*a,7+8*b,0+8*c]: unknown 64+384*a+768*a^2+512*a^3-2904*c-4224*a*c-1536*a^2*c-4224*b*c-3072*a*b*c-1536*b^2*c-2112*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [30]
-[7+8*a,7+8*b,0+8*c]: unknown 512+1536*a+1536*a^2+512*a^3-5400*c-5760*a*c-1536*a^2*c-5760*b*c-3072*a*b*c-1536*b^2*c-2880*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [31]
-[3+8*a,3+8*b,4+8*c]: failure constant=-924, vgcd=8
-[7+8*a,3+8*b,4+8*c]: failure constant=-1532, vgcd=8
-[3+8*a,7+8*b,4+8*c]: failure constant=-1980, vgcd=8
-[7+8*a,7+8*b,4+8*c]: failure constant=-2972, vgcd=8
-
-expanding queue[8]:  - 36 - 72*a + 64*a^3 - 84*b - 96*a*b - 48*b^2 - 192*c - 384*a*c - 192*a^2*c - 384*b*c - 384*a*b*c - 192*b^2*c - 192*c^2 - 192*a*c^2 - 192*b*c^2 - 64*c^3 = 0 modulo [2,2,2] *8
+expanding queue[6]:  - 36 - 72*a + 64*a^3 - 84*b - 96*a*b - 48*b^2 - 192*c - 384*a*c - 192*a^2*c - 384*b*c - 384*a*b*c - 192*b^2*c - 192*c^2 - 192*a*c^2 - 192*b*c^2 - 64*c^3 = 0 modulo [2,2,2] *8
 [0+8*a,2+8*b,1+8*c]: failure constant=-36, vgcd=8
 [4+8*a,2+8*b,1+8*c]: failure constant=-44, vgcd=8
-[0+8*a,6+8*b,1+8*c]: unknown -168-336*a+512*a^3-360*b-384*a*b-192*b^2-1536*c-3072*a*c-1536*a^2*c-3072*b*c-3072*a*b*c-1536*b^2*c-1536*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [32]
-[4+8*a,6+8*b,1+8*c]: unknown -272+48*a+768*a^2+512*a^3-552*b-384*a*b-192*b^2-3456*c-4608*a*c-1536*a^2*c-4608*b*c-3072*a*b*c-1536*b^2*c-2304*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [33]
+[0+8*a,6+8*b,1+8*c]: unknown -168-336*a+512*a^3-360*b-384*a*b-192*b^2-1536*c-3072*a*c-1536*a^2*c-3072*b*c-3072*a*b*c-1536*b^2*c-1536*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [18]
+[4+8*a,6+8*b,1+8*c]: unknown -272+48*a+768*a^2+512*a^3-552*b-384*a*b-192*b^2-3456*c-4608*a*c-1536*a^2*c-4608*b*c-3072*a*b*c-1536*b^2*c-2304*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [19]
 [0+8*a,2+8*b,5+8*c]: failure constant=-484, vgcd=8
 [4+8*a,2+8*b,5+8*c]: failure constant=-1260, vgcd=8
-[0+8*a,6+8*b,5+8*c]: unknown -1384-2256*a-768*a^2+512*a^3-2280*b-1920*a*b-960*b^2-3456*c-4608*a*c-1536*a^2*c-4608*b*c-3072*a*b*c-1536*b^2*c-2304*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [34]
-[4+8*a,6+8*b,5+8*c]: unknown -2640-2640*a+512*a^3-3240*b-1920*a*b-960*b^2-6144*c-6144*a*c-1536*a^2*c-6144*b*c-3072*a*b*c-1536*b^2*c-3072*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [35]
+[0+8*a,6+8*b,5+8*c]: unknown -1384-2256*a-768*a^2+512*a^3-2280*b-1920*a*b-960*b^2-3456*c-4608*a*c-1536*a^2*c-4608*b*c-3072*a*b*c-1536*b^2*c-2304*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [20]
+[4+8*a,6+8*b,5+8*c]: unknown -2640-2640*a+512*a^3-3240*b-1920*a*b-960*b^2-6144*c-6144*a*c-1536*a^2*c-6144*b*c-3072*a*b*c-1536*b^2*c-3072*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [21]
 
-expanding queue[9]:  - 64 - 24*a + 96*a^2 + 64*a^3 - 132*b - 96*a*b - 48*b^2 - 432*c - 576*a*c - 192*a^2*c - 576*b*c - 384*a*b*c - 192*b^2*c - 288*c^2 - 192*a*c^2 - 192*b*c^2 - 64*c^3 = 0 modulo [2,2,2] *8
-[2+8*a,2+8*b,1+8*c]: unknown -64-48*a+384*a^2+512*a^3-264*b-384*a*b-192*b^2-864*c-2304*a*c-1536*a^2*c-2304*b*c-3072*a*b*c-1536*b^2*c-1152*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [36]
-[6+8*a,2+8*b,1+8*c]: unknown 72+720*a+1152*a^2+512*a^3-456*b-384*a*b-192*b^2-2400*c-3840*a*c-1536*a^2*c-3840*b*c-3072*a*b*c-1536*b^2*c-1920*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [37]
+expanding queue[7]:  - 64 - 24*a + 96*a^2 + 64*a^3 - 132*b - 96*a*b - 48*b^2 - 432*c - 576*a*c - 192*a^2*c - 576*b*c - 384*a*b*c - 192*b^2*c - 288*c^2 - 192*a*c^2 - 192*b*c^2 - 64*c^3 = 0 modulo [2,2,2] *8
+[2+8*a,2+8*b,1+8*c]: unknown -64-48*a+384*a^2+512*a^3-264*b-384*a*b-192*b^2-864*c-2304*a*c-1536*a^2*c-2304*b*c-3072*a*b*c-1536*b^2*c-1152*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [22]
+[6+8*a,2+8*b,1+8*c]: unknown 72+720*a+1152*a^2+512*a^3-456*b-384*a*b-192*b^2-2400*c-3840*a*c-1536*a^2*c-3840*b*c-3072*a*b*c-1536*b^2*c-1920*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [23]
 [2+8*a,6+8*b,1+8*c]: failure constant=-244, vgcd=8
 [6+8*a,6+8*b,1+8*c]: failure constant=-204, vgcd=8
-[2+8*a,2+8*b,5+8*c]: unknown -848-1584*a-384*a^2+512*a^3-1800*b-1920*a*b-960*b^2-2400*c-3840*a*c-1536*a^2*c-3840*b*c-3072*a*b*c-1536*b^2*c-1920*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [38]
-[6+8*a,2+8*b,5+8*c]: unknown -1672-1584*a+384*a^2+512*a^3-2760*b-1920*a*b-960*b^2-4704*c-5376*a*c-1536*a^2*c-5376*b*c-3072*a*b*c-1536*b^2*c-2688*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [39]
+[2+8*a,2+8*b,5+8*c]: unknown -848-1584*a-384*a^2+512*a^3-1800*b-1920*a*b-960*b^2-2400*c-3840*a*c-1536*a^2*c-3840*b*c-3072*a*b*c-1536*b^2*c-1920*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [24]
+[6+8*a,2+8*b,5+8*c]: unknown -1672-1584*a+384*a^2+512*a^3-2760*b-1920*a*b-960*b^2-4704*c-5376*a*c-1536*a^2*c-5376*b*c-3072*a*b*c-1536*b^2*c-2688*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [25]
 [2+8*a,6+8*b,5+8*c]: failure constant=-1988, vgcd=8
 [6+8*a,6+8*b,5+8*c]: failure constant=-3292, vgcd=8
 
-expanding queue[10]:  - 188 - 312*a - 96*a^2 + 64*a^3 - 324*b - 288*a*b - 144*b^2 - 432*c - 576*a*c - 192*a^2*c - 576*b*c - 384*a*b*c - 192*b^2*c - 288*c^2 - 192*a*c^2 - 192*b*c^2 - 64*c^3 = 0 modulo [2,2,2] *8
+expanding queue[8]:  - 188 - 312*a - 96*a^2 + 64*a^3 - 324*b - 288*a*b - 144*b^2 - 432*c - 576*a*c - 192*a^2*c - 576*b*c - 384*a*b*c - 192*b^2*c - 288*c^2 - 192*a*c^2 - 192*b*c^2 - 64*c^3 = 0 modulo [2,2,2] *8
 [0+8*a,2+8*b,3+8*c]: failure constant=-188, vgcd=8
 [4+8*a,2+8*b,3+8*c]: failure constant=-532, vgcd=8
-[0+8*a,6+8*b,3+8*c]: unknown -656-1200*a-384*a^2+512*a^3-1224*b-1152*a*b-576*b^2-2400*c-3840*a*c-1536*a^2*c-3840*b*c-3072*a*b*c-1536*b^2*c-1920*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [40]
-[4+8*a,6+8*b,3+8*c]: unknown -1288-1200*a+384*a^2+512*a^3-1800*b-1152*a*b-576*b^2-4704*c-5376*a*c-1536*a^2*c-5376*b*c-3072*a*b*c-1536*b^2*c-2688*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [41]
+[0+8*a,6+8*b,3+8*c]: unknown -656-1200*a-384*a^2+512*a^3-1224*b-1152*a*b-576*b^2-2400*c-3840*a*c-1536*a^2*c-3840*b*c-3072*a*b*c-1536*b^2*c-1920*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [26]
+[4+8*a,6+8*b,3+8*c]: unknown -1288-1200*a+384*a^2+512*a^3-1800*b-1152*a*b-576*b^2-4704*c-5376*a*c-1536*a^2*c-5376*b*c-3072*a*b*c-1536*b^2*c-2688*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [27]
 [0+8*a,2+8*b,7+8*c]: failure constant=-972, vgcd=8
 [4+8*a,2+8*b,7+8*c]: failure constant=-2276, vgcd=8
-[0+8*a,6+8*b,7+8*c]: unknown -2400-3504*a-1152*a^2+512*a^3-3528*b-2688*a*b-1344*b^2-4704*c-5376*a*c-1536*a^2*c-5376*b*c-3072*a*b*c-1536*b^2*c-2688*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [42]
-[4+8*a,6+8*b,7+8*c]: unknown -4376-4272*a-384*a^2+512*a^3-4872*b-2688*a*b-1344*b^2-7776*c-6912*a*c-1536*a^2*c-6912*b*c-3072*a*b*c-1536*b^2*c-3456*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [43]
+[0+8*a,6+8*b,7+8*c]: unknown -2400-3504*a-1152*a^2+512*a^3-3528*b-2688*a*b-1344*b^2-4704*c-5376*a*c-1536*a^2*c-5376*b*c-3072*a*b*c-1536*b^2*c-2688*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [28]
+[4+8*a,6+8*b,7+8*c]: unknown -4376-4272*a-384*a^2+512*a^3-4872*b-2688*a*b-1344*b^2-7776*c-6912*a*c-1536*a^2*c-6912*b*c-3072*a*b*c-1536*b^2*c-3456*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [29]
 
-expanding queue[11]:  - 360 - 360*a + 64*a^3 - 468*b - 288*a*b - 144*b^2 - 768*c - 768*a*c - 192*a^2*c - 768*b*c - 384*a*b*c - 192*b^2*c - 384*c^2 - 192*a*c^2 - 192*b*c^2 - 64*c^3 = 0 modulo [2,2,2] *8
-[2+8*a,2+8*b,3+8*c]: unknown -360-720*a+512*a^3-936*b-1152*a*b-576*b^2-1536*c-3072*a*c-1536*a^2*c-3072*b*c-3072*a*b*c-1536*b^2*c-1536*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [44]
-[6+8*a,2+8*b,3+8*c]: unknown -656-336*a+768*a^2+512*a^3-1512*b-1152*a*b-576*b^2-3456*c-4608*a*c-1536*a^2*c-4608*b*c-3072*a*b*c-1536*b^2*c-2304*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [45]
+expanding queue[9]:  - 360 - 360*a + 64*a^3 - 468*b - 288*a*b - 144*b^2 - 768*c - 768*a*c - 192*a^2*c - 768*b*c - 384*a*b*c - 192*b^2*c - 384*c^2 - 192*a*c^2 - 192*b*c^2 - 64*c^3 = 0 modulo [2,2,2] *8
+[2+8*a,2+8*b,3+8*c]: unknown -360-720*a+512*a^3-936*b-1152*a*b-576*b^2-1536*c-3072*a*c-1536*a^2*c-3072*b*c-3072*a*b*c-1536*b^2*c-1536*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [30]
+[6+8*a,2+8*b,3+8*c]: unknown -656-336*a+768*a^2+512*a^3-1512*b-1152*a*b-576*b^2-3456*c-4608*a*c-1536*a^2*c-4608*b*c-3072*a*b*c-1536*b^2*c-2304*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [31]
 [2+8*a,6+8*b,3+8*c]: failure constant=-972, vgcd=8
 [6+8*a,6+8*b,3+8*c]: failure constant=-1556, vgcd=8
-[2+8*a,2+8*b,7+8*c]: unknown -1576-2640*a-768*a^2+512*a^3-2856*b-2688*a*b-1344*b^2-3456*c-4608*a*c-1536*a^2*c-4608*b*c-3072*a*b*c-1536*b^2*c-2304*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [46]
-[6+8*a,2+8*b,7+8*c]: unknown -3024-3024*a+512*a^3-4200*b-2688*a*b-1344*b^2-6144*c-6144*a*c-1536*a^2*c-6144*b*c-3072*a*b*c-1536*b^2*c-3072*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [47]
+[2+8*a,2+8*b,7+8*c]: unknown -1576-2640*a-768*a^2+512*a^3-2856*b-2688*a*b-1344*b^2-3456*c-4608*a*c-1536*a^2*c-4608*b*c-3072*a*b*c-1536*b^2*c-2304*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [32]
+[6+8*a,2+8*b,7+8*c]: unknown -3024-3024*a+512*a^3-4200*b-2688*a*b-1344*b^2-6144*c-6144*a*c-1536*a^2*c-6144*b*c-3072*a*b*c-1536*b^2*c-3072*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [33]
 [2+8*a,6+8*b,7+8*c]: failure constant=-3340, vgcd=8
 [6+8*a,6+8*b,7+8*c]: failure constant=-5460, vgcd=8
 
-expanding queue[12]:  - 60 - 96*a + 64*a^3 - 108*b - 96*a*b - 48*b^2 - 300*c - 480*a*c - 192*a^2*c - 480*b*c - 384*a*b*c - 192*b^2*c - 240*c^2 - 192*a*c^2 - 192*b*c^2 - 64*c^3 = 0 modulo [2,2,2] *8
+expanding queue[10]:  - 60 - 96*a + 64*a^3 - 108*b - 96*a*b - 48*b^2 - 300*c - 480*a*c - 192*a^2*c - 480*b*c - 384*a*b*c - 192*b^2*c - 240*c^2 - 192*a*c^2 - 192*b*c^2 - 64*c^3 = 0 modulo [2,2,2] *8
 [0+8*a,3+8*b,1+8*c]: failure constant=-60, vgcd=8
 [4+8*a,3+8*b,1+8*c]: failure constant=-92, vgcd=8
-[0+8*a,7+8*b,1+8*c]: unknown -216-384*a+512*a^3-408*b-384*a*b-192*b^2-1944*c-3456*a*c-1536*a^2*c-3456*b*c-3072*a*b*c-1536*b^2*c-1728*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [48]
-[4+8*a,7+8*b,1+8*c]: unknown -344+768*a^2+512*a^3-600*b-384*a*b-192*b^2-4056*c-4992*a*c-1536*a^2*c-4992*b*c-3072*a*b*c-1536*b^2*c-2496*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [49]
-[0+8*a,3+8*b,5+8*c]: unknown -664-1536*a-768*a^2+512*a^3-1560*b-1920*a*b-960*b^2-1944*c-3456*a*c-1536*a^2*c-3456*b*c-3072*a*b*c-1536*b^2*c-1728*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [50]
-[4+8*a,3+8*b,5+8*c]: unknown -1560-1920*a+512*a^3-2520*b-1920*a*b-960*b^2-4056*c-4992*a*c-1536*a^2*c-4992*b*c-3072*a*b*c-1536*b^2*c-2496*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [51]
+[0+8*a,7+8*b,1+8*c]: unknown -216-384*a+512*a^3-408*b-384*a*b-192*b^2-1944*c-3456*a*c-1536*a^2*c-3456*b*c-3072*a*b*c-1536*b^2*c-1728*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [34]
+[4+8*a,7+8*b,1+8*c]: unknown -344+768*a^2+512*a^3-600*b-384*a*b-192*b^2-4056*c-4992*a*c-1536*a^2*c-4992*b*c-3072*a*b*c-1536*b^2*c-2496*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [35]
+[0+8*a,3+8*b,5+8*c]: unknown -664-1536*a-768*a^2+512*a^3-1560*b-1920*a*b-960*b^2-1944*c-3456*a*c-1536*a^2*c-3456*b*c-3072*a*b*c-1536*b^2*c-1728*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [36]
+[4+8*a,3+8*b,5+8*c]: unknown -1560-1920*a+512*a^3-2520*b-1920*a*b-960*b^2-4056*c-4992*a*c-1536*a^2*c-4992*b*c-3072*a*b*c-1536*b^2*c-2496*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [37]
 [0+8*a,7+8*b,5+8*c]: failure constant=-1684, vgcd=8
 [4+8*a,7+8*b,5+8*c]: failure constant=-3060, vgcd=8
 
-expanding queue[13]:  - 100 - 48*a + 96*a^2 + 64*a^3 - 156*b - 96*a*b - 48*b^2 - 588*c - 672*a*c - 192*a^2*c - 672*b*c - 384*a*b*c - 192*b^2*c - 336*c^2 - 192*a*c^2 - 192*b*c^2 - 64*c^3 = 0 modulo [2,2,2] *8
+expanding queue[11]:  - 100 - 48*a + 96*a^2 + 64*a^3 - 156*b - 96*a*b - 48*b^2 - 588*c - 672*a*c - 192*a^2*c - 672*b*c - 384*a*b*c - 192*b^2*c - 336*c^2 - 192*a*c^2 - 192*b*c^2 - 64*c^3 = 0 modulo [2,2,2] *8
 [2+8*a,3+8*b,1+8*c]: failure constant=-100, vgcd=8
 [6+8*a,3+8*b,1+8*c]: failure constant=12, vgcd=8
-[2+8*a,7+8*b,1+8*c]: unknown -304-288*a+384*a^2+512*a^3-504*b-384*a*b-192*b^2-2904*c-4224*a*c-1536*a^2*c-4224*b*c-3072*a*b*c-1536*b^2*c-2112*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [52]
-[6+8*a,7+8*b,1+8*c]: unknown -288+480*a+1152*a^2+512*a^3-696*b-384*a*b-192*b^2-5400*c-5760*a*c-1536*a^2*c-5760*b*c-3072*a*b*c-1536*b^2*c-2880*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [53]
-[2+8*a,3+8*b,5+8*c]: unknown -1088-1824*a-384*a^2+512*a^3-2040*b-1920*a*b-960*b^2-2904*c-4224*a*c-1536*a^2*c-4224*b*c-3072*a*b*c-1536*b^2*c-2112*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [54]
-[6+8*a,3+8*b,5+8*c]: unknown -2032-1824*a+384*a^2+512*a^3-3000*b-1920*a*b-960*b^2-5400*c-5760*a*c-1536*a^2*c-5760*b*c-3072*a*b*c-1536*b^2*c-2880*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [55]
+[2+8*a,7+8*b,1+8*c]: unknown -304-288*a+384*a^2+512*a^3-504*b-384*a*b-192*b^2-2904*c-4224*a*c-1536*a^2*c-4224*b*c-3072*a*b*c-1536*b^2*c-2112*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [38]
+[6+8*a,7+8*b,1+8*c]: unknown -288+480*a+1152*a^2+512*a^3-696*b-384*a*b-192*b^2-5400*c-5760*a*c-1536*a^2*c-5760*b*c-3072*a*b*c-1536*b^2*c-2880*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [39]
+[2+8*a,3+8*b,5+8*c]: unknown -1088-1824*a-384*a^2+512*a^3-2040*b-1920*a*b-960*b^2-2904*c-4224*a*c-1536*a^2*c-4224*b*c-3072*a*b*c-1536*b^2*c-2112*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [40]
+[6+8*a,3+8*b,5+8*c]: unknown -2032-1824*a+384*a^2+512*a^3-3000*b-1920*a*b-960*b^2-5400*c-5760*a*c-1536*a^2*c-5760*b*c-3072*a*b*c-1536*b^2*c-2880*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [41]
 [2+8*a,7+8*b,5+8*c]: failure constant=-2348, vgcd=8
 [6+8*a,7+8*b,5+8*c]: failure constant=-3772, vgcd=8
 
-expanding queue[14]:  - 116 - 240*a - 96*a^2 + 64*a^3 - 252*b - 288*a*b - 144*b^2 - 300*c - 480*a*c - 192*a^2*c - 480*b*c - 384*a*b*c - 192*b^2*c - 240*c^2 - 192*a*c^2 - 192*b*c^2 - 64*c^3 = 0 modulo [2,2,2] *8
+expanding queue[12]:  - 116 - 240*a - 96*a^2 + 64*a^3 - 252*b - 288*a*b - 144*b^2 - 300*c - 480*a*c - 192*a^2*c - 480*b*c - 384*a*b*c - 192*b^2*c - 240*c^2 - 192*a*c^2 - 192*b*c^2 - 64*c^3 = 0 modulo [2,2,2] *8
 [0+8*a,1+8*b,3+8*c]: failure constant=-116, vgcd=8
 [4+8*a,1+8*b,3+8*c]: failure constant=-388, vgcd=8
-[0+8*a,5+8*b,3+8*c]: unknown -512-1056*a-384*a^2+512*a^3-1080*b-1152*a*b-576*b^2-1944*c-3456*a*c-1536*a^2*c-3456*b*c-3072*a*b*c-1536*b^2*c-1728*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [56]
-[4+8*a,5+8*b,3+8*c]: unknown -1072-1056*a+384*a^2+512*a^3-1656*b-1152*a*b-576*b^2-4056*c-4992*a*c-1536*a^2*c-4992*b*c-3072*a*b*c-1536*b^2*c-2496*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [57]
-[0+8*a,1+8*b,7+8*c]: unknown -720-1824*a-1152*a^2+512*a^3-1848*b-2688*a*b-1344*b^2-1944*c-3456*a*c-1536*a^2*c-3456*b*c-3072*a*b*c-1536*b^2*c-1728*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [58]
-[4+8*a,1+8*b,7+8*c]: unknown -1856-2592*a-384*a^2+512*a^3-3192*b-2688*a*b-1344*b^2-4056*c-4992*a*c-1536*a^2*c-4992*b*c-3072*a*b*c-1536*b^2*c-2496*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [59]
+[0+8*a,5+8*b,3+8*c]: unknown -512-1056*a-384*a^2+512*a^3-1080*b-1152*a*b-576*b^2-1944*c-3456*a*c-1536*a^2*c-3456*b*c-3072*a*b*c-1536*b^2*c-1728*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [42]
+[4+8*a,5+8*b,3+8*c]: unknown -1072-1056*a+384*a^2+512*a^3-1656*b-1152*a*b-576*b^2-4056*c-4992*a*c-1536*a^2*c-4992*b*c-3072*a*b*c-1536*b^2*c-2496*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [43]
+[0+8*a,1+8*b,7+8*c]: unknown -720-1824*a-1152*a^2+512*a^3-1848*b-2688*a*b-1344*b^2-1944*c-3456*a*c-1536*a^2*c-3456*b*c-3072*a*b*c-1536*b^2*c-1728*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [44]
+[4+8*a,1+8*b,7+8*c]: unknown -1856-2592*a-384*a^2+512*a^3-3192*b-2688*a*b-1344*b^2-4056*c-4992*a*c-1536*a^2*c-4992*b*c-3072*a*b*c-1536*b^2*c-2496*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [45]
 [0+8*a,5+8*b,7+8*c]: failure constant=-1980, vgcd=8
 [4+8*a,5+8*b,7+8*c]: failure constant=-3788, vgcd=8
 
-expanding queue[15]:  - 252 - 288*a + 64*a^3 - 396*b - 288*a*b - 144*b^2 - 588*c - 672*a*c - 192*a^2*c - 672*b*c - 384*a*b*c - 192*b^2*c - 336*c^2 - 192*a*c^2 - 192*b*c^2 - 64*c^3 = 0 modulo [2,2,2] *8
+expanding queue[13]:  - 252 - 288*a + 64*a^3 - 396*b - 288*a*b - 144*b^2 - 588*c - 672*a*c - 192*a^2*c - 672*b*c - 384*a*b*c - 192*b^2*c - 336*c^2 - 192*a*c^2 - 192*b*c^2 - 64*c^3 = 0 modulo [2,2,2] *8
 [2+8*a,1+8*b,3+8*c]: failure constant=-252, vgcd=8
 [6+8*a,1+8*b,3+8*c]: failure constant=-476, vgcd=8
-[2+8*a,5+8*b,3+8*c]: unknown -792-1152*a+512*a^3-1368*b-1152*a*b-576*b^2-2904*c-4224*a*c-1536*a^2*c-4224*b*c-3072*a*b*c-1536*b^2*c-2112*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [60]
-[6+8*a,5+8*b,3+8*c]: unknown -1304-768*a+768*a^2+512*a^3-1944*b-1152*a*b-576*b^2-5400*c-5760*a*c-1536*a^2*c-5760*b*c-3072*a*b*c-1536*b^2*c-2880*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [61]
-[2+8*a,1+8*b,7+8*c]: unknown -1240-2304*a-768*a^2+512*a^3-2520*b-2688*a*b-1344*b^2-2904*c-4224*a*c-1536*a^2*c-4224*b*c-3072*a*b*c-1536*b^2*c-2112*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [62]
-[6+8*a,1+8*b,7+8*c]: unknown -2520-2688*a+512*a^3-3864*b-2688*a*b-1344*b^2-5400*c-5760*a*c-1536*a^2*c-5760*b*c-3072*a*b*c-1536*b^2*c-2880*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [63]
+[2+8*a,5+8*b,3+8*c]: unknown -792-1152*a+512*a^3-1368*b-1152*a*b-576*b^2-2904*c-4224*a*c-1536*a^2*c-4224*b*c-3072*a*b*c-1536*b^2*c-2112*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [46]
+[6+8*a,5+8*b,3+8*c]: unknown -1304-768*a+768*a^2+512*a^3-1944*b-1152*a*b-576*b^2-5400*c-5760*a*c-1536*a^2*c-5760*b*c-3072*a*b*c-1536*b^2*c-2880*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [47]
+[2+8*a,1+8*b,7+8*c]: unknown -1240-2304*a-768*a^2+512*a^3-2520*b-2688*a*b-1344*b^2-2904*c-4224*a*c-1536*a^2*c-4224*b*c-3072*a*b*c-1536*b^2*c-2112*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [48]
+[6+8*a,1+8*b,7+8*c]: unknown -2520-2688*a+512*a^3-3864*b-2688*a*b-1344*b^2-5400*c-5760*a*c-1536*a^2*c-5760*b*c-3072*a*b*c-1536*b^2*c-2880*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [49]
 [2+8*a,5+8*b,7+8*c]: failure constant=-2836, vgcd=8
 [6+8*a,5+8*b,7+8*c]: failure constant=-4788, vgcd=8
-Maximum level 2 reached, queue size = 64
+Maximum level 2 reached, queue size = 50

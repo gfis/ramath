@@ -1,0 +1,245 @@
+# Collection of Testcases for Ramath
+# @(#) $Id: all.tests 955 2012-06-05 07:22:59Z gfis $
+# 2013-07-28: linear algebra
+# 2013-07-05: Dxx = DispenserFactory for all dispensers; tests shortened and reordered
+# 2013-02-01: web/spec/test/fragment01.xml
+# 2013-01-05: rm U0*, add TL1-4, UR1-7
+# 2012-11-24: for RegressionTester
+# 2012-11-22: new H03, H04, TN1, TN2; explicit QUERY_STRING
+# 2012-10-19: <counter> tests
+# 2012-06-19: GREP ... d{2})T => d{2})T
+# 2012-06-12: all clean again for github
+# 2012-05-08: V0% pass with method="post"; A01 FAILED, 156 passed tests
+# 2011-10-10: <choose> conditional compilation
+# 2011-08-10, Dr. Georg Fischer: extracted from batch_test.pl
+#-----------------------------------
+# Caution:
+# (1) Adjust the following line: URL where Ramath was deployed
+URL=http://localhost:8080/ramath/servlet
+# (2) Adjust the following line: default commandline arguments
+ARGS=
+#======================================================================
+ECHO 000
+#--------------------------------
+# Tests of symbolic classes
+PACKAGE=org.teherba.ramath.symbolic
+
+TEST FA1 factor
+CALL Factor
+
+TEST MO2 monomial
+CALL Monomial
+
+TEST PH1 HighTerms - z^2
+CALL Polynomial -hiterms "-1+2*x+12*x^2+32*x^3+32*x^4-32*y^4-3*z-2*z^2=0"
+
+TEST PH2 HighTerms - z^1
+CALL Polynomial -hiterms "-1+2*x+12*x^2+32*x^3+32*x^4-32*y^4-3*z=0"
+
+TEST PS1 isPowerSum
+CALL Polynomial -psum "4*x^4 - 4*y^4 - 4*z^4"
+
+TEST PS2 not isPowerSum: exponent
+CALL Polynomial -psum "4*x^4 - 4*y^4 - 4*z^2"
+
+TEST PS3 not isPowerSum: coefficient
+CALL Polynomial -psum "4*x^4 - 4*y^4 - 5*z^4"
+
+TEST PS4 not isPowerSum: constant
+CALL Polynomial -psum "4*x^4 - 4*y^4 - 4*z^4 + 4"
+
+TEST PR1 Rest - univariate
+CALL Polynomial -rest 2 "-1+2*x+12*x^2+32*x^3+32*x^4-32*y^4-3*z-2*z^2=0"
+
+TEST PR2 Rest - constant
+CALL Polynomial -rest 2 "-1+2*x+12*x^2+32*x^3+32*x^4-32*y^4-2*z^2=0"
+
+TEST PR3 Rest - empty
+CALL Polynomial -rest 2 "2*x+12*x^2+32*x^3+32*x^4-32*y^4-2*z^2=0"
+
+TEST PR4 Rest - all monomials
+CALL Polynomial -rest 2 "x^4 - y^4 - z^2"
+
+TEST RR1 Rest - univariate
+CALL RelationSet -rest 2 "-1+2*x+12*x^2+32*x^3+32*x^4-32*y^4-3*z-2*z^2=0"
+
+TEST RR4 Rest - all polynomials
+CALL RelationSet -rest 2 "x^4 - y^4 - z^2 = 0"
+
+TEST VM1 VariableMap
+CALL VariableMap
+
+TEST RM1 RefinedMap
+CALL RefinedMap
+
+TEST GR1 isGrownFrom(poly)
+CALL Polynomial  -grow "-80-96*x+16*x^2-96*y-128*x*y+16*y^2-96*z-128*x*z-128*y*z-128*x*y*z+16*z^2=0" "- 4 - 8*x + 4*x^2 - 8*y - 16*x*y + 4*y^2 - 8*z - 16*x*z - 16*y*z - 16*x*y*z + 4*z^2 = 0"
+
+TEST GR2 isGrownFrom(rset)
+CALL RelationSet -grow "-80-96*x+16*x^2-96*y-128*x*y+16*y^2-96*z-128*x*z-128*y*z-128*x*y*z+16*z^2=0" "- 4 - 8*x + 4*x^2 - 8*y - 16*x*y + 4*y^2 - 8*z - 16*x*z - 16*y*z - 16*x*y*z + 4*z^2 = 0"
+
+TEST GR3 isGrownFrom false
+CALL Polynomial  -grow "-48+16*x+96*x^2+256*x^3+256*x^4-16*y^4-112*z-64*z^2=0" "-8+8*x+24*x^2+32*x^3+16*x^4-16*y^4-24*z-16*z^2=0"
+
+TEST P00 constant
+CALL Polynomial "1"
+
+TEST P01 binomial: 3rd power with 3 variables
+CALL Polynomial "(a+b+c)^3"
+
+TEST P02 polynomial equivalence
+CALL Polynomial -equiv "3*(a^2+b^2)-c^2-d^2" "a^2+b^2-3*(d^2-c^2)"
+
+TEST P03 polynomial equivalence
+# runs into an infinite loop in Permutator?
+CALL Polynomial -equiv "3*(a^2+b^2)-c^2-d^2" "a^2+b^2-3*(d^2+c^2)"
+
+TEST P04 Korneck polynomial
+CALL Polynomial "(6*t^3*m*f  + m*(t+m)*(m^4 + m^2*t^2 + t^4) + 3*m*(m-t)*f^2)^3 - (6*m^3*t*f  + t*(t+m)*(m^4 + m^2*t^2 + t^4) + 3*t*(t-m)*f^2)^3 - (6*m^3*t*f  - t*(t+m)*(m^4 + m^2*t^2 + t^4) - 3*t*(t-m)*f^2)^3 - (-6*t^3*m*f + m*(t+m)*(m^4 + m^2*t^2 + t^4) + 3*m*(m-t)*f^2)^3"
+
+TEST P05 binomial: 5th power with 5 variables
+CALL Polynomial "(a+b+c+d+e)^5"
+
+TEST W05 binomial: 6th power with 3 variables
+HTTP view=upper area=poly opt= form1=(a%2Bb%2Bc)^6
+
+TEST P06 binomial: 3rd power with 3 variables
+CALL Polynomial "(a+b+c)^3"
+
+TEST P07 abstract matrix times Pythagorean generator
+DATA
+ (a11*(a^2 - b^2) + 2*a12*a*b + a13*(a^2 + b^2))^2
++(a21*(a^2 - b^2) + 2*a22*a*b + a23*(a^2 + b^2))^2
+-(a31*(a^2 - b^2) + 2*a32*a*b + a33*(a^2 + b^2))^2
+CALL Polynomial -f $(DATA)
+
+TEST P08 Barning's B matrix times Pythagorean generator
+DATA
+ (  1*(a^2 - b^2) +   2*2*a*b +   2*(a^2 + b^2))^2
++(  2*(a^2 - b^2) +   1*2*a*b +   2*(a^2 + b^2))^2
+-(  2*(a^2 - b^2) +   2*2*a*b +   3*(a^2 + b^2))^2
+CALL Polynomial -var "a,b,c" $(DATA)
+
+TEST P09 abstract matrix times (a,b,c) is powersum  a^2 + b^2 - c^2
+DATA
+ (a11*a + a12*b + a13*c)^2
++(a21*a + a22*b + a23*c)^2
+-(a31*a + a32*b + a33*c)^2
+CALL Polynomial -var "a,b,c" $(DATA)
+
+TEST P10 abstract matrix times (3,4,5,6)
+DATA
+ (a11*3 + a12*4 + a13*5 + a14*6)^3
++(a21*3 + a22*4 + a23*5 + a24*6)^3
++(a31*3 + a32*4 + a33*5 + a34*6)^3
+-(a41*3 + a42*4 + a43*5 + a44*6)^3
+CALL Polynomial -f $(DATA)
+
+TEST P11 abstract matrix times (a,b,c,d) is powersum  a^3 + b^3 + c^3 - d^3
+DATA
+ (a11*a + a12*b + a13*c + a14*d)^3
++(a21*a + a22*b + a23*c + a24*d)^3
++(a31*a + a32*b + a33*c + a34*d)^3
+-(a41*a + a42*b + a43*c + a44*d)^3
+-(a^3   +   b^3 +   c^3 -   d^3)
+CALL Polynomial -var "a,b,c,d" $(DATA)
+
+TEST P12 GF.C matrix times (a,b,c,d) yields powersum  a^3 + b^3 + c^3 - d^3 ?
+DATA
+ (  1*a +   2*b +   2*c +   0*d)^3
++(  1*a +   1*b +   1*c +   1*d)^3
++(  2*a +   2*b +   1*c +   0*d)^3
+-(  2*a +   3*b +   2*c +   0*d)^3
+-(a^3   +   b^3 +   c^3 -   d^3)
+CALL Polynomial -f $(DATA)
+
+TEST P13 GF.P matrix times (a,b,c,d) yields powersum  a^3 + b^3 + c^3 - d^3 ?
+DATA
+ ( -2*a +   3*b    -1*c +   1*d)^3
++( -3*a +   4*b    -2*c +   2*d)^3
++( -3*a +   6*b +   0*c +   1*d)^3
+-( -3*a +   6*b    -1*c +   2*d)^3
+CALL Polynomial -var "a,b,c,d" $(DATA)
+
+TEST P14 Price's  A' matrix times (a,b,c) yields powersum  4*a^2 + 4*b^2 - 4*c^2
+DATA
+ (  2*a +   1*b    -1*c)^2
++( -2*a +   2*b +   2*c)^2
+-( -2*a +   1*b +   3*c)^2
+CALL Polynomial -var "a,b,c,d" $(DATA)
+
+TEST P16 Polynomial parsing
+CALL PolynomialParser
+
+TEST P17 Polynomial with GT_0
+CALL Polynomial "(a + b) > 0"
+
+TEST P18 groupBy a constant
+DATA
+ 28+90*a+81*b-121*d+108*a²+162*a*b+81*b²
+CALL Polynomial -var "9" $(DATA)
+
+TEST P19 monomial divided by constant
+CALL Polynomial "20*x / 7"
+
+TEST P20 monomial divided by constant
+CALL Polynomial "20*x / 4"
+
+TEST P21 monomial divided by constant
+CALL Polynomial "20 / 4"
+
+TEST PC1 transp
+CALL Polynomial -transp   "a^3 + b^3 + c^3 - d^3"
+
+TEST PC2 transp
+CALL Polynomial -transp   "a^3 + 2*b^3 + 3*c^3 - d^3"
+
+TEST PC3 transp
+CALL Polynomial -transp  "4*e - 4*f"
+
+TEST PC4 transp
+CALL Polynomial -transp  "x^4 - y^4 - z^2"
+
+TEST PMP1 affineMap
+CALL Polynomial -affine   "x^4 - y^4 - z^2"       "16*x^4 - 16*y^4 - z^2"
+
+TEST PMP2 affineMap
+CALL Polynomial -affine   "16*x^4 - 16*y^4 - z^2" "x^4 - y^4 - z^2"
+
+TEST PMP3 isMappableTo 2*x,2*y,z
+CALL Polynomial -mappable "16*x^4 - 16*y^4 -    z^2" "x^4 - y^4 -z^2"
+
+TEST PMP4 isMappableTo x,y,4*z
+CALL Polynomial -mappable "16*x^4 - 16*y^4 - 16*z^2" "16*x^4 - 16*y^4 - z^2"
+
+TEST PMP5 isMappableTo x,y,4*z+1
+CALL Polynomial -mappable "16*x^4 - 16*y^4 - 16*z^2 - 8*z - 1" "16*x^4 - 16*y^4 - z^2"
+
+TEST PMP6 isMappableTo a->2*a+1, b=3*b+2
+CALL Polynomial -mappable "a^3+b^3+c^3-d^3" "9 + 6*a + 12*a^2 + 8*a^3 + 36*b + 54*b^2 + 27*b^3 + c^3 - d^3"
+
+TEST PMP7 isMappableTo a->2*a+1, b=3*b+2
+CALL Polynomial -mappable "9 + 6*a + 12*a^2 + 8*a^3 + 36*b + 54*b^2 + 27*b^3 + c^3 - d^3" "a^3+b^3+c^3-d^3"
+
+TEST PMP8 isMappableTo 
+CALL Polynomial -mappable "( - 4 - 32*x + 16*x^2 - 32*y - 160*x*y + 16*y^2 - 4*z - 80*x*z - 80*y*z - 320*x*y*z + 16*z^2)" "- 68 - 96*x + 16*x^2 - 96*y - 160*x*y + 16*y^2 - 164*z - 240*x*z - 240*y*z - 320*x*y*z + 16*z^2"
+
+
+#-------------------------------
+# Relation Sets
+
+TEST RS1 without arguments
+CALL RelationSet
+
+TEST RS2 with set in argument
+CALL RelationSet "a+b>0, a-b>0, a>0"
+
+TEST RC1 transposition EEC(3)
+CALL RelationSet -transp   "a^3 + b^3 + c^3 - d^3 = 0"
+
+TEST RC2 transposition
+CALL RelationSet -transp   "a^3 + 2*b^3 + 3*c^3 - d^3 = 0"
+
+TEST RC3 transposition
+CALL RelationSet -transp   "4*e - 4*f = 0"
+

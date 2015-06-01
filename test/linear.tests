@@ -36,10 +36,10 @@ CALL PolyVector -psum a b c
 TEST PMA1 PolyMatrix.multiply
 CALL PolyMatrix -mult [[5,5,0,-3],[3,0,5,5],[0,-3,5,5],[5,5,3,0]] [a,b,c,d]
 
-TEST PM20 abst
+TEST PMA2 abst
 CALL PolyMatrix -abst [[-2,-2,1,0],[1,0,2,2],[2,2,0,1],[0,1,-2,-2]] 
 
-TEST PM21 abst
+TEST PMA3 abst
 CALL PolyMatrix -abst [[5,5,0,-3],[3,0,5,5],[0,-3,5,5],[5,5,3,0]] 
 
 #----------

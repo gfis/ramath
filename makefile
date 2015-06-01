@@ -2,6 +2,7 @@
 
 # test Ramath functions
 # @(#) $Id: makefile 741 2011-07-23 12:30:09Z  $
+# 2015-06-01: all -> symbolic
 # 2015-04-06: java -X...
 # 2013-02-27: RegressionTester
 # 2011-07-06, Dr. Georg Fischer
@@ -12,11 +13,7 @@ TESTDIR=test
 WROB=../../mater/ramath/eec/wroblewski
 
 all: regression
-
-regression:
-	$(REGR) test/all.tests 		$(TEST) 2>&1 \
-	| tee regression.log.tmp
-	grep FAILED regression.log.tmp
+regression: symbolic linear solver
 linear:
 	$(REGR) test/linear.tests 	$(TEST) 2>&1 \
 	| tee regression.log.tmp
@@ -31,6 +28,10 @@ simple:
 	grep FAILED regression.log.tmp
 solver:
 	$(REGR) test/solver.tests 	$(TEST) 2>&1 \
+	| tee regression.log.tmp
+	grep FAILED regression.log.tmp
+symbolic:
+	$(REGR) test/symbolic.tests $(TEST) 2>&1 \
 	| tee regression.log.tmp
 	grep FAILED regression.log.tmp
 #

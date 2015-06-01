@@ -1278,8 +1278,8 @@ x^2 + 3*x^3 + 2*x^4
 
     /** Tries to establish an affine mapping between the variables
      *  of <em>this</em> Polynomial and a 2nd Polynomial.
-     *  The absolute coefficients of the 2nd Polynomial should be greater or equal
-     *  than the absolute coefficients of this Polynomial.
+     *  The absolute coefficients of the 2nd Polynomial should be greater than or equal to
+     *  the absolute coefficients of <em>this</em> Polynomial.
      *  The set of variable names in both Polynomials must be identical.
      *  Currently, only univariate Monomials are treated properly,
      *  and the offsets <em>bi</em> are assumed to be 0.
@@ -1357,37 +1357,48 @@ x^2 + 3*x^3 + 2*x^4
     } // affineMap
 
     /** For a variable, return the - univariate - {@link Monomial}s
-     *  in <em>this</em> Polynomial
-     *  which have [0] the maximum exponent - 1 of that variable,
-     *  and [1] the maximum exponent of the variable,
+     *  in <em>this</em> Polynomial which have 
+     *  (returned in [0]) the maximum exponent - 1 of that variable, and
+     *  (returned in [1]) the maximum exponent of the variable,
      *  or the constant 0 if such monomial(s) do not exist.
+     *  Caution, currently the monomials must be univariate.
      *  @param vname variable name
-     *  @return monomials: [0] = max-1 exponent, [1] = max exponent
+     *  @return monomials: [0] = max-1 exponent, [1] = max exponent, 
+     *  or null if there was a non-univariate Monomial
+     
      */
     public Monomial[] getHighTerms(String vname) {
         Monomial[] result = new Monomial[]{ null, null }; // [0] = max-1, [1] = max exponent
         Iterator <String> titer = monomials.keySet().iterator();
         int maxExp = 0; // lowest possible exponent
-        while (titer.hasNext()) {
+        boolean univariate = true;
+        while (univariate && titer.hasNext()) {
             Monomial mono1 = this.get(titer.next());
             if (mono1.size() == 1) { // univariate
                 int exp = mono1.getExponent(vname);
                 if (exp > maxExp) { // this is higher
                     maxExp = exp;
                 } // was higher
-            } // univariate
+                // univariate
+            } else {
+                univariate = false;
+                maxExp = 0;
+                result = null; // 1 univariate
+            }
         } // while titer
         if (maxExp > 0) {
             String prefix = "/" + vname + ".";
             result[1] = this.get(prefix + String.format("%02x", maxExp    ));
             result[0] = this.get(prefix + String.format("%02x", maxExp - 1));
         } // not "00"
-        if (result[1] == null) {
-            result[1] =  new Monomial("0");
-        }
-        if (result[0] == null) {
-            result[0] =  new Monomial("0");
-        }
+        if (result != null) {
+            if (result[1] == null) {
+                result[1] =  new Monomial("0");
+            }
+            if (result[0] == null) {
+                result[0] =  new Monomial("0");
+            }
+        } // result != null
         return result;
     } // getHighTerms
 
@@ -1396,7 +1407,9 @@ x^2 + 3*x^3 + 2*x^4
      *  The absolute coefficients of the 2nd Polynomial should be greater than
      *  or equal to the corresponding absolute coefficients of this Polynomial.
      *  The set of variable names in both Polynomials must be identical.
-     *  Currently, only univariate Monomials are treated properly.
+     *
+     *  Caution, currently only univariate {@link Monomial}s are treated properly!
+     *
      *  @param poly2 second comparision operand
      *  @return a map from this set of variables to the 2nd set
      *  in the form (ai*xi + bi) -&gt; xi', or null if no such map exists.
@@ -1432,55 +1445,60 @@ x^2 + 3*x^3 + 2*x^4
                     if (busy) {
                         Monomial[] hit1 = this .getHighTerms(vname1);
                         Monomial[] hit2 = poly2.getHighTerms(vname2);
-                        hits1.put(vname1, hit1);
-                        hits2.put(vname2, hit2);
-                        // this.isMappableTo(poly2) => a*x1 + b = x2; a = root(x2.coeff / x1.coeff, exp)
-                        int exp1 = hit1[1].getExponent(vname1);
-                        int exp2 = hit2[1].getExponent(vname2);
-                        busy = exp1 == exp2;
-                        if (busy) { // same exponents
-                            BigInteger pn = hit1[1].getCoefficient();
-                            BigInteger qn = hit2[1].getCoefficient();
-                            BigInteger quotRest[] = pn.divideAndRemainder(qn);
-                            busy = quotRest[1].equals(BigInteger.ZERO);
-                            if (busy) { // even divisible
-                                BigInteger fact = BigIntegerUtil.root(quotRest[0], exp1);
-                                busy = ! fact.equals(BigInteger.ZERO);
-                                if (busy) { // root exists
-                                    BigInteger fact_1 = fact.pow(exp1 - 1);
-                                    BigInteger summ[] = hit1[0].getCoefficient() // pn-1
-                                            .subtract(  hit2[0].getCoefficient().multiply(fact_1))
-                                            .divideAndRemainder(BigInteger.valueOf(exp1)
-                                            .multiply(fact_1)
-                                            .multiply(qn)
-                                            );
-                                    busy = summ[1].equals(BigInteger.ZERO);
-                                    if (busy) { // summand divisible
-                                        result.put(vname2, fact.toString() + "*" + vname1 + "+" + summ[0].toString());
-                                    } else {
+                        busy = hit1 != null && hit2 != null;
+                        if (busy) { // both Polynomials had all univariate Monomials
+                            hits1.put(vname1, hit1);
+                            hits2.put(vname2, hit2);
+                            // this.isMappableTo(poly2) => a*x1 + b = x2; a = root(x2.coeff / x1.coeff, exp)
+                            int exp1 = hit1[1].getExponent(vname1);
+                            int exp2 = hit2[1].getExponent(vname2);
+                            busy = exp1 == exp2;
+                            if (busy) { // same exponents
+                                BigInteger pn = hit1[1].getCoefficient();
+                                BigInteger qn = hit2[1].getCoefficient();
+                                BigInteger quotRest[] = pn.divideAndRemainder(qn);
+                                busy = quotRest[1].equals(BigInteger.ZERO);
+                                if (busy) { // evenly divisible
+                                    BigInteger fact = BigIntegerUtil.root(quotRest[0], exp1);
+                                    busy = ! fact.equals(BigInteger.ZERO);
+                                    if (busy) { // root exists
+                                        BigInteger fact_1 = fact.pow(exp1 - 1);
+                                        BigInteger summ[] = hit1[0].getCoefficient() // pn-1
+                                                .subtract(  hit2[0].getCoefficient().multiply(fact_1))
+                                                .divideAndRemainder(BigInteger.valueOf(exp1)
+                                                .multiply(fact_1)
+                                                .multiply(qn)
+                                                );
+                                        busy = summ[1].equals(BigInteger.ZERO);
+                                        if (busy) { // summand divisible
+                                            result.put(vname2, summ[0].toString() + "+" + fact.toString() + "*" + vname1);
+                                        } else {
+                                            if (debug >= debugLimit) {
+                                                System.out.println("isMappableTo: indivisible summand for " + vname2);
+                                            }
+                                        } // summand divisible
+                                        // root exists
+                                    } else { // no root
                                         if (debug >= debugLimit) {
-                                            System.out.println("isMappableTo: indivisible summand for " + vname2);
+                                            System.out.println("isMappableTo: root, "
+                                                + hit1[1].getCoefficient().toString() + "/"
+                                                + hit2[1].getCoefficient().toString() + " = " + quotRest[0].toString());
                                         }
-                                    } // summand divisible
-                                    // root exists
-                                } else { // no root
+                                    }
+                                    // even divisible
+                                } else {
                                     if (debug >= debugLimit) {
-                                        System.out.println("isMappableTo: root, "
-                                            + hit1[1].getCoefficient().toString() + "/"
-                                            + hit2[1].getCoefficient().toString() + " = " + quotRest[0].toString());
+                                        System.out.println("isMappableTo: quotRest[1] " + quotRest[1].toString());
                                     }
                                 }
-                                // even divisible
+                                // same exponents
                             } else {
                                 if (debug >= debugLimit) {
-                                    System.out.println("isMappableTo: quotRest[1] " + quotRest[1].toString());
+                                    System.out.println("isMappableTo: exp1 " + exp1 + " != exp2 " + exp2);
                                 }
                             }
-                            // same exponents
-                        } else {
-                            if (debug >= debugLimit) {
-                                System.out.println("isMappableTo: exp1 " + exp1 + " != exp2 " + exp2);
-                            }
+                            // both Polynomials had all univariate Monomials
+                        } else { // there were some non-univariate
                         }
                         // parallel variable names
                     } else {
@@ -1499,7 +1517,7 @@ x^2 + 3*x^3 + 2*x^4
             System.err.println(exc.getMessage());
             exc.printStackTrace();
         }
-        return busy ? result : null;
+        return busy && result.size() >= 1 ? result : null;
     } // isMappableTo
 
     /** Determines whether <em>this</em> Polynomial can be transformed into <em>poly2</em>
@@ -1538,30 +1556,32 @@ x^2 + 3*x^3 + 2*x^4
      */
     public String similiarity(Polynomial poly2) {
         String message = null;
-        if (debug >= 2) {
-            System.out.println(this .toString().replaceAll("_\\d+", "") + " isLike " );
-            System.out.println(poly2.toString().replaceAll("_\\d+", "") + " --> " +
-                this .normalize().toString().replaceAll("_\\d+", "").equals(
-                poly2.normalize().toString().replaceAll("_\\d+", "")       )
-
-            );
-        } // debug
         boolean result = this.size() == poly2.size();
         if (true || result) {
-            VariableMap mapt = this.getVariableMap("1", poly2);
-            result = this.substitute(mapt).equals(poly2);
+        //  VariableMap mapt = this.getVariableMap("1", poly2);
+            VariableMap mapt = poly2.getExpressionMap();
+            result = this.substitute(mapt)
+                    .clone().normalize()
+                    .equals(poly2
+                    .clone().normalize()
+                    );
             if (! result) {
-                if (true) { // old code
+                if (false) { // old code
                     mapt = this.affineMap   (poly2);
                     result = mapt != null;
                     if (result) {
                         message = "affine map: "     + mapt.toString();
                     }
                 } else { // new code
-                    mapt = this.isMappableTo(poly2);
+                    mapt = this.isMappableTo(poly2); // this is the way to map the new element to one in the queue
                     result = mapt != null;
                     if (result) {
-                        message = "is mappable to: " + mapt.toString();
+                        message = "is mappable by: " + mapt.toString();
+                        if (debug >= 2) {
+                            message += " ("  + this .toString()
+                                    + " => " + poly2.toString()
+                                    +  ") ";        
+                        } // debug
                     }
                 } // new
             } else {
@@ -2003,7 +2023,7 @@ x^2 + 3*x^3 + 2*x^4
                         System.out.println(highTerms[0].toString() + ", " + highTerms[1].toString());
                     } // while iter1
 
-                } else if (opt.startsWith("-map")) {
+                } else if (opt.startsWith("-mappable")) {
                     poly1 = poly1.parse(args[iarg ++]);
                     poly2 = poly2.parse(args[iarg ++]);
                     System.out.println("(\"" + poly1.toString() + "\").isMappableTo(\"" + poly2.toString() + "\") = "

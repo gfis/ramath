@@ -158,8 +158,11 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
                 result.append(",");
             }
             result.append(name);
-            result.append("=");
-            result.append(this.get(name).toString());
+            result.append("=>");
+            result.append(this.get(name).toString()
+                    .replaceAll("\\+1\\*", "+")
+                    .replaceAll("\\A0\\+", "")
+                    );
         } // while iter
         result.append("}");
         return result.toString();
