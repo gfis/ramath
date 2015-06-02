@@ -391,22 +391,26 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
 
     /** Determines whether <em>this</em> RelationSet can be transformed into <em>rset2</em>
      *  by multiplying the constants of the monomials in <em>rset2</em> by
-     *  some factors &gt; 1.
+     *  some factors &gt;= 1.
      *  @param rset2 target RelationSet
-     *  @return true if such factors exist, false otherwise
+     *  @return a list of numbers separated by "," if such factors exist, null otherwise
      */
-    public boolean isGrownFrom(RelationSet rset2) {
-        boolean result = true; // assume success
+    public String getGrowingFactors(RelationSet rset2) {
+        String result  = null; 
+        String factors = ""; // assume success
         int rsize1 =  this .size();
         if (rsize1 == rset2.size()) {
             int ipoly = 0;
-            while (result && ipoly < rsize1) {
-                result = this.get(ipoly).isGrownFrom(rset2.get(ipoly));
+            while (factors != null && ipoly < rsize1) {
+                factors = this.get(ipoly).getGrowingFactors(rset2.get(ipoly));
+                if (factors != null) {
+                    result = result == null ? factors : result + factors;
+                }
                 ipoly ++;
             } // while ipoly
         } // same size
         return result;
-    } // isGrownFrom
+    } // getGrowingFactors
 
     /** Determines whether <em>this</em> RelationSet can be transformed into <em>rset2</em>
      *  by an affine map from the variables in <em>this</em> to the variables in <em>rset2</em>.
@@ -655,8 +659,10 @@ evaluate: unknown
             } else if (opt.startsWith("-grow")) {
                 rset1 = rset1.parse(args[iarg ++]);
                 rset2 = rset2.parse(args[iarg ++]);
-                System.out.println("(\"" + rset1.toString() + "\").isGrownFrom\n(\"" + rset2.toString() + "\") = "
-                        + rset1.isGrownFrom(rset2));
+                System.out.println("(\"" + rset1.toString() 
+                        + "\").getGrowingFactors\n(\"" 
+                        + rset2.toString() + "\") = "
+                        + rset1.getGrowingFactors(rset2));
             } else if (opt.equals("-rest")  ) {
                 String factor = args[iarg ++];
                 rset1 = rset1.parse(args[iarg ++]);

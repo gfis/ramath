@@ -69,7 +69,7 @@ public class TransposeReason extends BaseReason {
             }
             String transposition = rmap1.getTransposition(rmap2);
             if (transposition.length() > 0) { // transposition found
-                result = VariableMap.FAILURE + " transposition of [" + iqueue + "] " 
+                result = "transposition of [" + iqueue + "] " 
                         + rmap1.toString() + " by " + transposition;
                 iqueue = 1; // break loop
             } // transposition found

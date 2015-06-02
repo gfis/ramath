@@ -1,6 +1,6 @@
-/*  GrowingReason: checks whether the RelationSet was growing from a parent
- *  @(#) $Id: GrowingReason.java 970 2012-10-25 16:49:32Z gfis $
- *  2015-02-27, Georg Fischer
+/*  DoGrowReason: checks whether the RelationSet was growing from a parent
+ *  @(#) $Id: DoGrowReason.java 970 2012-10-25 16:49:32Z gfis $
+ *  2015-06-01, Georg Fischer: copied from GrowingReason
  */
 /*
  * Copyright 2015 Dr. Georg Fischer <punctum at punctum dot kom>
@@ -27,14 +27,15 @@ import  org.teherba.ramath.symbolic.solver.BaseSolver;
  *  with the same dispenser values, such that the constants of the
  *  monomial in the relation set result from the corresponding constants
  *  in the parent by multiplicative factors &gt;= 1.
+ *  This class is identical to {@link GrowingReason} except that it does no stop the tree expansion.
  *  @author Dr. Georg Fischer
  */
-public class GrowingReason extends BaseReason {
-    public final static String CVSID = "@(#) $Id: GrowingReason.java 970 2012-10-25 16:49:32Z gfis $";
+public class DoGrowReason extends BaseReason {
+    public final static String CVSID = "@(#) $Id: DoGrowReason.java 970 2012-10-25 16:49:32Z gfis $";
 
      /** No-args Constructor
      */
-    public GrowingReason() {
+    public DoGrowReason() {
     } // no-args Constructor
     
     /** Checks a {@link RelationSet} and determines whether 
@@ -52,6 +53,7 @@ public class GrowingReason extends BaseReason {
      *  <li>{@link VariableMap#FAILURE} - the RelationSet is not possible</li>
      *  <li>{@link VariableMap#SUCCESS} - there is a solution, but the RelationSet must further be expanded</li>
      *  </ul>
+     *  This method is identical to {@link GrowingReason#check} except that it does no stop the tree expansion.
      */
     public String check(BaseSolver solver, RelationSet rset2) {
         boolean all = false; // whether to examine all queue elements, or the parents only
@@ -70,7 +72,7 @@ public class GrowingReason extends BaseReason {
                 }
                 if (factors != null) {
                     // busy = false;
-                    result += ", grown from [" + iparent + "]*" + factors + " " + solver.polish(rset2);
+                    result += ", grown from [" + iparent + "]*" + factors; //  + " " + solver.polish(rset2);
                     if (solver.debug >= 2) {
                         result += "\n\t\tfrom " + solver.polish(rset1);
                     }
@@ -80,7 +82,7 @@ public class GrowingReason extends BaseReason {
             } // condition (1)
             iparent = all ? iparent - 1 : rset1.getParentIndex();
         } // while iparent
-        return result.replaceAll("\\A" + VariableMap.UNKNOWN + "\\, grown", "grown");
+        return result;
     } // check
 
-} // GrowingReason
+} // DoGrowReason

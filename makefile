@@ -13,7 +13,7 @@ REGR=java -cp dist/ramath.jar org.teherba.common.RegressionTester
 TESTDIR=test
 WROB=../../mater/ramath/eec/wroblewski
 
-all: regression
+all: solver
 regression: symbolic linear solver
 linear:
 	$(REGR) test/linear.tests 	$(TEST) 2>&1 \

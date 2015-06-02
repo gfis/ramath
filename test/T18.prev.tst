@@ -18,5 +18,5 @@ expanding queue[1]:  - 4 - 8*x + 4*x^2 - 8*y - 16*x*y + 4*y^2 - 8*z - 16*x*z - 1
 [1+4*x,1+4*y,3+4*z]: failure constant=-8, vgcd=16
 [3+4*x,1+4*y,3+4*z]: failure constant=-28, vgcd=16
 [1+4*x,3+4*y,3+4*z]: failure constant=-28, vgcd=16
-[3+4*x,3+4*y,3+4*z]: grown from [1] -80-96*x+16*x^2-96*y-128*x*y+16*y^2-96*z-128*x*z-128*y*z-128*x*y*z+16*z^2=0
+[3+4*x,3+4*y,3+4*z]: grown from [1]*20,12,4,12,8,4,12,8,8,8,4 -80-96*x+16*x^2-96*y-128*x*y+16*y^2-96*z-128*x*z-128*y*z-128*x*y*z+16*z^2=0
 Proof - queue exhausted, queue size = 2

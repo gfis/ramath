@@ -1534,34 +1534,46 @@ x^2 + 3*x^3 + 2*x^4
 
     /** Determines whether <em>this</em> Polynomial can be transformed into <em>poly2</em>
      *  by multiplying the constants of the monomials in <em>poly2</em> by
-     *  some factors &gt; 1.
+     *  some factors &lt;&gt; 0.
      *  @param poly2 target Polynomial
-     *  @return true if such factors exist, false otherwise
+     *  @return a list of numbers separated by "," if such factors exist, null otherwise
      */
-    public boolean isGrownFrom(Polynomial poly2) {
-        boolean result = true; // assume success
+    public String getGrowingFactors(Polynomial poly2) {
+        String result = null;
         int psize1 =  this .size();
         if (psize1 == poly2.size()) {
             Iterator <String> iter1 = this .keySet().iterator();
             Iterator <String> iter2 = poly2.keySet().iterator();
-            while (result && iter1.hasNext()) {
+            boolean busy = true;
+            while (busy && iter1.hasNext()) {
                 String sig1 = iter1.next();
                 String sig2 = iter2.next();
                 if (sig1.equals(sig2)) {
                     Monomial mono1 = this .get(sig1);
                     Monomial mono2 = poly2.get(sig2);
                     Monomial factor  = mono1.divide(mono2);
-                    if (factor == null || ! factor.isConstant() || factor.getCoefficient().compareTo(BigInteger.ONE) < 0) { // no factor
-                        result = false;
-                    } // no factor
-                } // sig1 == sig2
+                    if (factor != null && factor.isConstant() 
+                            && factor.getCoefficient().compareTo(BigInteger.ZERO) > 0
+                            ) { // valid factor
+                        result = (result != null ? result + "," : "") + factor.toString()
+                                .replaceAll(" ", "").replaceAll("\\A\\+", "");
+                        // no factor
+                    } else {
+                        busy = false;
+                        result = null;
+                    }
+                    // sig1 == sig2
+                } else {
+                    busy = false;
+                    result = null;
+                }
             } // while iter1
             // same size
         } else { // different size
-        	result = false;
+            result = null;
         }
         return result;
-    } // isGrownFrom
+    } // getGrowingFactors
 
     /** Determines whether <em>this</em> polynomial can be transformed into <em>poly2</em>
      *  by an affine map from the variables in <em>this</em> to the variables in <em>poly2</em>.
@@ -2022,8 +2034,8 @@ x^2 + 3*x^3 + 2*x^4
                 } else if (opt.startsWith("-grow")) {
                     poly1 = poly1.parse(args[iarg ++]);
                     poly2 = poly2.parse(args[iarg ++]);
-                    System.out.println("(\"" + poly1.toString() + "\").isGrownFrom\n(\"" + poly2.toString() + "\") = "
-                            + poly1.isGrownFrom(poly2));
+                    System.out.println("(\"" + poly1.toString() + "\").getGrowingFactors\n(\"" + poly2.toString() + "\") = "
+                            + poly1.getGrowingFactors(poly2));
 
                 } else if (opt.startsWith("-hiter")) {
                     poly1 = poly1.parse(args[iarg ++]);
