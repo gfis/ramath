@@ -28,6 +28,7 @@ import  org.teherba.ramath.symbolic.solver.BaseSolver;
 import  org.teherba.ramath.linear.Vector;
 import  java.io.PrintWriter;
 import  java.util.ArrayList;
+import  java.util.HashMap;
 import  java.util.Iterator;
 
 /** Factory and store for a list of reason classes
@@ -40,6 +41,9 @@ public class ReasonFactory extends ArrayList<BaseReason> {
     /** Debugging switch: 0 = no, 1 = moderate, 2 = more, 3 = extreme verbosity */
     private int debug = 1;
 
+    /** List of various minor solver features */
+    protected HashMap<String, String> features;
+
     //--------------
     // Construction
     //--------------
@@ -48,7 +52,22 @@ public class ReasonFactory extends ArrayList<BaseReason> {
      */
     public ReasonFactory() {
         super(16);
+        features = new HashMap<String, String>(8);
     } // no-args Constructor
+
+    /** Constructor with code list
+     *  @param codeList list of codes separated by non-word characters
+     */
+    public ReasonFactory(String codeList) {
+        this();
+        this.addReason("base"); // this is always used
+        String[] reasonCodes = codeList.split("\\W"); // non-word characters, e.g. ","
+        int icode = 0;
+        while (icode < reasonCodes.length) {
+            this.addReason(reasonCodes[icode]); // a reason or a feature
+            icode ++;
+        } // while icode
+    } // Constructor(String)
 
     /** Attempts to instantiate some reason class
      *  @param code external code for the reason
@@ -82,13 +101,47 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         } else if (code.equals("same"       )) { result = addReasonClass(code, "SameReason"       );
         } else if (code.equals("similiar"   )) { result = addReasonClass(code, "SimiliarReason"   );
         } else if (code.equals("transpose"  )) { result = addReasonClass(code, "TransposeReason"  );
-        }
-        if (result == null) {
-            System.err.println("** Reason code \"" + code + "\" is not known or class cannot be instantiated");
+        } else { // unknown reason -> feature
+            features.put(code, code);
         }
         return result;
     } // addReason(String)
-    
+
+    /** Determines whether a certain feature is set
+     *  @param code name of the feature
+     *  @return true if the feature is set, false otherwise
+     */
+    public boolean hasFeature(String code) {
+        return features.get(code) != null;
+    } // hasFeature
+
+    /** Returns a list of accepted reason codes, a space, 
+     *  and a list of stored feature codes
+     *  @return for example: base,same,similiar,dogrow norm,invall
+     */
+    public String toList() {
+        StringBuffer result = new StringBuffer(32);
+        String sep = "";
+        String code = "";
+        int ireas = 0;
+        while (ireas < this.size()) {
+            code = this.get(ireas).getCode();
+            result.append(sep);
+            sep = ",";
+            result.append(code);
+            ireas ++;
+        } // while ireas
+        sep = " " ;
+        Iterator<String> fiter = features.keySet().iterator();
+        while (fiter.hasNext()) { // over all feature codes
+            code = fiter.next();
+            result.append(sep);
+            sep = ",";
+            result.append(code);
+        } // while fiter
+        return result.toString();
+    } // toList
+
     /** Remove unnecessary reasons from the list
      *  @param rset0 initial {@link RelationSet} which is expanded
      *  @return a {@link Vector} with equivalence classes for variables which can be transposed, if any
@@ -116,15 +169,15 @@ public class ReasonFactory extends ArrayList<BaseReason> {
     // Check all specified reasons
     //----------------------------
 
-    /** Checks a {@link RelationSet} 
+    /** Checks a {@link RelationSet}
      *  with all stored reasons and determines whether it
      *  <ul>
      *  <li>can be decided (and be cut from the expansion tree) or</li>
      *  <li>must be further expanded (and therefore will be appended to the queue).</li>
      *  </ul>
      *  @param solver the complete state of the expansion tree
-     *  @param rset2 the new {@link RelationSet} to be added to the queue 
-     *  @return a message string starting with one of 
+     *  @param rset2 the new {@link RelationSet} to be added to the queue
+     *  @return a message string starting with one of
      *  <ul>
      *  <li>{@link VariableMap#UNKNOWN} - the RelationSet cannot be decided and must be further expanded</li>
      *  <li>{@link VariableMap#FAILURE} - the RelationSet is not possible</li>
@@ -154,8 +207,8 @@ public class ReasonFactory extends ArrayList<BaseReason> {
             } else if (message.startsWith(VariableMap.FAILURE) || true) { // all other messages
                 busy = false;
                 if (result.length() > 0 && ! result.startsWith(VariableMap.UNKNOWN)) {
-                	result = message + " " + result;
-                } else { 
+                    result = message + " " + result;
+                } else {
                     result = message;
                 }
             } // end message switch
@@ -164,7 +217,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         return result;
     } // check
 
-    /** Checks a {@link RelationSet} 
+    /** Checks a {@link RelationSet}
      *  with all stored reasons and prints the decision
      *  @param solver the complete state of the expansion tree
      *  @param rset2 the new {@link RelationSet} to be checked
@@ -172,7 +225,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
      */
     public void printDecision(BaseSolver solver, RelationSet rset2, VariableMap vmap2) {
         String decision = this.check(solver, rset2);
-        if (! decision.startsWith(VariableMap.UNKNOWN) && 
+        if (! decision.startsWith(VariableMap.UNKNOWN) &&
             ! decision.startsWith(VariableMap.SUCCESS)) { // FAILURE etc.
                 if (solver.debug >= 1) {
                     solver.trace.print(vmap2.toVector() + ": ");

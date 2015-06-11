@@ -60,6 +60,14 @@ public class BaseSolver extends Stack<RelationSet> {
     protected ReasonFactory reasons;
 
     //--------------
+    //  Features which can be set from outside
+    //--------------
+    /** Whether to normalize expanded {@link RelationSet]s */
+    protected boolean norm;
+    /** Whether to involve all variables in the expansion */
+    protected boolean invall;
+
+    //--------------
     // Construction
     //--------------
 
@@ -274,6 +282,8 @@ public class BaseSolver extends Stack<RelationSet> {
      *  @return whether the iteration did stop because the queue was exhausted
      */
     public boolean solve(RelationSet rset0) {
+        invall = reasons.hasFeature("invall");
+        norm   = reasons.hasFeature("norm"  );
         setTransposables(reasons.purge(rset0)); // TransposeReason is not checked if there are no transposable variables
         trace.println("Expanding for base " + getModBase() + ", transposables = " + getTransposables().toString());
         boolean exhausted = false;
@@ -319,13 +329,7 @@ public class BaseSolver extends Stack<RelationSet> {
         setSubsetting       (false);
         setUpperSubst       (true);
         queueHead           = 0;
-
-        reasons = new ReasonFactory();
-        reasons.addReason("base"        );
-        reasons.addReason("transpose"   );
-        reasons.addReason("same"        );
-        reasons.addReason("similiar"    );
-        reasons.addReason("grow"        ); // related to 'same' and 'similiar'
+        reasons = new ReasonFactory("transpose,same,similiar,grow");
     } // initialize
 
     //------------------------
@@ -375,15 +379,8 @@ public class BaseSolver extends Stack<RelationSet> {
                         setMaxLevel(Integer.parseInt(args[iargs ++]));
                     } catch (Exception exc) {
                     }
-                } else if (arg.startsWith("-r") && iargs < args.length) {
-                    String[] codes = args[iargs ++].split("\\W");
-                    reasons = new ReasonFactory(); // ignore default reason list
-                    reasons.addReason("base"); // this is always used
-                    int icode = 0;
-                    while (icode < codes.length) {
-                        reasons.addReason(codes[icode]);
-                        icode ++;
-                    } // while icode
+                } else if (arg.startsWith("-r") && iargs < args.length) { 
+                    reasons = new ReasonFactory(args[iargs ++]); // ignore default reason list
                 } else if (arg.startsWith("-q")                       ) {
                     setFindMode(1);
                 } else if (arg.startsWith("-u")                       ) {
