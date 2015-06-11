@@ -51,7 +51,7 @@ TEST T08 EEC(3) mod 2
 CALL TreeSolver -b 2 -l 2 -e "a^3 + b^3 + c^3 - d^3" 
 
 TEST T09 Markov(2, unsolvable, power)
-CALL TreeSolver -l 8 -e "x^2 + y^2 + z^2 - 2*x*y*z" -r transpose,same,dogrow
+CALL TreeSolver -l 8 -e "x^2 + y^2 + z^2 - 2*x*y*z" -r transpose,same,norm,invall
 
 TEST T10 Markov(5, unsolvable)
 CALL TreeSolver -b 2 -l 3 -e "x^2 + y^2 + z^2 - 5*x*y*z" 
@@ -103,7 +103,7 @@ TEST T24 Smart p. 11 Elliptic Curve
 CALL TreeSolver -b 2 -l 5 -e "y^2 - x^3 + 4 = 0" -r transpose,same,dogrow
 
 TEST T25 Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3]; http://math.stackexchange.com/questions/677422/solve-x22-y3-using-infinite-descent; growing !
-CALL TreeSolver -b 2 -l 5 -e "x^2 + 2 - y^3" -r transpose,same,dogrow,norm,invall 
+CALL TreeSolver -b 2 -l 5 -e "x^2 + 2 - y^3" -r transpose,same,similiar,norm
 
 TEST T26 Squeeze; https://hcmop.wordpress.com/2012/04/09/techniques-in-solving-diophantine-equations-part-2/
 CALL TreeSolver -b 2 -l 8 -e "x * (x + 1) * (x + 7) * (x + 8) - y^2"
@@ -115,10 +115,13 @@ TEST T28 Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3]; http://math.stackexcha
 CALL TreeSolver -b 3 -l 2 -e "x^2 + 2 - y^3" -r transpose,same,dogrow
 
 TEST T29 Fermat/Carcavi(8) x^2 + 4 = y^3; solutions [2,2],[11,5]
-CALL TreeSolver -b 2 -l 4 -e "x^2 + 4 - y^3" -r transpose,same,dogrow 
+CALL TreeSolver -b 2 -l 4 -e "x^2 + 4 - y^3" -r transpose,same,dogrow,norm,invall
 
 TEST T30 Fermat/Carcavi(10); solutions [1,1],[2,5]; http://www.jstor.org/stable/2974148?seq=1#page_scan_tab_contents
 CALL TreeSolver -b 2 -l 4 -e "(2*x^2 - 1)^2 - (2*y^2 - 1)" -r transpose,same,dogrow 
+
+TEST T31 Fermat/Carcavi(7) x^2 + 2 = y^3; -> (a+b, a-b)
+CALL TreeSolver -b 2 -l 3 -e "2 + a^2 - a^3 + 2*a*b + 3*a^2*b + b^2 - 3*a*b^2 + b^3" -r transpose,same,similiar,norm,invall 
 
 #-------------------------------
 # c.f. http://planetmath.org/encyclopedia/InfiniteDescent.html
