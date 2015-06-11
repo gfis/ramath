@@ -1,4 +1,4 @@
-Expanding for base 2, transposables =    0   0   2
+Expanding for base=2, transposables={{x,y},{z}}, reasons+features=base,transpose,same,similiar,grow
 
 expanding queue[0]: 2*x + x^2 + 2*y + y^2 - 4*z - 2*z^2 = 0 modulo [2,2,2] *2
 [0+2*x,0+2*y,0+2*z]: success [0,0,0],trivial(3) success [2,2,2],trivial(2)  4*x+4*x^2+4*y+4*y^2-8*z-8*z^2=0 -> [1]

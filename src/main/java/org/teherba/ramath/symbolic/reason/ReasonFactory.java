@@ -142,27 +142,18 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         return result.toString();
     } // toList
 
-    /** Remove unnecessary reasons from the list
-     *  @param rset0 initial {@link RelationSet} which is expanded
-     *  @return a {@link Vector} with equivalence classes for variables which can be transposed, if any
+    /** Remove an unnecessary reason from the list
+     *  @param code code of the reason to be removed
      */
-    public Vector purge(RelationSet rset0) {
-        // TransposeReason
-        Vector result = rset0.getTransposableClasses();
-        if (result.isMonotone()) { // no variable names can be transposed
-            int ireas = size() - 1;
-            while (ireas >= 0) {
-                if (this.get(ireas).getCode().equals("transpose")) {
-                    if (this.debug >= 2) {
-                        System.err.println("class TransposeReason removed from list, vector = " + result.toString());
-                    } // debug >= 1
-                    this.remove(ireas);
-                    ireas = 0; // break loop
-                }
-                ireas --;
-            } // while ireas
-        } // isMonotone
-        return result;
+    public void purge(String code) {
+        int ireas = size() - 1;
+        while (ireas >= 0) {
+            if (this.get(ireas).getCode().equals(code)) {
+                this.remove(ireas);
+                // ireas = 0; // found - break loop / no, may occur several times
+            }
+            ireas --;
+        } // while ireas
     } // purge
 
     //----------------------------

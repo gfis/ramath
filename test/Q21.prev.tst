@@ -1,4 +1,4 @@
-Expanding for base=2, transposables={{x},{y},{z}}, reasons+features=base,transpose,same,similiar,grow
+Expanding for base=2, transposables=[0,1,2], reasons+features=base,transpose,same,similiar,grow
 
 expanding queue[0]: x^3 + 2*y^3 - 4*z^3 = 0 modulo [2,2,2] *2
 [0+2*x,0+2*y,0+2*z]: same as 8*x^3+16*y^3-32*z^3=0

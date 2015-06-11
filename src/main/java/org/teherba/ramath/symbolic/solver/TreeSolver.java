@@ -26,11 +26,11 @@ import  org.teherba.ramath.symbolic.solver.BaseSolver;
 import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.RelationSet;
 import  org.teherba.ramath.symbolic.VariableMap;
+import  org.teherba.ramath.linear.Vector;
 import  org.teherba.ramath.util.ModoMeter;
 import  java.io.PrintWriter;
 import  java.math.BigInteger;
 import  java.util.Iterator;
-import  java.util.Vector; // essentially a java.util.Queue (Java 1.6)
 
 /** Tries to solve a set of Diophantine inequalities (a {@link RelationSet})
  *  by some systematic variable tree expansion.
@@ -135,9 +135,10 @@ public class TreeSolver extends BaseSolver {
         // meter now ready for n-adic expansion, e.g. x -> 2*x+0, 2*x+1
         if (debug >= 1) {
             trace.println();
-            trace.println("expanding queue[" + queueIndex + "]: "
-                    + (rset1.toString())
-                    + " modulo " + meter.toBaseList()
+            trace.println("expanding queue[" + queueIndex 
+            		+ "]^" + rset1.getParentIndex()
+            		+ ": " + rset1.toString()
+                    + " meter=" + meter.toBaseList()
                     + " *" + factor.toString()
                     );
         }
@@ -175,8 +176,14 @@ public class TreeSolver extends BaseSolver {
         if (expr != null) {
             rset0 = rset0.parse(expr);
         }
-        solver.setTransposables(solver.reasons.purge(rset0)); // rset0.getTransposableClasses());
+    /*
+        Vector tpcs = rset0.getTransposableClasses();
+        solver.setTransposables(tpcs);
+        if (tpcs.isMonotone()) { // no variable names can be transposed
+            solver.reasons.purge("transposable"); // TransposeReason is not checked if there are no transposable variables
+        } // isMonotone
         rset0.setTuple(rset0.getExpressionMap(), solver.getTransposables());
+    */
         solver.solve(rset0);
     } // main
 

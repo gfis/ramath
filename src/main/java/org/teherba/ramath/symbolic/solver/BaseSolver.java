@@ -170,19 +170,55 @@ public class BaseSolver extends Stack<RelationSet> {
     } // setSubsetting
 
     /** Variable name equivalence classes  */
-    private Vector transposables;
-    /** Gets the transposables
+    private Vector vtransp;
+    /** Gets the vtransp
      *  @return a Vector of variable name equivalence classes
      */
     public Vector getTransposables() {
-        return this.transposables;
+        return this.vtransp;
     } // getTransposables
     /** Sets the transposables
-     *  @param transposables a Vector of variable name equivalence classes
+     *  @param vtransp a Vector of variable name equivalence classes
      */
-    public void   setTransposables(Vector transposables) {
-        this.transposables = transposables;
+    public void   setTransposables(Vector vtransp) {
+        this.vtransp = vtransp;
     } // setTransposables
+    /** Gets a readable list of transposable variables
+     *  @param rset1 {@link RelationSet} with variable names
+     *  @return a set of sets of variables in equivalence classes, for example for
+     *  a^2+b^2-c^2 the result is "{{a,b},{c}}"
+     */
+    public String getTransposableString(RelationSet rset1) {
+        StringBuffer result = new StringBuffer(16);
+        String [] names = rset1.getVariableMap().getNameArray();
+        int tclass = 0; // one of the transposable classes in 'vtransp'
+        int len = vtransp.size();
+        String sep = "";
+        boolean first = true;
+        result.append("{");
+        while (tclass < len) {
+            int itran = 0;
+            while (itran < len) {
+                if (vtransp.get(itran) == tclass) {
+                    if (sep.equals("")) { // start for class 'tclass'
+                        result.append(first ? "{" : ",{");
+                    }
+                    first = false;
+                    result.append(sep);
+                    sep = ",";
+                    result.append(names[itran]);
+                }
+                itran ++;
+            } // while itran
+            if (! sep.equals("")) { // end for class 'tclass'
+                result.append("}");
+            }
+            sep = "";
+            tclass ++;
+        } // while tclass
+        result.append("}");
+        return result.toString();
+    } // getTransposableString
 
     /** Whether to substitute uppercase variables */
     private boolean upperSubst;
@@ -284,13 +320,24 @@ public class BaseSolver extends Stack<RelationSet> {
     public boolean solve(RelationSet rset0) {
         invall = reasons.hasFeature("invall");
         norm   = reasons.hasFeature("norm"  );
-        setTransposables(reasons.purge(rset0)); // TransposeReason is not checked if there are no transposable variables
-        trace.println("Expanding for base " + getModBase() + ", transposables = " + getTransposables().toString());
+        Vector tpcs = rset0.getTransposableClasses();
+        setTransposables(tpcs);
+        if (tpcs.isMonotone()) { // no variable names can be transposed
+            reasons.purge("transposable"); // TransposeReason is not checked if there are no transposable variables
+        } // isMonotone
+
+        trace.print("Expanding for base=" + getModBase());
+        trace.print(", transposables=" + getTransposableString(rset0));
+        trace.print(", reasons+features=" + reasons.toList());
+        trace.println();
         boolean exhausted = false;
         queueHead = 0;
         if (rset0.getTuple() == null) {
+        /*
             VariableMap vmap0 = rset0.getVariableMap("0", getUpperSubst());
             rset0.setTuple(vmap0); // tuple is initially (0,0, ... 0)
+        */
+            rset0.setTuple(rset0.getExpressionMap(), getTransposables());
         }
         ModoMeter meter = new ModoMeter(rset0.getTuple().size(), 1); // assume that all variables are not involved
         rset0.setMeter(meter.toString());

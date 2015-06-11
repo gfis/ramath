@@ -27,11 +27,11 @@ import  org.teherba.ramath.symbolic.solver.BaseSolver;
 import  org.teherba.ramath.symbolic.RelationSet;
 import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.VariableMap;
+import  org.teherba.ramath.linear.Vector;
 import  org.teherba.ramath.util.ModoMeter;
 import  java.io.PrintWriter;
 import  java.math.BigInteger;
 import  java.util.Iterator;
-import  java.util.Vector; // essentially a java.util.Queue (Java 1.6)
 
 /** Tries to solve a set of Diophantine inequalities (a {@link RelationSet})
  *  by some systematic variable tree expansion.
@@ -173,6 +173,54 @@ public class MonadicSolver extends BaseSolver {
         } // switch findMode
         return "[" + String.valueOf(isimil) + "], " + message;
     } // findSimiliar
+
+    /** Refines and evaluates modulus properties for variables in a {@link RelationSet}.
+     *  The maximum queue size breaks the expansion loop in any case.
+     *  @param rset0 start expansion with this {@link RelationSet}.
+     *  @return whether the iteration did stop because the queue was exhausted
+     */
+    public boolean solve(RelationSet rset0) {
+        invall = reasons.hasFeature("invall");
+        norm   = reasons.hasFeature("norm"  );
+        Vector tpcs = rset0.getTransposableClasses();
+        setTransposables(tpcs);
+        if (tpcs.isMonotone()) { // no variable names can be transposed
+            reasons.purge("transposable"); // TransposeReason is not checked if there are no transposable variables
+        } // isMonotone
+        trace.println("Expanding for base " + getModBase() + ", transposables = " + getTransposables().toString());
+        boolean exhausted = false;
+        queueHead = 0;
+        if (rset0.getTuple() == null) {
+            VariableMap vmap0 = rset0.getVariableMap("0", getUpperSubst());
+            rset0.setTuple(vmap0); // tuple is initially (0,0, ... 0)
+        }
+        ModoMeter meter = new ModoMeter(rset0.getTuple().size(), 1); // assume that all variables are not involved
+        rset0.setMeter(meter.toString());
+        add(rset0);
+        boolean busy = true;
+        while (busy) {
+            if (queueHead >= size()) { // queue exhausted
+                busy = false;
+                exhausted = true;
+            } else {
+                RelationSet rset1 = this.get(queueHead);
+                if (rset1.getNestingLevel() > getMaxLevel()) { // nesting too deep - give up
+                    busy   = false;
+                } else { // still expanding
+                    expand(queueHead);
+                    queueHead ++;
+                }
+            }
+        } // while busy
+        if (exhausted) {
+            trace.print("Proof - queue exhausted");
+        } else {
+            trace.print("Maximum level " + getMaxLevel() + " reached");
+        }
+        trace.println(", queue size = " + size());
+        close();
+        return exhausted;
+    } // solve
 
     /** Expands one {@link RelationSet} in the queue,
      *  evaluates the expanded children,

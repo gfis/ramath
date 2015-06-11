@@ -1129,6 +1129,7 @@ x^2 + 3*x^3 + 2*x^4
     /** Determines the equivalence classes (subsets) of variables
      *  which can be interchanged (renamed) in <em>this</em> Polynomial,
      *  while the polynomial's structure is still maintained.
+     *  Caution: primitive, inefficient implementation.
      *  @return an {@link Vector} of indexes into a fictitious array of the sorted variable names of
      *  <em>this</em> Polynomial. The indexes start with 0, but they are not necessarily consecutive.
      *  Two variable names having the same index may be interchanged/renamed in the Polynomial
@@ -1141,8 +1142,7 @@ x^2 + 3*x^3 + 2*x^4
      *  </pre>
      */
     public Vector getTransposableClasses() {
-        VariableMap varmt = getVariableMap();
-        String [] names = varmt.getNameArray();
+        String [] names = getVariableMap().getNameArray();
         int len = names.length;
         Vector result = new Vector(len);
 

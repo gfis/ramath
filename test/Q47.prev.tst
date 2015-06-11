@@ -1,4 +1,4 @@
-Expanding for base 2, transposables =    0   1   2
+Expanding for base=2, transposables={{a},{b},{c}}, reasons+features=base,transpose,same,similiar,grow
 
 expanding queue[0]: 1 + 4*a + 6*a^2 + 4*a^3 + a^4 - 4*a^3*c - 12*a^2*b*c - 12*a*b^2*c - 4*b^3*c - 6*a^2*c^2 - 12*a*b*c^2 - 6*b^2*c^2 - 4*a*c^3 - 4*b*c^3 - c^4 = 0 modulo [2,2,2] *2
 [0+2*a,0+2*b,0+2*c]: failure constant=1, vgcd=8

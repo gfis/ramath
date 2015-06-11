@@ -484,6 +484,7 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
 
     /** Determine whether two variable names of <em>this</em> Polynomial
      *  are interchangeable (equivalent).
+     *  Caution: primitive, inefficient implementation.
      *  @param name1 name of 1st variable
      *  @param name2 name of 2nd variable
      *  @return true of the two variable names can be interchanged in the Polynomial

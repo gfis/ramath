@@ -1,4 +1,4 @@
-Expanding for base 2, transposables =    0   1   2
+Expanding for base=2, transposables={{x},{y},{z}}, reasons+features=base,transpose,same,similiar,grow
 
 expanding queue[0]:  - 1 + 4*x + 6*x^2 + 4*x^3 + x^4 - 4*y - 6*y^2 - 4*y^3 - y^4 - 2*z - z^2 = 0 modulo [2,2,2] *2
 [0+2*x,0+2*y,0+2*z]: failure constant=-1, vgcd=4

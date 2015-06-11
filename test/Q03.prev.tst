@@ -1,4 +1,4 @@
-Expanding for base 2, transposables =    0   0   2   2
+Expanding for base=2, transposables={{a,b},{c,d}}, reasons+features=base,transpose,same,similiar,grow
 
 expanding queue[0]: a^2 + b^2 - 3*c^2 - 3*d^2 = 0 modulo [2,2,2,2] *2
 [0+2*a,0+2*b,0+2*c,0+2*d]: same as 4*a^2+4*b^2-12*c^2-12*d^2=0

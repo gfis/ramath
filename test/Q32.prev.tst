@@ -1,4 +1,4 @@
-Expanding for base 2, transposables =    0   1
+Expanding for base=2, transposables={{p},{q}}, reasons+features=base,transpose,same,similiar,grow
 
 expanding queue[0]: 4 - 2*p - p^2 + 10*q + 5*q^2 = 0 modulo [2,2] *2
 [0+2*p,0+2*q]: unknown 4-4*p-4*p^2+20*q+20*q^2=0 -> [1]
