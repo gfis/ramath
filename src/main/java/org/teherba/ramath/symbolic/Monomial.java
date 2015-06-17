@@ -24,6 +24,7 @@
 package org.teherba.ramath.symbolic;
 import  org.teherba.ramath.symbolic.Factor;
 import  org.teherba.ramath.BigIntegerUtil;
+import  org.teherba.ramath.BigRational;
 import  org.teherba.ramath.util.Permutator; // for orderTest
 import  java.io.Serializable;
 import  java.math.BigInteger;
@@ -44,8 +45,8 @@ public class Monomial implements Cloneable, Serializable {
     private static final long serialVersionUID = 1L;
     public final static String CVSID = "@(#) $Id: Monomial.java 522 2010-07-26 07:14:48Z gfis $";
 
-    /** BigInteger factor of the product of variables */
-    private BigInteger coefficient;
+    /** factor of the product of variables */
+    private BigInteger/*Rational*/ coefficient;
 
     /** The sorted map for all variables in lexicographic order of their 
      *  names which are mapped to (positive) exponent values
@@ -59,7 +60,7 @@ public class Monomial implements Cloneable, Serializable {
     /** No-args Constructor - yields a scalar "1"
      */
     public Monomial() {
-        coefficient = BigInteger.ONE;
+        setCoefficient(1);
         vars = new TreeMap<String, Integer>();
     } // no-args Constructor
 
@@ -70,10 +71,10 @@ public class Monomial implements Cloneable, Serializable {
     public Monomial(String name, int exponent) {
         vars = new TreeMap<String, Integer>();
         if (isNumber(name)) {
-            coefficient = (new BigInteger(name)).pow(exponent);
+            setCoefficient((new BigInteger/*Rational*/(name)).pow(exponent));
             // vars remains empty
         } else {
-            coefficient = BigInteger.ONE;
+            setCoefficient(1);
             this.putExponent(name, exponent);
         }
     } // Constructor(name, exponent)
@@ -84,7 +85,7 @@ public class Monomial implements Cloneable, Serializable {
      *  @param exponent raise variable (but not the coefficient) to this power
      */
     public Monomial(int coeff, String name, int exponent) {
-        coefficient = BigInteger.valueOf(coeff);
+        setCoefficient(coeff);
         vars = new TreeMap<String, Integer>();
         if (name.length() > 0 && exponent != 0) {
             this.putExponent(name, exponent);
@@ -103,7 +104,7 @@ public class Monomial implements Cloneable, Serializable {
      *  these variables with coeeficient +1
      */
     public Monomial(String[] names) {
-        coefficient = BigInteger.ONE;
+        setCoefficient(1);
         vars = new TreeMap<String, Integer>();
         int ivar = names.length - 1;
         while (ivar >= 0) {
@@ -115,9 +116,9 @@ public class Monomial implements Cloneable, Serializable {
     /** Constructor with {@link BigInteger}
      *  @param bint constant integer coefficient
      */
-    public Monomial(BigInteger bint) {
+    public Monomial(BigInteger/*Rational*/ bint) {
         this();
-        coefficient = bint;
+        setCoefficient(bint);
     } // Constructor(bint)
 
     /** Deep copy of the monomial with coefficient and all variables.
@@ -162,11 +163,21 @@ public class Monomial implements Cloneable, Serializable {
     } // isNumber
 
     /** Sets the coefficient.
-     *  @param coefficient rational number before the variables
+     *  @param coefficient number before the variables
      */
-    public void setCoefficient(BigInteger coefficient) {
+    public void setCoefficient(BigInteger/*Rational*/ coefficient) {
         this.coefficient = coefficient;
-        if (coefficient.equals(BigInteger.ZERO)) {
+        if (isZero()) {
+            vars = new TreeMap<String, Integer>();
+        }
+    } // setCoefficient
+
+    /** Sets the coefficient.
+     *  @param coefficient number before the variables
+     */
+    public void setCoefficient(long coefficient) {
+        this.coefficient = BigInteger/*Rational*/.valueOf(coefficient);
+        if (isZero()) {
             vars = new TreeMap<String, Integer>();
         }
     } // setCoefficient
@@ -174,7 +185,7 @@ public class Monomial implements Cloneable, Serializable {
     /** Gets the coefficient.
      *  @return rational factor of the product of variables
      */
-    public BigInteger getCoefficient() {
+    public BigInteger/*Rational*/ getCoefficient() {
         return this.coefficient;
     } // getCoefficient
 
@@ -245,11 +256,11 @@ public class Monomial implements Cloneable, Serializable {
         return vars.keySet();
     } // keySet
 
-    /** Returns the signum function of this BigInteger.
-     *  @return -1, 0 or 1 as the value of this BigInteger is negative, zero or positive.
+    /** Returns the signum function of the coefficient.
+     *  @return -1, 0 or 1 as the value of the coefficient is negative, zero or positive.
      */
     public int signum() {
-        return this.coefficient.compareTo(BigInteger.ZERO);
+        return this.coefficient.compareTo(BigInteger/*Rational*/.ZERO);
     } // signum
 
     /** Determines whether the monomial contains no variables
@@ -270,7 +281,7 @@ public class Monomial implements Cloneable, Serializable {
      *  @return true if the monomial equals 0, false otherwise
      */
     public boolean isZero() {
-        return /* vars.size() == 0 && */ getCoefficient().equals(BigInteger.ZERO);
+        return /* vars.size() == 0 && */ getCoefficient().equals(BigInteger/*Rational*/.ZERO);
     } // isZero
 
     //=================
@@ -373,7 +384,7 @@ public class Monomial implements Cloneable, Serializable {
             throw new IllegalArgumentException("signatures of both monomials must be equal");
         } else {
             result.setCoefficient(this.coefficient.add(monomial2.getCoefficient()));
-            if (result.getCoefficient().equals(BigInteger.ZERO)) {
+            if (result.isZero()) {
                 result.clear(); // remove all variables
             }
         }
@@ -392,7 +403,7 @@ public class Monomial implements Cloneable, Serializable {
             throw new IllegalArgumentException("signatures of both monomials must be equal");
         } else {
             result.setCoefficient(this.coefficient.add(monomial2.getCoefficient()));
-            if (result.getCoefficient().equals(BigInteger.ZERO)) {
+            if (result.isZero()) {
                 result.clear(); // remove all variables
             }
         }
@@ -411,7 +422,7 @@ public class Monomial implements Cloneable, Serializable {
             throw new IllegalArgumentException("signatures of both monomials must be equal");
         } else {
             result.setCoefficient(this.coefficient.subtract(monomial2.getCoefficient()));
-            if (result.getCoefficient().compareTo(BigInteger.ZERO) == 0) {
+            if (result.isZero()) {
                 result.clear(); // remove all variables
             }
         }
@@ -430,7 +441,7 @@ public class Monomial implements Cloneable, Serializable {
             throw new IllegalArgumentException("signatures of both monomials must be equal");
         } else {
             result.setCoefficient(this.coefficient.subtract(monomial2.getCoefficient()));
-            if (result.getCoefficient().equals(BigInteger.ZERO)) {
+            if (result.isZero()) {
                 result.clear(); // remove all variables
             }
         }
@@ -455,12 +466,12 @@ public class Monomial implements Cloneable, Serializable {
     public Monomial multiplyBy(String name2, int exp2) {
         Monomial result = this;
         if (isNumber(name2)) {
-            result.setCoefficient(this.coefficient.multiply((new BigInteger(name2)).pow(exp2)));
-            if (result.getCoefficient().equals(BigInteger.ZERO)) {
+            result.setCoefficient(this.coefficient.multiply((new BigInteger/*Rational*/(name2)).pow(exp2)));
+            if (result.isZero()) {
                 result.clear(); // remove all variables
             }
         } else if (exp2 == 0) { // *= 1 means: leave it unchanged
-            // result.setCoefficient(BigInteger.ONE);
+            // result.setCoefficient(1);
             // result.clear();
         } else {
             if (result.getExponent(name2) != 0) {
@@ -485,7 +496,7 @@ public class Monomial implements Cloneable, Serializable {
             result.multiplyBy(name2, monomial2.getExponent(name2));
         } // while iter
         result.setCoefficient(this.coefficient.multiply(monomial2.getCoefficient()));
-        if (result.getCoefficient().equals(BigInteger.ZERO)) {
+        if (result.isZero()) {
             result.clear(); // remove all variables
         }
         return result;
@@ -500,7 +511,7 @@ public class Monomial implements Cloneable, Serializable {
         if (exponent < 0) {
             throw new IllegalArgumentException("exponent may not be negative");
         } else if (exponent == 0) {
-            result.setCoefficient(BigInteger.ONE);
+            result.setCoefficient(1);
             result.clear();
         } else if (exponent == 1) {
             // ignore - leave the Monomial as it is
@@ -528,8 +539,8 @@ public class Monomial implements Cloneable, Serializable {
         Monomial result = this;
         try {
             if (isNumber(name2)) {
-                BigInteger bint2 = (new BigInteger(name2)).pow(exp2);
-                if (bint2.equals(BigInteger.ZERO)) {
+                BigInteger/*Rational*/ bint2 = (new BigInteger/*Rational*/(name2)).pow(exp2);
+                if (bint2.equals(BigInteger/*Rational*/.ZERO)) {
                     throw new IllegalArgumentException("division by zero");
                 } else {
                     result.setCoefficient(this.coefficient.divide(bint2));
@@ -575,15 +586,15 @@ public class Monomial implements Cloneable, Serializable {
      *  @throws ArithmeticException if the second monomial is zero
      */
     public Monomial divide(Monomial monomial2) {
-        if (monomial2.getCoefficient().equals(BigInteger.ZERO)) {
+        if (monomial2.isZero()) {
             throw new ArithmeticException();
         }
         Monomial result = this.clone();
         try {
-            BigInteger[] divRemain = this.coefficient.divideAndRemainder(monomial2.getCoefficient());
+            BigInteger/*Rational*/[] divRemain = this.getCoefficient().divideAndRemainder(monomial2.getCoefficient());
             if (divRemain[1].equals(BigInteger.ZERO)) {
                 result.setCoefficient(divRemain[0]);
-                if (! result.getCoefficient().equals(BigInteger.ZERO)) {
+                if (! result.isZero()) {
                     Iterator<String> iter = monomial2.keySet().iterator();
                     while (iter.hasNext() && result != null) {
                         String name2 = iter.next();
@@ -591,7 +602,7 @@ public class Monomial implements Cloneable, Serializable {
                     } // while iter
                 } // ! ZERO
             } else { // did not divide evenly
-                result = new Monomial(BigInteger.ZERO);
+                result.setCoefficient(0);
             } //
         } catch (Exception exc) {
             System.out.println(exc.getMessage());
@@ -715,7 +726,7 @@ public class Monomial implements Cloneable, Serializable {
      *  @return "3*4*x*y^3" for example for factor 4 and monomial 12*x*x^3
      */
     public String toFactoredString(BigInteger factor) {
-        BigInteger coeff = coefficient;
+        BigInteger coeff = this.getCoefficient();
         String number = null;
         if (coeff.gcd(factor).equals(factor)) {
             number = coeff.divide(factor).toString() + "*" + factor.toString();
@@ -805,7 +816,7 @@ public class Monomial implements Cloneable, Serializable {
             }
         } // while iter2
         if (! found) {
-            result.setCoefficient(BigInteger.ZERO);
+            result.setCoefficient(0);
         }
         return result;
     } // getVariablePowers
@@ -827,7 +838,7 @@ public class Monomial implements Cloneable, Serializable {
             exp2 = monomial2.getExponent(name2);
             if (exp1 == 0 || exp1 != exp2) {
                 busy = false;
-                result = new Monomial(BigInteger.ZERO); // no factor
+                result.setCoefficient(0); // no factor
             } else { // this variable was not found or had a different exponent
                 result.putExponent(name2, 0); // remove this variable
             }
@@ -920,13 +931,13 @@ lcm( + 24*a^6*b^6*c*x4^8, + 100*a^5*b^4) =  + 600*a^6*b^6*c*x4^8
                     .multiply(new Monomial("a", 3))
                     .multiply(new Monomial("b", 2));
 
-            mono1.setCoefficient(new BigInteger("24"));
+            mono1.setCoefficient(24);
             System.out.println(mono1.toString() + " / "        + mono2.toString()  + " = " + mono1.divide(mono2).toString());
             mono1   .multiplyBy("a", 2).multiplyBy("b", 4).multiplyBy("c", 1);
             mono2   .multiplyBy("b", 2).multiplyBy("a", 2);
             System.out.println("gcd(" + mono1.toString() + "," + mono2.toString() + ") = " + mono1.gcd   (mono2).toString());
             System.out.println("lcm(" + mono1.toString() + "," + mono2.toString() + ") = " + mono1.lcm   (mono2).toString());
-            mono1.setCoefficient(new BigInteger("2400"));
+            mono1.setCoefficient(2400);
             System.out.println(mono1.toString() + " / "        + mono2.toString()  + " = " + mono1.divide(mono2).toString());
         } catch (Exception exc) {
             System.out.println(exc.getMessage());

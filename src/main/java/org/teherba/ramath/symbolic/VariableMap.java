@@ -323,12 +323,12 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
                 b = b - skippable;
             }
             BigInteger base     = BigInteger.valueOf(b);
-            BigInteger modulus  = BigInteger.valueOf(m);
+            BigInteger module   = BigInteger.valueOf(m);
             String value = this.get(key); // REFINED_FORM - this has the form "c+f*x"
             int starPos  = value.indexOf('*');
             int plusPos  = value.indexOf('+');
             BigInteger factor   = (new BigInteger(value.substring(plusPos + 1, starPos)));
-            BigInteger constant = (new BigInteger(value.substring(0, plusPos))).add(factor.multiply(modulus));
+            BigInteger constant = (new BigInteger(value.substring(0, plusPos))).add(factor.multiply(module));
             result.put(key, constant.toString() + "+" + (factor.multiply(base).toString()) + "*" + key);
             idisp ++;
         } // while iter

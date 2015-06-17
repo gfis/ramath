@@ -1,6 +1,7 @@
 /*  Polynomial: a symbolic, multivariate polynomial with addition, multiplication
  *  and exponentiation
  *  @(#) $Id: Polynomial.java 744 2011-07-26 06:29:20Z gfis $
+ *  2015-06-17: modulus removed, coefficients are BigRatiaonal again
  *  2015-03-25: isPowerSum
  *  2015-02-13: getTransposition
  *  2014-04-04: getIndivisiblePart(2)
@@ -94,16 +95,10 @@ public class Polynomial implements Cloneable, Serializable {
             , GT_0  // this polynomial >  0
             , GE_0  // this polynomial >= 0
             , NE_0  // this polynomial != 0
-            , MOD0  // this polynomial mod modulus == 0
             };
 
     /** relation with zero */
     private Relator relation;
-    /** The Polynomial must be congruent 0 modulus this number for {@link Polynomial.Relator}
-     *  {@link Polynomial.Relator#MOD0}.
-     *  For other relators, the modulus is irrelevant, and its default value is 0.
-     */
-    private BigInteger modulus;
 
     /*-------------- construction -----------------------------*/
 
@@ -131,7 +126,6 @@ public class Polynomial implements Cloneable, Serializable {
     public Polynomial(Polynomial poly) {
         monomials =  (poly.clone()).getMonomials();
         setFactor    (poly.getFactor());
-        setModulus   (poly.getModulus());
         setPseudo    (poly.getPseudo());
         setRelation  (poly.getRelation());
     } // Constructor(Polynomial)
@@ -147,7 +141,6 @@ public class Polynomial implements Cloneable, Serializable {
      */
     private void initialize() {
         setFactor(new Monomial("1"));
-        setModulus(BigInteger.ZERO);
         setPseudo(0);
         setRelation(Relator.EQ_0);
     } // initialize
@@ -165,7 +158,6 @@ public class Polynomial implements Cloneable, Serializable {
         } // while titer
         result.setFactor    (this.getFactor());
         result.setMonomials (resultMonomials);
-        result.setModulus   (this.getModulus());
         result.setPseudo    (this.getPseudo());
         result.setRelation  (this.getRelation());
         return result;
@@ -244,20 +236,6 @@ public class Polynomial implements Cloneable, Serializable {
     public void setFactor(Monomial factor) {
         this.factor = factor;
     } // setFactor
-
-    /** Gets the modulus.
-     *  @return the number which is used for {@link Polynomial.Relator} {@link Polynomial.Relator#MOD0}
-     */
-    protected BigInteger getModulus() {
-        return modulus;
-    } // getModulus
-
-    /** Sets the modulus
-     *  @param modulus the number which is used for {@link Polynomial.Relator} {@link Polynomial.Relator#MOD0}
-     */
-    protected void setModulus(BigInteger modulus) {
-        this.modulus = modulus;
-    } // setModulus
 
     /** Gets the pseudo property.
      *  @return pseudo
@@ -339,9 +317,6 @@ public class Polynomial implements Cloneable, Serializable {
             case NE_0:
                 buffer.append(" != 0");
                 break;
-            case MOD0:
-                buffer.append(" mod " + modulus.toString() + " = 0");
-                break;
         } // switch relation
         String result = buffer.toString();
         return result.substring(result.startsWith(" + ") ? 3 : 0);
@@ -378,9 +353,6 @@ public class Polynomial implements Cloneable, Serializable {
             case NE_0:
                 buffer.append(" != 0");
                 break;
-            case MOD0:
-                buffer.append(" mod " + modulus.toString() + " = 0");
-                break;
         } // switch relation
         String result = buffer.toString();
         return result.substring(result.startsWith(" + ") ? 3 : 0);
@@ -409,8 +381,8 @@ public class Polynomial implements Cloneable, Serializable {
     /** Gets the constant {@link Monomial} of the polynomial, if any, or the constant 0.
      *  @return the constant monomial if there is one, or 0
      */
-    public BigInteger getConstant() {
-        BigInteger result = BigInteger.ZERO;
+    public BigInteger/*Rational*/ getConstant() {
+        BigInteger/*Rational*/ result = BigInteger/*Rational*/.ZERO;
         Monomial monomial = monomials.get(Monomial.CONSTANT_SIGNATURE);
         if (monomial != null) {
             result = monomial.getCoefficient();
@@ -1087,7 +1059,7 @@ x^2 + 3*x^3 + 2*x^4
      *  if they are integral, or 1.
      *  @return common divisor
      */
-    public BigInteger gcdVariables() {
+    public BigInteger/*Rational*/ gcdVariables() {
         return gcdCoefficients(false);
     } // gcdVariables
 
@@ -1096,8 +1068,8 @@ x^2 + 3*x^3 + 2*x^4
      *  @param all whether all monomials should be investigated, or the non-constant ones only
      *  @return common divisor &gt;= 1
      */
-    private BigInteger gcdCoefficients(boolean all) {
-        BigInteger result = BigInteger.ONE;
+    private BigInteger/*Rational*/ gcdCoefficients(boolean all) {
+        BigInteger/*Rational*/ result = BigInteger/*Rational*/.ONE;
         Iterator <String> titer = monomials.keySet().iterator();
         int index = 0;
         while (titer.hasNext()) {
@@ -1198,7 +1170,7 @@ x^2 + 3*x^3 + 2*x^4
         } // while titer
         Iterator <String> riter = result.monomials.keySet().iterator();
         while (riter.hasNext()) { // over all monomials
-            result.monomials.get(riter.next()).setCoefficient(BigInteger.ONE);
+            result.monomials.get(riter.next()).setCoefficient(1);
         } // while riter
         return result;
     } // getVariablePowers
@@ -1562,7 +1534,7 @@ x^2 + 3*x^3 + 2*x^4
                     Monomial mono2 = poly2.get(sig2);
                     Monomial factor  = mono1.divide(mono2);
                     if (factor != null && factor.isConstant() 
-                            && factor.getCoefficient().compareTo(BigInteger.ZERO) > 0
+                            && factor.getCoefficient().compareTo(BigInteger/*Rational*/.ZERO) > 0
                             ) { // valid factor
                         result = (result != null ? result + "," : "") + factor.toString()
                                 .replaceAll(" ", "").replaceAll("\\A\\+", "");
@@ -1801,7 +1773,7 @@ x^2 + 3*x^3 + 2*x^4
     public String evaluate(VariableMap vmap1) {
         // this.normalize();
         StringBuffer result = new StringBuffer(64);
-        BigInteger constant = this.getConstant();
+        BigInteger/*Rational*/ constant = this.getConstant();
         if (false) {
         } else if (this.isConstant()) {
             if (this.isZero()) {
@@ -1826,7 +1798,7 @@ x^2 + 3*x^3 + 2*x^4
                         break;
                     case GE_0:
                     case GT_0:
-                        result.append(constant.compareTo(BigInteger.ZERO) > 0 ? VariableMap.SUCCESS : VariableMap.FAILURE);
+                        result.append(constant.compareTo(BigInteger/*Rational*/.ZERO) > 0 ? VariableMap.SUCCESS : VariableMap.FAILURE);
                         break;
                     case NE_0:
                         result.append(VariableMap.SUCCESS);
@@ -1844,7 +1816,7 @@ x^2 + 3*x^3 + 2*x^4
                         break;
                     case GE_0:
                     case GT_0:
-                        result.append(constant.compareTo(BigInteger.ZERO) > 0 ? VariableMap.SUCCESS : VariableMap.FAILURE);
+                        result.append(constant.compareTo(BigInteger*Rational*//*.ZERO) > 0 ? VariableMap.SUCCESS : VariableMap.FAILURE);
                         break;
                     case NE_0:
                         result.append(VariableMap.SUCCESS);
@@ -1852,7 +1824,7 @@ x^2 + 3*x^3 + 2*x^4
                 } // switch relation
                 result.append(" biased");
 
-        } else if (constant.equals(BigInteger.ZERO)) {
+        } else if (constant.equals(BigInteger*Rational*//*.ZERO)) {
                 switch (this.getRelation()) {
                     default:
                     case EQ_0:
@@ -1877,8 +1849,8 @@ x^2 + 3*x^3 + 2*x^4
 
         } else { // not a single constant, not biased
             // check greatest common divisor of variables
-            BigInteger  varGCD = this.gcdVariables();
-            if (! varGCD.equals(BigInteger.ONE) && ! constant.mod(varGCD).equals(BigInteger.ZERO)) {
+            BigInteger/*Rational*/  varGCD = this.gcdVariables();
+            if (! varGCD.equals(BigInteger/*Rational*/.ONE) && ! constant.mod(varGCD).equals(BigInteger/*Rational*/.ZERO)) {
                 // constant is not divisible by GCD of variables which is != 1
                 switch (this.getRelation()) {
                     default:
@@ -2102,7 +2074,7 @@ x^2 + 3*x^3 + 2*x^4
                     String factor = args[iarg ++];
                     poly1 = Polynomial.parse(args[iarg ++]);
                     System.out.println("getRest(" + poly1.toString() + ", " + factor + ") -> "
-                            +  poly1.getRest(new BigInteger(factor)).toString());
+                            +  poly1.getRest(new BigInteger/*Rational*/(factor)).toString());
 
                 } else if (opt.startsWith("-spoly")) {
                     exprs = ereader.getArguments(iarg, args);

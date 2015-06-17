@@ -1,5 +1,6 @@
 /*  BigRational: a fraction as a pair of BigIntegers
  *  @(#) $Id: BigRational.java 231 2009-08-25 08:47:16Z gfis $
+ *  2015-06-17: extends BigInteger
  *  2014-04-08: use BigInteger.valueOf(long)
  *  2013-09-13: normalize -> simplify
  *  2013-08-23: Serializable, lcm, gcd
@@ -34,7 +35,7 @@ import  java.math.RoundingMode;
  *  @author Dr. Georg Fischer
  */
 public class BigRational 
-        extends BigInteger 
+    //  extends BigInteger 
         implements Cloneable, Serializable 
         {
     private static final long serialVersionUID = 1L;
@@ -52,7 +53,7 @@ public class BigRational
      *  @result a new instance 
      */
     public BigRational(String rawNumber) {
-    	super("0");
+    //	super("0");
         String number = rawNumber.replaceAll("[^\\d\\.\\/]", "");
         int slash = number.indexOf("/");
         if (slash >= 0) {
@@ -124,6 +125,8 @@ public class BigRational
     public static BigRational ZERO = BigRational.valueOf(0);
     /** constant 1 */
     public static BigRational ONE  = BigRational.valueOf(1);
+    /** constant 2 */
+    public static BigRational TWO  = BigRational.valueOf(2);
 
     /** Deep copy of the rational number with denominator and nominator.
      *  @return independant, simplified copy of the rational number
@@ -333,9 +336,6 @@ public class BigRational
         return result;
     } // root1
 
-    private static final BigInteger one = BigInteger.ONE;
-    private static final BigInteger two = BigInteger.valueOf(2);
-
     /** Computes the greatest common divisor of the numerators
      *  @param brat2 2nd BigRational
      *  @return the greatest common divisor of the numerators
@@ -406,19 +406,41 @@ public class BigRational
      *  The suggested idiom for performing these comparisons is:
      *  (x.compareTo(y) <op> 0), where <op> is one of the six comparison operators.
      *  Returns the signum of the difference of <em>this</em> BigRational minus the parameter.
-     *  @param val - BigRational to which this BigRational is to be compared.
+     *  @param num2 number to which this BigRational is to be compared.
      *  @return -1, 0 or 1 as this BigRational is numerically
-     *  less than, equal to, or greater than <em>val</em>.
+     *  less than, equal to, or greater than <em>num2</em>.
      */
-    public int compareTo(BigRational val) {
-        return this.numerator  .multiply(val.getDenominator()).compareTo(this.denominator.multiply(val.getNumerator()));
+    public int compareTo(BigRational num2) {
+        return this.numerator  .multiply(num2.getDenominator()).compareTo(this.denominator.multiply(num2.getNumerator()));
+    } // compareTo
+
+    /** Compares this BigRational with the specified BigInteger.
+     *  This method is provided in preference to individual methods
+     *  for each of the six boolean comparison operators (<, ==, >, >=, !=, <=).
+     *  The suggested idiom for performing these comparisons is:
+     *  (x.compareTo(y) <op> 0), where <op> is one of the six comparison operators.
+     *  Returns the signum of the difference of <em>this</em> BigRational minus the parameter.
+     *  @param num2 number to which this BigRational is to be compared.
+     *  @return -1, 0 or 1 as this BigRational is numerically
+     *  less than, equal to, or greater than <em>num2</em>.
+     */
+    public int compareTo(BigInteger num2) {
+        return this.numerator                                  .compareTo(this.denominator.multiply(num2               ));
     } // compareTo
 
     /** Determines whether <em>this</em> BigRational has the same value as the parameter.
      *  @param num2 2nd comparision operand
-     *  @return true when the two rational are the same
+     *  @return true when the two numbers have the same values
      */
     public boolean equals(BigRational num2) {
+        return this.compareTo(num2) == 0;
+    } // equals
+
+    /** Determines whether <em>this</em> BigRational has the same value as the parameter.
+     *  @param num2 2nd comparision operand
+     *  @return true when the two numbers have the same values
+     */
+    public boolean equals(BigInteger num2) {
         return this.compareTo(num2) == 0;
     } // equals
 
@@ -485,17 +507,20 @@ public class BigRational
     public static void main(String[] args) {
         /* elementary arithmetic */
         System.out.println((BigRational.valueOf(2906,1947)).toString());
-        System.out.println("3/4 + 5/7 = " + (BigRational.valueOf(3,4)).add     (BigRational.valueOf(5,7))             .toString());
-        System.out.println("3/4 - 5/7 = " + (BigRational.valueOf(3,4)).subtract(BigRational.valueOf(5,7))             .toString());
-        System.out.println("3/4 * 5/7 = " + (BigRational.valueOf(3,4)).multiply(BigRational.valueOf(5,7))             .toString());
-        System.out.println("3/4 / 5/7 = " + (BigRational.valueOf(3,4)).divide  (BigRational.valueOf(5,7))             .toString());
-        System.out.println("3/4 + 5   = " + (BigRational.valueOf(3,4)).add     (BigRational.valueOf(5  ))             .toString());
-        System.out.println("3/4 - 5   = " + (BigRational.valueOf(3,4)).subtract(BigRational.valueOf(5  ))             .toString());
-        System.out.println("3/4 * 5   = " + (BigRational.valueOf(3,4)).multiply(BigRational.valueOf(5  ))             .toString());
-        System.out.println("3/4 / 5   = " + (BigRational.valueOf(3,4)).divide  (BigRational.valueOf(5  ))             .toString());
-        System.out.println("3/4 / 5/7 = " + (BigRational.valueOf(3,4)).divide  (BigRational.valueOf(5,7)).getDecimal().toString());
-        System.out.println("3/4 * 4/3 = " + (BigRational.valueOf(3,4)).multiply(BigRational.valueOf(4,3))             .toString());
-        System.out.println("3/4 pow 3 = " + (BigRational.valueOf(3,4)).pow     (3                   )             .toString());
+        System.out.println("3/4 + 5/7 = " + (BigRational.valueOf(3,4)).add      (BigRational.valueOf(5,7))             .toString());
+        System.out.println("3/4 - 5/7 = " + (BigRational.valueOf(3,4)).subtract (BigRational.valueOf(5,7))             .toString());
+        System.out.println("3/4 * 5/7 = " + (BigRational.valueOf(3,4)).multiply (BigRational.valueOf(5,7))             .toString());
+        System.out.println("3/4 / 5/7 = " + (BigRational.valueOf(3,4)).divide   (BigRational.valueOf(5,7))             .toString());
+        System.out.println("3/4 + 5   = " + (BigRational.valueOf(3,4)).add      (BigRational.valueOf(5  ))             .toString());
+        System.out.println("3/4 - 5   = " + (BigRational.valueOf(3,4)).subtract (BigRational.valueOf(5  ))             .toString());
+        System.out.println("3/4 * 5   = " + (BigRational.valueOf(3,4)).multiply (BigRational.valueOf(5  ))             .toString());
+        System.out.println("3/4 / 5   = " + (BigRational.valueOf(3,4)).divide   (BigRational.valueOf(5  ))             .toString());
+        System.out.println("3/4 / 5/7 = " + (BigRational.valueOf(3,4)).divide   (BigRational.valueOf(5,7)).getDecimal().toString());
+        System.out.println("3/4 * 4/3 = " + (BigRational.valueOf(3,4)).multiply (BigRational.valueOf(4,3))             .toString());
+        System.out.println("3/4 pow 3 = " + (BigRational.valueOf(3,4)).pow      (3                   )                 .toString());
+        System.out.println("3/4 <>5/7 = " + (BigRational.valueOf(3,4)).compareTo(BigRational.valueOf(5,7)));
+        System.out.println("3/4 ==5/7 = " + (BigRational.valueOf(3,4)).equals   (BigRational.valueOf(5,7)));
+        System.out.println("3/4==12/16= " + (BigRational.valueOf(3,4)).equals   (BigRational.valueOf(12,16)));
     } // main
 
 } // BigRational
