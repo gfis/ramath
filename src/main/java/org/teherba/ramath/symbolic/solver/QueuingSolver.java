@@ -1,5 +1,6 @@
 /*  QueuingSolver: tries to solve a Diophantine equation by monadic variable expansion
  *  @(#) $Id: QueuingSolver.java 970 2012-10-25 16:49:32Z gfis $
+ *  2015-06-15: RelationSet.parse was not static
  *  2015-05-28: subdirectory solver
  *  2015-02-07: try to treat variable name equivalences classes; Pforzheim 4th day post; Dorothea's 105th birthday
  *  2014-04-05, Georg Fischer: copied from and replacing MonadicSolver.java
@@ -228,7 +229,7 @@ public class QueuingSolver extends BaseSolver {
         String expr = solver.getArguments(0, args);
         RelationSet rset0 = new RelationSet("(3+a)^2+(4+b)^2=(5+c)^2"); // solution a=b=c=0
         if (expr != null) {
-            rset0 = rset0.parse(expr);
+            rset0 = RelationSet.parse(expr);
         }
         rset0.setTuple(rset0.getExpressionMap());
         solver.solve(rset0);

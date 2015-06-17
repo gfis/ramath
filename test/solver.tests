@@ -16,7 +16,7 @@
 #   x^3 + 2*y^3 = 4*z^3 has 1! solution (0,0,0)
 #
 # http://www.math.uconn.edu/~kconrad/blurbs/ugradnumthy/descent.pdf
-#   The Marko equation, introduced by Marko in 1880, is
+#   The Marko equation, introduced by Markoff in 1880, is
 #   x^2 + y^2 + z^2 = 3*x*y*z
 #   Solutions: (3*y*z-x,y,z) and (x,3*x*z-y,z)
 #   From (1,1,1) we can successively generate, for instance, (2,1,1),
@@ -32,14 +32,14 @@ CALL TreeSolver -l 4 -e "2*q^2 - p^2"
 TEST T02 tree solver, sqrt(5) (proof in 2 steps)
 CALL TreeSolver -l 4 -e "5*q^2 - p^2" 
 
-TEST T03 tree solver (proof in 2 steps)
+TEST T03 Fermat (proof in 2 steps)
 CALL TreeSolver -l 4 -e "a^2 + b^2 - 3*(c^2 + d^2)" 
 
 TEST T04 tree solver, biquadratic minus
 CALL TreeSolver -l 6 -e "x^4 - y^4 - z^2"
 
-TEST T05 tree solver, biquadratic plus
-CALL TreeSolver -l 4 -e "x^4 + y^4 - z^2" 
+TEST T05 FLT(4), biquadratic plus
+CALL TreeSolver -l 4 -e "x^4 + y^4 - z^2" -r same,transpose,norm,invall
 
 TEST T06 Markov(3, solvable)
 CALL TreeSolver -l 4 -e "x^2 + y^2 + z^2 - 3*x*y*z"
@@ -50,15 +50,14 @@ CALL TreeSolver -b 2 -l 3 -e "a^3 + b^3 - c^3"
 TEST T08 EEC(3) mod 2
 CALL TreeSolver -b 2 -l 2 -e "a^3 + b^3 + c^3 - d^3" 
 
-TEST T09 Markov(2, unsolvable, power)
-CALL TreeSolver -l 8 -e "x^2 + y^2 + z^2 - 2*x*y*z" -r transpose,same,norm,invall
+TEST T09 Markoff(2, unsolvable, power)
+CALL TreeSolver      -l 8 -e "x^2 + y^2 + z^2 - 2*x*y*z" -r transpose,same,norm,invall
 
-TEST T10 Markov(5, unsolvable)
-CALL TreeSolver -b 2 -l 3 -e "x^2 + y^2 + z^2 - 5*x*y*z" 
-# -r transpose,same
+TEST T10 Markoff(5, unsolvable)
+CALL TreeSolver -b 2 -l 3 -e "x^2 + y^2 + z^2 - 5*x*y*z" -r transpose,same,norm,dogrow
 
-TEST T11 Markov(4, unsolvable, power)
-CALL TreeSolver -l 8 -e "x^2 + y^2 + z^2 - 4*x*y*z" -r transpose,same,dogrow
+TEST T11 Markoff(4, unsolvable, power)
+CALL TreeSolver      -l 8 -e "x^2 + y^2 + z^2 - 4*x*y*z" -r transpose,same,dogrow
 
 TEST T12 proof
 CALL TreeSolver -l 4 -e "x^2 + y^2 - 3*z^2" 
@@ -76,14 +75,14 @@ CALL TreeSolver -b 2 -l 2 -e "a^4 + b^4 + c^4 - d^4"
 TEST T16 Pythagoras
 CALL TreeSolver -b 2 -l 4 -e "a^2 + b^2 - c^2"
 
-TEST T17 modified Fermat^3 mod 2 (http://www.cut-the-knot.org/arithmetic/BasicsOfInfiniteDescent.shtml)
+TEST T17 FLT(3) modified, Euler, proof=1 (http://www.cut-the-knot.org/arithmetic/BasicsOfInfiniteDescent.shtml)
 CALL TreeSolver -b 2 -l 4 -e "a^3 + 2*b^3 - 4*c^3" -r "transposable,same,dogrow,norm,invall"
 # also Keith Conrad: Proofs by Descent, Example 1.1
 
-TEST T18 Markov(2, unsolvable, power)
+TEST T18 Markov(2, unsolvable, power, proof)
 CALL TreeSolver -l 6 -e "(x + 1)^2 + (y + 1)^2 + (z + 1)^2 - 2*(x + 1) * (y + 1) * (z + 1)" 
 
-TEST T19 Markov(2, unsolvable, power)
+TEST T19 Markov(2, unsolvable, power, proof)
 CALL TreeSolver -l 6 -e "(x + 2)^2 + (y + 2)^2 + (z + 2)^2 - 2*(x + 2) * (y + 2) * (z + 2)"
 
 TEST T20 generating Pythagoras
@@ -93,17 +92,17 @@ CALL TreeSolver -b 2 -l 2 -e "(m^2 - n^2)^2 + (2*m*n)^2 - (m^2 + n^2)^2"
 # CALL TreeSolver -b 3 -l 1 -e "a^6 + b^6 + c^6 + d^6 + e^6 - f^6"
 
 TEST T22 FLT(3)=Fermat/Carcavi(6) mod 3
-CALL TreeSolver -b 3 -l 2 -e "a^3 + b^3 - c^3" 
+CALL TreeSolver -b 2 -l 4 -e "a^3 + b^3 - c^3" -r same,transpose,norm
 
 TEST T23 FLT(5) mod 2
 CALL TreeSolver -b 2 -l 2 -e "a^5 + b^5 - c^5" 
 
 # Smart p. 11 Elliptic Curve; Solutions: x=5,y=+-11; x=2,y=+-2
 TEST T24 Smart p. 11 Elliptic Curve
-CALL TreeSolver -b 2 -l 5 -e "y^2 - x^3 + 4 = 0" -r transpose,same,dogrow
+CALL TreeSolver -b 2 -l 5 -e "y^2 - x^3 + 4 = 0" -r tran5pose,same,dogrow
 
 TEST T25 Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3]; http://math.stackexchange.com/questions/677422/solve-x22-y3-using-infinite-descent; growing !
-CALL TreeSolver -b 2 -l 5 -e "x^2 + 2 - y^3" -r transpose,same,similiar,norm
+CALL TreeSolver -b 2 -l 7 -e "x^2 + 2 - y^3" -r same,norm,invall
 
 TEST T26 Squeeze; https://hcmop.wordpress.com/2012/04/09/techniques-in-solving-diophantine-equations-part-2/
 CALL TreeSolver -b 2 -l 8 -e "x * (x + 1) * (x + 7) * (x + 8) - y^2"
@@ -121,7 +120,18 @@ TEST T30 Fermat/Carcavi(10); solutions [1,1],[2,5]; http://www.jstor.org/stable/
 CALL TreeSolver -b 2 -l 4 -e "(2*x^2 - 1)^2 - (2*y^2 - 1)" -r transpose,same,dogrow 
 
 TEST T31 Fermat/Carcavi(7) x^2 + 2 = y^3; -> (a+b, a-b)
-CALL TreeSolver -b 2 -l 3 -e "2 + a^2 - a^3 + 2*a*b + 3*a^2*b + b^2 - 3*a*b^2 + b^3" -r transpose,same,similiar,norm,invall 
+CALL TreeSolver -b 2 -l 7 -e "(a+b)^2 + 2 - (a-b)^3" -r transpose,same,norm,invall 
+
+TEST T32 FC7, behind solution
+CALL TreeSolver -b 2 -l 7 -e "(5 + 2*v + 2*u)^2 + 2 - (5 + 2*v)^3" -r same,transpose,dogrow,norm,invall
+
+TEST T33 Oeuvres de Fermat 5, p. 154 Remarques de A. Genocchi
+CALL TreeSolver -b 2 -l 4 -e "x^4 + x^2*y^2 + y^4 - z^2" -r same,transpose,dogrow,norm,invall
+
+TEST T34 Keith Conrad Descent: Cor. 3.7
+CALL TreeSolver -b 2 -l 4 -e "y^2 = x^3 - 4*x" -r same,transpose,dogrow,norm,invall
+
+PACKAGE=org.teherba.ramath.symbolic.solver
 
 #-------------------------------
 # c.f. http://planetmath.org/encyclopedia/InfiniteDescent.html

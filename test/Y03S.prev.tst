@@ -1,3 +1,16 @@
+# flat	Cubic.Y03	 - 1 - 2*x - x^2
+# flat	Cubic.Y03	1 - 2*x - x^2 - x^3
+# flat	Cubic.Y03	2 + 2*x + x^2 + x^3
+# flat	Cubic.Y03	2 + x + 2*x^2
+# merg	Cubic.Y03	 - 1 - 2*x_y_z - x_y_z^2
+# merg	Cubic.Y03	1 - 2*x_y_z - x_y_z^2 - x_y_z^3
+# merg	Cubic.Y03	2 + 2*x_y_z + x_y_z^2 + x_y_z^3
+# merg	Cubic.Y03	2 + x_y_z + 2*x_y_z^2
+# orig	Cubic.Y03	-(2+x+2*x^2)^3
+# orig	Cubic.Y03	+(-1-2*x-x^2)^3
+# orig	Cubic.Y03	+(1-2*x-x^2-x^3)^3
+# orig	Cubic.Y03	+(2+2*x+x^2+x^3)^3
+# poly	Cubic.Y03	0
 000018	[3,4,5,6]	Cubic.Y03	factor=1	parm= [1]
 000018	[3,4,5,6]	Cubic.Y03	factor=3	parm= [2]
 000024	[1,6,8,9]	Cubic.Y03	factor=1	parm= [-2]
@@ -27,16 +40,3 @@
 005700	[169,380,2574,2577]	Cubic.Y03	factor=1	parm= [-14]
 006992	[196,437,3178,3181]	Cubic.Y03	factor=1	parm= [-15]
 007984	[256,467,3629,3632]	Cubic.Y03	factor=1	parm= [15]
-# flat	Cubic.Y03	 - 1 - 2*x - x^2
-# flat	Cubic.Y03	1 - 2*x - x^2 - x^3
-# flat	Cubic.Y03	2 + 2*x + x^2 + x^3
-# flat	Cubic.Y03	2 + x + 2*x^2
-# merg	Cubic.Y03	 - 1 - 2*x_y_z - x_y_z^2
-# merg	Cubic.Y03	1 - 2*x_y_z - x_y_z^2 - x_y_z^3
-# merg	Cubic.Y03	2 + 2*x_y_z + x_y_z^2 + x_y_z^3
-# merg	Cubic.Y03	2 + x_y_z + 2*x_y_z^2
-# orig	Cubic.Y03	+(-1-2*x-x^2)^3
-# orig	Cubic.Y03	+(1-2*x-x^2-x^3)^3
-# orig	Cubic.Y03	+(2+2*x+x^2+x^3)^3
-# orig	Cubic.Y03	-(2+x+2*x^2)^3
-# poly	Cubic.Y03	0

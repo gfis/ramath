@@ -37,6 +37,13 @@ symbolic:
 	$(REGR) test/symbolic.tests $(TEST) 2>&1 \
 	| tee regression.log.tmp
 	grep FAILED regression.log.tmp
+fc7: fc1 fc2
+fc1:
+	make solver
+fc2:
+	perl -w data/fermcau7.pl test/$(TEST).this.tst > x.tmp 
+	less x.tmp
+	# diff -y x.tmp y.tmp | less
 #
 # Recreate all testcases which failed (i.e. remove xxx.prev.tst)
 # Handle with care!

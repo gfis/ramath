@@ -1,2 +1,2 @@
 unknown operation "m3"
-elapsed time: nn s
+elapsed time: 0 s

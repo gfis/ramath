@@ -1,65 +1,75 @@
+# flat	Pythagoras.Y02	 - 1 - 2*x - x^2 - 2*y - 2*x*y
+# flat	Pythagoras.Y02	 - 1 - 2*x - x^2 - 2*y - 2*x*y - 2*y^2
+# flat	Pythagoras.Y02	 - 2*y - 2*x*y - 2*y^2
+# merg	Pythagoras.Y02	 - 1 - 4*x_y_z - 3*x_y_z^2
+# merg	Pythagoras.Y02	 - 1 - 4*x_y_z - 5*x_y_z^2
+# merg	Pythagoras.Y02	 - 2*x_y_z - 4*x_y_z^2
+# orig	Pythagoras.Y02	-(-1-2*x-2*y-x^2-2*y^2-2*x*y)
+# orig	Pythagoras.Y02	+(-1-2*x-2*y-x^2-2*x*y)^2
+# orig	Pythagoras.Y02	+(-2*y-2*y^2-2*x*y)^2
+# poly	Pythagoras.Y02	2 + 6*x + 7*x^2 + 4*x^3 + x^4 + 6*y + 14*x*y + 12*x^2*y + 4*x^3*y + 10*y^2 + 16*x*y^2 + 8*x^2*y^2 + 8*y^3 + 8*x*y^3 + 4*y^4
+000012	[3,4,5]	Pythagoras.Y02	factor=1	parm= [0,1]
 000012	[3,4,5]	Pythagoras.Y02	factor=100	parm= [9,10]
 000012	[3,4,5]	Pythagoras.Y02	factor=121	parm= [10,11]
 000012	[3,4,5]	Pythagoras.Y02	factor=128	parm= [15,8]
 000012	[3,4,5]	Pythagoras.Y02	factor=144	parm= [11,12]
-000012	[3,4,5]	Pythagoras.Y02	factor=169	parm= [12,13]
 000012	[3,4,5]	Pythagoras.Y02	factor=16	parm= [3,4]
+000012	[3,4,5]	Pythagoras.Y02	factor=169	parm= [12,13]
 000012	[3,4,5]	Pythagoras.Y02	factor=18	parm= [5,3]
 000012	[3,4,5]	Pythagoras.Y02	factor=196	parm= [13,14]
-000012	[3,4,5]	Pythagoras.Y02	factor=1	parm= [0,1]
+000012	[3,4,5]	Pythagoras.Y02	factor=2	parm= [1,1]
 000012	[3,4,5]	Pythagoras.Y02	factor=225	parm= [14,15]
 000012	[3,4,5]	Pythagoras.Y02	factor=25	parm= [4,5]
-000012	[3,4,5]	Pythagoras.Y02	factor=2	parm= [1,1]
 000012	[3,4,5]	Pythagoras.Y02	factor=32	parm= [7,4]
 000012	[3,4,5]	Pythagoras.Y02	factor=36	parm= [5,6]
-000012	[3,4,5]	Pythagoras.Y02	factor=49	parm= [6,7]
 000012	[3,4,5]	Pythagoras.Y02	factor=4	parm= [1,2]
+000012	[3,4,5]	Pythagoras.Y02	factor=49	parm= [6,7]
 000012	[3,4,5]	Pythagoras.Y02	factor=50	parm= [9,5]
 000012	[3,4,5]	Pythagoras.Y02	factor=64	parm= [7,8]
 000012	[3,4,5]	Pythagoras.Y02	factor=72	parm= [11,6]
-000012	[3,4,5]	Pythagoras.Y02	factor=81	parm= [8,9]
 000012	[3,4,5]	Pythagoras.Y02	factor=8	parm= [3,2]
-000012	[3,4,5]	Pythagoras.Y02	factor=98	parm= [13,7]
+000012	[3,4,5]	Pythagoras.Y02	factor=81	parm= [8,9]
 000012	[3,4,5]	Pythagoras.Y02	factor=9	parm= [2,3]
+000012	[3,4,5]	Pythagoras.Y02	factor=98	parm= [13,7]
+000030	[5,12,13]	Pythagoras.Y02	factor=1	parm= [0,2]
 000030	[5,12,13]	Pythagoras.Y02	factor=16	parm= [3,8]
 000030	[5,12,13]	Pythagoras.Y02	factor=18	parm= [11,3]
-000030	[5,12,13]	Pythagoras.Y02	factor=1	parm= [0,2]
-000030	[5,12,13]	Pythagoras.Y02	factor=25	parm= [4,10]
 000030	[5,12,13]	Pythagoras.Y02	factor=2	parm= [3,1]
+000030	[5,12,13]	Pythagoras.Y02	factor=25	parm= [4,10]
 000030	[5,12,13]	Pythagoras.Y02	factor=32	parm= [15,4]
 000030	[5,12,13]	Pythagoras.Y02	factor=36	parm= [5,12]
-000030	[5,12,13]	Pythagoras.Y02	factor=49	parm= [6,14]
 000030	[5,12,13]	Pythagoras.Y02	factor=4	parm= [1,4]
+000030	[5,12,13]	Pythagoras.Y02	factor=49	parm= [6,14]
 000030	[5,12,13]	Pythagoras.Y02	factor=8	parm= [7,2]
 000030	[5,12,13]	Pythagoras.Y02	factor=9	parm= [2,6]
+000040	[8,15,17]	Pythagoras.Y02	factor=1	parm= [2,1]
 000040	[8,15,17]	Pythagoras.Y02	factor=16	parm= [11,4]
 000040	[8,15,17]	Pythagoras.Y02	factor=18	parm= [5,9]
-000040	[8,15,17]	Pythagoras.Y02	factor=1	parm= [2,1]
-000040	[8,15,17]	Pythagoras.Y02	factor=25	parm= [14,5]
 000040	[8,15,17]	Pythagoras.Y02	factor=2	parm= [1,3]
+000040	[8,15,17]	Pythagoras.Y02	factor=25	parm= [14,5]
 000040	[8,15,17]	Pythagoras.Y02	factor=32	parm= [7,12]
 000040	[8,15,17]	Pythagoras.Y02	factor=4	parm= [5,2]
 000040	[8,15,17]	Pythagoras.Y02	factor=50	parm= [9,15]
 000040	[8,15,17]	Pythagoras.Y02	factor=8	parm= [3,6]
 000040	[8,15,17]	Pythagoras.Y02	factor=9	parm= [8,3]
-000056	[7,24,25]	Pythagoras.Y02	factor=16	parm= [3,12]
 000056	[7,24,25]	Pythagoras.Y02	factor=1	parm= [0,3]
-000056	[7,24,25]	Pythagoras.Y02	factor=25	parm= [4,15]
+000056	[7,24,25]	Pythagoras.Y02	factor=16	parm= [3,12]
 000056	[7,24,25]	Pythagoras.Y02	factor=2	parm= [5,1]
+000056	[7,24,25]	Pythagoras.Y02	factor=25	parm= [4,15]
 000056	[7,24,25]	Pythagoras.Y02	factor=4	parm= [1,6]
 000056	[7,24,25]	Pythagoras.Y02	factor=8	parm= [11,2]
 000056	[7,24,25]	Pythagoras.Y02	factor=9	parm= [2,9]
+000070	[20,21,29]	Pythagoras.Y02	factor=1	parm= [2,2]
 000070	[20,21,29]	Pythagoras.Y02	factor=16	parm= [11,8]
 000070	[20,21,29]	Pythagoras.Y02	factor=18	parm= [11,9]
-000070	[20,21,29]	Pythagoras.Y02	factor=1	parm= [2,2]
-000070	[20,21,29]	Pythagoras.Y02	factor=25	parm= [14,10]
 000070	[20,21,29]	Pythagoras.Y02	factor=2	parm= [3,3]
+000070	[20,21,29]	Pythagoras.Y02	factor=25	parm= [14,10]
 000070	[20,21,29]	Pythagoras.Y02	factor=32	parm= [15,12]
 000070	[20,21,29]	Pythagoras.Y02	factor=4	parm= [5,4]
 000070	[20,21,29]	Pythagoras.Y02	factor=8	parm= [7,6]
 000070	[20,21,29]	Pythagoras.Y02	factor=9	parm= [8,6]
-000084	[12,35,37]	Pythagoras.Y02	factor=18	parm= [5,15]
 000084	[12,35,37]	Pythagoras.Y02	factor=1	parm= [4,1]
+000084	[12,35,37]	Pythagoras.Y02	factor=18	parm= [5,15]
 000084	[12,35,37]	Pythagoras.Y02	factor=2	parm= [1,5]
 000084	[12,35,37]	Pythagoras.Y02	factor=4	parm= [9,2]
 000084	[12,35,37]	Pythagoras.Y02	factor=8	parm= [3,10]
@@ -69,8 +79,8 @@
 000090	[9,40,41]	Pythagoras.Y02	factor=4	parm= [1,8]
 000090	[9,40,41]	Pythagoras.Y02	factor=8	parm= [15,2]
 000090	[9,40,41]	Pythagoras.Y02	factor=9	parm= [2,12]
-000126	[28,45,53]	Pythagoras.Y02	factor=18	parm= [11,15]
 000126	[28,45,53]	Pythagoras.Y02	factor=1	parm= [4,2]
+000126	[28,45,53]	Pythagoras.Y02	factor=18	parm= [11,15]
 000126	[28,45,53]	Pythagoras.Y02	factor=2	parm= [3,5]
 000126	[28,45,53]	Pythagoras.Y02	factor=4	parm= [9,4]
 000126	[28,45,53]	Pythagoras.Y02	factor=8	parm= [7,10]
@@ -238,13 +248,3 @@
 002296	[615,728,953]	Pythagoras.Y02	factor=1	parm= [14,13]
 002408	[559,840,1009]	Pythagoras.Y02	factor=1	parm= [12,15]
 002494	[645,812,1037]	Pythagoras.Y02	factor=1	parm= [14,14]
-# flat	Pythagoras.Y02	 - 1 - 2*x - x^2 - 2*y - 2*x*y
-# flat	Pythagoras.Y02	 - 1 - 2*x - x^2 - 2*y - 2*x*y - 2*y^2
-# flat	Pythagoras.Y02	 - 2*y - 2*x*y - 2*y^2
-# merg	Pythagoras.Y02	 - 1 - 4*x_y_z - 3*x_y_z^2
-# merg	Pythagoras.Y02	 - 1 - 4*x_y_z - 5*x_y_z^2
-# merg	Pythagoras.Y02	 - 2*x_y_z - 4*x_y_z^2
-# orig	Pythagoras.Y02	+(-1-2*x-2*y-x^2-2*x*y)^2
-# orig	Pythagoras.Y02	-(-1-2*x-2*y-x^2-2*y^2-2*x*y)
-# orig	Pythagoras.Y02	+(-2*y-2*y^2-2*x*y)^2
-# poly	Pythagoras.Y02	2 + 6*x + 7*x^2 + 4*x^3 + x^4 + 6*y + 14*x*y + 12*x^2*y + 4*x^3*y + 10*y^2 + 16*x*y^2 + 8*x^2*y^2 + 8*y^3 + 8*x*y^3 + 4*y^4

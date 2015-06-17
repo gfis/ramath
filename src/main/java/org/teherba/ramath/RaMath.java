@@ -1,5 +1,6 @@
 /*  RaMath.java - Mathematics with Rational Numbers
  *  @(#) $Id: RaMath.java 233 2009-09-01 15:05:11Z gfis $
+ *  2015-06-17: BigRational extends BigInteger
  *  2008-10-07, Georg Fischer
  */
 /*
@@ -55,25 +56,25 @@ public class RaMath implements Serializable {
         return process(Pattern.compile("\\s+").split(commandLine)); // split on whitespace
     } // process
 
-	/* function codes */
-	private static final int FUNC_NONE = 0;
-	private static final int FUNC_CF   = 1;
-	
+    /* function codes */
+    private static final int FUNC_NONE = 0;
+    private static final int FUNC_CF   = 1;
+    
     /** Processes all command line arguments, and returns
      *  the resulting lines in one string.
      *  @param args command line arguments: options, numbers, filenames
      *  @return all lines of the result, concatenated by newlines
      */
     public String process(String[] args) {
-    	StringBuffer result = new StringBuffer(256);
-		ContinuedFraction cf = new ContinuedFraction();
-		int function = FUNC_NONE;
-		int mode = ContinuedFraction.MODE_REGULAR;
+        StringBuffer result = new StringBuffer(256);
+        ContinuedFraction cf = new ContinuedFraction();
+        int function = FUNC_NONE;
+        int mode = ContinuedFraction.MODE_REGULAR;
         String amode = "reg";
         String fileName = "";
-		String number = "";
-		int debug  = 0;
-		int anchor = 1;
+        String number = "";
+        int debug  = 0;
+        int anchor = 1;
         int pos = -1;
         try {
             int iarg = 0; // argument index
@@ -83,82 +84,82 @@ public class RaMath implements Serializable {
                     String opt = args[iarg ++]; // main operation letters and modifiers
                     if (opt.startsWith("-")) { // it is an option string
                         opt = opt.substring(1).toLowerCase();
-						if (false) {
+                        if (false) {
                         } else if (opt.equals("m")) { // mode
                             if (iarg < args.length) {
-	                       		amode = args[iarg ++];
-	                       		if (false) {
-	                       		} else if (amode.startsWith("reg")) {
-	                       			mode = ContinuedFraction.MODE_REGULAR;
-	                       		} else if (amode.startsWith("floor")) {
-	                       			mode = ContinuedFraction.MODE_FLOOR;
-	                       		} else if (amode.startsWith("ceil")) {
-	                       			mode = ContinuedFraction.MODE_CEILING;
-	                       		} else if (amode.startsWith("alt") && amode.contains("0")) {
-	                       			mode = ContinuedFraction.MODE_ALTERNATE_0;
-	                       		} else if (amode.startsWith("alt") && amode.contains("1")) {
-	                       			mode = ContinuedFraction.MODE_ALTERNATE_1;
-	                       		} else if (amode.startsWith("near")) {
-	                       			mode = ContinuedFraction.MODE_NEAREST;
-	                       		} else { 
-	                       			System.err.println("invalid mode " + amode);
-	                       		}	
+                                amode = args[iarg ++];
+                                if (false) {
+                                } else if (amode.startsWith("reg")) {
+                                    mode = ContinuedFraction.MODE_REGULAR;
+                                } else if (amode.startsWith("floor")) {
+                                    mode = ContinuedFraction.MODE_FLOOR;
+                                } else if (amode.startsWith("ceil")) {
+                                    mode = ContinuedFraction.MODE_CEILING;
+                                } else if (amode.startsWith("alt") && amode.contains("0")) {
+                                    mode = ContinuedFraction.MODE_ALTERNATE_0;
+                                } else if (amode.startsWith("alt") && amode.contains("1")) {
+                                    mode = ContinuedFraction.MODE_ALTERNATE_1;
+                                } else if (amode.startsWith("near")) {
+                                    mode = ContinuedFraction.MODE_NEAREST;
+                                } else { 
+                                    System.err.println("invalid mode " + amode);
+                                }   
                             } else {
                                 log.error("Option -m and no following mode");
                             }
                         } else if (opt.equals("a") || opt.equals("b")) { // anchor
                             if (iarg < args.length) {
-								try {
-									anchor = Integer.parseInt(args[iarg ++]);
-								} catch (Exception exc) {
-								}
+                                try {
+                                    anchor = Integer.parseInt(args[iarg ++]);
+                                } catch (Exception exc) {
+                                }
                             } else {
                                 log.error("Option -a or -b and no following anchor value");
                             }
-                           	mode = opt.equals("a") ? ContinuedFraction.MODE_ANCHOR_A : ContinuedFraction.MODE_ANCHOR_B;
+                            mode = opt.equals("a") ? ContinuedFraction.MODE_ANCHOR_A : ContinuedFraction.MODE_ANCHOR_B;
                         } else if (opt.equals("d")) { // debugging level
                             if (iarg < args.length) {
-								try {
-									debug = Integer.parseInt(args[iarg ++]);
-								} catch (Exception exc) {
-								}
+                                try {
+                                    debug = Integer.parseInt(args[iarg ++]);
+                                } catch (Exception exc) {
+                                }
                             } else {
                                 log.error("Option -d and no following debugging level");
                             }
                         } else if (opt.equals("f")) { // mode
                             if (iarg < args.length) {
-	                       		fileName = args[iarg ++];
-	                       		number = (new ExpressionReader()).read(fileName);
+                                fileName = args[iarg ++];
+                                number = (new ExpressionReader()).read(fileName);
                             } else {
                                 log.error("Option -f and no following filename");
                             }
                         } else if (opt.equals("cf")) { // generate a continued fraction
-                        	function = FUNC_CF;
+                            function = FUNC_CF;
                         } else {
-                   		 	if (opt.length() >= 1 && Character.isDigit(opt.charAt(0))) {
-                    			number = "-" + opt;
-                    		}
+                            if (opt.length() >= 1 && Character.isDigit(opt.charAt(0))) {
+                                number = "-" + opt;
+                            }
                         }
                     } else { // assume a number without option
-                   		 	if (opt.length() >= 1 && Character.isDigit(opt.charAt(0))) {
-                    			number = opt;
-                    		}
+                            if (opt.length() >= 1 && Character.isDigit(opt.charAt(0))) {
+                                number = opt;
+                            }
                     } // end of case for arguments
                 } // while args[]
-				switch (function) {
-					default:
-					case FUNC_NONE:
-						result.append("? no function specified");
-						break;
-					case FUNC_CF:
-						cf.setDebuggingLevel(debug);
-						cf.setAnchor(anchor);
-						cf.set(new BigRational(number), mode);
-						result.append(cf.toString());
-						result.append("\n");
-						result.append(cf.getRational().toString());
-						break;
-				} // switch function
+                switch (function) {
+                    default:
+                    case FUNC_NONE:
+                        result.append("? no function specified");
+                        break;
+                    case FUNC_CF:
+                        cf.setDebuggingLevel(debug);
+                        cf.setAnchor(anchor);
+                        cf.set(new BigRational(number), mode);
+                        result.append(cf.toString());
+                        result.append("\n");
+                        result.append(cf.getRational().toString());
+                        break;
+                } // switch function
             } // at least 1 argument
         } catch (Exception exc) {
             log.error(exc.getMessage(), exc);

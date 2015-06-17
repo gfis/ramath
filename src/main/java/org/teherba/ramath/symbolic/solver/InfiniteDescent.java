@@ -1,5 +1,6 @@
 /*  InfiniteDescent: prover for Diophantine equations
  *  @(#) $Id: InfiniteDescent.java 532 2010-08-28 17:15:36Z gfis $
+ *  2015-06-15: Polynomial.parse was not static
  *  2009-07-12, Georg Fischer: copied from Polynomial
  */
 /*
@@ -354,12 +355,12 @@ public class InfiniteDescent {
         int maxBase  = 4;
         int maxLevel = 4;
         if (args.length == 0) {
-            poly = poly.parse("a^2+b^2-3*(c^2+d^2)");
+            poly = Polynomial.parse("a^2+b^2-3*(c^2+d^2)");
         } else { // with arguments
             StringBuffer input = new StringBuffer(256);
             int iargs = 0;
             input.append(args[iargs ++]);
-            poly = poly.parse(input.toString());
+            poly = Polynomial.parse(input.toString());
             if (iargs < args.length) {
                 try {
                     maxBase = Integer.parseInt(args[iargs ++]);

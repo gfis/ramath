@@ -1,5 +1,6 @@
 /*  Exhaustive generator for power identities
  *  @(#) $Id: ParameterExhauster.java 808 2011-09-20 16:56:14Z gfis $
+ *  2015-06-15: Polynomial.parse was not static
  *  2013-07-06, Georg Fischer: copied from ParameterGenerator
  */
 /*
@@ -229,9 +230,9 @@ G;
                                                 String p = ( a2 + "*x^2 + " + a1 + "*x + " + a0 ).replaceAll("\\+ \\-", "-");
                                                 String q = ( b2 + "*x^2 + " + b1 + "*x + " + b0 ).replaceAll("\\+ \\-", "-");
                                                 String r = ( c2 + "*x^2 + " + c1 + "*x + " + c0 ).replaceAll("\\+ \\-", "-");
-                                                p = (new Polynomial()).parse(p).toString().replaceAll(" = 0", "");
-                                                q = (new Polynomial()).parse(q).toString().replaceAll(" = 0", "");
-                                                r = (new Polynomial()).parse(r).toString().replaceAll(" = 0", "");
+                                                p = Polynomial.parse(p).toString().replaceAll(" = 0", "");
+                                                q = Polynomial.parse(q).toString().replaceAll(" = 0", "");
+                                                r = Polynomial.parse(r).toString().replaceAll(" = 0", "");
                                                 System.out.println("norm: "
                                                         + "(" + p + ")^2 + "
                                                         + "(" + q + ")^2 - "
@@ -245,7 +246,7 @@ G;
                                                         );
                                             */
                                                 System.out.println("test: "
-                                                        + (new Polynomial()).parse
+                                                        + Polynomial.parse
                                                         ( "(" + p + ")^2 + "
                                                         + "(" + q + ")^2 - "
                                                         + "(" + r + ")^2 = 0"
@@ -322,9 +323,9 @@ G;
                                                 String p = ( a20 + "*x^2 + " + a11 + "*x*y + " + a02 + "*y^2" ).replaceAll("\\+ \\-", "-");
                                                 String q = ( b20 + "*x^2 + " + b11 + "*x*y + " + b02 + "*y^2" ).replaceAll("\\+ \\-", "-");
                                                 String r = ( c20 + "*x^2 + " + c11 + "*x*y + " + c02 + "*y^2" ).replaceAll("\\+ \\-", "-");
-                                                p = (new Polynomial()).parse(p).toString().replaceAll(" = 0", "");
-                                                q = (new Polynomial()).parse(q).toString().replaceAll(" = 0", "");
-                                                r = (new Polynomial()).parse(r).toString().replaceAll(" = 0", "");
+                                                p = Polynomial.parse(p).toString().replaceAll(" = 0", "");
+                                                q = Polynomial.parse(q).toString().replaceAll(" = 0", "");
+                                                r = Polynomial.parse(r).toString().replaceAll(" = 0", "");
                                                 System.out.println("norm: "
                                                         + "(" + p + ")^2 + "
                                                         + "(" + q + ")^2 - "
@@ -338,7 +339,7 @@ G;
                                                         );
                                             */
                                                 System.out.println("test: "
-                                                        + (new Polynomial()).parse
+                                                        + Polynomial.parse
                                                         ( "(" + p + ")^2 + "
                                                         + "(" + q + ")^2 - "
                                                         + "(" + r + ")^2 = 0"
@@ -460,20 +461,20 @@ G;
             String p = "(" + a20 + ")*x^2 + (" + a11 + ")*x*y + (" + a02 + ")*y^2 + (" + a10 + ")*x   + (" + a01 + ")*y   + (" + a00 + ")";
             String q = "(" + b20 + ")*x^2 + (" + b11 + ")*x*y + (" + b02 + ")*y^2 + (" + b10 + ")*x   + (" + b01 + ")*y   + (" + b00 + ")";
             String r = "(" + c20 + ")*x^2 + (" + c11 + ")*x*y + (" + c02 + ")*y^2 + (" + c10 + ")*x   + (" + c01 + ")*y   + (" + c00 + ")";
-            p = (new Polynomial()).parse(p).toString().replaceAll(" = 0", "");
-            q = (new Polynomial()).parse(q).toString().replaceAll(" = 0", "");
-            r = (new Polynomial()).parse(r).toString().replaceAll(" = 0", "");
+            p = Polynomial.parse(p).toString().replaceAll(" = 0", "");
+            q = Polynomial.parse(q).toString().replaceAll(" = 0", "");
+            r = Polynomial.parse(r).toString().replaceAll(" = 0", "");
             // the following only for even powers (2, 4 ...)
-            if (p.startsWith(" -")) { p = (new Polynomial()).parse("-(" + p + ")").toString().replaceAll(" = 0", ""); }
-            if (q.startsWith(" -")) { q = (new Polynomial()).parse("-(" + q + ")").toString().replaceAll(" = 0", ""); }
-            if (r.startsWith(" -")) { r = (new Polynomial()).parse("-(" + r + ")").toString().replaceAll(" = 0", ""); }
+            if (p.startsWith(" -")) { p = Polynomial.parse("-(" + p + ")").toString().replaceAll(" = 0", ""); }
+            if (q.startsWith(" -")) { q = Polynomial.parse("-(" + q + ")").toString().replaceAll(" = 0", ""); }
+            if (r.startsWith(" -")) { r = Polynomial.parse("-(" + r + ")").toString().replaceAll(" = 0", ""); }
             String norm =
                       "(" + p + ")^2 + "
                     + "(" + q + ")^2 - "
                     + "(" + r + ")^2 = 0"
                     ;
             System.out.println("n" + Integer.toString(norm.length() + 1000).substring(1) + ": " + norm);
-            String test = (new Polynomial()).parse
+            String test = Polynomial.parse
                     ( "(" + p + ")^2 + "
                     + "(" + q + ")^2 - "
                     + "(" + r + ")^2 = 0"
@@ -621,10 +622,10 @@ G;
             String q = "((" + b3  + ")*x^3 + (" + b2  + ")*x^2 + (" + b1  + ")*x   + (" + b0  + "))" + (inverse ? "*(-1)" : "");
             String r = "((" + c3  + ")*x^3 + (" + c2  + ")*x^2 + (" + c1  + ")*x   + (" + c0  + "))" + (inverse ? "*(-1)" : "");
             String s = "((" + h3  + ")*x^3 + (" + h2  + ")*x^2 + (" + h1  + ")*x   + (" + h0  + "))" + (inverse ? "*(-1)" : "");
-            p = (new Polynomial()).parse(p).toString().replaceAll(" = 0", "");
-            q = (new Polynomial()).parse(q).toString().replaceAll(" = 0", "");
-            r = (new Polynomial()).parse(r).toString().replaceAll(" = 0", "");
-            s = (new Polynomial()).parse(s).toString().replaceAll(" = 0", "");
+            p = Polynomial.parse(p).toString().replaceAll(" = 0", "");
+            q = Polynomial.parse(q).toString().replaceAll(" = 0", "");
+            r = Polynomial.parse(r).toString().replaceAll(" = 0", "");
+            s = Polynomial.parse(s).toString().replaceAll(" = 0", "");
             String temp;
             if (q.compareTo(r) > 0) { temp = r; r = q; q = temp;   temp = tupr; tupr = tupq; tupq = temp; }
             if (p.compareTo(q) > 0) { temp = q; q = p; p = temp;   temp = tupq; tupq = tupp; tupp = temp; }
@@ -637,7 +638,7 @@ G;
                     + "(" + s + ")^3 = 0"
                     ;
             System.out.println("n" + Integer.toString(norm.length() + 1000).substring(1) + ": " + norm);
-            String test = (new Polynomial()).parse
+            String test = Polynomial.parse
                     ( "(" + p + ")^3 + "
                     + "(" + q + ")^3 + "
                     + "(" + r + ")^3 - "
@@ -828,10 +829,10 @@ G;
             String q = "((" + b3  + ")*x^3 + (" + b2  + ")*x^2 + (" + b1  + ")*x   + (" + b0  + "))" + (inverse ? "*(-1)" : "");
             String r = "((" + c3  + ")*x^3 + (" + c2  + ")*x^2 + (" + c1  + ")*x   + (" + c0  + "))" + (inverse ? "*(-1)" : "");
             String s = "((" + h3  + ")*x^3 + (" + h2  + ")*x^2 + (" + h1  + ")*x   + (" + h0  + "))" + (inverse ? "*(-1)" : "");
-            s = (new Polynomial()).parse(s).toString().replaceAll(" = 0", "");
-            p = (new Polynomial()).parse(p).toString().replaceAll(" = 0", "");
-            q = (new Polynomial()).parse(q).toString().replaceAll(" = 0", "");
-            r = (new Polynomial()).parse(r).toString().replaceAll(" = 0", "");
+            s = Polynomial.parse(s).toString().replaceAll(" = 0", "");
+            p = Polynomial.parse(p).toString().replaceAll(" = 0", "");
+            q = Polynomial.parse(q).toString().replaceAll(" = 0", "");
+            r = Polynomial.parse(r).toString().replaceAll(" = 0", "");
             String temp;
             if (q.compareTo(r) > 0) { temp = r; r = q; q = temp; }
             if (p.compareTo(q) > 0) { temp = q; q = p; p = temp; }
@@ -843,7 +844,7 @@ G;
                     + "(" + r + ")^3 = 0"
                     ;
             System.out.println("n" + Integer.toString(norm.length() + 1000).substring(1) + ": " + norm);
-            String test = (new Polynomial()).parse
+            String test = Polynomial.parse
                     ( "(" + p + ")^3 + "
                     + "(" + q + ")^3 + "
                     + "(" + r + ")^3 - "

@@ -1,5 +1,6 @@
 /*  MonadicSolver: tries to solve a Diophantine equation by monadic variable expansion
  *  @(#) $Id: MonadicSolver.java 970 2012-10-25 16:49:32Z gfis $
+ *  2015-06-15: RelationSet.parse was not static
  *  2015-05-28: subdirectory solver
  *  2012-10-25: EquationSet replaced by RelationSet
  *  2010-09-01: with solutions
@@ -304,11 +305,11 @@ public class MonadicSolver extends BaseSolver {
     public static void main(String[] args) {
         MonadicSolver solver = new MonadicSolver();
         String expr = solver.getArguments(0, args);
-        RelationSet   rset   = new RelationSet("(3+a)^2+(4+b)^2=(5+c)^2"); // solution a=b=c=0
+        RelationSet   rset0   = new RelationSet("(3+a)^2+(4+b)^2=(5+c)^2"); // solution a=b=c=0
         if (expr != null) {
-            rset = rset.parse(expr);
+            rset0 = RelationSet.parse(expr);
         }
-        solver.solve(rset);
+        solver.solve(rset0);
     } // main
 
 } // MonadicSolver

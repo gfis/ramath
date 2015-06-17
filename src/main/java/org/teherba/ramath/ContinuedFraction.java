@@ -1,5 +1,6 @@
 /*  ContinuedFraction: a continued fraction in an array list of BigIntegers
  *  @(#) $Id: ContinuedFraction.java 738 2011-07-12 15:14:44Z gfis $
+ *  2015-06-17: BigRational extends BigInteger
  *  2014-04-08: use BigInteger.valueOf(long)
  *  2013-08-21: denom -> numerator, nomin -> denominator
  *  2009-09-01: solvePellEquation
@@ -166,7 +167,7 @@ public class ContinuedFraction extends ArrayList/*1.5*/<BigRational>/*1.5*/  {
      *  @param mode mode of sign for this instance
      */
     public void set(BigRational brat, int mode) {
-        BigRational elem = new BigRational();
+        BigRational elem = BigRational.valueOf(0);
         final BigInteger MINUS_ONE = BigInteger.ZERO.subtract(BigInteger.ONE);
         BigInteger[] quotRem = new BigInteger[] { brat.getA(), brat.getB() };
         BigInteger divisor = null;
@@ -230,19 +231,19 @@ public class ContinuedFraction extends ArrayList/*1.5*/<BigRational>/*1.5*/  {
                 }
                 System.out.println();
             } // debug
-            elem = new BigRational();
+            elem = BigRational.valueOf(0);
             elem.setA(quotRem[0]);
             elem.setB(partB);
             this.add(elem);
-            // this.add(new BigRational(quotRem[0], partB)); // partial quotient
+            // this.add(BigRational.valueOf(quotRem[0], partB)); // partial quotient
             quotRem[0] = divisor;
         } // while rational not exhausted
         // append a dummy element which reproduces the original BigRational (without shortening)
-        elem = new BigRational();
+        elem = BigRational.valueOf(0);
         elem.setA(divisor);
         elem.setB(BigInteger.ZERO);
         this.add(elem);
-        // this.add(new BigRational(divisor, BigInteger.ZERO));
+        // this.add(BigRational.valueOf(divisor, BigInteger.ZERO));
     } // set(BigRational, mode)
 
     /** Generates a continued fraction (with denominators = +-1) from a
@@ -254,7 +255,7 @@ public class ContinuedFraction extends ArrayList/*1.5*/<BigRational>/*1.5*/  {
     public void set(ArrayList<BigInteger>list) {
         int index = 0;
         while (index < list.size()) {
-            BigRational result = new BigRational();
+            BigRational result = BigRational.valueOf(0);
             result.setB(1);
             result.setA(list.get(index));
             this.add(result);
@@ -283,7 +284,7 @@ public class ContinuedFraction extends ArrayList/*1.5*/<BigRational>/*1.5*/  {
      *  @param bdec decimal number to be expanded to a continued fraction
      */
     public void set(BigDecimal bdec) {
-        this.set(new BigRational(bdec), MODE_REGULAR);
+        this.set(BigRational.valueOf(bdec), MODE_REGULAR);
     } // set(BigDecimal)
 
     /** Generates a continued fraction (with partial numerators = +-1) from a decimal fraction,
@@ -292,7 +293,7 @@ public class ContinuedFraction extends ArrayList/*1.5*/<BigRational>/*1.5*/  {
      *  @param mode mode of sign for this instance
      */
     public void set(BigDecimal bdec, int mode) {
-        this.set(new BigRational(bdec), mode);
+        this.set(BigRational.valueOf(bdec), mode);
     } // set(BigDecimal, mode)
 
     /** Evaluates a continued fraction and returns the corresponding rational number,
@@ -344,6 +345,7 @@ public class ContinuedFraction extends ArrayList/*1.5*/<BigRational>/*1.5*/  {
             BigInteger b1 = partial.getB().multiply(a2);
             a2 = a1;
             b2 = b1;
+            result[index] = BigRational.valueOf(0);
             result[index].setA(a2);
             result[index].setB(b2);
             if (debug >= 2) {
@@ -412,7 +414,7 @@ public class ContinuedFraction extends ArrayList/*1.5*/<BigRational>/*1.5*/  {
                 akm0 = partial.getA().multiply(akm1).add(partial.getB().multiply(akm2));
                 bkm0 = partial.getA().multiply(bkm1).add(partial.getB().multiply(bkm2));
             }
-            result[tarIndex] = new BigRational();
+            result[tarIndex] = BigRational.valueOf(0);
             result[tarIndex].setA(akm0);
             result[tarIndex].setB(bkm0);
             if (debug >= 2) {
@@ -451,7 +453,7 @@ public class ContinuedFraction extends ArrayList/*1.5*/<BigRational>/*1.5*/  {
         if (debug >= 2) {
             System.out.print(g + ";");
         }
-        this.add(new BigRational(g, BigInteger.ONE));
+        this.add(BigRational.valueOf(g));
         if (g.multiply(g).compareTo(n) != 0) { // no square number
             BigInteger p0 = BigInteger.ZERO;
             BigInteger q0 = BigInteger.ONE ;
@@ -464,7 +466,7 @@ public class ContinuedFraction extends ArrayList/*1.5*/<BigRational>/*1.5*/  {
                 BigInteger p1 = b0.multiply(q0).subtract(p0);
                 BigInteger q1 = n.subtract(p1.multiply(p1)).divide(q0);
                 BigInteger b1 = g.add(p1).divide(q1);
-                this.add(new BigRational(b1, BigInteger.ONE));
+                this.add(BigRational.valueOf(b1));
                 periodIndex ++;
                 if (debug >= 2) {
                     System.out.print(b1 + ",");
@@ -496,7 +498,7 @@ public class ContinuedFraction extends ArrayList/*1.5*/<BigRational>/*1.5*/  {
                 periodIndex ++;
             } // while completing
             if (periodLength >= 2) {
-                this.add(new BigRational(g.add(g), BigInteger.ONE));
+                this.add(BigRational.valueOf(g.add(g)));
             }
         } // no square number
         if (debug >= 2) {
@@ -538,7 +540,8 @@ public class ContinuedFraction extends ArrayList/*1.5*/<BigRational>/*1.5*/  {
                 if (debug >= 2) {
                     System.out.println("SOLUTION: x = " + x.toString() + ", y = " + y.toString() + ", value = " + value.toString());
                 }
-                result[isol ++] = partial.multiply(value);
+                result[isol] = partial.multiply(value);
+                isol ++;
             }
             ielem ++;
         } // while isol
@@ -644,11 +647,11 @@ public class ContinuedFraction extends ArrayList/*1.5*/<BigRational>/*1.5*/  {
         Series ser = new Series();
         ser.setNatural();
         BigRational
-        er = new BigRational(40902L, 24140L);
-        er = new BigRational(khintchine100);
+        er = BigRational.valueOf(40902L, 24140L);
+        er = BigRational.valueOf(khintchine100);
         er = ser.getRational();
-        er = new BigRational(e);
-        er = new BigRational(gamma);
+        er = BigRational.valueOf(e);
+        er = BigRational.valueOf(gamma);
 
         ContinuedFraction
         cre = new ContinuedFraction(er, ContinuedFraction.MODE_REGULAR    );
@@ -669,7 +672,7 @@ public class ContinuedFraction extends ArrayList/*1.5*/<BigRational>/*1.5*/  {
     */
         class PiElements1 implements BigRationalGenerator {
             public BigRational get(int index) {
-                BigRational result = new BigRational();
+                BigRational result = BigRational.valueOf(0);
                 switch (index) {
                     case 0:
                         result.setA(3);
@@ -687,7 +690,7 @@ public class ContinuedFraction extends ArrayList/*1.5*/<BigRational>/*1.5*/  {
 
         class PiElements2 implements BigRationalGenerator {
             public BigRational get(int index) {
-                BigRational result = new BigRational();
+                BigRational result = BigRational.valueOf(0);
                 switch (index) {
                     case 0:
                         result.setA(2);
@@ -714,7 +717,7 @@ public class ContinuedFraction extends ArrayList/*1.5*/<BigRational>/*1.5*/  {
             System.out.println("e = "         + (new ContinuedFraction(e)).toString());
             System.out.println("sqrt(114) = " + (new ContinuedFraction(sqrt114)).toString());
             /* continued fractions */
-            cf = new ContinuedFraction(new BigRational(77708491L,2640858L));
+            cf = new ContinuedFraction(BigRational.valueOf(77708491L,2640858L));
                 // Christiaan Huygens (17xx): Saturn gear ratio; c.f. de.wikipedia.org/Kettenbruch
             System.out.println("Huygens\' 77708491/2640858 = " + cf.toString());
             System.out.println(cf.getRational().simplify() +  " = " + cf.getDecimal());

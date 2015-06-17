@@ -1,5 +1,6 @@
 /*  RaMathServlet.java - Rational and Symbolic Mathematics
  *  @(#) $Id: RaMathServlet.java 199 2009-07-13 20:16:23Z gfis $
+ *  2015-06-15: Polynomial.parse was not static
  *  2013-10-30: symmetrical form1 and form2
  *  2013-09-21: variableMap
  *  2009-07-07, Georg Fischer: for symbolic polynomial, rewritten from dbtab.pl
@@ -126,7 +127,7 @@ public class RaMathServlet extends HttpServlet {
             } else if (view.equals("upper")) {
                 if (false) {
                 } else if (area.equals("poly")) {
-                    poly = (new Polynomial()).parse(form1);
+                    poly = Polynomial.parse(form1);
                     varMap = poly.getExpressionMap("x"); // maps x -> name
                     index = 0;
                     found = true;
@@ -157,7 +158,7 @@ public class RaMathServlet extends HttpServlet {
             } else if (view.equals("lower")) {
                 if (false) {
                 } else if (area.equals("poly")) {
-                    poly = (new Polynomial()).parse(form2);
+                    poly = Polynomial.parse(form2);
                     varMap = poly.getExpressionMap("x"); // maps x -> name
                     index = 0;
                     found = true;

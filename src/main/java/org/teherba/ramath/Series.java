@@ -1,5 +1,6 @@
 /*  Series - store and evaluate (converging) series of BigRationals
  *  @(#) $Id: Series.java 232 2009-08-27 22:17:16Z gfis $
+ *  2015-06-17: BigRational extends BigInteger
  *  2008-10-21, Georg Fischer: copied from Series
  */
 /*
@@ -39,7 +40,7 @@ public class Series extends ArrayList/*1.5*/<BigRational>/*1.5*/  {
      *  @return BigRational from the evaluated series
      */
     public BigRational getRational() {
-        BigRational result = new BigRational(0, 1);
+        BigRational result = BigRational.valueOf(0, 1);
         int index = 0;
         while (index < this.size()) {
             result = result.add(this.get(index ++));
@@ -77,7 +78,7 @@ public class Series extends ArrayList/*1.5*/<BigRational>/*1.5*/  {
      *  @param maxTerm maximum number of terms of the series
      */
     public void setNatural(int maxTerm) {
-        BigRational term  = new BigRational(1, 1);
+        BigRational term  = BigRational.valueOf(1, 1);
         this.add(term); // 1/0!
         BigInteger factor = BigInteger.ZERO;
         int index = 1;

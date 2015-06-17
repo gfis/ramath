@@ -1,5 +1,6 @@
 /*  QuadraticSolver: tries to solve a quadratic Diophantine equation
  *  @(#) $Id: QuadraticSolver.java 298 2009-11-16 21:54:54Z gfis $
+ *  2015-06-15: Polynomial.parse was not static
  *  2015-05-28: subdirectory solver
  *  2014-04-05: no more extending Solver
  *  2009-08-28, Georg Fischer: copied from BinarySolver
@@ -112,14 +113,14 @@ public class QuadraticSolver {
             if (arg.startsWith("-")) { // option
                 if (false) {
                 } else if (arg.startsWith("-e") && iargs < args.length) {
-                    poly = poly.parse              (args[iargs ++]);
+                    poly = Polynomial.parse(args[iargs ++]);
                 } else if (arg.startsWith("-f") && iargs < args.length) {
-                    poly = poly.parse              ((new ExpressionReader()).read(args[iargs ++]));
+                    poly = Polynomial.parse((new ExpressionReader()).read(args[iargs ++]));
                 } else {
                     System.err.println("invalid option \"" + arg + "\"");
                 }
             } else { // no option - direct expression (my not start with "-")
-                poly = poly.parse(arg);
+                poly = Polynomial.parse(arg);
             }
         } // while iargs
         qsolver.solvePell(new ProofStep(poly));

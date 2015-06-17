@@ -33,88 +33,103 @@ import  java.math.RoundingMode;
 /** BigRational - a fraction as a pair of {@link BigInteger}s, and functions for them.
  *  @author Dr. Georg Fischer
  */
-public class BigRational implements Cloneable, Serializable {
+public class BigRational 
+        extends BigInteger 
+        implements Cloneable, Serializable 
+        {
     private static final long serialVersionUID = 1L;
     public final static String CVSID = "@(#) $Id: BigRational.java 231 2009-08-25 08:47:16Z gfis $";
 
-    /** the number which is divided by the nominator */
+    /** dividend, the number which is divided by the denominator, see https://en.wikipedia.org/wiki/Quotient */
     private BigInteger numerator  ;
-    /** the number which divides the denominator */
+    /** divisor, the number which divides the numerator */
     private BigInteger denominator;
 
-    /** No-args Constructor
+    /** Construct from a String: either a decimal number (with decimal dot),
+     *  or a fraction of the form numerator  /denominator.
+     *  All characters except from digits, '.' and '/' are stripped.
+     *  @param rawNumber string with digits, decimal dot or slash.
+     *  @result a new instance 
      */
-    public BigRational() {
-    } // no-args Constructor
+    public BigRational(String rawNumber) {
+    	super("0");
+        String number = rawNumber.replaceAll("[^\\d\\.\\/]", "");
+        int slash = number.indexOf("/");
+        if (slash >= 0) {
+            this.setA(new BigInteger(number.substring(0, slash)));
+            this.setB(new BigInteger(number.substring(slash + 1)));
+        } else {
+            this.setA(new BigInteger(number));
+            this.setB(BigInteger.ONE);
+        }
+    } // Constructor String
 
-    /** Constructor with 1 BigInteger argument; the nominator will be 1
+    /** Constructing with 1 BigInteger argument; the denominator will be 1
      *  @param numerator   numerator of the instance
+     *  @result a new instance 
      */
-    public BigRational(BigInteger numerator  ) {
-        this.numerator   = numerator  ;
-        this.denominator = BigInteger.ONE;
-    } // Constructor 1
+    public static BigRational valueOf(BigInteger numerator) {
+        BigRational result = new BigRational("0");
+        result.setA(numerator);
+        result.setB(BigInteger.ONE);
+        return result;
+    } // valueOf
 
-    /** Constructor with 1 long argument; the nominator will be 1
+    /** Constructing with 1 long argument; the denominator will be 1
      *  @param numerator   numerator of the instance
+     *  @result a new instance 
      */
-    public BigRational(long numerator  ) {
-        this.numerator   = BigInteger.valueOf(numerator  );
-        this.denominator = BigInteger.ONE;
-    } // Constructor 1
+    public static BigRational valueOf(long numerator) {
+        BigRational result = new BigRational("0");
+        result.setA(numerator);
+        result.setB(BigInteger.ONE);
+        return result;
+    } // valueOf
 
-    /** Constructor with 2 BigInteger arguments
+    /** Constructing with 2 BigInteger arguments
      *  @param numerator   numerator   of the instance
      *  @param denominator denominator of the instance
+     *  @result a new instance 
      */
-    public BigRational(BigInteger numerator  , BigInteger denominator) {
-        this.numerator   = numerator  ;
-        this.denominator = denominator  ;
+    public static BigRational valueOf(BigInteger numerator, BigInteger denominator) {
+        BigRational result = new BigRational("0");
+        result.setA(numerator);
+        result.setB(denominator);
+        return result;
     } // Constructor 2
 
     /** Constructor with 2 long arguments
      *  @param numerator   numerator   of the instance
      *  @param denominator denominator of the instance
+     *  @result a new instance 
      */
-    public BigRational(long numerator  , long denominator) {
-        this.numerator   = BigInteger.valueOf(numerator  );
-        this.denominator = BigInteger.valueOf(denominator);
+    public static BigRational valueOf(long numerator, long denominator) {
+        BigRational result = new BigRational("0");
+        result.setA(numerator);
+        result.setB(denominator);
+        return result;
     } // Constructor 2
 
     /** Construct from a BigDecimal; the denominator will be a power of 10.
      *  @param bdec represent this exact
+     *  @result a new instance 
      */
-    public BigRational(BigDecimal bdec) {
-        this.set(bdec);
+    public static BigRational valueOf(BigDecimal bdec) {
+        BigRational result = new BigRational("0");
+        result.set(bdec);
+        return result;
     } // Constructor BigDecimal
 
-    /** Construct from a String: either a decimal number (with decimal dot),
-     *  or a fraction of the form numerator  /denominator.
-     *  All characters except from digits, '.' and '/' are stripped.
-      * @param rawNumber string with digits, decimal dot or slash.
-     */
-    public BigRational(String rawNumber) {
-        this();
-        String number = rawNumber.replaceAll("[^\\d\\.\\/]", "");
-        int slash = number.indexOf("/");
-        if (slash >= 0) {
-            this.numerator   = new BigInteger(number.substring(0, slash));
-            this.denominator = new BigInteger(number.substring(slash + 1));
-        } else {
-            this.set(new BigDecimal(number));
-        }
-    } // Constructor String
-
     /** constant 0 */
-    public static BigRational ZERO = new BigRational(0);
+    public static BigRational ZERO = BigRational.valueOf(0);
     /** constant 1 */
-    public static BigRational ONE  = new BigRational(1);
+    public static BigRational ONE  = BigRational.valueOf(1);
 
     /** Deep copy of the rational number with denominator and nominator.
      *  @return independant, simplified copy of the rational number
      */
     public BigRational clone() {
-        return (new BigRational(numerator  , denominator)).simplify();
+        return (BigRational.valueOf(numerator, denominator)).simplify();
     } // clone
 
     /** Sets a BigRational to a BigDecimal; the denominator will be a power of 10.
@@ -194,7 +209,7 @@ public class BigRational implements Cloneable, Serializable {
      *  @return this + val
      */
     public BigRational add     (BigInteger  val) {
-        return new BigRational
+        return  BigRational.valueOf
                 ( (this.numerator                           ).add     (val           .multiply(this.denominator))
                 , (this.denominator                         )
                 );
@@ -206,7 +221,7 @@ public class BigRational implements Cloneable, Serializable {
      *  @return this + val
      */
     public BigRational add     (BigRational val) {
-        return  (new BigRational
+        return  (BigRational.valueOf
                 ( (this.numerator  .multiply(val.getDenominator())).add     (val.getNumerator().multiply(this.denominator))
                 , (this.denominator.multiply(val.getDenominator()))
                 )).simplify();
@@ -218,7 +233,7 @@ public class BigRational implements Cloneable, Serializable {
      *  @return this - val
      */
     public BigRational subtract(BigInteger  val) {
-        return new BigRational
+        return  BigRational.valueOf
                 ( (this.numerator                           ).subtract(val           .multiply(this.denominator))
                 , (this.denominator                         )
                 );
@@ -230,7 +245,7 @@ public class BigRational implements Cloneable, Serializable {
      *  @return this - val
      */
     public BigRational subtract(BigRational val) {
-        return  (new BigRational
+        return  (BigRational.valueOf
                 ( (this.numerator  .multiply(val.getDenominator())).subtract(val.getNumerator().multiply(this.denominator))
                 , (this.denominator.multiply(val.getDenominator()))
                 )).simplify();
@@ -242,7 +257,7 @@ public class BigRational implements Cloneable, Serializable {
      *  @return this * val
      */
     public BigRational multiply(BigInteger  val) {
-        return new BigRational
+        return BigRational.valueOf
                 ( (this.numerator                           ).multiply(val                                       )
                 , (this.denominator                         )
                 );
@@ -254,7 +269,7 @@ public class BigRational implements Cloneable, Serializable {
      *  @return this * val
      */
     public BigRational multiply(BigRational val) {
-        return  (new BigRational
+        return  (BigRational.valueOf
                 ( (this.numerator                           ).multiply(val.getNumerator()                        )
                 , (this.denominator.multiply(val.getDenominator()))
                 )).simplify();
@@ -266,7 +281,7 @@ public class BigRational implements Cloneable, Serializable {
      *  @return this / val
      */
     public BigRational divide  (BigInteger  val) {
-        return new BigRational
+        return BigRational.valueOf
                 ( (this.numerator                           )
                 , (this.denominator                         ).multiply(val                                       )
                 );
@@ -278,7 +293,7 @@ public class BigRational implements Cloneable, Serializable {
      *  @return this / val
      */
     public BigRational divide  (BigRational val) {
-        return  (new BigRational
+        return  (BigRational.valueOf
                 ( (this.numerator  .multiply(val.getDenominator()))
                 , (this.denominator                         ).multiply(val.getNumerator()                        )
                 )).simplify();
@@ -292,7 +307,7 @@ public class BigRational implements Cloneable, Serializable {
     public BigRational pow     (int exp) {
         return exp == 1
             ? this.clone()
-            : new BigRational
+            : BigRational.valueOf
                 ( (this.numerator  .pow(exp))
                 , (this.denominator.pow(exp))
                 );
@@ -318,128 +333,15 @@ public class BigRational implements Cloneable, Serializable {
         return result;
     } // root1
 
-    // the following was taken from
-    // http://i12www.ira.uka.de/~bubel/nightly/doc/api/src-html/de/uka/ilkd/key/strategy/termgenerator/RootsGenerator.html
-
     private static final BigInteger one = BigInteger.ONE;
-    private static final BigInteger two = BigInteger.valueOf ( 2 );
-
-    /**
-      * @return a number <tt>res</tt> with the property
-      *         <tt>prod in [res^exp, (res+1)^exp)</tt>
-      */
-    public static BigInteger root2 (BigInteger prod, int exp) {
-        assert exp > 0;
-        BigInteger result = null;
-
-        if ( prod.signum () >= 0 ) {
-            result = posRoot ( prod, exp );
-        } else {
-            assert exp % 2 != 0;
-
-            BigInteger res = posRoot ( prod.abs (), exp ).negate ();
-            while ( power ( res, exp ).compareTo ( prod ) > 0 )
-                res = res.subtract ( one );
-
-            result = res;
-        }
-        if (! result.pow(exp).equals(prod)) {
-        	result = BigInteger.ZERO;
-        }
-        return result;
-    } // root2
-
-    private static BigInteger posRoot(BigInteger prod, int exp) {
-        assert exp > 0;
-        assert prod.signum () >= 0;
-
-        // binary search for finding the root
-
-        BigInteger lb = BigInteger.ZERO;
-        BigInteger ub = prod;
-        while ( !power ( lb, exp ).equals ( prod )
-                && ub.subtract ( lb ).compareTo ( one ) > 0 ) {
-            final BigInteger mid = ub.add ( lb ).divide ( two );
-            if ( power ( mid, exp ).compareTo ( prod ) <= 0 ) {
-                lb = mid;
-            } else {
-                ub = mid;
-            }
-        }
-        return lb;
-    } // posRoot
-
-    private static BigInteger power (BigInteger base, int exp) {
-        assert exp >= 0;
-
-        // shift-multiplier
-
-        BigInteger res = BigInteger.ONE;
-        while (true) {
-            if ( exp % 2 != 0 ) res = res.multiply ( base );
-
-            exp >>= 1;
-            if ( exp == 0 ) return res;
-
-            base = base.multiply ( base );
-        }
-    } // power
-
-    /** Computes the <em>n</em>th root of some BigInteger <em>a</em>.
-     *  If <em>a</a> is no exact <em>n</em>th power of the result, the result is 0.
-     *  @param a take the root of this number
-     *  @param n exponent
-     *  @return the exact root, or 0
-     */
-    public static BigInteger root3(BigInteger a, int n) {
-        BigInteger exp    = BigInteger.valueOf(n);
-        BigInteger exp_1  = exp.subtract(BigInteger.ONE);
-        BigInteger result = BigInteger.ONE; // a.divide(new BigInteger(new byte[] { (byte) (n + 4) })).max(BigInteger.ONE); // initial guess
-        BigInteger temp = BigInteger.ONE;
-        if (false) {
-        } else if (n <= 1) {
-        	result = a;
-        } else {
-	        int iloop = 1024;
-	        while (iloop > 0) {
-	            iloop --;
-	            /*
-	              ret = ( (n - 1) * ret
-	                    + ( A / (int) pow(ret, n - 1) )
-	                    ) / n;
-	            */
-	            BigInteger pown_1 = result.pow(n - 1);
-	            result= (exp_1.multiply(result)
-	                    .add(a.divide(pown_1))
-	                    ).divide(exp);
-	            BigInteger pown = pown_1.multiply(result);
-	            if (a.equals(pown)) {
-	            	iloop = -8; // exact solution
-	            } else if (temp.equals(result)) {
-	                if (! a.equals(pown)) { // inexact solution
-	                    result = BigInteger.ZERO;
-	                }
-	                // System.out.println(String.valueOf(1024 - iloop) + " loops in Newton-Raphson");
-	                iloop = -16; // break loop
-	        //  } else if (! temp.equals(result.subtract(BigInteger.ONE))) {
-	            } else if (! temp.subtract(result).abs().equals(BigInteger.ONE)) {
-	                temp = result;
-	            }
-	        }
-	        if (iloop >= -1) {
-	        	System.err.println("BigRational.root did not converge for " + n + "th root of " + a.toString());
-	                result = BigInteger.ZERO;
-	        }
-	   	} // switch for n
-        return result;
-    } // root3
+    private static final BigInteger two = BigInteger.valueOf(2);
 
     /** Computes the greatest common divisor of the numerators
      *  @param brat2 2nd BigRational
      *  @return the greatest common divisor of the numerators
      */
     public BigRational gcd(BigRational brat2) {
-        return new BigRational(this.numerator.gcd(brat2.getNumerator()));
+        return BigRational.valueOf(this.numerator.gcd(brat2.getNumerator()));
     } // gcd(BigRational)
 
     /** Computes the least common multiple of the numerators
@@ -449,7 +351,7 @@ public class BigRational implements Cloneable, Serializable {
     public BigRational lcm(BigRational brat2) {
         BigInteger num1 = this.numerator;
         BigInteger num2 = brat2.getNumerator();
-        return new BigRational(num1.multiply(num2).divide(num1.gcd(num2)));
+        return BigRational.valueOf(num1.multiply(num2).divide(num1.gcd(num2)));
     } // lcm(BigRational)
 
     /** Computes the least common multiple of the numerators
@@ -463,8 +365,8 @@ public class BigRational implements Cloneable, Serializable {
     /** Returns the BigRational with simplified numerator and denominator, that is:
      *  <ul>
      *  <li>numerator and denominator have no common divisor > 1</li>
-     *	<li>the denominator is positive</li>
-     *	</ul>
+     *  <li>the denominator is positive</li>
+     *  </ul>
      *  @return reduced fraction with positive denominator
      */
     public BigRational simplify() {
@@ -472,13 +374,13 @@ public class BigRational implements Cloneable, Serializable {
         BigInteger  common = this.numerator  .gcd(this.denominator);
         if (common.compareTo(BigInteger.ONE) > 0) {
             if (common.compareTo(this.denominator) == 0) {
-                result = new BigRational(this.numerator  .divide(common));
+                result = BigRational.valueOf(this.numerator  .divide(common));
             } else {
-                result = new BigRational(this.numerator  .divide(common), this.denominator.divide(common));
+                result = BigRational.valueOf(this.numerator  .divide(common), this.denominator.divide(common));
             }
         }
         if (this.denominator.signum() < 0) { // denominator is always made positive
-            result = new BigRational(result.getNumerator().negate(), result.getDenominator().negate());
+            result = BigRational.valueOf(result.getNumerator().negate(), result.getDenominator().negate());
         }
         return result;
     } // simplify
@@ -487,7 +389,7 @@ public class BigRational implements Cloneable, Serializable {
      *  @return a copy of the object with the opposite sign
      */
     public BigRational negate() {
-        return (new BigRational(numerator  .negate(), denominator)).simplify();
+        return (BigRational.valueOf(numerator  .negate(), denominator)).simplify();
     } // negate
 
     /** Returns the sign of <em>this</em> BigRational.
@@ -551,7 +453,7 @@ public class BigRational implements Cloneable, Serializable {
      *  @return inverted fraction
      */
     public BigRational invert() {
-        return new BigRational
+        return BigRational.valueOf
                 (  this.denominator
                 ,  this.numerator
                 );
@@ -582,18 +484,18 @@ public class BigRational implements Cloneable, Serializable {
      */
     public static void main(String[] args) {
         /* elementary arithmetic */
-        System.out.println((new BigRational(2906,1947)).toString());
-        System.out.println("3/4 + 5/7 = " + (new BigRational(3,4)).add     (new BigRational(5,7))             .toString());
-        System.out.println("3/4 - 5/7 = " + (new BigRational(3,4)).subtract(new BigRational(5,7))             .toString());
-        System.out.println("3/4 * 5/7 = " + (new BigRational(3,4)).multiply(new BigRational(5,7))             .toString());
-        System.out.println("3/4 / 5/7 = " + (new BigRational(3,4)).divide  (new BigRational(5,7))             .toString());
-        System.out.println("3/4 + 5   = " + (new BigRational(3,4)).add     (new BigRational(5  ))             .toString());
-        System.out.println("3/4 - 5   = " + (new BigRational(3,4)).subtract(new BigRational(5  ))             .toString());
-        System.out.println("3/4 * 5   = " + (new BigRational(3,4)).multiply(new BigRational(5  ))             .toString());
-        System.out.println("3/4 / 5   = " + (new BigRational(3,4)).divide  (new BigRational(5  ))             .toString());
-        System.out.println("3/4 / 5/7 = " + (new BigRational(3,4)).divide  (new BigRational(5,7)).getDecimal().toString());
-        System.out.println("3/4 * 4/3 = " + (new BigRational(3,4)).multiply(new BigRational(4,3))             .toString());
-        System.out.println("3/4 pow 3 = " + (new BigRational(3,4)).pow     (3                   )             .toString());
+        System.out.println((BigRational.valueOf(2906,1947)).toString());
+        System.out.println("3/4 + 5/7 = " + (BigRational.valueOf(3,4)).add     (BigRational.valueOf(5,7))             .toString());
+        System.out.println("3/4 - 5/7 = " + (BigRational.valueOf(3,4)).subtract(BigRational.valueOf(5,7))             .toString());
+        System.out.println("3/4 * 5/7 = " + (BigRational.valueOf(3,4)).multiply(BigRational.valueOf(5,7))             .toString());
+        System.out.println("3/4 / 5/7 = " + (BigRational.valueOf(3,4)).divide  (BigRational.valueOf(5,7))             .toString());
+        System.out.println("3/4 + 5   = " + (BigRational.valueOf(3,4)).add     (BigRational.valueOf(5  ))             .toString());
+        System.out.println("3/4 - 5   = " + (BigRational.valueOf(3,4)).subtract(BigRational.valueOf(5  ))             .toString());
+        System.out.println("3/4 * 5   = " + (BigRational.valueOf(3,4)).multiply(BigRational.valueOf(5  ))             .toString());
+        System.out.println("3/4 / 5   = " + (BigRational.valueOf(3,4)).divide  (BigRational.valueOf(5  ))             .toString());
+        System.out.println("3/4 / 5/7 = " + (BigRational.valueOf(3,4)).divide  (BigRational.valueOf(5,7)).getDecimal().toString());
+        System.out.println("3/4 * 4/3 = " + (BigRational.valueOf(3,4)).multiply(BigRational.valueOf(4,3))             .toString());
+        System.out.println("3/4 pow 3 = " + (BigRational.valueOf(3,4)).pow     (3                   )             .toString());
     } // main
 
 } // BigRational

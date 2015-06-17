@@ -1,5 +1,6 @@
 /*  RelationSet: a set of polynomials which relate to zero
  *  @(#) $Id: RelationSet.java 970 2012-10-25 16:49:32Z  $
+ *  2015-06-15: RelationSet.parse was not static
  *  2015-02-19: extends Polynomial; inherit a number of methods from there
  *  2015-02-17: getTransposition; Durbach.2
  *  2014-04-04: getIndivisibleParts
@@ -444,7 +445,7 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
      *  @param input the input string, with whitespace, for example " + 17*a0^2*a1 + a2^2*a3^3 - 4*b4"
      *  @return a reference to a new relation set
      */
-    public RelationSet parse(String input) {
+    public static RelationSet parse(String input) {
         return new RelationSet(input);
     } // parse
 
@@ -564,7 +565,7 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
                 }
             } // if valid mapping
         } // while viter
-        return (new RelationSet()).parse(result);
+        return RelationSet.parse(result);
     } // substitute(Map)
 
     /** Evaluates a {@link RelationSet} without any proof history by evaluating
@@ -636,7 +637,7 @@ evaluate: unknown
         RelationSet rset2 = new RelationSet();
         if (false) {
         } else if (args.length == 0) {
-            rset1 = rset1.parse("a²+b^2=c^2, a<b, b<c");
+            rset1 = RelationSet.parse("a²+b^2=c^2, a<b, b<c");
             System.out.println(rset1.toString());
             System.out.println("evaluate: " + rset1.evaluate(null));
             VariableMap varMap = rset1.getVariableMap();
@@ -646,7 +647,7 @@ evaluate: unknown
             rset2 = rset1.substitute(varMap);
             System.out.println(rset2);
         } else if (args.length == 1 && ! args[0].startsWith("-")) {
-            rset1 = rset1.parse(args[iarg ++]);
+            rset1 = RelationSet.parse(args[iarg ++]);
             System.out.println(rset1.toString());
             System.out.println("evaluate: " + rset1.evaluate(null));
         } else if (args.length >= 2) {
@@ -654,23 +655,23 @@ evaluate: unknown
             if (false) {
             } else if (opt.equals("-f")     ) {
                 String fileName = args[1];
-                rset1 = rset1.parse((new ExpressionReader()).read(fileName));
+                rset1 = RelationSet.parse((new ExpressionReader()).read(fileName));
                 System.out.println(rset1.toString());
                 System.out.println("evaluate: " + rset1.evaluate(null));
             } else if (opt.startsWith("-grow")) {
-                rset1 = rset1.parse(args[iarg ++]);
-                rset2 = rset2.parse(args[iarg ++]);
+                rset1 = RelationSet.parse(args[iarg ++]);
+                rset2 = RelationSet.parse(args[iarg ++]);
                 System.out.println("(\"" + rset1.toString() 
                         + "\").getGrowingFactors\n(\"" 
                         + rset2.toString() + "\") = "
                         + rset1.getGrowingFactors(rset2));
             } else if (opt.equals("-rest")  ) {
                 String factor = args[iarg ++];
-                rset1 = rset1.parse(args[iarg ++]);
+                rset1 = RelationSet.parse(args[iarg ++]);
                 System.out.println(rset1.toString());
                 System.out.println("rest: " + rset1.getRest(new BigInteger(factor)));
             } else if (opt.equals("-transp")   ) {
-                rset1 = rset1.parse(args[iarg ++]);
+                rset1 = RelationSet.parse(args[iarg ++]);
                 System.out.println("getTransposableClasses(\"" + rset1.toString() + "\") = "
                         + rset1.getTransposableClasses().toString());
             }

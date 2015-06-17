@@ -1,5 +1,6 @@
 /*  TreeSolver: tries to solve a Diophantine equation by monadic variable expansion
  *  @(#) $Id: TreeSolver.java 970 2012-10-25 16:49:32Z gfis $
+ *  2015-06-15: RelationSet.parse was not static
  *  2015-05-28: subdirectory solver
  *  2015-04-26: solution if (xi,yi,..) elem of {0,1}^n
  *  2015-02-20, Georg Fischer: copied from and replacing QueuingSolver.java
@@ -73,6 +74,9 @@ public class TreeSolver extends BaseSolver {
     public final static String CVSID = "@(#) $Id: TreeSolver.java 970 2012-10-25 16:49:32Z gfis $";
 
     /* debug is inherited */
+    
+    /** level of queue element which was previously expanded */
+    private int prevLevel;
 
     //--------------
     // Construction
@@ -82,6 +86,7 @@ public class TreeSolver extends BaseSolver {
      */
     public TreeSolver() {
         super(new PrintWriter(System.out));
+        prevLevel = -1;
     } // no-args Constructor
 
     /** Constructor with writer
@@ -89,6 +94,7 @@ public class TreeSolver extends BaseSolver {
      */
     public TreeSolver(PrintWriter writer) {
         super(writer); // this will also initialize the optional parameters
+        prevLevel = -1;
     } // Constructor(printer)
 
     //---------------------
@@ -104,26 +110,33 @@ public class TreeSolver extends BaseSolver {
      *  @param queueIndex position in the queue of the element ({@link RelationSet}) to be expanded, >= 0
      */
     public void expand(int queueIndex) {
-        int skippable = 0; // 1 does not really work
         RelationSet rset1 = get(queueIndex); // expand this element (the "parent")
         VariableMap vmap1 = rset1.getTuple();
         // reasons.printDecision(this, rset1, vmap1);
-        int curLevel      = rset1.getNestingLevel() + 1;
-        int base          = getModBase() + skippable;
-        BigInteger factor = BigInteger.valueOf(base - skippable).pow(curLevel);
+        int curLevel      = rset1.getNestingLevel();
+        if (debug >= 1) {
+            if (prevLevel < curLevel) {
+                prevLevel = curLevel;
+                trace.println("----------------"); // 16 x "-"
+            }
+        } 
+        curLevel ++;
+        int base          = getModBase();
+        BigInteger factor = BigInteger.valueOf(base).pow(curLevel);
         int varNo         = vmap1.size(); // total number of variables to be substituted
         /*  Variables having at least a coefficient of factor*base
             are not involved in the modular expansion.
             If this feature is not desired, the ModoMeter should be initialized with base.
         */
         ModoMeter meter   = new ModoMeter(varNo, 1); // assume that all variables are not involved
-        VariableMap vmapr = rset1.getRest(BigInteger.valueOf(base - skippable).multiply(factor)).getExpressionMap(); // base if normalized below
+        BigInteger other  = norm ? BigInteger.valueOf(base) : BigInteger.valueOf(base).multiply(factor);
+        VariableMap vmapr = rset1.getRest(other).getExpressionMap(); 
         Iterator<String> iter1 = vmap1.keySet().iterator();
         int involvedCount = 0;
         int im = 0;
         while (iter1.hasNext()) {
             String name = iter1.next();
-            if (skippable == 1 || vmapr.get(name) != null) { // name occurs in rest: this will be involved
+            if (vmapr.get(name) != null) { // name occurs in rest: this will be involved
                 meter.setBase(im, base); // involve it
                 involvedCount ++;
             } // name in rest
@@ -134,17 +147,16 @@ public class TreeSolver extends BaseSolver {
         } // vmapr empty
         // meter now ready for n-adic expansion, e.g. x -> 2*x+0, 2*x+1
         if (debug >= 1) {
-            trace.println();
             trace.println("expanding queue[" + queueIndex 
-            		+ "]^" + rset1.getParentIndex()
-            		+ ": " + rset1.toString()
+                    + "]^" + rset1.getParentIndex()
+                    + ": " + rset1.toString()
                     + " meter=" + meter.toBaseList()
                     + " *" + factor.toString()
                     );
         }
 
         while (meter.hasNext()) { // over all constant combinations - generate all children
-            VariableMap vmap2 = vmap1.refineExpressions(meter, skippable);
+            VariableMap vmap2 = vmap1.refineExpressions(meter, 0);
             if (vmap2.size() > 0) {
                 RelationSet rset2 = getStartSet().substitute(vmap2);
                 if (norm) {
@@ -174,7 +186,7 @@ public class TreeSolver extends BaseSolver {
         String expr = solver.getArguments(0, args);
         RelationSet rset0 = new RelationSet("(3+a)^2+(4+b)^2=(5+c)^2"); // solution a=b=c=0
         if (expr != null) {
-            rset0 = rset0.parse(expr);
+            rset0 = RelationSet.parse(expr);
         }
     /*
         Vector tpcs = rset0.getTransposableClasses();

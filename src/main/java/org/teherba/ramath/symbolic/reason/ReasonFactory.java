@@ -216,8 +216,14 @@ public class ReasonFactory extends ArrayList<BaseReason> {
      */
     public void printDecision(BaseSolver solver, RelationSet rset2, VariableMap vmap2) {
         String decision = this.check(solver, rset2);
-        if (! decision.startsWith(VariableMap.UNKNOWN) &&
-            ! decision.startsWith(VariableMap.SUCCESS)) { // FAILURE etc.
+        if (false) {
+        } else if (decision.startsWith(VariableMap.FAILURE))   { 
+                if (solver.debug >= 2) {
+                    solver.trace.print(vmap2.toVector() + ": ");
+                    solver.trace.println(decision);
+                }
+        } else if (! decision.startsWith(VariableMap.UNKNOWN) &&
+                   ! decision.startsWith(VariableMap.SUCCESS)) { // or SAME, transpose, similiar ...
                 if (solver.debug >= 1) {
                     solver.trace.print(vmap2.toVector() + ": ");
                     solver.trace.println(decision);
