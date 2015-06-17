@@ -292,8 +292,8 @@ public class InfiniteDescent {
      */
     private boolean evalEquation(StringBuffer message, int decision, ProofStep poly) {
         boolean success = true; // assume definitive result
-        BigInteger constant = poly.getConstant();
-        BigInteger  varGCD   = poly.gcdVariables();
+        BigInteger constant = poly.getPolynomial().getConstant();
+        BigInteger varGCD   = poly.getPolynomial().gcdCoefficients(false);
         switch (decision) {
             default:
             case 0:

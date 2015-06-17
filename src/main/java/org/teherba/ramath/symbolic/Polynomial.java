@@ -36,8 +36,9 @@ import  org.teherba.ramath.symbolic.Monomial;
 import  org.teherba.ramath.symbolic.PolynomialParser;
 import  org.teherba.ramath.symbolic.RelationSet;
 import  org.teherba.ramath.symbolic.VariableMap;
-import  org.teherba.ramath.linear.Vector;
 import  org.teherba.ramath.BigIntegerUtil;
+import  org.teherba.ramath.BigRational;
+import  org.teherba.ramath.linear.Vector;
 import  org.teherba.ramath.util.ExpressionReader;
 import  org.teherba.ramath.util.ModoMeter;
 import  org.teherba.ramath.util.Permutator;
@@ -382,7 +383,7 @@ public class Polynomial implements Cloneable, Serializable {
      *  @return the constant monomial if there is one, or 0
      */
     public BigInteger/*Rational*/ getConstant() {
-        BigInteger/*Rational*/ result = BigInteger/*Rational*/.ZERO;
+        BigInteger/*Rational*/ result = Coefficient.ZERO;
         Monomial monomial = monomials.get(Monomial.CONSTANT_SIGNATURE);
         if (monomial != null) {
             result = monomial.getCoefficient();
@@ -1055,21 +1056,13 @@ x^2 + 3*x^3 + 2*x^4
         return getVariableMap().size() == 1;
     } // isUniVariate
 
-    /** Gets the greatest common divisor of the coefficients of all variable monomials,
-     *  if they are integral, or 1.
-     *  @return common divisor
-     */
-    public BigInteger/*Rational*/ gcdVariables() {
-        return gcdCoefficients(false);
-    } // gcdVariables
-
-    /** Gets the greatest common (positive) divisor of the coefficients of the variable monomials,
+    /** Gets the greatest common (positive) divisor of the coefficients of the variable {@link Monomial}s,
      *  or of all monomials if they are integral, or +1.
      *  @param all whether all monomials should be investigated, or the non-constant ones only
      *  @return common divisor &gt;= 1
      */
-    private BigInteger/*Rational*/ gcdCoefficients(boolean all) {
-        BigInteger/*Rational*/ result = BigInteger/*Rational*/.ONE;
+    public BigInteger/*Rational*/ gcdCoefficients(boolean all) {
+        BigInteger/*Rational*/ result = Coefficient.ONE;
         Iterator <String> titer = monomials.keySet().iterator();
         int index = 0;
         while (titer.hasNext()) {
@@ -1534,7 +1527,7 @@ x^2 + 3*x^3 + 2*x^4
                     Monomial mono2 = poly2.get(sig2);
                     Monomial factor  = mono1.divide(mono2);
                     if (factor != null && factor.isConstant() 
-                            && factor.getCoefficient().compareTo(BigInteger/*Rational*/.ZERO) > 0
+                            && factor.getCoefficient().compareTo(Coefficient.ZERO) > 0
                             ) { // valid factor
                         result = (result != null ? result + "," : "") + factor.toString()
                                 .replaceAll(" ", "").replaceAll("\\A\\+", "");
@@ -1798,7 +1791,7 @@ x^2 + 3*x^3 + 2*x^4
                         break;
                     case GE_0:
                     case GT_0:
-                        result.append(constant.compareTo(BigInteger/*Rational*/.ZERO) > 0 ? VariableMap.SUCCESS : VariableMap.FAILURE);
+                        result.append(constant.compareTo(Coefficient.ZERO) > 0 ? VariableMap.SUCCESS : VariableMap.FAILURE);
                         break;
                     case NE_0:
                         result.append(VariableMap.SUCCESS);
@@ -1849,8 +1842,8 @@ x^2 + 3*x^3 + 2*x^4
 
         } else { // not a single constant, not biased
             // check greatest common divisor of variables
-            BigInteger/*Rational*/  varGCD = this.gcdVariables();
-            if (! varGCD.equals(BigInteger/*Rational*/.ONE) && ! constant.mod(varGCD).equals(BigInteger/*Rational*/.ZERO)) {
+            BigInteger/*Rational*/ varGCD = this.gcdCoefficients(false);
+            if (! varGCD.equals(Coefficient.ONE) && ! constant.mod(varGCD).equals(Coefficient.ZERO)) {
                 // constant is not divisible by GCD of variables which is != 1
                 switch (this.getRelation()) {
                     default:
@@ -1917,8 +1910,8 @@ x^2 + 3*x^3 + 2*x^4
      */
     private void printProperties() {
        System.out.println(""
-                + "; vgcd="             + this.gcdVariables  ()
-                + "; gcd="              + this.gcdCoefficients          (true)
+                + "; vgcd="             + this.gcdCoefficients (false)
+                + "; gcd="              + this.gcdCoefficients (true)
                 + "; isZero="           + this.isZero          ()
                 + "; hasVariable="      + this.hasVariable     ()
                 + "; isBiased="         + this.isBiased        ()
@@ -2074,7 +2067,7 @@ x^2 + 3*x^3 + 2*x^4
                     String factor = args[iarg ++];
                     poly1 = Polynomial.parse(args[iarg ++]);
                     System.out.println("getRest(" + poly1.toString() + ", " + factor + ") -> "
-                            +  poly1.getRest(new BigInteger/*Rational*/(factor)).toString());
+                            +  poly1.getRest(new Coefficient(factor)).toString());
 
                 } else if (opt.startsWith("-spoly")) {
                     exprs = ereader.getArguments(iarg, args);

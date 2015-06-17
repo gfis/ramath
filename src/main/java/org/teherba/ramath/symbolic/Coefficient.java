@@ -18,6 +18,7 @@
  * limitations under the License.
  */
 package org.teherba.ramath.symbolic;
+import  org.teherba.ramath.BigRational;
 import  java.io.Serializable;
 import  java.math.BigInteger;
 
@@ -27,7 +28,7 @@ import  java.math.BigInteger;
  *  @author Dr. Georg Fischer
  */
 public class Coefficient 
-		extends BigInteger 
+		extends BigInteger/*Rational*/ 
         implements Cloneable, Serializable 
         {
     private static final long serialVersionUID = 1L;
@@ -47,15 +48,15 @@ public class Coefficient
      *  @param number   number of the instance
      *  @result a new instance 
      */
-    public static BigInteger valueOf(String number) {
-    	return new BigInteger(number);
+    public static BigInteger/*Rational*/ valueOf(String number) {
+    	return new BigInteger/*Rational*/(number);
     } // valueOf
 
     /** Constructing with 1 BigInteger argument; the denominator will be 1
      *  @param number   number of the instance
      *  @result a new instance 
      */
-    public static BigInteger valueOf(BigInteger number) {
+    public static BigInteger/*Rational*/ valueOf(BigInteger/*Rational*/ number) {
     	return number;
     } // valueOf
 
@@ -63,15 +64,15 @@ public class Coefficient
      *  @param number   number of the instance
      *  @result a new instance 
      */
-    public static BigInteger valueOf(long number) {
-    	return BigInteger.valueOf(number);
+    public static BigInteger/*Rational*/ valueOf(long number) {
+    	return BigInteger/*Rational*/.valueOf(number);
     } // valueOf
 
     /** constant 0 */
-    public static final BigInteger ZERO = BigInteger.valueOf(0);
+    public static final BigInteger/*Rational*/ ZERO = BigInteger/*Rational*/.valueOf(0);
     /** constant 1 */
-    public static final BigInteger ONE  = BigInteger.valueOf(1);
+    public static final BigInteger/*Rational*/ ONE  = BigInteger/*Rational*/.valueOf(1);
     /** constant 2 */
-    public static final BigInteger TWO  = BigInteger.valueOf(2);
+    public static final BigInteger/*Rational*/ TWO  = BigInteger/*Rational*/.valueOf(2);
 
 } // Coefficient
