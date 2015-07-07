@@ -8,8 +8,8 @@
 use strict;
 my $old_factor = 0;
 my $factor = 0;
-my ($xf, $yf); # offsets for x, y in lines
-my ($xs, $ys); # shifts  for x and y
+my (@x); # offsets for variables 
+my $factor = 1;
 
 while (<>) {
 	my $line = $_;
@@ -19,62 +19,19 @@ while (<>) {
 	} elsif ($line =~ m{\A--}) {
 		print "$line\n";
 	} elsif ($line =~ m{\Aexpand}) {
-	} elsif ($line =~ m{\A\[(\d+)\+(\d+)\*\w+\,(\d+)\+(\d+)\*\w+\]}) { # [0+2*u,0+2*v]: unknown -276+30*u+4*u^2-333*v+8*u*v-128*v^2-16*v^3=0 -> [1]
-		($xf, $xs, $yf, $ys) = ($1, $2, $3, $4);
-		&output();
+		# expanding queue[4]^2:  - 3 + 2*x + 8*x^2 - 27*y - 72*y^2 - 64*y^3 = 0 meter=[2,2] *16
+		$line =~ m{\*(\d+)\Z};
+		$factor = $1;
+	} elsif ($line =~ m{\A\[}) { # [0+2*u,0+2*v]: unknown -276+30*u+4*u^2-333*v+8*u*v-128*v^2-16*v^3=0 -> [1]
+		@x = m{[\[\,](\d+)\+}g;
+		print join("\t", @x), "\t$factor\t", join("\t", map { $_ = &revbits(&log2($factor), $_); $_ } @x), "\n";
+		# &output();
 	} else {
 	}
 } # while <>
 
 sub output {
-		my $div = 2;
-		my $delta = &formula($xf, 0, $xs, $yf, 0, $ys);
-		print sprintf("%6d%4d %6d%4d %6d %6d   %12d %10x %10x %12d\n"
-			, $xf, $xs
-			, $yf, $ys
-			, &revbits($xs, $xf)
-			, &revbits($ys, $yf)
-		#	, ($xof[0]-$yof[0]) / $div
-		#	, ($xof[0]+$yof[0]) / $div 
-			, $delta
-			, abs($delta) / $xs
-			, &revbits($xs*4, abs($delta) / $xs)
-			, &revbits($xs*4, abs($delta) / $xs)
-		#	, &formula($xf, 0, $xs, $yf, 1, $ys)
-		#	, &formula($xf, 1, $xs, $yf, 1, $ys)
-			);
 } # output
-
-sub formula { # generalized
-	my               ($xf, $x1, $xs, $yf, $y1, $ys) = @_;
-	return &formula35($xf, $x1, $xs, $yf, $y1, $ys);
-} # formula
-
-sub formula25 { # x^2 + 2 - y^3
-	my ($xf, $x1, $xs, $yf, $y1, $ys) = @_;
-	return &pow(2, $xf + $xs * $x1) + 2 - &pow(3, $yf + $ys * $y1);
-} # formula25
-
-sub formula31 { # (a+b)^2 + 2 - (a-b)^3
-	my ($xf, $x1, $xs, $yf, $y1, $ys) = @_;
-	my $a = $xf + $xs * $x1;
-	my $b = $yf + $ys * $y1;
-	return &pow(2, $a + $b) + 2 - &pow(3, $a - $b);
-} # formula31
-
-sub formula32 { # (5 + 2*v + 2*u)^2 + 2 - (5 + 2*v)^3
-	my ($xf, $x1, $xs, $yf, $y1, $ys) = @_;
-	my $u = $xf + $xs * $x1;
-	my $v = $yf + $ys * $y1;
-	return &pow(2, 5 + 2*$v + 2*$u) + 2 - &pow(3, 5 + 2*$v);
-} # formula32
-
-sub formula35 { # ((2*u+5))^2 + 2 - ((2*u+5) - 2*v)^3
-	my ($xf, $x1, $xs, $yf, $y1, $ys) = @_;
-	my $u = $xf + $xs * $x1;
-	my $v = $yf + $ys * $y1;
-	return &pow(2, 5 + 2*$u) + 2 - &pow(3, 2*$u + 5 - 2*$v);
-} # formula35
 
 
 sub pow {
@@ -94,7 +51,7 @@ sub log2 {
 
 sub revbits {
 	my ($width, $value) = @_;
-	$width = &log2($width);
+	# $width = &log2($width);
 	return oct("0b" . join('', reverse(split(//, sprintf("%0${width}b", $value)))) ); 
 } # revbits
 

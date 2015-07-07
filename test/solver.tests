@@ -45,7 +45,7 @@ TEST T06 Markov(3, solvable)
 CALL TreeSolver -l 4 -e "x^2 + y^2 + z^2 - 3*x*y*z"
 
 TEST T07 FLT(3) mod 2
-CALL TreeSolver -b 2 -l 3 -e "a^3 + b^3 - c^3" 
+CALL TreeSolver -b 2 -l 3 -e "a^3 + b^3 - c^3" -r transpose,same,norm,invall
 
 TEST T08 EEC(3) mod 2
 CALL TreeSolver -b 2 -l 2 -e "a^3 + b^3 + c^3 - d^3" 
@@ -64,13 +64,13 @@ CALL TreeSolver -l 4 -e "x^2 + y^2 - 3*z^2"
 # -r transpose,dogrow
 
 TEST T13 modified FLT(3) mod 2
-CALL TreeSolver -b 2 -l 2 -e "a^3 + 3*b^3 - 9*c^3"
+CALL TreeSolver -b 2 -l 3 -e "a^3 + 3*b^3 - 9*c^3" -r "transposable,same,similiar,norm,invall"
 
 TEST T14 modified FLT(3) mod 3 proof
-CALL TreeSolver -b 3 -l 2 -e "a^3 + 3*b^3 - 9*c^3"
+CALL TreeSolver -b 3 -l 3 -e "a^3 + 3*b^3 - 9*c^3" -d 2 -r "transposable,same,dogrow,norm,invall"
 
-TEST T15 EEC(4,1,3)
-CALL TreeSolver -b 2 -l 2 -e "a^4 + b^4 + c^4 - d^4"
+TEST T15 modified FLT(3) mod 6 no descent?
+CALL TreeSolver -b 6 -l 2 -e "a^3 + 3*b^3 - 9*c^3" -r "transposable,same,similiar,norm,invall"
 
 TEST T16 Pythagoras
 CALL TreeSolver -b 2 -l 4 -e "a^2 + b^2 - c^2"
@@ -130,6 +130,13 @@ CALL TreeSolver -b 2 -l 4 -e "x^4 + x^2*y^2 + y^4 - z^2" -r same,transpose,dogro
 
 TEST T34 Keith Conrad Descent: Cor. 3.7
 CALL TreeSolver -b 2 -l 4 -e "y^2 = x^3 - 4*x" -r same,transpose,dogrow,norm,invall
+
+TEST T35 FC7
+CALL TreeSolver -b 2 -l 5 -e " - 49 - 65*u - 28*u^2 - 4*u^3 + 75*v + 60*u*v + 12*u^2*v - 30*v^2 - 12*u*v^2 + 4*v^3" -r same,transpose,similiar,norm,invall
+
+
+TEST T41 EEC(4,1,3)
+CALL TreeSolver -b 2 -l 2 -e "a^4 + b^4 + c^4 - d^4"
 
 PACKAGE=org.teherba.ramath.symbolic.solver
 

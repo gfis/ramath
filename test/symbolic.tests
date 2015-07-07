@@ -248,6 +248,21 @@ CALL Polynomial -mappable "( - 4 - 32*x + 16*x^2 - 32*y - 160*x*y + 16*y^2 - 4*z
 TEST W05 binomial: 6th power with 3 variables
 HTTP view=upper area=poly opt= form1=(a%2Bb%2Bc)^6
 
+TEST PI1 increment for Fermat/Carcavi6
+CALL Polynomial -incr "(2*v+5 + 2*u)^2 + 2 = (2*v + 5)^3" u 511
+
+TEST PI2 increment for Fermat/Carcavi6
+CALL Polynomial -incr "(2*v+3 + 2*u)^2 + 2 = (2*v + 3)^3" u 511
+
+TEST SL1 rational solution 
+CALL Polynomial -solution "(2*v+3 + 2)^2 + 2 = (2*v + 3)^3" 0
+
+TEST SL2 rational solution 
+CALL Polynomial -solution "6*x^3 - 7*x^2 + 1" "-1 / 3"
+TEST SL3 rational solution 
+CALL Polynomial -solution "6*x^3 - 7*x^2 + 1" 1
+TEST SL4 rational solution 
+CALL Polynomial -solution "6*x^3 - 7*x^2 + 1" 1/2
 #-------------------------------
 # Relation Sets
 

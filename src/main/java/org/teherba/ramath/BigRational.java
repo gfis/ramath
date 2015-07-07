@@ -41,6 +41,9 @@ public class BigRational
     private static final long serialVersionUID = 1L;
     public final static String CVSID = "@(#) $Id: BigRational.java 231 2009-08-25 08:47:16Z gfis $";
 
+    /** Debugging switch: 0 = no, 1 = moderate, 2 = more, 3 = extreme verbosity */
+    private static int debug = 0;
+
     /** dividend, the number which is divided by the denominator, see https://en.wikipedia.org/wiki/Quotient */
     private BigInteger numerator  ;
     /** divisor, the number which divides the numerator */
@@ -53,15 +56,20 @@ public class BigRational
      *  @result a new instance 
      */
     public BigRational(String rawNumber) {
-    //	super("0");
-        String number = rawNumber.replaceAll("[^\\d\\.\\/]", "");
-        int slash = number.indexOf("/");
-        if (slash >= 0) {
-            this.setA(new BigInteger(number.substring(0, slash)));
-            this.setB(new BigInteger(number.substring(slash + 1)));
-        } else {
-            this.setA(new BigInteger(number));
-            this.setB(BigInteger.ONE);
+    //  super("0");
+        String number = rawNumber.replaceAll("[^\\d\\.\\/\\-\\+]", "");
+        int slashPos = number.indexOf("/");
+        if (slashPos < 0) { // integral
+        	slashPos = number.length();
+            number += "/1";
+        } // integral
+        this.numerator   = new BigInteger(number.substring(0, slashPos), 10);
+        if (false && number.startsWith("-")) {
+            this.numerator   = this.numerator  .negate();
+        }
+        this.denominator = new BigInteger(number.substring(slashPos + 1), 10);
+        if (false && number.indexOf("/-") >= 0) {
+            this.denominator = this.denominator.negate();
         }
     } // Constructor String
 
@@ -374,13 +382,15 @@ public class BigRational
         BigInteger  common = this.numerator  .gcd(this.denominator);
         if (common.compareTo(BigInteger.ONE) > 0) {
             if (common.compareTo(this.denominator) == 0) {
-                result = BigRational.valueOf(this.numerator  .divide(common));
+                result = BigRational.valueOf( this.numerator  .divide(common));
             } else {
-                result = BigRational.valueOf(this.numerator  .divide(common), this.denominator.divide(common));
+                result = BigRational.valueOf( this.numerator  .divide(common)
+                                            , this.denominator.divide(common));
             }
         }
         if (this.denominator.signum() < 0) { // denominator is always made positive
-            result = BigRational.valueOf(result.getNumerator().negate(), result.getDenominator().negate());
+            result = BigRational.valueOf( result.getNumerator  ().negate()
+                                        , result.getDenominator().negate());
         }
         return result;
     } // simplify
@@ -425,7 +435,7 @@ public class BigRational
      *  less than, equal to, or greater than <em>num2</em>.
      */
     public int compareTo(BigInteger num2) {
-        return this.numerator                                  .compareTo(this.denominator.multiply(num2               ));
+        return this.numerator.compareTo(this.denominator.multiply(num2));
     } // compareTo
 
     /** Determines whether <em>this</em> BigRational has the same value as the parameter.
@@ -519,8 +529,10 @@ public class BigRational
         System.out.println("3/4 * 4/3 = " + (BigRational.valueOf(3,4)).multiply (BigRational.valueOf(4,3))             .toString());
         System.out.println("3/4 pow 3 = " + (BigRational.valueOf(3,4)).pow      (3                   )                 .toString());
         System.out.println("3/4 <>5/7 = " + (BigRational.valueOf(3,4)).compareTo(BigRational.valueOf(5,7)));
-        System.out.println("3/4 ==5/7 = " + (BigRational.valueOf(3,4)).equals   (BigRational.valueOf(5,7)));
-        System.out.println("3/4==12/16= " + (BigRational.valueOf(3,4)).equals   (BigRational.valueOf(12,16)));
+        System.out.println("3/4 == 5/7 = "     + (BigRational.valueOf(3,4)).equals   (BigRational.valueOf(5,7)));
+        System.out.println("3/4 == -12/-16 = " + (BigRational.valueOf(3,4)).equals   (new BigRational("-12/-16")));
+        System.out.println("3/4 == -12/16  = " + (BigRational.valueOf(3,4)).equals   (new BigRational("-12/16")));
+        System.out.println("3/4 == -12/16  = " + (BigRational.valueOf(3,4)).equals   (BigRational.valueOf(-12,16)));
     } // main
 
 } // BigRational

@@ -688,6 +688,43 @@ public class Polynomial implements Cloneable, Serializable {
         return result;
     } // divide(Polynomial)
 
+    /** Determines whether the parameter {@link BigRational} is a 
+     *  rational solution (root) of <em>this</em> univariate Polynomial.
+     *  @param root the desired solution
+     *  @return true if <em>(variable - root)</em> divides this Polynomial evenly
+     */
+    public boolean hasSolution(BigRational root) {
+        boolean result = false;
+        if (! this.isUniVariate()) {
+            VariableMap vmap1 = this.getVariableMap();
+            System.out.println("not isUniVariate: " + vmap1.toString() + ", size=" + vmap1.size());
+            throw new ArithmeticException();
+        } else { // univariate
+            Iterator<String> iter = monomials.keySet().iterator();
+            BigRational sum = BigRational.valueOf(0);
+            while (iter.hasNext()) {            
+                String sig1 = iter.next();
+                Monomial mono1 = this.get(sig1);
+                BigRational term = BigRational.valueOf(mono1.getCoefficient());
+                String vname = mono1.firstName();
+                if (vname != null) { // with variable
+                    int exp = mono1.getExponent(vname);
+                    while (exp > 0) {
+                        term = term.multiply(root);
+                        exp --;
+                    } // while exp
+                } // with variable
+                sum = sum.add(term);
+                if (debug > 0) {
+                    System.out.println("Monomial \"" + mono1.toString() + ", sum = " + sum.toString());
+                }
+            } // while iter
+            result = sum.equals(BigInteger.ZERO);
+        } // univeriate
+        return result;
+    } // hasSolution
+
+
     //===============================================
     // Gröbner bases, Buchberger's algorithm
     //===============================================
@@ -1977,7 +2014,7 @@ x^2 + 3*x^3 + 2*x^4
                             + poly1.affineMap   (poly2));
 
                 } else if (opt.startsWith("-bachet")) {
-                	// input is x,y,c of a Mordell equation y^2 = x^3 + c
+                    // input is x,y,c of a Mordell equation y^2 = x^3 + c
                     Polynomial x = Polynomial.parse(args[iarg ++]); 
                     Polynomial y = Polynomial.parse(args[iarg ++]);
                     Polynomial c = Polynomial.parse(args[iarg ++]);
@@ -2039,6 +2076,27 @@ x^2 + 3*x^3 + 2*x^4
                         System.out.println(highTerms[0].toString() + ", " + highTerms[1].toString());
                     } // while iter1
 
+                } else if (opt.startsWith("-incr")) {
+                    // input is: poly vi ei; variable vi runs from 0 to ei 
+                    poly1 = Polynomial.parse(args[iarg ++]);
+                    VariableMap vmap1 = poly1.getVariableMap("*", true); // x -> x
+                    String vname = args[iarg ++];
+                    int limit = 1;
+                    try {
+                        limit = Integer.parseInt(args[iarg ++]);
+                    } catch (Exception exc) {
+                    }
+                    int iloop = 0;
+                    while (iloop <= limit) {
+                        String sloop = String.valueOf(iloop);
+                        vmap1.put(vname, sloop);
+                        poly2 = poly1.substitute(vmap1);
+                        System.out.println(sloop
+                                + "\t" + poly2.toString() 
+                                + "\t" + poly2.normalize().toString());
+                        iloop ++;
+                    } // while iloop
+
                 } else if (opt.startsWith("-mappable")) {
                     poly1 = Polynomial.parse(args[iarg ++]);
                     poly2 = Polynomial.parse(args[iarg ++]);
@@ -2068,6 +2126,12 @@ x^2 + 3*x^3 + 2*x^4
                     poly1 = Polynomial.parse(args[iarg ++]);
                     System.out.println("getRest(" + poly1.toString() + ", " + factor + ") -> "
                             +  poly1.getRest(new Coefficient(factor)).toString());
+
+                } else if (opt.startsWith("-solut")) { // poly brat
+                    poly1 =            Polynomial.parse(args[iarg ++]);
+                    BigRational brat1 = new BigRational(args[iarg ++]);
+                    System.out.println(brat1.toString() + " solves " + poly1.toString() 
+                            + "? " + poly1.hasSolution(brat1));
 
                 } else if (opt.startsWith("-spoly")) {
                     exprs = ereader.getArguments(iarg, args);
