@@ -272,6 +272,9 @@ CALL RelationSet
 TEST RS2 with set in argument
 CALL RelationSet "a+b>0, a-b>0, a>0"
 
+TEST RS3 with coefficients only
+CALL RelationSet "3;4;5"
+
 TEST RC1 transposition EEC(3)
 CALL RelationSet -transp   "a^3 + b^3 + c^3 - d^3 = 0"
 

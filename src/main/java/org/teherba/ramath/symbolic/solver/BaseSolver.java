@@ -1,5 +1,6 @@
 /*  Solver: base class for solvers of Diophantine relation sets, with bean properties
- *  @(#) $Id: Solver.java 970 2012-10-25 16:49:32Z gfis $
+ *  @(#) $Id: BaseSolver.java 970 2012-10-25 16:49:32Z gfis $
+ *  2015-07-09: feature igtriv
  *  2015-05-28: subdirectory solver, renamed from Solver.java
  *  2015-02-21: extends Vector<RelationSet>
  *  2013-09-01: polish; Caution: must be UTF-8, äöüÄÖÜß ² ³
@@ -62,10 +63,12 @@ public class BaseSolver extends Stack<RelationSet> {
     //--------------
     //  Features which can be set from outside
     //--------------
-    /** Whether to normalize expanded {@link RelationSet]s */
-    protected boolean norm;
+    /** Whether to ignore trivial solutions */
+    public boolean igtriv;
     /** Whether to involve all variables in the expansion */
-    protected boolean invall;
+    public boolean invall;
+    /** Whether to normalize expanded {@link RelationSet]s */
+    public boolean norm;
 
     //--------------
     // Construction
@@ -312,31 +315,48 @@ public class BaseSolver extends Stack<RelationSet> {
     protected void expand(int queueIndex) {
     } // expand
 
+    /** Prints the header message
+     *  @param rset0 initial {@link RelationSet}
+     */
+    protected void printHeader(RelationSet rset0) {
+        trace.print("Expanding for base=" + getModBase());
+        trace.print(", transposables="    + getTransposableString(rset0));
+        trace.print(", reasons+features=" + reasons.toList());
+        trace.println();
+    } // printHeader
+
+    /** Prints the trailer message
+     *  @param exhausted whether a proof was reached and the queue was exhausted
+     */
+    protected void printTrailer(boolean exhausted) {
+        if (exhausted) {
+            trace.print("Proof - queue exhausted");
+        } else {
+            trace.print("Maximum level " + getMaxLevel() + " reached");
+        }
+        trace.println(", queue size = " + size());
+    } // printTrailer
+
     /** Refines and evaluates modulus properties for variables in a {@link RelationSet}.
      *  The maximum queue size breaks the expansion loop in any case.
      *  @param rset0 start expansion with this {@link RelationSet}.
      *  @return whether the iteration did stop because the queue was exhausted
      */
     public boolean solve(RelationSet rset0) {
+        // determine all features
+        igtriv = reasons.hasFeature("igtriv");
         invall = reasons.hasFeature("invall");
         norm   = reasons.hasFeature("norm"  );
+
         Vector tpcs = rset0.getTransposableClasses();
         setTransposables(tpcs);
         if (tpcs.isMonotone()) { // no variable names can be transposed
             reasons.purge("transposable"); // TransposeReason is not checked if there are no transposable variables
         } // isMonotone
-
-        trace.print("Expanding for base=" + getModBase());
-        trace.print(", transposables=" + getTransposableString(rset0));
-        trace.print(", reasons+features=" + reasons.toList());
-        trace.println();
+        printHeader(rset0);
         boolean exhausted = false;
         queueHead = 0;
         if (rset0.getTuple() == null) {
-        /*
-            VariableMap vmap0 = rset0.getVariableMap("0", getUpperSubst());
-            rset0.setTuple(vmap0); // tuple is initially (0,0, ... 0)
-        */
             rset0.setTuple(rset0.getExpressionMap(), getTransposables());
         }
         ModoMeter meter = new ModoMeter(rset0.getTuple().size(), 1); // assume that all variables are not involved
@@ -357,12 +377,7 @@ public class BaseSolver extends Stack<RelationSet> {
                 }
             }
         } // while busy
-        if (exhausted) {
-            trace.print("Proof - queue exhausted");
-        } else {
-            trace.print("Maximum level " + getMaxLevel() + " reached");
-        }
-        trace.println(", queue size = " + size());
+        printTrailer(exhausted);
         close();
         return exhausted;
     } // solve

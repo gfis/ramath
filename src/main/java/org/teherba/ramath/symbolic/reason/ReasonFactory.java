@@ -170,9 +170,9 @@ public class ReasonFactory extends ArrayList<BaseReason> {
      *  @param rset2 the new {@link RelationSet} to be added to the queue
      *  @return a message string starting with one of
      *  <ul>
-     *  <li>{@link VariableMap#UNKNOWN} - the RelationSet cannot be decided and must be further expanded</li>
      *  <li>{@link VariableMap#FAILURE} - the RelationSet is not possible</li>
      *  <li>{@link VariableMap#SUCCESS} - there is a solution, but the RelationSet must further be expanded</li>
+     *  <li>{@link VariableMap#UNKNOWN} - the RelationSet cannot be decided and must be further expanded</li>
      *  </ul>
      */
     public String check(BaseSolver solver, RelationSet rset2) {
@@ -231,6 +231,9 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         } else { // UNKNOWN || SUCCESS
                 if (solver.debug >= 1) {
                     solver.trace.print(vmap2.toVector() + ": ");
+					if (solver.igtriv && decision.indexOf("trivial") >= 0) {
+						decision = VariableMap.UNKNOWN;
+                    }
                     solver.trace.print(decision);
                     solver.trace.print(" " + solver.polish(rset2));
                     solver.trace.print(" -> [" + solver.size() + "]");

@@ -1,5 +1,6 @@
 /*  PolyVector: a vector Polynomials
  *  @(#) $Id: PolyVector.java 744 2011-07-26 06:29:20Z gfis $
+ *  2015-07-14: read expression allows for RelationSets with semicolons and "=0"
  *  2015-04-27: triviality(), describe()
  *  2015-03-26: construct from expression
  *  2015-03-19: convolve
@@ -134,11 +135,15 @@ public class PolyVector implements Cloneable, Serializable {
     } // Constructor(3)
 
     /** Constructor for a PolyVector from a vector expression
-     *  @param vectExpr an array of comma-separated elements in square brackets,
-     *  for example "[x^2,4*y,y*z*3]"
+     *  @param vectExpr an array of comma-(or semicolon) separated elements in square brackets,
+     *  maybe with spaces,
+     *  for example "[x^2, 4*y, y*z*3]"
      */
     public PolyVector(String vectExpr) {
-        String[] values = vectExpr.replaceAll("[\\[\\]\\s]+","").split("\\,");
+        String[] values = vectExpr
+                .replaceAll("[\\[\\]\\s]+", "")
+                .replaceAll("\\=0", "") // from Polynomial.toString(false)
+                .split("[\\,\\;]");
         this.vecLen = values.length;
         this.vector = new /*Type*/Polynomial[vecLen];
         int ivect = 0;

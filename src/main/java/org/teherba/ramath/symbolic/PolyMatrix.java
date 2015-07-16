@@ -422,7 +422,8 @@ public class PolyMatrix implements Cloneable, Serializable {
                     result.vector[irow] = sum;
             } // for irow
         } else {
-            throw new IllegalArgumentException("cannot multiply a matrix and a vector of different size " + this.rowLen);
+            throw new IllegalArgumentException("cannot multiply a matrix and a vector of different size: " 
+            	+ this.toString(",") + " * " + vect2.toString(","));
         }
         return result;
     } // multiply(PolyVector)

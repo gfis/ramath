@@ -134,9 +134,20 @@ CALL TreeSolver -b 2 -l 4 -e "y^2 = x^3 - 4*x" -r same,transpose,dogrow,norm,inv
 TEST T35 FC7
 CALL TreeSolver -b 2 -l 5 -e " - 49 - 65*u - 28*u^2 - 4*u^3 + 75*v + 60*u*v + 12*u^2*v - 30*v^2 - 12*u*v^2 + 4*v^3" -r same,transpose,similiar,norm,invall
 
-
 TEST T41 EEC(4,1,3)
 CALL TreeSolver -b 2 -l 2 -e "a^4 + b^4 + c^4 - d^4"
+
+TEST T42 Euler bricks
+CALL TreeSolver -b 2 -l 2 -e "a^2 + b^2 = d^2; a^2 + c^2 = e^2; b^2 + c^2 = f^2" -r same,transpose,dogrow,norm,invall
+
+TEST T43 perfect Euler bricks
+CALL TreeSolver -b 2 -l 4 -e "a^2 + b^2 = d^2; a^2 + c^2 = e^2; b^2 + c^2 = f^2; a^2 + b^2 + c^2 = g^2" -r same,transpose,dogrow,norm,invall,igtriv
+
+# https://books.google.de/books?id=My19IcewAnoC&lpg=PA317&ots=V3hN58VkXU&dq=Fermat%20identities&hl=de&pg=PA322#v=onepage&q=Fermat%20identities&f=false
+# Google: Fermat identities
+# The Mathematical Career of Pierre de Fermat, 1601-1665  von Michael Sean Mahoney p.320 ff.
+TEST T44 test 
+CALL TreeSolver -b 4 -l 3 -e "7 + 7*a  + 13*b - 16*k" -r same,transpose,norm,igtriv,invall
 
 PACKAGE=org.teherba.ramath.symbolic.solver
 
@@ -367,3 +378,22 @@ CALL MonadicSolver -l 2 -e a^2+b^2-3*(c^2+d^2)
 
 TEST M44 binary solver, biquadratic
 CALL MonadicSolver -l 2 -e x^4-y^4-z^2
+#------------------------------------------------
+# Tree of Pythagorean triples
+
+TEST PY1 getMatrix
+CALL PythagoreanTreeGenerator
+
+TEST PY2 getMatrix
+CALL PythagoreanTreeGenerator -b 0 -l 10 -e "X; 3; 4; 5"
+
+TEST PY3 getMatrix
+CALL PythagoreanTreeGenerator -b 4 -l 10 -e "X; 3; 4; 5"
+
+#-------------------------------------------------
+# Euler Bricks
+TEST EB1 perfect?
+CALL TreeSolver -b 2 -l 3 -e "2*g^2 = (m^2 + n^2)^2 + (p^2 + q^2)^2 + (r^2 + s^2)^2" -r transpose,same,dogrow,norm,igtriv
+
+TEST EB2 perfect?
+CALL TreeSolver -b 2 -l 3 -e "a^2 + b^2 = d^2; a^2 + c^2 = e^2; b^2 + c^2 = f^2; g^2 = a^2 + b^2 + c^2" -r transpose,same,dogrow,norm,igtriv

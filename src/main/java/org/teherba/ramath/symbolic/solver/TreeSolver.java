@@ -188,14 +188,6 @@ public class TreeSolver extends BaseSolver {
         if (expr != null) {
             rset0 = RelationSet.parse(expr);
         }
-    /*
-        Vector tpcs = rset0.getTransposableClasses();
-        solver.setTransposables(tpcs);
-        if (tpcs.isMonotone()) { // no variable names can be transposed
-            solver.reasons.purge("transposable"); // TransposeReason is not checked if there are no transposable variables
-        } // isMonotone
-        rset0.setTuple(rset0.getExpressionMap(), solver.getTransposables());
-    */
         solver.solve(rset0);
     } // main
 
