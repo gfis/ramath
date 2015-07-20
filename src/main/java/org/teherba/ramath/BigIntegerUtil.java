@@ -63,9 +63,6 @@ public class BigIntegerUtil {
     // the following was taken from
     // http://i12www.ira.uka.de/~bubel/nightly/doc/api/src-html/de/uka/ilkd/key/strategy/termgenerator/RootsGenerator.html
 
-    private static final BigInteger one = BigInteger.ONE;
-    private static final BigInteger two = BigInteger.valueOf(2);
-
     /**
       * @return a number <tt>res</tt> with the property
       *         <tt>prod in [res^exp, (res+1)^exp)</tt>
@@ -81,7 +78,7 @@ public class BigIntegerUtil {
 
             BigInteger res = posRoot ( prod.abs (), exp ).negate ();
             while ( power ( res, exp ).compareTo ( prod ) > 0 )
-                res = res.subtract ( one );
+                res = res.subtract ( BigInteger.ONE );
 
             result = res;
         }
@@ -100,8 +97,8 @@ public class BigIntegerUtil {
         BigInteger lb = BigInteger.ZERO;
         BigInteger ub = prod;
         while ( !power ( lb, exp ).equals ( prod )
-                && ub.subtract ( lb ).compareTo ( one ) > 0 ) {
-            final BigInteger mid = ub.add ( lb ).divide ( two );
+                && ub.subtract ( lb ).compareTo ( BigInteger.ONE ) > 0 ) {
+            final BigInteger mid = ub.add ( lb ).divide ( TWO );
             if ( power ( mid, exp ).compareTo ( prod ) <= 0 ) {
                 lb = mid;
             } else {

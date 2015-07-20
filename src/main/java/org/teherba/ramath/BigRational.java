@@ -60,7 +60,7 @@ public class BigRational
         String number = rawNumber.replaceAll("[^\\d\\.\\/\\-\\+]", "");
         int slashPos = number.indexOf("/");
         if (slashPos < 0) { // integral
-        	slashPos = number.length();
+            slashPos = number.length();
             number += "/1";
         } // integral
         this.numerator   = new BigInteger(number.substring(0, slashPos), 10);
@@ -214,135 +214,138 @@ public class BigRational
         setB(BigInteger.valueOf(b));
     } // setB
 
-    /** Returns a BigRational whose value is (this + val).
-     *  The resulting fraction is not simplified: a/b + c/1 = (a*1 + c*b)/(b*1)
+    /** Returns a BigRational whose value is  <em>(this + val)</em>
+     *  The resulting fraction is simplified: <em>a/b + c = (a + c*b)/(b)</em>
      *  @param val value to be added to  this BigRational
      *  @return this + val
      */
     public BigRational add     (BigInteger  val) {
         return  BigRational.valueOf
-                ( (this.numerator                           ).add     (val           .multiply(this.denominator))
-                , (this.denominator                         )
-                );
+                ( (this.numerator  )
+                  .add     (val               .multiply(this.denominator))
+                , (this.denominator)
+                ).simplify();
     } // add(BigInteger)
 
-    /** Returns a BigRational whose value is (this + val).
-     *  The resulting fraction is not simplified: a/b + c/d = (a*d + c*b)/(b*d)
+    /** Returns a BigRational whose value is  <em>(this + val)</em>
+     *  The resulting fraction is simplified: <em>a/b + c/d = (a*d + c*b)/(b*d)</em>
      *  @param val value to be added to      this BigRational
      *  @return this + val
      */
     public BigRational add     (BigRational val) {
-        return  (BigRational.valueOf
-                ( (this.numerator  .multiply(val.getDenominator())).add     (val.getNumerator().multiply(this.denominator))
+        return  BigRational.valueOf
+                ( (this.numerator  .multiply(val.getDenominator()))
+                  .add     (val.getNumerator().multiply(this.denominator))
                 , (this.denominator.multiply(val.getDenominator()))
-                )).simplify();
+                ).simplify();
     } // add(BigRational)
 
-    /** Returns a BigRational whose value is (this - val).
-     *  The resulting fraction is not simplified: a/b - c/1 = (a*1 - c*b)/(b*1)
+    /** Returns a BigRational whose value is  <em>(this - val)</em>
+     *  The resulting fraction is simplified: <em>a/b - c = (a - c*b)/(b)</em>
      *  @param val value to be subtracted from this BigRational
      *  @return this - val
      */
     public BigRational subtract(BigInteger  val) {
         return  BigRational.valueOf
-                ( (this.numerator                           ).subtract(val           .multiply(this.denominator))
-                , (this.denominator                         )
-                );
+                ( (this.numerator  )
+                  .subtract(val               .multiply(this.denominator))
+                , (this.denominator)
+                ).simplify();
     } // subtract(BigInteger)
 
-    /** Returns a BigRational whose value is (this - val).
-     *  The resulting fraction is not simplified: a/b - c/d = (a*d - c*b)/(b*d)
+    /** Returns a BigRational whose value is  <em>(this - val)</em>
+     *  The resulting fraction is simplified: <em>a/b - c/d = (a*d - c*b)/(b*d)</em>
      *  @param val value to be subtracted from this BigRational
      *  @return this - val
      */
     public BigRational subtract(BigRational val) {
-        return  (BigRational.valueOf
-                ( (this.numerator  .multiply(val.getDenominator())).subtract(val.getNumerator().multiply(this.denominator))
+        return  BigRational.valueOf
+                ( (this.numerator  .multiply(val.getDenominator()))
+                  .subtract(val.getNumerator().multiply(this.denominator))
                 , (this.denominator.multiply(val.getDenominator()))
-                )).simplify();
+                ).simplify();
     } // subtract(BigRational)
 
-    /** Returns a BigRational whose value is (this * val).
-     *  The resulting fraction is not simplified: a/b * c/1 = (a*c)/(b*1)
+    /** Returns a BigRational whose value is  <em>(this * val)</em>
+     *  The resulting fraction is simplified: <em>a/b * c = (a*c)/(b)</em>
      *  @param val value to be multiplied with this BigRational
      *  @return this * val
      */
     public BigRational multiply(BigInteger  val) {
-        return BigRational.valueOf
-                ( (this.numerator                           ).multiply(val                                       )
-                , (this.denominator                         )
-                );
+        return  BigRational.valueOf
+                ( (this.numerator  ).multiply(val                 )
+                , (this.denominator                               )
+                ).simplify();
     } // multiply(BigInteger)
 
-    /** Returns a BigRational whose value is (this * val).
-     *  The resulting fraction is not simplified: a/b * c/d = (a*c)/(b*d)
+    /** Returns a BigRational whose value is  <em>(this * val)</em>
+     *  The resulting fraction is simplified: <em>a/b * c/d = (a*c)/(b*d)</em>
      *  @param val value to be multiplied with this BigRational
      *  @return this * val
      */
     public BigRational multiply(BigRational val) {
-        return  (BigRational.valueOf
-                ( (this.numerator                           ).multiply(val.getNumerator()                        )
+        return  BigRational.valueOf
+                ( (this.numerator  .multiply(val.getNumerator  ()))
                 , (this.denominator.multiply(val.getDenominator()))
-                )).simplify();
+                ).simplify();
     } // multiply(BigRational)
 
-    /** Returns a BigRational whose value is (this * val).
-     *  The resulting fraction is not simplified: (a/b) / (c/1) = (a*1)/(b*c)
+    /** Returns a BigRational whose value is  <em>(this * val)</em>
+     *  The resulting fraction is simplified: <em>(a/b) / (c) = (a)/(b*c)</em>
      *  @param val value by which this BigRational is to be divided
      *  @return this / val
      */
     public BigRational divide  (BigInteger  val) {
         return BigRational.valueOf
-                ( (this.numerator                           )
-                , (this.denominator                         ).multiply(val                                       )
-                );
+                ( (this.numerator                                 )
+                , (this.denominator                               ).multiply(val                )
+                ).simplify();
     } // divide  (BigInteger)
 
-    /** Returns a BigRational whose value is (this / val).
-     *  The resulting fraction is not simplified: (a/b) / (c/d) = (a*d)/(b*c)
+    /** Returns a BigRational whose value is  <em>(this / val)</em>
+     *  The resulting fraction is simplified: <em>(a/b) / (c/d) = (a*d)/(b*c)</em>
      *  @param val value by which this BigRational is to be divided
      *  @return this / val
      */
     public BigRational divide  (BigRational val) {
         return  (BigRational.valueOf
-                ( (this.numerator  .multiply(val.getDenominator()))
-                , (this.denominator                         ).multiply(val.getNumerator()                        )
-                )).simplify();
+                ( (this.numerator  .multiply(val.getDenominator() )                             )
+                , (this.denominator                               ).multiply(val.getNumerator() )                        )
+                ).simplify();
     } // divide  (BigRational)
 
     /** Returns a BigRational whose value is (this**exp) - raised to some exponent.
      *  The resulting fraction is simplified.
-     *  @param exp the power to which this BigRational is to be raised
+     *  @param exp the power to which this BigRational is to be raised, may be negative
      *  @return this**exp
      */
     public BigRational pow     (int exp) {
-        return exp == 1
-            ? this.clone()
-            : BigRational.valueOf
-                ( (this.numerator  .pow(exp))
-                , (this.denominator.pow(exp))
-                );
-    } // pow  (BigRational)
-
-    /** Tries to find an integer root
-     *  (in a very primitive way)
-     *  @param power determine the root of this number
-     *  @param exp exponent for the result
-     *  @return root such that root^exp = power
-     */
-    public static BigInteger root(BigInteger power, int exp) {
-        BigInteger result = BigInteger.ZERO;
-        BigInteger rootn  = BigInteger.ONE.add(BigInteger.ONE); // = 2
-        int comp = rootn.pow(exp).compareTo(power);
-        while (comp < 0) {
-            rootn = rootn.add(BigInteger.ONE);
-            comp  = rootn.pow(exp).compareTo(power);
-        } // while <
-        if (comp == 0) {
-            result = rootn;
-        }
+        BigRational result;
+        switch (exp) {
+            case 0:
+                result = BigRational.ONE;
+                break;
+            case 1:
+                result = this.clone();
+                break;
+            case 2:
+                result = this.clone();
+                result = result.multiply(result);
+                break;
+            case -1:
+                result = BigRational.valueOf(this.denominator, this.numerator).simplify();
+                break;
+            default:
+                if (exp >= 0) {
+                    result = BigRational.valueOf(this.numerator  .pow(exp), this.denominator.pow(exp));
+                } else {
+                    exp = - exp;
+                    result = BigRational.valueOf(this.denominator.pow(exp), this.numerator  .pow(exp)).simplify();
+                }
+                break;
+        } // switch exp
         return result;
-    } // root1
+    } // pow()
 
     /** Computes the greatest common divisor of the numerators
      *  @param brat2 2nd BigRational
@@ -528,6 +531,7 @@ public class BigRational
         System.out.println("3/4 / 5/7 = " + (BigRational.valueOf(3,4)).divide   (BigRational.valueOf(5,7)).getDecimal().toString());
         System.out.println("3/4 * 4/3 = " + (BigRational.valueOf(3,4)).multiply (BigRational.valueOf(4,3))             .toString());
         System.out.println("3/4 pow 3 = " + (BigRational.valueOf(3,4)).pow      (3                   )                 .toString());
+        System.out.println("3/4 pow -2= " + (BigRational.valueOf(3,4)).pow      (-2                  )                 .toString());
         System.out.println("3/4 <>5/7 = " + (BigRational.valueOf(3,4)).compareTo(BigRational.valueOf(5,7)));
         System.out.println("3/4 == 5/7 = "     + (BigRational.valueOf(3,4)).equals   (BigRational.valueOf(5,7)));
         System.out.println("3/4 == -12/-16 = " + (BigRational.valueOf(3,4)).equals   (new BigRational("-12/-16")));

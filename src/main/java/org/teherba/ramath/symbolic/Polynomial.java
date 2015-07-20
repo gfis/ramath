@@ -37,8 +37,10 @@ import  org.teherba.ramath.symbolic.Monomial;
 import  org.teherba.ramath.symbolic.PolynomialParser;
 import  org.teherba.ramath.symbolic.RelationSet;
 import  org.teherba.ramath.symbolic.VariableMap;
+import  org.teherba.ramath.BigRational;
 import  org.teherba.ramath.BigIntegerUtil;
 import  org.teherba.ramath.BigRational;
+import  org.teherba.ramath.Coefficient;
 import  org.teherba.ramath.linear.Vector;
 import  org.teherba.ramath.util.ExpressionReader;
 import  org.teherba.ramath.util.ModoMeter;
@@ -572,7 +574,7 @@ public class Polynomial implements Cloneable, Serializable {
         Iterator <String> titer = monomials.keySet().iterator();
         while (titer.hasNext()) {
             Monomial monomial = monomials.get(titer.next());
-            monomial.setCoefficient(monomial.getCoefficient().negate());
+            monomial.setCoefficient(Coefficient.valueOf(monomial.getCoefficient().negate()));
         } // while titer
         return this;
     } // negativeOf
@@ -1322,7 +1324,7 @@ x^2 + 3*x^3 + 2*x^4
     public Polynomial normalize() {
         BigInteger divisor = this.gcdCoefficients(true);
         if (divisor.compareTo(BigInteger.ONE) != 0 && this.hasVariable()) { // divide by GCD if > 1
-           this.divideBy(new Monomial(divisor));
+           this.divideBy(new Monomial(Coefficient.valueOf(divisor)));
         }
         return this;
     } // normalize
