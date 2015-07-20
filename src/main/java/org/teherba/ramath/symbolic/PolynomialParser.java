@@ -1,5 +1,6 @@
 /*  PolynomialParser: parser for the recognition of arithmetic expressions
  *  @(#) $Id: PolynomialParser.java 522 2010-07-26 07:14:48Z gfis $
+ *  2015-07-17: relaxed rules for '*': may be omitted after a number or ')'
  *  2013-09-20: BigRational -> BigIntegerUtil
  *  2013-08-14: decode %-escaped sequence and reprocess the corresponding character
  *  2013-07-03: less strict syntax "number variable" expanded to "number * variable"
@@ -66,6 +67,7 @@ public class PolynomialParser extends Polynomial {
             , IN_NAME       // after the first letter of a name
             , IN_NUMBER     // after the first digit of a number
             , IN_OPERATOR   // after first character of a relational or boolean operator, or after '%'
+            , IN_CLOSE      // after ')' - eventually insert '*'
             };
 
     /** pushdown stack for operators and parentheses */
@@ -203,6 +205,7 @@ public class PolynomialParser extends Polynomial {
                                         postfix.add(elem.substring(1));
                                     }
                                 } // while
+                                state = State.IN_CLOSE;
                                 break;
                             default:
                                 if (false) {
@@ -225,6 +228,11 @@ public class PolynomialParser extends Polynomial {
                         if (false) {
                         } else if (Character.isJavaIdentifierPart(ch)) {
                             buffer.append(ch);
+                        } else if (ch == '(') {
+                            postfix.add(buffer.toString());
+                            replaceLower("p*");
+                            readOff = false;
+                            state = State.IN_START;
                         } else {
                             postfix.add(buffer.toString());
                             readOff = false;
@@ -237,6 +245,11 @@ public class PolynomialParser extends Polynomial {
                         } else if (Character.isDigit(ch)) {
                             buffer.append(ch);
                         } else if (Character.isLetter(ch)) { // imply a multiplication operator
+                            postfix.add(buffer.toString());
+                            replaceLower("p*");
+                            readOff = false;
+                            state = State.IN_START;
+                        } else if (ch == '(') {
                             postfix.add(buffer.toString());
                             replaceLower("p*");
                             readOff = false;
@@ -313,6 +326,15 @@ public class PolynomialParser extends Polynomial {
                         } // switch 1st ch
                         state = State.IN_START;
                         break; // IN_OPERATOR
+                    
+                    case IN_CLOSE: // after ')' - eventually insert a '*'
+                        if (false) {
+                        } else if (Character.isJavaIdentifierPart(ch)) {
+                            replaceLower("p*");
+						}
+                        readOff = false;
+                        state = State.IN_START;
+						break; // IN_CLOSE                    	
 
                     default: // should never be reached
                         System.err.println("invalid state " + state + " in PolynomialParser.shuntingYardAlgorithm");

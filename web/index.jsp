@@ -2,6 +2,7 @@
 <%--
     Main form for application 'ramath'
     @(#) $Id: index.jsp 195 2009-07-09 05:38:17Z gfis $
+    2015-07-17: opt=norm; poly -> rset
     2013-09-21: valueMap -> varMap
     2009-07-07: copied from xtrans
     caution, must be UTF-8 encoded: äöüÄÖÜß
@@ -41,7 +42,7 @@
     int width  = 100;
     int height = 4;
     String[] optArea    = new String []
-            { "poly"    // 0
+            { "rset"    // 0
             , "cfra"    // 1
             , "eecj"    // 2
             } ;
@@ -52,8 +53,8 @@
             } ;
     Object
     field = session.getAttribute("view"     );  String view  = (field != null) ? (String) field : "upper";
-    field = session.getAttribute("area"     );  String area  = (field != null) ? (String) field : "poly";
-    field = session.getAttribute("opt"      );  String opt   = (field != null) ? (String) field : "";
+    field = session.getAttribute("area"     );  String area  = (field != null) ? (String) field : "rset";
+    field = session.getAttribute("opt"      );  String opt   = (field != null) ? (String) field : "norm";
     field = session.getAttribute("form1"    );  String form1 = (field != null) ? (String) field : "(a-b)^4";
     field = session.getAttribute("form2"    );  String form2 = (field != null) ? (String) field : "";
     field = session.getAttribute("varmap"   );
@@ -91,7 +92,7 @@
                     <br />
                     <br />
                     Options<br />
-                    <input name="opt" maxsize="60" size="<%= width / 4 %>" value="<%= opt %>" />
+                    <input name="opt" maxsize="60" size="<%= width / 4 %>" value="<%= opt %>" /> (norm)
                 </td>
                 <td>
                 Variable Substitutions<br />

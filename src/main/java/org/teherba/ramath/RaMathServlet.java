@@ -1,9 +1,10 @@
 /*  RaMathServlet.java - Rational and Symbolic Mathematics
  *  @(#) $Id: RaMathServlet.java 199 2009-07-13 20:16:23Z gfis $
+ *  2015-07-17: opt=norm; Polynomial -> RelationSet
  *  2015-06-15: Polynomial.parse was not static
  *  2013-10-30: symmetrical form1 and form2
  *  2013-09-21: variableMap
- *  2009-07-07, Georg Fischer: for symbolic polynomial, rewritten from dbtab.pl
+ *  2009-07-07, Georg Fischer: for symbolic.Polynomial
  */
 /*
  * Copyright 2009 Dr. Georg Fischer <punctum at punctum dot kom>
@@ -21,6 +22,7 @@
  * limitations under the License.
  */
 package org.teherba.ramath;
+import  org.teherba.ramath.symbolic.RelationSet;
 import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.VariableMap;
 import  java.io.IOException;
@@ -85,10 +87,10 @@ public class RaMathServlet extends HttpServlet {
     /** Gets the value of an HTML input field, maybe as empty string
      *  @param request request for the HTML form
      *  @param name name of the input field
-     *  @throws IOException
+     *  @param initValue initial value if the parameter was not set
      *  @return non-null (but possibly empty) string value of the input field
      */
-    private String getInputField(HttpServletRequest request, String name) {
+    private String getInputField(HttpServletRequest request, String name, String initValue) {
         String value = request.getParameter(name);
         if (value == null) {
             value = "";
@@ -103,19 +105,16 @@ public class RaMathServlet extends HttpServlet {
      */
     public void generateResponse(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
-        	Polynomial poly = null;
+        	RelationSet rset = null;
         	VariableMap varMap = null;
         	int index = 0;
         	boolean found = false;
             HttpSession session = request.getSession();
-            String view     = getInputField(request, "view");
-            String area     = getInputField(request, "area");
-            String opt      = getInputField(request, "opt");
-            String form1    = getInputField(request, "form1");
-            if (form1.equals("")) {
-                form1 = "(a-b)^3";
-            }
-            String form2    = getInputField(request, "form2");
+            String view     = getInputField(request, "view"	, "");
+            String area     = getInputField(request, "area"	, "rset");
+            String opt      = getInputField(request, "opt"	, "norm");
+            String form1    = getInputField(request, "form1", "(a-b)^3");
+            String form2    = getInputField(request, "form2", "");
             session.setAttribute("view"  , view);
             session.setAttribute("area"  , area);
             session.setAttribute("opt"   , opt);
@@ -126,9 +125,9 @@ public class RaMathServlet extends HttpServlet {
             if (false) {
             } else if (view.equals("upper")) {
                 if (false) {
-                } else if (area.equals("poly")) {
-                    poly = Polynomial.parse(form1);
-                    varMap = poly.getExpressionMap("x"); // maps x -> name
+                } else if (area.equals("rset")) {
+                    rset = RelationSet.parse(form1);
+                    varMap = rset.getExpressionMap("x"); // maps x -> name
                     index = 0;
                     found = true;
                     while (found) {
@@ -147,7 +146,11 @@ public class RaMathServlet extends HttpServlet {
                         index ++;
                     } // while found
                     session.setAttribute("varmap", varMap);
-                    form2 = poly.substitute(varMap).normalize().toString();
+                    rset = rset.substitute(varMap);
+                    if (opt.indexOf("norm") >= 0) {
+                    	rset.normalize();
+                    }
+                    form2 = rset.toString();
                     session.setAttribute("form2", form2);
                 } else if (area.equals("cfra")) {
                 } else if (area.equals("eecj")) {
@@ -157,9 +160,9 @@ public class RaMathServlet extends HttpServlet {
                 }
             } else if (view.equals("lower")) {
                 if (false) {
-                } else if (area.equals("poly")) {
-                    poly = Polynomial.parse(form2);
-                    varMap = poly.getExpressionMap("x"); // maps x -> name
+                } else if (area.equals("rset")) {
+                    rset = RelationSet.parse(form2);
+                    varMap = rset.getExpressionMap("x"); // maps x -> name
                     index = 0;
                     found = true;
                     while (found) {
@@ -178,7 +181,11 @@ public class RaMathServlet extends HttpServlet {
                         index ++;
                     } // while found
                     session.setAttribute("varmap", varMap);
-                    form1 = poly.substitute(varMap).normalize().toString();
+                    rset = rset.substitute(varMap);
+                    if (opt.indexOf("norm") >= 0) {
+                    	rset.normalize();
+                    }
+                    form1 = rset.toString();
                     session.setAttribute("form1", form1);
                 } else if (area.equals("cfra")) {
                 } else if (area.equals("eecj")) {

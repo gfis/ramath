@@ -1,5 +1,6 @@
 /*  Monomial: a product with a signed numeric coefficient and optional exponentiated variable(s)
  *  @(#) $Id: Monomial.java 522 2010-07-26 07:14:48Z gfis $
+ *  2015-07-17: degree
  *  2015-03-25: firstName
  *  2013-09-20: BigRational -> BigIntegerUtil
  *  2013-08-20: renamed from Term
@@ -283,6 +284,30 @@ public class Monomial implements Cloneable, Serializable {
     public boolean isZero() {
         return /* vars.size() == 0 && */ this.getCoefficient().equals(Coefficient.ZERO);
     } // isZero
+
+    /** Determines the degree, that is the sum of exponents of the individual factors
+     *  @param upperConst whether the exponents of uppercase variables should not be counted
+     *  @return degree >= 0
+     */
+    public int degree(boolean upperConst) {
+        int result = 0;
+        Iterator <String> viter = vars.keySet().iterator();
+        while (viter.hasNext()) {
+            String name = viter.next();
+            if (! upperConst || name.compareTo("a") >= 0) {
+                result += this.getExponent(name);
+                // System.out.println("degree: " + name + "^" + this.getExponent(name));
+            } // upperSubst
+        } // while viter
+        return result;
+	} // degree(boolean)
+
+    /** Determines the degree, that is the sum of exponents
+     *  @return degree >= 0
+     */
+    public int degree() {
+        return this.degree(false);
+    } // degree()
 
     //=================
     // Monomial Order

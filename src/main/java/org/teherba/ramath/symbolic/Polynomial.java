@@ -1,6 +1,7 @@
 /*  Polynomial: a symbolic, multivariate polynomial with addition, multiplication
  *  and exponentiation
  *  @(#) $Id: Polynomial.java 744 2011-07-26 06:29:20Z gfis $
+ *  2015-07-17: degree, isHomogeneous
  *  2015-06-17: modulus removed, coefficients are BigRatiaonal again
  *  2015-03-25: isPowerSum
  *  2015-02-13: getTransposition
@@ -927,15 +928,6 @@ x^2 + 3*x^3 + 2*x^4
      *  @param input the input string, with whitespace, for example " + 17*a0^2*a1 + a2^2*a3^3 - 4*b4"
      *  @return a reference to a new polynomial
      */
-    public Polynomial parse_deprecated(String input) {
-        return (new PolynomialParser()).parseFrom(input);
-    } // parse
-
-    /** Returns a new polynomial constructed from a string representation, possibly with an
-     *  error message inserted at the point where parsing could not proceed.
-     *  @param input the input string, with whitespace, for example " + 17*a0^2*a1 + a2^2*a3^3 - 4*b4"
-     *  @return a reference to a new polynomial
-     */
     public static Polynomial parse(String input) {
         return (new PolynomialParser()).parseFrom(input);
     } // parse
@@ -1086,12 +1078,55 @@ x^2 + 3*x^3 + 2*x^4
         return result;
     } // isMonoVariate
 
-    /** Determines whether there is exactly one variable in the polynomial.
+    /** Determines whether there is exactly one variable in the Polynomial.
      *  @return true if there is only one variable, false otherwise
      */
     public boolean isUniVariate() {
         return getVariableMap().size() == 1;
     } // isUniVariate
+
+    /** Determines the degree, that is the sum of exponents in all {@link Monomial}s
+     *  if it is the same
+     *  @param upperConst whether the exponents of uppercase variables should not be counted
+     *  @return degree >= 0
+     */
+    public int degree(boolean upperConst) {
+        int result = 0;
+        Iterator <String> titer = monomials.keySet().iterator();
+        if (! this.isConstant()) {
+            result = monomials.get(titer.next()).degree(upperConst);
+        }
+        while (result >= 0 && titer.hasNext()) {
+            int deg1 = monomials.get(titer.next()).degree(upperConst);
+            if (deg1 != result) {
+                result = -1;
+            }
+        } // while titer
+        return result;
+	} // degree(boolean)
+	
+    /** Determines the degree, that is the sum of exponents in all {@link Monomial}s
+     *  if it is the same
+     *  @return degree >= 0, or -1 if there are different sums of exponents
+     */
+    public int degree() {
+    	return this.degree(false);
+    } // degree()
+
+    /** Determines whether all {@link Monomial}s are of the same {@link #degree}.
+     *  @param upperConst whether the exponents of uppercase variables should not be counted
+     *  @return true if the sum of exponents in all Monomials is the same, false otherwise
+     */
+    public boolean isHomogeneous(boolean upperConst) {
+        return this.degree(upperConst) >= 0;
+    } // isHomogeneous
+
+    /** Determines whether all {@link Monomial}s are of the same {@link #degree}.
+     *  @return true if the sum of exponents in all Monomials is the same, false otherwise
+     */
+    public boolean isHomogeneous() {
+        return this.degree(false) >= 0;
+    } // isHomogeneous
 
     /** Gets the greatest common (positive) divisor of the coefficients of the variable {@link Monomial}s,
      *  or of all monomials if they are integral, or +1.
@@ -1205,7 +1240,7 @@ x^2 + 3*x^3 + 2*x^4
         return result;
     } // getVariablePowers
 
-    /** Takes the variable names from <em>monomial</em>,
+    /** Takes the variable names from <em>monomial2</em>,
      *  creates an empty {@link RelationSet} and, for all {@link Monomial}s that
      *  occur as combinations of powers of the selected variables in <em>this</em>
      *  Polynomial, adds a new {@link Polynomial} to the set which has the
@@ -2000,7 +2035,7 @@ x^2 + 3*x^3 + 2*x^4
             System.out.println(poly2.toString(true));
         } else {
             String opt = args[iarg ++];
-            if (! opt.startsWith("-")) {
+            if (! opt.startsWith("-") || ! opt.matches("\\-[a-z]+")) {
                 poly1 = Polynomial.parse(opt);
                 System.out.println(poly1.toString());
                 poly1.printProperties();
@@ -2029,6 +2064,11 @@ x^2 + 3*x^3 + 2*x^4
                     Polynomial nominY = (new Polynomial("8")).multiply(y.pow(3));
                     System.out.println(denomX.toString() + " / " + nominX.toString());
                     System.out.println(denomY.toString() + " / " + nominY.toString());
+
+                } else if (opt.startsWith("-degree")) {
+                    poly1 = Polynomial.parse(args[iarg ++]);
+                    System.out.println(poly1.toString() + ".degree()     = " + poly1.degree()    );
+                    System.out.println(poly1.toString() + ".degree(true) = " + poly1.degree(true));
 
                 } else if (opt.startsWith("-equiv")) {
                     poly1 = Polynomial.parse(args[iarg ++]);

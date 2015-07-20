@@ -14,7 +14,7 @@ TESTDIR=test
 WROB=../../mater/ramath/eec/wroblewski
 
 all: solver
-regression: symbolic linear solver
+regression: simple symbolic linear matrix solver
 linear:
 	$(REGR) test/linear.tests 	$(TEST) 2>&1 \
 	| tee regression.log.tmp

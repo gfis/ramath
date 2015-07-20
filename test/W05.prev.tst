@@ -19,9 +19,9 @@
 
 <body>
     <!--
-    view= "upper", area="poly", opt=""
+    view= "upper", area="rset", opt=""
     form1="(a%2Bb%2Bc)^6"
-    form2="a^6 + 6*a^5*b + 15*a^4*b^2 + 20*a^3*b^3 + 15*a^2*b^4 + 6*a*b^5 + b^6 + 6*a^5*c + 30*a^4*b*c + 60*a^3*b^2*c + 60*a^2*b^3*c + 30*a*b^4*c + 6*b^5*c + 15*a^4*c^2 + 60*a^3*b*c^2 + 90*a^2*b^2*c^2 + 60*a*b^3*c^2 + 15*b^4*c^2 + 20*a^3*c^3 + 60*a^2*b*c^3 + 60*a*b^2*c^3 + 20*b^3*c^3 + 15*a^2*c^4 + 30*a*b*c^4 + 15*b^2*c^4 + 6*a*c^5 + 6*b*c^5 + c^6"
+    form2="a^6 + 6*a^5*b + 15*a^4*b^2 + 20*a^3*b^3 + 15*a^2*b^4 + 6*a*b^5 + b^6 + 6*a^5*c + 30*a^4*b*c + 60*a^3*b^2*c + 60*a^2*b^3*c + 30*a*b^4*c + 6*b^5*c + 15*a^4*c^2 + 60*a^3*b*c^2 + 90*a^2*b^2*c^2 + 60*a*b^3*c^2 + 15*b^4*c^2 + 20*a^3*c^3 + 60*a^2*b*c^3 + 60*a*b^2*c^3 + 20*b^3*c^3 + 15*a^2*c^4 + 30*a*b*c^4 + 15*b^2*c^4 + 6*a*c^5 + 6*b*c^5 + c^6 = 0"
     valmap="{a=>a,b=>b,c=>c}"
     -->
 
@@ -32,7 +32,7 @@
             <tr valign="top">
                 <td>Area<br />
                     <select name="area" size="3">
-                    <option value="poly" selected>Symbolic Polynomial</option>
+                    <option value="rset" selected>Symbolic Polynomial</option>
 <option value="cfra">Continued Fraction</option>
 <option value="eecj">Euler's Extended Conjecture</option>
 
@@ -40,7 +40,7 @@
                     <br />
                     <br />
                     Options<br />
-                    <input name="opt" maxsize="60" size="25" value="" />
+                    <input name="opt" maxsize="60" size="25" value="" /> (norm)
                 </td>
                 <td>
                 Variable Substitutions<br />
@@ -70,7 +70,7 @@
 
     <form action="servlet" method="get">
         <input type = "hidden" name="view" value="lower" />
-        <input type = "hidden" name="area" value="poly" />
+        <input type = "hidden" name="area" value="rset" />
         <input type = "hidden" name="opt"  value="" />
         <table cellpadding="0" border="0">
             <tr valign="top">
@@ -83,7 +83,7 @@
             </tr>
             <tr valign="top">
                 <td colspan="2">
-                    <textarea name="form2" cols="100" rows="4">a^6 + 6*a^5*b + 15*a^4*b^2 + 20*a^3*b^3 + 15*a^2*b^4 + 6*a*b^5 + b^6 + 6*a^5*c + 30*a^4*b*c + 60*a^3*b^2*c + 60*a^2*b^3*c + 30*a*b^4*c + 6*b^5*c + 15*a^4*c^2 + 60*a^3*b*c^2 + 90*a^2*b^2*c^2 + 60*a*b^3*c^2 + 15*b^4*c^2 + 20*a^3*c^3 + 60*a^2*b*c^3 + 60*a*b^2*c^3 + 20*b^3*c^3 + 15*a^2*c^4 + 30*a*b*c^4 + 15*b^2*c^4 + 6*a*c^5 + 6*b*c^5 + c^6
+                    <textarea name="form2" cols="100" rows="4">a^6 + 6*a^5*b + 15*a^4*b^2 + 20*a^3*b^3 + 15*a^2*b^4 + 6*a*b^5 + b^6 + 6*a^5*c + 30*a^4*b*c + 60*a^3*b^2*c + 60*a^2*b^3*c + 30*a*b^4*c + 6*b^5*c + 15*a^4*c^2 + 60*a^3*b*c^2 + 90*a^2*b^2*c^2 + 60*a*b^3*c^2 + 15*b^4*c^2 + 20*a^3*c^3 + 60*a^2*b*c^3 + 60*a*b^2*c^3 + 20*b^3*c^3 + 15*a^2*c^4 + 30*a*b*c^4 + 15*b^2*c^4 + 6*a*c^5 + 6*b*c^5 + c^6 = 0
                     </textarea>
                 </td>
             </tr>

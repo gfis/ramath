@@ -44,6 +44,9 @@ public class ReasonFactory extends ArrayList<BaseReason> {
     /** List of various minor solver features */
     protected HashMap<String, String> features;
 
+	/** Feature: show FAILUREs */
+	private boolean showFail = false;
+
     //--------------
     // Construction
     //--------------
@@ -95,13 +98,21 @@ public class ReasonFactory extends ArrayList<BaseReason> {
     public BaseReason addReason(String code) {
         BaseReason result = null; // assume success
         if (false) {
-        } else if (code.equals("base"       )) { result = addReasonClass(code, "BaseReason"       );
-        } else if (code.equals("dogrow"     )) { result = addReasonClass(code, "DoGrowReason"     );
-        } else if (code.equals("grow"       )) { result = addReasonClass(code, "GrowingReason"    );
-        } else if (code.equals("same"       )) { result = addReasonClass(code, "SameReason"       );
-        } else if (code.equals("similiar"   )) { result = addReasonClass(code, "SimiliarReason"   );
-        } else if (code.equals("transpose"  )) { result = addReasonClass(code, "TransposeReason"  );
-        } else { // unknown reason -> feature
+        } else if (code.startsWith("base"       )) { result = addReasonClass(code, "BaseReason"       );
+        } else if (code.startsWith("dogrow"     )) { result = addReasonClass(code, "DoGrowReason"     );
+        } else if (code.startsWith("grow"       )) { result = addReasonClass(code, "GrowingReason"    );
+        } else if (code.startsWith("same"       )) { result = addReasonClass(code, "SameReason"       );
+        } else if (code.startsWith("sim"        )) { result = addReasonClass(code, "SimiliarReason"   );
+        } else if (code.startsWith("transp"     )) { result = addReasonClass(code, "TransposeReason"  );
+        } else if (code.startsWith("showf"      )) { 
+        	showFail = true;
+        	features.put(code, code);
+        } else { // unknown reason -> feature (codes are not checked)
+		/*  BaseSolver currently understands the following features:
+	        igtriv = reasons.hasFeature("igtriv");
+	        invall = reasons.hasFeature("invall");
+	        norm   = reasons.hasFeature("norm"  );
+		*/
             features.put(code, code);
         }
         return result;
@@ -218,7 +229,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         String decision = this.check(solver, rset2);
         if (false) {
         } else if (decision.startsWith(VariableMap.FAILURE))   { 
-                if (solver.debug >= 2) {
+                if (showFail && solver.debug >= 1) {
                     solver.trace.print(vmap2.toVector() + ": ");
                     solver.trace.println(decision);
                 }
@@ -231,8 +242,8 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         } else { // UNKNOWN || SUCCESS
                 if (solver.debug >= 1) {
                     solver.trace.print(vmap2.toVector() + ": ");
-					if (solver.igtriv && decision.indexOf("trivial") >= 0) {
-						decision = VariableMap.UNKNOWN;
+                    if (solver.igtriv && decision.indexOf("trivial") >= 0) {
+                        decision = VariableMap.UNKNOWN;
                     }
                     solver.trace.print(decision);
                     solver.trace.print(" " + solver.polish(rset2));

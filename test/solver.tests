@@ -33,16 +33,16 @@ TEST T02 tree solver, sqrt(5) (proof in 2 steps)
 CALL TreeSolver -l 4 -e "5*q^2 - p^2" 
 
 TEST T03 Fermat (proof in 2 steps)
-CALL TreeSolver -l 4 -e "a^2 + b^2 - 3*(c^2 + d^2)" 
+CALL TreeSolver -l 4 -e "a^2 + b^2 - 3*(c^2 + d^2)" -r transpose,same,norm,invall,igtriv,showfail
 
 TEST T04 tree solver, biquadratic minus
 CALL TreeSolver -l 6 -e "x^4 - y^4 - z^2"
 
 TEST T05 FLT(4), biquadratic plus
-CALL TreeSolver -l 4 -e "x^4 + y^4 - z^2" -r same,transpose,norm,invall
+CALL TreeSolver -l 4 -e "x^4 + y^4 - z^2" -r same,transpose,similiar,igtriv
 
 TEST T06 Markov(3, solvable)
-CALL TreeSolver -l 4 -e "x^2 + y^2 + z^2 - 3*x*y*z"
+CALL TreeSolver -l 4 -e "x^2 + y^2 + z^2 - 3*x*y*z" -r transpose,same,norm,invall,igtriv
 
 TEST T07 FLT(3) mod 2
 CALL TreeSolver -b 2 -l 3 -e "a^3 + b^3 - c^3" -r transpose,same,norm,invall
@@ -64,20 +64,21 @@ CALL TreeSolver -l 4 -e "x^2 + y^2 - 3*z^2"
 # -r transpose,dogrow
 
 TEST T13 modified FLT(3) mod 2
-CALL TreeSolver -b 2 -l 3 -e "a^3 + 3*b^3 - 9*c^3" -r "transposable,same,similiar,norm,invall"
+CALL TreeSolver -b 2 -l 3 -e "a^3 + 3*b^3 - 9*c^3" -r "transposable,same,similiar,norm"
 
 TEST T14 modified FLT(3) mod 3 proof
-CALL TreeSolver -b 3 -l 3 -e "a^3 + 3*b^3 - 9*c^3" -d 2 -r "transposable,same,dogrow,norm,invall"
+CALL TreeSolver -b 3 -l 3 -e "a^3 + 3*b^3 - 9*c^3" -r "transposable,same,similiar,dogrow,norm,igtriv"
 
 TEST T15 modified FLT(3) mod 6 no descent?
-CALL TreeSolver -b 6 -l 2 -e "a^3 + 3*b^3 - 9*c^3" -r "transposable,same,similiar,norm,invall"
+CALL TreeSolver -b 6 -l 2 -e "a^3 + 3*b^3 - 9*c^3" -r "transposable,same,similiar,norm,igtriv"
 
 TEST T16 Pythagoras
 CALL TreeSolver -b 2 -l 4 -e "a^2 + b^2 - c^2"
 
-TEST T17 FLT(3) modified, Euler, proof=1 (http://www.cut-the-knot.org/arithmetic/BasicsOfInfiniteDescent.shtml)
-CALL TreeSolver -b 2 -l 4 -e "a^3 + 2*b^3 - 4*c^3" -r "transposable,same,dogrow,norm,invall"
+# Euler, proof=1 (http://www.cut-the-knot.org/arithmetic/BasicsOfInfiniteDescent.shtml)
 # also Keith Conrad: Proofs by Descent, Example 1.1
+TEST T17 FLT(3) modified
+CALL TreeSolver -b 2 -l 4 -e "a^3 + 2*b^3 - 4*c^3" -r "transpose,same,dogrow,norm,invall,showfail"
 
 TEST T18 Markov(2, unsolvable, power, proof)
 CALL TreeSolver -l 6 -e "(x + 1)^2 + (y + 1)^2 + (z + 1)^2 - 2*(x + 1) * (y + 1) * (z + 1)" 
@@ -92,17 +93,17 @@ CALL TreeSolver -b 2 -l 2 -e "(m^2 - n^2)^2 + (2*m*n)^2 - (m^2 + n^2)^2"
 # CALL TreeSolver -b 3 -l 1 -e "a^6 + b^6 + c^6 + d^6 + e^6 - f^6"
 
 TEST T22 FLT(3)=Fermat/Carcavi(6) mod 3
-CALL TreeSolver -b 2 -l 4 -e "a^3 + b^3 - c^3" -r same,transpose,norm
+CALL TreeSolver -b 2 -l 4 -e "a^3 + b^3 - c^3" -r same,transpose,igtriv,norm
 
 TEST T23 FLT(5) mod 2
-CALL TreeSolver -b 2 -l 2 -e "a^5 + b^5 - c^5" 
+CALL TreeSolver -b 2 -l 2 -e "a^5 + b^5 - c^5" -r same.similiar,transpose,igtriv,norm
 
 # Smart p. 11 Elliptic Curve; Solutions: x=5,y=+-11; x=2,y=+-2
 TEST T24 Smart p. 11 Elliptic Curve
 CALL TreeSolver -b 2 -l 5 -e "y^2 - x^3 + 4 = 0" -r tran5pose,same,dogrow
 
 TEST T25 Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3]; http://math.stackexchange.com/questions/677422/solve-x22-y3-using-infinite-descent; growing !
-CALL TreeSolver -b 2 -l 7 -e "x^2 + 2 - y^3" -r same,norm,invall
+CALL TreeSolver -b 2 -l 7 -e "x^2 + 2 - y^3" -r same,invall,showfail
 
 TEST T26 Squeeze; https://hcmop.wordpress.com/2012/04/09/techniques-in-solving-diophantine-equations-part-2/
 CALL TreeSolver -b 2 -l 8 -e "x * (x + 1) * (x + 7) * (x + 8) - y^2"
@@ -134,23 +135,32 @@ CALL TreeSolver -b 2 -l 4 -e "y^2 = x^3 - 4*x" -r same,transpose,dogrow,norm,inv
 TEST T35 FC7
 CALL TreeSolver -b 2 -l 5 -e " - 49 - 65*u - 28*u^2 - 4*u^3 + 75*v + 60*u*v + 12*u^2*v - 30*v^2 - 12*u*v^2 + 4*v^3" -r same,transpose,similiar,norm,invall
 
+TEST T36 area of a rational triangle
+CALL TreeSolver -b 2 -l 3 -e "a^2 + b^2 = c^2; a*b = 2*d^2" -r same,transpose,norm,invall,igtriv
+
 TEST T41 EEC(4,1,3)
 CALL TreeSolver -b 2 -l 2 -e "a^4 + b^4 + c^4 - d^4"
 
-TEST T42 Euler bricks
-CALL TreeSolver -b 2 -l 2 -e "a^2 + b^2 = d^2; a^2 + c^2 = e^2; b^2 + c^2 = f^2" -r same,transpose,dogrow,norm,invall
-
-TEST T43 perfect Euler bricks
-CALL TreeSolver -b 2 -l 4 -e "a^2 + b^2 = d^2; a^2 + c^2 = e^2; b^2 + c^2 = f^2; a^2 + b^2 + c^2 = g^2" -r same,transpose,dogrow,norm,invall,igtriv
-
-# https://books.google.de/books?id=My19IcewAnoC&lpg=PA317&ots=V3hN58VkXU&dq=Fermat%20identities&hl=de&pg=PA322#v=onepage&q=Fermat%20identities&f=false
-# Google: Fermat identities
-# The Mathematical Career of Pierre de Fermat, 1601-1665  von Michael Sean Mahoney p.320 ff.
-TEST T44 test 
-CALL TreeSolver -b 4 -l 3 -e "7 + 7*a  + 13*b - 16*k" -r same,transpose,norm,igtriv,invall
+# TEST T42 Euler bricks
+# CALL TreeSolver -b 2 -l 2 -e "a^2 + b^2 = d^2; a^2 + c^2 = e^2; b^2 + c^2 = f^2" -r same,transpose,dogrow,norm,invall
+# 
+# TEST T43 perfect Euler bricks
+# CALL TreeSolver -b 2 -l 4 -e "a^2 + b^2 = d^2; a^2 + c^2 = e^2; b^2 + c^2 = f^2; a^2 + b^2 + c^2 = g^2" -r same,transpose,dogrow,norm,invall,igtriv
+# 
+# # https://books.google.de/books?id=My19IcewAnoC&lpg=PA317&ots=V3hN58VkXU&dq=Fermat%20identities&hl=de&pg=PA322#v=onepage&q=Fermat%20identities&f=false
+# # Google: Fermat identities
+# # The Mathematical Career of Pierre de Fermat, 1601-1665  von Michael Sean Mahoney p.320 ff.
+# TEST T44 test 
+# CALL TreeSolver -b 4 -l 3 -e "7 + 7*a  + 13*b - 16*k" -r same,transpose,norm,igtriv,invall
+#-------------------------------------------------
+# # Euler Bricks
+# TEST EB1 perfect?
+# CALL TreeSolver -b 2 -l 3 -e "2*g^2 = (m^2 + n^2)^2 + (p^2 + q^2)^2 + (r^2 + s^2)^2" -r transpose,same,dogrow,norm,igtriv
+# 
+# TEST EB2 perfect?
+# CALL TreeSolver -b 2 -l 3 -e "a^2 + b^2 = d^2; a^2 + c^2 = e^2; b^2 + c^2 = f^2; g^2 = a^2 + b^2 + c^2" -r transpose,same,dogrow,norm,igtriv
 
 PACKAGE=org.teherba.ramath.symbolic.solver
-
 #-------------------------------
 # c.f. http://planetmath.org/encyclopedia/InfiniteDescent.html
 
@@ -390,10 +400,3 @@ CALL PythagoreanTreeGenerator -b 0 -l 10 -e "X; 3; 4; 5"
 TEST PY3 getMatrix
 CALL PythagoreanTreeGenerator -b 4 -l 10 -e "X; 3; 4; 5"
 
-#-------------------------------------------------
-# Euler Bricks
-TEST EB1 perfect?
-CALL TreeSolver -b 2 -l 3 -e "2*g^2 = (m^2 + n^2)^2 + (p^2 + q^2)^2 + (r^2 + s^2)^2" -r transpose,same,dogrow,norm,igtriv
-
-TEST EB2 perfect?
-CALL TreeSolver -b 2 -l 3 -e "a^2 + b^2 = d^2; a^2 + c^2 = e^2; b^2 + c^2 = f^2; g^2 = a^2 + b^2 + c^2" -r transpose,same,dogrow,norm,igtriv
