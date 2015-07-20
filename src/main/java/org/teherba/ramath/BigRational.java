@@ -411,7 +411,7 @@ public class BigRational
     public int signum() {
         this.simplify(); // makes numerator positive
         return numerator  .signum();
-    } // compareTo
+    } // signum
 
     /** Compares this BigRational with the specified BigRational.
      *  This method is provided in preference to individual methods

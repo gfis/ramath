@@ -385,8 +385,8 @@ public class Polynomial implements Cloneable, Serializable {
     /** Gets the constant {@link Monomial} of the polynomial, if any, or the constant 0.
      *  @return the constant monomial if there is one, or 0
      */
-    public BigInteger/*Rational*/ getConstant() {
-        BigInteger/*Rational*/ result = Coefficient.ZERO;
+    public Coefficient getConstant() {
+        Coefficient result = Coefficient.ZERO;
         Monomial monomial = monomials.get(Monomial.CONSTANT_SIGNATURE);
         if (monomial != null) {
             result = monomial.getCoefficient();
@@ -1135,17 +1135,17 @@ x^2 + 3*x^3 + 2*x^4
      *  @param all whether all monomials should be investigated, or the non-constant ones only
      *  @return common divisor &gt;= 1
      */
-    public BigInteger/*Rational*/ gcdCoefficients(boolean all) {
-        BigInteger/*Rational*/ result = Coefficient.ONE;
+    public Coefficient gcdCoefficients(boolean all) {
+        Coefficient result = Coefficient.ONE;
         Iterator <String> titer = monomials.keySet().iterator();
         int index = 0;
         while (titer.hasNext()) {
             Monomial monomial = monomials.get(titer.next());
             if (all || ! monomial.isConstant()) {
                 if (index == 0) { // first monomial
-                    result = monomial.getCoefficient().abs();
+                    result = Coefficient.valueOf(monomial.getCoefficient().abs());
                 } else { // following variables
-                    result = result.gcd(monomial.getCoefficient());
+                    result = Coefficient.valueOf(result.gcd(monomial.getCoefficient()));
                 } // following
                 index ++;
             } // ! isConstant
@@ -1840,7 +1840,7 @@ x^2 + 3*x^3 + 2*x^4
     public String evaluate(VariableMap vmap1) {
         // this.normalize();
         StringBuffer result = new StringBuffer(64);
-        BigInteger/*Rational*/ constant = this.getConstant();
+        Coefficient constant = /*Coefficient.valueOf*/(this.getConstant());
         if (false) {
         } else if (this.isConstant()) {
             if (this.isZero()) {
@@ -1916,7 +1916,7 @@ x^2 + 3*x^3 + 2*x^4
 
         } else { // not a single constant, not biased
             // check greatest common divisor of variables
-            BigInteger/*Rational*/ varGCD = this.gcdCoefficients(false);
+            Coefficient varGCD = /*Coefficient.valueOf*/(this.gcdCoefficients(false));
             if (! varGCD.equals(Coefficient.ONE) && ! constant.mod(varGCD).equals(Coefficient.ZERO)) {
                 // constant is not divisible by GCD of variables which is != 1
                 switch (this.getRelation()) {
@@ -1970,7 +1970,7 @@ x^2 + 3*x^3 + 2*x^4
                     result.append(VariableMap.UNKNOWN);
                     // result.append(residues);
                     if (debug >= 3) {
-                        result.append(" varGCD=" + varGCD.toString() + ", constant=" + getConstant().toString()
+                        result.append(" varGCD=" + varGCD.toString() + ", constant=" + constant.toString()
                                 + ", gcd=" + varGCD.gcd(constant.abs()).toString());
                     }
                 } // UNKNOWN

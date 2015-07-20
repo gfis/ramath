@@ -51,7 +51,7 @@ public class Coefficient
      *  @result a new instance 
      */
     public static Coefficient valueOf(String number) {
-        return new Coefficient(number); // new BigInteger/*Rational*/(number);
+        return new Coefficient(number);
     } // valueOf(String)
 
     /** Constructing with 1 BigInteger argument; the denominator will be 1
