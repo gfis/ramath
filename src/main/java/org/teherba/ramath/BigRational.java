@@ -302,6 +302,16 @@ public class BigRational
                 ).simplify();
     } // divide  (BigInteger)
 
+    /** Returns quotient and rest
+     *  Caution: This method works for the numerators only !!!
+     *  @param val value by which this BigRational is to be divided
+     *  @return [this / val, this mod val]
+     */
+    public BigInteger[] divideAndRemainder(BigRational val) {
+    	BigInteger[] result = this.getNumerator().divideAndRemainder(val.getNumerator());
+        return result;
+    } // divideAndRemeinder(BigRational)
+
     /** Returns a BigRational whose value is  <em>(this / val)</em>
      *  The resulting fraction is simplified: <em>(a/b) / (c/d) = (a*d)/(b*c)</em>
      *  @param val value by which this BigRational is to be divided

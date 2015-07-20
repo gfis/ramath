@@ -331,10 +331,10 @@ public class PolynomialParser extends Polynomial {
                         if (false) {
                         } else if (Character.isJavaIdentifierPart(ch)) {
                             replaceLower("p*");
-						}
+                        }
                         readOff = false;
                         state = State.IN_START;
-						break; // IN_CLOSE                    	
+                        break; // IN_CLOSE                      
 
                     default: // should never be reached
                         System.err.println("invalid state " + state + " in PolynomialParser.shuntingYardAlgorithm");
@@ -482,7 +482,6 @@ public class PolynomialParser extends Polynomial {
         setMonomials(poly2.getMonomials());
         setPseudo   (poly2.getPseudo   ());
         setRelation (poly2.getRelation ());
-        // we assume that 'monomials' is the only property of this polynomial
         return this;
     } // parseFrom
 

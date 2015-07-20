@@ -1,6 +1,6 @@
 /*  Coefficient: extends either BigInteger or BigRational
  *  @(#) $Id: Coefficient.java 231 2009-08-25 08:47:16Z gfis $
- *  2015-07-20: moved from ./symbolic
+ *  2015-07-20: moved from ./symbolic, lifted to BigRational
  *  2015-06-17: Georg Fischer: copied from BigRational
  */
 /*
@@ -30,7 +30,7 @@ import  java.math.BigInteger;
  *  @author Dr. Georg Fischer
  */
 public class Coefficient 
-        extends BigInteger/*Rational*/ 
+        extends BigInteger
         implements Cloneable, Serializable 
         {
     private static final long serialVersionUID = 1L;
@@ -62,15 +62,13 @@ public class Coefficient
         return new Coefficient(number.toString());
     } // valueOf(BigInteger)
 
-    /** Constructing with 1 long argument; the denominator will be 1
+    /** Constructing with a long argument; the denominator will be 1
      *  @param number   number of the instance
      *  @result a new instance 
      */
-/*
     public static Coefficient valueOf(long number) {
-        return valueOf(number);
+        return new Coefficient(String.valueOf(number));
     } // valueOf(long)
-*/
 
     /** constant 0 */
     public static final Coefficient ZERO = Coefficient.valueOf(BigInteger.ZERO);
@@ -78,15 +76,5 @@ public class Coefficient
     public static final Coefficient ONE  = Coefficient.valueOf(BigInteger.ONE);
     /** constant 2 */
     public static final Coefficient TWO  = Coefficient.valueOf(BigIntegerUtil.TWO);
-
-    /** Returns a {@link Coefficient} whose value is (this**exp) - raised to some exponent.
-     *  The resulting fraction is simplified.
-     *  @param exp the power to which this BigRational is to be raised, may be negative
-     *  @return this**exp
-     */
-/*
-    public Coefficient pow     (int exp) {
-		return super.pow(exp);
-	} // pow
-*/
+    
 } // Coefficient

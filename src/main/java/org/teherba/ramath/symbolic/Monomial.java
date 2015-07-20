@@ -168,8 +168,8 @@ public class Monomial implements Cloneable, Serializable {
      *  @param coefficient number before the variables
      */
     public void setCoefficient(Coefficient/*ratint*/ coefficient) {
-        this.coefficient = coefficient;
-        if (isZero()) {
+        this.coefficient = Coefficient.valueOf(coefficient);
+        if (coefficient.equals(Coefficient.ZERO)) {
             vars = new TreeMap<String, Integer>();
         }
     } // setCoefficient
@@ -179,7 +179,7 @@ public class Monomial implements Cloneable, Serializable {
      */
     public void setCoefficient(long coefficient) {
         this.coefficient = Coefficient.valueOf(BigInteger.valueOf(coefficient));
-        if (isZero()) {
+        if (coefficient == 0L) {
             vars = new TreeMap<String, Integer>();
         }
     } // setCoefficient
@@ -283,7 +283,7 @@ public class Monomial implements Cloneable, Serializable {
      *  @return true if the monomial equals 0, false otherwise
      */
     public boolean isZero() {
-        return /* vars.size() == 0 && */ this.getCoefficient().equals(Coefficient.ZERO);
+        return this.getCoefficient().equals(Coefficient.ZERO);
     } // isZero
 
     /** Determines the degree, that is the sum of exponents of the individual factors

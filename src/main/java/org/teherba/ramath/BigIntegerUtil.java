@@ -1,5 +1,6 @@
 /*  BigIntegerUtil: helper methods for BigInteger
  *  @(#) $Id: BigIntegerUtil.java 231 2009-08-25 08:47:16Z gfis $
+ *  2015-07-20: lcm(BigRationals)
  *  2014-04-08: use BigInteger.valueOf(long)
  *  2013-09-20, Georg Fischer: copied from BigRational
  *
@@ -22,6 +23,7 @@
  */
 package org.teherba.ramath;
 import  java.math.BigInteger;
+import  org.teherba.ramath.BigRational;
 
 /** BigIntegerUtil - helper methods for {@link BigInteger}
  *  @author Dr. Georg Fischer
@@ -185,6 +187,16 @@ public class BigIntegerUtil {
      */
     public static BigInteger lcm(BigInteger num1, BigInteger num2) {
         return num1.multiply(num2).divide(num1.gcd(num2));
+    } // lcm
+
+    /** Computes the least common multiple of 2 numbers
+     *  @param num1 1st number
+     *  @param num2 2nd number
+     *  @return the least common multiple of the numbers
+     *  Caution, this implementation cares for the numerators only !!!
+     */
+    public static BigRational lcm(BigRational num1, BigRational num2) {
+        return num1.multiply(num2.getNumerator()).divide(num1.getNumerator().gcd(num2.getNumerator()));
     } // lcm
 
     /** Test method.
