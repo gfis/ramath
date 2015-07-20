@@ -35,7 +35,7 @@ import  java.math.RoundingMode;
  *  @author Dr. Georg Fischer
  */
 public class BigRational 
-        extends BigInteger 
+        // extends BigInteger 
         implements Cloneable, Serializable 
         {
     private static final long serialVersionUID = 1L;
@@ -56,7 +56,7 @@ public class BigRational
      *  @result a new instance 
      */
     public BigRational(String rawNumber) {
-        super("0");
+        // super("0");
         String number = rawNumber.replaceAll("[^\\d\\.\\/\\-\\+]", "");
         int slashPos = number.indexOf("/");
         if (slashPos < 0) { // integral
@@ -64,14 +64,18 @@ public class BigRational
             number += "/1";
         } // integral
         this.numerator   = new BigInteger(number.substring(0, slashPos), 10);
-        if (false && number.startsWith("-")) {
-            this.numerator   = this.numerator  .negate();
-        }
         this.denominator = new BigInteger(number.substring(slashPos + 1), 10);
-        if (false && number.indexOf("/-") >= 0) {
-            this.denominator = this.denominator.negate();
-        }
     } // Constructor String
+
+    /** Construct from a byte array containing a BigInteger
+     *  @param bytes the result of gibint.toByteArray()
+     *  @result a new instance 
+     */
+    public BigRational(byte[] bytes) {
+    	// super("0");
+        this.numerator   = new BigInteger(bytes);
+        this.denominator = BigInteger.ONE;
+    } // Constructor(byte[])
 
     /** Constructing with 1 BigInteger argument; the denominator will be 1
      *  @param numerator   numerator of the instance
@@ -408,20 +412,28 @@ public class BigRational
         return result;
     } // simplify
 
+    /** Returns the absolute value of the BigRational
+     *  @return a copy of the object with a positive sign
+     */
+    public BigRational abs() {
+        this.simplify(); // makes denominator positive
+        return BigRational.valueOf(numerator.signum() < 0 ? numerator.negate() : numerator, denominator);
+    } // abs
+
+    /** Returns the sign of <em>this</em> BigRational.
+     *  @return -1, 0 or 1
+     */
+    public int signum() {
+        this.simplify(); // makes denominator positive
+        return numerator  .signum();
+    } // signum
+
     /** Returns the BigRational with inverted sign.
      *  @return a copy of the object with the opposite sign
      */
     public BigRational negate() {
         return (BigRational.valueOf(numerator  .negate(), denominator)).simplify();
     } // negate
-
-    /** Returns the sign of <em>this</em> BigRational.
-     *  @return -1, 0 or 1
-     */
-    public int signum() {
-        this.simplify(); // makes numerator positive
-        return numerator  .signum();
-    } // signum
 
     /** Compares this BigRational with the specified BigRational.
      *  This method is provided in preference to individual methods

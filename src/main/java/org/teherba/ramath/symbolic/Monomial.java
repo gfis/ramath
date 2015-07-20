@@ -168,7 +168,7 @@ public class Monomial implements Cloneable, Serializable {
      *  @param coefficient number before the variables
      */
     public void setCoefficient(Coefficient/*ratint*/ coefficient) {
-        this.coefficient = Coefficient.valueOf(coefficient);
+        this.coefficient = (coefficient);
         if (coefficient.equals(Coefficient.ZERO)) {
             vars = new TreeMap<String, Integer>();
         }
@@ -752,6 +752,7 @@ public class Monomial implements Cloneable, Serializable {
      *  @return "3*4*x*y^3" for example for factor 4 and monomial 12*x*x^3
      */
     public String toFactoredString(BigInteger factor) {
+    /*  this is no longer used in BaseSolver
         BigInteger coeff = this.getCoefficient();
         String number = null;
         if (coeff.gcd(factor).equals(factor)) {
@@ -759,6 +760,8 @@ public class Monomial implements Cloneable, Serializable {
         } else {
             number = coeff.toString();
         }
+    */
+    	String number = this.getCoefficient().toString();
         return toStringCommon(false, number);
     } // toFactoredString(full)
 

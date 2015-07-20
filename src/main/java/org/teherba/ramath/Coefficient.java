@@ -46,6 +46,14 @@ public class Coefficient
         super(rawNumber);
     } // Constructor String
 
+    /** Construct from a byte array containing a BigInteger
+     *  @param bytes the result of gibint.toByteArray()
+     *  @result a new instance 
+     */
+    public Coefficient(byte[] bytes) {
+        super(bytes);
+    } // Constructor String
+
     /** Constructing with 1 BigInteger argument; the denominator will be 1
      *  @param number   number of the instance
      *  @result a new instance 
@@ -62,6 +70,14 @@ public class Coefficient
         return new Coefficient(number.toString());
     } // valueOf(BigInteger)
 
+    /** Constructing with 1 BigRational argument; the denominator will be 1
+     *  @param number   number of the instance
+     *  @result a new instance 
+     */
+    public static Coefficient valueOf(BigRational number) {
+        return new Coefficient(number.toString());
+    } // valueOf(BigInteger)
+
     /** Constructing with a long argument; the denominator will be 1
      *  @param number   number of the instance
      *  @result a new instance 
@@ -71,10 +87,10 @@ public class Coefficient
     } // valueOf(long)
 
     /** constant 0 */
-    public static final Coefficient ZERO = Coefficient.valueOf(BigInteger.ZERO);
+    public static final Coefficient ZERO = new Coefficient("0");
     /** constant 1 */
-    public static final Coefficient ONE  = Coefficient.valueOf(BigInteger.ONE);
+    public static final Coefficient ONE  = new Coefficient("1");
     /** constant 2 */
-    public static final Coefficient TWO  = Coefficient.valueOf(BigIntegerUtil.TWO);
+    public static final Coefficient TWO  = new Coefficient("2");
     
 } // Coefficient

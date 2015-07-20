@@ -481,8 +481,8 @@ public class Polynomial implements Cloneable, Serializable {
      *  @return 0 if the Polynomial is no sum of like powers,
      *  or the common factor &gt;= 1 of all variables with the same exponent (4 in the example)
      */
-    public BigInteger isPowerSum() {
-        BigInteger result = null;
+    public Coefficient isPowerSum() {
+        Coefficient result = null;
         int exp           = 0;
         boolean first     = true;
         boolean busy      = true;
@@ -495,7 +495,7 @@ public class Polynomial implements Cloneable, Serializable {
             } else { // a single variable
                 if (first) {
                     first  = false;
-                    result = mono.getCoefficient().abs();
+                    result = Coefficient.valueOf(mono.getCoefficient().abs());
                     exp    = mono.getExponent(mono.firstName());
                 } else { // ! first
                     if (! result.equals(mono.getCoefficient().abs())
@@ -704,11 +704,11 @@ public class Polynomial implements Cloneable, Serializable {
             throw new ArithmeticException();
         } else { // univariate
             Iterator<String> iter = monomials.keySet().iterator();
-            BigRational sum = BigRational.valueOf(0);
+            BigRational sum = BigRational.ZERO;
             while (iter.hasNext()) {            
                 String sig1 = iter.next();
                 Monomial mono1 = this.get(sig1);
-                BigRational term = BigRational.valueOf(mono1.getCoefficient());
+                BigRational term = new BigRational(mono1.getCoefficient().toString());
                 String vname = mono1.firstName();
                 if (vname != null) { // with variable
                     int exp = mono1.getExponent(vname);
@@ -1322,9 +1322,9 @@ x^2 + 3*x^3 + 2*x^4
      *  @return reference to <em>this</em> modified object
      */
     public Polynomial normalize() {
-        BigInteger divisor = this.gcdCoefficients(true);
-        if (divisor.compareTo(BigInteger.ONE) != 0 && this.hasVariable()) { // divide by GCD if > 1
-           this.divideBy(new Monomial(Coefficient.valueOf(divisor)));
+        Coefficient divisor = this.gcdCoefficients(true);
+        if (divisor.compareTo(Coefficient.ONE) != 0 && this.hasVariable()) { // divide by GCD if > 1
+           this.divideBy(new Monomial(divisor));
         }
         return this;
     } // normalize
