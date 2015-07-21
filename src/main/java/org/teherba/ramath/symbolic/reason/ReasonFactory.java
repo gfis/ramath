@@ -259,7 +259,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
     //-------------
 
     /** Test method.
-     *  @param args command line arguments, see {@link Solver#getArguments}.
+     *  @param args command line arguments, see {@link BaseSolver#getArguments}.
      */
     public static void main(String[] args) {
         ReasonFactory reasons = new ReasonFactory();

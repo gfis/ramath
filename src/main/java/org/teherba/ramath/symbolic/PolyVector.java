@@ -219,7 +219,7 @@ public class PolyVector implements Cloneable, Serializable {
     } // toString()
 
     /** Returns a string representation of the vector
-     *  @param sep specification of the layout: "," or " "
+     *  @param format specification of the layout: "," or " "
      *  @return a one-dimensional array of {@link Polynomial}s
      */
     public String toString(String format) {

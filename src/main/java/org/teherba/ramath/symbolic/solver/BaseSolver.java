@@ -67,7 +67,7 @@ public class BaseSolver extends Stack<RelationSet> {
     public boolean igtriv;
     /** Whether to involve all variables in the expansion */
     public boolean invall;
-    /** Whether to normalize expanded {@link RelationSet]s */
+    /** Whether to normalize expanded {@link RelationSet}s */
     public boolean norm;
 
     //--------------
@@ -249,7 +249,7 @@ public class BaseSolver extends Stack<RelationSet> {
     // Utility methods
     //-----------------
 
-    /** Try to separate a factor in the constants of a string representation of a {@link Polynomial}.
+    /** Try to separate a factor in the constants of a string representation of a {@link RelationSet}.
      *  @param raw raw formula string
      *  @return string with extracted factor, for example "4*4*x^2 + 16*4*y^2" for factor 4
      */
@@ -466,7 +466,7 @@ public class BaseSolver extends Stack<RelationSet> {
     //-------------
 
     /** Test method.
-     *  @param args command line arguments, see {@link Solver#getArguments}.
+     *  @param args command line arguments, see {@link #getArguments}.
      */
     public static void main(String[] args) {
         BaseSolver solver = new BaseSolver();

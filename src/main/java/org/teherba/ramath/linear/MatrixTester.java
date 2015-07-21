@@ -208,7 +208,7 @@ public class MatrixTester implements Serializable {
      *  @param amat  print the chain for this {@link Matrix}
      *  @param vect0 initial {@link Vector} to be used in the preservation chain
      *  @param left  number of variables on the left  of the equation
-     *  @param rigth number of variables on the right of the equation
+     *  @param right number of variables on the right of the equation
      *  @param fact  factor of the chained polynomial
      */
     public static void printPreservedChain(Matrix amat, Vector vect0, int fact, int left, int right) {
@@ -217,12 +217,7 @@ public class MatrixTester implements Serializable {
         ArrayList<Vector> chain = amat.preservedPowerSums(alen - 1, left, right, vect0, maxIter);
         if (chain.size() >= 2) { // == maxIter) {
             System.out.print(""
-                //  + ", fact " + fact + " "
                     + String.format("%-32s ", amat.toString("(,)") + ",det=" + amat.determinant())
-                /*
-                    + String.format(" %-24s", (new PolyMatrix(amat)).multiply(new PolyVector(alen, "a"))
-                        .powerSum(alen - 1, left, right).toString().replaceAll("\\s", ""))
-                */
                     + vect0.toString("(,)")
                     + ", chain " + chain.size()
                     );

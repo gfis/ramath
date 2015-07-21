@@ -40,8 +40,8 @@ import  org.apache.log4j.Logger;
 
 /** Class PythagoreanTreeGenerator implements the generation of a tree
  *  of Pythagorean triples by the aid of 3 linear 3x3 matrixes, as described in
- *  {@link https://en.wikipedia.org/wiki/Tree_of_primitive_Pythagorean_triples}.
  *  Either the matrixes of Barning or of Price are used.
+ *  See <a href="https://en.wikipedia.org/wiki/Tree_of_primitive_Pythagorean_triples">Tree of primitive Pythagorean Triples</a>}.
  *  @author Dr. Georg Fischer
  */
 public class PythagoreanTreeGenerator extends BaseSolver implements Serializable {

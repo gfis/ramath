@@ -299,14 +299,14 @@ public class Matrix implements Cloneable, Serializable {
     } // get
 
     /** Returns the {@link #fraction}
-     *  @return the divisor when the Matrix was the result of {@link inverse}
+     *  @return the divisor when the Matrix was the result of {@link #inverse}
      */
     public int getFraction() {
         return this.fraction;
     } // getFraction
 
     /** Sets the {@link #fraction}
-     *  @param fraction the divisor when the Matrix was the result of {@link inverse}
+     *  @param fraction the divisor when the Matrix was the result of {@link #inverse}
      */
     public void setFraction(int fraction) {
         this.fraction = fraction;
@@ -503,7 +503,7 @@ public class Matrix implements Cloneable, Serializable {
     } // equals
 
     /** Determines whether <em>this</em> matrix is a permutation
-     *  of a second matrix, that is whether there is a {@link permutation}
+     *  of a second matrix, that is whether there is a {@link #permutation}
      *  matrix such that <em>this=matr2*perm</em>.
      *  @param matr2 compare with this matrix
      *  @return null if there is no such permutation matrix,

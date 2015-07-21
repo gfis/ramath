@@ -292,7 +292,7 @@ public class MonadicSolver extends BaseSolver {
     //-------------
 
     /** Test method.
-     *  @param args command line arguments, see {@link Solver#getArguments}.
+     *  @param args command line arguments, see {@link BaseSolver#getArguments}.
      *  <ul>
      *  <li>-b modulo base (default 2)</li>
      *  <li>-e equation set (enclosed in quotes)</li>

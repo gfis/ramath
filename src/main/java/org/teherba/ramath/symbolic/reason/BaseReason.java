@@ -19,10 +19,11 @@
  */
 package org.teherba.ramath.symbolic.reason;
 import  org.teherba.ramath.symbolic.RelationSet;
+import  org.teherba.ramath.symbolic.VariableMap;
 import  org.teherba.ramath.symbolic.solver.BaseSolver;
 
 /** Checks some reason why a node (a {@link RelationSet}) in the tree expansion
- *  of a {@link Solver} needs not to be investigated any further.
+ *  of a {@link BaseSolver} needs not to be investigated any further.
  *  There may be several reasons which are all checked in sequence, and the first
  *  valid reason stops this sequence.
  +  <p>

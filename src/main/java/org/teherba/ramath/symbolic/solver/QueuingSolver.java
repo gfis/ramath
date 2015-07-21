@@ -222,7 +222,7 @@ public class QueuingSolver extends BaseSolver {
     //-------------
 
     /** Test method.
-     *  @param args command line arguments, see {@link Solver#getArguments}.
+     *  @param args command line arguments, see {@link BaseSolver#getArguments}.
      */
     public static void main(String[] args) {
         QueuingSolver solver = new QueuingSolver();

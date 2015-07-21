@@ -53,7 +53,6 @@ public class BigRational
      *  or a fraction of the form numerator  /denominator.
      *  All characters except from digits, '.' and '/' are stripped.
      *  @param rawNumber string with digits, decimal dot or slash.
-     *  @result a new instance 
      */
     public BigRational(String rawNumber) {
         // super("0");
@@ -68,8 +67,7 @@ public class BigRational
     } // Constructor String
 
     /** Construct from a byte array containing a BigInteger
-     *  @param bytes the result of gibint.toByteArray()
-     *  @result a new instance 
+     *  @param bytes the result of BigInteger.toByteArray()
      */
     public BigRational(byte[] bytes) {
     	// super("0");
@@ -79,7 +77,7 @@ public class BigRational
 
     /** Constructing with 1 BigInteger argument; the denominator will be 1
      *  @param numerator   numerator of the instance
-     *  @result a new instance 
+     *  @return a new instance 
      */
     public static BigRational valueOf(BigInteger numerator) {
         BigRational result = new BigRational("0");
@@ -90,7 +88,7 @@ public class BigRational
 
     /** Constructing with 1 long argument; the denominator will be 1
      *  @param numerator   numerator of the instance
-     *  @result a new instance 
+     *  @return a new instance 
      */
     public static BigRational valueOf(long numerator) {
         BigRational result = new BigRational("0");
@@ -102,7 +100,7 @@ public class BigRational
     /** Constructing with 2 BigInteger arguments
      *  @param numerator   numerator   of the instance
      *  @param denominator denominator of the instance
-     *  @result a new instance 
+     *  @return a new instance 
      */
     public static BigRational valueOf(BigInteger numerator, BigInteger denominator) {
         BigRational result = new BigRational("0");
@@ -114,7 +112,7 @@ public class BigRational
     /** Constructor with 2 long arguments
      *  @param numerator   numerator   of the instance
      *  @param denominator denominator of the instance
-     *  @result a new instance 
+     *  @return a new instance 
      */
     public static BigRational valueOf(long numerator, long denominator) {
         BigRational result = new BigRational("0");
@@ -125,7 +123,7 @@ public class BigRational
 
     /** Construct from a BigDecimal; the denominator will be a power of 10.
      *  @param bdec represent this exact
-     *  @result a new instance 
+     *  @return a new instance 
      */
     public static BigRational valueOf(BigDecimal bdec) {
         BigRational result = new BigRational("0");

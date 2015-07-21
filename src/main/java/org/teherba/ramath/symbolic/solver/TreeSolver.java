@@ -179,7 +179,7 @@ public class TreeSolver extends BaseSolver {
     //-------------
 
     /** Test method.
-     *  @param args command line arguments, see {@link Solver#getArguments}.
+     *  @param args command line arguments, see {@link BaseSolver#getArguments}.
      */
     public static void main(String[] args) {
         TreeSolver solver = new TreeSolver();

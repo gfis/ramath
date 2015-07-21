@@ -21,10 +21,11 @@
 package org.teherba.ramath;
 import  org.teherba.ramath.BigRational;
 import  org.teherba.ramath.BigIntegerUtil;
+import  org.teherba.ramath.symbolic.Monomial;
 import  java.io.Serializable;
 import  java.math.BigInteger;
 
-/** Utility class for the migration from BigInteger to BigRational coefficients of
+/** Utility class for the migration from BigInteger to {@link BigRational} coefficients of
  *  {@link Monomial}s.
  *  The class serves as a placeholder for, and extends one of these number classes.
  *  @author Dr. Georg Fischer
@@ -40,7 +41,6 @@ public class Coefficient
      *  or a fraction of the form <em>numerator/denominator</em>.
      *  All characters except from digits, '-', '.' and '/' are stripped.
      *  @param rawNumber string with sign, digits, decimal dot and/or slash.
-     *  @result a new instance 
      */
     public Coefficient(String rawNumber) {
         super(rawNumber);
@@ -48,7 +48,6 @@ public class Coefficient
 
     /** Construct from a byte array containing a BigInteger
      *  @param bytes the result of gibint.toByteArray()
-     *  @result a new instance 
      */
     public Coefficient(byte[] bytes) {
         super(bytes);
@@ -56,7 +55,7 @@ public class Coefficient
 
     /** Constructing with 1 BigInteger argument; the denominator will be 1
      *  @param number   number of the instance
-     *  @result a new instance 
+     *  @return a new instance 
      */
     public static Coefficient valueOf(String number) {
         return new Coefficient(number);
@@ -64,7 +63,7 @@ public class Coefficient
 
     /** Constructing with 1 BigInteger argument; the denominator will be 1
      *  @param number   number of the instance
-     *  @result a new instance 
+     *  @return a new instance 
      */
     public static Coefficient valueOf(BigInteger number) {
         return new Coefficient(number.toString());
@@ -72,7 +71,7 @@ public class Coefficient
 
     /** Constructing with 1 BigRational argument; the denominator will be 1
      *  @param number   number of the instance
-     *  @result a new instance 
+     *  @return a new instance 
      */
     public static Coefficient valueOf(BigRational number) {
         return new Coefficient(number.toString());
@@ -80,7 +79,7 @@ public class Coefficient
 
     /** Constructing with a long argument; the denominator will be 1
      *  @param number   number of the instance
-     *  @result a new instance 
+     *  @return a new instance 
      */
     public static Coefficient valueOf(long number) {
         return new Coefficient(String.valueOf(number));

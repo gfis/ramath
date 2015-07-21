@@ -21,6 +21,7 @@
  * limitations under the License.
  */
 package org.teherba.ramath.symbolic.solver;
+import  org.teherba.ramath.symbolic.Monomial;
 import  org.teherba.ramath.symbolic.Polynomial;
 import  java.util.TreeMap;
 import  java.io.Serializable;
