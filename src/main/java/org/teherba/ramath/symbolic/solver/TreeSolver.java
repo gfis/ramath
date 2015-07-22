@@ -75,9 +75,6 @@ public class TreeSolver extends BaseSolver {
 
     /* debug is inherited */
     
-    /** level of queue element which was previously expanded */
-    private int prevLevel;
-
     //--------------
     // Construction
     //--------------
@@ -86,7 +83,6 @@ public class TreeSolver extends BaseSolver {
      */
     public TreeSolver() {
         super(new PrintWriter(System.out));
-        prevLevel = -1;
     } // no-args Constructor
 
     /** Constructor with writer
@@ -94,35 +90,17 @@ public class TreeSolver extends BaseSolver {
      */
     public TreeSolver(PrintWriter writer) {
         super(writer); // this will also initialize the optional parameters
-        prevLevel = -1;
     } // Constructor(printer)
 
-    //---------------------
-    // Heavyweight Methods
-    //---------------------
-
-    /** Expands one {@link RelationSet} in the queue,
-     *  evaluates the expanded children,
-     *  and requeues all children with status UNKNOWN or SUCCESS.
-     *  Binary expansion (for example) replaces all variables x_i by 0+2*x_j and 1+2*x_j (j=i+1).
-     *  The constants which are added run from (0,0,0 ... 0), (1,0,0 ... 0) ... through to (1,1,1 ... 1);
-     *  they are obtained from a {@link ModoMeter}.
-     *  @param queueIndex position in the queue of the element ({@link RelationSet}) to be expanded, >= 0
+    /** Prepares a {@link ModoMeter} from the set of variables.
+     *  Only the necessary variables are involved.
+     *  @param rset1 {@link RelationSet} to be expanded
+     *  @param vmap1 {@link VariableMap containing the variable names
+     *  @param factor base^curLevel
+     *  @return an appropriate ModoMeter
      */
-    public void expand(int queueIndex) {
-        RelationSet rset1 = get(queueIndex); // expand this element (the "parent")
-        VariableMap vmap1 = rset1.getTuple();
-        // reasons.printDecision(this, rset1, vmap1);
-        int curLevel      = rset1.getNestingLevel();
-        if (debug >= 1) {
-            if (prevLevel < curLevel) {
-                prevLevel = curLevel;
-                trace.println("----------------"); // 16 x "-"
-            }
-        } 
-        curLevel ++;
-        int base          = getModBase();
-        BigInteger factor = BigInteger.valueOf(base).pow(curLevel);
+    private ModoMeter prepareMeter(RelationSet rset1, VariableMap vmap1, BigInteger factor) {
+        int base          = this.getModBase();
         int varNo         = vmap1.size(); // total number of variables to be substituted
         /*  Variables having at least a coefficient of factor*base
             are not involved in the modular expansion.
@@ -145,7 +123,29 @@ public class TreeSolver extends BaseSolver {
         if (invall || involvedCount <= 0) { // vmapr was empty
             meter = new ModoMeter(varNo, base); // involve all variables / avoid modulo [1,1,1,...]
         } // vmapr empty
-        
+        return meter;        
+    } // prepareMeter
+
+    //---------------------
+    // Heavyweight Methods
+    //---------------------
+
+    /** Expands one {@link RelationSet} in the queue,
+     *  evaluates the expanded children,
+     *  and requeues all children with status UNKNOWN or SUCCESS.
+     *  Binary expansion (for example) replaces all variables x_i by 0+2*x_j and 1+2*x_j (j=i+1).
+     *  The constants which are added run from (0,0,0 ... 0), (1,0,0 ... 0) ... through to (1,1,1 ... 1);
+     *  they are obtained from a {@link ModoMeter}.
+     *  @param queueIndex position in the queue of the element ({@link RelationSet}) to be expanded, >= 0
+     */
+    public void expand(int queueIndex) {
+        RelationSet rset1 = this.get(queueIndex); // expand this element (the "parent")
+        VariableMap vmap1 = rset1.getTuple();
+        // reasons.printDecision(this, rset1, vmap1);
+        int newLevel      = rset1.getNestingLevel() + 1;
+        int base          = this.getModBase();
+        BigInteger factor = BigInteger.valueOf(base).pow(newLevel);
+        ModoMeter meter   = prepareMeter(rset1, vmap1, factor);      
         // meter now ready for n-adic expansion, e.g. x -> 2*x+0, 2*x+1
         printNode(queueIndex, rset1, meter, factor);
         while (meter.hasNext()) { // over all constant combinations - generate all children
@@ -155,16 +155,13 @@ public class TreeSolver extends BaseSolver {
                 if (norm) {
                     rset2.normalize();
                 }
-                rset2.setNestingLevel   (curLevel);
-                rset2.setParentIndex    (queueIndex);
-                rset2.setTuple          (vmap2, this.getTransposables());
-                rset2.setTupleShift     (factor);
-                rset2.setMeter(meter.toString());
+                rset2.setTuple(vmap2, this.getTransposables());
+                rset2.setNestingLevel(newLevel);
+                rset2.setParentIndex(queueIndex);
                 if (reasons.evaluateReasons(this, rset2, vmap2)) { // queueAgain
                     this.add(rset2);
                 } // queueAgain
             } // vmap2.size() > 0
-
             meter.next();
         } // while meter.hasNext() - generate all children
     } // expand

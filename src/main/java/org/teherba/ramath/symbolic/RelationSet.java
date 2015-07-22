@@ -189,21 +189,6 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
         message = text;
     } // setMessage
 
-    /** String denoting the Dispenser values which lead to the refined RelationSet */
-    private String meter;
-    /** Gets the Dispenser values which lead to the refined RelationSet
-     *  @return string describing the meter
-     */
-    public String getMeter() {
-        return meter;
-    } // getMeter
-    /** Sets the Dispenser values which lead to the refined RelationSet
-     *  @param meter string describing the meter
-     */
-    public void setMeter(String meter) {
-        this.meter = meter;
-    } // setMeter
-
     /** Nesting level: 0, 1, 2 and so on - number of variable expansions which did already take place */
     private int nestingLevel;
     /** Gets the nesting level

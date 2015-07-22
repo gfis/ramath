@@ -1,4 +1,5 @@
 Expanding for base=2, transposables={{a},{b},{c}}, reasons+features=base,transpose,same,similiar,grow
+----------------
 
 expanding queue[0]: 1 + 3*a + 3*a^2 + a^3 - 3*c - 6*a*c - 3*a^2*c - 6*b*c - 6*a*b*c - 3*b^2*c - 3*c^2 - 3*a*c^2 - 3*b*c^2 - c^3 = 0 modulo [2,2,2] *2
 [0+2*a,0+2*b,0+2*c]: failure constant=1, vgcd=2
@@ -9,6 +10,7 @@ expanding queue[0]: 1 + 3*a + 3*a^2 + a^3 - 3*c - 6*a*c - 3*a^2*c - 6*b*c - 6*a*
 [1+2*a,0+2*b,1+2*c]: failure constant=-11, vgcd=2
 [0+2*a,1+2*b,1+2*c]: unknown -18-24*a+8*a^3-30*b-24*a*b-12*b^2-54*c-72*a*c-24*a^2*c-72*b*c-48*a*b*c-24*b^2*c-36*c^2-24*a*c^2-24*b*c^2-8*c^3=0 -> [3]
 [1+2*a,1+2*b,1+2*c]: failure constant=-29, vgcd=2
+----------------
 
 expanding queue[1]: 8 + 24*a + 24*a^2 + 8*a^3 - 54*c - 72*a*c - 24*a^2*c - 72*b*c - 48*a*b*c - 24*b^2*c - 36*c^2 - 24*a*c^2 - 24*b*c^2 - 8*c^3 = 0 modulo [2,2,2] *4
 [1+4*a,1+4*b,0+4*c]: unknown 8+48*a+96*a^2+64*a^3-108*c-288*a*c-192*a^2*c-288*b*c-384*a*b*c-192*b^2*c-144*c^2-192*a*c^2-192*b*c^2-64*c^3=0 -> [4]
@@ -39,6 +41,7 @@ expanding queue[3]:  - 18 - 24*a + 8*a^3 - 30*b - 24*a*b - 12*b^2 - 54*c - 72*a*
 [2+4*a,1+4*b,3+4*c]: unknown -252-288*a+64*a^3-396*b-288*a*b-144*b^2-588*c-672*a*c-192*a^2*c-672*b*c-384*a*b*c-192*b^2*c-336*c^2-192*a*c^2-192*b*c^2-64*c^3=0 -> [15]
 [0+4*a,3+4*b,3+4*c]: failure constant=-278, vgcd=4
 [2+4*a,3+4*b,3+4*c]: failure constant=-486, vgcd=4
+----------------
 
 expanding queue[4]: 8 + 48*a + 96*a^2 + 64*a^3 - 108*c - 288*a*c - 192*a^2*c - 288*b*c - 384*a*b*c - 192*b^2*c - 144*c^2 - 192*a*c^2 - 192*b*c^2 - 64*c^3 = 0 modulo [2,2,2] *8
 [1+8*a,1+8*b,0+8*c]: unknown 8+96*a+384*a^2+512*a^3-216*c-1152*a*c-1536*a^2*c-1152*b*c-3072*a*b*c-1536*b^2*c-576*c^2-1536*a*c^2-1536*b*c^2-512*c^3=0 -> [16]

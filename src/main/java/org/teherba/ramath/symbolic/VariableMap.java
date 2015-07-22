@@ -1,10 +1,10 @@
 /*  VariableMap: maps a set of variables to their values or substitution formulas
  *  @(#) $Id: VariableMap.java 538 2010-09-08 15:08:36Z gfis $
- *  2015-04-26: triviality returns String
+ *  2015-04-26: old_triviality returns String
  *  2015-03-02: refineExpressions(, skippable)
  *  2015-02-08: Dispenser instead of ModoMeter
  *  2014-06-02: SAME
- *  2014-04-04: triviality, refineExpressions
+ *  2014-04-04: old_triviality, refineExpressions
  *  2013-09-23: renamed from ValueMap
  *  2013-08-23: Serializable
  *  2010-09-06: accumulate
@@ -32,7 +32,7 @@ import  org.teherba.ramath.util.ModoMeter; // for test only
 import  java.io.Serializable;
 import  java.math.BigInteger;
 import  java.util.Iterator;
-import  java.util.HashSet; // for triviality
+import  java.util.HashSet; // for old_triviality
 import  java.util.Map;
 import  java.util.TreeMap;
 
@@ -255,45 +255,6 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
         return result;
     } // getSolutionVector
 
-    /** Describes the triviality of the mapping by a code:
-     *  <ul>
-     *  <li>1: one of the variables maps to zero</li>
-     *  <li>2: there are 2 variables which map to the same value</li>
-     *  <li>3: both of the conditions above</li>
-     *  <li>0: none of the conditions above = NONTRIVIAL</li>
-     *  </ul>
-     *  @return a description for the triviality of a solution
-     *  Caution: the form of the expressions must be c+f*x;
-     *  this is initiated by {@link Polynomial#getExpressionMap}().
-     */
-    public String triviality() {
-        int code = 0;
-        HashSet<String> valSet = new HashSet<String>(16);
-        Iterator<String> iter = this.keySet().iterator();
-        while (iter.hasNext()) {
-            String key = iter.next();
-            String value = this.get(key);
-            int plusPos = value.indexOf('+');
-            if (plusPos < 0) {
-                plusPos = value.length();
-            }
-            value = value.substring(0, plusPos);
-            if (value.equals("0")) { // ||
-                code |= 0x01;
-            }
-            if (valSet.contains(value)) {
-                code |= 0x02;
-            } else {
-                valSet.add(value);
-            }
-        } // while iter
-        String result = "NONTRIVIAL";
-        if (code != 0) {
-            result = "trivial=" + String.valueOf(code);
-        }
-        return result;
-    } // triviality
-
     /** Refines the expressions in <em>this</em> VariableMap
      *  by one level of modulus expansion.
      *  @param dispenser current state of a {@link Dispenser} containing the
@@ -345,11 +306,11 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
         vmap.put("a" , "3");
         vmap.put("b" , "4");
         vmap.put("c" , "5");
-        System.out.println("vmap = " + vmap.toString() + "; vmap.triviality() = " + vmap.triviality());
+        System.out.println("vmap = " + vmap.toString());
         vmap.put("b" , "5");
-        System.out.println("vmap = " + vmap.toString() + "; vmap.triviality() = " + vmap.triviality());
+        System.out.println("vmap = " + vmap.toString());
         vmap.put("d2", "0");
-        System.out.println("vmap = " + vmap.toString() + "; vmap.triviality() = " + vmap.triviality());
+        System.out.println("vmap = " + vmap.toString());
 
         vmap.put("a" , "2+4*a");
         vmap.put("b" , "3+4*b");

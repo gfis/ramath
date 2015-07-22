@@ -1,4 +1,5 @@
 Expanding for base=2, transposables={{x,y},{z}}, reasons+features=base,transpose,same,similiar,grow
+----------------
 
 expanding queue[0]: 2*x + x^2 + 2*y + y^2 - 4*z - 2*z^2 = 0 modulo [2,2,2] *2
 [0+2*x,0+2*y,0+2*z]: success [0,0,0],trivial(3) success [2,2,2],trivial(2)  4*x+4*x^2+4*y+4*y^2-8*z-8*z^2=0 -> [1]
@@ -9,6 +10,7 @@ expanding queue[0]: 2*x + x^2 + 2*y + y^2 - 4*z - 2*z^2 = 0 modulo [2,2,2] *2
 [1+2*x,0+2*y,1+2*z]: failure constant=-3, vgcd=4
 [0+2*x,1+2*y,1+2*z]: failure constant=-3, vgcd=4
 [1+2*x,1+2*y,1+2*z]: similiar to [0], same  8*x+4*x^2+8*y+4*y^2-16*z-8*z^2=0
+----------------
 
 expanding queue[1]: 4*x + 4*x^2 + 4*y + 4*y^2 - 8*z - 8*z^2 = 0 modulo [2,2,2] *4
 [0+4*x,0+4*y,0+4*z]: success [0,0,0],trivial(3) success [4,4,4],trivial(2)  8*x+16*x^2+8*y+16*y^2-16*z-32*z^2=0 -> [2]
@@ -19,6 +21,7 @@ expanding queue[1]: 4*x + 4*x^2 + 4*y + 4*y^2 - 8*z - 8*z^2 = 0 modulo [2,2,2] *
 [2+4*x,0+4*y,2+4*z]: unknown -8+24*x+16*x^2+8*y+16*y^2-48*z-32*z^2=0 -> [7]
 [0+4*x,2+4*y,2+4*z]: unknown -8+8*x+16*x^2+24*y+16*y^2-48*z-32*z^2=0 -> [8]
 [2+4*x,2+4*y,2+4*z]: success [2,2,2],trivial(2) success [6,6,6],trivial(2)  24*x+16*x^2+24*y+16*y^2-48*z-32*z^2=0 -> [9]
+----------------
 
 expanding queue[2]: 8*x + 16*x^2 + 8*y + 16*y^2 - 16*z - 32*z^2 = 0 modulo [2,2,2] *8
 [0+8*x,0+8*y,0+8*z]: success [0,0,0],trivial(3) success [8,8,8],trivial(2)  16*x+64*x^2+16*y+64*y^2-32*z-128*z^2=0 -> [10]
@@ -99,6 +102,7 @@ expanding queue[9]: 24*x + 16*x^2 + 24*y + 16*y^2 - 48*z - 32*z^2 = 0 modulo [2,
 [6+8*x,2+8*y,6+8*z]: failure constant=-40, vgcd=16
 [2+8*x,6+8*y,6+8*z]: failure constant=-40, vgcd=16
 [6+8*x,6+8*y,6+8*z]: success [6,6,6],trivial(2) success [14,14,14],trivial(2)  112*x+64*x^2+112*y+64*y^2-224*z-128*z^2=0 -> [41]
+----------------
 
 expanding queue[10]: 16*x + 64*x^2 + 16*y + 64*y^2 - 32*z - 128*z^2 = 0 modulo [2,2,2] *16
 [0+16*x,0+16*y,0+16*z]: success [0,0,0],trivial(3) success [16,16,16],trivial(2)  32*x+256*x^2+32*y+256*y^2-64*z-512*z^2=0 -> [42]

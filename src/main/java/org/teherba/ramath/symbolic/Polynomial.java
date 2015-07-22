@@ -1891,7 +1891,7 @@ x^2 + 3*x^3 + 2*x^4
                 } // switch relation
                 result.append(" biased");
 
-        } else if (constant.equals(BigInteger*Rational*//*.ZERO)) {
+        } else if (constant.equals(Coefficient.ZERO)) {
                 switch (this.getRelation()) {
                     default:
                     case EQ_0:
@@ -1916,7 +1916,7 @@ x^2 + 3*x^3 + 2*x^4
 
         } else { // not a single constant, not biased
             // check greatest common divisor of variables
-            Coefficient varGCD = /*Coefficient.valueOf*/(this.gcdCoefficients(false));
+            Coefficient varGCD = this.gcdCoefficients(false);
             if (! varGCD.equals(Coefficient.ONE) && ! constant.mod(varGCD).equals(Coefficient.ZERO)) {
                 // constant is not divisible by GCD of variables which is != 1
                 switch (this.getRelation()) {
@@ -1940,7 +1940,6 @@ x^2 + 3*x^3 + 2*x^4
                 VariableMap vmap2 = vmap1 != null ? vmap1.clone() : new VariableMap();
                 ModoMeter meter = new ModoMeter(vmap2.size(), 2); // run {0,1} through all variables
                 boolean success = false;
-                // String residues = " ";
                 while (meter.hasNext()) {
                     vmap2.setValues(meter);
                     Polynomial poly2 = this.substitute(vmap2);
@@ -1956,23 +1955,11 @@ x^2 + 3*x^3 + 2*x^4
                             result.append(" =0");
                         }
                         // isZero
-                    } else { // ! isZero
-                    /*
-                        if (residues.length() > 1) {
-                            residues += "/";
-                        }
-                        residues += poly2.toString().replaceAll(" ", "");
-                    */
-                    } // ! isZero
+                    } 
                     meter.next();
                 } // while meter
                 if (! success) {
                     result.append(VariableMap.UNKNOWN);
-                    // result.append(residues);
-                    if (debug >= 3) {
-                        result.append(" varGCD=" + varGCD.toString() + ", constant=" + constant.toString()
-                                + ", gcd=" + varGCD.gcd(constant.abs()).toString());
-                    }
                 } // UNKNOWN
             } // Test for (x,y,...) elem of {0,1}^n
         } // not a single constant, not biased

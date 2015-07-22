@@ -196,7 +196,6 @@ public class MonadicSolver extends BaseSolver {
             rset0.setTuple(vmap0); // tuple is initially (0,0, ... 0)
         }
         ModoMeter meter = new ModoMeter(rset0.getTuple().size(), 1); // assume that all variables are not involved
-        rset0.setMeter(meter.toString());
         add(rset0);
         boolean busy = true;
         while (busy) {

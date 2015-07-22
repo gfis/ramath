@@ -1,4 +1,5 @@
 Expanding for base=2, transposables={{x},{y},{z}}, reasons+features=base,transpose,same,similiar,grow
+----------------
 
 expanding queue[0]:  - 1 + 4*x + 6*x^2 + 4*x^3 + x^4 - 4*y - 6*y^2 - 4*y^3 - y^4 - 2*z - z^2 = 0 modulo [2,2,2] *2
 [0+2*x,0+2*y,0+2*z]: failure constant=-1, vgcd=4
@@ -9,6 +10,7 @@ expanding queue[0]:  - 1 + 4*x + 6*x^2 + 4*x^3 + x^4 - 4*y - 6*y^2 - 4*y^3 - y^4
 [1+2*x,0+2*y,1+2*z]: failure constant=11, vgcd=4
 [0+2*x,1+2*y,1+2*z]: failure constant=-19, vgcd=4
 [1+2*x,1+2*y,1+2*z]: unknown -4+64*x+96*x^2+64*x^3+16*x^4-64*y-96*y^2-64*y^3-16*y^4-8*z-4*z^2=0 -> [3]
+----------------
 
 expanding queue[1]:  - 16 + 8*x + 24*x^2 + 32*x^3 + 16*x^4 - 64*y - 96*y^2 - 64*y^3 - 16*y^4 - 4*z - 4*z^2 = 0 modulo [2,2,2] *4
 [0+4*x,1+4*y,0+4*z]: unknown -16+16*x+96*x^2+256*x^3+256*x^4-128*y-384*y^2-512*y^3-256*y^4-8*z-16*z^2=0 -> [4]

@@ -62,14 +62,8 @@ public class DoGrowReason extends BaseReason {
         boolean busy = true;
         while (busy && iparent >= 0) {
             RelationSet rset1 = solver.get(iparent);
-            if (true || rset1.getMeter().equals(rset2.getMeter())) { // condition (1)
+            if (true) { // condition (1)
                 String factors = rset2.getGrowingFactors(rset1);
-                if (solver.debug >= 2) {
-                    solver.getWriter().println("DoGrowReason iparent=" + iparent + ", factors=" + factors
-                            + "\n\trset1:" + rset1.getMeter() + ", " + solver.polish(rset1)
-                            + "\n\trset2:" + rset2.getMeter() + ", " + solver.polish(rset2)
-                            );
-                }
                 if (factors != null) {
                     // busy = false;
                     result += ", grown from [" + iparent + "]*" + factors; //  + " " + solver.polish(rset2);

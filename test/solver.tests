@@ -242,8 +242,8 @@ CALL QueuingSolver -b 2 -l 1 -e "(a+1)^4 + (a+b)^4 - (a+b+c)^4"
 
 EXIT
 #=======================================================
-TEST Q07b Fermat^3 mod 3
-CALL QueuingSolver -l 2 -b 3 -e "a^3 + b^3 - c^3"
+# TEST Q07b Fermat^3 mod 3
+# CALL QueuingSolver -l 2 -b 3 -e "a^3 + b^3 - c^3"
 
 # TEST Q08 Fermat(3) distance mod 6
 # CALL QueuingSolver -b 6 -l 1 -e "a^3 + (a+b)^3 - (a+b+c)^3"

@@ -51,6 +51,9 @@ public class BaseSolver extends Stack<RelationSet> {
     /** index into queue for unresolved {@link RelationSet}s */
     public int queueHead;
 
+    /** level of queue element which was previously expanded */
+    protected int prevLevel;
+
     /** Writer for proof trace.
      *  The printer is still used in {@link MonadicSolver}, but
      *  modern solvers should normally not print any output except for debugging.
@@ -341,7 +344,7 @@ public class BaseSolver extends Stack<RelationSet> {
      *  @return polished formula
      */
     public String polish(RelationSet rset) {
-        return polish(rset, rset.getTupleShift());
+        return polish(rset, BigInteger.ONE);
     } // polish(1)
 
     //-----------------------------------------------
@@ -368,8 +371,6 @@ public class BaseSolver extends Stack<RelationSet> {
             rset0.setTuple(rset0.getExpressionMap(), getTransposables());
         }
         ModoMeter meter = new ModoMeter(rset0.getTuple().size(), 1); // assume that all variables are not involved
-        rset0.setMeter(meter.toString());
-        // queueHead = 0;
         add(rset0);
     } // setRootNode
 
@@ -401,6 +402,18 @@ public class BaseSolver extends Stack<RelationSet> {
                     );
         }
     } // printNode
+
+    /** Prints the separator between different nesting levels
+     *  @param level current level from next queue element
+     */
+    protected void printSeparator(int level) {
+        if (debug >= 1) {
+            if (prevLevel < level) {
+                prevLevel = level;
+                trace.println("----------------"); // 16 x "-"
+            }
+        } // debug
+    } // printSeparator
 
     /** Prints the trailer message
      *  @param exhausted whether a proof was reached and the queue was exhausted
@@ -435,6 +448,7 @@ public class BaseSolver extends Stack<RelationSet> {
         invall = reasons.hasFeature("invall");
         norm   = reasons.hasFeature("norm"  );
 
+        prevLevel = -1;
         setRootNode(rset0);
         printHeader(rset0);
         boolean exhausted = false;
@@ -445,9 +459,11 @@ public class BaseSolver extends Stack<RelationSet> {
                 exhausted = true;
             } else {
                 RelationSet rset1 = this.get(queueHead);
-                if (rset1.getNestingLevel() > getMaxLevel()) { // nesting too deep - give up
+                int curLevel = rset1.getNestingLevel();
+                if (curLevel > getMaxLevel()) { // nesting too deep - give up
                     busy   = false;
                 } else { // still expanding
+                	printSeparator(curLevel);
                     expand(queueHead);
                     queueHead ++;
                 }

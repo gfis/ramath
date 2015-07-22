@@ -1,4 +1,5 @@
 Expanding for base=2, transposables={{a},{b},{c}}, reasons+features=base,transpose,same,similiar,grow
+----------------
 
 expanding queue[0]: 1 + 4*a + 6*a^2 + 4*a^3 + a^4 - 4*a^3*c - 12*a^2*b*c - 12*a*b^2*c - 4*b^3*c - 6*a^2*c^2 - 12*a*b*c^2 - 6*b^2*c^2 - 4*a*c^3 - 4*b*c^3 - c^4 = 0 modulo [2,2,2] *2
 [0+2*a,0+2*b,0+2*c]: failure constant=1, vgcd=8
@@ -9,6 +10,7 @@ expanding queue[0]: 1 + 4*a + 6*a^2 + 4*a^3 + a^4 - 4*a^3*c - 12*a^2*b*c - 12*a*
 [1+2*a,0+2*b,1+2*c]: failure constant=1, vgcd=8
 [0+2*a,1+2*b,1+2*c]: failure constant=-14, vgcd=8
 [1+2*a,1+2*b,1+2*c]: failure constant=-49, vgcd=8
+----------------
 
 expanding queue[1]: 16 + 64*a + 96*a^2 + 64*a^3 + 16*a^4 - 8*c - 48*a*c - 96*a^2*c - 64*a^3*c - 48*b*c - 192*a*b*c - 192*a^2*b*c - 96*b^2*c - 192*a*b^2*c - 64*b^3*c - 24*c^2 - 96*a*c^2 - 96*a^2*c^2 - 96*b*c^2 - 192*a*b*c^2 - 96*b^2*c^2 - 32*c^3 - 64*a*c^3 - 64*b*c^3 - 16*c^4 = 0 modulo [2,2,2] *4
 [1+4*a,0+4*b,0+4*c]: unknown 16+128*a+384*a^2+512*a^3+256*a^4-16*c-192*a*c-768*a^2*c-1024*a^3*c-192*b*c-1536*a*b*c-3072*a^2*b*c-768*b^2*c-3072*a*b^2*c-1024*b^3*c-96*c^2-768*a*c^2-1536*a^2*c^2-768*b*c^2-3072*a*b*c^2-1536*b^2*c^2-256*c^3-1024*a*c^3-1024*b*c^3-256*c^4=0 -> [4]
