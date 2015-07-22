@@ -44,8 +44,8 @@ public class ReasonFactory extends ArrayList<BaseReason> {
     /** List of various minor solver features */
     protected HashMap<String, String> features;
 
-	/** Feature: show FAILUREs */
-	private boolean showFail = false;
+    /** Feature: show FAILUREs */
+    private boolean showFail = false;
 
     //--------------
     // Construction
@@ -105,14 +105,14 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         } else if (code.startsWith("sim"        )) { result = addReasonClass(code, "SimiliarReason"   );
         } else if (code.startsWith("transp"     )) { result = addReasonClass(code, "TransposeReason"  );
         } else if (code.startsWith("showf"      )) { 
-        	showFail = true;
-        	features.put(code, code);
+            showFail = true;
+            features.put(code, code);
         } else { // unknown reason -> feature (codes are not checked)
-		/*  BaseSolver currently understands the following features:
-	        igtriv = reasons.hasFeature("igtriv");
-	        invall = reasons.hasFeature("invall");
-	        norm   = reasons.hasFeature("norm"  );
-		*/
+        /*  BaseSolver currently understands the following features:
+            igtriv = reasons.hasFeature("igtriv");
+            invall = reasons.hasFeature("invall");
+            norm   = reasons.hasFeature("norm"  );
+        */
             features.put(code, code);
         }
         return result;
@@ -186,7 +186,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
      *  <li>{@link VariableMap#UNKNOWN} - the RelationSet cannot be decided and must be further expanded</li>
      *  </ul>
      */
-    public String check(BaseSolver solver, RelationSet rset2) {
+    private String checkAll(BaseSolver solver, RelationSet rset2) {
         String result = "";
         int ireas = 0;
         boolean busy = true;
@@ -217,16 +217,18 @@ public class ReasonFactory extends ArrayList<BaseReason> {
             ireas ++;
         } // while ireas
         return result;
-    } // check
+    } // checkAll
 
     /** Checks a {@link RelationSet}
      *  with all stored reasons and prints the decision
      *  @param solver the complete state of the expansion tree
      *  @param rset2 the new {@link RelationSet} to be checked
      *  @param vmap2 variables with refined expressions
+     *  @return whether to queue <em>rset2</em> for further expansion
      */
-    public void printDecision(BaseSolver solver, RelationSet rset2, VariableMap vmap2) {
-        String decision = this.check(solver, rset2);
+    public boolean evaluateReasons(BaseSolver solver, RelationSet rset2, VariableMap vmap2) {
+    	boolean queueAgain = false;
+        String decision = this.checkAll(solver, rset2);
         if (false) {
         } else if (decision.startsWith(VariableMap.FAILURE))   { 
                 if (showFail && solver.debug >= 1) {
@@ -250,9 +252,10 @@ public class ReasonFactory extends ArrayList<BaseReason> {
                     solver.trace.print(" -> [" + solver.size() + "]");
                     solver.trace.println();
                 }
-                solver.add(rset2);
+                queueAgain = true;
         } // unknown
-    } // printDecision
+        return queueAgain;
+    } // evaluateReasons
 
     //-------------
     // Test driver

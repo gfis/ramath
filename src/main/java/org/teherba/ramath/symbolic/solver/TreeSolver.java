@@ -145,20 +145,13 @@ public class TreeSolver extends BaseSolver {
         if (invall || involvedCount <= 0) { // vmapr was empty
             meter = new ModoMeter(varNo, base); // involve all variables / avoid modulo [1,1,1,...]
         } // vmapr empty
+        
         // meter now ready for n-adic expansion, e.g. x -> 2*x+0, 2*x+1
-        if (debug >= 1) {
-            trace.println("expanding queue[" + queueIndex 
-                    + "]^" + rset1.getParentIndex()
-                    + ": " + rset1.toString()
-                    + " meter=" + meter.toBaseList()
-                    + " *" + factor.toString()
-                    );
-        }
-
+        printNode(queueIndex, rset1, meter, factor);
         while (meter.hasNext()) { // over all constant combinations - generate all children
             VariableMap vmap2 = vmap1.refineExpressions(meter, 0);
             if (vmap2.size() > 0) {
-                RelationSet rset2 = getStartSet().substitute(vmap2);
+                RelationSet rset2 = getRootNode().substitute(vmap2);
                 if (norm) {
                     rset2.normalize();
                 }
@@ -167,7 +160,9 @@ public class TreeSolver extends BaseSolver {
                 rset2.setTuple          (vmap2, this.getTransposables());
                 rset2.setTupleShift     (factor);
                 rset2.setMeter(meter.toString());
-                reasons.printDecision(this, rset2, vmap2);
+                if (reasons.evaluateReasons(this, rset2, vmap2)) { // queueAgain
+                    this.add(rset2);
+                } // queueAgain
             } // vmap2.size() > 0
 
             meter.next();

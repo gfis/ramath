@@ -119,13 +119,13 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
     private String solutionState;
     /** Result message for cases which are definitely non-solvable */
     public static final String FAILURE   = "failure";
-    /** Result message for cases which definitely have a known solution */
+    /** Result message for cases which have a known solution */
     public static final String SUCCESS   = "success";
     /** Result message for cases which cannot (yet) be decided */
     public static final String UNKNOWN   = "unknown";
-    /** Result message for a recursion to a similiar RelationSet */
+    /** Result message for a recursion to a similiar {@link RelationSet} */
     public static final String SIMILIAR  = "similiar";
-    /** Result message for a recursion to the same   RelationSet */
+    /** Result message for a recursion to the same   {@link RelationSet} */
     public static final String SAME      = "same";
 
     /** Gets the solution state

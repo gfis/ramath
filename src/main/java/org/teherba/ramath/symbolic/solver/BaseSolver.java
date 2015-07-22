@@ -95,12 +95,17 @@ public class BaseSolver extends Stack<RelationSet> {
         trace.close();
     } // close
 
-    /** Gets the {@link RelationSet} to be solved
-     *  @return initial RelationSet to be solved
+    /** Initializes the optional parameters
      */
-    public RelationSet getStartSet() {
-        return this.get(0);
-    } // getStartSet
+    protected void initialize() {
+        setFindMode         (FIND_IN_PREVIOUS);
+        setMaxLevel         (4);
+        setModBase          (2); // for n-adic modulo expansion (here: binary)
+        setSubsetting       (false);
+        setUpperSubst       (true);
+        queueHead           = 0;
+        reasons = new ReasonFactory("transpose,same,similiar,grow");
+    } // initialize
 
     //-----------------------------
     // Bean properties and methods
@@ -186,6 +191,7 @@ public class BaseSolver extends Stack<RelationSet> {
     public void   setTransposables(Vector vtransp) {
         this.vtransp = vtransp;
     } // setTransposables
+    
     /** Gets a readable list of transposable variables
      *  @param rset1 {@link RelationSet} with variable names
      *  @return a set of sets of variables in equivalence classes, for example for
@@ -244,155 +250,6 @@ public class BaseSolver extends Stack<RelationSet> {
     public PrintWriter getWriter() {
         return trace;
     } // getWriter
-
-    //-----------------
-    // Utility methods
-    //-----------------
-
-    /** Try to separate a factor in the constants of a string representation of a {@link RelationSet}.
-     *  @param raw raw formula string
-     *  @return string with extracted factor, for example "4*4*x^2 + 16*4*y^2" for factor 4
-     */
-    protected static String toFactoredString(String raw, BigInteger factor) {
-        Pattern pattern = Pattern.compile("\\d+");
-        Matcher matcher = pattern.matcher("raw");
-        StringBuffer result = new StringBuffer(256);
-        while (matcher.find()) {
-            BigInteger constant = new BigInteger(raw.substring(matcher.start(), matcher.end()));
-            BigInteger[] divRest  = constant.divideAndRemainder(factor);
-            matcher.appendReplacement(result, divRest[1].equals(BigInteger.ZERO)
-                    ? factor.toString() + "*" + divRest[0].toString()
-                    : constant.toString()
-                    );
-        } // while find
-        matcher.appendTail(result);
-        return result.toString();
-    } // toFactoredString
-
-    /** Polish the string representation of a {@link RelationSet}.
-     *  @param rset polish this RelationSet
-     *  @param factor extract this common factor, if possible
-     *  @return polished formula
-     */
-    protected String polish(RelationSet rset, BigInteger factor) {
-        return rset.toString() // toFactoredString(factor)
-           //   .replaceAll("_\\d+", "")
-                .replaceAll("[_ ]", "") // maybe "*" also
-           //   .replaceAll("\\^2", "²")
-           //   .replaceAll("\\^3", "³")
-                ;
-    } // polish(2)
-
-    /** Polish the string representation of a {@link RelationSet}.
-     *  @param rset polish this RelationSet
-     *  @return polished formula
-     */
-    public String polish(RelationSet rset) {
-        return polish(rset, rset.getTupleShift());
-    } // polish(1)
-
-    //-----------------------------------------------
-    // Pseudo-abstract methods common to all Solvers
-    //-----------------------------------------------
-
-    /** Tries to find a similiar {@link RelationSet} in the solver's history,
-     *  either in the parents or in all queue elements (depending on the findMode)
-     *  @param rset2 RelationSet to be looked up
-     *  @return index of similiar element in queue, or "[-1]" if none was found
-     */
-    protected String findSimiliar(RelationSet rset2) {
-        int isimil = -1; // assume not found
-        int iqueue = size() - 1;
-        String message = null;
-        return "[" + String.valueOf(isimil) + "], " + message;
-    } // findSimiliar
-
-    /** Expands one {@link RelationSet} in the queue,
-     *  evaluates the expanded children,
-     *  and requeues all children with status UNKNOWN or SUCCESS.
-     *  @param queueIndex position in the queue of the element ({@link RelationSet}) to be expanded, >= 0
-     */
-    protected void expand(int queueIndex) {
-    } // expand
-
-    /** Prints the header message
-     *  @param rset0 initial {@link RelationSet}
-     */
-    protected void printHeader(RelationSet rset0) {
-        trace.print("Expanding for base=" + getModBase());
-        trace.print(", transposables="    + getTransposableString(rset0));
-        trace.print(", reasons+features=" + reasons.toList());
-        trace.println();
-    } // printHeader
-
-    /** Prints the trailer message
-     *  @param exhausted whether a proof was reached and the queue was exhausted
-     */
-    protected void printTrailer(boolean exhausted) {
-        if (exhausted) {
-            trace.print("Proof - queue exhausted");
-        } else {
-            trace.print("Maximum level " + getMaxLevel() + " reached");
-        }
-        trace.println(", queue size = " + size());
-    } // printTrailer
-
-    /** Refines and evaluates modulus properties for variables in a {@link RelationSet}.
-     *  The maximum queue size breaks the expansion loop in any case.
-     *  @param rset0 start expansion with this {@link RelationSet}.
-     *  @return whether the iteration did stop because the queue was exhausted
-     */
-    public boolean solve(RelationSet rset0) {
-        // determine all features
-        igtriv = reasons.hasFeature("igtriv");
-        invall = reasons.hasFeature("invall");
-        norm   = reasons.hasFeature("norm"  );
-
-        Vector tpcs = rset0.getTransposableClasses();
-        setTransposables(tpcs);
-        if (tpcs.isMonotone()) { // no variable names can be transposed
-            reasons.purge("transposable"); // TransposeReason is not checked if there are no transposable variables
-        } // isMonotone
-        printHeader(rset0);
-        boolean exhausted = false;
-        queueHead = 0;
-        if (rset0.getTuple() == null) {
-            rset0.setTuple(rset0.getExpressionMap(), getTransposables());
-        }
-        ModoMeter meter = new ModoMeter(rset0.getTuple().size(), 1); // assume that all variables are not involved
-        rset0.setMeter(meter.toString());
-        add(rset0);
-        boolean busy = true;
-        while (busy) {
-            if (queueHead >= size()) { // queue exhausted
-                busy = false;
-                exhausted = true;
-            } else {
-                RelationSet rset1 = this.get(queueHead);
-                if (rset1.getNestingLevel() > getMaxLevel()) { // nesting too deep - give up
-                    busy   = false;
-                } else { // still expanding
-                    expand(queueHead);
-                    queueHead ++;
-                }
-            }
-        } // while busy
-        printTrailer(exhausted);
-        close();
-        return exhausted;
-    } // solve
-
-    /** Initializes the optional parameters
-     */
-    protected void initialize() {
-        setFindMode         (FIND_IN_PREVIOUS);
-        setMaxLevel         (4);
-        setModBase          (2); // for n-adic modulo expansion (here: binary)
-        setSubsetting       (false);
-        setUpperSubst       (true);
-        queueHead           = 0;
-        reasons = new ReasonFactory("transpose,same,similiar,grow");
-    } // initialize
 
     //------------------------
     // Commandline processing
@@ -461,6 +318,146 @@ public class BaseSolver extends Stack<RelationSet> {
         return result;
     } // getArguments
 
+    //-----------------
+    // Utility methods
+    //-----------------
+
+    /** Polish the string representation of a {@link RelationSet}.
+     *  @param rset polish this RelationSet
+     *  @param factor extract this common factor, if possible
+     *  @return polished formula
+     */
+    protected String polish(RelationSet rset, BigInteger factor) {
+        return rset.toString()
+           //   .replaceAll("_\\d+", "")
+                .replaceAll("[_ ]", "") // maybe "*" also
+           //   .replaceAll("\\^2", "²")
+           //   .replaceAll("\\^3", "³")
+                ;
+    } // polish(2)
+
+    /** Polish the string representation of a {@link RelationSet}.
+     *  @param rset polish this RelationSet
+     *  @return polished formula
+     */
+    public String polish(RelationSet rset) {
+        return polish(rset, rset.getTupleShift());
+    } // polish(1)
+
+    //-----------------------------------------------
+    // Pseudo-abstract methods common to all Solvers
+    //-----------------------------------------------
+
+    /** Gets the initial {@link RelationSet} to be solved
+     *  @return root element of the queue of RelationSets
+     */
+    protected RelationSet getRootNode() {
+        return this.get(0);
+    } // getRootNode
+
+    /** Sets root element of the queue of RelationSets
+     *  @param rset0 the initial {@link RelationSet} to be solved
+     */
+    protected void setRootNode(RelationSet rset0) {
+        Vector tpcs = rset0.getTransposableClasses();
+        setTransposables(tpcs);
+        if (tpcs.isMonotone()) { // no variable names can be transposed
+            reasons.purge("transposable"); // TransposeReason is not checked if there are no transposable variables
+        } // isMonotone
+        if (rset0.getTuple() == null) {
+            rset0.setTuple(rset0.getExpressionMap(), getTransposables());
+        }
+        ModoMeter meter = new ModoMeter(rset0.getTuple().size(), 1); // assume that all variables are not involved
+        rset0.setMeter(meter.toString());
+        // queueHead = 0;
+        add(rset0);
+    } // setRootNode
+
+    /** Prints the header message
+     *  @param rset0 initial {@link RelationSet}
+     */
+    protected void printHeader(RelationSet rset0) {
+        if (debug >= 1) {
+            trace.print("Expanding for base=" + getModBase());
+            trace.print(", transposables="    + getTransposableString(rset0));
+            trace.print(", reasons+features=" + reasons.toList());
+            trace.println();
+        } // debug
+    } // printHeader
+
+    /** Prints the message for a node to be expanded
+     *  @param queueIndex expand this queue element
+     *  @param rset1 {@link RelationSet} at position <em>queueIndex</em>
+     *  @param meter which {@link ModoMeter} will be used for the expansion
+     *  @param factor the common shift for all variables (if any)
+     */
+    protected void printNode(int queueIndex, RelationSet rset1, ModoMeter meter, BigInteger factor) {
+        if (debug >= 1) {
+            trace.println("expanding queue[" + queueIndex + "]^" 
+                    + rset1.getParentIndex()
+                    + ": " + rset1.toString()
+                    + " meter=" + meter.toBaseList()
+                    + " *" + factor.toString()
+                    );
+        }
+    } // printNode
+
+    /** Prints the trailer message
+     *  @param exhausted whether a proof was reached and the queue was exhausted
+     */
+    protected void printTrailer(boolean exhausted) {
+        if (debug >= 1) {
+            if (exhausted) {
+                trace.print("Proof - queue exhausted");
+            } else {
+                trace.print("Maximum level " + getMaxLevel() + " reached");
+            }
+            trace.println(", queue size = " + size());
+        } // debug
+    } // printTrailer
+
+    /** Expands one {@link RelationSet} in the queue,
+     *  evaluates the expanded children,
+     *  and requeues all children with status UNKNOWN or SUCCESS.
+     *  @param queueIndex position in the queue of the element ({@link RelationSet}) to be expanded, >= 0
+     */
+    protected void expand(int queueIndex) {
+    } // expand
+
+    /** Refines and evaluates modulus properties for variables in a {@link RelationSet}.
+     *  The maximum queue size breaks the expansion loop in any case.
+     *  @param rset0 start expansion with this {@link RelationSet}.
+     *  @return whether the iteration did stop because the queue was exhausted
+     */
+    public boolean solve(RelationSet rset0) {
+        // determine all features
+        igtriv = reasons.hasFeature("igtriv");
+        invall = reasons.hasFeature("invall");
+        norm   = reasons.hasFeature("norm"  );
+
+        setRootNode(rset0);
+        printHeader(rset0);
+        boolean exhausted = false;
+        boolean busy = true;
+        while (busy) {
+            if (queueHead >= size()) { // queue exhausted
+                busy = false;
+                exhausted = true;
+            } else {
+                RelationSet rset1 = this.get(queueHead);
+                if (rset1.getNestingLevel() > getMaxLevel()) { // nesting too deep - give up
+                    busy   = false;
+                } else { // still expanding
+                    expand(queueHead);
+                    queueHead ++;
+                }
+            }
+        } // while busy
+        printTrailer(exhausted);
+        close();
+        return exhausted;
+    } // solve
+
     //-------------
     // Test driver
     //-------------
@@ -473,4 +470,4 @@ public class BaseSolver extends Stack<RelationSet> {
         String expr = solver.getArguments(0, args);
     } // main
 
-} // Solver
+} // BaseSolver
