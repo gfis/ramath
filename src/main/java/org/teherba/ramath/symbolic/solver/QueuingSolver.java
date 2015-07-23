@@ -1,5 +1,6 @@
 /*  QueuingSolver: tries to solve a Diophantine equation by monadic variable expansion
  *  @(#) $Id: QueuingSolver.java 970 2012-10-25 16:49:32Z gfis $
+ *  2015-07-23: deactivated, replaced by TreeSolver
  *  2015-06-15: RelationSet.parse was not static
  *  2015-05-28: subdirectory solver
  *  2015-02-07: try to treat variable name equivalences classes; Pforzheim 4th day post; Dorothea's 105th birthday
@@ -97,39 +98,6 @@ public class QueuingSolver extends BaseSolver {
     // Heavyweight Methods
     //---------------------
 
-    /** Tries to find a similiar {@link RelationSet} in the solver's history,
-     *  either in the parents or in all queue elements (depending on the findMode)
-     *  @param rset2 RelationSet to be looked up
-     *  @return index of similiar element in queue, or "[-1]" if none was found
-     */
-    protected String findSimiliar(RelationSet rset2) {
-        int isimil = -1; // assume not found
-        int iqueue = size() - 1;
-        String message = null;
-        switch (getFindMode()) {
-            default:
-            case FIND_IN_PREVIOUS:
-                while (isimil < 0 && iqueue >= 0) {
-                    message = get(iqueue).similiarity(rset2);
-                    if (message != null) {
-                        isimil = iqueue;
-                    }
-                    iqueue --;
-                } // while iqueue
-                break;
-            case FIND_IN_PARENTS:
-                iqueue = rset2.getParentIndex();
-                while (isimil < 0 && iqueue >= 0) {
-                    message = get(iqueue).similiarity(rset2);
-                    if (message != null) {
-                        isimil = iqueue;
-                    }
-                    iqueue = rset2.getParentIndex();
-                } // while iqueue
-                break;
-        } // switch findMode
-        return "[" + String.valueOf(isimil) + "], " + message;
-    } // findSimiliar
 
     /** Expands one {@link RelationSet} in the queue,
      *  evaluates the expanded children,
@@ -140,81 +108,6 @@ public class QueuingSolver extends BaseSolver {
      *  @param queueIndex position in the queue of the element ({@link RelationSet}) to be expanded, >= 0
      */
     public void expand(int queueIndex) {
-        RelationSet rset1 = get(queueIndex); // expand this element (the "parent")
-        int curLevel      = rset1.getNestingLevel() + 1;
-        int base          =  getModBase();
-        VariableMap vmap1 = rset1.getTuple();
-        int varNo         = vmap1.size(); // total number of variables to be substituted
-        ModoMeter meter   = new ModoMeter(varNo, 1); // assume that all variables are not involved
-        VariableMap vmapr = rset1.getRest(base).getExpressionMap();
-        Iterator<String> iter1 = vmap1.keySet().iterator();
-        int im = 0;
-        while (iter1.hasNext()) {
-            String name = iter1.next();
-            if (true || vmapr.get(name) != null) { // name occurs in rest: this will be involved
-                meter.setBase(im, base); // involve it
-            } // name in rest
-            im ++;
-        } // while iter1
-        // meter now ready for n-adic expansion, e.g. x -> 2*x+0, 2*x+1
-        BigInteger factor = BigInteger.valueOf(base).pow(curLevel);
-        if (debug >= 1) {
-            trace.println();
-            trace.println("expanding queue[" + queueIndex + "]: "
-                    + (rset1.toString())
-                    + " modulo " + meter.toBaseList()
-                    + " *" + factor.toString()
-                //  + ", vmap1=" + vmap1.toString()
-                //  + ", vmapr=" + vmapr.toString()
-                    );
-        }
-        while (meter.hasNext()) { // over all constant combinations - generate all children
-            VariableMap vmap2 = vmap1.refineExpressions(meter, 0);
-            RelationSet rset2 = getRootNode().substitute(vmap2); // .normalize();
-            rset2.setNestingLevel   (curLevel); // + 1);
-            rset2.setParentIndex    (queueIndex);
-            rset2.setTuple          (vmap2);
-            int qpos = size(); // position where the next queue element is stored
-            add(rset2);
-            String decision = rset2.evaluate(vmap2);
-            remove(qpos);
-
-            if (! decision.startsWith(VariableMap.UNKNOWN) && ! decision.startsWith(VariableMap.SUCCESS)) {
-                    if (debug >= 0) {
-                        trace.print(vmap2.toVector() + ": ");
-                        trace.println(decision);
-                    }
-            } else { // UNKNOWN || SUCCESS
-                if (size() == 1 && get(0).toString().equals(rset2.clone().normalize().toString())) { // first queue entry, expanded with [0,0,...0]
-                        if (debug >= 1) {
-                            trace.print(vmap2.toVector() + ": ");
-                            trace.print(VariableMap.SAME + " as");
-                            trace.print(" " + polish(rset2, factor));
-                            trace.println();
-                        }
-                } else { // not [0]
-                    String similiar = findSimiliar(rset2);
-                    if (! similiar.startsWith("[-1]")) { // no index "[-1]" means a similiar RelationSet was found
-                        if (debug >= 1) {
-                            trace.print(vmap2.toVector() + ": ");
-                            trace.print(VariableMap.SIMILIAR + " to " + similiar);
-                            trace.print(" " + polish(rset2, factor));
-                            trace.println();
-                        }
-                    } else { // "[-1]", no similiar RelationSet found
-                        if (debug >= 1) {
-                            trace.print(vmap2.toVector() + ": ");
-                            trace.print(decision);
-                            trace.print(" " + polish(rset2, factor));
-                            trace.print(" -> [" + size() + "]");
-                            trace.println();
-                        }
-                        add(rset2);
-                    } // no similiar
-                } // not [0]
-            } // unkown
-            meter.next();
-        } // while meter.hasNext() - generate all children
     } // expand
 
     //-------------

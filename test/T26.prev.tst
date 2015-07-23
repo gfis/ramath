@@ -1,7 +1,8 @@
 Expanding for base=2, transposables={{x},{y}}, reasons+features=base,transpose,same,similiar,grow
 ----------------
 expanding queue[0]^-1: 56*x + 71*x^2 + 16*x^3 + x^4 - y^2 = 0 meter=[2,2] *2
-[0+2*x,0+2*y]: grown from [0]*2,4,8,16,4 112*x+284*x^2+128*x^3+16*x^4-4*y^2=0 success [0,0],trivial(3) 
+solution [0,0],trivial(3)
+[0+2*x,0+2*y]: grown from [0]*2,4,8,16,4 112*x+284*x^2+128*x^3+16*x^4-4*y^2=0
 [1+2*x,0+2*y]: unknown 144+500*x+500*x^2+160*x^3+16*x^4-4*y^2=0 -> [1]
 ----------------
 expanding queue[1]^0: 144 + 500*x + 500*x^2 + 160*x^3 + 16*x^4 - 4*y^2 = 0 meter=[2,2] *4

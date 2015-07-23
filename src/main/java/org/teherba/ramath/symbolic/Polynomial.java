@@ -1105,14 +1105,14 @@ x^2 + 3*x^3 + 2*x^4
             }
         } // while titer
         return result;
-	} // degree(boolean)
-	
+    } // degree(boolean)
+    
     /** Determines the degree, that is the sum of exponents in all {@link Monomial}s
      *  if it is the same
      *  @return degree >= 0, or -1 if there are different sums of exponents
      */
     public int degree() {
-    	return this.degree(false);
+        return this.degree(false);
     } // degree()
 
     /** Determines whether all {@link Monomial}s are of the same {@link #degree}.
@@ -1840,7 +1840,7 @@ x^2 + 3*x^3 + 2*x^4
     public String evaluate(VariableMap vmap1) {
         // this.normalize();
         StringBuffer result = new StringBuffer(64);
-        Coefficient constant = /*Coefficient.valueOf*/(this.getConstant());
+        Coefficient constant = this.getConstant();
         if (false) {
         } else if (this.isConstant()) {
             if (this.isZero()) {
@@ -1874,7 +1874,9 @@ x^2 + 3*x^3 + 2*x^4
                 result.append(" constant=");
                 result.append(constant.toString());
             }
+
     /* unsure whether biasedness should be tested
+    */
         } else if (this.isBiased()) { // > 0 or < 0
                 switch (this.getRelation()) {
                     default:
@@ -1883,36 +1885,13 @@ x^2 + 3*x^3 + 2*x^4
                         break;
                     case GE_0:
                     case GT_0:
-                        result.append(constant.compareTo(BigInteger*Rational*//*.ZERO) > 0 ? VariableMap.SUCCESS : VariableMap.FAILURE);
+                        result.append(constant.compareTo(BigInteger/*Rational*/.ZERO) > 0 ? VariableMap.SUCCESS : VariableMap.FAILURE);
                         break;
                     case NE_0:
                         result.append(VariableMap.SUCCESS);
                         break;
                 } // switch relation
                 result.append(" biased");
-
-        } else if (constant.equals(Coefficient.ZERO)) {
-                switch (this.getRelation()) {
-                    default:
-                    case EQ_0:
-                    case GE_0:
-                        result.append(VariableMap.SUCCESS);
-                        if (vmap1 != null) {
-                            result.append(" ");
-                            result.append(vmap1.getConstants()); // they are a solution when all variables are set to zero
-                            result.append(" ");
-                            result.append(vmap1.triviality());
-                        } else {
-                            result.append(" =0");
-                        }
-                        break;
-                    case GT_0:
-                    case NE_0:
-                        result.append(VariableMap.FAILURE);
-                        result.append(" !=0");
-                        break;
-                } // switch relation
-    */
 
         } else { // not a single constant, not biased
             // check greatest common divisor of variables
@@ -1936,31 +1915,8 @@ x^2 + 3*x^3 + 2*x^4
                 result.append(constant.toString());
                 result.append(", vgcd=");
                 result.append(varGCD.toString());
-            } else { // Test for (x,y,...) elem of {0,1}^n
-                VariableMap vmap2 = vmap1 != null ? vmap1.clone() : new VariableMap();
-                ModoMeter meter = new ModoMeter(vmap2.size(), 2); // run {0,1} through all variables
-                boolean success = false;
-                while (meter.hasNext()) {
-                    vmap2.setValues(meter);
-                    Polynomial poly2 = this.substitute(vmap2);
-                    if (poly2.isZero()) {
-                        success = true;
-                        result.append(VariableMap.SUCCESS);
-                        if (vmap1 != null) {
-                            result.append(" ");
-                            result.append(vmap1.getSolutionVector(meter).describe());
-                            result.append(" ");
-                            // result.append(vmap1.triviality());
-                        } else {
-                            result.append(" =0");
-                        }
-                        // isZero
-                    } 
-                    meter.next();
-                } // while meter
-                if (! success) {
-                    result.append(VariableMap.UNKNOWN);
-                } // UNKNOWN
+            } else { 
+                result.append(VariableMap.UNKNOWN);
             } // Test for (x,y,...) elem of {0,1}^n
         } // not a single constant, not biased
         return result.toString();

@@ -1,10 +1,10 @@
 Expanding for base=2, transposables={{a,b},{c}}, reasons+features=base,same,similiar,transpose norm,igtriv
 ----------------
 expanding queue[0]^-1: a^5 + b^5 - c^5 = 0 meter=[2,2,2] *2
-[0+2*a,0+2*b,0+2*c]: same form as a^5+b^5-c^5=0 success [0,0,0],trivial(3) success [2,0,2],trivial(3) success [0,2,2],trivial(3) 
+[0+2*a,0+2*b,0+2*c]: same form as a^5+b^5-c^5=0
 [1+2*a,1+2*b,0+2*c]: unknown 1+5*a+20*a^2+40*a^3+40*a^4+16*a^5+5*b+20*b^2+40*b^3+40*b^4+16*b^5-16*c^5=0 -> [1]
 [1+2*a,0+2*b,1+2*c]: unknown 5*a+20*a^2+40*a^3+40*a^4+16*a^5+16*b^5-5*c-20*c^2-40*c^3-40*c^4-16*c^5=0 -> [2]
-[0+2*a,1+2*b,1+2*c]: transposition of [2] {0/0+2*b,0/1+2*a,2/1+2*c} by 0+2*b|0+2*a 1+2*a|1+2*b success [0,1,1],trivial(3) success [0,3,3],trivial(3) 
+[0+2*a,1+2*b,1+2*c]: transposition of [2] {0/0+2*b,0/1+2*a,2/1+2*c} by 0+2*b|0+2*a 1+2*a|1+2*b
 ----------------
 expanding queue[1]^0: 1 + 5*a + 20*a^2 + 40*a^3 + 40*a^4 + 16*a^5 + 5*b + 20*b^2 + 40*b^3 + 40*b^4 + 16*b^5 - 16*c^5 = 0 meter=[2,2,1] *4
 [3+4*a,1+4*b,0+2*c]: unknown 61+405*a+1080*a^2+1440*a^3+960*a^4+256*a^5+5*b+40*b^2+160*b^3+320*b^4+256*b^5-8*c^5=0 -> [3]

@@ -37,7 +37,6 @@ import  java.util.ArrayList;
 import  java.util.Iterator;
 import  org.apache.log4j.Logger;
 
-
 /** Class PythagoreanTreeGenerator implements the generation of a tree
  *  of Pythagorean triples by the aid of 3 linear 3x3 matrixes, as described in
  *  Either the matrixes of Barning or of Price are used.
@@ -257,23 +256,29 @@ X132 [207,224,305]
      *  @param args command line arguments
      */
     public static void main(String[] args) {
-        if (args.length == 0) {
-            PythagoreanTreeGenerator generator = new PythagoreanTreeGenerator();
-            int index = 0; 
-            while (index < 8) {
-                System.out.println("getMatrix(" + index + ") = " + generator.getMatrix(index).toString(","));
-                index ++;
-            } // while index
-        } else { // with arguments: generate tree
-            PythagoreanTreeGenerator solver = new PythagoreanTreeGenerator();
-            String expr = solver.getArguments(0, args);
-            RelationSet rset0 = new RelationSet("X; 3; 4; 5"); // always start with this triple
-            if (expr != null) {
-                rset0 = RelationSet.parse(expr);
-            }
-            solver.setMatrixes();
-            solver.solve(rset0);
-        } // with arguments
+        Logger log = Logger.getLogger(PythagoreanTreeGenerator.class.getName()); // log4j
+        try {
+            if (args.length == 0) {
+                PythagoreanTreeGenerator generator = new PythagoreanTreeGenerator();
+                int index = 1; 
+                while (index < 8 && index != 4) {
+                    System.out.println("getMatrix(" + index + ") = " + generator.getMatrix(index).toString(","));
+                    index ++;
+                } // while index
+            } else { // with arguments: generate tree
+                PythagoreanTreeGenerator solver = new PythagoreanTreeGenerator();
+                String expr = solver.getArguments(0, args);
+                RelationSet rset0 = new RelationSet("X; 3; 4; 5"); // always start with this triple
+                if (expr != null) {
+                    rset0 = RelationSet.parse(expr);
+                }
+                solver.setMatrixes();
+                solver.solve(rset0);
+            } // with arguments
+        } catch (Exception exc) {
+            log.error(exc.getMessage(), exc);
+            exc.printStackTrace();
+        }
     } // main
 
 } // PythagoreanTreeGenerator

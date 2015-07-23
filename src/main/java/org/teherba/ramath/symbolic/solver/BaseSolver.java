@@ -1,5 +1,6 @@
 /*  Solver: base class for solvers of Diophantine relation sets, with bean properties
  *  @(#) $Id: BaseSolver.java 970 2012-10-25 16:49:32Z gfis $
+ *  2015-07-23: printSolutions
  *  2015-07-09: feature igtriv
  *  2015-05-28: subdirectory solver, renamed from Solver.java
  *  2015-02-21: extends Vector<RelationSet>
@@ -415,6 +416,40 @@ public class BaseSolver extends Stack<RelationSet> {
         } // debug
     } // printSeparator
 
+    /** Prints solutions, if there are any.
+     *  Solutions are obtained by replacing the variables by 0 (not implemented: "or by 1").
+     *  @param rset1 {@link RelationSet} to be examined
+     *  @param vmap1 {@link VariableMap} of <em>rset1</em>
+     */
+    protected void printSolutions(RelationSet rset1, VariableMap vmap1) {
+        if (debug >= 0) {
+            boolean first = false;
+            VariableMap vmap2 = vmap1 != null ? vmap1.clone() : new VariableMap();
+            ModoMeter meter = new ModoMeter(vmap2.size(), 2); // run {0,1} through all variables
+            boolean busy = true;
+            while (busy && meter.hasNext()) {
+                vmap2.setValues(meter);
+                RelationSet rset2 = rset1.substitute(vmap2);
+                String decision = rset2.evaluate(vmap2);
+                if (decision.startsWith(VariableMap.SUCCESS + " =0")) {
+                    decision = vmap1.getMeteredValues(meter).describe();
+                    if (! igtriv || ! (decision.indexOf("trivial") >= 0)) {
+                        if (! first) {
+                            trace.print("solution");
+                            first = true;
+                        }
+                        trace.print(" " + decision);
+                    }
+                } // SUCCESS =0
+                meter.next();
+                busy = false; // evaluate only once for [0,0,...]
+            } // while meter
+            if (first) {
+                trace.println();
+            }
+        } // debug
+    } // printSolutions
+
     /** Prints the trailer message
      *  @param exhausted whether a proof was reached and the queue was exhausted
      */
@@ -463,7 +498,7 @@ public class BaseSolver extends Stack<RelationSet> {
                 if (curLevel > getMaxLevel()) { // nesting too deep - give up
                     busy   = false;
                 } else { // still expanding
-                	printSeparator(curLevel);
+                    printSeparator(curLevel);
                     expand(queueHead);
                     queueHead ++;
                 }

@@ -230,30 +230,30 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
         return result.toString();
     } // getConstants
 
-    /** Gets a solution, that
-     *  are the constant expressions when refined variables are substituted from a 
+    /** Gets a {@link PolyVector} 
+     *  of the constant expressions when refined variables are substituted from a 
      *  binary {@link Dispenser}.
-     *  @return "[3,4,5]", for example
+     *  @return for example: [3,4] for this={x->3+2*x, y->0+4*y} and meter=[0,1] 
      *  Caution: the form of the expressions must be c+f*x;
      *  this is initiated by {@link Polynomial#getExpressionMap}().
      */
-    public PolyVector getSolutionVector(Dispenser meter) {
+    public PolyVector getMeteredValues(Dispenser meter) {
         PolyVector result = new PolyVector(this.size());
         Iterator<String> iter = this.keySet().iterator();
         int iname = 0;
         while (iter.hasNext()) {
             String name  = iter.next();
             String value = this.get(name);
-            String repl  = String.valueOf(meter.get(iname));
-            int timesPos = value.indexOf("*") + 1;
-            if (timesPos <= 0) {
-                timesPos = value.length();
+            String digit = String.valueOf(meter.get(iname));
+            int behindTimes = value.indexOf("*") + 1;
+            if (behindTimes <= 0) {
+                behindTimes = value.length();
             } 
-            result.set(iname, new Polynomial(value.substring(0, timesPos) + String.valueOf(repl)));
+            result.set(iname, new Polynomial(value.substring(0, behindTimes) + String.valueOf(digit)));  // REFINED_FORM
             iname ++;
         } // while iter
         return result;
-    } // getSolutionVector
+    } // getMeteredValues
 
     /** Refines the expressions in <em>this</em> VariableMap
      *  by one level of modulus expansion.

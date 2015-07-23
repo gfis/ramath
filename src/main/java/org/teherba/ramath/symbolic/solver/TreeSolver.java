@@ -1,5 +1,6 @@
 /*  TreeSolver: tries to solve a Diophantine equation by monadic variable expansion
  *  @(#) $Id: TreeSolver.java 970 2012-10-25 16:49:32Z gfis $
+ *  2015-07-23: printSolutions
  *  2015-06-15: RelationSet.parse was not static
  *  2015-05-28: subdirectory solver
  *  2015-04-26: solution if (xi,yi,..) elem of {0,1}^n
@@ -141,13 +142,13 @@ public class TreeSolver extends BaseSolver {
     public void expand(int queueIndex) {
         RelationSet rset1 = this.get(queueIndex); // expand this element (the "parent")
         VariableMap vmap1 = rset1.getTuple();
-        // reasons.printDecision(this, rset1, vmap1);
         int newLevel      = rset1.getNestingLevel() + 1;
         int base          = this.getModBase();
         BigInteger factor = BigInteger.valueOf(base).pow(newLevel);
         ModoMeter meter   = prepareMeter(rset1, vmap1, factor);      
         // meter now ready for n-adic expansion, e.g. x -> 2*x+0, 2*x+1
         printNode(queueIndex, rset1, meter, factor);
+        printSolutions(rset1, vmap1);
         while (meter.hasNext()) { // over all constant combinations - generate all children
             VariableMap vmap2 = vmap1.refineExpressions(meter, 0);
             if (vmap2.size() > 0) {

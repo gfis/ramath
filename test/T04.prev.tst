@@ -1,14 +1,17 @@
 Expanding for base=2, transposables={{x},{y},{z}}, reasons+features=base,transpose,same,similiar,grow
 ----------------
 expanding queue[0]^-1: x^4 - y^4 - z^2 = 0 meter=[2,2,2] *2
-[0+2*x,0+2*y,0+2*z]: grown from [0]*16,16,4 16*x^4-16*y^4-4*z^2=0 success [0,0,0],trivial(3) success [2,2,0],trivial(3) 
-[1+2*x,1+2*y,0+2*z]: success [1,1,0],trivial(3) success [3,3,0],trivial(3)  8*x+24*x^2+32*x^3+16*x^4-8*y-24*y^2-32*y^3-16*y^4-4*z^2=0 -> [1]
-[1+2*x,0+2*y,1+2*z]: success [1,0,1],trivial(3)  8*x+24*x^2+32*x^3+16*x^4-16*y^4-4*z-4*z^2=0 -> [2]
+solution [0,0,0],trivial(3)
+[0+2*x,0+2*y,0+2*z]: grown from [0]*16,16,4 16*x^4-16*y^4-4*z^2=0
+[1+2*x,1+2*y,0+2*z]: unknown 8*x+24*x^2+32*x^3+16*x^4-8*y-24*y^2-32*y^3-16*y^4-4*z^2=0 -> [1]
+[1+2*x,0+2*y,1+2*z]: unknown 8*x+24*x^2+32*x^3+16*x^4-16*y^4-4*z-4*z^2=0 -> [2]
 ----------------
 expanding queue[1]^0: 8*x + 24*x^2 + 32*x^3 + 16*x^4 - 8*y - 24*y^2 - 32*y^3 - 16*y^4 - 4*z^2 = 0 meter=[1,1,2] *4
-[1+2*x,1+2*y,0+4*z]: grown from [1]*1,1,1,1,1,1,1,1,4 8*x+24*x^2+32*x^3+16*x^4-8*y-24*y^2-32*y^3-16*y^4-16*z^2=0 success [1,1,0],trivial(3) success [3,3,0],trivial(3) 
+solution [1,1,0],trivial(3)
+[1+2*x,1+2*y,0+4*z]: grown from [1]*1,1,1,1,1,1,1,1,4 8*x+24*x^2+32*x^3+16*x^4-8*y-24*y^2-32*y^3-16*y^4-16*z^2=0
 expanding queue[2]^0: 8*x + 24*x^2 + 32*x^3 + 16*x^4 - 16*y^4 - 4*z - 4*z^2 = 0 meter=[1,1,2] *4
-[1+2*x,0+2*y,1+4*z]: grown from [2]*1,1,1,1,1,2,4 8*x+24*x^2+32*x^3+16*x^4-16*y^4-8*z-16*z^2=0 success [1,0,1],trivial(3) 
+solution [1,0,1],trivial(3)
+[1+2*x,0+2*y,1+4*z]: grown from [2]*1,1,1,1,1,2,4 8*x+24*x^2+32*x^3+16*x^4-16*y^4-8*z-16*z^2=0
 [1+2*x,0+2*y,3+4*z]: unknown -8+8*x+24*x^2+32*x^3+16*x^4-16*y^4-24*z-16*z^2=0 -> [3]
 ----------------
 expanding queue[3]^2:  - 8 + 8*x + 24*x^2 + 32*x^3 + 16*x^4 - 16*y^4 - 24*z - 16*z^2 = 0 meter=[2,1,2] *8

@@ -1,7 +1,7 @@
 Expanding for base=6, transposables={{a},{b},{c}}, reasons+features=base,same,similiar igtriv,norm
 ----------------
 expanding queue[0]^-1: a^3 + 3*b^3 - 9*c^3 = 0 meter=[6,6,6] *6
-[0+6*a,0+6*b,0+6*c]: same form as a^3+3*b^3-9*c^3=0 success [0,0,0],trivial(3) 
+[0+6*a,0+6*b,0+6*c]: same form as a^3+3*b^3-9*c^3=0
 [3+6*a,3+6*b,0+6*c]: unknown 2+3*a+6*a^2+4*a^3+9*b+18*b^2+12*b^3-36*c^3=0 -> [1]
 [3+6*a,0+6*b,3+6*c]: unknown -4+3*a+6*a^2+4*a^3+12*b^3-27*c-54*c^2-36*c^3=0 -> [2]
 [0+6*a,3+6*b,3+6*c]: unknown -3+4*a^3+9*b+18*b^2+12*b^3-27*c-54*c^2-36*c^3=0 -> [3]

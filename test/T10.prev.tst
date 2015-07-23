@@ -1,14 +1,16 @@
 Expanding for base=2, transposables={{x,y,z}}, reasons+features=base,transpose,same,dogrow norm
 ----------------
 expanding queue[0]^-1: x^2 + y^2 - 5*x*y*z + z^2 = 0 meter=[2,2,2] *2
-[0+2*x,0+2*y,0+2*z]: success [0,0,0],trivial(3) , grown from [0]*1,1,2,1 x^2+y^2-10*x*y*z+z^2=0 -> [1]
+solution [0,0,0],trivial(3)
+[0+2*x,0+2*y,0+2*z]: unknown, grown from [0]*1,1,2,1 x^2+y^2-10*x*y*z+z^2=0 -> [1]
 [1+2*x,1+2*y,0+2*z]: unknown 1+2*x+2*x^2+2*y+2*y^2-5*z-10*x*z-10*y*z-20*x*y*z+2*z^2=0 -> [2]
 [1+2*x,0+2*y,1+2*z]: transposition of [2] {0/0+2*z,0/1+2*x,0/1+2*y} by 0+2*z|0+2*y 1+2*y|1+2*z
 [0+2*x,1+2*y,1+2*z]: transposition of [2] {0/0+2*z,0/1+2*x,0/1+2*y} by 0+2*z|0+2*x 1+2*x|1+2*y 1+2*y|1+2*z
 [1+2*x,1+2*y,1+2*z]: unknown -1-3*x+2*x^2-3*y-10*x*y+2*y^2-3*z-10*x*z-10*y*z-20*x*y*z+2*z^2=0 -> [3]
 ----------------
 expanding queue[1]^0: x^2 + y^2 - 10*x*y*z + z^2 = 0 meter=[2,2,2] *4
-[0+4*x,0+4*y,0+4*z]: success [0,0,0],trivial(3) , grown from [1]*1,1,2,1, grown from [0]*1,1,4,1 x^2+y^2-20*x*y*z+z^2=0 -> [4]
+solution [0,0,0],trivial(3)
+[0+4*x,0+4*y,0+4*z]: unknown, grown from [1]*1,1,2,1, grown from [0]*1,1,4,1 x^2+y^2-20*x*y*z+z^2=0 -> [4]
 expanding queue[2]^0: 1 + 2*x + 2*x^2 + 2*y + 2*y^2 - 5*z - 10*x*z - 10*y*z - 20*x*y*z + 2*z^2 = 0 meter=[1,1,2] *4
 [1+2*x,1+2*y,2+4*z]: unknown -1-4*x+x^2-4*y-10*x*y+y^2-z-10*x*z-10*y*z-20*x*y*z+4*z^2=0 -> [5]
 expanding queue[3]^0:  - 1 - 3*x + 2*x^2 - 3*y - 10*x*y + 2*y^2 - 3*z - 10*x*z - 10*y*z - 20*x*y*z + 2*z^2 = 0 meter=[2,2,2] *4
@@ -18,7 +20,8 @@ expanding queue[3]^0:  - 1 - 3*x + 2*x^2 - 3*y - 10*x*y + 2*y^2 - 3*z - 10*x*z -
 [3+4*x,3+4*y,3+4*z]: unknown, grown from [3]*27,13,2,13,6,2,13,6,6,4,2 -27-39*x+4*x^2-39*y-60*x*y+4*y^2-39*z-60*x*z-60*y*z-80*x*y*z+4*z^2=0 -> [7]
 ----------------
 expanding queue[4]^1: x^2 + y^2 - 20*x*y*z + z^2 = 0 meter=[2,2,2] *8
-[0+8*x,0+8*y,0+8*z]: success [0,0,0],trivial(3) , grown from [4]*1,1,2,1, grown from [1]*1,1,4,1, grown from [0]*1,1,8,1 x^2+y^2-40*x*y*z+z^2=0 -> [8]
+solution [0,0,0],trivial(3)
+[0+8*x,0+8*y,0+8*z]: unknown, grown from [4]*1,1,2,1, grown from [1]*1,1,4,1, grown from [0]*1,1,8,1 x^2+y^2-40*x*y*z+z^2=0 -> [8]
 expanding queue[5]^2:  - 1 - 4*x + x^2 - 4*y - 10*x*y + y^2 - z - 10*x*z - 10*y*z - 20*x*y*z + 4*z^2 = 0 meter=[2,2,2] *8
 [3+4*x,1+4*y,2+8*z]: unknown -2-2*x+2*x^2-14*y-20*x*y+2*y^2-11*z-20*x*z-60*y*z-80*x*y*z+8*z^2=0 -> [9]
 [1+4*x,3+4*y,2+8*z]: transposition of [9] {0/1+4*y,0/2+8*z,0/3+4*x} by 1+4*y|1+4*x 3+4*x|3+4*y
@@ -36,7 +39,8 @@ expanding queue[7]^3:  - 27 - 39*x + 4*x^2 - 39*y - 60*x*y + 4*y^2 - 39*z - 60*x
 [7+8*x,7+8*y,7+8*z]: unknown, grown from [3]*196,77,4,77,28,4,77,28,28,16,4 -196-231*x+8*x^2-231*y-280*x*y+8*y^2-231*z-280*x*z-280*y*z-320*x*y*z+8*z^2=0 -> [16]
 ----------------
 expanding queue[8]^4: x^2 + y^2 - 40*x*y*z + z^2 = 0 meter=[2,2,2] *16
-[0+16*x,0+16*y,0+16*z]: success [0,0,0],trivial(3) , grown from [8]*1,1,2,1, grown from [4]*1,1,4,1, grown from [1]*1,1,8,1, grown from [0]*1,1,16,1 x^2+y^2-80*x*y*z+z^2=0 -> [17]
+solution [0,0,0],trivial(3)
+[0+16*x,0+16*y,0+16*z]: unknown, grown from [8]*1,1,2,1, grown from [4]*1,1,4,1, grown from [1]*1,1,8,1, grown from [0]*1,1,16,1 x^2+y^2-80*x*y*z+z^2=0 -> [17]
 expanding queue[9]^5:  - 2 - 2*x + 2*x^2 - 14*y - 20*x*y + 2*y^2 - 11*z - 20*x*z - 60*y*z - 80*x*y*z + 8*z^2 = 0 meter=[1,1,2] *16
 [3+4*x,1+4*y,2+16*z]: unknown -1-x+x^2-7*y-10*x*y+y^2-11*z-20*x*z-60*y*z-80*x*y*z+16*z^2=0 -> [18]
 expanding queue[10]^5: 1 - 14*x + 2*x^2 - 14*y - 60*x*y + 2*y^2 + 7*z - 20*x*z - 20*y*z - 80*x*y*z + 8*z^2 = 0 meter=[1,1,2] *16

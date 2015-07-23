@@ -23,6 +23,10 @@
 #   (2,1,5), and (2,29,5).
 #   x^2 + y^2 + z^2 = k*x*y*z has no solutions except (0,0,0) for any
 #   k different from 1, 3
+#
+# http://mathoverflow.net/questions/134352/the-modular-arithmetic-contradiction-trick-for-diophantine-equations
+# http://math.berkeley.edu/~ribet/Articles/icfs.pdf; -pell x=158070671986249, y=15140424455100
+# c.f. http://planetmath.org/encyclopedia/InfiniteDescent.html
 #===================================================
 PACKAGE=org.teherba.ramath.symbolic.solver
 
@@ -39,10 +43,10 @@ TEST T04 tree solver, biquadratic minus
 CALL TreeSolver -l 6 -e "x^4 - y^4 - z^2"
 
 TEST T05 FLT(4), biquadratic plus
-CALL TreeSolver -l 4 -e "x^4 + y^4 - z^2" -r same,transpose,similiar,igtriv
+CALL TreeSolver -l 3 -e "x^4 + y^4 - z^2" -r same,transpose,similiar,igtriv
 
 TEST T06 Markov(3, solvable)
-CALL TreeSolver -l 4 -e "x^2 + y^2 + z^2 - 3*x*y*z" -r transpose,same,norm,invall,igtriv
+CALL TreeSolver -l 3 -e "x^2 + y^2 + z^2 - 3*x*y*z" -r transpose,same,norm,invall,igtriv
 
 TEST T07 FLT(3) mod 2
 CALL TreeSolver -b 2 -l 3 -e "a^3 + b^3 - c^3" -r transpose,same,norm,invall
@@ -103,7 +107,7 @@ TEST T24 Smart p. 11 Elliptic Curve
 CALL TreeSolver -b 2 -l 5 -e "y^2 - x^3 + 4 = 0" -r tran5pose,same,dogrow
 
 TEST T25 Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3]; http://math.stackexchange.com/questions/677422/solve-x22-y3-using-infinite-descent; growing !
-CALL TreeSolver -b 2 -l 7 -e "x^2 + 2 - y^3" -r same,invall,showfail
+CALL TreeSolver -b 2 -l 6 -e "x^2 + 2 - y^3" -r same,invall,showfail
 
 TEST T26 Squeeze; https://hcmop.wordpress.com/2012/04/09/techniques-in-solving-diophantine-equations-part-2/
 CALL TreeSolver -b 2 -l 8 -e "x * (x + 1) * (x + 7) * (x + 8) - y^2"
@@ -121,16 +125,16 @@ TEST T30 Fermat/Carcavi(10); solutions [1,1],[2,5]; http://www.jstor.org/stable/
 CALL TreeSolver -b 2 -l 4 -e "(2*x^2 - 1)^2 - (2*y^2 - 1)" -r transpose,same,dogrow 
 
 TEST T31 Fermat/Carcavi(7) x^2 + 2 = y^3; -> (a+b, a-b)
-CALL TreeSolver -b 2 -l 7 -e "(a+b)^2 + 2 - (a-b)^3" -r transpose,same,norm,invall 
+CALL TreeSolver -b 2 -l 6 -e "(a+b)^2 + 2 - (a-b)^3" -r transpose,same,norm,invall 
 
 TEST T32 FC7, behind solution
 CALL TreeSolver -b 2 -l 7 -e "(5 + 2*v + 2*u)^2 + 2 - (5 + 2*v)^3" -r same,transpose,dogrow,norm,invall
 
 TEST T33 Oeuvres de Fermat 5, p. 154 Remarques de A. Genocchi
-CALL TreeSolver -b 2 -l 4 -e "x^4 + x^2*y^2 + y^4 - z^2" -r same,transpose,dogrow,norm,invall
+CALL TreeSolver -b 2 -l 3 -e "x^4 + x^2*y^2 + y^4 - z^2" -r same,transpose,dogrow,norm,invall
 
 TEST T34 Keith Conrad Descent: Cor. 3.7
-CALL TreeSolver -b 2 -l 4 -e "y^2 = x^3 - 4*x" -r same,transpose,dogrow,norm,invall
+CALL TreeSolver -b 2 -l 3 -e "y^2 = x^3 - 4*x" -r same,transpose,dogrow,norm,invall
 
 TEST T35 FC7
 CALL TreeSolver -b 2 -l 5 -e " - 49 - 65*u - 28*u^2 - 4*u^3 + 75*v + 60*u*v + 12*u^2*v - 30*v^2 - 12*u*v^2 + 4*v^3" -r same,transpose,similiar,norm,invall
@@ -138,19 +142,43 @@ CALL TreeSolver -b 2 -l 5 -e " - 49 - 65*u - 28*u^2 - 4*u^3 + 75*v + 60*u*v + 12
 TEST T36 area of a rational triangle
 CALL TreeSolver -b 2 -l 3 -e "a^2 + b^2 = c^2; a*b = 2*d^2" -r same,transpose,norm,invall,igtriv
 
+TEST T37 p^3 - q^5 - (p + q)^2; p,q prime; http://db.math.ust.hk/notes_download/elementary/number/ne_N3.pdf
+CALL TreeSolver -l 1 -e "p^3 - q^5 - (p + q)^2" -r dogrow,norm
+
+TEST T38 1 2 4 9 http://db.math.ust.hk/notes_download/elementary/number/ne_N3.pdf
+CALL TreeSolver -l 2 -b 2 -e "a^3 + 2*b^3 + 4*c^3 - 9*d^3"
+
+TEST T39 1 2 4 9 Proof
+CALL TreeSolver -l 2 -b 3 -e "a^3 + 2*b^3 + 4*c^3 - 9*d^3"
+
+TEST T40 biased expression
+CALL TreeSolver -b 2 -l 2 -e "2 + a^2 + b^2" -r showfail
+
 TEST T41 EEC(4,1,3)
 CALL TreeSolver -b 2 -l 2 -e "a^4 + b^4 + c^4 - d^4"
 
-# TEST T42 Euler bricks
-# CALL TreeSolver -b 2 -l 2 -e "a^2 + b^2 = d^2; a^2 + c^2 = e^2; b^2 + c^2 = f^2" -r same,transpose,dogrow,norm,invall
-# 
-# TEST T43 perfect Euler bricks
-# CALL TreeSolver -b 2 -l 4 -e "a^2 + b^2 = d^2; a^2 + c^2 = e^2; b^2 + c^2 = f^2; a^2 + b^2 + c^2 = g^2" -r same,transpose,dogrow,norm,invall,igtriv
-# 
+TEST T42 modif. Pythagoras
+CALL TreeSolver -l 2 -e "x^2 + y^2 - 2*z^2"
+
+TEST T43 modif. Pythagoras (proof in 1 step)
+CALL TreeSolver -l 2 -e "(x+1)^2 + (y+1)^2 - 2*(z+1)^2" -r same,similiar,transpose,showfail
+
+TEST T44 Pyth-a2b2 
+CALL TreeSolver -l 2 -e "a^2 + b^2 + c^2 - b^2*c^2"
+
+TEST T45 15 7 9 http://db.math.ust.hk/notes_download/elementary/number/ne_N3.pdf
+CALL TreeSolver -l 2 -b 2 -e "15*x^2 - 7*y^2 - 9"
+
+TEST T46 15 7 9
+CALL TreeSolver -l 2 -b 2 -e "15*(x+1)^2 - 7*(y+1)^2 - 9"
+
+TEST T47 15 7 9 Proof
+CALL TreeSolver -l 2 -b 3 -e "15*x^2 - 7*y^2 - 9"
+
 # # https://books.google.de/books?id=My19IcewAnoC&lpg=PA317&ots=V3hN58VkXU&dq=Fermat%20identities&hl=de&pg=PA322#v=onepage&q=Fermat%20identities&f=false
 # # Google: Fermat identities
 # # The Mathematical Career of Pierre de Fermat, 1601-1665  von Michael Sean Mahoney p.320 ff.
-# TEST T44 test 
+# TEST T54 test 
 # CALL TreeSolver -b 4 -l 3 -e "7 + 7*a  + 13*b - 16*k" -r same,transpose,norm,igtriv,invall
 #-------------------------------------------------
 # # Euler Bricks
@@ -159,185 +187,14 @@ CALL TreeSolver -b 2 -l 2 -e "a^4 + b^4 + c^4 - d^4"
 # 
 # TEST EB2 perfect?
 # CALL TreeSolver -b 2 -l 3 -e "a^2 + b^2 = d^2; a^2 + c^2 = e^2; b^2 + c^2 = f^2; g^2 = a^2 + b^2 + c^2" -r transpose,same,dogrow,norm,igtriv
-
-PACKAGE=org.teherba.ramath.symbolic.solver
-#-------------------------------
-# c.f. http://planetmath.org/encyclopedia/InfiniteDescent.html
-
-TEST I01 infinite descent, sqrt(2)
-CALL InfiniteDescent "2*q^2-p^2"
-
-TEST I02 infinite descent, sqrt(2), 3 iterations
-CALL InfiniteDescent "2*q^2-p^2" 2 3
-
-TEST I03 infinite descent, mixed Fermat
-CALL InfiniteDescent "a^2+b^2-3*(c^2+d^2)"
-
-# TEST I04 infinite descent, biquadratic
-# CALL InfiniteDescent "x^4-y^4-z^2"
-
-TEST I05 infinite descent, Pythagoras
-CALL InfiniteDescent "x^2 + y^2 - z^2"
-
-#---------------------------------------
-TEST M01 monadic solver, sqrt(2)
-CALL MonadicSolver -l 2 -e "2*q^2 - p^2"
-
-TEST M02 monadic solver, sqrt(5)
-CALL MonadicSolver -l 2 -e "5*q^2 - p^2"
-
-TEST M03 monadic solver
-CALL MonadicSolver -l 2 -e "a^2 + b^2 - 3*(c^2 + d^2)"
-
-TEST M05 monadic solver, modified Fermat^3 mod 2
-CALL MonadicSolver -b 2 -l 2 -e "a^3 + 3*b^3 - 9*c^3"
-
-TEST M06 monadic solver, modified Fermat^3 mod 3
-CALL MonadicSolver -b 3 -l 2 -e "a^3 + 3*b^3 - 9*c^3"
-
-# TEST M08 monadic solver, biquadratic mod 3
-# CALL MonadicSolver -b 3 -l 1 -e "x^4-y^4-z^2"
-
-# TEST M09 monadic solver, Fermat(3) mod 6
-# CALL MonadicSolver -b 6 -l 1 -e "a^3+b^3-c^3"
-
-# TEST M45 binary, Pythagoras
-# CALL MonadicSolver -b 2 -l 3 -e "(a)^2 + (b)^2 - (c)^2"
-
+#
+# TEST EB3 Euler bricks
+# CALL TreeSolver -b 2 -l 2 -e "a^2 + b^2 = d^2; a^2 + c^2 = e^2; b^2 + c^2 = f^2" -r same,transpose,dogrow,norm,invall
+# 
+# TEST EB4 perfect Euler bricks
+# CALL TreeSolver -b 2 -l 4 -e "a^2 + b^2 = d^2; a^2 + c^2 = e^2; b^2 + c^2 = f^2; a^2 + b^2 + c^2 = g^2" -r same,transpose,dogrow,norm,invall,igtriv
+# 
 #===================================================
-TEST Q01 queuing solver, sqrt(2)
-CALL QueuingSolver -l 2 -e "2*q^2 - p^2"
-
-TEST Q02 queuing solver, sqrt(5) (proof in 2 steps)
-CALL QueuingSolver -l 2 -e "5*q^2 - p^2"
-TEST Q32 queuing solver, sqrt(5) (proof in 1 step)
-CALL QueuingSolver -l 2 -e "5*(q+1)^2 - (p+1)^2"
-
-TEST Q03 queuing solver (proof in 2 steps)
-CALL QueuingSolver -l 2 -e "a^2 + b^2 - 3*(c^2 + d^2)"
-TEST Q33 queuing solver (proof in 1 step)
-CALL QueuingSolver -l 2 -e "(a+1)^2 + (b+1)^2 - 3*((c+1)^2 + (d+1)^2)"
-
-TEST Q04 queuing solver, biquadratic
-CALL QueuingSolver -l 1 -e "x^4-y^4-z^2"
-TEST Q34 queuing solver, biquadratic
-CALL QueuingSolver -l 1 -e "(x+1)^4-(y+1)^4-(z+1)^2"
-
-TEST Q05 modif. Pythagoras
-CALL QueuingSolver -l 3 -e "x^2 + y^2 - 2*z^2"
-TEST Q35 modif. Pythagoras (proof in 1 step)
-CALL QueuingSolver -l 3 -e "(x+1)^2 + (y+1)^2 - 2*(z+1)^2"
-
-TEST Q06 Euler
-CALL QueuingSolver -l 2 -e "x^3 + 2*y^3 - 4*z^3"
-TEST Q36 Euler (proof in 1 step)
-CALL QueuingSolver -l 2 -e "(x+1)^3 + 2*(y+1)^3 - 4*(z+1)^3"
-
-TEST Q07 Fermat^3 mod 2
-CALL QueuingSolver -b 2 -l 2 -e "a^3 + b^3 - c^3"
-TEST Q37 Fermat^3 mod 2 distance
-CALL QueuingSolver -b 2 -l 2 -e "(a+1)^3 + (a+b+1)^3 - (a+b+c+1)^3"
-TEST Q47 Fermat^4 mod 2 distance
-CALL QueuingSolver -b 2 -l 1 -e "(a+1)^4 + (a+b)^4 - (a+b+c)^4"
-
-EXIT
-#=======================================================
-# TEST Q07b Fermat^3 mod 3
-# CALL QueuingSolver -l 2 -b 3 -e "a^3 + b^3 - c^3"
-
-# TEST Q08 Fermat(3) distance mod 6
-# CALL QueuingSolver -b 6 -l 1 -e "a^3 + (a+b)^3 - (a+b+c)^3"
-
-# TEST Q09 Fermat(3) distance mod 3
-# CALL QueuingSolver -b 3 -l 2 -e "a^3 + (a+b)^3 - (a+b+c)^3"
-
-TEST Q10 Fermat(4) mod 2
-CALL QueuingSolver -b 2 -l 2 -e "a^6 + b^6 - c^6"
-
-TEST Q11 EEC(3) mod 2
-CALL QueuingSolver -b 2 -l 2 -e "a^3 + b^3 + c^3 - d^3"
-
-# TEST Q12 EEC(3) mod 3
-# CALL QueuingSolver -b 3 -l 1 -e "a^3 + b^3 + c^3 - d^3"
-
-TEST Q20 Pyth-2xyz (infinite / expanding in 0 0 0; detect this?)
-CALL QueuingSolver -l 7 -e "x^2 + y^2 + z^2 - 2*x*y*z"
-TEST Q50 Pyth-2xyz (infinite / expanding in 1 1 1)
-CALL QueuingSolver -l 7 -e "(x+1)^2 + (y+1)^2 + (z+1)^2 - 2*(x+1)*(y+1)*(z+1)"
-
-TEST Q21 2 3 4 (proof in 1 step)
-CALL QueuingSolver -l 3 -e "x^3 + 2*y^3 - 4*z^3"
-
-TEST Q22a 15 7 9 http://db.math.ust.hk/notes_download/elementary/number/ne_N3.pdf
-CALL QueuingSolver -l 6 -b 2 -e "15*x^2 - 7*y^2 - 9"
-TEST Q52a 15 7 9
-CALL QueuingSolver -l 6 -b 2 -e "15*(x+1)^2 - 7*(y+1)^2 - 9"
-
-TEST Q22b 15 7 9
-CALL QueuingSolver -l 3 -b 3 -e "15*x^2 - 7*y^2 - 9"
-
-TEST Q23 1 2 4 9 http://db.math.ust.hk/notes_download/elementary/number/ne_N3.pdf
-CALL QueuingSolver -l 2 -e "a^3 + 2*b^3 + 4*c^3 - 9*d^3"
-TEST Q23b 1 2 4 9
-CALL QueuingSolver -l 2 -b 3 -e "a^3 + 2*b^3 + 4*c^3 - 9*d^3"
-
-TEST Q24 Pyth-a2b2 
-CALL QueuingSolver -l 3 -e "a^2 + b^2 + c^2 - b^2*c^2"
-
-TEST Q25 p^3 - q^5 - (p + q)^2; p,q primeM http://db.math.ust.hk/notes_download/elementary/number/ne_N3.pdf
-CALL QueuingSolver -l 2 -e "p^3 - q^5 - (p + q)^2"
-
-EXIT
-#===================================================
-
-TEST M10 monadic solver, Fermat(4) mod 4
-CALL MonadicSolver -b 4 -l 1 -e "a^4 + b^4 - c^4"
-
-TEST M11 monadic solver, Fermat(3) distance mod 3
-CALL MonadicSolver -b 3 -l 1 -e "a^3 + (a+b)^3 - (a+b+c)^3"
-
-TEST M12 monadic solver, EEC(3) mod 3
-CALL MonadicSolver -b 3 -l 1 -e "a^3 + b^3 + c^3 - d^3"
-
-TEST M13 monadic solver, EEC(3) increasing mod 3
-CALL MonadicSolver -b 3 -l 2 -e "(a)^3 + (a+b)^3 + (a+b+c)^3 - (a+b+c+d)^3"
-
-TEST M14 monadic solver, EEC(3) increasing mod 2
-CALL MonadicSolver -b 2 -l 2 -e "(a)^3 + (a+b)^3 + (a+b+c)^3 - (a+b+c+d)^3"
-
-TEST M15 monadic solver, part of EEC(3) increasing mod 2
-CALL MonadicSolver -b 3 -l 1 -e "(b)^3 - (b+d)^3 + 3*k = 0"
-
-TEST M16 monadic solver, Fermat(3) increasing mod 2
-CALL MonadicSolver -b 2 -l 2 -e "(a)^3 + (a+b)^3 - (a+b+c)^3 = 0"
-
-TEST M17 http://mathoverflow.net/questions/134352/the-modular-arithmetic-contradiction-trick-for-diophantine-equations
-CALL MonadicSolver -b 3 -l 2 -e "x^2 + y^2 - 3*z^2"
-
-TEST M18 http://mathoverflow.net/questions/134352/the-modular-arithmetic-contradiction-trick-for-diophantine-equations
-CALL MonadicSolver -b 2 -l 2 -e "x^2 + y^2 - 3*z^2"
-
-TEST M19 http://mathoverflow.net/questions/134352/the-modular-arithmetic-contradiction-trick-for-diophantine-equations
-CALL MonadicSolver -b 4 -l 2 -e "x^2 + y^2 - 3*z^2"
-
-TEST M20 http://mathoverflow.net/questions/134352/the-modular-arithmetic-contradiction-trick-for-diophantine-equations
-CALL MonadicSolver -b 3 -l 3 -e "x^3 - 117*y^3 - 5"
-
-TEST M21 http://mathoverflow.net/questions/134352/the-modular-arithmetic-contradiction-trick-for-diophantine-equations
-CALL MonadicSolver -b 6 -l 2 -e "3*x^3 + 4*y^3 - 5*z^3"
-
-TEST M22 http://math.berkeley.edu/~ribet/Articles/icfs.pdf; -pell x=158070671986249, y=15140424455100
-CALL MonadicSolver -b 6 -l 2 -e "x^2 - 109*y^2 - 1"
-
-TEST M23 monadic solver, Pythagoras mod 2 increasing
-CALL MonadicSolver -b 3 -l 2 -e "(a)^2 + (a+b)^2 - (a+b+c)^2"
-
-TEST M24 monadic solver, Pythagoras mod 2 increasing
-CALL MonadicSolver -b 4 -l 2 -e "(a)^2 + (a+b)^2 - (a+b+c)^2"
-
-TEST M25 monadic solver, Fermat(3) mod 2
-CALL MonadicSolver -b 2 -l 2 -e "a^3 + b^3 - c^3"
-
 PACKAGE=org.teherba.ramath
 TEST M25H shift
 # expanding [1]*2: 1+3*a+6*a²+4*a³+3*b+6*b²+4*b³-4*c³=0
@@ -348,9 +205,6 @@ DATA
  + (5+3*a+12*a²+16*a³+27*b+36*b²+16*b³-12*c-24*c²-16*c³)^3
 CALL ParameterEquation -shift -f $(DATA)  -l -4 -w 3 -e 3 -t Fermat3.M25
 
-PACKAGE=org.teherba.ramath.symbolic.solver
-TEST M26 monadic solver, Fermat(3) mod 3
-CALL MonadicSolver -b 3 -l 1 -e "a^3 + b^3 - c^3"
 PACKAGE=org.teherba.ramath
 TEST M26H shift, line "-> [4]"
 # expanding [1]*3: 1+4*a+6*a²+3*a³+b+3*b²+3*b³-3*c³=0
@@ -366,37 +220,16 @@ DATA
  + ( 5+4*a+18*a²+27*a³+49*b+63*b²+27*b³-36*c-54*c²-27*c³)^3
 CALL ParameterEquation -shift -f $(DATA)  -l -3 -w 3 -e 3 -t Fermat3.M26
 
-PACKAGE=org.teherba.ramath.symbolic.solver
-TEST M27 Fermat(3) shifted
-CALL MonadicSolver -b 2 -l 3 -e "(x+1)^3 + (y+1)^3 - (z+1)^3"
-
-TEST M28 Fermat(3) shifted
-CALL MonadicSolver -b 2 -l 3 -e "(x+0)^3 + (y+0)^3 - (z+0)^3"
-
-TEST M29 monadic solver, biquadratic
-CALL MonadicSolver -l 2 -e "x^4 - y^4 - z^2"
-#----
-
-TEST M41 binary solver, sqrt(2)
-CALL MonadicSolver -l 2 -e 2*q^2-p^2
-
-TEST M42 binary solver, cubic
-CALL MonadicSolver -l 2  -e a^3+b^3-c^3-d^3
-
-TEST M43 binary solver, mixed Fermat
-CALL MonadicSolver -l 2 -e a^2+b^2-3*(c^2+d^2)
-
-TEST M44 binary solver, biquadratic
-CALL MonadicSolver -l 2 -e x^4-y^4-z^2
 #------------------------------------------------
 # Tree of Pythagorean triples
+PACKAGE=org.teherba.ramath.symbolic.solver
 
 TEST PY1 getMatrix
 CALL PythagoreanTreeGenerator
 
 TEST PY2 getMatrix
-CALL PythagoreanTreeGenerator -b 0 -l 10 -e "X; 3; 4; 5"
+CALL PythagoreanTreeGenerator -b 0 -l 6 -e "X; 3; 4; 5"
 
 TEST PY3 getMatrix
-CALL PythagoreanTreeGenerator -b 4 -l 10 -e "X; 3; 4; 5"
+CALL PythagoreanTreeGenerator -b 4 -l 6 -e "X; 3; 4; 5"
 
