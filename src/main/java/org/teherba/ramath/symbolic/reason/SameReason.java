@@ -1,5 +1,6 @@
 /*  SameReason: checks whether the RelationSet is the same as the root
  *  @(#) $Id: SameReason.java 970 2012-10-25 16:49:32Z gfis $
+ *  2015-07-23: used only on explicit request
  *  2015-02-24, Georg Fischer
  */
 /*

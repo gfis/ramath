@@ -71,7 +71,7 @@ public class SimiliarReason extends BaseReason {
                     } // while iqueue
                     break;
             } // switch findMode
-    	} // iqueue > 0
+        } // iqueue > 0
         return "[" + String.valueOf(isimil) + "], " + message;
     } // findSimiliar
 
@@ -90,7 +90,7 @@ public class SimiliarReason extends BaseReason {
         String result = VariableMap.UNKNOWN;
         String message = findSimiliar(solver, rset2);
         if (! message.startsWith("[-1]")) { // no index "[-1]" means a similiar RelationSet was found
-            result = VariableMap.SIMILIAR + " to  " + message + " " + solver.polish(rset2);
+            result = VariableMap.SIMILIAR + " to " + message + " " + solver.polish(rset2);
         } // no index "[-1]"
         return result;
     } // check

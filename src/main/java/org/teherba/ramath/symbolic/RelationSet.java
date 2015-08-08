@@ -346,6 +346,7 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
      *  coefficients and exponents of 1
      *  @return a list of lines separated by newline
      */
+
     public String toList(boolean full) {
         StringBuffer buffer = new StringBuffer(2048);
         int ipoly = 0;
@@ -362,7 +363,8 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
         } // while ipoly
         return buffer.toString();
     } // toList
-
+/*
+*/
     /** Normalizes all member {@link Polynomial}s
      *  @return <em>this</em> normalized RelationSet
      */

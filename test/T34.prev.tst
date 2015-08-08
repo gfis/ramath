@@ -1,4 +1,4 @@
-Expanding for base=2, transposables={{x},{y}}, reasons+features=base,same,transpose,dogrow norm,invall
+Expanding for base=2, transposables={{x},{y}}, reasons+features=base,similiar,transpose norm,invall
 ----------------
 expanding queue[0]^-1: 4*x - x^3 + y^2 = 0 meter=[2,2] *2
 solution [0,0],trivial(3)
@@ -15,7 +15,7 @@ expanding queue[2]^0: 2 + x - 6*x^2 - 4*x^3 + 2*y + 2*y^2 = 0 meter=[2,2] *4
 ----------------
 expanding queue[3]^1: x - 4*x^3 + y^2 = 0 meter=[2,2] *8
 solution [0,0],trivial(3)
-[0+8*x,0+8*y]: unknown, grown from [3]*1,4,2 x-16*x^3+2*y^2=0 -> [7]
+[0+8*x,0+8*y]: unknown x-16*x^3+2*y^2=0 -> [7]
 [4+8*x,4+8*y]: unknown -1-11*x-24*x^2-16*x^3+2*y+2*y^2=0 -> [8]
 expanding queue[4]^1:  - 2*x - 6*x^2 - 4*x^3 + y^2 = 0 meter=[2,2] *8
 solution [2,0],trivial(1)
@@ -30,14 +30,14 @@ expanding queue[6]^2: 3 + x - 12*x^2 - 16*x^3 + 6*y + 4*y^2 = 0 meter=[2,2] *8
 ----------------
 expanding queue[7]^3: x - 16*x^3 + 2*y^2 = 0 meter=[2,2] *16
 solution [0,0],trivial(3)
-[0+16*x,0+16*y]: unknown, grown from [7]*1,4,2, grown from [3]*1,16,4 x-64*x^3+4*y^2=0 -> [15]
+[0+16*x,0+16*y]: unknown x-64*x^3+4*y^2=0 -> [15]
 [0+16*x,8+16*y]: unknown 1+x-64*x^3+4*y+4*y^2=0 -> [16]
 expanding queue[8]^3:  - 1 - 11*x - 24*x^2 - 16*x^3 + 2*y + 2*y^2 = 0 meter=[2,2] *16
 [12+16*x,4+16*y]: unknown -26-107*x-144*x^2-64*x^3+2*y+4*y^2=0 -> [17]
 [12+16*x,12+16*y]: unknown -24-107*x-144*x^2-64*x^3+6*y+4*y^2=0 -> [18]
 expanding queue[9]^4:  - x - 6*x^2 - 8*x^3 + y^2 = 0 meter=[2,2] *16
 solution [2,0],trivial(1)
-[2+16*x,0+16*y]: unknown, grown from [9]*1,2,4,2 -x-12*x^2-32*x^3+2*y^2=0 -> [19]
+[2+16*x,0+16*y]: unknown -x-12*x^2-32*x^3+2*y^2=0 -> [19]
 [10+16*x,8+16*y]: unknown -7-37*x-60*x^2-32*x^3+2*y+2*y^2=0 -> [20]
 expanding queue[10]^4:  - 3 - 13*x - 18*x^2 - 8*x^3 + y^2 = 0 meter=[2,2] *16
 [14+16*x,0+16*y]: unknown -21-73*x-84*x^2-32*x^3+2*y^2=0 -> [21]

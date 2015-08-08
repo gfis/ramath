@@ -33,6 +33,10 @@ solver:
 	grep FAILED regression.log.tmp
 t:
 	make solver TEST=T%
+proved:
+	grep -i proof test/T*.this.tst | tee x.tmp
+	wc -l x.tmp
+# 2015-07-23: 10 proofs
 symbolic:
 	$(REGR) test/symbolic.tests $(TEST) 2>&1 \
 	| tee regression.log.tmp

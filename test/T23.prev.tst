@@ -1,7 +1,7 @@
-Expanding for base=2, transposables={{a,b},{c}}, reasons+features=base,same,similiar,transpose norm,igtriv
+Expanding for base=2, transposables={{a,b},{c}}, reasons+features=base,similiar,transpose norm,igtriv
 ----------------
 expanding queue[0]^-1: a^5 + b^5 - c^5 = 0 meter=[2,2,2] *2
-[0+2*a,0+2*b,0+2*c]: same form as a^5+b^5-c^5=0
+[0+2*a,0+2*b,0+2*c]: similiar to [0], same  a^5+b^5-c^5=0
 [1+2*a,1+2*b,0+2*c]: unknown 1+5*a+20*a^2+40*a^3+40*a^4+16*a^5+5*b+20*b^2+40*b^3+40*b^4+16*b^5-16*c^5=0 -> [1]
 [1+2*a,0+2*b,1+2*c]: unknown 5*a+20*a^2+40*a^3+40*a^4+16*a^5+16*b^5-5*c-20*c^2-40*c^3-40*c^4-16*c^5=0 -> [2]
 [0+2*a,1+2*b,1+2*c]: transposition of [2] {0/0+2*b,0/1+2*a,2/1+2*c} by 0+2*b|0+2*a 1+2*a|1+2*b

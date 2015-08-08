@@ -1,4 +1,4 @@
-Expanding for base=2, transposables={{x,y},{z}}, reasons+features=base,same,transpose,similiar igtriv
+Expanding for base=2, transposables={{x,y},{z}}, reasons+features=base,transpose,similiar igtriv
 ----------------
 expanding queue[0]^-1: x^4 + y^4 - z^2 = 0 meter=[2,2,2] *2
 [0+2*x,0+2*y,0+2*z]: unknown 16*x^4+16*y^4-4*z^2=0 -> [1]
@@ -6,7 +6,7 @@ expanding queue[0]^-1: x^4 + y^4 - z^2 = 0 meter=[2,2,2] *2
 [0+2*x,1+2*y,1+2*z]: transposition of [2] {0/0+2*y,0/1+2*x,2/1+2*z} by 0+2*y|0+2*x 1+2*x|1+2*y
 ----------------
 expanding queue[1]^0: 16*x^4 + 16*y^4 - 4*z^2 = 0 meter=[1,1,2] *4
-[0+2*x,0+2*y,0+4*z]: similiar to  [0], same  16*x^4+16*y^4-16*z^2=0
+[0+2*x,0+2*y,0+4*z]: similiar to [0], same  16*x^4+16*y^4-16*z^2=0
 expanding queue[2]^0: 8*x + 24*x^2 + 32*x^3 + 16*x^4 + 16*y^4 - 4*z - 4*z^2 = 0 meter=[1,1,2] *4
 [1+2*x,0+2*y,1+4*z]: unknown 8*x+24*x^2+32*x^3+16*x^4+16*y^4-8*z-16*z^2=0 -> [3]
 [1+2*x,0+2*y,3+4*z]: unknown -8+8*x+24*x^2+32*x^3+16*x^4+16*y^4-24*z-16*z^2=0 -> [4]

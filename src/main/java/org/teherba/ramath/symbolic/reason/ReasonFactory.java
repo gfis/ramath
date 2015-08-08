@@ -1,5 +1,6 @@
 /*  ReasonFactory: list of reasons to decide that the tree expansion can be truncated
  *  @(#) $Id: ReasonFactory.java 970 2012-10-25 16:49:32Z gfis $
+ *  2015-07-23: *Grow* removed
  *  2015-06-01: DoGrowReason
  *  2015-02-27: GrowingReason
  *  2015-02-21, Georg Fischer
@@ -99,8 +100,6 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         BaseReason result = null; // assume success
         if (false) {
         } else if (code.startsWith("base"       )) { result = addReasonClass(code, "BaseReason"       );
-        } else if (code.startsWith("dogrow"     )) { result = addReasonClass(code, "DoGrowReason"     );
-        } else if (code.startsWith("grow"       )) { result = addReasonClass(code, "GrowingReason"    );
         } else if (code.startsWith("same"       )) { result = addReasonClass(code, "SameReason"       );
         } else if (code.startsWith("sim"        )) { result = addReasonClass(code, "SimiliarReason"   );
         } else if (code.startsWith("transp"     )) { result = addReasonClass(code, "TransposeReason"  );
@@ -128,7 +127,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
 
     /** Returns a list of accepted reason codes, a space, 
      *  and a list of stored feature codes
-     *  @return for example: base,same,similiar,dogrow norm,invall
+     *  @return for example: base,same,similiar norm,invall
      */
     public String toList() {
         StringBuffer result = new StringBuffer(32);

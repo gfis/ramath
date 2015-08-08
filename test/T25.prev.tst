@@ -1,4 +1,4 @@
-Expanding for base=2, transposables={{x},{y}}, reasons+features=base,same invall,showfail
+Expanding for base=2, transposables={{x},{y}}, reasons+features=base,simliar invall,showfail
 ----------------
 expanding queue[0]^-1: 2 + x^2 - y^3 = 0 meter=[2,2] *2
 [0+2*x,0+2*y]: failure constant=2, vgcd=4

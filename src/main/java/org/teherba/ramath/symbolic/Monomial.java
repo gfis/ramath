@@ -315,10 +315,9 @@ public class Monomial implements Cloneable, Serializable {
     //=================
     /** Gets the signature, that is the concatenation of
      *  <ul>
-     *  <li>the count of exponents = number of different variables</li>
-     *  <li>the exponents (sorted increasingly)</li>
-     *  <li>the list of variables, sorted in the order of the exponents
-     *  and the lexicographical order of their names</li>
+     *  <li>a list of elements: "/" variable name "." exponent
+     *  sorted by the reverse lexicographical order of the names
+     *  </li>
      *  </ul>
      *  This signature defines the monomial order in a {@link Polynomial}.
      *  @return for example "/x4.08/b.02/a.04" for the monomial "16384*a^4*b^2*x4^8"
@@ -335,14 +334,13 @@ public class Monomial implements Cloneable, Serializable {
      *  and which characterizes exponents and the absolute value of the coefficient (but not the sign),
      *  for normalization and equivalence checking as a separated string concatenation of
      *  <ul>
-     *  <li>the count of exponents = number of different variables</li>
      *  <li>a list of elements: "/" variable name "." exponent
      *  sorted by the reverse lexicographical order of their names
      *  </li>
      *  <li>optionally a ";" followed by the absolute value of the coefficient</li>
      *  </ul>
      *  @param withCoeff whether to append the absolute value of the coefficient
-     *  @param withVars  whether to append the variable names
+     *  @param withVars  whether to append the variable names (otherwise their exponents only)
      *  @return for example (true, false): "/08/02/04;16384" for the monomial "16384*a^4*b^2*x4^8"
      */
     public String characteristic(boolean withCoeff, boolean withVars) {
@@ -385,7 +383,6 @@ public class Monomial implements Cloneable, Serializable {
      *  and which characterizes exponents and the absolute value of the coefficient (but not the sign),
      *  for normalization and equivalence checking as a separated string concatenation of
      *  <ul>
-     *  <li>the count of exponents = number of different variables</li>
      *  <li>the exponents (sorted increasingly)</li>
      *  <li>the absolute value of the coefficient</li>
      *  </ul>
@@ -401,15 +398,15 @@ public class Monomial implements Cloneable, Serializable {
     /** Adds another monomial with the same signature
      *  by adding the coefficients.
      *  An exception is thrown if the two signatures differ.
-     *  @param monomial2 add this monomial
+     *  @param mono2 add this monomial
      *  @return this object, now containing the sum
      */
-    public Monomial addTo(Monomial monomial2) {
+    public Monomial addTo(Monomial mono2) {
         Monomial result = this;
-        if (! this.signature().equals(monomial2.signature())) {
+        if (! this.signature().equals(mono2.signature())) {
             throw new IllegalArgumentException("signatures of both monomials must be equal");
         } else {
-            result.setCoefficient(Coefficient.valueOf(this.getCoefficient().add(monomial2.getCoefficient())));
+            result.setCoefficient(Coefficient.valueOf(this.getCoefficient().add(mono2.getCoefficient())));
             if (result.isZero()) {
                 result.clear(); // remove all variables
             }
@@ -420,15 +417,15 @@ public class Monomial implements Cloneable, Serializable {
     /** Adds another monomial with the same signature
      *  by adding the coefficients.
      *  An exception is thrown if the two signatures differ.
-     *  @param monomial2 add this monomial
+     *  @param mono2 add this monomial
      *  @return new object that contains the sum
      */
-    public Monomial add(Monomial monomial2) {
+    public Monomial add(Monomial mono2) {
         Monomial result = this.clone();
-        if (! this.signature().equals(monomial2.signature())) {
+        if (! this.signature().equals(mono2.signature())) {
             throw new IllegalArgumentException("signatures of both monomials must be equal");
         } else {
-            result.setCoefficient(Coefficient.valueOf(this.getCoefficient().add(monomial2.getCoefficient())));
+            result.setCoefficient(Coefficient.valueOf(this.getCoefficient().add(mono2.getCoefficient())));
             if (result.isZero()) {
                 result.clear(); // remove all variables
             }
@@ -439,15 +436,15 @@ public class Monomial implements Cloneable, Serializable {
     /** Subtracts another monomial with the same signature
      *  by subtracting the coefficient.
      *  An exception is thrown if the two signatures differ.
-     *  @param monomial2 add this monomial
+     *  @param mono2 add this monomial
      *  @return this object, now containing the difference
      */
-    public Monomial subtractFrom(Monomial monomial2) {
+    public Monomial subtractFrom(Monomial mono2) {
         Monomial result = this;
-        if (! this.signature().equals(monomial2.signature())) {
+        if (! this.signature().equals(mono2.signature())) {
             throw new IllegalArgumentException("signatures of both monomials must be equal");
         } else {
-            result.setCoefficient(Coefficient.valueOf(this.getCoefficient().subtract(monomial2.getCoefficient())));
+            result.setCoefficient(Coefficient.valueOf(this.getCoefficient().subtract(mono2.getCoefficient())));
             if (result.isZero()) {
                 result.clear(); // remove all variables
             }
@@ -458,15 +455,15 @@ public class Monomial implements Cloneable, Serializable {
     /** Subtracts another monomial with the same signature
      *  by subtracting the coefficient.
      *  An exception is thrown if the two signatures differ.
-     *  @param monomial2 subtract this monomial
+     *  @param mono2 subtract this monomial
      *  @return new object that contains the difference
      */
-    public Monomial subtract(Monomial monomial2) {
+    public Monomial subtract(Monomial mono2) {
         Monomial result = this.clone();
-        if (! this.signature().equals(monomial2.signature())) {
+        if (! this.signature().equals(mono2.signature())) {
             throw new IllegalArgumentException("signatures of both monomials must be equal");
         } else {
-            result.setCoefficient(Coefficient.valueOf(this.getCoefficient().subtract(monomial2.getCoefficient())));
+            result.setCoefficient(Coefficient.valueOf(this.getCoefficient().subtract(mono2.getCoefficient())));
             if (result.isZero()) {
                 result.clear(); // remove all variables
             }
@@ -511,17 +508,17 @@ public class Monomial implements Cloneable, Serializable {
 
     /** Multiplies this monomial with another one
      *  by multiplying it with each factor of the parameter monomial.
-     *  @param monomial2 multiply with this monomial
+     *  @param mono2 multiply with this monomial
      *  @return new object that contains the product
      */
-    public Monomial multiply(Monomial monomial2) {
+    public Monomial multiply(Monomial mono2) {
         Monomial result = this.clone();
-        Iterator<String> iter = monomial2.keySet().iterator();
+        Iterator<String> iter = mono2.keySet().iterator();
         while (iter.hasNext()) {
             String name2 = iter.next();
-            result.multiplyBy(name2, monomial2.getExponent(name2));
+            result.multiplyBy(name2, mono2.getExponent(name2));
         } // while iter
-        result.setCoefficient(Coefficient.valueOf(this.getCoefficient().multiply(monomial2.getCoefficient())));
+        result.setCoefficient(Coefficient.valueOf(this.getCoefficient().multiply(mono2.getCoefficient())));
         if (result.isZero()) {
             result.clear(); // remove all variables
         }
@@ -606,25 +603,25 @@ public class Monomial implements Cloneable, Serializable {
      *  There may not remain any negative exponents of variables,
      *  but the resulting coefficient may get a denominator different from 1.
      *  The divisor may not be zero, of course.
-     *  @param monomial2 divide with this monomial
+     *  @param mono2 divide with this monomial
      *  @return new object that contains the fraction, or zero if the parameter
      *  does not divide <em>this</em> monomial evently
      *  @throws ArithmeticException if the second monomial is zero
      */
-    public Monomial divide(Monomial monomial2) {
-        if (monomial2.isZero()) {
+    public Monomial divide(Monomial mono2) {
+        if (mono2.isZero()) {
             throw new ArithmeticException();
         }
         Monomial result = this.clone();
         try {
-            BigInteger[] divRemain = this.getCoefficient().divideAndRemainder(monomial2.getCoefficient());
+            BigInteger[] divRemain = this.getCoefficient().divideAndRemainder(mono2.getCoefficient());
             if (divRemain[1].equals(BigInteger.ZERO)) {
                 result.setCoefficient(Coefficient.valueOf(divRemain[0]));
                 if (! result.isZero()) {
-                    Iterator<String> iter = monomial2.keySet().iterator();
+                    Iterator<String> iter = mono2.keySet().iterator();
                     while (iter.hasNext() && result != null) {
                         String name2 = iter.next();
-                        result = result.divideBy(name2, monomial2.getExponent(name2));
+                        result = result.divideBy(name2, mono2.getExponent(name2));
                     } // while iter
                 } // ! ZERO
             } else { // did not divide evenly
@@ -638,56 +635,56 @@ public class Monomial implements Cloneable, Serializable {
     } // divide(Monomial)
 
     /** Compute the greatest common divisor of <em>this</em> monomial and another.
-     *  @param monomial2 the 2nd monomial
+     *  @param mono2 the 2nd monomial
      *  @return new object which contains the gcd of the coefficients, and
      *  the intersection of the variables with their minimum exponents
      */
-    public Monomial gcd(Monomial monomial2) {
+    public Monomial gcd(Monomial mono2) {
         Monomial result = new Monomial();
         Iterator<String> iter = vars.keySet().iterator();
         while (iter.hasNext()) {
             String name1 = iter.next();
             int exp1 = this     .getExponent(name1);
-            int exp2 = monomial2.getExponent(name1);
+            int exp2 = mono2.getExponent(name1);
             int minExp = Math.min(exp1, exp2);
             if (minExp > 0) {
                 result.putExponent(name1, minExp);
             }
         } // while iter
         // setSign(exponent % 2 == 0 ? 1 : -1);
-        result.setCoefficient(Coefficient.valueOf(this.getCoefficient().gcd(monomial2.getCoefficient())));
+        result.setCoefficient(Coefficient.valueOf(this.getCoefficient().gcd(mono2.getCoefficient())));
         return result;
     } // gcd
 
     /** Compute the least common multiple of <em>this</em> monomial and another.
-     *  @param monomial2 the 2nd monomial
+     *  @param mono2 the 2nd monomial
      *  @return new object which contains the lcm of the coefficients, and
      *  the union of the variables with their maximum exponents
      */
-    public Monomial lcm(Monomial monomial2) {
-        Monomial result = monomial2.clone();
+    public Monomial lcm(Monomial mono2) {
+        Monomial result = mono2.clone();
         Iterator<String> iter = vars.keySet().iterator();
         while (iter.hasNext()) {
             String name1 = iter.next();
             int exp1 = this     .getExponent(name1);
-            int exp2 = monomial2.getExponent(name1);
+            int exp2 = mono2.getExponent(name1);
             if (exp1 > exp2) {
                 result.putExponent(name1, exp1);
             }
         } // while iter
         // setSign(exponent % 2 == 0 ? 1 : -1);
-        result.setCoefficient(Coefficient.valueOf(BigIntegerUtil.lcm(this.getCoefficient(), monomial2.getCoefficient())));
+        result.setCoefficient(Coefficient.valueOf(BigIntegerUtil.lcm(this.getCoefficient(), mono2.getCoefficient())));
         return result;
     } // lcm
 
     /** Compares the sets of exponentiated variables of two monomials.
-     *  @param monomial2 second comparision operand
+     *  @param mono2 second comparision operand
      *  @return -1, 0 or +1 if <em>this</em> is &lt;, = or &gt; the parameter
      */
-    public int compareTo(Monomial monomial2) {
+    public int compareTo(Monomial mono2) {
         int result = 0;
         Iterator<String> iter1 = vars .keySet().iterator();
-        Iterator<String> iter2 = monomial2.keySet().iterator();
+        Iterator<String> iter2 = mono2.keySet().iterator();
         int    exp1,  exp2;
         String name1, name2;
         boolean busy1 = true;
@@ -700,7 +697,7 @@ public class Monomial implements Cloneable, Serializable {
                     busy1 = false;
                 } else {
                     exp1 = this     .getExponent(name1);
-                    exp2 = monomial2.getExponent(name2);
+                    exp2 = mono2.getExponent(name2);
                     if (exp1 != exp2) {
                         busy1 = false;
                         result = (exp1 < exp2) ? -1 : 1;
@@ -724,11 +721,11 @@ public class Monomial implements Cloneable, Serializable {
     } // compareTo
 
     /** Determines whether the parameter monomial has the same value as <em>this</em> monomial.
-     *  @param monomial2 second comparision operand
+     *  @param mono2 second comparision operand
      *  @return whether the variable/exponent sequences are the same
      */
-    public boolean equals(Monomial monomial2) {
-        return this.compareTo(monomial2) == 0;
+    public boolean equals(Monomial mono2) {
+        return this.compareTo(mono2) == 0;
     } // equals
 
     /** Returns a string representation of the monomial in compressed representation
@@ -822,17 +819,17 @@ public class Monomial implements Cloneable, Serializable {
         return result.toString();
     } // toString(full)
 
-    /** Takes the variables from <em>monomial2</em> and
+    /** Takes the variables from <em>mono2</em> and
      *  creates a monomial with the powers of these variables
      *  occurring in <em>this</em> monomial, with constant +1.
-     *  @param monomial2 a multiplication of all desired variables (names with exponent 1 and constant +1)
+     *  @param mono2 a multiplication of all desired variables (names with exponent 1 and constant +1)
      *  @return monomial with constant &gt;= +1, and which consists of
      *  the powers of the variables in <em>monomial</em>, (without ^0),
-     *  or 0 if not any of the variables of <em>monomial2</em> was contained in <em>this</em> monomial.
+     *  or 0 if not any of the variables of <em>mono2</em> was contained in <em>this</em> monomial.
      */
-    public Monomial getVariablePowers(Monomial monomial2) {
+    public Monomial getVariablePowers(Monomial mono2) {
         Monomial result = new Monomial();
-        Iterator<String> iter2 = monomial2.keySet().iterator();
+        Iterator<String> iter2 = mono2.keySet().iterator();
         int exp1;
         String name2;
         boolean found = false;
@@ -851,20 +848,20 @@ public class Monomial implements Cloneable, Serializable {
     } // getVariablePowers
 
     /** Tests whether <em>this</em> monomial contains the exact variable power combination
-     *  of <em>monomial2</em>; if not, 0 is returned, otherwise, the factor monomial/monomial2.
-     *  @param monomial2 a combination of powers of the desired variables, with coefficient 1
-     *  @return 0 or a monomial3 such that monomial = monomial2 * monomial3
+     *  of <em>mono2</em>; if not, 0 is returned, otherwise, the factor monomial/mono2.
+     *  @param mono2 a combination of powers of the desired variables, with coefficient 1
+     *  @return 0 or a mono3 such that monomial = mono2 * mono3
      */
-    public Monomial getFactorOf(Monomial monomial2) {
+    public Monomial getFactorOf(Monomial mono2) {
         Monomial result = this.clone();
-        Iterator<String> iter2 = monomial2.keySet().iterator();
+        Iterator<String> iter2 = mono2.keySet().iterator();
         int exp1, exp2;
         String  name2;
         boolean busy = true;
         while (busy && iter2.hasNext()) {
             name2 = iter2.next();
             exp1 = result   .getExponent(name2);
-            exp2 = monomial2.getExponent(name2);
+            exp2 = mono2.getExponent(name2);
             if (exp1 == 0 || exp1 != exp2) {
                 busy = false;
                 result.setCoefficient(0); // no factor

@@ -1,7 +1,7 @@
-Expanding for base=2, transposables={{a,b},{c}}, reasons+features=base,same,transpose norm,igtriv
+Expanding for base=2, transposables={{a,b},{c}}, reasons+features=base,simliar,transpose norm,igtriv
 ----------------
 expanding queue[0]^-1: a^3 + b^3 - c^3 = 0 meter=[2,2,2] *2
-[0+2*a,0+2*b,0+2*c]: same form as a^3+b^3-c^3=0
+[0+2*a,0+2*b,0+2*c]: similiar to [0], same  a^3+b^3-c^3=0
 [1+2*a,1+2*b,0+2*c]: unknown 1+3*a+6*a^2+4*a^3+3*b+6*b^2+4*b^3-4*c^3=0 -> [1]
 [1+2*a,0+2*b,1+2*c]: unknown 3*a+6*a^2+4*a^3+4*b^3-3*c-6*c^2-4*c^3=0 -> [2]
 [0+2*a,1+2*b,1+2*c]: transposition of [2] {0/0+2*b,0/1+2*a,2/1+2*c} by 0+2*b|0+2*a 1+2*a|1+2*b

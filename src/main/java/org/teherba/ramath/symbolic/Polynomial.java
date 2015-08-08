@@ -157,8 +157,8 @@ public class Polynomial implements Cloneable, Serializable {
         TreeMap<String, Monomial> resultMonomials = new TreeMap<String, Monomial>();
         Iterator<String> titer = monomials.keySet().iterator();
         while (titer.hasNext()) {
-            String sigt = titer.next();
-            resultMonomials.put(sigt, this.monomials.get(sigt).clone());
+            String tsig = titer.next();
+            resultMonomials.put(tsig, this.monomials.get(tsig).clone());
         } // while titer
         result.setFactor    (this.getFactor());
         result.setMonomials (resultMonomials);
@@ -181,11 +181,11 @@ public class Polynomial implements Cloneable, Serializable {
     /** Inserts a {@link Monomial}s into the polynomial.
      *  If there is already a monomial with the parameter signature, it is overwritten.
      *  @param sig signature (variable names and their exponents) of the desired monomial
-     *  @param monomial2 monomial to be inserted or overwritten.
+     *  @param mono2 monomial to be inserted or overwritten.
      *  @deprecated
      */
-    public void put(String sig, Monomial monomial2) {
-        monomials.put(sig, monomial2);
+    public void put(String sig, Monomial mono2) {
+        monomials.put(sig, mono2);
     } // put
 
     /** Gets the key set of the internal mapping from signatures to {@link Monomial}s.
@@ -220,12 +220,13 @@ public class Polynomial implements Cloneable, Serializable {
     /** Inserts a {@link Monomial} into the polynomial.
      *  If there is already a monomial with the parameter signature, it is overwritten.
      *  @param sig signature (variable names and their exponents) of the desired monomial
-     *  @param monomial2 monomial to be inserted or overwritten.
+     *  @param mono2 monomial to be inserted or overwritten.
      */
-    public void setMonomial(String sig, Monomial monomial2) {
-        this.monomials.put(sig, monomial2);
+/*
+    public void setMonomial(String sig, Monomial mono2) {
+        this.monomials.put(sig, mono2);
     } // setMonomial
-
+*/
     /** a factor common to all {@link Monomial}s of the Polynomial */
     private Monomial factor;
     /** Gets the factor
@@ -272,8 +273,8 @@ public class Polynomial implements Cloneable, Serializable {
     /*-------------- lightweight derived methods -----------------------------*/
 
     /** Returns the lead term, that is the "greatest" {@link Monomial}
-     *  with respect to the monomial order defined by the TreeMap.
-     *  @return the last element in the TreeMap
+     *  with respect to the monomial order defined by the TreeMap <em>monomials</em>.
+     *  @return the last element in the TreeMap <em>monomials</em>
      */
     public Monomial leadTerm() {
         Monomial result = null;
@@ -511,22 +512,22 @@ public class Polynomial implements Cloneable, Serializable {
     /*-------------- arithmetic operations -------------------------*/
 
     /** Adds a {@link Monomial} to this polynomial.
-     *  @param monomial2 add this monomial
+     *  @param mono2 add this monomial
      *  @return reference to <em>this</em> polynomial that was modified
      */
-    protected Polynomial addTo(Monomial monomial2) {
-        String sig2 = monomial2.signature();
-        Monomial monomial1 = monomials.get(sig2);
-        if (monomial2.isZero()) {
+    protected Polynomial addTo(Monomial mono2) {
+        String sig2 = mono2.signature();
+        Monomial mono1 = monomials.get(sig2);
+        if (mono2.isZero()) {
             // ignore "+ 0"
             if (debug >= 2) {
                 System.out.println("+ 0 ignored");
             }
-        } else if (monomial1 == null) {
-            monomials.put(sig2, monomial2.clone());
+        } else if (mono1 == null) {
+            monomials.put(sig2, mono2.clone());
         } else {
-            monomial1.addTo(monomial2);
-            if (monomial1.isZero()) {
+            mono1.addTo(mono2);
+            if (mono1.isZero()) {
                 monomials.remove(sig2);
             }
         }
@@ -548,19 +549,19 @@ public class Polynomial implements Cloneable, Serializable {
     } // add(Polynomial)
 
     /** Subtracts a {@link Monomial} from this polynomial.
-     *  @param monomial2 subtract this monomial
+     *  @param mono2 subtract this monomial
      *  @return reference to <em>this</em> polynomial that was modified
      */
-    protected Polynomial subtractFrom(Monomial monomial2) {
-        String sig2 = monomial2.signature();
-        Monomial monomial1 = monomials.get(sig2);
-        if (monomial2.isZero()) {
+    protected Polynomial subtractFrom(Monomial mono2) {
+        String sig2 = mono2.signature();
+        Monomial mono1 = monomials.get(sig2);
+        if (mono2.isZero()) {
             // ignore "- 0"
-        } else if (monomial1 == null) {
-            monomials.put(sig2, monomial2.clone().negate());
+        } else if (mono1 == null) {
+            monomials.put(sig2, mono2.clone().negate());
         } else {
-            monomial1.subtractFrom(monomial2);
-            if (monomial1.isZero()) {
+            mono1.subtractFrom(mono2);
+            if (mono1.isZero()) {
                 monomials.remove(sig2);
             }
         }
@@ -594,17 +595,17 @@ public class Polynomial implements Cloneable, Serializable {
     } // subtract(Polynomial)
 
     /** Multiplies all monomials of this polynomial with a {@link Monomial}.
-     *  @param monomial2 multiply with this monomial
+     *  @param mono2 multiply with this monomial
      *  @return reference to <em>this</em> polynomial which was modified
      */
-    protected Polynomial multiplyBy(Monomial monomial2) {
+    protected Polynomial multiplyBy(Monomial mono2) {
         Iterator<String> iter = monomials.keySet().iterator();
-        if (monomial2.isZero()) {
+        if (mono2.isZero()) {
             monomials.clear(); // an empty map indicates constant 0
         } else {
             while (iter.hasNext()) {
                 String sig1 = iter.next();
-                monomials.put(sig1, monomials.get(sig1).multiply(monomial2));
+                monomials.put(sig1, monomials.get(sig1).multiply(mono2));
             } // while iter
         }
         return this;
@@ -653,22 +654,22 @@ public class Polynomial implements Cloneable, Serializable {
 
     /** Divides all monomials of this polynomial by a {@link Monomial}.
      *  The caller should ensure that all monomials are in fact divisible
-     *  by <em>monomial2</em>, otherwise an exception will be thrown.
-     *  @param monomial2 divide by this monomial
+     *  by <em>mono2</em>, otherwise an exception will be thrown.
+     *  @param mono2 divide by this monomial
      *  @return reference to <em>this</em> polynomial which was modified
      */
-    protected Polynomial divideBy(Monomial monomial2) {
-        if (monomial2.isZero()) {
+    protected Polynomial divideBy(Monomial mono2) {
+        if (mono2.isZero()) {
             throw new ArithmeticException();
         } else {
             Iterator<String> iter = monomials.keySet().iterator();
             while (iter.hasNext()) {
                 String sig1 = iter.next();
                 if (debug > 0) {
-                    System.out.println("Polynomial (" + this.toString() + ").divideBy(" + monomial2.toString()
+                    System.out.println("Polynomial (" + this.toString() + ").divideBy(" + mono2.toString()
                             + ", sig1=" + sig1 + ", get(sig1)=" + monomials.get(sig1));
                 }
-                monomials.put(sig1, monomials.get(sig1).divide(monomial2));
+                monomials.put(sig1, monomials.get(sig1).divide(mono2));
             } // while iter
         }
         return this;
@@ -1223,17 +1224,17 @@ x^2 + 3*x^3 + 2*x^4
     /** Takes all variables from <em>monomial</em> and
      *  creates a sum of {@link Monomial}s for all different powers of these variables
      *  occurring in <em>this</em> polynomial.
-     *  @param monomial2 a multiplication of all desired variables (names with exponent 1 and constant +1)
+     *  @param mono2 a multiplication of all desired variables (names with exponent 1 and constant +1)
      *  @return polynomial whose monomials have constant &gt;= +1, and which consists of
      *  all different powers of the variables in <em>monomial</em>
      */
-    public Polynomial getVariablePowers(Monomial monomial2) {
+    public Polynomial getVariablePowers(Monomial mono2) {
         Polynomial result = new Polynomial();
         Monomial monomial = null;
         Iterator <String> titer = this.monomials.keySet().iterator();
         while (titer.hasNext()) { // over all monomials
             monomial = this.monomials.get(titer.next());
-            result.addTo(monomial.getVariablePowers(monomial2));
+            result.addTo(monomial.getVariablePowers(mono2));
         } // while titer
         Iterator <String> riter = result.monomials.keySet().iterator();
         while (riter.hasNext()) { // over all monomials
@@ -1242,29 +1243,29 @@ x^2 + 3*x^3 + 2*x^4
         return result;
     } // getVariablePowers
 
-    /** Takes the variable names from <em>monomial2</em>,
+    /** Takes the variable names from <em>mono2</em>,
      *  creates an empty {@link RelationSet} and, for all {@link Monomial}s that
      *  occur as combinations of powers of the selected variables in <em>this</em>
      *  Polynomial, adds a new {@link Polynomial} to the set which has the
      *  monomial as key and the factors of the monomial as terms.
-     *  @param monomial2 a multiplication of all desired variables (names with exponent 1 and constant +1)
+     *  @param mono2 a multiplication of all desired variables (names with exponent 1 and constant +1)
      *  @return a RelationSet with one Polynomial for each variable combination
      */
-    public RelationSet groupBy(Monomial monomial2) {
+    public RelationSet groupBy(Monomial mono2) {
         RelationSet result = new RelationSet();
-        Polynomial poly3 = this.getVariablePowers(monomial2);
+        Polynomial poly3 = this.getVariablePowers(mono2);
         Iterator <String> piter3 = poly3.monomials.keySet().iterator();
         while (piter3.hasNext()) { // over all combinations of powers of variables
-            Monomial monomial3 = poly3.monomials.get(piter3.next()); // specific combination
+            Monomial mono3 = poly3.monomials.get(piter3.next()); // specific combination
             Polynomial poly4 = new Polynomial();
             Iterator <String> piter1 = this.monomials.keySet().iterator();
             while (piter1.hasNext()) { // over all monomials of <em>this</em> polynomial
-                Monomial monomial5 = this.monomials.get(piter1.next());
-                if (monomial5.getVariablePowers(monomial2).equals(monomial3)) {
-                    poly4.addTo(monomial5.getFactorOf(monomial3));
+                Monomial mono5 = this.monomials.get(piter1.next());
+                if (mono5.getVariablePowers(mono2).equals(mono3)) {
+                    poly4.addTo(mono5.getFactorOf(mono3));
                 }
             } // while titer
-            poly4.setFactor(monomial3);
+            poly4.setFactor(mono3);
             result.insert(poly4);
         } // while titer
         return result;
@@ -1277,12 +1278,12 @@ x^2 + 3*x^3 + 2*x^4
      */
     public Polynomial getRest(BigInteger factor) {
         Polynomial result = new Polynomial();
-        Monomial monomial = null;
+        Monomial mono = null;
         Iterator <String> titer = this.monomials.keySet().iterator();
         while (titer.hasNext()) { // over all monomials
-            monomial = this.monomials.get(titer.next());
-            if (! monomial.getCoefficient().mod(factor).equals(BigInteger.ZERO)) { // indivisible
-                result.addTo(monomial); // .clone()); ??
+            mono = this.monomials.get(titer.next());
+            if (! mono.getCoefficient().mod(factor).equals(BigInteger.ZERO)) { // indivisible
+                result.addTo(mono); // .clone()); ??
             } // if indivisible
         } // while titer
         return result;
@@ -1299,14 +1300,14 @@ x^2 + 3*x^3 + 2*x^4
         Iterator <String> titer = this.monomials.keySet().iterator();
         int count = 0;
         while (titer.hasNext()) { // over all monomials
-            Monomial monomial = this.monomials.get(titer.next());
-            String tchic = monomial.characteristic();
+            Monomial mono = this.monomials.get(titer.next());
+            String tchic = mono.characteristic();
             Polynomial subPoly = resultMap.get(tchic);
             if (subPoly == null) {
-                subPoly = new Polynomial(monomial);
+                subPoly = new Polynomial(mono);
                 resultMap.put(tchic, subPoly);
             } else {
-                subPoly.addTo(monomial);
+                subPoly.addTo(mono);
             }
         } // while titer
         return resultMap;
@@ -1470,7 +1471,7 @@ x^2 + 3*x^3 + 2*x^4
      *
      *  Caution, currently only univariate {@link Monomial}s are treated properly!
      *
-     *  @param poly2 second comparision operand
+     *  @param poly2p second comparision operand
      *  @return a map from this set of variables to the 2nd set
      *  in the form (ai*xi + bi) -&gt; xi', or null if no such map exists.
      <pre>
@@ -1484,11 +1485,13 @@ x^2 + 3*x^3 + 2*x^4
      ("4 + 32*x + 96*x^2 + 128*x^3 + 64*x^4 - 64*y^4 - 4*z^2").isMappableTo("4*x^4 - 4*y^4 - z^2") = {x=2*x+1,y=2*y+0,z=2*z+0}
      </pre>
      */
-    public VariableMap isMappableTo(Polynomial poly2) {
+    public VariableMap isMappableTo(Polynomial poly2p) {
+    	Polynomial poly2 = poly2p.clone(); // .normalize();
+    	Polynomial poly1 = this  .clone(); // .normalize();
         int debugLimit = 1;
         VariableMap result = new VariableMap();
         boolean busy = true;
-        VariableMap vmap1 = this .getExpressionMap();
+        VariableMap vmap1 = poly1.getExpressionMap();
         VariableMap vmap2 = poly2.getExpressionMap();
         try {
             busy = vmap1.size() == vmap2.size() && poly2.isMonoVariate();
@@ -1503,7 +1506,7 @@ x^2 + 3*x^3 + 2*x^4
                     String vname2 = iter2.next();
                     busy = vname1.equals(vname2); // variable names are parallel
                     if (busy) {
-                        Monomial[] hit1 = this .getHighTerms(vname1);
+                        Monomial[] hit1 = poly1.getHighTerms(vname1);
                         Monomial[] hit2 = poly2.getHighTerms(vname2);
                         busy = true;
                         if (busy) { // both Polynomials had all univariate Monomials ???
@@ -1633,11 +1636,8 @@ x^2 + 3*x^3 + 2*x^4
         String result = null;
         if (true) {
             VariableMap mapt = poly2.getExpressionMap();
-            boolean outcome = this.substitute(mapt)
-                    .clone().normalize()
-                    .equals(poly2
-                    .clone().normalize()
-                    );
+            boolean outcome = this.substitute(mapt).clone().normalize()
+                    .equals(poly2.clone().normalize());
             if (! outcome) {
                 if (false) { // old code
                     mapt = this.affineMap   (poly2);
@@ -1657,7 +1657,7 @@ x^2 + 3*x^3 + 2*x^4
                         } // debug
                     }
                 } // new
-            } else {
+            } else { // equals
                 result = "same";
             }
         } // if sizes ==
@@ -2135,9 +2135,9 @@ x^2 + 3*x^3 + 2*x^4
                     String[] vars = varStr.split("\\W"); // non-word characters
                     poly1 = Polynomial.parse(ereader.read(args[iarg ++]));
                     System.out.println(poly1.toString());
-                    Monomial monomial4 = new Monomial(vars);
-                    System.out.println("getVariablePowers(" + varStr + ")="   + poly1.getVariablePowers(monomial4));
-                    System.out.println(          "groupBy(" + varStr + ")=\n" + poly1.groupBy          (monomial4).toList(false));
+                    Monomial mono4 = new Monomial(vars);
+                    System.out.println("getVariablePowers(" + varStr + ")="   + poly1.getVariablePowers(mono4));
+                    System.out.println(          "groupBy(" + varStr + ")=\n" + poly1.groupBy          (mono4).toList(false));
 
                 } else {
                     System.err.println("invalid option " + opt);

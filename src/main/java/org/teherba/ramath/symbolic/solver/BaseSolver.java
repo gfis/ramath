@@ -33,6 +33,7 @@ import  org.teherba.ramath.util.ExpressionReader;
 import  org.teherba.ramath.util.ModoMeter;
 import  java.io.PrintWriter;
 import  java.math.BigInteger;
+import  java.util.Iterator;
 import  java.util.Stack; // was java.util.Vector;  essentially a java.util.Queue (Java 1.6)
 import  java.util.regex.Matcher;
 import  java.util.regex.Pattern;
@@ -55,10 +56,7 @@ public class BaseSolver extends Stack<RelationSet> {
     /** level of queue element which was previously expanded */
     protected int prevLevel;
 
-    /** Writer for proof trace.
-     *  The printer is still used in {@link MonadicSolver}, but
-     *  modern solvers should normally not print any output except for debugging.
-     */
+    /** Writer for proof trace */
     public PrintWriter trace;
 
     /** Factory for reasons to truncate the expansion tree */
@@ -108,7 +106,7 @@ public class BaseSolver extends Stack<RelationSet> {
         setSubsetting       (false);
         setUpperSubst       (true);
         queueHead           = 0;
-        reasons = new ReasonFactory("transpose,same,similiar,grow");
+        reasons = new ReasonFactory("transpose,similiar");
     } // initialize
 
     //-----------------------------
@@ -463,6 +461,39 @@ public class BaseSolver extends Stack<RelationSet> {
             trace.println(", queue size = " + size());
         } // debug
     } // printTrailer
+
+    /** Prepares and returns a {@link ModoMeter} from the set of variables.
+     *  Only the necessary variables are involved.
+     *  Variables having at least a coefficient of factor*base
+     *  are not involved in the modular expansion.
+     *  If this feature is not desired, the ModoMeter should be initialized with base.
+     *  @param rset1 {@link RelationSet} to be expanded
+     *  @param vmap1 {@link VariableMap} containing the variable names
+     *  @param factor <em>base^newLevel</em>
+     *  @return an appropriate {@link ModoMeter}
+     */
+    protected ModoMeter getPreparedMeter(RelationSet rset1, VariableMap vmap1, BigInteger factor) {
+        int base          = this.getModBase();
+        int varNo         = vmap1.size(); // total number of variables to be substituted
+        ModoMeter meter   = new ModoMeter(varNo, 1); // assume that all variables are not involved
+        BigInteger other  = norm ? BigInteger.valueOf(base) : BigInteger.valueOf(base).multiply(factor);
+        VariableMap vmapr = rset1.getRest(other).getExpressionMap(); 
+        Iterator<String> iter1 = vmap1.keySet().iterator();
+        int involvedCount = 0;
+        int im = 0;
+        while (iter1.hasNext()) {
+            String name = iter1.next();
+            if (vmapr.get(name) != null) { // name occurs in rest: this will be involved
+                meter.setBase(im, base); // involve it
+                involvedCount ++;
+            } // name in rest
+            im ++;
+        } // while iter1
+        if (invall || involvedCount <= 0) { // vmapr was empty
+            meter = new ModoMeter(varNo, base); // involve all variables / avoid modulo [1,1,1,...]
+        } // vmapr empty
+        return meter;        
+    } // getPreparedMeter
 
     /** Expands one {@link RelationSet} in the queue,
      *  evaluates the expanded children,

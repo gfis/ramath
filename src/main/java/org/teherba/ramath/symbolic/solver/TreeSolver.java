@@ -93,40 +93,6 @@ public class TreeSolver extends BaseSolver {
         super(writer); // this will also initialize the optional parameters
     } // Constructor(printer)
 
-    /** Prepares a {@link ModoMeter} from the set of variables.
-     *  Only the necessary variables are involved.
-     *  @param rset1 {@link RelationSet} to be expanded
-     *  @param vmap1 {@link VariableMap containing the variable names
-     *  @param factor base^curLevel
-     *  @return an appropriate ModoMeter
-     */
-    private ModoMeter prepareMeter(RelationSet rset1, VariableMap vmap1, BigInteger factor) {
-        int base          = this.getModBase();
-        int varNo         = vmap1.size(); // total number of variables to be substituted
-        /*  Variables having at least a coefficient of factor*base
-            are not involved in the modular expansion.
-            If this feature is not desired, the ModoMeter should be initialized with base.
-        */
-        ModoMeter meter   = new ModoMeter(varNo, 1); // assume that all variables are not involved
-        BigInteger other  = norm ? BigInteger.valueOf(base) : BigInteger.valueOf(base).multiply(factor);
-        VariableMap vmapr = rset1.getRest(other).getExpressionMap(); 
-        Iterator<String> iter1 = vmap1.keySet().iterator();
-        int involvedCount = 0;
-        int im = 0;
-        while (iter1.hasNext()) {
-            String name = iter1.next();
-            if (vmapr.get(name) != null) { // name occurs in rest: this will be involved
-                meter.setBase(im, base); // involve it
-                involvedCount ++;
-            } // name in rest
-            im ++;
-        } // while iter1
-        if (invall || involvedCount <= 0) { // vmapr was empty
-            meter = new ModoMeter(varNo, base); // involve all variables / avoid modulo [1,1,1,...]
-        } // vmapr empty
-        return meter;        
-    } // prepareMeter
-
     //---------------------
     // Heavyweight Methods
     //---------------------
@@ -145,7 +111,7 @@ public class TreeSolver extends BaseSolver {
         int newLevel      = rset1.getNestingLevel() + 1;
         int base          = this.getModBase();
         BigInteger factor = BigInteger.valueOf(base).pow(newLevel);
-        ModoMeter meter   = prepareMeter(rset1, vmap1, factor);      
+        ModoMeter meter   = getPreparedMeter(rset1, vmap1, factor);      
         // meter now ready for n-adic expansion, e.g. x -> 2*x+0, 2*x+1
         printNode(queueIndex, rset1, meter, factor);
         printSolutions(rset1, vmap1);

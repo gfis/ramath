@@ -1,5 +1,6 @@
 /*  GrowingReason: checks whether the RelationSet was growing from a parent
  *  @(#) $Id: GrowingReason.java 970 2012-10-25 16:49:32Z gfis $
+ *  2015-07-23: no longer in use
  *  2015-02-27, Georg Fischer
  */
 /*
