@@ -54,7 +54,7 @@ public class SameReason extends BaseReason {
         String result = VariableMap.UNKNOWN;
         if (solver.size() == 1 
             //  && rset2.getNestingLevel() > 0 
-                && solver.get(0).toString().equals(rset2.clone().normalize().toString())) { 
+                && solver.get(0).toString().equals(rset2.clone().normalizeIt().toString())) { 
             // first queue entry, expanded with [0,0,...0]
             result  = VariableMap.SAME + " form as " + solver.polish(rset2);
         } // same as [0]

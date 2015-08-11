@@ -156,19 +156,11 @@ DATA
 -(a31*(a^2 - b^2) + 2*a32*a*b + a33*(a^2 + b^2))^2
 CALL Polynomial -f $(DATA)
 
-TEST P08 Barning's B matrix times Pythagorean generator
-DATA
- (  1*(a^2 - b^2) +   2*2*a*b +   2*(a^2 + b^2))^2
-+(  2*(a^2 - b^2) +   1*2*a*b +   2*(a^2 + b^2))^2
--(  2*(a^2 - b^2) +   2*2*a*b +   3*(a^2 + b^2))^2
-CALL Polynomial -var "a,b,c" $(DATA)
+TEST P08 Example from http://www.solitaryroad.com/c138.html
+CALL Polynomial -square "x1" "x1^2 + 2x2^2 - 7x3^2 -4 x1*x2 + 8x1*x3"  
 
-TEST P09 abstract matrix times (a,b,c) is powersum  a^2 + b^2 - c^2
-DATA
- (a11*a + a12*b + a13*c)^2
-+(a21*a + a22*b + a23*c)^2
--(a31*a + a32*b + a33*c)^2
-CALL Polynomial -var "a,b,c" $(DATA)
+TEST P09 
+CALL Polynomial -square "x1" "3x1^2 - 3*x1*x2 + 7*x1*x3"  
 
 TEST P10 abstract matrix times (3,4,5,6)
 DATA
@@ -178,14 +170,8 @@ DATA
 -(a41*3 + a42*4 + a43*5 + a44*6)^3
 CALL Polynomial -f $(DATA)
 
-TEST P11 abstract matrix times (a,b,c,d) is powersum  a^3 + b^3 + c^3 - d^3
-DATA
- (a11*a + a12*b + a13*c + a14*d)^3
-+(a21*a + a22*b + a23*c + a24*d)^3
-+(a31*a + a32*b + a33*c + a34*d)^3
--(a41*a + a42*b + a43*c + a44*d)^3
--(a^3   +   b^3 +   c^3 -   d^3)
-CALL Polynomial -var "a,b,c,d" $(DATA)
+TEST P11 
+CALL Polynomial -square "x1" "3x1^4 - 3*x1*x2 + 7*x1*x3"  
 
 TEST P12 GF.C matrix times (a,b,c,d) yields powersum  a^3 + b^3 + c^3 - d^3 ?
 DATA

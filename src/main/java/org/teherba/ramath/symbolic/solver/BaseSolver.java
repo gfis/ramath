@@ -464,7 +464,7 @@ public class BaseSolver extends Stack<RelationSet> {
 
     /** Prepares and returns a {@link ModoMeter} from the set of variables.
      *  Only the necessary variables are involved.
-     *  Variables having at least a coefficient of factor*base
+     *  Variables having at least a coefficient of <em>factor*base</em>
      *  are not involved in the modular expansion.
      *  If this feature is not desired, the ModoMeter should be initialized with base.
      *  @param rset1 {@link RelationSet} to be expanded

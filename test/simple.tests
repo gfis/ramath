@@ -10,6 +10,12 @@ ARGS=
 #======================================================================
 ECHO 000
 #-------------------------
+# BigIntegerUtil
+PACKAGE=org.teherba.ramath
+
+TEST BI1 BigIntegerUtil
+CALL BigIntegerUtil
+#-------------------------
 # EEC array generation
 PACKAGE=org.teherba.ramath
 
@@ -236,6 +242,24 @@ CALL ContinuedFraction -eval $(DATA)
 
 TEST CF9 continued fraction: Pell equation
 CALL ContinuedFraction -pell 109
+#--------------------------------
+# PrimeFactorization
+PACKAGE=org.teherba.ramath
+
+TEST FP1 PrimeFactorization 2
+CALL     PrimeFactorization 2
+
+TEST FP2 PrimeFactorization 60
+CALL     PrimeFactorization 60
+
+TEST FP3 PrimeFactorization 1729
+CALL     PrimeFactorization 1729
+
+TEST FP4 PrimeFactorization 900
+CALL     PrimeFactorization 900
+
+TEST FP5 PrimeFactorization 19472906
+CALL     PrimeFactorization 19472906
 
 #--------------------------------
 # Gröbner bases

@@ -301,7 +301,7 @@ public class Monomial implements Cloneable, Serializable {
             } // upperSubst
         } // while viter
         return result;
-	} // degree(boolean)
+    } // degree(boolean)
 
     /** Determines the degree, that is the sum of exponents
      *  @return degree >= 0
@@ -480,7 +480,7 @@ public class Monomial implements Cloneable, Serializable {
         return result;
     } // negate
 
-    /** Multiplies this monomial <em>in place</em> with an exponentiated variable or number.
+    /** Multiplies this Monomial <em>in place</em> with an exponentiated variable or number.
      *  This method can only be used internally since it does not clone.
      *  @param name2 variable name or number constant
      *  @param exp2 raise variable to this power
@@ -489,7 +489,8 @@ public class Monomial implements Cloneable, Serializable {
     public Monomial multiplyBy(String name2, int exp2) {
         Monomial result = this;
         if (isNumber(name2)) {
-            result.setCoefficient(Coefficient.valueOf(this.getCoefficient().multiply((new Coefficient(name2)).pow(exp2))));
+            result.setCoefficient(Coefficient.valueOf(this.getCoefficient()
+                    .multiply((new Coefficient(name2)).pow(exp2))));
             if (result.isZero()) {
                 result.clear(); // remove all variables
             }
@@ -506,7 +507,19 @@ public class Monomial implements Cloneable, Serializable {
         return result;
     } // multiplyBy(name, exponent)
 
-    /** Multiplies this monomial with another one
+    /** Multiplies this Monomial <em>in place</em> with a BigInteger.
+     *  This method can only be used internally since it does not clone.
+     *  @param bint number constant
+     *  @return this object, now containing the product
+     */
+    public Monomial multiplyBy(BigInteger number) {
+        Monomial result = this;
+        result.setCoefficient(Coefficient.valueOf(this.getCoefficient()
+                .multiply(number)));
+        return result;
+    } // multiplyBy(number)
+
+    /** Multiplies this Monomial with another one
      *  by multiplying it with each factor of the parameter monomial.
      *  @param mono2 multiply with this monomial
      *  @return new object that contains the product
@@ -518,14 +531,15 @@ public class Monomial implements Cloneable, Serializable {
             String name2 = iter.next();
             result.multiplyBy(name2, mono2.getExponent(name2));
         } // while iter
-        result.setCoefficient(Coefficient.valueOf(this.getCoefficient().multiply(mono2.getCoefficient())));
+        result.setCoefficient(Coefficient.valueOf(this.getCoefficient()
+                .multiply(mono2.getCoefficient())));
         if (result.isZero()) {
             result.clear(); // remove all variables
         }
         return result;
     } // multiply(Monomial)
 
-    /** Raise this monomial to some power.
+    /** Raise this Monomial to some power.
      *  @param exponent raise to this power &gt;= 0; 0 and 1 are handled individually.
      *  @return new object which contains the monomial raised to the expontent
      */
@@ -550,7 +564,7 @@ public class Monomial implements Cloneable, Serializable {
         return result;
     } // pow
 
-    /** Divides this monomial <em>in place</em> by an exponentiated variable or number.
+    /** Divides this Monomial <em>in place</em> by an exponentiated variable or number.
      *  This method can only be used internally since it does not clone.
      *  The resulting exponent may not become negative.
      *  @param name2 variable name or constant number
@@ -598,7 +612,7 @@ public class Monomial implements Cloneable, Serializable {
         return result;
     } // divideBy(name, exponent)
 
-    /** Divides <em>this</em> monomial by another one
+    /** Divides <em>this</em> Monomial by another one
      *  by dividing it with each factor of the parameter monomial.
      *  There may not remain any negative exponents of variables,
      *  but the resulting coefficient may get a denominator different from 1.
@@ -634,7 +648,7 @@ public class Monomial implements Cloneable, Serializable {
         return result;
     } // divide(Monomial)
 
-    /** Compute the greatest common divisor of <em>this</em> monomial and another.
+    /** Compute the greatest common divisor of <em>this</em> Monomial and another.
      *  @param mono2 the 2nd monomial
      *  @return new object which contains the gcd of the coefficients, and
      *  the intersection of the variables with their minimum exponents
@@ -656,7 +670,7 @@ public class Monomial implements Cloneable, Serializable {
         return result;
     } // gcd
 
-    /** Compute the least common multiple of <em>this</em> monomial and another.
+    /** Compute the least common multiple of <em>this</em> Monomial and another.
      *  @param mono2 the 2nd monomial
      *  @return new object which contains the lcm of the coefficients, and
      *  the union of the variables with their maximum exponents
@@ -677,7 +691,7 @@ public class Monomial implements Cloneable, Serializable {
         return result;
     } // lcm
 
-    /** Compares the sets of exponentiated variables of two monomials.
+    /** Compares the sets of exponentiated variables of two Monomials.
      *  @param mono2 second comparision operand
      *  @return -1, 0 or +1 if <em>this</em> is &lt;, = or &gt; the parameter
      */
@@ -758,7 +772,7 @@ public class Monomial implements Cloneable, Serializable {
             number = coeff.toString();
         }
     */
-    	String number = this.getCoefficient().toString();
+        String number = this.getCoefficient().toString();
         return toStringCommon(false, number);
     } // toFactoredString(full)
 
@@ -827,6 +841,7 @@ public class Monomial implements Cloneable, Serializable {
      *  the powers of the variables in <em>monomial</em>, (without ^0),
      *  or 0 if not any of the variables of <em>mono2</em> was contained in <em>this</em> monomial.
      */
+/*
     public Monomial getVariablePowers(Monomial mono2) {
         Monomial result = new Monomial();
         Iterator<String> iter2 = mono2.keySet().iterator();
@@ -846,7 +861,7 @@ public class Monomial implements Cloneable, Serializable {
         }
         return result;
     } // getVariablePowers
-
+*/
     /** Tests whether <em>this</em> monomial contains the exact variable power combination
      *  of <em>mono2</em>; if not, 0 is returned, otherwise, the factor monomial/mono2.
      *  @param mono2 a combination of powers of the desired variables, with coefficient 1
@@ -949,7 +964,9 @@ lcm( + 24*a^6*b^6*c*x4^8, + 100*a^5*b^4) =  + 600*a^6*b^6*c*x4^8
             System.out.println("CONSTANT_SIGNATURE=" + Monomial.CONSTANT_SIGNATURE);
 
             Monomial mono4 = new Monomial(new String[] { "a", "b" });
+/*
             System.out.println("getVariablePowers(" + mono4.toString() + ") = " + mono1.getVariablePowers(mono4).toString());
+*/
             Monomial mono5 = (new Monomial("a", 4))
                     .multiply(new Monomial("b", 2));
             System.out.println("getFactorOf(" + mono5.toString() + ") = "       + mono1.getFactorOf      (mono5).toString());

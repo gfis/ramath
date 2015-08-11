@@ -60,7 +60,8 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
 
     /** The array for {@link Polynomial}s,
      *  preferrably with ascending complexity in order to allow for
-     *  more efficient evaluations
+     *  more efficient evaluations.
+     *  Elements are indexed by 0, 1, 2 and so on.
      */
     private ArrayList<Polynomial> polynomials;
 
@@ -86,7 +87,7 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
     } // Constructor(Polynomial)
 
     /** Construct from an array of Strings which represent {@link Polynomial}s.
-     *  Increasing numerical keys are assigned sequentially: "0001", "0002", and so on.
+     *  Increasing numerical keys are assigned sequentially: 0, 1, 2, and so on.
      *  @param exprs array of String expressions
      */
     public RelationSet(String[] exprs) {
@@ -99,7 +100,7 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
     } // Constructor(String[])
 
     /** Construct from an array of {@link Polynomial}s.
-     *  Increasing numerical keys are assigned sequentially: "0001", "0002", and so on.
+     *  Increasing numerical keys are assigned sequentially: 0, 1, 2, and so on.
      *  @param polys array of Polynomials
      */
     public RelationSet(Polynomial[] polys) {
@@ -112,7 +113,7 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
     } // Constructor(Polynomial[])
 
     /** Construct from a string with a list of relational expressions.
-     *  Increasing numerical keys are assigned sequentially: "0001", "0002", and so on.
+     *  Increasing numerical keys are assigned sequentially: 0, 1, 2, and so on.
      *  The cost of evaluation should increase in parallel to the keys' values
      *  for better performance of solvers, since the relations are concatenated
      *  with an AND operation, and the evaluation stops at the first FALSE condition.
@@ -136,8 +137,8 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
         result.setParentIndex   (this.getParentIndex    ());
         result.setTuple         (this.getTuple          ());
         result.setRefMap        (this.getRefMap         ());
-        setTupleShift           (this.getTupleShift     ());
-        setMessage              (this.getMessage        ());
+        result.setTupleShift    (this.getTupleShift     ());
+        result.setMessage       (this.getMessage        ());
         return result;
     } // clone
 
@@ -153,7 +154,7 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
     } // size
 
     /** Gets one of the {@link Polynomial}s in the relation set
-     *  @param index sequential index of the Polynomial
+     *  @param index sequential index of the Polynomial: 0, 1, 2 and so on
      */
     public Polynomial get(int index) {
         return polynomials.get(index);
@@ -368,14 +369,14 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
     /** Normalizes all member {@link Polynomial}s
      *  @return <em>this</em> normalized RelationSet
      */
-    public RelationSet normalize() {
+    public RelationSet normalizeIt() {
         int ipoly = 0;
         while (ipoly < this.polynomials.size()) {
-            this.get(ipoly).normalize();
+            this.get(ipoly).normalizeIt();
             ipoly ++;
         } // while ipoly
         return this;
-    } // normalize
+    } // normalizeIt
 
     /** Determines whether <em>this</em> RelationSet can be transformed into <em>rset2</em>
      *  by multiplying the constants of the monomials in <em>rset2</em> by

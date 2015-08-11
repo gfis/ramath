@@ -148,7 +148,7 @@ public class RaMathServlet extends HttpServlet {
                     session.setAttribute("varmap", varMap);
                     rset = rset.substitute(varMap);
                     if (opt.indexOf("norm") >= 0) {
-                    	rset.normalize();
+                    	rset.normalizeIt();
                     }
                     form2 = rset.toString();
                     session.setAttribute("form2", form2);
@@ -183,7 +183,7 @@ public class RaMathServlet extends HttpServlet {
                     session.setAttribute("varmap", varMap);
                     rset = rset.substitute(varMap);
                     if (opt.indexOf("norm") >= 0) {
-                    	rset.normalize();
+                    	rset.normalizeIt();
                     }
                     form1 = rset.toString();
                     session.setAttribute("form1", form1);

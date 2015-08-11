@@ -1,5 +1,6 @@
 /*  BigIntegerUtil: helper methods for BigInteger
  *  @(#) $Id: BigIntegerUtil.java 231 2009-08-25 08:47:16Z gfis $
+ *  2015-08-11: THREE
  *  2015-07-20: lcm(BigRationals)
  *  2014-04-08: use BigInteger.valueOf(long)
  *  2013-09-20, Georg Fischer: copied from BigRational
@@ -22,8 +23,8 @@
  * limitations under the License.
  */
 package org.teherba.ramath;
-import  java.math.BigInteger;
 import  org.teherba.ramath.BigRational;
+import  java.math.BigInteger;
 
 /** BigIntegerUtil - helper methods for {@link BigInteger}
  *  @author Dr. Georg Fischer
@@ -37,7 +38,9 @@ public class BigIntegerUtil {
     } // no-args Constructor
 
     /** constant big 2 */
-    public static final BigInteger TWO = BigInteger.valueOf(2);
+    public static final BigInteger TWO   = BigInteger.valueOf(2);
+    /** constant big 3 */
+    public static final BigInteger THREE = BigInteger.valueOf(3);
 
     /** Tries to find an integer root
      *  (in a very primitive way)
@@ -110,7 +113,7 @@ public class BigIntegerUtil {
         return lb;
     } // posRoot
 
-    private static BigInteger power (BigInteger base, int exp) {
+    private static BigInteger power(BigInteger base, int exp) {
         assert exp >= 0;
         // shift-multiplier
         BigInteger res = BigInteger.ONE;
@@ -199,17 +202,39 @@ public class BigIntegerUtil {
         return num1.multiply(num2.getNumerator()).divide(num1.getNumerator().gcd(num2.getNumerator()));
     } // lcm
 
+    /** Computes the binomial coefficient <em>num1 choose num2</em>, that is
+     *  the <em>num2</em>th entry in row <em>num1</em> of Pascal's triangle.
+     *  Code adapted from {@link http://stackoverflow.com/questions/2201113/combinatoric-n-choose-r-in-java-math stackoverflow}
+     *  @param num1 the upper parameter
+     *  @param num2 the lower parameter
+     *  @return num1! / (num1 - num2)! / num2!; 
+     *  for example binomial(4,2) = 6, 
+     *  or binomial(133,71) = 555687036928510235891585199545206017600
+     */ 
+    public static BigInteger binomial(int num1, int num2) {
+        BigInteger result = BigInteger.ONE;
+        int k = 0;
+        while (k < num2) {
+            result = result.multiply(BigInteger.valueOf(num1 - k))
+                     .divide(BigInteger.valueOf(k + 1));
+            k ++;
+        } // while k
+        return result;
+    } // binomial
+
     /** Test method.
      *  Prints
      <pre>
     gcd(24,27) = 3
     lcm(24,27) = 216
+    binomial(133,71) = 555687036928510235891585199545206017600
      </pre>
      */
     public static void main(String[] args) {
         /* elementary arithmetic */
         System.out.println("gcd(24,27) = " + BigIntegerUtil.gcd(BigInteger.valueOf(24), BigInteger.valueOf(27)).toString());
         System.out.println("lcm(24,27) = " + BigIntegerUtil.lcm(BigInteger.valueOf(24), BigInteger.valueOf(27)).toString());
+        System.out.println("binomial(133,71) = " + BigIntegerUtil.binomial(133, 71).toString());
     } // main
 
 } // BigIntegerUtil

@@ -120,7 +120,7 @@ public class TreeSolver extends BaseSolver {
             if (vmap2.size() > 0) {
                 RelationSet rset2 = getRootNode().substitute(vmap2);
                 if (norm) {
-                    rset2.normalize();
+                    rset2.normalizeIt();
                 }
                 rset2.setTuple(vmap2, this.getTransposables());
                 rset2.setNestingLevel(newLevel);
