@@ -1,3 +1,8 @@
-("3*x1^2 - 3*x1*x2 + 7*x1*x3 = 0").getSubPolynomial("x1") = 3*x1^2 - 3*x1*x2 + 7*x1*x3
-.getWideningFactor("x1", 2) = 2*3*7
-.getSquareCompletion("x1) =  - 63*x2 + 147*x3
+("3*x1^2 - 3*x1*x2 + 7*x1*x3 = 0").getPowerFactors("x1") =
+[0]  + 1*(0)
+[1]  + 1*( - 3*x2 + 7*x3)
+[2]  + 1*(3)
+.widenIt("x1") =
+[0]  + 1*(0)
+[1]  + 1*( - 36*x2 + 84*x3)
+[2]  + 1*(36), rootx=6

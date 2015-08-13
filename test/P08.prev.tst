@@ -1,3 +1,8 @@
-("x1^2 - 4*x1*x2 + 2*x2^2 + 8*x1*x3 - 7*x3^2 = 0").getSubPolynomial("x1") = x1^2 - 4*x1*x2 + 8*x1*x3
-.getWideningFactor("x1", 2) = 1
-.getSquareCompletion("x1) =  - 2*x2 + 4*x3
+("x1^2 - 4*x1*x2 + 2*x2^2 + 8*x1*x3 - 7*x3^2 = 0").getPowerFactors("x1") =
+[0]  + 1*(2*x2^2 - 7*x3^2)
+[1]  + 1*( - 4*x2 + 8*x3)
+[2]  + 1*(1)
+.widenIt("x1") =
+[0]  + 1*(2*x2^2 - 7*x3^2)
+[1]  + 1*( - 4*x2 + 8*x3)
+[2]  + 1*(1), rootx=1

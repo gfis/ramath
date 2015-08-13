@@ -393,111 +393,118 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
      *  @return <em>this</em> normalized RelationSet
      */
     public RelationSet normalizeIt() {
-        int ipoly = 0;
-        while (ipoly < this.polynomials.size()) {
+        int ipoly = this.polynomials.size() - 1;
+        while (ipoly >= 0) {
             this.get(ipoly).normalizeIt();
-            ipoly ++;
+            ipoly --;
         } // while ipoly
         return this;
     } // normalizeIt
 
+    /** Multiplies all {@link Polynomial}s of <em>this</em> {@link RelationSet}
+     *  with a {@link BigInteger}.
+     *  This is the inverse operation to {@link #normalizeIt}.
+     *  @param number multiply with this BigInteger
+     *  @return reference to <em>this</em> RelationSet which was modified
+     */
+    protected RelationSet multiplyBy(BigInteger number) {
+        int ipoly = this.polynomials.size() - 1;
+        while (ipoly >= 0) {
+            this.get(ipoly).multiplyBy(number);
+            ipoly --;
+        } // while ipoly
+        return this;
+    } // multiplyBy(number)
+
     /** Multiply (in place) all component {@link Polynomial}s of 
      *  <em>this</em> {@link RelationSet} such that the parameter variable 
      *  can be square, cubic completed. 
-     *  <em>this</em> should be the result of {@link Polynomial#getPowerFactors}.
-     *  @param varName name of variable which was factored out
-     *  @return widening factor to be multiplied on the original {@link Polynomial}
+     *  <em>this</em> should be the result of {@link Polynomial#getPowerFactors}, that is
+     *  <em>varName^index</em> was previously factored out of those Polynomials.
+     *  @param varName name of variable whose powers were factored out. 
+     *  This will later be replaced by <em>tupleShift * varName</em>.
+     *  @return <em>this</em> widened RelationSet;
+     *  {@link RelationSet#tupleShift} is set (to <em>rootx</em>) 
+     *  such that the coefficient of the lead term is a power of it. 
      */
     public RelationSet widenIt(String varName) {
-        // first ensure that the binomial factors are contained in the subpolynomials
-        BigInteger widenFactor = BigInteger.ONE;
-        Polynomial polyi = null;    
-        PrimeFactorization[] factors   = new PrimeFactorization[this.size()];
-        BigInteger        [] gcds      = new BigInteger        [this.size()];
+        BigInteger rootx = BigInteger.ONE;
+        Polynomial poly1 = null;    
         BigInteger        [] binomials = new BigInteger        [this.size()];
         int power = this.size() - 1;
 
+        // first store binomial factors for all subpolynomials
         int ipoly = 0;
         if (true) { // symmetricity with loop below
             ipoly = power;
             while (ipoly >= 0) {
-                polyi = this.get(ipoly);
-                gcds     [ipoly] = polyi.gcdCoefficients(true).bigIntegerValue();
+                poly1 = this.get(ipoly);
                 binomials[ipoly] = BigIntegerUtil.binomial(power, power - ipoly);
-                if (ipoly != 0 && ipoly != power) {
-                    widenFactor = BigIntegerUtil.lcm(widenFactor, binomials[ipoly]);
-                }
-                factors  [ipoly] = new PrimeFactorization(gcds[ipoly]);
-                if (debug >= 0) { 
-                    System.out.println("[" + ipoly + "]"
-                            + ": gcd="      + gcds     [ipoly].toString() 
-                            + ", binomial=" + binomials[ipoly].toString()
-                            + ", factors="  + factors  [ipoly].toString()
-                            + ", widenFactor=" + widenFactor  .toString()); 
-                } // debug
                 ipoly --;
             } // while ipoly
         } // if true
 
+        // repeatedly try to determine widev
+        BigInteger widev = BigInteger.ONE;
         boolean rbusy = true; // as long as not all subpolynomials of this RelationSet are properly widened
-        while (rbusy) { // try to widen all
-            boolean pbusy = true; // as long as subpolynomials are to be examined
+        int loopCheck = this.size() * 2 + 1;
+        while (rbusy && loopCheck >= 0) { // try to widen all
+            boolean repeat = false; // as long as subpolynomials are to be examined
             ipoly = power;
-            while (pbusy && ipoly >= 0) {
-                BigInteger facti = BigInteger.ONE;
-                if (! gcds[ipoly].mod(binomials[ipoly]).equals(BigInteger.ZERO)) {
-                    facti = BigIntegerUtil.lcm(gcds[ipoly], binomials[ipoly]).divide(binomials[ipoly]);
-                } else { // gcds mod binomial == 0
-                    facti = gcds[ipoly].divide(binomials[ipoly]);
-                }
-                BigInteger factp = (new PrimeFactorization(facti)).wideToPower(ipoly);
-                // now polyi needs binomial*factp
-                ipoly --;
-            } // while ipoly
-            rbusy = ipoly >= 0; // not all subpolynomials were properly widened
-        } // while rbusy
-
-    /*
-        // first determine whether the lower exponents have coefficients 
-        // which contain the binomial factors
-        BigInteger result = BigInteger.ONE;
-        Iterator <String> titer = this.monomials.keySet().iterator();
-        String sigMax = null;
-        while (titer.hasNext()) { // over all monomials
-            String sig1 = titer.next();
-            Monomial mono1 = this.monomials.get(sig1);
-            int exp1 = mono1.getExponent(varName);
-            if (exp1 == power) { // the maximum exponent
-                sigMax = sig1;
-            } else if (exp1 > 0) {
-                BigInteger coeff1 = mono1.getCoefficient().abs();
-                BigInteger binom1 = BigIntegerUtil.binomial(power, power - exp1);
-                if (! coeff1.mod(binom1).equals(BigInteger.ZERO)) {
-                    result = BigIntegerUtil.lcm(result, BigIntegerUtil.lcm(coeff1, binom1));
-                    if (debug > 0) {
-                        System.out.println("exp1 = " + exp1 
-                                + ", binomial = " + BigIntegerUtil.binomial(power, power - exp1).toString()
-                                + ", result = " + (new PrimeFactorization(result)).toString());
-                    }
+            poly1 = this.get(ipoly);
+            BigInteger 
+            gcd1  = poly1.gcdCoefficients(true).bigIntegerValue();
+            PrimeFactorization pfmax = new PrimeFactorization(gcd1);
+            BigInteger wide2 = pfmax.wideToPower(ipoly);
+            if (! wide2.equals(BigInteger.ONE)) {
+                this.multiplyBy(wide2);
+                if (debug > 0) { 
+                    System.out.println("[" + ipoly + "]"
+                            + ", pfmax=" + pfmax.toString()
+                            + ", wide2=" + wide2.toString() 
+                            + ", poly1=" + poly1.toString());
                 } // debug
-            } // exp1 > 0
-        } // while titer
-        BigInteger binomFactor = result;
-        
-        if (sigMax != null) { // there was a Monomial with degree 'power'
-            Monomial mono2 = this.monomials.get(sigMax);
-            BigInteger coeff2 = BigIntegerUtil.lcm(mono2.getCoefficient(), binomFactor);
-            PrimeFactorization primfn = new PrimeFactorization(coeff2);
-            result = primfn.wideToPower(power);
-            if (debug > 0) {
-                System.out.println("coeff2 = " + coeff2.toString()
-                        + ", primfn = " + primfn .toString()
-                        + ", result = " + (new PrimeFactorization(result)).toString());
-            } // debug
-        } // sigMax != null
-    */
+                repeat = true;
+                if (debug > 0) { 
+                    System.out.println("----repeat-max");
+                } // debug
+            } else { // try downwards   
+                rootx = pfmax.root(power).valueOf(); // this times the variable is later mapped
+                ipoly --;
+                while (! repeat && ipoly > 0) { // may not wideToPower(0)
+                    poly1 = this.get(ipoly);
+                    if (! poly1.isZero()) {
+                        gcd1  = poly1.gcdCoefficients(true).bigIntegerValue();
+                        BigInteger factp = binomials[ipoly].multiply(rootx.pow(ipoly));
+                        if (! gcd1.mod(factp).equals(BigInteger.ZERO)) {
+                            wide2 = BigIntegerUtil.lcm(gcd1, factp).divide(gcd1);
+                            this.multiplyBy(wide2);
+                            if (debug > 0) { 
+                                System.out.println("[" + ipoly + "]"
+                                        + ", gcd1="  + gcd1.toString()
+                                        + ", factp=" + factp.toString()
+                                        + ", wide2=" + wide2.toString() 
+                                        + ", rootx=" + rootx.toString() 
+                                        + ", poly1=" + poly1.toString());
+                            } // debug
+                            repeat = true;
+                            if (debug > 0) { 
+                                System.out.println("----repeat-ipoly");
+                            } // debug
+                        } // ! gcd1.mod(factp)
+                    } // ! isZero
+                    ipoly --;
+                } // while ipoly
+            } // try downwards
+            rbusy = repeat; // not all subpolynomials were properly widened
+            loopCheck --;
+        } // while rbusy
+        if (loopCheck < 0) {
+            System.out.println("widenIt: loopCheck reached");
+        }
+        this.setTupleShift(rootx);
         return this;
-    } // getWideningFactor
+    } // widenIt
 
     /** Determines whether <em>this</em> RelationSet can be transformed into <em>rset2</em>
      *  by multiplying the constants of the monomials in <em>rset2</em> by

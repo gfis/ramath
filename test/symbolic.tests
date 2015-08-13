@@ -182,13 +182,8 @@ DATA
 -(a^3   +   b^3 +   c^3 -   d^3)
 CALL Polynomial -f $(DATA)
 
-TEST P13 GF.P matrix times (a,b,c,d) yields powersum  a^3 + b^3 + c^3 - d^3 ?
-DATA
- ( -2*a +   3*b    -1*c +   1*d)^3
-+( -3*a +   4*b    -2*c +   2*d)^3
-+( -3*a +   6*b +   0*c +   1*d)^3
--( -3*a +   6*b    -1*c +   2*d)^3
-CALL Polynomial -var "a,b,c,d" $(DATA)
+TEST P13 widening for completion
+CALL Polynomial -square "x" "2x^3 + 3x^2 + x + y"
 
 TEST P14 Price's  A' matrix times (a,b,c) yields powersum  4*a^2 + 4*b^2 - 4*c^2
 DATA

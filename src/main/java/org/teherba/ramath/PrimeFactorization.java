@@ -94,7 +94,7 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
     } // clone
 
     /** Get the BigInteger value represented by <em>this</em> {@link PrimeFactorization}
-     *  @return product of all prime powers
+     *  @return product of all prime powers, or 1 for an empty map
      */
     public BigInteger valueOf() {
         BigInteger result = BigInteger.ONE;
@@ -136,7 +136,7 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
         BigInteger result = BigInteger.ONE;
         Iterator<BigInteger> iter = this.keySet().iterator();
         while (iter.hasNext()) {
-            BigInteger prime = iter.next();
+            BigInteger prime = iter.next(); // this must get an exponent of a multiple of 'power'
             int exp = this.get(prime).intValue();
             int rest = exp % power;
             if (false) {
@@ -145,7 +145,7 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
             } else if (rest == power - 1) {
                 result = result.multiply(prime);
             } else  {
-                result = result.multiply(prime.pow(power - exp));
+                result = result.multiply(prime.pow(power - rest));
             }
         } // while iter
         return result;
@@ -157,15 +157,21 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
      */
     public PrimeFactorization root(int power) {
         PrimeFactorization result = new PrimeFactorization();
-        Iterator<BigInteger> iter = this.keySet().iterator();
-        while (iter.hasNext()) {
-            BigInteger prime = iter.next();
-            int exp = this.get(prime).intValue();
-            if (exp % power != 0) { // not divisible
-            	throw new IllegalArgumentException("cannot take root(" + power + ") of " + this.toString());
-            }
-            result.put(prime, exp / power);
-        } // while iter
+        if (this.size() > 0) { // not 0, 1
+            Iterator<BigInteger> iter = this.keySet().iterator();
+            while (iter.hasNext()) {
+                BigInteger prime = iter.next();
+                if (! prime.equals(BigInteger.ONE)) {
+                    int exp = this.get(prime).intValue();
+                    if (exp % power != 0) { // not divisible
+                        throw new IllegalArgumentException("cannot take root(" + power + ") of " + this.toString());
+                    }
+                    result.put(prime, exp / power);
+                } else {
+                    result.put(prime, 1);
+                }
+            } // while iter
+        } // if size
         return result;
     } // root
 

@@ -438,7 +438,7 @@ public class Polynomial implements Cloneable, Serializable {
         while (result && iter1.hasNext()) {
             String sig1 = iter1.next();
             if (first) {
-            	first = false;
+                first = false;
                 sign = monomials.get(sig1).signum();
             } else if (monomials.get(sig1).signum() != sign) {
                 result = false;
@@ -1339,8 +1339,8 @@ x^2 + 3*x^3 + 2*x^4
         while (titer.hasNext()) { // over all monomials
             Monomial mono1 = this.monomials.get(titer.next());
             int exp1 = mono1.getExponent(varName);
-            if (result.size() < exp1) {
-            	result.insert(exp1, new Polynomial());
+            if (result.size() <= exp1) {
+                result.insert(exp1, new Polynomial());
             }
             result.get(exp1).addTo(mono1.divide(new Monomial(varName, exp1)));
         } // while titer
@@ -1426,7 +1426,7 @@ x^2 + 3*x^3 + 2*x^4
      *  </pre>
      */
     public Polynomial getSquareCompletion(String varName) {
-    	Polynomial result = new Polynomial();
+        Polynomial result = new Polynomial();
         Polynomial psub = this.getSubPolynomial(varName);
         int power = psub.maxDegree(varName);
         BigInteger factor = psub.getWideningFactor(varName, power);
@@ -2289,9 +2289,10 @@ x^2 + 3*x^3 + 2*x^4
                     poly1 = Polynomial.parse(args[iarg ++]); 
                     RelationSet rset2 = poly1.getPowerFactors(varName);
                     System.out.println("(\"" + poly1.toString(false) + "\")"
-                            + ".getPowerFactors(\"" + varName + "\") ="   + rset2.toList(true));
+                            + ".getPowerFactors(\""  + varName + "\") ="   + rset2.toList(true));
                     rset2.widenIt(varName);
-                    System.out.println(".widenIt(\"" + varName + "\") ="   + rset2.toList(true));
+                    System.out.println(".widenIt(\"" + varName + "\") ="   + rset2.toList(true)
+                    		+ ", rootx=" + rset2.getTupleShift().toString());
                 /*
                     int power = poly2.maxDegree(varName);
                     BigInteger fact2 = poly2.getWideningFactor(varName, power);
