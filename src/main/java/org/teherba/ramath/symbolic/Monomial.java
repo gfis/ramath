@@ -509,7 +509,7 @@ public class Monomial implements Cloneable, Serializable {
 
     /** Multiplies this Monomial <em>in place</em> with a BigInteger.
      *  This method can only be used internally since it does not clone.
-     *  @param bint number constant
+     *  @param number a constant number
      *  @return this object, now containing the product
      */
     public Monomial multiplyBy(BigInteger number) {
@@ -758,8 +758,9 @@ public class Monomial implements Cloneable, Serializable {
         return toStringCommon(full, number);
     } // toString(full)
 
-    /** Returns a string representation of the monomial
-     *  @param factor factor to be extracted from the constant, if possible
+    /** Returns a string representation of <em>this</em> {@link Monomial}
+     *  @param factor if the coefficient of the Monomial is divisible by this factor &gt; 1,
+     *  the coefficient is written as "factor*coeff2"
      *  @return "3*4*x*y^3" for example for factor 4 and monomial 12*x*x^3
      */
     public String toFactoredString(BigInteger factor) {

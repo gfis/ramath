@@ -363,10 +363,10 @@ public class Polynomial implements Cloneable, Serializable {
         return result.substring(result.startsWith(" + ") ? 3 : 0);
     } // toString
 
-    /** Returns a string representation of the polynomial, with leading sign,
+    /** Returns a string representation of <em>this</em> {@link Polynomial}, with leading sign,
      *  in compressed representation, without the relation.
-     *  @param factor if the constant of a monomial is divisible by this factor &gt; 1,
-     *  the constant is written as "factor*factor2"
+     *  @param factor if the coefficient of a {@link Monomial} is divisible by this factor &gt; 1,
+     *  the coefficient is written as "factor*coeff2"
      *  @return "4*4*x^2+4*4*y^2-32*4*x*y*z+4*4*z^2" (factor 4), for example
      */
     public String toFactoredString(BigInteger factor) {
@@ -425,27 +425,26 @@ public class Polynomial implements Cloneable, Serializable {
         return monomials.size() == 0;
     } // isZero
 
-    /** Determines whether the polynomial has a non-zero constant
-     *  and all monomials have the same sign as the constant - such polynomials
-     *  have no solutions in variables which are all >= 0.
-     *  Assuming positive variable values, such polynomials can never become zero.
+    /** Determines whether all {@link Monomial}s in <em>this</em> {@link Polynomial} 
+     *  have the same sign. When all variables are assumed to have values >= 0,
+     *  a biased polynomial has no non-trivial solutions.
      *  @return true if the polynomial has one type of sign and a constant, or false otherwise
      */
     public boolean isBiased() {
         boolean result = true; // assume success
-        int monomNo  = 0;
+        boolean first = true;
         int sign = 0;
         Iterator<String> iter1 = this.keySet().iterator();
         while (result && iter1.hasNext()) {
-            monomNo ++;
             String sig1 = iter1.next();
-            if (monomNo == 1) {
+            if (first) {
+            	first = false;
                 sign = monomials.get(sig1).signum();
             } else if (monomials.get(sig1).signum() != sign) {
                 result = false;
             }
         } // while iter1
-        return result && monomials.get(Monomial.CONSTANT_SIGNATURE) != null;
+        return result; //  && monomials.get(Monomial.CONSTANT_SIGNATURE) != null;
     } // isBiased
 
     /** Gets the <em>polarity</em> of the polynomial, that is the sign of the constant monomial, if present,
@@ -1326,6 +1325,28 @@ x^2 + 3*x^3 + 2*x^4
         return result;
     } // getRest
 
+    /** Extracts, from <em>this<em> {@link Polynomial},  
+     *  a new {@link RelationSet} with a Polynomial
+     *  for each power of the parameter variable. 
+     *  These Polynomials gather the factors of the variable's power. 
+     *  The indexes of the resulting RelationSet correspond with those powers.
+     *  @param varName variable to be factored out 
+     *  @return RelationSet of factored Polynomials
+     */
+    public RelationSet getPowerFactors(String varName) {
+        RelationSet result = new RelationSet();
+        Iterator <String> titer = this.monomials.keySet().iterator();
+        while (titer.hasNext()) { // over all monomials
+            Monomial mono1 = this.monomials.get(titer.next());
+            int exp1 = mono1.getExponent(varName);
+            if (result.size() < exp1) {
+            	result.insert(exp1, new Polynomial());
+            }
+            result.get(exp1).addTo(mono1.divide(new Monomial(varName, exp1)));
+        } // while titer
+        return result;
+    } // getPowerFactors
+
     /** Extracts a new {@link Polynomial} consisting of all {@link Monomial}s
      *  that involve the variable <em>varName</em>.
      *  @param varName variable to be factored out 
@@ -1345,14 +1366,15 @@ x^2 + 3*x^3 + 2*x^4
 
     /** Determines the widening factor neccessary for a completion to some power expression.
      *  The method operates on <em>this</em> {@link Polynomial} which should be the
-     *  result of {@link #getSubPolynomial}
-     *  @param varName variabel name which was factored out
-     *  @param exp desired exponent for the completion (2, 3 and so on)
+     *  result of {@link #getSubPolynomial}.
+     *  Caution, the wideToPower of x^2 terms is not yet done for a cubic Polynomial.
+     *  @param varName name of variable which was factored out
+     *  @param power desired exponent for the completion (2, 3 and so on)
      *  @return widening factor to be multiplied on the original {@link Polynomial}
      */
     public BigInteger getWideningFactor(String varName, int power) {
-        // first determine whether te lower exponents have coefficients which contain the binomial factors
-        // Caution, the wideToPower of x^2 terms is not yet done for a cubic Polynomial.
+        // first determine whether the lower exponents have coefficients 
+        // which contain the binomial factors
         BigInteger result = BigInteger.ONE;
         Iterator <String> titer = this.monomials.keySet().iterator();
         String sigMax = null;
@@ -1380,11 +1402,11 @@ x^2 + 3*x^3 + 2*x^4
         if (sigMax != null) { // there was a Monomial with degree 'power'
             Monomial mono2 = this.monomials.get(sigMax);
             BigInteger coeff2 = BigIntegerUtil.lcm(mono2.getCoefficient(), binomFactor);
-            PrimeFactorization primf = new PrimeFactorization(coeff2);
-            result = primf.wideToPower(power);
+            PrimeFactorization primfn = new PrimeFactorization(coeff2);
+            result = primfn.wideToPower(power);
             if (debug > 0) {
                 System.out.println("coeff2 = " + coeff2.toString()
-                        + ", primf = "  + primf .toString()
+                        + ", primfn = " + primfn .toString()
                         + ", result = " + (new PrimeFactorization(result)).toString());
             } // debug
         } // sigMax != null
@@ -2263,18 +2285,22 @@ x^2 + 3*x^3 + 2*x^4
 
                 } else if (opt.startsWith("-square")) { 
                     // getSubPolynomial, getWideningFactor, getLagrangeReduction
-                    String varStr = args[iarg ++];
+                    String varName = args[iarg ++];
                     poly1 = Polynomial.parse(args[iarg ++]); 
-                    poly2 = poly1.getSubPolynomial(varStr);
+                    RelationSet rset2 = poly1.getPowerFactors(varName);
                     System.out.println("(\"" + poly1.toString(false) + "\")"
-                            + ".getSubPolynomial(\"" + varStr + "\") = "   + poly2.toString());
-                    int power = poly2.maxDegree(varStr);
-                    BigInteger fact2 = poly2.getWideningFactor(varStr, power);
-                    System.out.println(".getWideningFactor(\"" + varStr + "\", " + power + ") = "   
-                            + fact2.toString());
-                    Polynomial poly3 = poly2.getSquareCompletion(varStr);
-                    System.out.println(".getSquareCompletion(\"" + varStr + ") = "   
+                            + ".getPowerFactors(\"" + varName + "\") ="   + rset2.toList(true));
+                    rset2.widenIt(varName);
+                    System.out.println(".widenIt(\"" + varName + "\") ="   + rset2.toList(true));
+                /*
+                    int power = poly2.maxDegree(varName);
+                    BigInteger fact2 = poly2.getWideningFactor(varName, power);
+                    System.out.println(".getWideningFactor(\"" + varName + "\", " + power + ") = "   
+                            + (new PrimeFactorization(fact2)).toString());
+                    Polynomial poly3 = poly2.getSquareCompletion(varName);
+                    System.out.println(".getSquareCompletion(\"" + varName + ") = "   
                             + poly3.toString());
+                */
 
                 } else if (opt.startsWith("-transp")) {
                     poly1 = Polynomial.parse(args[iarg ++]);
@@ -2282,13 +2308,13 @@ x^2 + 3*x^3 + 2*x^4
                             + poly1.getTransposableClasses().toString());
 /*
                 } else if (opt.startsWith("-var")) { // getVariablePowers and groupBy
-                    String varStr = args[iarg ++];
-                    String[] vars = varStr.split("\\W"); // non-word characters
+                    String varName = args[iarg ++];
+                    String[] vars = varName.split("\\W"); // non-word characters
                     poly1 = Polynomial.parse(ereader.read(args[iarg ++]));
                     System.out.println(poly1.toString());
                     Monomial mono4 = new Monomial(vars);
-                    System.out.println("getVariablePowers(" + varStr + ")="   + poly1.getVariablePowers(mono4));
-                    System.out.println(          "groupBy(" + varStr + ")=\n" + poly1.groupBy          (mono4).toList(false));
+                    System.out.println("getVariablePowers(" + varName + ")="   + poly1.getVariablePowers(mono4));
+                    System.out.println(          "groupBy(" + varName + ")=\n" + poly1.groupBy          (mono4).toList(false));
 */
                 } else {
                     System.err.println("invalid option " + opt);

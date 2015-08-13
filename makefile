@@ -31,6 +31,7 @@ solver:
 	$(REGR) test/solver.tests 	$(TEST) 2>&1 \
 	| tee regression.log.tmp
 	grep FAILED regression.log.tmp
+	make proved
 t:
 	make solver TEST=T%
 proved:

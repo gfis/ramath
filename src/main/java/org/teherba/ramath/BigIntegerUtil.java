@@ -204,7 +204,7 @@ public class BigIntegerUtil {
 
     /** Computes the binomial coefficient <em>num1 choose num2</em>, that is
      *  the <em>num2</em>th entry in row <em>num1</em> of Pascal's triangle.
-     *  Code adapted from {@link http://stackoverflow.com/questions/2201113/combinatoric-n-choose-r-in-java-math stackoverflow}
+     *  Code adapted from {@link <a href="http://stackoverflow.com/questions/2201113/combinatoric-n-choose-r-in-java-math">stackoverflow.com</a>}
      *  @param num1 the upper parameter
      *  @param num2 the lower parameter
      *  @return num1! / (num1 - num2)! / num2!; 
@@ -213,12 +213,18 @@ public class BigIntegerUtil {
      */ 
     public static BigInteger binomial(int num1, int num2) {
         BigInteger result = BigInteger.ONE;
-        int k = 0;
-        while (k < num2) {
-            result = result.multiply(BigInteger.valueOf(num1 - k))
-                     .divide(BigInteger.valueOf(k + 1));
-            k ++;
-        } // while k
+        if (num2 == 0 || num1 == num2) {
+            // 1
+        } else if (num2 == 1 || num1 - num2 == 1) {
+            result = BigInteger.valueOf(num1); // n 
+        } else {
+            int k = 0;
+            while (k < num2) {
+                result = result.multiply(BigInteger.valueOf(num1 - k))
+                         .divide(BigInteger.valueOf(k + 1));
+                k ++;
+            } // while k
+        }
         return result;
     } // binomial
 

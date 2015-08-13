@@ -20,6 +20,7 @@
 package org.teherba.ramath;
 import  org.teherba.ramath.BigIntegerUtil;
 import  java.io.Serializable;
+import  java.lang.IllegalArgumentException;
 import  java.math.BigInteger;
 import  java.util.Iterator;
 import  java.util.TreeMap;
@@ -30,7 +31,7 @@ import  java.util.TreeMap;
  *  @author Dr. Georg Fischer
  */
 public class PrimeFactorization extends TreeMap<BigInteger, Integer> 
-		implements Cloneable, Serializable {
+        implements Cloneable, Serializable {
     public final static String CVSID = "@(#) $Id: PrimeFactorization.java 231 2009-08-25 08:47:16Z gfis $";
 
     /** No-args Constructor (represents ZERO or ONE)
@@ -41,7 +42,7 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
 
     /** Constructor for a positive BigInteger.
      *  This code was adapted from 
-     *  {@link http://stackoverflow.com/questions/16802233/faster-prime-factorization-for-huge-bigintegers-in-java stackoverflow}
+     *  {@link <a href="http://stackoverflow.com/questions/16802233/faster-prime-factorization-for-huge-bigintegers-in-java">stackoverflow.com</a>}
      *  @param number number to be factored
      */
     public PrimeFactorization(BigInteger number) {
@@ -92,9 +93,22 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
         return result;
     } // clone
 
+    /** Get the BigInteger value represented by <em>this</em> {@link PrimeFactorization}
+     *  @return product of all prime powers
+     */
+    public BigInteger valueOf() {
+        BigInteger result = BigInteger.ONE;
+        Iterator<BigInteger> iter = this.keySet().iterator();
+        while (iter.hasNext()) {
+            BigInteger prime = iter.next();
+            result = result.multiply(prime.pow(get(prime)));
+        } // while iter
+        return result;
+    } // valueOf
+
     /** Multiplies two {@link PrimeFactorization}s by merging the
      *  two TreeMaps and adding the exponents
-     *  @param primf2 2nd PrimeFactorization 
+     *  @param primfn2 second PrimeFactorization 
      *  @return resulting product as PrimeFactorization
      */
     public PrimeFactorization multiply(PrimeFactorization primfn2) {
@@ -106,7 +120,7 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
             Integer exp2 = primfn2.get(prime2);
             oldExp = result.put(prime2, exp2);
             if (oldExp != null) {
-            	result.put(prime2, new Integer(oldExp.intValue() + exp2.intValue()));
+                result.put(prime2, new Integer(oldExp.intValue() + exp2.intValue()));
             }
         } // while iter2
         return result;
@@ -136,6 +150,35 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
         } // while iter
         return result;
     } // wideToPower
+
+    /** Returns a number <em>result</em> such that <em>result.pow(power) = this</em>.
+     *  @param power take the <em>power</em>th root
+     *  @return 3^2*5^2 for 3^4*5^4 and power 2
+     */
+    public PrimeFactorization root(int power) {
+        PrimeFactorization result = new PrimeFactorization();
+        Iterator<BigInteger> iter = this.keySet().iterator();
+        while (iter.hasNext()) {
+            BigInteger prime = iter.next();
+            int exp = this.get(prime).intValue();
+            if (exp % power != 0) { // not divisible
+            	throw new IllegalArgumentException("cannot take root(" + power + ") of " + this.toString());
+            }
+            result.put(prime, exp / power);
+        } // while iter
+        return result;
+    } // root
+
+    /** Returns the least number which turns <em>this</em>
+     *  {@link PrimeFactorization} into some power number times a binomial factor, 
+     *  or 1 if the PrimeFactorization represents already such a power
+     *  @param power widen the number to this power >= 2
+     *  @return a BigInteger factor
+     */
+    public BigInteger wideToBinomialPower(int power, BigInteger binomial) {
+        BigInteger result = this.wideToPower(power).multiply(binomial);
+        return result;
+    } // wideToBinomialPower
 
     /** Returns a string representation of the {@link PrimeFactorization} 
      *  @return "2^2*3*5" for 60
@@ -167,12 +210,13 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
     public static void main(String[] args) {
         BigInteger number = new BigInteger(args[0]);
         PrimeFactorization primfn1 = new PrimeFactorization(number);
-        System.out.println("PrimeFactorization(" + number.toString() + ") = " 
-                + primfn1.toString());
-        System.out.println(".wideToPower(3) = " 
-                + (new PrimeFactorization(primfn1.wideToPower(3))).toString());
-        System.out.println(".multiply(same) = " 
-                + primfn1.multiply(primfn1).toString());
+        System.out.println("PrimeFactorization(" + number.toString() + ") = " + primfn1.toString());
+        PrimeFactorization primfn4 = new PrimeFactorization(primfn1.wideToPower(4));
+        System.out.println(".wideToPower(4) = " + primfn4.toString());
+        System.out.println(".root(2) = " + primfn4.multiply(primfn1).root(2).toString());
+        PrimeFactorization primfn2 = primfn1.multiply(primfn1);
+        System.out.println(".multiply(same) = " + primfn2.toString());
+        System.out.println(".valueOf() = " + primfn2.valueOf().toString());
     } // main
 
 } // PrimeFactorization

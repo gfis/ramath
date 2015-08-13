@@ -63,9 +63,8 @@ CALL TreeSolver -b 2 -l 3 -e "x^2 + y^2 + z^2 - 5*x*y*z" -r transpose,similiar,n
 TEST T11 Markoff(4, unsolvable, power)
 CALL TreeSolver      -l 8 -e "x^2 + y^2 + z^2 - 4*x*y*z" -r transpose,similiar
 
-TEST T12 proof
-CALL TreeSolver -l 4 -e "x^2 + y^2 - 3*z^2" 
-# -r transpose
+TEST T12 modif. Pythagoras (proof) 
+CALL TreeSolver -l 4 -e "x^2 + y^2 - 3*z^2" -r transpose,similiar,norm,invall,showfail
 
 TEST T13 modified FLT(3) mod 2
 CALL TreeSolver -b 2 -l 3 -e "a^3 + 3*b^3 - 9*c^3" -r "transposable,similiar,norm"
@@ -152,16 +151,16 @@ TEST T39 1 2 4 9 Proof
 CALL TreeSolver -l 2 -b 3 -e "a^3 + 2*b^3 + 4*c^3 - 9*d^3"
 
 TEST T40 biased expression
-CALL TreeSolver -b 2 -l 2 -e "2 + a^2 + b^2" -r showfail
+CALL TreeSolver -b 2 -l 6 -e "-2 + a^2 + b^2" -r showfail
 
 TEST T41 EEC(4,1,3)
 CALL TreeSolver -b 2 -l 2 -e "a^4 + b^4 + c^4 - d^4"
 
-TEST T42 modif. Pythagoras
-CALL TreeSolver -l 2 -e "x^2 + y^2 - 2*z^2"
+TEST T42 Fermat 2 squares mod 4 = 3 (proof)
+CALL TreeSolver -b 2 -l 3 -e "x^2 + y^2 - 4*z - 3" -r transpose,similiar,norm,invall,showfail
 
-TEST T43 modif. Pythagoras (proof in 1 step)
-CALL TreeSolver -l 2 -e "(x+1)^2 + (y+1)^2 - 2*(z+1)^2" -r similiar,transpose,showfail
+TEST T43 Fermat 2 squares mod 4 = 1
+CALL TreeSolver -b 2 -l 4 -e "x^2 + y^2 - 4*z - 1" -r transpose,similiar,invall
 
 TEST T44 Pyth-a2b2 
 CALL TreeSolver -l 2 -e "a^2 + b^2 + c^2 - b^2*c^2"

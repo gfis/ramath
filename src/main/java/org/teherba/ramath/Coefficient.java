@@ -85,6 +85,14 @@ public class Coefficient
         return new Coefficient(String.valueOf(number));
     } // valueOf(long)
 
+    /** Returns the integral part of <em>this</em> {@link COefficient},
+     *  or +1 if the Coefficient is fractional.
+     *  @return BigInteger or 1
+     */
+    public BigInteger bigIntegerValue() {
+        return this;
+    } // bigIntegerValue
+
     /** constant 0 */
     public static final Coefficient ZERO = new Coefficient("0");
     /** constant 1 */
