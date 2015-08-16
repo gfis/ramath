@@ -129,7 +129,7 @@ public class RefinedMap extends TreeMap<String, Integer> implements Cloneable , 
     } // getExpressions
     
     /** Compares two {@link RefinedMap}s and determines whether 
-     *  one can be though of as being transformed one into the other 
+     *  one can be thought of as being transformed into the other 
      *  by a transposition of the variable names.
      *  @param rmap2 RefinedMap to be compared with <em>this</em>
      *  @return the empty string if no transposition can be applied,

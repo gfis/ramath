@@ -211,31 +211,49 @@ X132 [207,224,305]
         RelationSet rset1 = get(queueIndex); // expand this element (the "parent")
         int curLevel      = rset1.getNestingLevel();
         String vstr1      = rset1.toString();
-        String history    = vstr1.substring(0, vstr1.indexOf(" ")); // up to 1st space
+        String history    = vstr1.substring(0, vstr1.indexOf(";")); // up to 1st separator
         PolyVector vect1  = new PolyVector(vstr1.substring(vstr1.indexOf(";") + 1)); // rest behind 1st ";"
         if (debug >= 1) {
+            System.out.println("expand vstr1=\"" + vstr1 + "\""
+                        + ", queueIndex=" + queueIndex
+                        + ", history=\"" + history + "\""
+                        + "  rset1=" + rset1.toString() 
+                        + ", vect1=" + vect1.toString()
+                        );
             if (prevLevel < curLevel) {
                 prevLevel = curLevel;
-                trace.println("----------------"); // 16 x "-"
+                trace.println("----------------" + vect1.toString()); // 16 x "-"
             }
         } 
         curLevel ++;
         int base = getModBase();
         int index = 1;
         while (index < 4) { // generate all children
+            if (mats[base + index].size() != vect1.size()) {
+                System.out.println("PythagoreanTreeGenerator assertion???, vstr1=\"" + vstr1 + "\""
+                        + ", queueIndex=" + queueIndex
+                        + ", history=\"" + history + "\""
+                        + "  rset1=" + rset1.toString() 
+                        + ", vect1=" + vect1.toString()
+                        );
+            } // assertion
             PolyVector vect2 = mats[base + index].multiply(vect1); // either Barning's 1,2,3 or Price's 5,6,7
             String vstr2 = vect2.toString();
             if (! vect2.isPowerSum(2, 2, 1)) {
                 System.err.println("no PowerSum: " + vstr2);
             } // ! isPowerSum
             trace.println(history + index + " " + vstr2);
-            RelationSet rset2 = new RelationSet(history + index + "=0;" 
+            RelationSet rset2 = new RelationSet(history + index + ";" 
                     + vstr2
                     .replaceAll("[\\[\\]\\s]+", "")
                     .replaceAll("\\,", ";") // a RelationSet of the form "3;4;5"
                     );
-            rset2.setNestingLevel   (curLevel);
-            rset2.setParentIndex    (queueIndex);
+            if (debug >= 1) {
+                System.out.println("rset2=" + rset2.toString()
+                        + ", vstr2=" + vstr2);
+            }
+            rset2.setNestingLevel(curLevel);
+            rset2.setParentIndex (queueIndex);
             add(rset2);
             index ++;
         } // while index - generate all children
@@ -266,7 +284,7 @@ X132 [207,224,305]
                     index ++;
                 } // while index
             } else { // with arguments: generate tree
-                PythagoreanTreeGenerator solver = new PythagoreanTreeGenerator();
+                PythagoreanTreeGenerator solver    = new PythagoreanTreeGenerator();
                 String expr = solver.getArguments(0, args);
                 RelationSet rset0 = new RelationSet("X; 3; 4; 5"); // always start with this triple
                 if (expr != null) {

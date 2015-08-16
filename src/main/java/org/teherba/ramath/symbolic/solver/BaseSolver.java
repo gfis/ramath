@@ -366,10 +366,14 @@ public class BaseSolver extends Stack<RelationSet> {
         if (tpcs.isMonotone()) { // no variable names can be transposed
             reasons.purge("transposable"); // TransposeReason is not checked if there are no transposable variables
         } // isMonotone
-        if (rset0.getTuple() == null) {
-            rset0.setTuple(rset0.getExpressionMap(), getTransposables());
+        VariableMap emap0 = rset0.getExpressionMap();
+        if (false && emap0.size() == 0) {
+            System.out.println("BaseSolver assertion??? emap0.size()=" + emap0.size() + ", rset0=" + rset0.toString(true));
+        }    
+        if (true || rset0.getTuple() == null) {
+            rset0.setTuple(emap0, getTransposables());
         }
-        ModoMeter meter = new ModoMeter(rset0.getTuple().size(), 1); // assume that all variables are not involved
+        // ModoMeter meter = new ModoMeter(rset0.getTuple().size(), 1); // assume that all variables are not involved
         add(rset0);
     } // setRootNode
 
@@ -381,6 +385,7 @@ public class BaseSolver extends Stack<RelationSet> {
             trace.print("Expanding for base=" + getModBase());
             trace.print(", transposables="    + getTransposableString(rset0));
             trace.print(", reasons+features=" + reasons.toList());
+        //  trace.print(", tuple="            + rset0.getTuple().toString());
             trace.println();
         } // debug
     } // printHeader
@@ -492,6 +497,7 @@ public class BaseSolver extends Stack<RelationSet> {
         if (invall || involvedCount <= 0) { // vmapr was empty
             meter = new ModoMeter(varNo, base); // involve all variables / avoid modulo [1,1,1,...]
         } // vmapr empty
+        // meter = new ModoMeter(varNo, base); // enforce involvement of all variables
         return meter;        
     } // getPreparedMeter
 

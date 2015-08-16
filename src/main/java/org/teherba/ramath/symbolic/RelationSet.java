@@ -1,6 +1,6 @@
 /*  RelationSet: a set of polynomials which relate to zero
  *  @(#) $Id: RelationSet.java 970 2012-10-25 16:49:32Z  $
- *  2015-08-13: widenIt
+ *  2015-08-13: prepareIt
  *  2015-06-15: RelationSet.parse was not static
  *  2015-02-19: extends Polynomial; inherit a number of methods from there
  *  2015-02-17: getTransposition; Durbach.2
@@ -302,19 +302,11 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
         return result;
     } // toArray
 
-    /** Returns a string representation of the {@link Polynomial}s in the relation set,
-     *  with leading signs, in compressed form.
-     *  @return " + 17*a0^2*a1 + a2^2*a3^3 - 4*b4 = 0", for example
-     */
-    public String toString() {
-        return toString(false);
-    } // toString()
-
     /** Returns a string representation of the relation set, either compressed or full
      *  @param full whether to return a complete representation suitable for substitution
      *  or a compressed representation which suppresses positive unary sign and
      *  coefficients and exponents of 1
-     *  @return " + 17*a0^2*a1 + a2^2*a3^3 - 4*b4 = 0", for example
+     *  @return " + 17*a0^2*a1^1 + a2^2*a3^3 = 0; - 4*b4^1 = 0", for example
      */
     public String toString(boolean full) {
         StringBuffer buffer = new StringBuffer(2048);
@@ -328,6 +320,14 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
         } // while ipoly
         return buffer.toString();
     } // toString
+
+    /** Returns a string representation of the {@link Polynomial}s in the relation set,
+     *  with leading signs, in compressed form.
+     *  @return "17*a0^2*a1 + a2^2*a3^3; - 4*b4", for example
+     */
+    public String toString() {
+        return toString(false);
+    } // toString()
 
     /** Returns a string representation of <em>this</em> {@link RelationSet}, with leading signs,
      *  in compressed representation, without the relations.
@@ -370,11 +370,7 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
             Polynomial poly1 = this.get(ipoly);
             buffer.append(poly1.getFactor().toString());
             buffer.append("*(");
-            if (full) {
-                buffer.append(poly1.toString());
-            } else {
-                buffer.append(poly1.toString().replaceAll(" = 0", ")"));
-            }
+            buffer.append(poly1.toString());
             buffer.append(')');
             ipoly ++;
         } // while ipoly
@@ -401,6 +397,20 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
         return this;
     } // normalizeIt
 
+    /** Divides all {@link Polynomial}s of <em>this</em> {@link RelationSet}
+     *  by a {@link BigInteger}.
+     *  @param number divide by this BigInteger
+     *  @return reference to <em>this</em> RelationSet which was modified
+     */
+    protected RelationSet divideBy(BigInteger number) {
+        int ipoly = this.polynomials.size() - 1;
+        while (ipoly >= 0) {
+            this.get(ipoly).divideBy(number);
+            ipoly --;
+        } // while ipoly
+        return this;
+    } // divideBy(number)
+
     /** Multiplies all {@link Polynomial}s of <em>this</em> {@link RelationSet}
      *  with a {@link BigInteger}.
      *  This is the inverse operation to {@link #normalizeIt}.
@@ -423,14 +433,16 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
      *  <em>varName^index</em> was previously factored out of those Polynomials.
      *  @param varName name of variable whose powers were factored out. 
      *  This will later be replaced by <em>tupleShift * varName</em>.
-     *  @return <em>this</em> widened RelationSet;
-     *  {@link RelationSet#tupleShift} is set (to <em>rootx</em>) 
+     *  @return ^the overall factor by which <em>this</em> RelationSet was widened;
+     *  {@link RelationSet#tupleShift} is set (to <em>rootv</em>) 
      *  such that the coefficient of the lead term is a power of it. 
      */
-    public RelationSet widenIt(String varName) {
-        BigInteger rootx = BigInteger.ONE;
+    public BigInteger prepareIt(String varName) {
+        int debug2 = 1;
+        BigInteger result = BigInteger.ONE;
+        BigInteger rootv  = BigInteger.ONE;
         Polynomial poly1 = null;    
-        BigInteger        [] binomials = new BigInteger        [this.size()];
+        BigInteger [] binomials = new BigInteger        [this.size()];
         int power = this.size() - 1;
 
         // first store binomial factors for all subpolynomials
@@ -445,7 +457,6 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
         } // if true
 
         // repeatedly try to determine widev
-        BigInteger widev = BigInteger.ONE;
         boolean rbusy = true; // as long as not all subpolynomials of this RelationSet are properly widened
         int loopCheck = this.size() * 2 + 1;
         while (rbusy && loopCheck >= 0) { // try to widen all
@@ -453,42 +464,44 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
             ipoly = power;
             poly1 = this.get(ipoly);
             BigInteger 
-            gcd1  = poly1.gcdCoefficients(true).bigIntegerValue();
+            gcd1  = poly1.gcdCoefficients(true);
             PrimeFactorization pfmax = new PrimeFactorization(gcd1);
             BigInteger wide2 = pfmax.wideToPower(ipoly);
             if (! wide2.equals(BigInteger.ONE)) {
                 this.multiplyBy(wide2);
-                if (debug > 0) { 
+                result = result.multiply(wide2);
+                if (debug2 > 0) { 
                     System.out.println("[" + ipoly + "]"
                             + ", pfmax=" + pfmax.toString()
                             + ", wide2=" + wide2.toString() 
                             + ", poly1=" + poly1.toString());
                 } // debug
                 repeat = true;
-                if (debug > 0) { 
+                if (debug2 > 0) { 
                     System.out.println("----repeat-max");
                 } // debug
             } else { // try downwards   
-                rootx = pfmax.root(power).valueOf(); // this times the variable is later mapped
+                rootv = pfmax.root(power).valueOf(); // this times the variable is later mapped
                 ipoly --;
                 while (! repeat && ipoly > 0) { // may not wideToPower(0)
                     poly1 = this.get(ipoly);
                     if (! poly1.isZero()) {
-                        gcd1  = poly1.gcdCoefficients(true).bigIntegerValue();
-                        BigInteger factp = binomials[ipoly].multiply(rootx.pow(ipoly));
+                        gcd1  = poly1.gcdCoefficients(true);
+                        BigInteger factp = binomials[ipoly].multiply(rootv.pow(ipoly));
                         if (! gcd1.mod(factp).equals(BigInteger.ZERO)) {
                             wide2 = BigIntegerUtil.lcm(gcd1, factp).divide(gcd1);
                             this.multiplyBy(wide2);
-                            if (debug > 0) { 
+			                result = result.multiply(wide2);
+                            if (debug2 > 0) { 
                                 System.out.println("[" + ipoly + "]"
                                         + ", gcd1="  + gcd1.toString()
                                         + ", factp=" + factp.toString()
                                         + ", wide2=" + wide2.toString() 
-                                        + ", rootx=" + rootx.toString() 
+                                        + ", rootv=" + rootv.toString() 
                                         + ", poly1=" + poly1.toString());
                             } // debug
                             repeat = true;
-                            if (debug > 0) { 
+                            if (debug2 > 0) { 
                                 System.out.println("----repeat-ipoly");
                             } // debug
                         } // ! gcd1.mod(factp)
@@ -500,11 +513,22 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
             loopCheck --;
         } // while rbusy
         if (loopCheck < 0) {
-            System.out.println("widenIt: loopCheck reached");
+            System.out.println("prepareIt: loopCheck reached");
         }
-        this.setTupleShift(rootx);
-        return this;
-    } // widenIt
+        this.setTupleShift(rootv);
+        
+        // now extract the powers of rootv and the binomial factors
+        ipoly = 1; // leave the Polynomial which does not contain varName
+        BigInteger proot = rootv; // powers of rootv
+        while (ipoly <= power) {
+            poly1 = this.get(ipoly);
+            BigInteger divisor = proot.multiply(binomials[ipoly]);
+            poly1.divideBy(divisor);
+            proot = proot.multiply(rootv);
+            ipoly ++;
+        } // while iploy
+        return result;
+    } // prepareIt
 
     /** Determines whether <em>this</em> RelationSet can be transformed into <em>rset2</em>
      *  by multiplying the constants of the monomials in <em>rset2</em> by
@@ -599,12 +623,12 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
         return result;
     } // getExpressionMap(String, boolean)
 
-    /** Determine whether two variable names of <em>this</em> Polynomial
+    /** Determine whether two variable names of <em>this</em> {@link RelationSet}
      *  are interchangeable (equivalent).
      *  Caution: primitive, inefficient implementation.
      *  @param name1 name of 1st variable
      *  @param name2 name of 2nd variable
-     *  @return true of the two variable names can be interchanged in the Polynomial
+     *  @return true of the two variable names can be interchanged in the RelationSet
      *  without loss of structure
      */
     protected boolean areTransposable(String name1, String name2) {
@@ -612,7 +636,7 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
         VariableMap varm2 = new VariableMap();
         varm2.put(name1, name2);
         varm2.put(name2, name1);
-        RelationSet rset2 = substitute(varm2);
+        RelationSet rset2 = this.substitute(varm2);
         int ipoly = 0;
         while (ipoly < this.size()) { // over all relations
             Polynomial poly1 = this .get(ipoly);
@@ -761,10 +785,10 @@ evaluate: unknown
             varMap.put("b", "4*b_2");
             varMap.put("c", "5*c_2");
             rset2 = rset1.substitute(varMap);
-            System.out.println(rset2);
+            System.out.println(rset2.toString(true));
         } else if (args.length == 1 && ! args[0].startsWith("-")) {
             rset1 = RelationSet.parse(args[iarg ++]);
-            System.out.println(rset1.toString());
+            System.out.println(rset1.toString(true));
             System.out.println("evaluate: " + rset1.evaluate(null));
         } else if (args.length >= 2) {
             String opt = args[iarg ++];
@@ -772,7 +796,7 @@ evaluate: unknown
             } else if (opt.equals("-f")     ) {
                 String fileName = args[1];
                 rset1 = RelationSet.parse((new ExpressionReader()).read(fileName));
-                System.out.println(rset1.toString());
+                System.out.println(rset1.toString(true));
                 System.out.println("evaluate: " + rset1.evaluate(null));
             } else if (opt.startsWith("-grow")) {
                 rset1 = RelationSet.parse(args[iarg ++]);

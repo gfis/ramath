@@ -126,6 +126,15 @@ CALL RelationSet  -grow "-80-96*x+16*x^2     -128*x*y+16*y^2-96*z-128*x*z-128*y*
 TEST GR5 isGrownFrom 
 CALL RelationSet  -grow "- 24 + 16*x + 64*x^2 - 216*y - 576*y^2 - 512*y^3" "- 24 + 8*x + 16*x^2 - 108*y - 144*y^2 - 64*y^3"
 #                        - 24 + 16*x + 64*x^2 - 216*y - 576*y^2 - 512*y^3   - 24 + 8*x + 16*x^2 - 108*y - 144*y^2 - 64*y^3
+#--------------------------------
+# Lagrange Reduction
+#
+TEST LR1 squareCompletion http://www.solitaryroad.com/c138.html
+CALL Polynomial -square "x^2 - 4x*y + 8x*z + 2y^2 - 7z^2"
+
+TEST LR2 squareCompletion + 4
+CALL Polynomial -square "x^2 - 4x*y + 8x*z + 2y^2 - 7z^2 + 4"
+
 #------------------------------------
 TEST P00 constant
 CALL Polynomial "1"
@@ -157,10 +166,10 @@ DATA
 CALL Polynomial -f $(DATA)
 
 TEST P08 Example from http://www.solitaryroad.com/c138.html
-CALL Polynomial -square "x1" "x1^2 + 2x2^2 - 7x3^2 -4 x1*x2 + 8x1*x3"  
+CALL Polynomial -widen x1 "x1^2 + 2x2^2 - 7x3^2 -4 x1*x2 + 8x1*x3"
 
-TEST P09 
-CALL Polynomial -square "x1" "3x1^2 - 3*x1*x2 + 7*x1*x3"  
+TEST P09 prepareCompletion
+CALL Polynomial -widen x1 "3x1^2 - 3*x1*x2 + 7*x1*x3"  
 
 TEST P10 abstract matrix times (3,4,5,6)
 DATA
@@ -171,19 +180,10 @@ DATA
 CALL Polynomial -f $(DATA)
 
 TEST P11 
-CALL Polynomial -square "x1" "3x1^4 - 3*x1*x2 + 7*x1*x3"  
-
-TEST P12 GF.C matrix times (a,b,c,d) yields powersum  a^3 + b^3 + c^3 - d^3 ?
-DATA
- (  1*a +   2*b +   2*c +   0*d)^3
-+(  1*a +   1*b +   1*c +   1*d)^3
-+(  2*a +   2*b +   1*c +   0*d)^3
--(  2*a +   3*b +   2*c +   0*d)^3
--(a^3   +   b^3 +   c^3 -   d^3)
-CALL Polynomial -f $(DATA)
+CALL Polynomial -widen x1 "3x1^4 - 3*x1*x2 + 7*x1*x3"  
 
 TEST P13 widening for completion
-CALL Polynomial -square "x" "2x^3 + 3x^2 + x + y"
+CALL Polynomial -widen x "2x^3 + 3x^2 + x + y"
 
 TEST P14 Price's  A' matrix times (a,b,c) yields powersum  4*a^2 + 4*b^2 - 4*c^2
 DATA
@@ -281,6 +281,11 @@ TEST SL3 rational solution
 CALL Polynomial -solution "6*x^3 - 7*x^2 + 1" 1
 TEST SL4 rational solution 
 CALL Polynomial -solution "6*x^3 - 7*x^2 + 1" 1/2
+
+#-------------------------------
+# Substitution
+TEST SU1 2x+1
+CALL Polynomial -subst "6*x^3 - 7*y^2"
 #-------------------------------
 # Relation Sets
 
@@ -301,4 +306,3 @@ CALL RelationSet -transp   "a^3 + 2*b^3 + 3*c^3 - d^3 = 0"
 
 TEST RC3 transposition
 CALL RelationSet -transp   "4*e - 4*f = 0"
-

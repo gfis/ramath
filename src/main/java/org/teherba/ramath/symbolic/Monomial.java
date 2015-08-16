@@ -92,7 +92,20 @@ public class Monomial implements Cloneable, Serializable {
         if (name.length() > 0 && exponent != 0) {
             this.putExponent(name, exponent);
         }
-    } // Constructor(name, exponent)
+    } // Constructor(int, name, exponent)
+
+    /** Constructor with coefficient, variable name and exponent.
+     *  @param bint BigInteger coefficient, maybe negative
+     *  @param name variable name
+     *  @param exponent raise variable (but not the coefficient) to this power
+     */
+    public Monomial(BigInteger bint, String name, int exponent) {
+        setCoefficient(Coefficient.valueOf(bint));
+        vars = new TreeMap<String, Integer>();
+        if (name.length() > 0 && exponent != 0) {
+            this.putExponent(name, exponent);
+        }
+    } // Constructor(bint, name, exponent)
 
     /** Constructor with a single name only.
      *  @param name variable name or integer constant
@@ -612,6 +625,18 @@ public class Monomial implements Cloneable, Serializable {
         return result;
     } // divideBy(name, exponent)
 
+    /** Divides <em>this</em> Monomial <em>in place</em> by a BigInteger.
+     *  This method can only be used internally since it does not clone.
+     *  @param number a constant number
+     *  @return this object, now containing the quotient
+     */
+    public Monomial divideBy(BigInteger number) {
+        Monomial result = this;
+        result.setCoefficient(Coefficient.valueOf(this.getCoefficient()
+                .divide(number)));
+        return result;
+    } // divideBy(number)
+
     /** Divides <em>this</em> Monomial by another one
      *  by dividing it with each factor of the parameter monomial.
      *  There may not remain any negative exponents of variables,
@@ -842,7 +867,6 @@ public class Monomial implements Cloneable, Serializable {
      *  the powers of the variables in <em>monomial</em>, (without ^0),
      *  or 0 if not any of the variables of <em>mono2</em> was contained in <em>this</em> monomial.
      */
-/*
     public Monomial getVariablePowers(Monomial mono2) {
         Monomial result = new Monomial();
         Iterator<String> iter2 = mono2.keySet().iterator();
@@ -862,7 +886,7 @@ public class Monomial implements Cloneable, Serializable {
         }
         return result;
     } // getVariablePowers
-*/
+
     /** Tests whether <em>this</em> monomial contains the exact variable power combination
      *  of <em>mono2</em>; if not, 0 is returned, otherwise, the factor monomial/mono2.
      *  @param mono2 a combination of powers of the desired variables, with coefficient 1

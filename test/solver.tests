@@ -40,7 +40,7 @@ TEST T03 Fermat (proof in 2 steps)
 CALL TreeSolver -l 4 -e "a^2 + b^2 - 3*(c^2 + d^2)" -r transpose,similiar,norm,invall,igtriv,showfail
 
 TEST T04 tree solver, biquadratic minus
-CALL TreeSolver -l 3 -e "x^4 - y^4 - z^2"
+CALL TreeSolver -l 3 -e "x^4 - y^4 - z^2" 
 
 TEST T05 FLT(4), biquadratic plus
 CALL TreeSolver -l 3 -e "x^4 + y^4 - z^2" -r transpose,similiar,igtriv

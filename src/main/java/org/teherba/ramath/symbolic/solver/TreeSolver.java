@@ -111,7 +111,10 @@ public class TreeSolver extends BaseSolver {
         int newLevel      = rset1.getNestingLevel() + 1;
         int base          = this.getModBase();
         BigInteger factor = BigInteger.valueOf(base).pow(newLevel);
-        ModoMeter meter   = getPreparedMeter(rset1, vmap1, factor);      
+        ModoMeter meter   = this.getPreparedMeter(rset1, vmap1, factor);  
+        if (false && vmap1.size() == 0) {
+            System.out.println("TreeSolver assertion??? vmap1.size()=0, rset1=" + rset1.toString(true));
+        }    
         // meter now ready for n-adic expansion, e.g. x -> 2*x+0, 2*x+1
         printNode(queueIndex, rset1, meter, factor);
         printSolutions(rset1, vmap1);
