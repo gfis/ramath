@@ -1,6 +1,6 @@
 /*  BigIntegerUtil: helper methods for BigInteger
  *  @(#) $Id: BigIntegerUtil.java 231 2009-08-25 08:47:16Z gfis $
- *  2015-08-11: THREE
+ *  2015-08-11: binomial(), HREE
  *  2015-07-20: lcm(BigRationals)
  *  2014-04-08: use BigInteger.valueOf(long)
  *  2013-09-20, Georg Fischer: copied from BigRational

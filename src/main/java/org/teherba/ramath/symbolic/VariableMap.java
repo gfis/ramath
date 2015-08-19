@@ -248,6 +248,25 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
         return this;
     } // multiplyBy(number)
 
+    /** Multiplies all values of <em>this</em> {@link VariableMap}
+     *  by -1.
+     *  The values must be valid {@link Polynomial} expressions.
+     *  @return reference to <em>this</em> VariableMap which was modified
+     */
+    public VariableMap negativeOf() {
+            Iterator<String> iter = this.keySet().iterator();
+            while (iter.hasNext()) {
+                String varName = iter.next();
+                String expr    = this.get(varName);
+                if (expr.startsWith("-(")) {
+                	this.put(varName, (new Polynomial(this.get(varName)).negativeOf().toString()));
+                } else {
+                	this.put(varName, "-(" + expr + ")");
+                }
+            } // while iter
+        return this;
+    } // negativeOf
+
     /** Gets a {@link PolyVector} 
      *  of the constant expressions when refined variables are substituted from a 
      *  binary {@link Dispenser}.

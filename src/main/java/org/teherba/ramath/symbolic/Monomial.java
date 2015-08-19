@@ -419,8 +419,14 @@ public class Monomial implements Cloneable, Serializable {
     public Monomial addTo(Monomial mono2) {
         Monomial result = this;
         if (! this.signature().equals(mono2.signature())) {
-            throw new IllegalArgumentException("signatures of both monomials must be equal: " 
-            		+ this.signature() + " != " + mono2.signature());
+            throw new IllegalArgumentException("Monomial: signatures of " + this.toString() 
+            	+ " and " + mono2.toString() + " must be equal: " 
+                + "\"" + this.signature() + "\" != \"" + mono2.signature() + "\"");
+		/*
+            System.out.println("signatures of " + this.toString() 
+            	+ " and " + mono2.toString() + " must be equal: " 
+                + "\"" + this.signature() + "\" != \"" + mono2.signature() + "\"");
+        */
         } else {
             result.setCoefficient(Coefficient.valueOf(this.getCoefficient().add(mono2.getCoefficient())));
             if (result.isZero()) {
@@ -612,8 +618,10 @@ public class Monomial implements Cloneable, Serializable {
                 int exp1 = result.getExponent(name2);
                 if (exp1 != 0) {
                     int exp = exp1 - exp2;
-                    if (exp >= 0) {
+                    if (exp >= 1) {
                         result.putExponent(name2, new Integer(exp));
+                    } else if (exp == 0) {
+                    	result.vars.remove(name2);
                     } else {
                         result = null; // not divisible
                     /*
@@ -648,12 +656,12 @@ public class Monomial implements Cloneable, Serializable {
         return result;
     } // divideBy(number)
 
-    /** Divides <em>this</em> Monomial by another one
+    /** Divides <em>this</em> {@link Monomial} by another one
      *  by dividing it with each factor of the parameter monomial.
      *  There may not remain any negative exponents of variables,
      *  but the resulting coefficient may get a denominator different from 1.
      *  The divisor may not be zero, of course.
-     *  @param mono2 divide with this monomial
+     *  @param mono2 divide by this Monomial
      *  @return new object that contains the fraction, or zero if the parameter
      *  does not divide <em>this</em> monomial evently
      *  @throws ArithmeticException if the second monomial is zero

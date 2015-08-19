@@ -128,34 +128,34 @@ CALL RelationSet  -grow "- 24 + 16*x + 64*x^2 - 216*y - 576*y^2 - 512*y^3" "- 24
 #                        - 24 + 16*x + 64*x^2 - 216*y - 576*y^2 - 512*y^3   - 24 + 8*x + 16*x^2 - 108*y - 144*y^2 - 64*y^3
 #--------------------------------
 # Lagrange Reduction
-#
-#TEST LR1 squareCompletion http://www.solitaryroad.com/c138.html
-#CALL Polynomial -square "x^2 - 4x*y + 8x*z + 2y^2 - 7z^2"
-#
-#TEST LR2 squareCompletion + 4
-#CALL Polynomial -square "4 + x^2 - 4x*y + 8x*z + 2y^2 - 7z^2"
-#
-#TEST LR3 squareCompletion, from T45[1]
-#CALL Polynomial -square "- 4 + 15*x^2 - 7*y - 7*y^2"
-#
-#TEST LR4 squareCompletion, from T45[2]
-#CALL Polynomial -square "- 2 + 30*x^2 - 7*y - 14*y^2"
-#
-#TEST LR5 squareCompletion, from T45[9]
-#CALL Polynomial -square "-42+30*x+30*x^2-105*y-56*y^2"
-#
-#TEST LR6 squareCompletion, from T45 with difference
-#CALL Polynomial -square "15x^2 - 7*(x-y)^2 - 9"
-#
-#TEST LR7 squareCompletion, from T45 with sum
-#CALL Polynomial -square "15x^2 - 7*(x+y)^2 - 9"
-#
-#TEST LR8 squareCompletion, from T45 with difference
-#CALL Polynomial -square "15x^2 - 7*(x-w)^2 - 9"
-#
-#TEST LR9 squareCompletion, from T45 with sum
-#CALL Polynomial -square "15x^2 - 7*(x+w)^2 - 9"
-#
+
+TEST LR1 squareCompletion http://www.solitaryroad.com/c138.html
+CALL Polynomial -reduce "x^2 - 4x*y + 8x*z + 2y^2 - 7z^2"
+
+TEST LR2 squareCompletion + 4
+CALL Polynomial -reduce "4 + x^2 - 4x*y + 8x*z + 2y^2 - 7z^2"
+
+TEST LR3 squareCompletion, from T45[1]
+CALL Polynomial -reduce "- 4 + 15*x^2 - 7*y - 7*y^2"
+
+TEST LR4 squareCompletion, from T45[2]
+CALL Polynomial -reduce "- 2 + 30*x^2 - 7*y - 14*y^2"
+
+TEST LR5 squareCompletion, from T45[9]
+CALL Polynomial -reduce "-42+30*x+30*x^2-105*y-56*y^2"
+
+TEST LR6 squareCompletion, from T45 with difference
+CALL Polynomial -reduce "15x^2 - 7*(x-y)^2 - 9"
+
+TEST LR7 squareCompletion, from T45 with sum
+CALL Polynomial -reduce "15x^2 - 7*(x+y)^2 - 9"
+
+TEST LR8 squareCompletion, from T45 with difference
+CALL Polynomial -reduce "15x^2 - 7*(x-w)^2 - 9"
+
+TEST LR9 squareCompletion, from T45 with sum
+CALL Polynomial -reduce "15x^2 - 7*(x+w)^2 - 9"
+
 #------------------------------------
 TEST P00 constant
 CALL Polynomial "1"
