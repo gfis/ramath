@@ -1,5 +1,6 @@
 /*  Monomial: a product with a signed numeric coefficient and optional exponentiated variable(s)
  *  @(#) $Id: Monomial.java 522 2010-07-26 07:14:48Z gfis $
+ *  2015-08-16: toFactoredString() with powers of prime factors
  *  2015-07-17: degree
  *  2015-03-25: firstName
  *  2013-09-20: BigRational -> BigIntegerUtil
@@ -27,6 +28,7 @@ import  org.teherba.ramath.symbolic.Factor;
 import  org.teherba.ramath.BigIntegerUtil;
 import  org.teherba.ramath.BigRational;
 import  org.teherba.ramath.Coefficient;
+import  org.teherba.ramath.PrimeFactorization;
 import  org.teherba.ramath.util.Permutator; // for orderTest
 import  java.io.Serializable;
 import  java.math.BigInteger;
@@ -417,7 +419,8 @@ public class Monomial implements Cloneable, Serializable {
     public Monomial addTo(Monomial mono2) {
         Monomial result = this;
         if (! this.signature().equals(mono2.signature())) {
-            throw new IllegalArgumentException("signatures of both monomials must be equal");
+            throw new IllegalArgumentException("signatures of both monomials must be equal: " 
+            		+ this.signature() + " != " + mono2.signature());
         } else {
             result.setCoefficient(Coefficient.valueOf(this.getCoefficient().add(mono2.getCoefficient())));
             if (result.isZero()) {
@@ -484,8 +487,16 @@ public class Monomial implements Cloneable, Serializable {
         return result;
     } // subtract(Monomial)
 
-    /** Inverses the sign of (the coefficient of) this monomial.
-     *  @return copy of the object with inverted sign
+    /** Inverses the sign of (the coefficient of) <em>this</em> {@link Monomial}.
+     *  @return <em>this</em> object with inverted sign
+     */
+    public Monomial negativeOf() {
+        this.setCoefficient(Coefficient.valueOf(this.getCoefficient().negate()));
+        return this;
+    } // negativeOf
+
+    /** Inverses the sign of (the coefficient of) <em>this</em> {@link Monomial}.
+     *  @return a copy of the object with inverted sign
      */
     public Monomial negate() {
         Monomial result = this.clone();
@@ -783,24 +794,17 @@ public class Monomial implements Cloneable, Serializable {
         return toStringCommon(full, number);
     } // toString(full)
 
-    /** Returns a string representation of <em>this</em> {@link Monomial}
-     *  @param factor if the coefficient of the Monomial is divisible by this factor &gt; 1,
-     *  the coefficient is written as "factor*coeff2"
-     *  @return "3*4*x*y^3" for example for factor 4 and monomial 12*x*x^3
+    /** Returns a string representation of <em>this</em> {@link Monomial},
+     *  in compressed form, 
+     *  and with the coefficient splitted into powers of prime factors
+     *  @return "2^2*3*5*x*y^3" for example
      */
-    public String toFactoredString(BigInteger factor) {
-    /*  this is no longer used in BaseSolver
-        BigInteger coeff = this.getCoefficient();
-        String number = null;
-        if (coeff.gcd(factor).equals(factor)) {
-            number = coeff.divide(factor).toString() + "*" + factor.toString();
-        } else {
-            number = coeff.toString();
-        }
-    */
-        String number = this.getCoefficient().toString();
+    public String toFactoredString() {
+        BigInteger bint = this.getCoefficient().bigIntegerValue();
+        String number = (bint.compareTo(BigInteger.ZERO) < 0 ? "-" : "") 
+                + (new PrimeFactorization(bint.abs())).toString();
         return toStringCommon(false, number);
-    } // toFactoredString(full)
+    } // toFactoredString()
 
     /** Returns a string representation of the monomial, either compressed or full
      *  @param full whether to return a complete representation suitable for substitution

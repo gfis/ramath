@@ -1,5 +1,6 @@
 /*  VariableMap: maps a set of variables to their values or substitution formulas
  *  @(#) $Id: VariableMap.java 538 2010-09-08 15:08:36Z gfis $
+ *  2015-08-19: multiplyBy
  *  2015-04-26: old_triviality returns String
  *  2015-03-02: refineExpressions(, skippable)
  *  2015-02-08: Dispenser instead of ModoMeter
@@ -229,6 +230,23 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
         result.append("]");
         return result.toString();
     } // getConstants
+
+    /** Multiplies all values of <em>this</em> {@link VariableMap}
+     *  with a {@link BigInteger}.
+     *  The values must be valid {@link Polynomial} expressions.
+     *  @param number multiply with this BigInteger
+     *  @return reference to <em>this</em> VariableMap which was modified
+     */
+    public VariableMap multiplyBy(BigInteger number) {
+        if (! number.equals(BigInteger.ONE)) {
+            Iterator<String> iter = this.keySet().iterator();
+            while (iter.hasNext()) {
+                String varName = iter.next();
+                this.put(varName, (new Polynomial(get(varName)).multiplyBy(number).toString()));
+            } // while iter
+        } // != 1
+        return this;
+    } // multiplyBy(number)
 
     /** Gets a {@link PolyVector} 
      *  of the constant expressions when refined variables are substituted from a 

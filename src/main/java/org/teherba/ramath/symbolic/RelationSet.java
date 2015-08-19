@@ -329,20 +329,19 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
         return toString(false);
     } // toString()
 
-    /** Returns a string representation of <em>this</em> {@link RelationSet}, with leading signs,
-     *  in compressed representation, without the relations.
-     *  @param factor if the coefficient of a {@link Monomial} is divisible by this factor &gt; 1,
-     *  the coefficient is written as "factor*coeff2"
-     *  @return "4*4*x^2+4*4*y^2-32*4*x*y*z+4*4*z^2" (factor 4), for example
+    /** Returns a string representation of <em>this</em> {@link RelationSet},
+     *  in compressed representation, without the relations,
+     *  and coefficients splitted into powers of prime factors
+     *  @return "2^2*3*5*x*y^3 + 2*z^4; x - y" for example
      */
-    public String toFactoredString(BigInteger factor) {
+    public String toFactoredString() {
         StringBuffer buffer = new StringBuffer(2048);
         int ipoly = 0;
         while (ipoly < this.size()) {
             if (ipoly > 0) {
                 buffer.append("; ");
             }
-            buffer.append(this.get(ipoly).toFactoredString(factor));
+            buffer.append(this.get(ipoly).toFactoredString());
             ipoly ++;
         } // while ipoly
         return buffer.toString();
@@ -417,7 +416,7 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
      *  @param number multiply with this BigInteger
      *  @return reference to <em>this</em> RelationSet which was modified
      */
-    protected RelationSet multiplyBy(BigInteger number) {
+    public RelationSet multiplyBy(BigInteger number) {
         int ipoly = this.polynomials.size() - 1;
         while (ipoly >= 0) {
             this.get(ipoly).multiplyBy(number);
@@ -438,7 +437,7 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
      *  such that the coefficient of the lead term is a power of it. 
      */
     public BigInteger prepareIt(String varName) {
-        int debug2 = 1;
+        int debug2 = 0;
         BigInteger result = BigInteger.ONE;
         BigInteger rootv  = BigInteger.ONE;
         Polynomial poly1 = null;    
@@ -491,7 +490,7 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
                         if (! gcd1.mod(factp).equals(BigInteger.ZERO)) {
                             wide2 = BigIntegerUtil.lcm(gcd1, factp).divide(gcd1);
                             this.multiplyBy(wide2);
-			                result = result.multiply(wide2);
+                            result = result.multiply(wide2);
                             if (debug2 > 0) { 
                                 System.out.println("[" + ipoly + "]"
                                         + ", gcd1="  + gcd1.toString()

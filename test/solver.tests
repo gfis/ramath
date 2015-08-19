@@ -166,13 +166,16 @@ TEST T44 Pyth-a2b2
 CALL TreeSolver -l 2 -e "a^2 + b^2 + c^2 - b^2*c^2"
 
 TEST T45 15 7 9 http://db.math.ust.hk/notes_download/elementary/number/ne_N3.pdf
-CALL TreeSolver -l 2 -b 2 -e "15*x^2 - 7*y^2 - 9"
+CALL TreeSolver -l 5 -b 2 -e "15*x^2 - 7*y^2 - 9" -r transpose,similiar,norm,showfail
 
 TEST T46 15 7 9
 CALL TreeSolver -l 2 -b 2 -e "15*(x+1)^2 - 7*(y+1)^2 - 9"
 
 TEST T47 15 7 9 Proof
-CALL TreeSolver -l 2 -b 3 -e "15*x^2 - 7*y^2 - 9"
+CALL TreeSolver -l 2 -b 3 -e "15*x^2 - 7*y^2 - 9" -r transpose,similiar,showfail
+
+TEST T48 15 7 9 mod 4
+CALL TreeSolver -l 3 -b 4 -e "15*x^2 - 7*y^2 - 9" -r transpose,similiar,norm
 
 # # https://books.google.de/books?id=My19IcewAnoC&lpg=PA317&ots=V3hN58VkXU&dq=Fermat%20identities&hl=de&pg=PA322#v=onepage&q=Fermat%20identities&f=false
 # # Google: Fermat identities

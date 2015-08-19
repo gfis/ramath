@@ -126,6 +126,28 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
         return result;
     } // multiply
 
+    /** Determines 3 factors which allow to perform a square completion properly.
+     *  <em>this</em> is the {@link PrimeFactorization} of the factor of v^2.
+     *  @param gcd1 the GCD of the subpolynomial for v^1
+     *  @return 
+     *  <ul>
+     *  <li>[0] = rootv: (rootv*varName)^2 will become the lead term</li>
+     *  <li>[0] = widev: multiply the whole Polynomial by this factor</li>
+     *  <li>[0] = divs1: divide the cofactor of varName^1 by this divisor to get the square completion</li>
+     *  </ul>
+     */
+    public BigInteger[] getCompletion2(BigInteger gcd1) {
+        BigInteger[] result = new BigInteger[] 
+                { BigInteger.ONE      // rootv
+                , BigInteger.ONE      // widev
+                , BigIntegerUtil.TWO  // divs1
+                };
+        result[1] = this.wideToPower(2);
+        result[0] = (new PrimeFactorization(result[1].multiply(this.valueOf()))).root(2).valueOf();
+        result[2] = result[1].multiply(BigIntegerUtil.TWO); // for power 2
+        return result;
+    } // getCompletion2
+
     /** Returns the least number which turns <em>this</em>
      *  {@link PrimeFactorization} into some power number, 
      *  or 1 if the PrimeFactorization represents already such a power
@@ -174,6 +196,29 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
         } // if size
         return result;
     } // root
+
+    /** Divides a <em>this</em> number by the maximum factor which is a power
+     *  @param power the factor taken to this power must still evenly divide <em>this</em> number
+     *  @return 2*3^2*5^2 for 2*3^5*5^4 and power 2
+     */
+    public BigInteger reducePower(int power) {
+        BigInteger result = BigInteger.ONE;
+        if (this.size() > 0) { // not 0, 1
+            Iterator<BigInteger> iter = this.keySet().iterator();
+            while (iter.hasNext()) {
+                BigInteger prime = iter.next();
+                if (! prime.equals(BigInteger.ONE)) {
+                    int exp = this.get(prime).intValue() % power;
+                    if (exp > 1) {
+                        result = result.multiply(prime.pow(exp));
+                    } else if (exp == 1) {
+                        result = result.multiply(prime);
+                    }
+                }
+            } // while iter
+        } // if size
+        return result;
+    } // reducePower
 
     /** Returns the least number which turns <em>this</em>
      *  {@link PrimeFactorization} into some power number times a binomial factor, 
