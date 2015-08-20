@@ -349,7 +349,7 @@ public class Polynomial implements Cloneable, Serializable {
     } // toString()
 
     /** Returns a string representation of <em>this</em> {@link Polynomial},
-     *  in compressed representation, without the relation, 
+     *  in compressed representation, without the relation,
      *  and with coefficients splitted into powers of prime factors.
      *  @return "2^2*3*5*x*y^3 + 2*z^4" for example
      */
@@ -402,14 +402,14 @@ public class Polynomial implements Cloneable, Serializable {
         return result;
     } // hasVariable
 
-    /** Determines whether the polynomial is zero (represented by no monomials)
-     *  @return true if the polynomial is zero, or false otherwise
+    /** Determines whether <em>this</em> {@link Polynomial} is zero (represented by no monomials)
+     *  @return true if the Polynomial is zero, or false otherwise
      */
     public boolean isZero() {
         return monomials.size() == 0;
     } // isZero
 
-    /** Determines whether all {@link Monomial}s in <em>this</em> {@link Polynomial} 
+    /** Determines whether all {@link Monomial}s in <em>this</em> {@link Polynomial}
      *  have the same sign. When all variables are assumed to have values >= 0,
      *  a biased polynomial has no non-trivial solutions.
      *  @return true if the polynomial has one type of sign and a constant, or false otherwise
@@ -509,12 +509,12 @@ public class Polynomial implements Cloneable, Serializable {
             this.monomials.put(sig2, mono2.clone());
         } else {
             if (! mono1.signature().equals(mono2.signature())) {
-                throw new IllegalArgumentException("Polynomial: signatures of " + this.toString() 
-                    + " and " + mono2.toString() + " must be equal: " 
+                throw new IllegalArgumentException("Polynomial: signatures of " + this.toString()
+                    + " and " + mono2.toString() + " must be equal: "
                     + "\"" + mono1.signature() + "\" != \"" + mono2.signature() + "\"");
             /*
-                System.out.println("signatures of " + this.toString() 
-                    + " and " + mono2.toString() + " must be equal: " 
+                System.out.println("signatures of " + this.toString()
+                    + " and " + mono2.toString() + " must be equal: "
                     + "\"" + this.signature() + "\" != \"" + mono2.signature() + "\"");
             */
             }
@@ -717,7 +717,7 @@ public class Polynomial implements Cloneable, Serializable {
         return result;
     } // divide(Polynomial)
 
-    /** Determines whether the parameter {@link BigRational} is a 
+    /** Determines whether the parameter {@link BigRational} is a
      *  rational solution (root) of <em>this</em> univariate Polynomial.
      *  @param root the desired solution
      *  @return true if <em>(variable - root)</em> divides this Polynomial evenly
@@ -731,7 +731,7 @@ public class Polynomial implements Cloneable, Serializable {
         } else { // univariate
             Iterator<String> iter = monomials.keySet().iterator();
             BigRational sum = BigRational.ZERO;
-            while (iter.hasNext()) {            
+            while (iter.hasNext()) {
                 String sig1 = iter.next();
                 Monomial mono1 = this.get(sig1);
                 BigRational term = new BigRational(mono1.getCoefficient().toString());
@@ -1092,7 +1092,7 @@ x^2 + 3*x^3 + 2*x^4
         return getVariableMap().size();
     } // getVariableCount
 
-    /** Determines whether there is exactly one variable in each {@link Monomial} 
+    /** Determines whether there is exactly one variable in each {@link Monomial}
      *  of <em>this</em> Polynomial.
      *  @return true if there is only one variable, false otherwise
      */
@@ -1132,7 +1132,7 @@ x^2 + 3*x^3 + 2*x^4
         } // while titer
         return result;
     } // degree(boolean)
-    
+
     /** Determines the degree, that is the sum of exponents in all {@link Monomial}s
      *  if it is the same in all Monomials
      *  @return degree >= 0, or -1 if the {@link Polynomial} has Monomials with different degrees
@@ -1157,7 +1157,7 @@ x^2 + 3*x^3 + 2*x^4
         } // while titer
         return result;
     } // maxDegree
-    
+
     /** Determines the maximum degree, that is the sum of exponents in all {@link Monomial}s
      *  irrespective of the variable names
      *  @param upperConst whether the exponents of uppercase variables should not be counted
@@ -1182,7 +1182,7 @@ x^2 + 3*x^3 + 2*x^4
     public int maxDegree() {
         return this.maxDegree(false);
     } // maxDegree()
-    
+
    /** Determines whether all {@link Monomial}s are of the same {@link #degree}.
      *  @param upperConst whether the exponents of uppercase variables should not be counted
      *  @return true if the sum of exponents in all Monomials is the same, false otherwise
@@ -1200,7 +1200,7 @@ x^2 + 3*x^3 + 2*x^4
 
     /** Gets the greatest common (positive) divisor of the coefficients of the variable {@link Monomial}s,
      *  or of all monomials if they are integral, or +1.
-     *  @param all whether all monomials should be investigated, 
+     *  @param all whether all monomials should be investigated,
      *  otherwise the non-constant ones are taken only
      *  @return common divisor &gt;= 1
      */
@@ -1224,7 +1224,7 @@ x^2 + 3*x^3 + 2*x^4
 
     /** Gets the greatest common (positive) divisor of the coefficients of the variable {@link Monomial}s,
      *  or of all monomials if they are integral, or +1.
-     *  @param all whether all monomials should be investigated, 
+     *  @param all whether all monomials should be investigated,
      *  otherwise the non-constant ones are taken only
      *  @return common divisor &gt;= 1
      */
@@ -1302,7 +1302,7 @@ x^2 + 3*x^3 + 2*x^4
     //------------
     // Subsetting
     //------------
-    
+
     /** Takes all variables from <em>mono2</em> and
      *  creates a sum of {@link Monomial}s for all different powers of these variables
      *  occurring in <em>this</em> polynomial.
@@ -1324,7 +1324,7 @@ x^2 + 3*x^3 + 2*x^4
         } // while riter
         return result;
     } // getVariablePowers
-    
+
     /** Takes the variable names from <em>mono2</em>,
      *  creates an empty {@link RelationSet} and, for all {@link Monomial}s that
      *  occur as combinations of powers of the selected variables in <em>this</em>
@@ -1372,7 +1372,7 @@ x^2 + 3*x^3 + 2*x^4
 
     /** Extracts a new {@link Polynomial} consisting of all {@link Monomial}s
      *  that involve the variable <em>varName</em>.
-     *  @param varName variable to be factored out 
+     *  @param varName variable to be factored out
      *  @return subset Polynomial with monomials from <em>this</em> Polynomial
      */
     public Polynomial getSubPolynomial(String varName) {
@@ -1382,40 +1382,49 @@ x^2 + 3*x^3 + 2*x^4
             String tsig = titer.next();
             Monomial mono = this.monomials.get(tsig);
             if (mono.getExponent(varName) > 0) { // involved
-                result.put(tsig, mono.clone()); 
+                result.put(tsig, mono.clone());
             } // if involved
         } // while titer
         return result;
     } // getSubPolynomial
 
-    /** Extracts, from <em>this<em> {@link Polynomial},  
-     *  a new {@link RelationSet} with a Polynomial
-     *  for each power of the parameter variable. 
-     *  These Polynomials gather the factors of the variable's power. 
-     *  The indexes of the resulting RelationSet correspond with those powers.
-     *  @param varName variable to be factored out 
-     *  @return RelationSet of factored Polynomials
+    /** Modifies <em>this<em> {@link Polynomial} such that 
+     *  all {@link Monomial}s consisting of a power of a variable
+     *  "consumes" as much as possible of the {@link Coefficient} into 
+     *  the variable, and adjusts the {@link VariableMap} accordingly
+     *  by multiplying the value of the variable.
+     *  Assumption: all non-constant {@link Monomial}s 
+     *  are {@link Monomial#isUniVariate univariate}, 
+     *  that is they contain only one variable.
+     *  @param vmap map of variable names to expression strings
+     *  @return <em>this<em> modified {@link Polynomial}; 
+     *  side effect: modifies <em>vmap</em>
      */
-    public Polynomial reduceCoefficients(int power) {
+    public Polynomial reducePowerCoefficients(VariableMap vmap) {
         Iterator <String> titer = this.monomials.keySet().iterator();
         while (titer.hasNext()) { // over all monomials
             Monomial mono1 = this.monomials.get(titer.next());
-            if (! mono1.isConstant()) {
-                BigInteger bint = mono1.getCoefficient().bigIntegerValue();
-                PrimeFactorization primfn = new PrimeFactorization(bint.abs());
-                BigInteger bint2 = primfn.reducePower(power);
-                mono1.setCoefficient(Coefficient.valueOf(bint.compareTo(BigInteger.ZERO) < 0 ? bint2.negate() : bint2));
+            if (mono1.isUniVariate()) { // implies not isConstant
+                String var1 = mono1.firstName();
+                BigInteger croot = mono1.reducePowerCoefficient(var1);
+                if (! croot.equals(BigInteger.ONE)) { // could extract a root > 1
+                    String vexpr = "(" + vmap.get(var1) + ")*" + croot.toString();
+                    vmap.put(var1, vexpr);
+                } // could extract a root > 1
+            } else {
+                // a constant is not modified
+                // multi-variate Monomials are not expected, and remain unchanged
             }
         } // while titer
         return this;
-    } // reduceCoefficients
+    } // reducePowerCoefficients
 
-    /** Extracts, from <em>this<em> {@link Polynomial},  
+    /** Extracts, from <em>this<em> {@link Polynomial},
      *  a new {@link RelationSet} with a Polynomial
-     *  for each power of the parameter variable. 
-     *  These Polynomials gather the factors of the variable's power. 
+     *  for each power of the parameter variable.
+     *  These Polynomials gather the factors of the variable's power.
      *  The indexes of the resulting RelationSet correspond with those powers.
-     *  @param varName variable to be factored out 
+     *  @param varName variable to be factored out
      *  @return RelationSet of factored Polynomials
      */
     public RelationSet getPowerFactors(String varName) {
@@ -1432,116 +1441,176 @@ x^2 + 3*x^3 + 2*x^4
         return result;
     } // getPowerFactors
 
-    /** Creates a new {@link Polynomial} from <em>this</em> {@link Polynomial} such
-     *  that all variables occur only once in a {@link Monomial}.
-     *  For any squared variable a suitable square completion is determined,
-     *  and the Polynomial is widened appropriately.
-     *  @return
-     *  for example:
+    /** Performs one square completion step, and widens all subpolynomials
+     *  appropriately. 
+     *  @param varName the variable to be square completed in this step
+     *  @param vmapt the {@link VariableMap} assembled so far, maps variables to the
+     *  expressions for which they are to substituted
+     *	@param phead the part which is already processed
+     *  @param pbody the subpolynomial for variable <em>varName</em>, to be square completed
+     *  @param ptail the remaining {@link Monomial}s with other variables
+     *  @return the modified, remaining <em>ptail</em>;
+     *	side effects: vmapt, phead
+     *  <p>Trace of testcase LR4:
      *  <pre>
-     *  this   = - 9 + 15x^2 - 7*(x+b)^2
-     *  result = - 9 - 7*b^2 + 15*x^2
-     *  </pre>
+start0 x, phead=0, pbody=30*x^2, ptail= - 2 - 7*y - 14*y^2, vmapt={x=>x,y=>y}
+zero   x, pbody == 0, fbody=30
+after3 x, phead=30*x^2, pbody=0
+after  x, phead=30*x^2, pbody=0, ptail= - 2 - 7*y - 14*y^2, vmapt={x=>x,y=>y}
+
+start0 y, phead=30*x^2, pbody= - 7*y - 14*y^2, ptail= - 2, vmapt={x=>x,y=>y}
+start1 y, pbody=1, fbody=-7, mlead= + 2*y^2
+start2 y, phead=60*x^2, pbody=1, ptail= - 4, mlead= + 4*y^2, fbody=-7, gcdv1=1
+before y, phead=60*x^2, pbody=1, ptail= - 4, mlead= + 4*y^2, flead=4, rootv=2, widev=1
+after2 y, pbody=1, ptail=3
+after3 y, phead=60*x^2 - 7*y^2, pbody=1
+after  y, phead=60*x^2 - 7*y^2, pbody=1, ptail=3, vmapt={x=>x,y=>1+2*y}
+
+assertion:  - 1 + 15*x^2 - 7*y - 7*y^2 !=  - 2 + 30*x^2 - 7*y - 14*y^2
+(" - 2 + 30*x^2 - 7*y - 14*y^2").reduceIt() = 3 + 15*x^2 - 7*y^2, vmapt={x=>(0+x)*2,y=>1+2*y}
+(" - 2 + 30*x^2 - 7*y - 14*y^2").reduceIt() = 3 + 15*x^2 - 7*y     *  </pre>
      */
-    public Polynomial completeSquare(String varName, Polynomial phead, Polynomial pbody, Polynomial ptail, VariableMap vmapt) {
+    public Polynomial completeSquare(String varName, VariableMap vmapt
+            , Polynomial phead, Polynomial pbody, Polynomial ptail) {
         int debug2 = 1; // debug;
         int e2 = 2;
-        if (debug2 >= 2) { 
+        if (debug2 >= 1) {
             System.out.println("start0 " + varName
                     + ", phead=" + phead.toString()
                     + ", pbody=" + pbody.toString()
                     + ", ptail=" + ptail.toString()
                     + ", vmapt=" + vmapt.toString()
-                    ); 
+                    );
         }
         BigInteger binom2 = BigIntegerUtil.binomial(e2, 1);
-        BigInteger fbody = pbody.gcdCoefficients(true); // factor for the whole bracket
+        BigInteger fbody = pbody.gcdCoefficients(true); // gcd factor for the whole bracket
+        BigInteger rootv = BigInteger.ONE;
         if (! fbody.equals(BigInteger.ONE)) {
-            pbody.divideBy(fbody); // pbody contains the bracket
-        } // fbody > 1       
+            pbody.divideBy(fbody); // pbody -> fbody*(pbody)
+        } // fbody > 1
         Monomial mlead = pbody.getMonomial(varName, e2).clone(); // the one with v^2
-        pbody.subtractFrom(mlead).divideBy(new Monomial(varName)); // now contains the factor of v^1 only
-        if (mlead.signum() < 0) {
+        pbody.subtractFrom(mlead).divideBy(new Monomial(varName)); // pbody -> mlead + (pbody / v^1) 
+        if (mlead.signum() < 0) { // move any negative sign of mlead to fbody
             mlead.negativeOf(); // now positive
             fbody = fbody.negate();
             pbody.negativeOf();
         } // negate
-        if (debug2 >= 1) { 
-            System.out.println("start1 " + varName
-                    + ", pbody=" + pbody.toString()
-                    + ", fbody=" + fbody.toString()
-                    + ", mlead=" + mlead.toString()
-                    ); 
-        }
-        BigInteger gcdv1 = pbody.gcdCoefficients(true); // gcd of the factor of v^1
-        if (gcdv1.mod(binom2).equals(BigInteger.ZERO)) { // binom2 must fit into pbody
-            pbody.divideBy(binom2);
-        } else { 
-            phead.multiplyBy(binom2);
-            // pbody is ok, think as if already "dividedBy(binom2)'
-            ptail.multiplyBy(binom2);
-            mlead.multiplyBy(binom2);
-            vmapt.multiplyBy(binom2);
-        } // pbody fits binom2
-        if (debug2 >= 1) { 
-            System.out.println("start2 " + varName
-                    + ", phead=" + phead.toString()
-                    + ", pbody=" + pbody.toString()
-                    + ", ptail=" + ptail.toString()
-                    + ", fbody=" + fbody.toString()
-                    + ", mlead=" + mlead.toString()
-                    + ", gcdv1=" + gcdv1.toString()
-                    ); 
-        }
-        //----------------------
-        // Determine factors which allow to perform a square completion properly.
-        // <em>this</em> is the {@link PrimeFactorization} of the factor of v^2:
-        // - (rootv*varName)^2 will become the lead term
-        // - multiply the whole Polynomial by widev
-        // - divide the cofactor of varName^1 by divs1 to get the square completion
-        BigInteger flead = mlead.getCoefficient().bigIntegerValue();
-        PrimeFactorization pmf2 = new PrimeFactorization(flead); // no abs, c.f. above
-        BigInteger widev = pmf2.wideToPower(e2);
-        BigInteger rootv = (new PrimeFactorization(widev.multiply(flead))).root(e2).valueOf();
-        //----------------------
-        phead.multiplyBy(widev);
-        ptail.multiplyBy(widev);
-        if (debug2 >= 1) { 
-            System.out.println("before " + varName
-                    + ", phead=" + phead.toString()
-                    + ", pbody=" + pbody.toString()
-                    + ", ptail=" + ptail.toString()
-                    + ", mlead=" + mlead.toString()
-                    + ", flead=" + flead.toString()
-                    + ", rootv=" + rootv.toString() 
-                    + ", widev=" + widev.toString()
-                    ); 
-        }
-        ptail = ptail.subtract(pbody.pow(e2).multiply(new Polynomial(new Monomial(Coefficient.valueOf(fbody)))));
-        if (debug2 >= 2) {
-            System.out.println("after2 " + varName
-                    + ", pbody=" + pbody.toString()
-                    + ", ptail=" + ptail.toString()
-                    ); 
-        } // debug2
+        if (! pbody.isZero()) {
+            if (debug2 >= 1) {
+                System.out.println("start1 " + varName
+                        + ", pbody=" + pbody.toString()
+                        + ", fbody=" + fbody.toString()
+                        + ", mlead=" + mlead.toString()
+                        );
+            }
+            BigInteger gcdv1 = pbody.gcdCoefficients(true); // inner gcd of the factor of v^1
+            
+            if (gcdv1.mod(binom2).equals(BigInteger.ZERO)) { // binom2 must fit into pbody
+                pbody.divideBy(binom2);
+            } else {
+                phead.multiplyBy(binom2);
+                // pbody is ok, think as if already "divideBy(binom2)'
+                ptail.multiplyBy(binom2);
+                mlead.multiplyBy(binom2);
+                // vmapt.multiplyBy(binom2);
+            } // pbody fits binom2
+            
+            if (debug2 >= 1) {
+                System.out.println("start2 " + varName
+                        + ", phead=" + phead.toString()
+                        + ", pbody=" + pbody.toString()
+                        + ", ptail=" + ptail.toString()
+                        + ", mlead=" + mlead.toString()
+                        + ", fbody=" + fbody.toString()
+                        + ", gcdv1=" + gcdv1.toString()
+                        );
+            }
+/*
+LR4
+start0 x, phead=0, pbody=30*x^2, ptail= - 2 - 7*y - 14*y^2, vmapt={x=>x,y=>y}
+zero   x, pbody == 0, fbody=30
+after3 x, phead=30*x^2, pbody=0
+after  x, phead=30*x^2, pbody=0, ptail= - 2 - 7*y - 14*y^2, vmapt={x=>x,y=>y}
+
+start0 y, phead=30*x^2, pbody= - 7*y - 14*y^2, ptail= - 2, vmapt={x=>x,y=>y}
+start1 y, pbody=1, fbody=-7, mlead= + 2*y^2
+start2 y, phead=60*x^2, pbody=1, ptail= - 4, mlead= + 4*y^2, fbody=-7, gcdv1=1
+before y, phead=60*x^2, pbody=1, ptail= - 4, mlead= + 4*y^2, flead=4, rootv=2, widev=1
+after2 y, pbody=1, ptail=3
+after3 y, phead=60*x^2 - 7*y^2, pbody=1
+after  y, phead=60*x^2 - 7*y^2, pbody=1, ptail=3, vmapt={x=>x,y=>1+2*y}
+
+assertion:  - 1 + 15*x^2 - 7*y - 7*y^2 !=  - 2 + 30*x^2 - 7*y - 14*y^2
+(" - 2 + 30*x^2 - 7*y - 14*y^2").reduceIt() = 3 + 15*x^2 - 7*y^2, vmapt={x=>(0+x)*2,y=>1+2*y}
+(" - 2 + 30*x^2 - 7*y - 14*y^2").reduceIt() = 3 + 15*x^2 - 7*y
+*/
+            //----------------------
+            // Determine factors which allow to perform a square completion properly.
+            // - (rootv*varName)^2 will become the lead term
+            // - multiply the whole Polynomial by widev
+            // - divide the cofactor of varName^1 by divs1 to get the square completion
+            BigInteger flead = mlead.getCoefficient().bigIntegerValue();
+            PrimeFactorization pmfz2 = new PrimeFactorization(flead); // no abs, c.f. above
+		/*
+			BigInteger coef2 = BigInteger.ONE; // the new coefficient of mlead
+			BigInteger root2 = BigInteger.ONE; // the root(e2) of coef2
+			BigInteger widev = BigInteger.ONE; // the overall widening factor for the remaining constituents
+			BigInteger coef1 = BigInteger.ONE; // the new coefficient fo pbody
+			BigInteger fact2 = BigInteger.ONE; //
+		*/
+            BigInteger widev = pmfz2.wideToPower(e2);
+            rootv = (new PrimeFactorization(widev.multiply(flead))).root(e2).valueOf();
+            
+            
+            //----------------------
+            phead.multiplyBy(widev);
+            ptail.multiplyBy(widev);
+            if (debug2 >= 1) {
+                System.out.println("before " + varName
+                        + ", phead=" + phead.toString()
+                        + ", pbody=" + pbody.toString()
+                        + ", ptail=" + ptail.toString()
+                        + ", mlead=" + mlead.toString()
+                        + ", flead=" + flead.toString()
+                        + ", rootv=" + rootv.toString()
+                        + ", widev=" + widev.toString()
+                        );
+            }
+            ptail = ptail.subtract(pbody.pow(e2).multiply(new Polynomial(new Monomial(Coefficient.valueOf(fbody)))));
+            if (debug2 >= 1) {
+                System.out.println("after2 " + varName
+                        + ", pbody=" + pbody.toString()
+                        + ", ptail=" + ptail.toString()
+                        );
+            } // debug2
+            // pbody != 0
+        } else { // pbody.isZero()
+            if (debug2 >= 1) {
+                System.out.println("zero   " + varName + ", pbody == 0, fbody=" + fbody.toString());
+            } // debug2
+        } // pbody.isZero()
         phead.addTo(new Monomial(fbody, varName, e2)); // replaces the bracket
-        if (debug2 >= 2) {
+        if (debug2 >= 1) {
             System.out.println("after3 " + varName
                     + ", phead=" + phead.toString()
                     + ", pbody=" + pbody.toString()
-                    ); 
+                    );
         } // debug2
         Polynomial mbody = pbody.clone();
-        // mbody.addTo(new Monomial(rootv, varName, 1));
-        vmapt.put(varName, mbody.toString() + "+" + rootv + "*" + varName);
+        if (false) { // code crashed in mbody.addTo(...)
+            mbody.addTo(new Monomial(rootv, varName, 1));
+            vmapt.put(varName, mbody.toString());
+        } else { // primitive, safe code
+            vmapt.put(varName, mbody.toString() + "+" + rootv + "*" + varName);
+        }
         if (debug2 >= 1) {
             System.out.println("after  " + varName
                     + ", phead=" + phead.toString()
                     + ", pbody=" + pbody.toString()
                     + ", ptail=" + ptail.toString()
                     + ", vmapt=" + vmapt.toString()
-                    + "\n"
-                    ); 
+                    );
+            System.out.println();
         } // debug2
         return ptail;
     } // completeSquare
@@ -1553,28 +1622,6 @@ x^2 + 3*x^3 + 2*x^4
      *  @return
      *  for example:
      *  <pre>
-java -cp dist/ramath.jar org.teherba.ramath.symbolic.Polynomial 
--reduce "x^2 - 4x*y + 8x*z + 2y^2 - 7z^2"
-
-start0 x, phead=0, pbody=x^2 - 4*x*y + 8*x*z, ptail=2*y^2 - 7*z^2, vmapt={x=>x,y=>y,z=>z}
-start1 x, pbody= - 4*y + 8*z, fbody=1, mlead= + x^2
-start2 x, phead=0, pbody= - 2*y + 4*z, ptail=2*y^2 - 7*z^2, fbody=1, mlead= + x^2, gcdv1=4
-before x, phead=0, pbody= - 2*y + 4*z, ptail=2*y^2 - 7*z^2, mlead= + x^2, flead=1, rootv=1, widev=1
-after  x, phead=x^2, pbody= - 2*y + 4*z, ptail= - 2*y^2 + 16*y*z - 23*z^2, vmapt={x=>x - 2*y + 4*z,y=>y,z=>z}
-
-start0 y, phead=x^2, pbody= - 2*y^2 + 16*y*z, ptail= - 23*z^2, vmapt={x=>x - 2*y + 4*z,y=>y,z=>z}
-start1 y, pbody= - 8*z, fbody=-2, mlead= + y^2
-start2 y, phead=x^2, pbody= - 4*z, ptail= - 23*z^2, fbody=-2, mlead= + y^2, gcdv1=8
-before y, phead=x^2, pbody= - 4*z, ptail= - 23*z^2, mlead= + y^2, flead=1, rootv=1, widev=1
-after  y, phead=x^2 - 2*y^2, pbody= - 4*z, ptail=9*z^2, vmapt={x=>x - 2*y + 4*z,y=>y - 4*z,z=>z}
-
-start0 z, phead=x^2 - 2*y^2, pbody=9*z^2, ptail=0, vmapt={x=>x - 2*y + 4*z,y=>y - 4*z,z=>z}
-start1 z, pbody=0, fbody=9, mlead= + z^2
-start2 z, phead=2*x^2 - 4*y^2, pbody=0, ptail=0, fbody=9, mlead= + 2*z^2, gcdv1=1
-before z, phead=4*x^2 - 8*y^2, pbody=0, ptail=0, mlead= + 2*z^2, flead=2, rootv=2, widev=2
-after  z, phead=4*x^2 - 8*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=>2*x - 4*y + 8*z,y=>2*y - 8*z,z=>2*z}
-
-("x^2 - 4*x*y + 2*y^2 + 8*x*z - 7*z^2").reduceIt() = 4*x^2 - 8*y^2 + 9*z^2
      *  </pre>
      */
     public Polynomial reduceIt() {
@@ -1592,7 +1639,7 @@ after  z, phead=4*x^2 - 8*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=>2*x - 4*y + 8
             ptail = ptail.subtract(pbody); // extract all with varName from it (the constant remains)
             switch (pbody.maxDegree()) {
                 case 2:
-                    ptail = completeSquare(varName, phead, pbody, ptail, vmapt);
+                    ptail = completeSquare(varName, vmapt, phead, pbody, ptail);
                     break;
                 default:
                     phead = phead.add(pbody);
@@ -1602,118 +1649,26 @@ after  z, phead=4*x^2 - 8*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=>2*x - 4*y + 8
         if (! ptail.isZero()) {
             phead = phead.add(ptail);
         }
-        return phead.normalizeIt(); // .reduceCoefficients(e2);
-    } // reduceIt
-
-    /** Creates a new {@link Polynomial} from <em>this</em> {@link Polynomial} such
-     *  that all variables occur only once in a {@link Monomial}.
-     *  For any squared variable a suitable square completion is determined,
-     *  and the Polynomial is widened appropriately.
-     *  @return
-     *  for example:
-     *  <pre>
-     *  this   = - 9 + 15x^2 - 7*(x+b)^2
-     *  result = - 9 - 7*b^2 + 15*x^2
-     *  </pre>
-     */
-    public Polynomial getSquareCompletion_2() {
-        int debug2 = 1; // debug;
-        Polynomial result = new Polynomial();
-        int power = this.maxDegree();
-        VariableMap vmapt = this.getVariableMap("*");
-        int varNo = vmapt.size();
-        Polynomial[] brackets  = new Polynomial[varNo]; // Sum of Monomials for one variable, to be squared
-        BigInteger[] brFactors = new BigInteger[varNo]; // factors for the brackets to be square
-        Polynomial rest = this.clone();
-        int ibr = 0; // index for brackets and variables
-        if (power == 2) { // can handle quadratic expressions only
-            Iterator<String> iter = vmapt.keySet().iterator(); // for variable names
-            boolean busy = true;
-            while (busy && iter.hasNext()) { // over all variable names
-                String varName = iter.next();
-                Polynomial polyv  = rest.getSubPolynomial(varName); // all Monomials involving varName
-                brFactors[ibr]    = polyv.gcdCoefficients(true);
-                RelationSet rsetv = polyv.getPowerFactors(varName); // split for each exponent of varName
-                if (rsetv.get(power).getLeadTerm().getCoefficient().bigIntegerValue()
-                        .compareTo(BigInteger.ZERO) < 0) { // is negative
-                    brFactors[ibr] = brFactors[ibr].negate(); // switch it
-                } // negative
-                if (! brFactors[ibr].equals(BigInteger.ONE)) { 
-                    rsetv.divideBy(brFactors[ibr]); // extract brFactors[ibr], bracket is positive
-                } // extract
-                if (debug2 >= 1) { 
-                    System.out.println("var " + varName
-                            + ", polyv=" + polyv.toString()
-                            + ", brFactors[" + ibr + "]=" + brFactors[ibr].toString() 
-                            + ", rsetv(before prepare)=" + rsetv.toString(false)
-                            ); 
-                }
-                BigInteger widev = rsetv.prepareIt(varName);
-                if (! widev.equals(BigInteger.ONE)) { // multiply those which are already processed
-                    result.multiplyBy(new Monomial(widev, "", 0));
-                /*
-                    int kbr = 0;
-                    while (kbr < ibr) {
-                        brFactors[kbr] = brFactors[kbr].multiply(widev);
-                        kbr ++;
-                    } // while kbr
-                */
-                } // already processed
-                BigInteger rootv = rsetv.getTupleShift();
-                if (debug2 >= 1) { 
-                    System.out.println("rsetv(after prepare)="  + rsetv.toString(false)
-                            + ", brFactors[" + ibr + "]=" + brFactors[ibr].toString() 
-                            + ", rootv=" + rootv.toString() 
-                            + ", widev=" + widev.toString()
-                            + ", polyv=" + polyv.toString()
-                            + ", rest="  + rest .toString()
-                            ); 
-                }
-                Polynomial polyc = rsetv.get(1); // for square completion
-                brackets[ibr] = (new Polynomial(new Monomial(rootv, varName, 1))).add(polyc); 
-                rest = rest.subtract(polyv).multiplyBy(widev)
-                        .subtract(polyc.pow(2).multiplyBy(brFactors[ibr]));
-                if (debug2 >= 1) {
-                    System.out.println("complete " + varName
-                            + ", polyc=" + polyc.toString()
-                            + ", rest="  + rest.toString()
-                            );
-                    System.out.println("--> bracket for " + varName 
-                            + ": " + brFactors[ibr].toString() 
-                            + "*(" + brackets [ibr].toString() + ")");
-                } // debug2
-                // busy = false; // take the first only
-                result.addTo(new Monomial(brFactors[ibr], varName, power));
-                vmapt.put(varName, brackets[ibr].toString());
-                ibr ++;
-            } // while variables
-        } // quadratic expressions only
-        if (! rest.isZero()) {
-            result = result.add(rest);
-        }
+        phead.normalizeIt().reducePowerCoefficients(vmapt);
         if (debug2 >= 1) {
-            Polynomial ptest = rest;
-            ibr = 0;
-            while (ibr < brackets.length) {
-                ptest = ptest.add(brackets[ibr].pow(power).multiplyBy(brFactors[ibr]));
-                ibr ++;
-            } // while ibr
-            ptest.normalizeIt();
-            System.out.println("vmapt=" + vmapt.toString()
-                    + ", rest="  + rest.toString()  + "\n"
-                    + ", ptest=" + ptest.toFactoredString() + " = " + ptest.toString()
-                    );
-            if (! ptest.equals(this)) {
-                System.out.println("squareCompletion.assertion???");
+            Polynomial ptest = phead.substitute(vmapt);
+            if (! ptest.normalize().equals(this.normalize())) {
+                System.out.println("assertion: "
+                        + ptest.normalize().toString() + " != "
+                        + this .normalize().toString());
             }
-        }
-        return result.normalizeIt(); // .reduceCoefficients(power);
-    } // getSquareCompletion_2
+            System.out.println("(\"" + this.toString() + "\").reduceIt() = "
+                    + phead.toString()
+                    + ", vmapt=" + vmapt.toString()
+                    );
+        } // debug2
+        return phead;
+    } // reduceIt
 
     //----------------------------------------
     // Characterization, Equivalence, Mapping
     //----------------------------------------
-    
+
     /** Computes a characterization of the polynomial
      *  suitable for normalization and equivalence checking.
      *  This characterization is independant of the monomials' variable names and of the signs of the monomials.
@@ -1738,14 +1693,14 @@ after  z, phead=4*x^2 - 8*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=>2*x - 4*y + 8
         return resultMap;
     } // characterize
 
-    /** Normalizes the coefficients and the signs of the monomials in place
-     *  (and also returns <em>this</em> - modified - polynomial).
+    /** Normalizes the {@link Coefficient}s of the {@link Monomial}s in place
+     *  (and also returns <em>this</em> - modified - Polynomial).
      *  Normalization is a predecessor step for equivalence checking, and proceeds
      *  in this sequence:
      *  <ul>
      *      <li>divide all coefficients by their greatest common divisor (GCD)</li>
      *  </ul>
-     *  @return reference to <em>this</em> - modified - object
+     *  @return reference to <em>this</em> - modified - Polynomial
      */
     public Polynomial normalizeIt() {
         BigInteger divisor = this.gcdCoefficients(true);
@@ -1754,6 +1709,15 @@ after  z, phead=4*x^2 - 8*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=>2*x - 4*y + 8
         }
         return this;
     } // normalizeIt
+
+    /** Normalizes the {@link Coefficient}s of the {@link Monomial}s
+     *  and returns the modified Polynomial.
+     *  @return reference to the modified Polynomial
+     */
+    public Polynomial normalize() {
+        Polynomial result = this.clone();
+        return result.normalizeIt();
+    } // normalize
 
     /** Determines whether the parameter polynomial is identical with <em>this</em> polynomial,
      *  including variable names and signs of monomials.
@@ -1845,13 +1809,13 @@ after  z, phead=4*x^2 - 8*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=>2*x - 4*y + 8
     } // affineMap
 
     /** For a variable, return the - univariate - {@link Monomial}s
-     *  in <em>this</em> Polynomial which have 
+     *  in <em>this</em> Polynomial which have
      *  (returned in [0]) the maximum exponent - 1 of that variable, and
      *  (returned in [1]) the maximum exponent of the variable,
      *  or the constant 0 if such monomial(s) do not exist.
      *  Caution, currently the monomials must be univariate.
      *  @param vname variable name
-     *  @return monomials: [0] = max-1 exponent, [1] = max exponent, 
+     *  @return monomials: [0] = max-1 exponent, [1] = max exponent,
      *  or null if there was a non-univariate Monomial
      */
     public Monomial[] getHighTerms(String vname) {
@@ -2028,7 +1992,7 @@ after  z, phead=4*x^2 - 8*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=>2*x - 4*y + 8
                     Monomial mono1 = this .get(sig1);
                     Monomial mono2 = poly2.get(sig2);
                     Monomial factor  = mono1.divide(mono2);
-                    if (factor != null && factor.isConstant() 
+                    if (factor != null && factor.isConstant()
                             && factor.getCoefficient().compareTo(Coefficient.ZERO) > 0
                             ) { // valid factor
                         result = (result != null ? result + "," : "") + factor.toString()
@@ -2078,7 +2042,7 @@ after  z, phead=4*x^2 - 8*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=>2*x - 4*y + 8
                         if (debug >= 2) {
                             result += " ("  + this .toString()
                                     + " => " + poly2.toString()
-                                    +  ") ";        
+                                    +  ") ";
                         } // debug
                     }
                 } // new
@@ -2340,7 +2304,7 @@ after  z, phead=4*x^2 - 8*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=>2*x - 4*y + 8
                 result.append(constant.toString());
                 result.append(", vgcd=");
                 result.append(varGCD.toString());
-            } else { 
+            } else {
                 result.append(VariableMap.UNKNOWN);
             } // Test for (x,y,...) elem of {0,1}^n
         } // not a single constant, not biased
@@ -2420,7 +2384,7 @@ after  z, phead=4*x^2 - 8*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=>2*x - 4*y + 8
 
                 } else if (opt.startsWith("-bachet")) {
                     // input is x,y,c of a Mordell equation y^2 = x^3 + c
-                    Polynomial x = Polynomial.parse(args[iarg ++]); 
+                    Polynomial x = Polynomial.parse(args[iarg ++]);
                     Polynomial y = Polynomial.parse(args[iarg ++]);
                     Polynomial c = Polynomial.parse(args[iarg ++]);
                     Polynomial denomX = x.pow(4).subtract((new Polynomial("8")).multiply(c).multiply(x));
@@ -2487,7 +2451,7 @@ after  z, phead=4*x^2 - 8*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=>2*x - 4*y + 8
                     } // while iter1
 
                 } else if (opt.startsWith("-incr")) {
-                    // input is: poly vi ei; variable vi runs from 0 to ei 
+                    // input is: poly vi ei; variable vi runs from 0 to ei
                     poly1 = Polynomial.parse(args[iarg ++]);
                     VariableMap vmap1 = poly1.getVariableMap("*", true); // x -> x
                     String vname = args[iarg ++];
@@ -2502,7 +2466,7 @@ after  z, phead=4*x^2 - 8*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=>2*x - 4*y + 8
                         vmap1.put(vname, sloop);
                         poly2 = poly1.substitute(vmap1);
                         System.out.println(sloop
-                                + "\t" + poly2.toString() 
+                                + "\t" + poly2.toString()
                                 + "\t" + poly2.normalizeIt().toString());
                         iloop ++;
                     } // while iloop
@@ -2531,8 +2495,8 @@ after  z, phead=4*x^2 - 8*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=>2*x - 4*y + 8
                     System.out.println("(\"" + poly1.toString() + "\").isPowerSum() = "
                             + poly1.isPowerSum());
 
-                } else if (opt.startsWith("-reduce")) { 
-                    poly1 = Polynomial.parse(args[iarg ++]); 
+                } else if (opt.startsWith("-reduce")) {
+                    poly1 = Polynomial.parse(args[iarg ++]);
                     poly2 = poly1.reduceIt();
                     System.out.println("(\"" + poly1.toString() + "\")"
                             + ".reduceIt()" // + " = " + poly2.toFactoredString()
@@ -2547,7 +2511,7 @@ after  z, phead=4*x^2 - 8*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=>2*x - 4*y + 8
                 } else if (opt.startsWith("-solut")) { // poly brat
                     poly1 =            Polynomial.parse(args[iarg ++]);
                     BigRational brat1 = new BigRational(args[iarg ++]);
-                    System.out.println(brat1.toString() + " solves " + poly1.toString() 
+                    System.out.println(brat1.toString() + " solves " + poly1.toString()
                             + "? " + poly1.hasSolution(brat1));
 
                 } else if (opt.startsWith("-spoly")) {
@@ -2557,15 +2521,8 @@ after  z, phead=4*x^2 - 8*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=>2*x - 4*y + 8
                     System.out.println("S(" + poly1.toString() + ", " + poly2.toString() + ") = "
                             + poly1.s_Polynomial(poly2).toString());
 
-                } else if (opt.startsWith("-square")) { 
-                    poly1 = Polynomial.parse(args[iarg ++]); 
-                    poly2 = poly1.getSquareCompletion_2();
-                    System.out.println("(\"" + poly1.toString() + "\")"
-                            + ".squareCompletion_2() = " + poly2.toFactoredString()
-                            + " = "+  poly2.toString());
-
                 } else if (opt.startsWith("-subst")) { // substitute
-                    poly1 = Polynomial.parse(args[iarg ++]); 
+                    poly1 = Polynomial.parse(args[iarg ++]);
                     VariableMap vmap2 = poly1.getExpressionMap("2*x+1", true);
                     System.out.println("(\"" + poly1.toString() + "\")"
                             + ".substitute(2*x+1) = " + poly1.substitute(vmap2).toString());
@@ -2584,15 +2541,15 @@ after  z, phead=4*x^2 - 8*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=>2*x - 4*y + 8
                     System.out.println("getVariablePowers(" + varName + ")="   + poly1.getVariablePowers(mono4));
                     System.out.println(          "groupBy(" + varName + ")=\n" + poly1.groupBy          (mono4).toList(false));
 
-                } else if (opt.startsWith("-widen")) { 
+                } else if (opt.startsWith("-widen")) {
                     String varName = args[iarg ++];
-                    poly1 = Polynomial.parse(args[iarg ++]); 
+                    poly1 = Polynomial.parse(args[iarg ++]);
                     RelationSet rset2 = poly1.getPowerFactors(varName);
                     System.out.println("(\"" + poly1.toString(false) + "\")"
                             + ".getPowerFactors(\""  + varName + "\") ="   + rset2.toList(true));
                     BigInteger widev = rset2.prepareIt(varName);
                     System.out.println(".prepareIt(\"" + varName + "\")=" + widev.toString()
-                            + ", rootv=" + rset2.getTupleShift().toString()   
+                            + ", rootv=" + rset2.getTupleShift().toString()
                             + rset2.toList(true));
                 } else {
                     System.err.println("invalid option " + opt);

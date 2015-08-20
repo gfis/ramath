@@ -52,7 +52,7 @@ public class Monomial implements Cloneable, Serializable {
     /** factor of the product of variables */
     private Coefficient/*ratint*/ coefficient;
 
-    /** The sorted map for all variables in lexicographic order of their 
+    /** The sorted map for all variables in lexicographic order of their
      *  names which are mapped to (positive) exponent values
      */
     private TreeMap<String, Integer> vars;
@@ -341,7 +341,8 @@ public class Monomial implements Cloneable, Serializable {
         return characteristic(false, true);
     } // signature
 
-    /** Special signature for constant monomials (coefficient without variables).
+    /** Special signature for constant {@link Monomial}s
+     *  (coefficient without variables, the empty String).
      */
     public static final String CONSTANT_SIGNATURE = (new Monomial("1")).signature(); // the empty string: ""
 
@@ -419,12 +420,12 @@ public class Monomial implements Cloneable, Serializable {
     public Monomial addTo(Monomial mono2) {
         Monomial result = this;
         if (! this.signature().equals(mono2.signature())) {
-            throw new IllegalArgumentException("Monomial: signatures of " + this.toString() 
-            	+ " and " + mono2.toString() + " must be equal: " 
+            throw new IllegalArgumentException("Monomial: signatures of " + this.toString()
+                + " and " + mono2.toString() + " must be equal: "
                 + "\"" + this.signature() + "\" != \"" + mono2.signature() + "\"");
-		/*
-            System.out.println("signatures of " + this.toString() 
-            	+ " and " + mono2.toString() + " must be equal: " 
+        /*
+            System.out.println("signatures of " + this.toString()
+                + " and " + mono2.toString() + " must be equal: "
                 + "\"" + this.signature() + "\" != \"" + mono2.signature() + "\"");
         */
         } else {
@@ -594,6 +595,26 @@ public class Monomial implements Cloneable, Serializable {
         return result;
     } // pow
 
+    /** Modifies <em>this<em> {@link Monomial} such that the 
+     *  specified variable "consumes" as big a power factor of the {@link Coefficient} 
+     *  as possible, and divides the Coefficient accordingly
+     *  @param varName try to consume the power factor by this variable
+     *  @return the root of the extracted factor;
+     *  side effect: divides the Coefficient of <em>this<em> Monomial by the power factor
+     */
+    public BigInteger reducePowerCoefficient(String varName) {
+        int exp1 = this.getExponent(varName);
+        BigInteger bint = this.getCoefficient().bigIntegerValue();
+        PrimeFactorization primfn = new PrimeFactorization(bint.abs());
+        BigInteger[] rpair = primfn.reducePowerOf(exp1); // [0] = extracted root, [1] = remaining factor
+        this.setCoefficient(Coefficient.valueOf(
+                bint.compareTo(BigInteger.ZERO) < 0 
+                    ? rpair[1].negate() 
+                    : rpair[1]
+                ));
+        return rpair[0];
+    } // reducePowerCoefficient
+
     /** Divides this Monomial <em>in place</em> by an exponentiated variable or number.
      *  This method can only be used internally since it does not clone.
      *  The resulting exponent may not become negative.
@@ -621,7 +642,7 @@ public class Monomial implements Cloneable, Serializable {
                     if (exp >= 1) {
                         result.putExponent(name2, new Integer(exp));
                     } else if (exp == 0) {
-                    	result.vars.remove(name2);
+                        result.vars.remove(name2);
                     } else {
                         result = null; // not divisible
                     /*
@@ -803,13 +824,13 @@ public class Monomial implements Cloneable, Serializable {
     } // toString(full)
 
     /** Returns a string representation of <em>this</em> {@link Monomial},
-     *  in compressed form, 
+     *  in compressed form,
      *  and with the coefficient splitted into powers of prime factors
      *  @return "2^2*3*5*x*y^3" for example
      */
     public String toFactoredString() {
         BigInteger bint = this.getCoefficient().bigIntegerValue();
-        String number = (bint.compareTo(BigInteger.ZERO) < 0 ? "-" : "") 
+        String number = (bint.compareTo(BigInteger.ZERO) < 0 ? "-" : "")
                 + (new PrimeFactorization(bint.abs())).toString();
         return toStringCommon(false, number);
     } // toFactoredString()
@@ -1019,6 +1040,9 @@ lcm( + 24*a^6*b^6*c*x4^8, + 100*a^5*b^4) =  + 600*a^6*b^6*c*x4^8
             System.out.println("lcm(" + mono1.toString() + "," + mono2.toString() + ") = " + mono1.lcm   (mono2).toString());
             mono1.setCoefficient(2400);
             System.out.println(mono1.toString() + " / "        + mono2.toString()  + " = " + mono1.divide(mono2).toString());
+            mono1 = new Monomial(32, "x", 2);
+            BigInteger root1 = mono1.reducePowerCoefficient("x");
+            System.out.println("(32*x^2).reducePowerCoefficient(\"x\") = " + root1.toString() + ", " + mono1.toString());
         } catch (Exception exc) {
             System.out.println(exc.getMessage());
             exc.printStackTrace();

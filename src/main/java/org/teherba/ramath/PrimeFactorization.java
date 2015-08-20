@@ -198,27 +198,34 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
     } // root
 
     /** Divides a <em>this</em> number by the maximum factor which is a power
-     *  @param power the factor taken to this power must still evenly divide <em>this</em> number
-     *  @return 2*3^2*5^2 for 2*3^5*5^4 and power 2
+     *  @param power the maximum factor taken to this power 
+     *  must still evenly divide <em>this</em> number
+     *  @return []{2^3, 2^1} for this=2^7 and power=2
      */
-    public BigInteger reducePower(int power) {
-        BigInteger result = BigInteger.ONE;
+    // BigInteger[] pfpair = primfn.reducePowerOf(exp1); // [0] = extracted root, [1] = remaining factor
+
+    public BigInteger[] reducePowerOf(int power) {
+        BigInteger rfact = BigInteger.ONE;
+        BigInteger rootv = BigInteger.ONE;
         if (this.size() > 0) { // not 0, 1
             Iterator<BigInteger> iter = this.keySet().iterator();
             while (iter.hasNext()) {
-                BigInteger prime = iter.next();
-                if (! prime.equals(BigInteger.ONE)) {
-                    int exp = this.get(prime).intValue() % power;
-                    if (exp > 1) {
-                        result = result.multiply(prime.pow(exp));
-                    } else if (exp == 1) {
-                        result = result.multiply(prime);
-                    }
-                }
+                BigInteger prime = iter.next(); // next prime factor (2)
+                if (! prime.equals(BigInteger.ONE)) { // for safety only
+                    int pexp = this.get(prime).intValue(); // 7
+                    int equot  = pexp / power; // 3
+                    if (equot > 0) {
+                        rootv = rootv.multiply(equot == 1 ? prime : prime.pow(equot));
+                    } 
+                    int erest = pexp % power; // 1
+                    if (erest > 0) {
+                        rfact = rfact.multiply(erest == 1 ? prime : prime.pow(erest));
+                    } 
+                } // prime > 1
             } // while iter
         } // if size
-        return result;
-    } // reducePower
+        return new BigInteger[] { rootv, rfact };
+    } // reducePowerOf
 
     /** Returns the least number which turns <em>this</em>
      *  {@link PrimeFactorization} into some power number times a binomial factor, 
@@ -259,7 +266,9 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
      *  The first commandline argument is factorized.
      */
     public static void main(String[] args) {
-        BigInteger number = new BigInteger(args[0]);
+        BigInteger number  = new BigInteger(args[0]);
+        BigInteger number2 = args.length > 1 ? new BigInteger(args[1]) : BigIntegerUtil.TWO;
+            
         PrimeFactorization primfn1 = new PrimeFactorization(number);
         System.out.println("PrimeFactorization(" + number.toString() + ") = " + primfn1.toString());
         PrimeFactorization primfn4 = new PrimeFactorization(primfn1.wideToPower(4));
@@ -268,6 +277,9 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
         PrimeFactorization primfn2 = primfn1.multiply(primfn1);
         System.out.println(".multiply(same) = " + primfn2.toString());
         System.out.println(".valueOf() = " + primfn2.valueOf().toString());
+        BigInteger[] rpair = primfn1.reducePowerOf(number2.intValue());
+        System.out.println(primfn1.valueOf().toString() + ".reducePowerOf(" + number2.toString() + ") = " 
+                + rpair[0].toString() + ", " + rpair[1].toString());
     } // main
 
 } // PrimeFactorization

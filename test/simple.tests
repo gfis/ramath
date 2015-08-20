@@ -256,7 +256,7 @@ TEST FP3 PrimeFactorization 1729
 CALL     PrimeFactorization 1729
 
 TEST FP4 PrimeFactorization 900
-CALL     PrimeFactorization 900
+CALL     PrimeFactorization 900 
 
 TEST FP5 PrimeFactorization 19472906
 CALL     PrimeFactorization 19472906
