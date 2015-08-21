@@ -36,6 +36,8 @@ lr:
 	make symbolic TEST=LR%
 lrh:
 	head -200 test/LR*.this.tst
+lrass:
+	grep assert test/LR*.this.tst
 t:
 	make solver TEST=T%
 proved:
