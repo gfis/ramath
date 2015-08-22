@@ -1,6 +1,5 @@
 /*  RelationSet: a set of polynomials which relate to zero
  *  @(#) $Id: RelationSet.java 970 2012-10-25 16:49:32Z  $
- *  2015-08-13: prepareIt
  *  2015-06-15: RelationSet.parse was not static
  *  2015-02-19: extends Polynomial; inherit a number of methods from there
  *  2015-02-17: getTransposition; Durbach.2
@@ -425,110 +424,6 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
         return this;
     } // multiplyBy(number)
 
-    /** Multiply (in place) all component {@link Polynomial}s of 
-     *  <em>this</em> {@link RelationSet} such that the parameter variable 
-     *  can be square, cubic completed. 
-     *  <em>this</em> should be the result of {@link Polynomial#getPowerFactors}, that is
-     *  <em>varName^index</em> was previously factored out of those Polynomials.
-     *  @param varName name of variable whose powers were factored out. 
-     *  This will later be replaced by <em>tupleShift * varName</em>.
-     *  @return ^the overall factor by which <em>this</em> RelationSet was widened;
-     *  {@link RelationSet#tupleShift} is set (to <em>rootv</em>) 
-     *  such that the coefficient of the lead term is a power of it. 
-     */
-    public BigInteger prepareIt(String varName) {
-        int debug2 = 0;
-        BigInteger result = BigInteger.ONE;
-        BigInteger rootv  = BigInteger.ONE;
-        Polynomial poly1 = null;    
-        BigInteger [] binomials = new BigInteger        [this.size()];
-        int power = this.size() - 1;
-
-        // first store binomial factors for all subpolynomials
-        int ipoly = 0;
-        if (true) { // symmetricity with loop below
-            ipoly = power;
-            while (ipoly >= 0) {
-                poly1 = this.get(ipoly);
-                binomials[ipoly] = BigIntegerUtil.binomial(power, power - ipoly);
-                ipoly --;
-            } // while ipoly
-        } // if true
-
-        // repeatedly try to determine widev
-        boolean rbusy = true; // as long as not all subpolynomials of this RelationSet are properly widened
-        int loopCheck = this.size() * 2 + 1;
-        while (rbusy && loopCheck >= 0) { // try to widen all
-            boolean repeat = false; // as long as subpolynomials are to be examined
-            ipoly = power;
-            poly1 = this.get(ipoly);
-            BigInteger 
-            gcd1  = poly1.gcdCoefficients(true);
-            PrimeFactorization pfmax = new PrimeFactorization(gcd1);
-            BigInteger wide2 = pfmax.wideToPower(ipoly);
-            if (! wide2.equals(BigInteger.ONE)) {
-                this.multiplyBy(wide2);
-                result = result.multiply(wide2);
-                if (debug2 > 0) { 
-                    System.out.println("[" + ipoly + "]"
-                            + ", pfmax=" + pfmax.toString()
-                            + ", wide2=" + wide2.toString() 
-                            + ", poly1=" + poly1.toString());
-                } // debug
-                repeat = true;
-                if (debug2 > 0) { 
-                    System.out.println("----repeat-max");
-                } // debug
-            } else { // try downwards   
-                rootv = pfmax.root(power).valueOf(); // this times the variable is later mapped
-                ipoly --;
-                while (! repeat && ipoly > 0) { // may not wideToPower(0)
-                    poly1 = this.get(ipoly);
-                    if (! poly1.isZero()) {
-                        gcd1  = poly1.gcdCoefficients(true);
-                        BigInteger factp = binomials[ipoly].multiply(rootv.pow(ipoly));
-                        if (! gcd1.mod(factp).equals(BigInteger.ZERO)) {
-                            wide2 = BigIntegerUtil.lcm(gcd1, factp).divide(gcd1);
-                            this.multiplyBy(wide2);
-                            result = result.multiply(wide2);
-                            if (debug2 > 0) { 
-                                System.out.println("[" + ipoly + "]"
-                                        + ", gcd1="  + gcd1.toString()
-                                        + ", factp=" + factp.toString()
-                                        + ", wide2=" + wide2.toString() 
-                                        + ", rootv=" + rootv.toString() 
-                                        + ", poly1=" + poly1.toString());
-                            } // debug
-                            repeat = true;
-                            if (debug2 > 0) { 
-                                System.out.println("----repeat-ipoly");
-                            } // debug
-                        } // ! gcd1.mod(factp)
-                    } // ! isZero
-                    ipoly --;
-                } // while ipoly
-            } // try downwards
-            rbusy = repeat; // not all subpolynomials were properly widened
-            loopCheck --;
-        } // while rbusy
-        if (loopCheck < 0) {
-            System.out.println("prepareIt: loopCheck reached");
-        }
-        this.setTupleShift(rootv);
-        
-        // now extract the powers of rootv and the binomial factors
-        ipoly = 1; // leave the Polynomial which does not contain varName
-        BigInteger proot = rootv; // powers of rootv
-        while (ipoly <= power) {
-            poly1 = this.get(ipoly);
-            BigInteger divisor = proot.multiply(binomials[ipoly]);
-            poly1.divideBy(divisor);
-            proot = proot.multiply(rootv);
-            ipoly ++;
-        } // while iploy
-        return result;
-    } // prepareIt
-
     /** Determines whether <em>this</em> RelationSet can be transformed into <em>rset2</em>
      *  by multiplying the constants of the monomials in <em>rset2</em> by
      *  some factors &gt;= 1.
@@ -536,7 +431,7 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
      *  @return a list of numbers separated by "," if such factors exist, null otherwise
      */
     public String getGrowingFactors(RelationSet rset2) {
-        String result  = null; 
+        String result  = null;
         String factors = ""; // assume success
         int rsize1 =  this .size();
         if (rsize1 == rset2.size()) {
@@ -800,8 +695,8 @@ evaluate: unknown
             } else if (opt.startsWith("-grow")) {
                 rset1 = RelationSet.parse(args[iarg ++]);
                 rset2 = RelationSet.parse(args[iarg ++]);
-                System.out.println("(\"" + rset1.toString() 
-                        + "\").getGrowingFactors\n(\"" 
+                System.out.println("(\"" + rset1.toString()
+                        + "\").getGrowingFactors\n(\""
                         + rset2.toString() + "\") = "
                         + rset1.getGrowingFactors(rset2));
             } else if (opt.equals("-rest")  ) {

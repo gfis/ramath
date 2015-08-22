@@ -51,7 +51,6 @@ public class ExpressionReader {
     BufferedReader lineReader;
 
     /** No-args Constructor
-
      */
     public ExpressionReader() {
         this("UTF-8", false);
