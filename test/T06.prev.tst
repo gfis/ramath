@@ -1,4 +1,4 @@
-Expanding for base=2, transposables={{x,y,z}}, reasons+features=base,transpose,similiar igtriv,norm,invall, exponentParities=[1,1,1]
+Expanding for base=2, transposables={{x,y,z}}, reasons+features=base,similiar,transpose igtriv,norm,invall, exponentParities=[1,1,1]
 ----------------
 expanding queue[0]^-1: x^2 + y^2 - 3*x*y*z + z^2 meter=[2,2,2] *2
 [0+2*x,0+2*y,0+2*z]: unknown x^2+y^2-6*x*y*z+z^2 -> [1]

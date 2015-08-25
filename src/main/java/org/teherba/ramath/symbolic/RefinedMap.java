@@ -25,7 +25,7 @@ import  java.util.TreeMap;
 
 /** Maps a set of (distinct) linear expressions with variables
  *  to their positions in the original {@link VariableMap} from which
- *  it was derived, for Example
+ *  it was derived, for example:
  *  <pre>
  *  VariableMap: {a =  3+4*a, b =  1+4*b, c =  0+4*c}
  *  RefinedMap:  {0/1+4*b => 1, 0/3+4*a => 0, 1947/0+4*c => 1947}

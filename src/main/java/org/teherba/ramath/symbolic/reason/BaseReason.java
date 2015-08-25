@@ -1,5 +1,6 @@
 /*  BaseReason: base class for all reasons to cut the tree expansion
  *  @(#) $Id: BaseReason.java 970 2012-10-25 16:49:32Z gfis $
+ *  2015-08-25: isConsiderable
  *  2015-02-21, Georg Fischer
  */
 /*
@@ -62,6 +63,18 @@ public class BaseReason {
     public void setCode(String code) {
         this.code = code;
     } // setCode
+    
+    /** Whether <em>this</em> reason should be considered for 
+     *  the starting {@link RelationSet}.
+     *  Only a few reasons overwrite this method and return <em>false</em> for
+     *  some types of RelationSets.
+     *  @param rset0 the starting RelationSet 
+     *  @return <em>true</em> if the <em>this</em> should be considered (default), 
+     *  <em>false</em> otherwise.
+     */
+    public boolean isConsiderable(RelationSet rset0) {
+        return true;
+    } // isConsiderable
     
     //---------------------------
     // Check the specific reason

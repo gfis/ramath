@@ -1,4 +1,4 @@
-Expanding for base=2, transposables={{p},{q}}, reasons+features=base,transpose,similiar,evenexp, exponentParities=[0,0]
+Expanding for base=2, transposables={{p},{q}}, reasons+features=base,evenexp,similiar,evenexp,similiar, exponentParities=[0,0]
 ----------------
 expanding queue[0]^-1:  - p^2 + 2*q^2 meter=[2,2] *2
 solution [0,0],trivial(3)

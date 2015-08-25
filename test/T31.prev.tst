@@ -1,4 +1,4 @@
-Expanding for base=2, transposables={{a},{b}}, reasons+features=base,transpose,similiar norm,invall, exponentParities=[1,1]
+Expanding for base=2, transposables={{a},{b}}, reasons+features=base,similiar norm,invall, exponentParities=[1,1]
 ----------------
 expanding queue[0]^-1: 2 + a^2 - a^3 + 2*a*b + 3*a^2*b + b^2 - 3*a*b^2 + b^3 meter=[2,2] *2
 [1+2*a,0+2*b]: unknown 1-a-4*a^2-4*a^3+5*b+16*a*b+12*a^2*b-4*b^2-12*a*b^2+4*b^3 -> [1]

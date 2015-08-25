@@ -37,43 +37,43 @@ TEST T02 tree solver, sqrt(5) (proof in 2 steps)
 CALL TreeSolver -l 4 -e "5*q^2 - p^2" 
 
 TEST T03 Fermat (proof in 2 steps)
-CALL TreeSolver -l 4 -e "a^2 + b^2 - 3*(c^2 + d^2)" -r transpose,similiar,norm,invall,igtriv,showfail
+CALL TreeSolver -l 4 -e "a^2 + b^2 - 3*(c^2 + d^2)" -r norm,invall,igtriv,showfail
 
 TEST T04 tree solver, biquadratic minus
 CALL TreeSolver -l 3 -e "x^4 - y^4 - z^2" 
 
 TEST T05 FLT(4), biquadratic plus
-CALL TreeSolver -l 3 -e "x^4 + y^4 - z^2" -r transpose,similiar,igtriv,evenexp
+CALL TreeSolver -l 3 -e "x^4 + y^4 - z^2" -r igtriv,evenexp
 
 TEST T06 Markov(3, solvable)
-CALL TreeSolver -l 3 -e "x^2 + y^2 + z^2 - 3*x*y*z" -r transpose,similiar,norm,invall,igtriv
+CALL TreeSolver -l 3 -e "x^2 + y^2 + z^2 - 3*x*y*z" -r norm,invall,igtriv
 
 TEST T07 FLT(3) mod 2
-CALL TreeSolver -b 2 -l 3 -e "a^3 + b^3 - c^3" -r transpose,similiar,norm,invall
+CALL TreeSolver -b 2 -l 3 -e "a^3 + b^3 - c^3" -r norm,invall
 
 TEST T08 EEC(3) mod 2
 CALL TreeSolver -b 2 -l 2 -e "a^3 + b^3 + c^3 - d^3" 
 
 TEST T09 Markoff(2, unsolvable, power)
-CALL TreeSolver      -l 8 -e "x^2 + y^2 + z^2 - 2*x*y*z" -r transpose,similiar,norm,invall
+CALL TreeSolver      -l 8 -e "x^2 + y^2 + z^2 - 2*x*y*z" -r norm,invall
 
 TEST T10 Markoff(5, unsolvable)
-CALL TreeSolver -b 2 -l 3 -e "x^2 + y^2 + z^2 - 5*x*y*z" -r transpose,similiar,norm
+CALL TreeSolver -b 2 -l 3 -e "x^2 + y^2 + z^2 - 5*x*y*z" -r norm
 
 TEST T11 Markoff(4, unsolvable, power)
-CALL TreeSolver      -l 8 -e "x^2 + y^2 + z^2 - 4*x*y*z" -r transpose,similiar
+CALL TreeSolver      -l 8 -e "x^2 + y^2 + z^2 - 4*x*y*z" 
 
 TEST T12 modif. Pythagoras (proof) 
-CALL TreeSolver -l 4 -e "x^2 + y^2 - 3*z^2" -r transpose,similiar,norm,invall,showfail
+CALL TreeSolver -l 4 -e "x^2 + y^2 - 3*z^2" -r norm,invall,showfail
 
 TEST T13 modified FLT(3) mod 2
-CALL TreeSolver -b 2 -l 3 -e "a^3 + 3*b^3 - 9*c^3" -r "transposable,similiar,norm"
+CALL TreeSolver -b 2 -l 3 -e "a^3 + 3*b^3 - 9*c^3" -r norm
 
 TEST T14 modified FLT(3) mod 3 proof
-CALL TreeSolver -b 3 -l 3 -e "a^3 + 3*b^3 - 9*c^3" -r "transposable,similiar,norm,igtriv"
+CALL TreeSolver -b 3 -l 3 -e "a^3 + 3*b^3 - 9*c^3" -r norm,igtriv
 
 TEST T15 modified FLT(3) mod 6 no descent?
-CALL TreeSolver -b 6 -l 2 -e "a^3 + 3*b^3 - 9*c^3" -r "transposable,similiar,norm,igtriv"
+CALL TreeSolver -b 6 -l 2 -e "a^3 + 3*b^3 - 9*c^3" -r norm,igtriv
 
 TEST T16 Pythagoras
 CALL TreeSolver -b 2 -l 4 -e "a^2 + b^2 - c^2"
@@ -81,7 +81,7 @@ CALL TreeSolver -b 2 -l 4 -e "a^2 + b^2 - c^2"
 # Euler, proof=1 (http://www.cut-the-knot.org/arithmetic/BasicsOfInfiniteDescent.shtml)
 # also Keith Conrad: Proofs by Descent, Example 1.1
 TEST T17 FLT(3) modified
-CALL TreeSolver -b 2 -l 4 -e "a^3 + 2*b^3 - 4*c^3" -r "transpose,similiar,norm,invall,showfail"
+CALL TreeSolver -b 2 -l 4 -e "a^3 + 2*b^3 - 4*c^3" -r "norm,invall,showfail"
 
 TEST T18 Markov(2, unsolvable, power, proof)
 CALL TreeSolver -l 6 -e "(x + 1)^2 + (y + 1)^2 + (z + 1)^2 - 2*(x + 1) * (y + 1) * (z + 1)" 
@@ -96,50 +96,50 @@ CALL TreeSolver -b 2 -l 2 -e "(m^2 - n^2)^2 + (2*m*n)^2 - (m^2 + n^2)^2"
 # CALL TreeSolver -b 3 -l 1 -e "a^6 + b^6 + c^6 + d^6 + e^6 - f^6"
 
 TEST T22 FLT(3)=Fermat/Carcavi(6) mod 3
-CALL TreeSolver -b 2 -l 4 -e "a^3 + b^3 - c^3" -r simliar,transpose,igtriv,norm
+CALL TreeSolver -b 2 -l 4 -e "a^3 + b^3 - c^3" -r igtriv,norm
 
 TEST T23 FLT(5) mod 2
-CALL TreeSolver -b 2 -l 2 -e "a^5 + b^5 - c^5" -r similiar,transpose,igtriv,norm
+CALL TreeSolver -b 2 -l 2 -e "a^5 + b^5 - c^5" -r igtriv,norm
 
 # Smart p. 11 Elliptic Curve; Solutions: x=5,y=+-11; x=2,y=+-2
 TEST T24 Smart p. 11 Elliptic Curve
-CALL TreeSolver -b 2 -l 5 -e "y^2 - x^3 + 4 = 0" -r tran5pose,similiar
+CALL TreeSolver -b 2 -l 5 -e "y^2 - x^3 + 4 = 0" 
 
 TEST T25 Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3]; http://math.stackexchange.com/questions/677422/solve-x22-y3-using-infinite-descent; growing !
-CALL TreeSolver -b 2 -l 5 -e "x^2 + 2 - y^3" -r simliar,invall,showfail,norm
+CALL TreeSolver -b 2 -l 5 -e "x^2 + 2 - y^3" -r invall,showfail,norm
 
 TEST T26 Squeeze; https://hcmop.wordpress.com/2012/04/09/techniques-in-solving-diophantine-equations-part-2/
 CALL TreeSolver -b 2 -l 6 -e "x * (x + 1) * (x + 7) * (x + 8) - y^2"
 
 TEST T27 Fermat/Carcavi(7) mod. (x+1)^2 + 2 = (y+1)^3; solution [4,2]
-CALL TreeSolver -b 2 -l 5 -e "(x+1)^2 + 2 - (y+1)^3" -r transpose,similiar 
+CALL TreeSolver -b 2 -l 5 -e "(x+1)^2 + 2 - (y+1)^3" 
 
 TEST T28 Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3]; http://math.stackexchange.com/questions/677422/solve-x22-y3-using-infinite-descent; growing !
-CALL TreeSolver -b 3 -l 2 -e "x^2 + 2 - y^3" -r transpose,similiar
+CALL TreeSolver -b 3 -l 2 -e "x^2 + 2 - y^3" 
 
 TEST T29 Fermat/Carcavi(8) x^2 + 4 = y^3; solutions [2,2],[11,5]
-CALL TreeSolver -b 2 -l 4 -e "x^2 + 4 - y^3" -r transpose,similiar,norm,invall
+CALL TreeSolver -b 2 -l 4 -e "x^2 + 4 - y^3" -r norm,invall
 
 TEST T30 Fermat/Carcavi(10); solutions [1,1],[2,5]; http://www.jstor.org/stable/2974148?seq=1#page_scan_tab_contents
-CALL TreeSolver -b 2 -l 4 -e "(2*x^2 - 1)^2 - (2*y^2 - 1)" -r transpose,similiar 
+CALL TreeSolver -b 2 -l 4 -e "(2*x^2 - 1)^2 - (2*y^2 - 1)" 
 
 TEST T31 Fermat/Carcavi(7) x^2 + 2 = y^3; -> (a+b, a-b)
-CALL TreeSolver -b 2 -l 4 -e "(a+b)^2 + 2 - (a-b)^3" -r transpose,similiar,norm,invall 
+CALL TreeSolver -b 2 -l 4 -e "(a+b)^2 + 2 - (a-b)^3" -r norm,invall 
 
 TEST T32 FC7, behind solution
-CALL TreeSolver -b 2 -l 4 -e "(5 + 2*v + 2*u)^2 + 2 - (5 + 2*v)^3" -r simliar,transpose,norm,invall
+CALL TreeSolver -b 2 -l 4 -e "(5 + 2*v + 2*u)^2 + 2 - (5 + 2*v)^3" -r norm,invall
 
 TEST T33 Oeuvres de Fermat 5, p. 154 Remarques de A. Genocchi
-CALL TreeSolver -b 2 -l 3 -e "x^4 + x^2*y^2 + y^4 - z^2" -r similiar,transpose,norm,invall
+CALL TreeSolver -b 2 -l 3 -e "x^4 + x^2*y^2 + y^4 - z^2" -r norm,invall
 
 TEST T34 Keith Conrad Descent: Cor. 3.7
-CALL TreeSolver -b 2 -l 3 -e "y^2 = x^3 - 4*x" -r similiar,transpose,norm,invall
+CALL TreeSolver -b 2 -l 3 -e "y^2 = x^3 - 4*x" -r norm,invall
 
 TEST T35 FC7
-CALL TreeSolver -b 2 -l 5 -e " - 49 - 65*u - 28*u^2 - 4*u^3 + 75*v + 60*u*v + 12*u^2*v - 30*v^2 - 12*u*v^2 + 4*v^3" -r similiar,transpose,similiar,norm,invall
+CALL TreeSolver -b 2 -l 5 -e " - 49 - 65*u - 28*u^2 - 4*u^3 + 75*v + 60*u*v + 12*u^2*v - 30*v^2 - 12*u*v^2 + 4*v^3" -r similiar,norm,invall
 
 TEST T36 area of a rational triangle
-CALL TreeSolver -b 2 -l 3 -e "a^2 + b^2 = c^2; a*b = 2*d^2" -r similiar,transpose,norm,invall,igtriv
+CALL TreeSolver -b 2 -l 3 -e "a^2 + b^2 = c^2; a*b = 2*d^2" -r norm,invall,igtriv
 
 TEST T37 p^3 - q^5 - (p + q)^2; p,q prime; http://db.math.ust.hk/notes_download/elementary/number/ne_N3.pdf
 CALL TreeSolver -l 1 -e "p^3 - q^5 - (p + q)^2" -r norm
@@ -157,50 +157,50 @@ TEST T41 EEC(4,1,3)
 CALL TreeSolver -b 2 -l 2 -e "a^4 + b^4 + c^4 - d^4"
 
 TEST T42 Fermat 2 squares mod 4 = 3 (proof)
-CALL TreeSolver -b 2 -l 3 -e "x^2 + y^2 - 4*z - 3" -r transpose,similiar,norm,invall,showfail
+CALL TreeSolver -b 2 -l 3 -e "x^2 + y^2 - 4*z - 3" -r norm,invall,showfail
 
 TEST T43 Fermat 2 squares mod 4 = 1
-CALL TreeSolver -b 2 -l 4 -e "x^2 + y^2 - 4*z - 1" -r transpose,similiar,invall
+CALL TreeSolver -b 2 -l 4 -e "x^2 + y^2 - 4*z - 1" -r invall
 
 TEST T44 Pyth-a2b2 
 CALL TreeSolver -l 2 -e "a^2 + b^2 + c^2 - b^2*c^2"
 
 TEST T45 15 7 9 http://db.math.ust.hk/notes_download/elementary/number/ne_N3.pdf
-CALL TreeSolver -l 5 -b 2 -e "15*x^2 - 7*y^2 - 9" -r transpose,similiar,norm,showfail
+CALL TreeSolver -l 5 -b 2 -e "15*x^2 - 7*y^2 - 9" -r norm,showfail
 
 TEST T46 15 7 9
 CALL TreeSolver -l 2 -b 2 -e "15*(x+1)^2 - 7*(y+1)^2 - 9"
 
 TEST T47 15 7 9 Proof
-CALL TreeSolver -l 2 -b 3 -e "15*x^2 - 7*y^2 - 9" -r transpose,similiar,showfail
+CALL TreeSolver -l 2 -b 3 -e "15*x^2 - 7*y^2 - 9" -r showfail
 
 TEST T48 15 7 9 mod 4
-CALL TreeSolver -l 3 -b 4 -e "15*x^2 - 7*y^2 - 9" -r transpose,similiar,norm
+CALL TreeSolver -l 3 -b 4 -e "15*x^2 - 7*y^2 - 9" -r norm
 
 TEST T50 15 7 9 reduced
-CALL TreeSolver -l 3 -b 2 -e "-576+15*x^2-7*y^2" -r transpose,similiar,norm
+CALL TreeSolver -l 3 -b 2 -e "-576+15*x^2-7*y^2" -r norm
 
 TEST T51 15 7 9 reduced, from LT3
-CALL TreeSolver -l 3 -b 2 -e "-2304+15*x^2-7*y^2" -r transpose,similiar,norm
+CALL TreeSolver -l 3 -b 2 -e "-2304+15*x^2-7*y^2" -r norm
 
 # # https://books.google.de/books?id=My19IcewAnoC&lpg=PA317&ots=V3hN58VkXU&dq=Fermat%20identities&hl=de&pg=PA322#v=onepage&q=Fermat%20identities&f=false
 # # Google: Fermat identities
 # # The Mathematical Career of Pierre de Fermat, 1601-1665  von Michael Sean Mahoney p.320 ff.
 # TEST T54 test 
-# CALL TreeSolver -b 4 -l 3 -e "7 + 7*a  + 13*b - 16*k" -r similiar,transpose,norm,igtriv,invall
+# CALL TreeSolver -b 4 -l 3 -e "7 + 7*a  + 13*b - 16*k" -r norm,igtriv,invall
 #-------------------------------------------------
 # # Euler Bricks
 # TEST EB1 perfect?
-# CALL TreeSolver -b 2 -l 3 -e "2*g^2 = (m^2 + n^2)^2 + (p^2 + q^2)^2 + (r^2 + s^2)^2" -r transpose,similiar,norm,igtriv
+# CALL TreeSolver -b 2 -l 3 -e "2*g^2 = (m^2 + n^2)^2 + (p^2 + q^2)^2 + (r^2 + s^2)^2" -r norm,igtriv
 # 
 # TEST EB2 perfect?
-# CALL TreeSolver -b 2 -l 3 -e "a^2 + b^2 = d^2; a^2 + c^2 = e^2; b^2 + c^2 = f^2; g^2 = a^2 + b^2 + c^2" -r transpose,similiar,norm,igtriv
+# CALL TreeSolver -b 2 -l 3 -e "a^2 + b^2 = d^2; a^2 + c^2 = e^2; b^2 + c^2 = f^2; g^2 = a^2 + b^2 + c^2" -r norm,igtriv
 #
 # TEST EB3 Euler bricks
-# CALL TreeSolver -b 2 -l 2 -e "a^2 + b^2 = d^2; a^2 + c^2 = e^2; b^2 + c^2 = f^2" -r similiar,transpose,norm,invall
+# CALL TreeSolver -b 2 -l 2 -e "a^2 + b^2 = d^2; a^2 + c^2 = e^2; b^2 + c^2 = f^2" -r norm,invall
 # 
 # TEST EB4 perfect Euler bricks
-# CALL TreeSolver -b 2 -l 4 -e "a^2 + b^2 = d^2; a^2 + c^2 = e^2; b^2 + c^2 = f^2; a^2 + b^2 + c^2 = g^2" -r similiar,transpose,norm,invall,igtriv
+# CALL TreeSolver -b 2 -l 4 -e "a^2 + b^2 = d^2; a^2 + c^2 = e^2; b^2 + c^2 = f^2; a^2 + b^2 + c^2 = g^2" -r norm,invall,igtriv
 # 
 #===================================================
 PACKAGE=org.teherba.ramath

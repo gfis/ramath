@@ -1,6 +1,6 @@
 /*  ReasonFactory: list of reasons to decide that the tree expansion can be truncated
  *  @(#) $Id: ReasonFactory.java 970 2012-10-25 16:49:32Z gfis $
- *  2015-08-25: EvenExponentReason
+ *  2015-08-25: EvenExponentReason, isConsiderable
  *  2015-07-23: *Grow* removed
  *  2015-06-01: DoGrowReason
  *  2015-02-27: GrowingReason
@@ -62,14 +62,19 @@ public class ReasonFactory extends ArrayList<BaseReason> {
 
     /** Constructor with code list
      *  @param codeList list of codes separated by non-word characters
+     *  @param rset0 the starting {@link RelationSet}
      */
-    public ReasonFactory(String codeList) {
+    public ReasonFactory(String codeList, RelationSet rset0) {
         this();
-        this.addReason("base"); // this is always used
+        // the standard reasons
+        this.addReason("base"       , rset0);
+        this.addReason("evenexp"    , rset0);
+        this.addReason("similiar"   , rset0);
+        this.addReason("transpose"  , rset0);
         String[] reasonCodes = codeList.split("\\W"); // non-word characters, e.g. ","
         int icode = 0;
         while (icode < reasonCodes.length) {
-            this.addReason(reasonCodes[icode]); // a reason or a feature
+            this.addReason(reasonCodes[icode], rset0); // a reason or a feature
             icode ++;
         } // while icode
     } // Constructor(String)
@@ -77,14 +82,17 @@ public class ReasonFactory extends ArrayList<BaseReason> {
     /** Attempts to instantiate some reason class
      *  @param code external code for the reason
      *  @param className name of the class for the reason
+     *  @param rset0 the starting {@link RelationSet}
      *  @return instance of the reason class, or null if not found
      */
-    private BaseReason addReasonClass(String code, String className) {
+    private BaseReason addReasonClass(String code, RelationSet rset0, String className) {
         BaseReason result = null; // assume that class is not found
         try {
             result = (BaseReason) Class.forName("org.teherba.ramath.symbolic.reason." + className).newInstance();
-            result.setCode(code);
-            this.add(result);
+            if (result != null && result.isConsiderable(rset0)) {
+                result.setCode(code);
+                this.add(result);
+            }
         } catch (Exception exc) {
             // ignore any error almost silently - this reason will not be known
             result = null;
@@ -95,16 +103,17 @@ public class ReasonFactory extends ArrayList<BaseReason> {
     /** Determine a reason class from its code and add it to the list.
      *  This is the factory method which appends the applicable reasons to the list.
      *  @param code external code for the reason class
+     *  @param rset0 the starting {@link RelationSet}
      *  @return instance of the reason class, or null if not found
      */
-    public BaseReason addReason(String code) {
+    public BaseReason addReason(String code, RelationSet rset0) {
         BaseReason result = null; // assume success
         if (false) {
-        } else if (code.startsWith("base"       )) { result = addReasonClass(code, "BaseReason"        );
-        } else if (code.startsWith("evenexp"    )) { result = addReasonClass(code, "EvenExponentReason");
-        } else if (code.startsWith("same"       )) { result = addReasonClass(code, "SameReason"        );
-        } else if (code.startsWith("sim"        )) { result = addReasonClass(code, "SimiliarReason"    );
-        } else if (code.startsWith("transp"     )) { result = addReasonClass(code, "TransposeReason"   );
+        } else if (code.startsWith("base"       )) { result = addReasonClass(code, rset0, "BaseReason"        );
+        } else if (code.startsWith("evenexp"    )) { result = addReasonClass(code, rset0, "EvenExponentReason");
+        } else if (code.startsWith("same"       )) { result = addReasonClass(code, rset0, "SameReason"        );
+        } else if (code.startsWith("simil"      )) { result = addReasonClass(code, rset0, "SimiliarReason"    );
+        } else if (code.startsWith("transp"     )) { result = addReasonClass(code, rset0, "TransposeReason"   );
         } else if (code.startsWith("showf"      )) { 
             showFail = true;
             features.put(code, code);

@@ -1,4 +1,4 @@
-Expanding for base=2, transposables={{u},{v}}, reasons+features=base,simliar,transpose norm,invall, exponentParities=[1,1]
+Expanding for base=2, transposables={{u},{v}}, reasons+features=base,similiar norm,invall, exponentParities=[1,1]
 ----------------
 expanding queue[0]^-1:  - 98 + 20*u + 4*u^2 - 130*v + 8*u*v - 56*v^2 - 8*v^3 meter=[2,2] *2
 [0+2*u,1+2*v]: unknown -73+14*u+4*u^2-133*v+8*u*v-80*v^2-16*v^3 -> [1]

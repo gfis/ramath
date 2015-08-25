@@ -1,4 +1,4 @@
-Expanding for base=2, transposables={{x,y},{z}}, reasons+features=base,transpose,similiar norm,invall,showfail, exponentParities=[0,0,0]
+Expanding for base=2, transposables={{x,y},{z}}, reasons+features=base,evenexp,similiar,transpose norm,invall,showfail, exponentParities=[0,0,0]
 ----------------
 expanding queue[0]^-1: x^2 + y^2 - 3*z^2 meter=[2,2,2] *2
 solution [0,0,0],trivial(3)

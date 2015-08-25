@@ -41,8 +41,20 @@ public class TransposeReason extends BaseReason {
     public TransposeReason() {
     } // no-args Constructor
     
+    /** Whether <em>this</em> reason should be considered for 
+     *  the starting {@link RelationSet}.
+     *  Only a few reasons overwrite this method and return <em>false</em> for
+     *  some types of RelationSets.
+     *  @param rset0 the starting RelationSet, which must be initialized
+     *  @return <em>true</em> if the <em>this</em> should be considered (default), 
+     *  <em>false</em> otherwise.
+     */
+    public boolean isConsiderable(RelationSet rset0) {
+        return ! rset0.getTransposableClasses().isMonotone();
+    } // isConsiderable
+
     /** Checks a {@link RelationSet} and determines whether 
-     * there is another {@link RelationSet} on the same nesting level
+     *  there is another {@link RelationSet} on the same nesting level
      *  of the expansion tree which differs from the parameter RelationSet only
      *  by a transposition of the variable (names).
      *  @param solver the complete state of the expansion tree
@@ -60,7 +72,7 @@ public class TransposeReason extends BaseReason {
         int iqueue = solver.size() - 1; // last element
         RefinedMap  rmap2 = rset2.getRefMap();
         RelationSet rset1 = solver.get(iqueue);
-        while (iqueue > 0 && rset1.getNestingLevel() == level2) {
+        while (iqueue > 0 && rset1.getNestingLevel() == level2) { // down in the same level
             RefinedMap rmap1 = rset1.getRefMap();
             if (debug >= 1) {
                 solver.getWriter().println(""

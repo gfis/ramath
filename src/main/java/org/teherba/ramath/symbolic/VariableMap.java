@@ -259,9 +259,9 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
                 String varName = iter.next();
                 String expr    = this.get(varName);
                 if (expr.startsWith("-(")) {
-                	this.put(varName, (new Polynomial(this.get(varName)).negativeOf().toString()));
+                    this.put(varName, (new Polynomial(this.get(varName)).negativeOf().toString()));
                 } else {
-                	this.put(varName, "-(" + expr + ")");
+                    this.put(varName, "-(" + expr + ")");
                 }
             } // while iter
         return this;
@@ -291,6 +291,69 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
         } // while iter
         return result;
     } // getMeteredValues
+
+    /** Extracts the additive factor <em>a</em> and multiplicative factor <em>m</em> from a refined expression 
+     *  @param expr the refined exproession of the form <em>a+m*x</em>.
+     *  @return BigInteger[] {a,m}
+     */
+    public BigInteger[] extractRefinedFactors(String expr) {
+        BigInteger[] result = new BigInteger[2];
+        int plusPos  = expr.indexOf("+");
+        int timesPos = expr.indexOf("*");
+        result[0] = new BigInteger(expr.substring(0          , plusPos ));
+        result[1] = new BigInteger(expr.substring(plusPos + 1, timesPos));
+        return result;
+    } // extractRefinedFactors
+    
+    /** Compares the additive factors <em>a</em> and multiplicative factors <em>m</em> of two
+     *  refined expressions
+     *  @param expr1 the 1st refined exproession of the form <em>a+m*x</em>.
+     *  @param expr2 the 2nd refined exproession of the form <em>a+m*x</em>.
+     *  @return 0 if the two expressions are the same, -1 for isNegative_1, +1 otherwise
+     */
+    public int compareRefinedFactors(String expr1, String expr2) {
+        int result = 0 + 1;
+        if (expr1.equals(expr2)) {
+            result = 0;
+        } else {
+            BigInteger[] fam1 = extractRefinedFactors(expr1);
+            BigInteger[] fam2 = extractRefinedFactors(expr2);
+            if (! fam1[1].equals(fam2[1])) { // some were not involved
+            	// result = 1; already set
+                // System.out.println("??? assertion: multiplicative factors differ in compareRefinedFactors");
+            } else { // same m; for example [1,8] ? [7,8]
+                if (fam1[0].subtract(fam1[1]).negate().equals(fam2[0])) { // - (1 - 8) == 7
+                //  fam2[0].subtract(fam2[1]).negate().equals(fam1[0])   // - (7 - 8) == 1
+                    result = -1;
+                }
+            } // same m
+        } // !=
+        return result;
+    } // compareRefinedFactors
+    
+    /** Determines whether the values (Polynomials) of <em>this</em> {@link VariableMap}
+     *  could be mapped those of a second, parallel VariableMap
+     *  by transforming one or more variable <em>x</em> to <em>-x-1</em> while
+     *  maintaining the values for all other variables the same.
+     *  @param vmap2 the 2nd VariableMap to be compared with <em>this</em>
+     *  @return <em>true</em> if such a mpaping exists, <em>false</em> otherwise
+     */
+    public boolean isNegative_1(VariableMap vmap2) {
+        boolean result = true;
+        Iterator<String> viter1 = this .keySet().iterator();
+        Iterator<String> viter2 = vmap2.keySet().iterator();
+        while (result && viter1.hasNext()) {
+            String name1 = viter1.next();       
+            String name2 = viter2.next();
+            if (! name1.equals(name2)) {
+                System.out.println("??? assertion: VariableMaps not parallel in isNegative_1");
+            } else { // names in parallel
+                int sign = compareRefinedFactors(this.get(name1), vmap2.get(name2));
+                result = sign <= 0;                                                
+            } // names in parallel          
+        } // while iter
+        return result;
+    } // isNegative_1
 
     /** Refines the expressions in <em>this</em> VariableMap
      *  by one level of modulus expansion.

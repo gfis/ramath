@@ -60,6 +60,8 @@ public class BaseSolver extends Stack<RelationSet> {
     /** Writer for proof trace */
     public PrintWriter trace;
 
+    /** List of reason and feature codes from the commandline */
+    protected String codeList;
     /** Factory for reasons to truncate the expansion tree */
     protected ReasonFactory reasons;
 
@@ -101,13 +103,13 @@ public class BaseSolver extends Stack<RelationSet> {
     /** Initializes the optional parameters
      */
     protected void initialize() {
-        setFindMode         (FIND_IN_PREVIOUS);
-        setMaxLevel         (4);
-        setModBase          (2); // for n-adic modulo expansion (here: binary)
-        setSubsetting       (false);
-        setUpperSubst       (true);
-        queueHead           = 0;
-        reasons = new ReasonFactory("transpose,similiar,evenexp");
+        setFindMode   (FIND_IN_PREVIOUS);
+        setMaxLevel   (4);
+        setModBase    (2); // for n-adic modulo expansion (here: binary)
+        setSubsetting (false);
+        setUpperSubst (true);
+        queueHead     = 0;
+        codeList      = "transpose,evenexp,similiar"; // default reasons
     } // initialize
 
     //-----------------------------
@@ -318,7 +320,7 @@ public class BaseSolver extends Stack<RelationSet> {
                     } catch (Exception exc) {
                     }
                 } else if (arg.startsWith("-r") && iargs < args.length) { 
-                    reasons = new ReasonFactory(args[iargs ++]); // ignore default reason list
+                    codeList = args[iargs ++]; // overwrite default reason list
                 } else if (arg.startsWith("-q")                       ) {
                     setFindMode(1);
                 } else if (arg.startsWith("-u")                       ) {
@@ -366,34 +368,6 @@ public class BaseSolver extends Stack<RelationSet> {
     //-----------------------------------------------
     // Pseudo-abstract methods common to all Solvers
     //-----------------------------------------------
-
-    /** Gets the initial {@link RelationSet} to be solved
-     *  @return root element of the queue of RelationSets
-     */
-    protected RelationSet getRootNode() {
-        return this.get(0);
-    } // getRootNode
-
-    /** Sets root element of the queue of RelationSets
-     *  @param rset0 the initial {@link RelationSet} to be solved
-     */
-    protected void setRootNode(RelationSet rset0) {
-        Vector tpcs = rset0.getTransposableClasses();
-        setTransposables(tpcs);
-        if (tpcs.isMonotone()) { // no variable names can be transposed
-            reasons.purge("transposable"); // TransposeReason is not checked if there are no transposable variables
-        } // isMonotone
-        VariableMap emap0 = rset0.getExpressionMap();
-        if (false && emap0.size() == 0) {
-            System.out.println("BaseSolver assertion??? emap0.size()=" + emap0.size() + ", rset0=" + rset0.toString(true));
-        }    
-        if (true || rset0.getTuple() == null) {
-            rset0.setTuple(emap0, getTransposables());
-        }
-        // ModoMeter meter = new ModoMeter(rset0.getTuple().size(), 1); // assume that all variables are not involved
-        setExponentParities(rset0.getExponentParities(emap0));
-        add(rset0);
-    } // setRootNode
 
     /** Prints the header message
      *  @param rset0 initial {@link RelationSet}
@@ -528,20 +502,51 @@ public class BaseSolver extends Stack<RelationSet> {
     protected void expand(int queueIndex) {
     } // expand
 
+    /** Gets the initial {@link RelationSet} to be solved
+     *  @return root element of the queue of RelationSets
+     */
+    protected RelationSet getRootNode() {
+        return this.get(0);
+    } // getRootNode
+
+    /** Sets root element of the queue of RelationSets
+     *  @param rset0 the initial {@link RelationSet} to be solved
+     */
+    protected void setRootNode(RelationSet rset0) {
+        Vector tpcs = rset0.getTransposableClasses();
+        setTransposables(tpcs);
+    /*
+        if (tpcs.isMonotone()) { // no variable names can be transposed
+            reasons.purge("transposable"); // TransposeReason is not checked if there are no transposable variables
+        } // isMonotone
+    */
+        VariableMap emap0 = rset0.getExpressionMap();
+        if (false && emap0.size() == 0) {
+            System.out.println("BaseSolver assertion??? emap0.size()=" + emap0.size() + ", rset0=" + rset0.toString(true));
+        }    
+        if (true || rset0.getTuple() == null) {
+            rset0.setTuple(emap0, getTransposables());
+        }
+        // ModoMeter meter = new ModoMeter(rset0.getTuple().size(), 1); // assume that all variables are not involved
+        setExponentParities(rset0.getExponentParities(emap0));
+        add(rset0);
+    } // setRootNode
+
     /** Refines and evaluates modulus properties for variables in a {@link RelationSet}.
      *  The maximum queue size breaks the expansion loop in any case.
      *  @param rset0 start expansion with this {@link RelationSet}.
      *  @return whether the iteration did stop because the queue was exhausted
      */
     public boolean solve(RelationSet rset0) {
+        prevLevel = -1;
+        setRootNode(rset0);
+        reasons = new ReasonFactory(codeList, rset0);
         // determine all features
         igtriv = reasons.hasFeature("igtriv");
         invall = reasons.hasFeature("invall");
-        norm   = reasons.hasFeature("norm"  );
-
-        prevLevel = -1;
-        setRootNode(rset0);
+        norm   = reasons.hasFeature("norm"  );      
         printHeader(rset0);
+
         boolean exhausted = false;
         boolean busy = true;
         while (busy) {

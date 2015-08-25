@@ -40,9 +40,10 @@ lrass:
 	grep assert test/LR*.this.tst
 t:
 	make solver TEST=T%
-proved:
-	grep -i proof test/T*.this.tst | tee x.tmp
-	wc -l x.tmp
+proofs:
+	grep -i proof test/T*.prev.tst     > proof.prev.tmp
+	grep -i proof test/T*.this.tst | tee proof.this.tmp
+	wc -l proof.*
 # 2015-07-23: 10 proofs
 symbolic:
 	$(REGR) test/symbolic.tests $(TEST) 2>&1 \
