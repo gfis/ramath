@@ -1,5 +1,6 @@
 /*  RelationSet: a set of polynomials which relate to zero
  *  @(#) $Id: RelationSet.java 970 2012-10-25 16:49:32Z  $
+ *  2015-08-25: getExponentParities
  *  2015-06-15: RelationSet.parse was not static
  *  2015-02-19: extends Polynomial; inherit a number of methods from there
  *  2015-02-17: getTransposition; Durbach.2
@@ -38,7 +39,7 @@ import  java.io.Serializable;
 import  java.math.BigInteger;
 import  java.util.Iterator;
 import  java.util.ArrayList;
-import  java.util.Map;
+import  java.util.TreeSet;
 
 /** A RelationSet is a set of inequalities, it compares one or more {@link Polynomial}s to zero.
  *  It represents a set of diophantine relations (mostly equations) with variables
@@ -517,6 +518,29 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
         return result;
     } // getExpressionMap(String, boolean)
 
+    /** Gets the parities of variable exponents,
+     *  in the natural order of the variable names in <em>this</em> {@link RelationSet}
+     *  @param vmap a {@link VariableMap} derived from <em>this</em> {@link RelationSet}
+     *  @return a Vector of {0, 1}
+     */
+    public Vector getExponentParities(VariableMap vmap) {
+        TreeSet<String> oddNames = new TreeSet<String>(); // variables which have odd exponents
+        int ipoly = 0;
+        while (ipoly < this.size()) { // over all relations
+            oddNames.addAll(this.get(ipoly).getOddExponentVariables());
+            ipoly ++;
+        } // while ipoly
+        Vector result = new Vector(vmap.size());
+        int ivar = 0;
+        Iterator<String> viter = vmap.keySet().iterator();
+        while (viter.hasNext()) {
+            String varName = viter.next();
+            result.set(ivar, oddNames.contains(varName) ? 1 : 0);
+            ivar ++;
+        } // while viter
+        return result;
+    } // getExponentParities
+
     /** Determine whether two variable names of <em>this</em> {@link RelationSet}
      *  are interchangeable (equivalent).
      *  Caution: primitive, inefficient implementation.
@@ -581,26 +605,16 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
         return result;
     } // hasConstant
 
-    /** Substitutes variable names with the expressions from a map (if they are not null),
+    /** Substitutes variable names with the expressions from a {@link VariableMap} (if they are not null),
      *  and returns a new RelationSet.
-     *  @param varMap map of variable names to (expressions or null);
-     *  whether uppercase variables should be replaced must already be defined in this map
+     *  @param vmap map of variable names to (expressions or null);
+     *  whether uppercase variables should be replaced must already have been
+     *  defined during the construction of this map.
      *  @return a new RelationSet
      */
-    public RelationSet substitute(Map<String, String> varMap) {
-        String result = this.toString(true); // full representation contains "*name^" for all variables
-        Iterator <String> viter = varMap.keySet().iterator();
-        while (viter.hasNext()) { // over all variables to be substituted
-            String name = viter.next();
-            if (name != null) {
-                String expr = varMap.get(name);
-                if (expr != null) {
-                    result = result.replaceAll("\\*" + name + "\\^", "*(" + expr + ")^");
-                }
-            } // if valid mapping
-        } // while viter
-        return RelationSet.parse(result);
-    } // substitute(Map)
+    public RelationSet substitute(VariableMap vmap) {
+        return RelationSet.parse(vmap.substitute(this.toString(true)));
+    } // substitute(VariableMap)
 
     /** Evaluates a {@link RelationSet} without any proof history by evaluating
      *  all its member {@link Polynomial}s, and returning the cummulative results, whether

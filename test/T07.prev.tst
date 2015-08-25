@@ -1,4 +1,4 @@
-Expanding for base=2, transposables={{a,b},{c}}, reasons+features=base,transpose,similiar norm,invall
+Expanding for base=2, transposables={{a,b},{c}}, reasons+features=base,transpose,similiar norm,invall, exponentParities=[1,1,1]
 ----------------
 expanding queue[0]^-1: a^3 + b^3 - c^3 meter=[2,2,2] *2
 solution [0,0,0],trivial(3)

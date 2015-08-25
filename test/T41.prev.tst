@@ -1,4 +1,4 @@
-Expanding for base=2, transposables={{a,b,c},{d}}, reasons+features=base,transpose,similiar
+Expanding for base=2, transposables={{a,b,c},{d}}, reasons+features=base,transpose,similiar,evenexp, exponentParities=[0,0,0,0]
 ----------------
 expanding queue[0]^-1: a^4 + b^4 + c^4 - d^4 meter=[2,2,2,2] *2
 solution [0,0,0,0],trivial(3)

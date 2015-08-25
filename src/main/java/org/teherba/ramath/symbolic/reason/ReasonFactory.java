@@ -1,5 +1,6 @@
 /*  ReasonFactory: list of reasons to decide that the tree expansion can be truncated
  *  @(#) $Id: ReasonFactory.java 970 2012-10-25 16:49:32Z gfis $
+ *  2015-08-25: EvenExponentReason
  *  2015-07-23: *Grow* removed
  *  2015-06-01: DoGrowReason
  *  2015-02-27: GrowingReason
@@ -99,15 +100,18 @@ public class ReasonFactory extends ArrayList<BaseReason> {
     public BaseReason addReason(String code) {
         BaseReason result = null; // assume success
         if (false) {
-        } else if (code.startsWith("base"       )) { result = addReasonClass(code, "BaseReason"       );
-        } else if (code.startsWith("same"       )) { result = addReasonClass(code, "SameReason"       );
-        } else if (code.startsWith("sim"        )) { result = addReasonClass(code, "SimiliarReason"   );
-        } else if (code.startsWith("transp"     )) { result = addReasonClass(code, "TransposeReason"  );
+        } else if (code.startsWith("base"       )) { result = addReasonClass(code, "BaseReason"        );
+        } else if (code.startsWith("evenexp"    )) { result = addReasonClass(code, "EvenExponentReason");
+        } else if (code.startsWith("same"       )) { result = addReasonClass(code, "SameReason"        );
+        } else if (code.startsWith("sim"        )) { result = addReasonClass(code, "SimiliarReason"    );
+        } else if (code.startsWith("transp"     )) { result = addReasonClass(code, "TransposeReason"   );
         } else if (code.startsWith("showf"      )) { 
             showFail = true;
             features.put(code, code);
-        } else { // unknown reason -> feature (codes are not checked)
-        /*  BaseSolver currently understands the following features:
+        } else { 
+        /*  Unknown reasons are silently ignored.
+            Assume a feature instead. Feature codes are also not checked.
+            BaseSolver currently understands the following features:
             igtriv = reasons.hasFeature("igtriv");
             invall = reasons.hasFeature("invall");
             norm   = reasons.hasFeature("norm"  );
@@ -226,7 +230,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
      *  @return whether to queue <em>rset2</em> for further expansion
      */
     public boolean evaluateReasons(BaseSolver solver, RelationSet rset2, VariableMap vmap2) {
-    	boolean queueAgain = false;
+        boolean queueAgain = false;
         String decision = this.checkAll(solver, rset2);
         if (false) {
         } else if (decision.startsWith(VariableMap.FAILURE))   { 

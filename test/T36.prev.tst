@@ -1,4 +1,4 @@
-Expanding for base=2, transposables={{a,b},{c},{d}}, reasons+features=base,similiar,transpose igtriv,norm,invall
+Expanding for base=2, transposables={{a,b},{c},{d}}, reasons+features=base,similiar,transpose igtriv,norm,invall, exponentParities=[1,1,0,0]
 ----------------
 expanding queue[0]^-1: a^2 + b^2 - c^2; a*b - 2*d^2 meter=[2,2,2,2] *2
 [0+2*a,0+2*b,0+2*c,0+2*d]: similiar to [0], same same  a^2+b^2-c^2;a*b-2*d^2

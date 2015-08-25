@@ -1,4 +1,4 @@
-Expanding for base=2, transposables={{a,b},{c}}, reasons+features=base,similiar,transpose norm,igtriv
+Expanding for base=2, transposables={{a,b},{c}}, reasons+features=base,similiar,transpose norm,igtriv, exponentParities=[1,1,1]
 ----------------
 expanding queue[0]^-1: a^5 + b^5 - c^5 meter=[2,2,2] *2
 [0+2*a,0+2*b,0+2*c]: similiar to [0], same  a^5+b^5-c^5

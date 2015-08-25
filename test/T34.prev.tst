@@ -1,4 +1,4 @@
-Expanding for base=2, transposables={{x},{y}}, reasons+features=base,similiar,transpose norm,invall
+Expanding for base=2, transposables={{x},{y}}, reasons+features=base,similiar,transpose norm,invall, exponentParities=[1,0]
 ----------------
 expanding queue[0]^-1: 4*x - x^3 + y^2 meter=[2,2] *2
 solution [0,0],trivial(3)

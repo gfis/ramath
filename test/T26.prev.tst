@@ -1,4 +1,4 @@
-Expanding for base=2, transposables={{x},{y}}, reasons+features=base,transpose,similiar
+Expanding for base=2, transposables={{x},{y}}, reasons+features=base,transpose,similiar,evenexp, exponentParities=[1,0]
 ----------------
 expanding queue[0]^-1: 56*x + 71*x^2 + 16*x^3 + x^4 - y^2 meter=[2,2] *2
 solution [0,0],trivial(3)

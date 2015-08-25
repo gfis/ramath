@@ -43,7 +43,7 @@ TEST T04 tree solver, biquadratic minus
 CALL TreeSolver -l 3 -e "x^4 - y^4 - z^2" 
 
 TEST T05 FLT(4), biquadratic plus
-CALL TreeSolver -l 3 -e "x^4 + y^4 - z^2" -r transpose,similiar,igtriv
+CALL TreeSolver -l 3 -e "x^4 + y^4 - z^2" -r transpose,similiar,igtriv,evenexp
 
 TEST T06 Markov(3, solvable)
 CALL TreeSolver -l 3 -e "x^2 + y^2 + z^2 - 3*x*y*z" -r transpose,similiar,norm,invall,igtriv
@@ -106,7 +106,7 @@ TEST T24 Smart p. 11 Elliptic Curve
 CALL TreeSolver -b 2 -l 5 -e "y^2 - x^3 + 4 = 0" -r tran5pose,similiar
 
 TEST T25 Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3]; http://math.stackexchange.com/questions/677422/solve-x22-y3-using-infinite-descent; growing !
-CALL TreeSolver -b 2 -l 6 -e "x^2 + 2 - y^3" -r simliar,invall,showfail
+CALL TreeSolver -b 2 -l 5 -e "x^2 + 2 - y^3" -r simliar,invall,showfail,norm
 
 TEST T26 Squeeze; https://hcmop.wordpress.com/2012/04/09/techniques-in-solving-diophantine-equations-part-2/
 CALL TreeSolver -b 2 -l 6 -e "x * (x + 1) * (x + 7) * (x + 8) - y^2"
@@ -176,6 +176,12 @@ CALL TreeSolver -l 2 -b 3 -e "15*x^2 - 7*y^2 - 9" -r transpose,similiar,showfail
 
 TEST T48 15 7 9 mod 4
 CALL TreeSolver -l 3 -b 4 -e "15*x^2 - 7*y^2 - 9" -r transpose,similiar,norm
+
+TEST T50 15 7 9 reduced
+CALL TreeSolver -l 3 -b 2 -e "-576+15*x^2-7*y^2" -r transpose,similiar,norm
+
+TEST T51 15 7 9 reduced, from LT3
+CALL TreeSolver -l 3 -b 2 -e "-2304+15*x^2-7*y^2" -r transpose,similiar,norm
 
 # # https://books.google.de/books?id=My19IcewAnoC&lpg=PA317&ots=V3hN58VkXU&dq=Fermat%20identities&hl=de&pg=PA322#v=onepage&q=Fermat%20identities&f=false
 # # Google: Fermat identities

@@ -1,4 +1,4 @@
-Expanding for base=2, transposables={{x},{y}}, reasons+features=base,transpose,similiar
+Expanding for base=2, transposables={{x},{y}}, reasons+features=base,transpose,similiar, exponentParities=[1,1]
 ----------------
 expanding queue[0]^-1: 2 + 2*x + x^2 - 3*y - 3*y^2 - y^3 meter=[2,2] *2
 [0+2*x,0+2*y]: unknown 2+4*x+4*x^2-6*y-12*y^2-8*y^3 -> [1]

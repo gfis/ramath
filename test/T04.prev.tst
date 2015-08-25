@@ -1,4 +1,4 @@
-Expanding for base=2, transposables={{x},{y},{z}}, reasons+features=base,transpose,similiar
+Expanding for base=2, transposables={{x},{y},{z}}, reasons+features=base,transpose,similiar,evenexp, exponentParities=[0,0,0]
 ----------------
 expanding queue[0]^-1: x^4 - y^4 - z^2 meter=[2,2,2] *2
 solution [0,0,0],trivial(3)

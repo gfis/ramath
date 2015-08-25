@@ -7,5 +7,4 @@ after  y, phead=x^2 - 2*y^2, pbody= - 4*z, ptail=9*z^2, vmapt={x=> - 2*y + 4*z+x
 zero   z, pbody == 0, fbody=9
 after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,y=> - 4*z+y,z=>z}
 
-("x^2 - 4*x*y + 2*y^2 + 8*x*z - 7*z^2").reduce() = x^2 - 2*y^2 + z^2, vmapt={x=>x - 2*y + 4*z,y=>y - 4*z,z=>3*z}
-("x^2 - 4*x*y + 2*y^2 + 8*x*z - 7*z^2").reduce() = x^2 - 2*y^2 + z^2
+("x^2 - 4*x*y + 2*y^2 + 8*x*z - 7*z^2").getReductionMap(1) = {=>x^2 - 2*y^2 + z^2,x=>x - 2*y + 4*z,y=>y - 4*z,z=>3*z}

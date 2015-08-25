@@ -1,5 +1,6 @@
 /*  Solver: base class for solvers of Diophantine relation sets, with bean properties
  *  @(#) $Id: BaseSolver.java 970 2012-10-25 16:49:32Z gfis $
+ *  2015-08-25: EvenExponentReason
  *  2015-07-23: printSolutions
  *  2015-07-09: feature igtriv
  *  2015-05-28: subdirectory solver, renamed from Solver.java
@@ -106,13 +107,30 @@ public class BaseSolver extends Stack<RelationSet> {
         setSubsetting       (false);
         setUpperSubst       (true);
         queueHead           = 0;
-        reasons = new ReasonFactory("transpose,similiar");
+        reasons = new ReasonFactory("transpose,similiar,evenexp");
     } // initialize
 
     //-----------------------------
     // Bean properties and methods
     //-----------------------------
 
+    /** Parity of variable exponents: 0 = all even, 1 = otherwise */
+    private Vector exponentParities;
+    /** Gets the parities of variable exponents, 
+     *  in the natural order of the variable names in a {@link RelationSet}
+     *  @return a Vector of {0, 1} 
+     */
+    public Vector getExponentParities() {
+        return this.exponentParities;
+    } // getExponentParities
+    /** Sets the parities of variable exponents,
+     *  in the natural order of the variable names in a {@link RelationSet}
+     *  @param exponentParities a Vector of {0, 1} 
+     */
+    public void setExponentParities(Vector exponentParities) {
+        this.exponentParities = exponentParities;
+    } // setExponentParities
+    //----------------
     /** How to search for a previous equivalent {@link RelationSet}:
      *  in all members queued so far (1),
      *  or in parents only (0)
@@ -132,7 +150,7 @@ public class BaseSolver extends Stack<RelationSet> {
     public void setFindMode(int findMode) {
         this.findMode = findMode;
     } // setFindMode
-
+    //----------------
     /** Maximum nesting (tree height) level */
     private int maxLevel;
     /** Gets the maximum level of nesting
@@ -147,7 +165,7 @@ public class BaseSolver extends Stack<RelationSet> {
     public void setMaxLevel(int maxLevel) {
         this.maxLevel = maxLevel;
     } // setMaxLevel
-
+    //----------------
     /** Modulo base */
     private int modBase;
     /** Gets the modulo base n for n-adic expansion
@@ -156,14 +174,13 @@ public class BaseSolver extends Stack<RelationSet> {
     public int getModBase() {
         return this.modBase;
     } // getModBase
-
     /** Sets the modulo base n for n-adic expansion
      *  @param modBase = 2 or some other small (preferrably prime) number
      */
     public void setModBase(int modBase) {
         this.modBase = modBase;
     } // setModBase
-
+    //----------------
     /** Whether to substitute subsets of variables */
     private boolean subsetting;
     /** Gets the modus of variable subsetting
@@ -178,7 +195,7 @@ public class BaseSolver extends Stack<RelationSet> {
     public void setSubsetting(boolean subsetting) {
         this.subsetting = subsetting;
     } // setSubsetting
-
+    //----------------
     /** Variable name equivalence classes  */
     private Vector vtransp;
     /** Gets the vtransp
@@ -230,7 +247,7 @@ public class BaseSolver extends Stack<RelationSet> {
         result.append("}");
         return result.toString();
     } // getTransposableString
-
+    //----------------
     /** Whether to substitute uppercase variables */
     private boolean upperSubst;
     /** Gets the modus of variable replacement
@@ -245,7 +262,7 @@ public class BaseSolver extends Stack<RelationSet> {
     public void setUpperSubst(boolean upperSubst) {
         this.upperSubst = upperSubst;
     } // setUpperSubst
-
+    //----------------
     /** Gets the print writer for traces
      *  @return print writer
      */
@@ -374,6 +391,7 @@ public class BaseSolver extends Stack<RelationSet> {
             rset0.setTuple(emap0, getTransposables());
         }
         // ModoMeter meter = new ModoMeter(rset0.getTuple().size(), 1); // assume that all variables are not involved
+        setExponentParities(rset0.getExponentParities(emap0));
         add(rset0);
     } // setRootNode
 
@@ -385,6 +403,7 @@ public class BaseSolver extends Stack<RelationSet> {
             trace.print("Expanding for base=" + getModBase());
             trace.print(", transposables="    + getTransposableString(rset0));
             trace.print(", reasons+features=" + reasons.toList());
+            trace.print(", exponentParities=" + getExponentParities().toString(","));
         //  trace.print(", tuple="            + rset0.getTuple().toString());
             trace.println();
         } // debug

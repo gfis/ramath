@@ -1,4 +1,4 @@
-Expanding for base=2, transposables={{x,y},{z}}, reasons+features=base,transpose,similiar igtriv
+Expanding for base=2, transposables={{x,y},{z}}, reasons+features=base,transpose,similiar,evenexp igtriv, exponentParities=[0,0,0]
 ----------------
 expanding queue[0]^-1: x^4 + y^4 - z^2 meter=[2,2,2] *2
 [0+2*x,0+2*y,0+2*z]: unknown 16*x^4+16*y^4-4*z^2 -> [1]

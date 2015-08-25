@@ -139,7 +139,7 @@ TEST LR3 squareCompletion, from T45[1]
 CALL Polynomial -reduce "- 4 + 15*x^2 - 7*y - 7*y^2"
 
 TEST LR4 squareCompletion, from T45[2]
-CALL Polynomial -reduce "- 2 + 30*x^2 - 7*y - 14*y^2"
+CALL Polynomial -reduce "-28+15*x+15*x^2-119*y-112*y^2"
 
 TEST LR5 squareCompletion, from T45[9]
 CALL Polynomial -reduce "-42+30*x+30*x^2-105*y-56*y^2"
@@ -155,6 +155,15 @@ CALL Polynomial -reduce "15x^2 - 7*(x-w)^2 - 9"
 
 TEST LR9 squareCompletion, from T45 with sum
 CALL Polynomial -reduce "15x^2 - 7*(x+w)^2 - 9"
+
+TEST LT1 getReductionMap from T45
+CALL Polynomial -redsol -f test/T45.this.tst
+
+TEST LT2 getReductionMap from T48
+CALL Polynomial -redsol -f test/T48.this.tst
+
+TEST LT3 getReductionMap from T50
+CALL Polynomial -redsol -f test/T50.this.tst
 
 #------------------------------------
 TEST P00 constant
@@ -186,12 +195,12 @@ DATA
 -(a31*(a^2 - b^2) + 2*a32*a*b + a33*(a^2 + b^2))^2
 CALL Polynomial -f $(DATA)
 
-TEST P08 Example from http://www.solitaryroad.com/c138.html
-CALL Polynomial -reduce "x1^2 + 2x2^2 - 7x3^2 -4 x1*x2 + 8x1*x3"
-
-TEST P09 prepareCompletion
-CALL Polynomial -reduce "3x1^2 - 3*x1*x2 + 7*x1*x3"  
-
+# TEST P08 Example from http://www.solitaryroad.com/c138.html
+# CALL Polynomial -reduce "x1^2 + 2x2^2 - 7x3^2 -4 x1*x2 + 8x1*x3"
+# 
+# TEST P09 prepareCompletion
+# CALL Polynomial -reduce "3x1^2 - 3*x1*x2 + 7*x1*x3"  
+# 
 TEST P10 abstract matrix times (3,4,5,6)
 DATA
  (a11*3 + a12*4 + a13*5 + a14*6)^3
@@ -200,12 +209,12 @@ DATA
 -(a41*3 + a42*4 + a43*5 + a44*6)^3
 CALL Polynomial -f $(DATA)
 
-TEST P11 
-CALL Polynomial -reduce "3x1^4 - 3*x1*x2 + 7*x1*x3"  
-
-TEST P13 widening for completion
-CALL Polynomial -reduce "2x^3 + 3x^2 + x + y"
-
+# TEST P11 
+# CALL Polynomial -reduce "3x1^4 - 3*x1*x2 + 7*x1*x3"  
+# 
+# TEST P13 widening for completion
+# CALL Polynomial -reduce "2x^3 + 3x^2 + x + y"
+# 
 TEST P14 Price's  A' matrix times (a,b,c) yields powersum  4*a^2 + 4*b^2 - 4*c^2
 DATA
  (  2*a +   1*b    -1*c)^2

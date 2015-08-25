@@ -1,6 +1,7 @@
 /*  Polynomial: a symbolic, multivariate polynomial with addition, multiplication
  *  and exponentiation
  *  @(#) $Id: Polynomial.java 744 2011-07-26 06:29:20Z gfis $
+ *  2015-08-25: getOddExponentVariables
  *  2015-07-17: degree, isHomogeneous
  *  2015-06-17: modulus removed, coefficients are BigRatiaonal again
  *  2015-03-25: isPowerSum
@@ -52,6 +53,7 @@ import  java.util.Iterator;
 import  java.util.Map;
 import  java.util.Set;
 import  java.util.TreeMap;
+import  java.util.TreeSet;
 
 /** A Polynomial is a sum of {@link Monomial}s, ordered by the signatures
  *  (variable names and natural number exponents) of the monomials.
@@ -700,12 +702,12 @@ public class Polynomial implements Cloneable, Serializable {
         return this;
     } // divideBy(number)
 
-    /** Clone and divide a Polynomial by another Polynomial
+    /** Clone and divide a {@link Polynomial} by another Polynomial
      *  assuming that there is no rest.
      *  This method is needed only for {@link PolynomialParser},
      *  and <em>poly2</em> must be a {@link Monomial} which divides
-     *  evenly in all monomials of <em>this</em> polynomial.
-     *  @param poly2 divide by this polynomial
+     *  evenly in all monomials of <em>this</em> Polynomial.
+     *  @param poly2 divide by this Polynomial
      *  @return quotient
      */
     public Polynomial divide(Polynomial poly2) {
@@ -718,7 +720,7 @@ public class Polynomial implements Cloneable, Serializable {
     } // divide(Polynomial)
 
     /** Determines whether the parameter {@link BigRational} is a
-     *  rational solution (root) of <em>this</em> univariate Polynomial.
+     *  rational solution (root) of <em>this</em> univariate {@link Polynomial}.
      *  @param root the desired solution
      *  @return true if <em>(variable - root)</em> divides this Polynomial evenly
      */
@@ -1231,11 +1233,24 @@ x^2 + 3*x^3 + 2*x^4
     } // gcdCoefficients
 
     /*---------------- heavyweight methods ----------------------*/
-    /** Determine whether two variable names of <em>this</em> Polynomial
+    /** Gets all variable names in <em>this</em> {@link Polynomial}
+     *  which have at least one odd exponent 
+     *  @return a set of variable names
+     */
+    public TreeSet<String> getOddExponentVariables() {
+        TreeSet<String> result = new TreeSet<String>();
+        Iterator <String> miter = this.monomials.keySet().iterator();
+        while (miter.hasNext()) { // over all monomials
+            result.addAll(this.monomials.get(miter.next()).getOddExponentVariables());
+        } // while miter    
+        return result;
+    } // getExponentParities
+
+    /** Determine whether two variable names of <em>this</em> {@link Polynomial}
      *  are interchangeable (equivalent).
      *  @param name1 name of 1st variable
      *  @param name2 name of 2nd variable
-     *  @return true of the two variable names can be interchanged in the polynomial
+     *  @return true of the two variable names can be interchanged in the Polynomial
      *  without loss of structure
      */
     protected boolean areTransposable(String name1, String name2) {
@@ -1368,6 +1383,28 @@ x^2 + 3*x^3 + 2*x^4
         return result;
     } // getRest
 
+    /** Extracts, from <em>this<em> {@link Polynomial},
+     *  a new {@link RelationSet} with a Polynomial
+     *  for each power of the parameter variable.
+     *  These Polynomials gather the factors of the variable's power.
+     *  The indexes of the resulting RelationSet correspond with those powers.
+     *  @param varName variable to be factored out
+     *  @return RelationSet of factored Polynomials
+     */
+    public RelationSet getPowerFactors(String varName) {
+        RelationSet result = new RelationSet();
+        Iterator <String> titer = this.monomials.keySet().iterator();
+        while (titer.hasNext()) { // over all monomials
+            Monomial mono1 = this.monomials.get(titer.next());
+            int exp1 = mono1.getExponent(varName);
+            while (result.size() <= exp1) {
+                result.insert(exp1, new Polynomial());
+            }
+            result.get(exp1).addTo(mono1.divide(new Monomial(varName, exp1)));
+        } // while titer
+        return result;
+    } // getPowerFactors
+
     /** Extracts a new {@link Polynomial} consisting of all {@link Monomial}s
      *  that involve the variable <em>varName</em>.
      *  @param varName variable to be factored out
@@ -1406,10 +1443,10 @@ x^2 + 3*x^3 + 2*x^4
                 String var1 = mono1.firstName();
                 BigInteger croot = mono1.reducePowerCoefficient(var1);
                 String vexpr = vmap.get(var1);
-                if (! croot.equals(BigInteger.ONE)) { // could extract a root > 1
+                if (    // false && 
+                        ! croot.equals(BigInteger.ONE)) { // could extract a root > 1
                     vexpr = "(" + vmap.get(var1) + ")*" + croot.toString();
-                    // could extract a root > 1
-                }
+                } // could extract a root > 1
                 vmap.put(var1, (new Polynomial(vexpr).toString()));
             } else {
                 // a constant is not modified
@@ -1419,28 +1456,6 @@ x^2 + 3*x^3 + 2*x^4
         return this;
     } // reducePowerCoefficients
 
-    /** Extracts, from <em>this<em> {@link Polynomial},
-     *  a new {@link RelationSet} with a Polynomial
-     *  for each power of the parameter variable.
-     *  These Polynomials gather the factors of the variable's power.
-     *  The indexes of the resulting RelationSet correspond with those powers.
-     *  @param varName variable to be factored out
-     *  @return RelationSet of factored Polynomials
-     */
-    public RelationSet getPowerFactors(String varName) {
-        RelationSet result = new RelationSet();
-        Iterator <String> titer = this.monomials.keySet().iterator();
-        while (titer.hasNext()) { // over all monomials
-            Monomial mono1 = this.monomials.get(titer.next());
-            int exp1 = mono1.getExponent(varName);
-            while (result.size() <= exp1) {
-                result.insert(exp1, new Polynomial());
-            }
-            result.get(exp1).addTo(mono1.divide(new Monomial(varName, exp1)));
-        } // while titer
-        return result;
-    } // getPowerFactors
-
     /** Performs one square completion step, and widens all subpolynomials
      *  appropriately.
      *  @param varName the variable to be square completed in this step
@@ -1449,12 +1464,12 @@ x^2 + 3*x^3 + 2*x^4
      *  @param phead the subpolynomial which is already processed
      *  @param pbody the subpolynomial for variable <em>varName</em>, to be square completed
      *  @param ptail the remaining {@link Monomial}s with other variables
+     *  @param debug2 = 0: no debugging output, 1 = some, 2 = more, 3 = most
      *  @return the modified, remaining <em>ptail</em>;
      *  side effects: vmapt, phead
      */
     public Polynomial completeSquare(String varName, VariableMap vmapt
-            , Polynomial phead, Polynomial pbody, Polynomial ptail) {
-        int debug2 = 1; // debug;
+            , Polynomial phead, Polynomial pbody, Polynomial ptail, int debug2) {
         int e2 = 2;
         if (debug2 >= 2) {
             System.out.println("start0 " + varName
@@ -1595,13 +1610,16 @@ x^2 + 3*x^3 + 2*x^4
         return ptail;
     } // completeSquare
 
-    /** Creates a new {@link Polynomial} from <em>this</em> {@link Polynomial} such
+    /** Creates a new, reduced {@link Polynomial} from <em>this</em> {@link Polynomial} such
      *  that - except for a constant - the number of {@link Monomial}s
      *  is the same as the number of variables, that is each variable has a unique Monomial
      *  where it occurs.
      *  For any powered variable a suitable power (square, cubic) completion is determined,
      *  and the Polynomial is widened appropriately.
-     *  @return a new, reduced Polynomial
+     *  @param debug2 = 0: no debugging output, 1 = some, 2 = more, 3 = most
+     *  @return a new {@link VariableMap} with a mapping from variables to expression which
+     *  transforms this into the reduced Polynomial, 
+     *  and the reduced Polynomial mapped from "" (the empty String)
      *  <p>Trace of testcase LR1:
      *  <pre>
 start0 x, phead=0, pbody=x^2 - 4*x*y + 8*x*z, ptail=2*y^2 - 7*z^2, vmapt={x=>x,y=>y,z=>z}
@@ -1633,8 +1651,7 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
 ("x^2 - 4*x*y + 2*y^2 + 8*x*z - 7*z^2").reduce() = x^2 - 2*y^2 + z^2
      *  </pre>
      */
-    public Polynomial reduce() {
-        int debug2 = 1; // debug;
+    public VariableMap getReductionMap(int debug2) {
         VariableMap vmapt = this.getVariableMap("*");
         int varNo = vmapt.size();
         Polynomial  phead   = new Polynomial(); // already squared
@@ -1648,7 +1665,7 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
             ptail = ptail.subtract(pbody); // extract all with varName from it (the constant remains)
             switch (pbody.maxDegree()) {
                 case 2:
-                    ptail = completeSquare(varName, vmapt, phead, pbody, ptail);
+                    ptail = completeSquare(varName, vmapt, phead, pbody, ptail, debug2);
                     break;
                 default:
                     phead = phead.add(pbody);
@@ -1659,20 +1676,17 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
             phead = phead.add(ptail);
         }
         phead.normalizeIt().reducePowerCoefficients(vmapt);
-        if (debug2 >= 1) {
+        if (debug2 >= 0) {
             Polynomial ptest = phead.substitute(vmapt);
             if (! ptest.normalize().equals(this.normalize())) {
-                System.out.println("assertion: "
+                System.out.println("??? assertion: "
                         + ptest.normalize().toString() + " != "
                         + this .normalize().toString());
             }
-            System.out.println("(\"" + this.toString() + "\").reduce() = "
-                    + phead.toString()
-                    + ", vmapt=" + vmapt.toString()
-                    );
         } // debug2
-        return phead;
-    } // reduce
+        vmapt.put("", phead.toString()); // store the result as if being mapped from the empty String
+        return vmapt;
+    } // getReductionMap
 
     //----------------------------------------
     // Characterization, Equivalence, Mapping
@@ -2185,54 +2199,22 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
         return substitute(getVariableMap(String.valueOf(number), upperSubst));
     } // substitute(int, boolean)
 
-    /** Substitutes variable names with the expressions from a map (if they are not null),
-     *  and returns a new polynomial.
-     *  @param map map of variable names to (expressions or null);
-     *  whether uppercase variables should be replaced must already be defined in this map
-     *  @return a new polynomial
+    /** Substitutes variable names with the expressions from a {@link VariableMap} (if they are not null),
+     *  and returns a new Polynomial.
+     *  @param vmap map of variable names to (expressions or null);
+     *  whether uppercase variables should be replaced must already have been 
+     *  defined during the construction of this map.
+     *  @return a new Polynomial
      */
-    public Polynomial substitute(Map<String, String> map) {
-        String result = this.toString(true); // full representation contains "*var^" for all variables
-        String name = null;
-        String expr = null;
-        Iterator <String> 
-        viter = map.keySet().iterator();
-        int 
-        index = 0;
-        while (viter.hasNext()) { // over all variables to be substituted
-            name = viter.next();
-            if (name != null) {
-                expr = map.get(name);
-                if (expr != null) {
-                    // result = result.replaceAll("\\*" + name + "\\^", "*(" + expr + ")^");
-                    result = result.replaceAll("\\*" + name + "\\^", "*#" + index + "#^");
-                }
-            } // if valid mapping
-            index ++;
-        } // while viter 1
-
-        viter = map.keySet().iterator();
-        index = 0;
-        while (viter.hasNext()) { // over all variables to be substituted
-            name = viter.next();
-            if (true && name != null) {
-                expr = map.get(name);
-                if (true && expr != null) {
-                    result = result.replaceAll("\\*\\#" + index + "\\#\\^", "*(" + expr + ")^");
-                }
-            } // if valid mapping
-            index ++;
-        } // while viter 2
-    /*
-    */
-        return Polynomial.parse(result);
-    } // substitute(Map)
+    public Polynomial substitute(VariableMap vmap) {
+        return Polynomial.parse(vmap.substitute(this.toString(true)));
+    } // substitute(VariableMap)
 
     /** Replaces all different variables by "x_y_z", and returns the corresponding Polynomial.
      *  @return a new Polynomial with all variables replaced by a single variable.
      */
     public Polynomial mergeVariables() {
-        VariableMap      vmap = this.getVariableMap();
+        VariableMap vmap = this.getVariableMap();
         Iterator<String> viter  = vmap.keySet().iterator();
         String expr = "x_y_z"; // user should (can) not enter underscores, and solvers generate at most one '_'
         while (viter.hasNext()) { // over all variables in the map
@@ -2528,11 +2510,35 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
                     System.out.println("(\"" + poly1.toString() + "\").isPowerSum() = "
                             + poly1.isPowerSum());
 
-                } else if (opt.startsWith("-reduce")) {
+                } else if (opt.startsWith("-redsol")) { // -f TreeSolver-resultfile
+                    exprs = ereader.getArguments(iarg, args);
+                    ipoly = 0;
+                    while (ipoly < exprs.length) {
+/* lines of the form (without the spaces):
+[1+2*x,0+2*y,1+2*z]: unknown 8*x+24*x^2+32*x^3+16*x^4-16*y^4-4*z-4*z^2 -> [3]
+----------------
+expanding queue[1]^0: 16*x^4 - 16*y^4 - 4*z^2 meter=[1,1,2] *4
+solution [0,0,0],trivial(3)
+[0+2*x,0+2*y,0+4*z]: similiar to [0], same  16*x^4-16*y^4-16*z^2
+*/
+                        String line = exprs[ipoly];
+                        int unkPos = line.indexOf("unknown");
+                        if (unkPos >= 0) {
+                            int arrPos = line.indexOf("->");
+                            poly1 = Polynomial.parse(line.substring(unkPos + "unknown".length(), arrPos));
+                            vmap1 = poly1.getReductionMap(0);
+                            System.out.println(vmap1.toString().replaceAll("\\s", "")
+                                    + "\t" + line.substring(1, unkPos - 2));
+                        } // startsWIth("[")
+                        ipoly ++;
+                    } // while ipoly
+                    // -redsol
+                    
+                } else if (opt.startsWith("-reduce")) { // poly
                     poly1 = Polynomial.parse(args[iarg ++]);
-                    poly2 = poly1.reduce();
+                    vmap1 = poly1.getReductionMap(1);
                     System.out.println("(\"" + poly1.toString() + "\")"
-                            + ".reduce()" + " = "+  poly2.toString());
+                            + ".getReductionMap(1)" + " = "+  vmap1.toString());
 
                 } else if (opt.startsWith("-rest")) { // factor, poly
                     String factor = args[iarg ++];
@@ -2553,7 +2559,7 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
                     System.out.println("S(" + poly1.toString() + ", " + poly2.toString() + ") = "
                             + poly1.s_Polynomial(poly2).toString());
 
-                } else if (opt.startsWith("-subst")) {
+                } else if (opt.startsWith("-subst")) { // expr1, expr2, ... poly
                     exprs = ereader.getArguments(iarg, args);
                     poly1 = (new PolynomialParser()).parseFrom(exprs[exprs.length - 1]); // the last
                     vmap1 = poly1.getVariableMap();

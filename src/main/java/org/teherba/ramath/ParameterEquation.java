@@ -1,5 +1,6 @@
 /*  Evaluate parameterized Diophantine equations
  *  @(#) $Id: ParameterEquation.java 808 2011-09-20 16:56:14Z gfis $
+ *  2015-08-24: VariableMap instead of TreeMap
  *  2014-04-08: use BigInteger.valueOf(long)
  *  2013-05-26: negative limit => offset
  *  2011-07-24: read some parameterized formula and evaluate it
@@ -23,13 +24,13 @@
 package org.teherba.ramath;
 import  org.teherba.ramath.linear.Vector;
 import  org.teherba.ramath.symbolic.Polynomial;
+import  org.teherba.ramath.symbolic.VariableMap;
 import  org.teherba.ramath.util.Dispenser;
 import  org.teherba.ramath.util.Expander;
 import  org.teherba.ramath.util.ExpressionReader;
 import  java.math.BigInteger;
 import  java.util.Date;
 import  java.util.Iterator;
-import  java.util.TreeMap;
 
 /** Evaluate parameterized Diophantine equations.
  *  @author Dr. Georg Fischer
@@ -176,7 +177,7 @@ public class ParameterEquation {
         System.out.println("# poly\t" + formulaName + "\t" + sumPoly.toString());
 
         // now substitute many variable values drawn from the Dispenser
-        TreeMap<String, String> varMap = polys[0].getVariableMap(); // the first Polynomial must contain all variables
+        VariableMap varMap = polys[0].getVariableMap(); // the first Polynomial must contain all variables
         int ceil = Math.abs(maxDigit);
         int npoly = polys.length;
         Dispenser dispenser = new Expander(numVars, ceil, (maxDigit == ceil ? 0 : -1)); // may generate negative values
@@ -184,7 +185,7 @@ public class ParameterEquation {
             int[] values = dispenser.next();
             StringBuffer normExpr  = new StringBuffer(128);
             ipoly = 0;
-            TreeMap<String, String> sumMap = new TreeMap<String, String>();
+            VariableMap sumMap = new VariableMap();
             while (ipoly < npoly) { // set variables and evaluate
                 int ival = 0;
                 Iterator <String> viter = varMap.keySet().iterator();
@@ -251,7 +252,7 @@ public class ParameterEquation {
             ipoly ++;
         } // while filling polys
 
-        TreeMap<String, String> varMap = polys[0].getVariableMap(); // the first Polynomial must contain all variables
+        VariableMap varMap = polys[0].getVariableMap(); // the first Polynomial must contain all variables
         int ceil = Math.abs(maxDigit);
         int npoly = polys.length;
         Dispenser dispenser = new Expander(numVars, ceil, (maxDigit == ceil ? 0 : -1)); // may generate negative values

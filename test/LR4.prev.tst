@@ -1,8 +1,7 @@
-zero   x, pbody == 0, fbody=30
-after  x, phead=30*x^2, pbody=0, ptail= - 2 - 7*y - 14*y^2, vmapt={x=>x,y=>y}
+before x, phead=0, pbody=1, ptail= - 112 - 476*y - 448*y^2, mlead= + x^2, flead=4, root2=2, widev=4
+after  x, phead=15*x^2, pbody=1, ptail= - 127 - 476*y - 448*y^2, vmapt={x=>1+2*x,y=>y}
 
-before y, phead=240*x^2, pbody=1, ptail= - 16, mlead= + 2*y^2, flead=16, root2=4, widev=8
-after  y, phead=240*x^2 - 7*y^2, pbody=1, ptail= - 9, vmapt={x=>x,y=>1+4*y}
+before y, phead=15360*x^2, pbody=68, ptail= - 130048, mlead= + 16*y^2, flead=16384, root2=128, widev=1024
+after  y, phead=15360*x^2 - 28*y^2, pbody=68, ptail= - 576, vmapt={x=>1+2*x,y=>68+128*y}
 
-(" - 2 + 30*x^2 - 7*y - 14*y^2").reduce() =  - 9 + 15*x^2 - 7*y^2, vmapt={x=>4*x,y=>1 + 4*y}
-(" - 2 + 30*x^2 - 7*y - 14*y^2").reduce() =  - 9 + 15*x^2 - 7*y^2
+(" - 28 + 15*x + 15*x^2 - 119*y - 112*y^2").getReductionMap(1) = {=> - 144 + 15*x^2 - 7*y^2,x=>16 + 32*x,y=>68 + 128*y}

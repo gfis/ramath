@@ -1,6 +1,6 @@
 /*  VariableMap: maps a set of variables to their values or substitution formulas
  *  @(#) $Id: VariableMap.java 538 2010-09-08 15:08:36Z gfis $
- *  2015-08-19: multiplyBy
+ *  2015-08-19: multiplyBy, substitute
  *  2015-04-26: old_triviality returns String
  *  2015-03-02: refineExpressions(, skippable)
  *  2015-02-08: Dispenser instead of ModoMeter
@@ -332,6 +332,44 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
         } // while iter
         return result;
     } // refineExpressions
+
+    /** Substitutes variable names with the expressions from <em>this</em> Map (if they are not null),
+     *  and returns the replaced String.
+     *  Whether uppercase variables should be replaced must already be defined in this map.
+     *  @param source replace variable names in this String
+     *  @return the new String with variable names replaced
+     */
+    public String substitute(String source) {
+        String result = source; // full representation contains "*var^" for all variables
+        String name = null;
+        String expr = null;
+        Iterator <String> 
+        viter = this.keySet().iterator();
+        int 
+        index = 0;
+        while (viter.hasNext()) { // over all variables to be substituted
+            name = viter.next();
+            if (name != null) {
+                    // result = result.replaceAll("\\*" + name + "\\^", "*(" + expr + ")^");
+                    result = result.replaceAll("\\*" + name + "\\^", "*#" + index + "#^");
+            } // if valid mapping
+            index ++;
+        } // while viter 1
+
+        viter = this.keySet().iterator();
+        index = 0;
+        while (viter.hasNext()) { // over all variables to be substituted
+            name = viter.next();
+            if (true && name != null) {
+                expr = this.get(name);
+                if (true && expr != null) {
+                    result = result.replaceAll("\\*\\#" + index + "\\#\\^", "*(" + expr + ")^");
+                }
+            } // if valid mapping
+            index ++;
+        } // while viter 2
+        return result;
+    } // substitute
 
     /*----------------- test driver ----------------------*/
     /** Test method.
