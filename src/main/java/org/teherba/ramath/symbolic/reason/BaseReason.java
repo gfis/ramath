@@ -38,9 +38,6 @@ public class BaseReason {
     /** Debugging switch: 0 = no, 1 = moderate, 2 = more, 3 = extreme verbosity */
     private int debug = 0;
 
-    /** External code which identifies <em>this</em> reason */
-    protected String code;
-
     //--------------
     // Construction
     //--------------
@@ -49,30 +46,46 @@ public class BaseReason {
      */
     public BaseReason() {
     } // no-args Constructor
-    
+    //----------------
+    /** External code which identifies <em>this</em> reason */
+    protected String code;
     /** Gets the external code
      *  @return a string which identifies <em>this</em> reason
      */
     public String getCode() {
         return code;
-    } // getCode
-    
+    } // getCode  
     /** Sets the external code
      *  @param code a string which identifies <em>this</em> reason
      */
     public void setCode(String code) {
         this.code = code;
     } // setCode
-    
+    //----------------
+    /** the initial {@link RelationSet} to be solved */
+    protected RelationSet rootNode;
+    /** Gets the initial {@link RelationSet} to be solved
+     *  @return root element of the queue of RelationSets
+     */
+    protected RelationSet getRootNode() {
+        return this.rootNode;
+    } // getRootNode
+    /** Sets root element of the queue of {@link RelationSet}s
+     *  @param rset0 the initial {@link RelationSet} to be solved
+     */
+    public void setRootNode(RelationSet rset0) {
+    	this.rootNode = rset0;
+    } // setRootNode
+
+    //----------------
     /** Whether <em>this</em> reason should be considered for 
      *  the starting {@link RelationSet}.
      *  Only a few reasons overwrite this method and return <em>false</em> for
      *  some types of RelationSets.
-     *  @param rset0 the starting RelationSet 
      *  @return <em>true</em> if the <em>this</em> should be considered (default), 
      *  <em>false</em> otherwise.
      */
-    public boolean isConsiderable(RelationSet rset0) {
+    public boolean isConsiderable() {
         return true;
     } // isConsiderable
     

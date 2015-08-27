@@ -1,4 +1,4 @@
-Expanding for base=2, transposables={{a,b,c},{d}}, reasons+features=base,similiar,transpose,transpose,similiar, exponentParities=[1,1,1,1]
+Expanding for base=2, transposables={{a,b,c},{d}}, reasons+features=base,similiar,transpose,transpose,similiar, exponentGCDs=[3,3,3,3]
 ----------------
 expanding queue[0]^-1: a^3 + b^3 + c^3 - d^3 meter=[2,2,2,2] *2
 solution [0,0,0,0],trivial(3)
@@ -93,4 +93,4 @@ expanding queue[10]^3: 28 + 108*a + 144*a^2 + 64*a^3 + 108*b + 144*b^2 + 64*b^3 
 [7+8*a,7+8*b,1+8*c,7+8*d]: unknown 344+1176*a+1344*a^2+512*a^3+1176*b+1344*b^2+512*b^3+24*c+192*c^2+512*c^3-1176*d-1344*d^2-512*d^3 -> [49]
 [7+8*a,3+8*b,5+8*c,7+8*d]: unknown 152+1176*a+1344*a^2+512*a^3+216*b+576*b^2+512*b^3+600*c+960*c^2+512*c^3-1176*d-1344*d^2-512*d^3 -> [50]
 [3+8*a,7+8*b,5+8*c,7+8*d]: transposition of [50] {0/3+8*b,0/5+8*c,0/7+8*a,3/7+8*d} by 3+8*b|3+8*a 7+8*a|7+8*b
-Maximum level 2 reached, queue size = 51
+Maximum level 2 reached at [51]: a^3 + b^3 + c^3 - d^3

@@ -116,22 +116,22 @@ public class BaseSolver extends Stack<RelationSet> {
     // Bean properties and methods
     //-----------------------------
 
-    /** Parity of variable exponents: 0 = all even, 1 = otherwise */
-    private Vector exponentParities;
-    /** Gets the parities of variable exponents, 
+    /** Greatest common divisors of variable exponents: numbers >= 1 */
+    private Vector exponentGCDs;
+    /** Gets the greatest common divisors of variable exponents, 
      *  in the natural order of the variable names in a {@link RelationSet}
-     *  @return a Vector of {0, 1} 
+     *  @return a Vector of numbers >= 1
      */
-    public Vector getExponentParities() {
-        return this.exponentParities;
-    } // getExponentParities
-    /** Sets the parities of variable exponents,
+    public Vector getExponentGCDs() {
+        return this.exponentGCDs;
+    } // getExponentGCDs
+    /** Sets the greatest common divisors of variable exponents,
      *  in the natural order of the variable names in a {@link RelationSet}
-     *  @param exponentParities a Vector of {0, 1} 
+     *  @param exponentGCDs a Vector of numbers >= 1
      */
-    public void setExponentParities(Vector exponentParities) {
-        this.exponentParities = exponentParities;
-    } // setExponentParities
+    public void setExponentGCDs(Vector exponentGCDs) {
+        this.exponentGCDs = exponentGCDs;
+    } // setExponentGCDs
     //----------------
     /** How to search for a previous equivalent {@link RelationSet}:
      *  in all members queued so far (1),
@@ -377,7 +377,7 @@ public class BaseSolver extends Stack<RelationSet> {
             trace.print("Expanding for base=" + getModBase());
             trace.print(", transposables="    + getTransposableString(rset0));
             trace.print(", reasons+features=" + reasons.toList());
-            trace.print(", exponentParities=" + getExponentParities().toString(","));
+            trace.print(", exponentGCDs="     + getExponentGCDs().toString(","));
         //  trace.print(", tuple="            + rset0.getTuple().toString());
             trace.println();
         } // debug
@@ -447,16 +447,17 @@ public class BaseSolver extends Stack<RelationSet> {
     } // printSolutions
 
     /** Prints the trailer message
+     *  @param rset0 the starting {@link RelationSet}, which is shown again in the trailer message
      *  @param exhausted whether a proof was reached and the queue was exhausted
      */
-    protected void printTrailer(boolean exhausted) {
+    protected void printTrailer(RelationSet rset0, boolean exhausted) {
         if (debug >= 1) {
             if (exhausted) {
                 trace.print("Proof - queue exhausted");
             } else {
                 trace.print("Maximum level " + getMaxLevel() + " reached");
             }
-            trace.println(", queue size = " + size());
+            trace.println(" at [" + size() + "]: " + rset0.toString());
         } // debug
     } // printTrailer
 
@@ -509,7 +510,7 @@ public class BaseSolver extends Stack<RelationSet> {
         return this.get(0);
     } // getRootNode
 
-    /** Sets root element of the queue of RelationSets
+    /** Sets root element of the queue of {@link RelationSet}s
      *  @param rset0 the initial {@link RelationSet} to be solved
      */
     protected void setRootNode(RelationSet rset0) {
@@ -528,7 +529,7 @@ public class BaseSolver extends Stack<RelationSet> {
             rset0.setTuple(emap0, getTransposables());
         }
         // ModoMeter meter = new ModoMeter(rset0.getTuple().size(), 1); // assume that all variables are not involved
-        setExponentParities(rset0.getExponentParities(emap0));
+        setExponentGCDs(rset0.getExponentGCDs(emap0));
         add(rset0);
     } // setRootNode
 
@@ -565,7 +566,7 @@ public class BaseSolver extends Stack<RelationSet> {
                 }
             }
         } // while busy
-        printTrailer(exhausted);
+        printTrailer(rset0, exhausted);
         close();
         return exhausted;
     } // solve

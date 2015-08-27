@@ -89,10 +89,13 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         BaseReason result = null; // assume that class is not found
         try {
             result = (BaseReason) Class.forName("org.teherba.ramath.symbolic.reason." + className).newInstance();
-            if (result != null && result.isConsiderable(rset0)) {
-                result.setCode(code);
-                this.add(result);
-            }
+            if (result != null) { // known reason
+            	result.setRootNode(rset0);
+                if (result.isConsiderable()) { // needs the rootNode
+                    result.setCode(code);
+                    this.add(result);
+                } // considerable
+            } // known reason
         } catch (Exception exc) {
             // ignore any error almost silently - this reason will not be known
             result = null;

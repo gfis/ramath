@@ -30,6 +30,7 @@ package org.teherba.ramath.symbolic;
 import  org.teherba.ramath.symbolic.PolyVector;
 import  org.teherba.ramath.util.Dispenser;
 import  org.teherba.ramath.util.ModoMeter; // for test only
+import  org.teherba.ramath.linear.Vector;
 import  java.io.Serializable;
 import  java.math.BigInteger;
 import  java.util.Iterator;
@@ -297,12 +298,12 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
      *  @return BigInteger[] {a,m}
      */
     public BigInteger[] extractRefinedFactors(String expr) {
-        BigInteger[] result = new BigInteger[2];
         int plusPos  = expr.indexOf("+");
         int timesPos = expr.indexOf("*");
-        result[0] = new BigInteger(expr.substring(0          , plusPos ));
-        result[1] = new BigInteger(expr.substring(plusPos + 1, timesPos));
-        return result;
+        return new BigInteger[] 
+                { new BigInteger(expr.substring(0          , plusPos ))
+                , new BigInteger(expr.substring(plusPos + 1, timesPos))
+                };
     } // extractRefinedFactors
     
     /** Compares the additive factors <em>a</em> and multiplicative factors <em>m</em> of two
@@ -319,7 +320,7 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
             BigInteger[] fam1 = extractRefinedFactors(expr1);
             BigInteger[] fam2 = extractRefinedFactors(expr2);
             if (! fam1[1].equals(fam2[1])) { // some were not involved
-            	// result = 1; already set
+                // result = 1; already set
                 // System.out.println("??? assertion: multiplicative factors differ in compareRefinedFactors");
             } else { // same m; for example [1,8] ? [7,8]
                 if (fam1[0].subtract(fam1[1]).negate().equals(fam2[0])) { // - (1 - 8) == 7
@@ -336,22 +337,32 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
      *  by transforming one or more variable <em>x</em> to <em>-x-1</em> while
      *  maintaining the values for all other variables the same.
      *  @param vmap2 the 2nd VariableMap to be compared with <em>this</em>
+     *  @param expGCDs the greatest common divisors of the variables' exponents in natural order
      *  @return <em>true</em> if such a mpaping exists, <em>false</em> otherwise
      */
-    public boolean isNegative_1(VariableMap vmap2) {
-        boolean result = true;
+    public boolean isNegative_1(VariableMap vmap2, Vector expGCDs) {
+        boolean result = true; // assume success
         Iterator<String> viter1 = this .keySet().iterator();
         Iterator<String> viter2 = vmap2.keySet().iterator();
+        int ivar = 0;
         while (result && viter1.hasNext()) {
             String name1 = viter1.next();       
             String name2 = viter2.next();
             if (! name1.equals(name2)) {
                 System.out.println("??? assertion: VariableMaps not parallel in isNegative_1");
+                result = false;
             } else { // names in parallel
-                int sign = compareRefinedFactors(this.get(name1), vmap2.get(name2));
-                result = sign <= 0;                                                
+                String expr1 = this .get(name1);
+                String expr2 = vmap2.get(name2);
+                int sign = compareRefinedFactors(expr1, expr2);
+                if (expGCDs.get(ivar) % 2 == 0) { // only even exponents for this variable
+                    result = sign <= 0; // same expressions, or mappable by -x-1
+                } else { // some odd exponents for this variable
+                    result = sign == 0; // same expressions
+                }
             } // names in parallel          
-        } // while iter
+            ivar ++;
+        } // while viter
         return result;
     } // isNegative_1
 

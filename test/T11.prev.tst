@@ -1,4 +1,4 @@
-Expanding for base=2, transposables={{x,y,z}}, reasons+features=base,similiar,transpose,transpose,similiar, exponentParities=[1,1,1]
+Expanding for base=2, transposables={{x,y,z}}, reasons+features=base,similiar,transpose,transpose,similiar, exponentGCDs=[1,1,1]
 ----------------
 expanding queue[0]^-1: x^2 + y^2 - 4*x*y*z + z^2 meter=[2,2,2] *2
 solution [0,0,0],trivial(3)
@@ -35,4 +35,4 @@ solution [0,0,0],trivial(3)
 expanding queue[8]^7: 65536*x^2 + 65536*y^2 - 67108864*x*y*z + 65536*z^2 meter=[2,2,2] *512
 solution [0,0,0],trivial(3)
 [0+512*x,0+512*y,0+512*z]: unknown 262144*x^2+262144*y^2-536870912*x*y*z+262144*z^2 -> [9]
-Maximum level 8 reached, queue size = 10
+Maximum level 8 reached at [10]: x^2 + y^2 - 4*x*y*z + z^2

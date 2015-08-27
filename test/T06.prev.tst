@@ -1,4 +1,4 @@
-Expanding for base=2, transposables={{x,y,z}}, reasons+features=base,similiar,transpose igtriv,norm,invall, exponentParities=[1,1,1]
+Expanding for base=2, transposables={{x,y,z}}, reasons+features=base,similiar,transpose igtriv,norm,invall, exponentGCDs=[1,1,1]
 ----------------
 expanding queue[0]^-1: x^2 + y^2 - 3*x*y*z + z^2 meter=[2,2,2] *2
 [0+2*x,0+2*y,0+2*z]: unknown x^2+y^2-6*x*y*z+z^2 -> [1]
@@ -126,4 +126,4 @@ expanding queue[25]^9:  - 29 - 31*x + 8*x^2 - 99*y - 120*x*y + 8*y^2 - 53*z - 72
 [7+16*x,11+16*y,5+16*z]: unknown -60-151*x+16*x^2-83*y-240*x*y+16*y^2-221*z-528*x*z-336*y*z-768*x*y*z+16*z^2 -> [75]
 [7+16*x,3+16*y,13+16*z]: unknown -37-103*x+16*x^2-267*y-624*x*y+16*y^2-37*z-144*x*z-336*y*z-768*x*y*z+16*z^2 -> [76]
 [15+16*x,11+16*y,13+16*z]: unknown -370-399*x+16*x^2-563*y-624*x*y+16*y^2-469*z-528*x*z-720*y*z-768*x*y*z+16*z^2 -> [77]
-Maximum level 3 reached, queue size = 78
+Maximum level 3 reached at [78]: x^2 + y^2 - 3*x*y*z + z^2

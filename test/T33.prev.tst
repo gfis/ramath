@@ -1,4 +1,4 @@
-Expanding for base=2, transposables={{x,y},{z}}, reasons+features=base,evenexp,similiar,transpose norm,invall, exponentParities=[0,0,0]
+Expanding for base=2, transposables={{x,y},{z}}, reasons+features=base,evenexp,similiar,transpose norm,invall, exponentGCDs=[2,2,2]
 ----------------
 expanding queue[0]^-1: x^4 + x^2*y^2 + y^4 - z^2 meter=[2,2,2] *2
 solution [0,0,0],trivial(3)
@@ -86,4 +86,4 @@ expanding queue[15]^6: 80 + 330*x + 664*x^2 + 640*x^3 + 256*x^4 + 228*y + 320*x*
 [13+16*x,4+16*y,1+16*z]: unknown 985+4602*x+8240*x^2+6656*x^3+2048*x^4+804*y+1664*x*y+1024*x^2*y+2120*y^2+3328*x*y^2+2048*x^2*y^2+2048*y^3+2048*y^4-z-8*z^2 -> [37]
 [5+16*x,12+16*y,1+16*z]: negative-1 of [36] by {x=>5+16*x,y=>4+16*y,z=>1+16*z}
 [13+16*x,12+16*y,1+16*z]: negative-1 of [37] by {x=>13+16*x,y=>4+16*y,z=>1+16*z}
-Maximum level 3 reached, queue size = 38
+Maximum level 3 reached at [38]: x^4 + x^2*y^2 + y^4 - z^2

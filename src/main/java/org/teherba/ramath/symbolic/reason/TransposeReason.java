@@ -1,5 +1,6 @@
 /*  TransposeReason: checks the transposition of variable names
  *  @(#) $Id: TransposeReason.java 970 2012-10-25 16:49:32Z gfis $
+ *  2015-08-25: isConsiderable
  *  2015-02-22, Georg Fischer
  */
 /*
@@ -26,8 +27,8 @@ import  org.teherba.ramath.symbolic.solver.BaseSolver;
 import  org.teherba.ramath.linear.Vector;
 
 /** Checks whether there is another {@link RelationSet} on the same nesting level
- *  of the expansions tree which differs from the RelationSet in question only
- *  by a transposition of the variable (names).
+ *  of the expansion tree which differs from the RelationSet in question only
+ *  by a transposition of the variable names.
  *  @author Dr. Georg Fischer
  */
 public class TransposeReason extends BaseReason {
@@ -49,8 +50,8 @@ public class TransposeReason extends BaseReason {
      *  @return <em>true</em> if the <em>this</em> should be considered (default), 
      *  <em>false</em> otherwise.
      */
-    public boolean isConsiderable(RelationSet rset0) {
-        return ! rset0.getTransposableClasses().isMonotone();
+    public boolean isConsiderable() {
+        return ! this.getRootNode().getTransposableClasses().isMonotone();
     } // isConsiderable
 
     /** Checks a {@link RelationSet} and determines whether 

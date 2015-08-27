@@ -1,4 +1,4 @@
-Expanding for base=2, transposables={{x,y,z}}, reasons+features=base,similiar,transpose norm, exponentParities=[1,1,1]
+Expanding for base=2, transposables={{x,y,z}}, reasons+features=base,similiar,transpose norm, exponentGCDs=[1,1,1]
 ----------------
 expanding queue[0]^-1: x^2 + y^2 - 5*x*y*z + z^2 meter=[2,2,2] *2
 solution [0,0,0],trivial(3)
@@ -72,4 +72,4 @@ expanding queue[16]^7:  - 196 - 231*x + 8*x^2 - 231*y - 280*x*y + 8*y^2 - 231*z 
 [15+16*x,15+16*y,7+16*z]: unknown -461-495*x+16*x^2-495*y-560*x*y+16*y^2-1111*z-1200*x*z-1200*y*z-1280*x*y*z+16*z^2 -> [35]
 [15+16*x,7+16*y,15+16*z]: transposition of [35] {0/15+16*x,0/15+16*y,0/7+16*z} by 15+16*y|15+16*z 7+16*z|7+16*y
 [7+16*x,15+16*y,15+16*z]: transposition of [35] {0/15+16*x,0/15+16*y,0/7+16*z} by 15+16*x|15+16*y 15+16*y|15+16*z 7+16*z|7+16*x
-Maximum level 3 reached, queue size = 36
+Maximum level 3 reached at [36]: x^2 + y^2 - 5*x*y*z + z^2

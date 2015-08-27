@@ -1,6 +1,6 @@
 /*  Monomial: a product with a signed numeric coefficient and optional exponentiated variable(s)
  *  @(#) $Id: Monomial.java 522 2010-07-26 07:14:48Z gfis $
- *  2015-08-25: getOddExponentVariables
+ *  2015-08-27: getExponentGCDs
  *  2015-08-16: toFactoredString() with powers of prime factors
  *  2015-07-17: degree
  *  2015-03-25: firstName
@@ -38,7 +38,6 @@ import  java.util.Arrays;
 import  java.util.Iterator;
 import  java.util.Set;
 import  java.util.TreeMap;
-import  java.util.TreeSet;
 
 /** Bean for a {@link Polynomial} with only one summand (term).
  *  A monomial consists of a product with a signed {@link BigInteger} coefficient
@@ -893,23 +892,6 @@ public class Monomial implements Cloneable, Serializable {
         }
         return result.toString();
     } // toString(full)
-
-    /** Gets all variable names in <em>this</em> {@link Monomial}
-     *  which have at least one odd exponent 
-     *  @return a set of variable names
-     */
-    public TreeSet<String> getOddExponentVariables() {
-    	TreeSet<String> result = new TreeSet<String>();
-        Iterator <String> viter = this.vars.keySet().iterator();
-        while (viter.hasNext()) { // over all variables
-            String name = viter.next();
-            int exp  = this.getExponent(name);
-            if (exp % 2 != 0) {
-                result.add(name);
-            }
-        } // while miter  	
-        return result;
-    } // getExponentParities
 
     /** Takes the variables from <em>mono2</em> and
      *  creates a monomial with the powers of these variables

@@ -1,4 +1,4 @@
-Expanding for base=2, transposables={{x},{y}}, reasons+features=base,evenexp,similiar,evenexp,similiar, exponentParities=[0,0]
+Expanding for base=2, transposables={{x},{y}}, reasons+features=base,evenexp,similiar,evenexp,similiar, exponentGCDs=[2,2]
 ----------------
 expanding queue[0]^-1: 2 - 4*x^2 + 4*x^4 - 2*y^2 meter=[1,2] *2
 [0+1*x,1+2*y]: unknown -4*x^2+4*x^4-8*y-8*y^2 -> [1]
@@ -36,4 +36,4 @@ expanding queue[8]^5: 32*x + 320*x^2 + 1024*x^3 + 1024*x^4 - 32*y - 128*y^2 mete
 solution [1,1],trivial(2)
 [1+8*x,1+16*y]: unknown 64*x+1280*x^2+8192*x^3+16384*x^4-64*y-512*y^2 -> [11]
 [5+8*x,9+16*y]: unknown 2240+15680*x+38144*x^2+40960*x^3+16384*x^4-576*y-512*y^2 -> [12]
-Maximum level 4 reached, queue size = 13
+Maximum level 4 reached at [13]: 2 - 4*x^2 + 4*x^4 - 2*y^2

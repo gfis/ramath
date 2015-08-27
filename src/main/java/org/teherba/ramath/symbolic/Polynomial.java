@@ -1,7 +1,7 @@
 /*  Polynomial: a symbolic, multivariate polynomial with addition, multiplication
  *  and exponentiation
  *  @(#) $Id: Polynomial.java 744 2011-07-26 06:29:20Z gfis $
- *  2015-08-25: getOddExponentVariables
+ *  2015-08-25: getExponentGCDs
  *  2015-07-17: degree, isHomogeneous
  *  2015-06-17: modulus removed, coefficients are BigRatiaonal again
  *  2015-03-25: isPowerSum
@@ -53,7 +53,6 @@ import  java.util.Iterator;
 import  java.util.Map;
 import  java.util.Set;
 import  java.util.TreeMap;
-import  java.util.TreeSet;
 
 /** A Polynomial is a sum of {@link Monomial}s, ordered by the signatures
  *  (variable names and natural number exponents) of the monomials.
@@ -1233,18 +1232,40 @@ x^2 + 3*x^3 + 2*x^4
     } // gcdCoefficients
 
     /*---------------- heavyweight methods ----------------------*/
-    /** Gets all variable names in <em>this</em> {@link Polynomial}
-     *  which have at least one odd exponent 
-     *  @return a set of variable names
+    /** Joins a map of variable names 
+     *  to the greatest common divisors of that variables' exponents
+     *  with the variables' exponents in an additional {@link Polynomial}
+     *  @param expGCDs map assembled so far, which is augmented
+     *  @param poly1 the Polynomial with the additional variable exponents
      */
-    public TreeSet<String> getOddExponentVariables() {
-        TreeSet<String> result = new TreeSet<String>();
-        Iterator <String> miter = this.monomials.keySet().iterator();
-        while (miter.hasNext()) { // over all monomials
-            result.addAll(this.monomials.get(miter.next()).getOddExponentVariables());
+    public static void joinExponentGCDs(TreeMap<String, Integer> expGCDs, Polynomial poly1) {
+        Iterator <String> miter = poly1.monomials.keySet().iterator();
+        while (miter.hasNext()) { // over all signatures of monomials
+        	Monomial mono1 = poly1.get(miter.next());
+            TreeMap<String, Integer>  mvars = mono1.getMap();
+            Iterator <String> viter = mvars.keySet().iterator();
+            while (viter.hasNext()) { // over all variables
+                String vname = viter.next();
+                int    vexp  = mono1.getExponent(vname);
+                Integer rexp = expGCDs.get(vname);
+                if (rexp == null) {
+                    expGCDs.put(vname, new Integer(vexp));
+                } else {
+                    expGCDs.put(vname, new Integer(Vector.gcd(rexp.intValue(), vexp)));
+                }
+            } // while viter
         } // while miter    
+    } // joinExponentGCDs
+
+    /** Gets a map of variable names in <em>this</em> {@link Polynomial}
+     *  to the greatest common divisors of that variables' exponents.
+     *  @return a map of variable names to the greatest common divisors of their exponents
+     */
+    public TreeMap<String, Integer> getExponentGCDs() {
+        TreeMap<String, Integer> result = new TreeMap<String, Integer>();
+        joinExponentGCDs(result, this);
         return result;
-    } // getExponentParities
+    } // getExponentGCDs
 
     /** Determine whether two variable names of <em>this</em> {@link Polynomial}
      *  are interchangeable (equivalent).

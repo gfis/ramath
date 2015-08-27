@@ -1,4 +1,4 @@
-Expanding for base=2, transposables={{u},{v}}, reasons+features=base,similiar norm,invall, exponentParities=[1,1]
+Expanding for base=2, transposables={{u},{v}}, reasons+features=base,similiar norm,invall, exponentGCDs=[1,1]
 ----------------
 expanding queue[0]^-1:  - 98 + 20*u + 4*u^2 - 130*v + 8*u*v - 56*v^2 - 8*v^3 meter=[2,2] *2
 [0+2*u,1+2*v]: unknown -73+14*u+4*u^2-133*v+8*u*v-80*v^2-16*v^3 -> [1]
@@ -97,4 +97,4 @@ expanding queue[29]^14:  - 22 + 50*u + 32*u^2 - 313*v + 64*u*v - 1024*v^2 - 1024
 expanding queue[30]^14: 11 + 82*u + 32*u^2 - 281*v + 64*u*v - 1024*v^2 - 1024*v^3 meter=[2,2] *32
 [15+32*u,19+32*v]: unknown -1159+146*u+64*u^2-5401*v+128*u*v-8192*v^2-4096*v^3 -> [61]
 [31+32*u,19+32*v]: unknown -1070+210*u+64*u^2-5337*v+128*u*v-8192*v^2-4096*v^3 -> [62]
-Maximum level 4 reached, queue size = 63
+Maximum level 4 reached at [63]:  - 98 + 20*u + 4*u^2 - 130*v + 8*u*v - 56*v^2 - 8*v^3

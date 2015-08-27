@@ -1,4 +1,4 @@
-Expanding for base=2, transposables={{x},{y}}, reasons+features=base,evenexp,similiar,evenexp,similiar, exponentParities=[1,0]
+Expanding for base=2, transposables={{x},{y}}, reasons+features=base,evenexp,similiar,evenexp,similiar, exponentGCDs=[3,2]
 ----------------
 expanding queue[0]^-1: 4 - x^3 + y^2 meter=[2,2] *2
 [0+2*x,0+2*y]: unknown 4-8*x^3+4*y^2 -> [1]
@@ -75,4 +75,4 @@ expanding queue[21]^12:  - 9088 - 42336*x - 64512*x^2 - 32768*x^3 + 832*y + 1024
 expanding queue[22]^12:  - 8416 - 42336*x - 64512*x^2 - 32768*x^3 + 1856*y + 1024*y^2 meter=[2,2] *64
 [53+64*x,29+64*y]: unknown -148032-539328*x-651264*x^2-262144*x^3+3712*y+4096*y^2 -> [41]
 [53+64*x,61+64*y]: unknown -145152-539328*x-651264*x^2-262144*x^3+7808*y+4096*y^2 -> [42]
-Maximum level 5 reached, queue size = 43
+Maximum level 5 reached at [43]: 4 - x^3 + y^2

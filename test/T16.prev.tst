@@ -1,4 +1,4 @@
-Expanding for base=2, transposables={{a,b},{c}}, reasons+features=base,evenexp,similiar,transpose,transpose,evenexp,similiar, exponentParities=[0,0,0]
+Expanding for base=2, transposables={{a,b},{c}}, reasons+features=base,evenexp,similiar,transpose,transpose,evenexp,similiar, exponentGCDs=[2,2,2]
 ----------------
 expanding queue[0]^-1: a^2 + b^2 - c^2 meter=[2,2,2] *2
 solution [0,0,0],trivial(3)
@@ -59,4 +59,4 @@ solution [13,0,13],trivial(3)
 expanding queue[12]^4:  - 128 + 160*a + 256*a^2 + 64*b + 64*b^2 - 416*c - 256*c^2 meter=[2,1,2] *32
 [5+32*a,4+8*b,13+32*c]: unknown -128+320*a+1024*a^2+64*b+64*b^2-832*c-1024*c^2 -> [27]
 [21+32*a,4+8*b,29+32*c]: unknown -384+1344*a+1024*a^2+64*b+64*b^2-1856*c-1024*c^2 -> [28]
-Maximum level 4 reached, queue size = 29
+Maximum level 4 reached at [29]: a^2 + b^2 - c^2

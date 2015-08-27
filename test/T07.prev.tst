@@ -1,4 +1,4 @@
-Expanding for base=2, transposables={{a,b},{c}}, reasons+features=base,similiar,transpose norm,invall, exponentParities=[1,1,1]
+Expanding for base=2, transposables={{a,b},{c}}, reasons+features=base,similiar,transpose norm,invall, exponentGCDs=[3,3,3]
 ----------------
 expanding queue[0]^-1: a^3 + b^3 - c^3 meter=[2,2,2] *2
 solution [0,0,0],trivial(3)
@@ -176,4 +176,4 @@ expanding queue[32]^8: 27 + 147*a + 168*a^2 + 64*a^3 + 108*b + 144*b^2 + 64*b^3 
 [15+16*a,14+16*b,7+16*c]: unknown 361+675*a+720*a^2+256*a^3+588*b+672*b^2+256*b^3-147*c-336*c^2-256*c^3 -> [126]
 [7+16*a,6+16*b,15+16*c]: unknown -176+147*a+336*a^2+256*a^3+108*b+288*b^2+256*b^3-675*c-720*c^2-256*c^3 -> [127]
 [7+16*a,14+16*b,15+16*c]: unknown -18+147*a+336*a^2+256*a^3+588*b+672*b^2+256*b^3-675*c-720*c^2-256*c^3 -> [128]
-Maximum level 3 reached, queue size = 129
+Maximum level 3 reached at [129]: a^3 + b^3 - c^3

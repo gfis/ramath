@@ -1,4 +1,4 @@
-Expanding for base=2, transposables={{u},{v}}, reasons+features=base,similiar,similiar norm,invall, exponentParities=[1,1]
+Expanding for base=2, transposables={{u},{v}}, reasons+features=base,similiar,similiar norm,invall, exponentGCDs=[1,1]
 ----------------
 expanding queue[0]^-1:  - 49 - 65*u - 28*u^2 - 4*u^3 + 75*v + 60*u*v + 12*u^2*v - 30*v^2 - 12*u*v^2 + 4*v^3 meter=[2,2] *2
 [1+2*u,0+2*v]: unknown -73-133*u-80*u^2-16*u^3+147*v+168*u*v+48*u^2*v-84*v^2-48*u*v^2+16*v^3 -> [1]
@@ -199,4 +199,4 @@ expanding queue[61]^30: 146 - 1305*u + 4096*u^2 - 4096*u^3 + 1323*v - 8064*u*v +
 expanding queue[62]^30: 171 - 1241*u + 4096*u^2 - 4096*u^3 + 1323*v - 8064*u*v + 12288*u^2*v + 4032*v^2 - 12288*u*v^2 + 4096*v^3 meter=[2,2] *64
 [50+64*u,31+64*v]: unknown -535-5337*u-16384*u^2-16384*u^3+5547*v+33024*u*v+49152*u^2*v-16512*v^2-49152*u*v^2+16384*v^3 -> [125]
 [18+64*u,63+64*v]: unknown 4811-21593*u+32768*u^2-16384*u^3+21675*v-65280*u*v+49152*u^2*v+32640*v^2-49152*u*v^2+16384*v^3 -> [126]
-Maximum level 5 reached, queue size = 127
+Maximum level 5 reached at [127]:  - 49 - 65*u - 28*u^2 - 4*u^3 + 75*v + 60*u*v + 12*u^2*v - 30*v^2 - 12*u*v^2 + 4*v^3

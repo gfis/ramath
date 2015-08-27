@@ -1,6 +1,6 @@
 /*  RelationSet: a set of polynomials which relate to zero
  *  @(#) $Id: RelationSet.java 970 2012-10-25 16:49:32Z  $
- *  2015-08-25: getExponentParities
+ *  2015-08-25: getExponentGCDs
  *  2015-06-15: RelationSet.parse was not static
  *  2015-02-19: extends Polynomial; inherit a number of methods from there
  *  2015-02-17: getTransposition; Durbach.2
@@ -39,7 +39,7 @@ import  java.io.Serializable;
 import  java.math.BigInteger;
 import  java.util.Iterator;
 import  java.util.ArrayList;
-import  java.util.TreeSet;
+import  java.util.TreeMap;
 
 /** A RelationSet is a set of inequalities, it compares one or more {@link Polynomial}s to zero.
  *  It represents a set of diophantine relations (mostly equations) with variables
@@ -518,28 +518,28 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
         return result;
     } // getExpressionMap(String, boolean)
 
-    /** Gets the parities of variable exponents,
+    /** Gets the greatest common divisors of variable exponents,
      *  in the natural order of the variable names in <em>this</em> {@link RelationSet}
-     *  @param vmap a {@link VariableMap} derived from <em>this</em> {@link RelationSet}
-     *  @return a Vector of {0, 1}
+     *  @param vmap (not used)
+     *  @return a map of variable names to the greatest common divisors of their exponents
      */
-    public Vector getExponentParities(VariableMap vmap) {
-        TreeSet<String> oddNames = new TreeSet<String>(); // variables which have odd exponents
+    public Vector getExponentGCDs(VariableMap vmap) {
+        TreeMap<String, Integer> expGCDs = new TreeMap<String, Integer>();
         int ipoly = 0;
         while (ipoly < this.size()) { // over all relations
-            oddNames.addAll(this.get(ipoly).getOddExponentVariables());
+	        joinExponentGCDs(expGCDs, this.get(ipoly));
             ipoly ++;
         } // while ipoly
-        Vector result = new Vector(vmap.size());
+        Vector result = new Vector(expGCDs.size());
         int ivar = 0;
-        Iterator<String> viter = vmap.keySet().iterator();
+        Iterator<String> viter = expGCDs.keySet().iterator();
         while (viter.hasNext()) {
             String varName = viter.next();
-            result.set(ivar, oddNames.contains(varName) ? 1 : 0);
+            result.set(ivar, expGCDs.get(varName).intValue());
             ivar ++;
         } // while viter
         return result;
-    } // getExponentParities
+    } // getExponentGCDs
 
     /** Determine whether two variable names of <em>this</em> {@link RelationSet}
      *  are interchangeable (equivalent).

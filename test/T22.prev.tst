@@ -1,4 +1,4 @@
-Expanding for base=2, transposables={{a,b},{c}}, reasons+features=base,similiar,transpose norm,igtriv, exponentParities=[1,1,1]
+Expanding for base=2, transposables={{a,b},{c}}, reasons+features=base,similiar,transpose norm,igtriv, exponentGCDs=[3,3,3]
 ----------------
 expanding queue[0]^-1: a^3 + b^3 - c^3 meter=[2,2,2] *2
 [0+2*a,0+2*b,0+2*c]: similiar to [0], same  a^3+b^3-c^3
@@ -150,4 +150,4 @@ expanding queue[35]^11:  - 189 + 147*a + 336*a^2 + 256*a^3 + 3*b + 6*b^2 + 4*b^3
 [7+32*a,6+8*b,15+32*c]: unknown -88+147*a+672*a^2+1024*a^3+27*b+36*b^2+16*b^3-675*c-1440*c^2-1024*c^3 -> [105]
 [7+32*a,2+8*b,31+32*c]: unknown -920+147*a+672*a^2+1024*a^3+3*b+12*b^2+16*b^3-2883*c-2976*c^2-1024*c^3 -> [106]
 [23+32*a,6+8*b,31+32*c]: unknown -544+1587*a+2208*a^2+1024*a^3+27*b+36*b^2+16*b^3-2883*c-2976*c^2-1024*c^3 -> [107]
-Maximum level 4 reached, queue size = 108
+Maximum level 4 reached at [108]: a^3 + b^3 - c^3

@@ -43,7 +43,7 @@ TEST T04 tree solver, biquadratic minus
 CALL TreeSolver -l 3 -e "x^4 - y^4 - z^2" 
 
 TEST T05 FLT(4), biquadratic plus
-CALL TreeSolver -l 3 -e "x^4 + y^4 - z^2" -r igtriv,evenexp
+CALL TreeSolver -l 4 -e "x^4 + y^4 - z^2" -r norm,igtriv
 
 TEST T06 Markov(3, solvable)
 CALL TreeSolver -l 3 -e "x^2 + y^2 + z^2 - 3*x*y*z" -r norm,invall,igtriv
@@ -106,7 +106,7 @@ TEST T24 Smart p. 11 Elliptic Curve
 CALL TreeSolver -b 2 -l 5 -e "y^2 - x^3 + 4 = 0" 
 
 TEST T25 Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3]; http://math.stackexchange.com/questions/677422/solve-x22-y3-using-infinite-descent; growing !
-CALL TreeSolver -b 2 -l 5 -e "x^2 + 2 - y^3" -r invall,showfail,norm
+CALL TreeSolver -b 2 -l 7 -e "x^2 + 2 - y^3" -r norm
 
 TEST T26 Squeeze; https://hcmop.wordpress.com/2012/04/09/techniques-in-solving-diophantine-equations-part-2/
 CALL TreeSolver -b 2 -l 6 -e "x * (x + 1) * (x + 7) * (x + 8) - y^2"
@@ -154,7 +154,7 @@ TEST T40 biased expression
 CALL TreeSolver -b 2 -l 6 -e "-2 + a^2 + b^2" -r showfail
 
 TEST T41 EEC(4,1,3)
-CALL TreeSolver -b 2 -l 2 -e "a^4 + b^4 + c^4 - d^4"
+CALL TreeSolver -b 2 -l 4 -e "a^4 + b^4 + c^4 - d^4" -r norm
 
 TEST T42 Fermat 2 squares mod 4 = 3 (proof)
 CALL TreeSolver -b 2 -l 3 -e "x^2 + y^2 - 4*z - 3" -r norm,invall,showfail

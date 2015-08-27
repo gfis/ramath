@@ -1,4 +1,4 @@
-Expanding for base=2, transposables={{a,b},{c,d}}, reasons+features=base,evenexp,similiar,transpose igtriv,norm,invall,showfail, exponentParities=[0,0,0,0]
+Expanding for base=2, transposables={{a,b},{c,d}}, reasons+features=base,evenexp,similiar,transpose igtriv,norm,invall,showfail, exponentGCDs=[2,2,2,2]
 ----------------
 expanding queue[0]^-1: a^2 + b^2 - 3*c^2 - 3*d^2 meter=[2,2,2,2] *2
 [0+2*a,0+2*b,0+2*c,0+2*d]: similiar to [0], same  a^2+b^2-3*c^2-3*d^2
@@ -35,4 +35,4 @@ expanding queue[1]^0:  - 1 + a + a^2 + b + b^2 - 3*c - 3*c^2 - 3*d - 3*d^2 meter
 [3+4*a,1+4*b,3+4*c,3+4*d]: failure constant=-11, vgcd=2
 [1+4*a,3+4*b,3+4*c,3+4*d]: failure constant=-11, vgcd=2
 [3+4*a,3+4*b,3+4*c,3+4*d]: failure constant=-9, vgcd=2
-Proof - queue exhausted, queue size = 2
+Proof - queue exhausted at [2]: a^2 + b^2 - 3*c^2 - 3*d^2

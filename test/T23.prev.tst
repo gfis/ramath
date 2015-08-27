@@ -1,4 +1,4 @@
-Expanding for base=2, transposables={{a,b},{c}}, reasons+features=base,similiar,transpose norm,igtriv, exponentParities=[1,1,1]
+Expanding for base=2, transposables={{a,b},{c}}, reasons+features=base,similiar,transpose norm,igtriv, exponentGCDs=[5,5,5]
 ----------------
 expanding queue[0]^-1: a^5 + b^5 - c^5 meter=[2,2,2] *2
 [0+2*a,0+2*b,0+2*c]: similiar to [0], same  a^5+b^5-c^5
@@ -22,4 +22,4 @@ expanding queue[4]^2: 5*a + 40*a^2 + 160*a^3 + 320*a^4 + 256*a^5 + 8*b^5 - 5*c -
 expanding queue[5]^2: 405*a + 1080*a^2 + 1440*a^3 + 960*a^4 + 256*a^5 + 8*b^5 - 405*c - 1080*c^2 - 1440*c^3 - 960*c^4 - 256*c^5 meter=[2,1,2] *8
 [3+8*a,0+2*b,3+8*c]: unknown 405*a+2160*a^2+5760*a^3+7680*a^4+4096*a^5+4*b^5-405*c-2160*c^2-5760*c^3-7680*c^4-4096*c^5 -> [10]
 [7+8*a,0+2*b,7+8*c]: unknown 12005*a+27440*a^2+31360*a^3+17920*a^4+4096*a^5+4*b^5-12005*c-27440*c^2-31360*c^3-17920*c^4-4096*c^5 -> [11]
-Maximum level 2 reached, queue size = 12
+Maximum level 2 reached at [12]: a^5 + b^5 - c^5

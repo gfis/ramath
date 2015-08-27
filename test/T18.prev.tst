@@ -1,4 +1,4 @@
-Expanding for base=2, transposables={{x,y,z}}, reasons+features=base,similiar,transpose,transpose,similiar, exponentParities=[1,1,1]
+Expanding for base=2, transposables={{x,y,z}}, reasons+features=base,similiar,transpose,transpose,similiar, exponentGCDs=[1,1,1]
 ----------------
 expanding queue[0]^-1: 1 + x^2 - 2*x*y + y^2 - 2*x*z - 2*y*z - 2*x*y*z + z^2 meter=[2,2,2] *2
 [1+2*x,1+2*y,1+2*z]: unknown -4-8*x+4*x^2-8*y-16*x*y+4*y^2-8*z-16*x*z-16*y*z-16*x*y*z+4*z^2 -> [1]
@@ -20,4 +20,4 @@ expanding queue[5]^4:  - 62464 - 63488*x + 1024*x^2 - 63488*y - 65536*x*y + 1024
 ----------------
 expanding queue[6]^5:  - 512000 - 516096*x + 4096*x^2 - 516096*y - 524288*x*y + 4096*y^2 - 516096*z - 524288*x*z - 524288*y*z - 524288*x*y*z + 4096*z^2 meter=[2,2,2] *128
 [127+128*x,127+128*y,127+128*z]: unknown -4145152-4161536*x+16384*x^2-4161536*y-4194304*x*y+16384*y^2-4161536*z-4194304*x*z-4194304*y*z-4194304*x*y*z+16384*z^2 -> [7]
-Maximum level 6 reached, queue size = 8
+Maximum level 6 reached at [8]: 1 + x^2 - 2*x*y + y^2 - 2*x*z - 2*y*z - 2*x*y*z + z^2
