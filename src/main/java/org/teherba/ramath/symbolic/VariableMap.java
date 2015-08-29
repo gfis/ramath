@@ -338,33 +338,49 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
      *  maintaining the values for all other variables the same.
      *  @param vmap2 the 2nd VariableMap to be compared with <em>this</em>
      *  @param expGCDs the greatest common divisors of the variables' exponents in natural order
-     *  @return <em>true</em> if such a mpaping exists, <em>false</em> otherwise
+     *  @return a mapping of the involved variables if such a mapping exists, 
+     *  or the empty String otherwise
      */
-    public boolean isNegative_1(VariableMap vmap2, Vector expGCDs) {
-        boolean result = true; // assume success
+    public String testNegative_1(VariableMap vmap2, Vector expGCDs) {
+        StringBuffer result = new StringBuffer(64); // assume failure
         Iterator<String> viter1 = this .keySet().iterator();
         Iterator<String> viter2 = vmap2.keySet().iterator();
         int ivar = 0;
-        while (result && viter1.hasNext()) {
+        boolean busy = true;
+        while (busy && viter1.hasNext()) {
             String name1 = viter1.next();       
             String name2 = viter2.next();
             if (! name1.equals(name2)) {
                 System.out.println("??? assertion: VariableMaps not parallel in isNegative_1");
-                result = false;
+                busy = false;
             } else { // names in parallel
                 String expr1 = this .get(name1);
                 String expr2 = vmap2.get(name2);
-                int sign = compareRefinedFactors(expr1, expr2);
-                if (expGCDs.get(ivar) % 2 == 0) { // only even exponents for this variable
-                    result = sign <= 0; // same expressions, or mappable by -x-1
-                } else { // some odd exponents for this variable
-                    result = sign == 0; // same expressions
-                }
+                if (expr1.equals(expr2)) { // same expressions
+                    // ignore
+                } else { // expressions differ
+                    if (expGCDs.get(ivar) % 2 == 0) { // only even exponents for this variable
+                        int sign = compareRefinedFactors(expr1, expr2);
+                        if (sign < 0) { // mappable by -x-1
+                            result.append(',');
+                            result.append(name1);
+                            result.append("=>-");
+                            result.append(name1);
+                            result.append("-1");
+                        }
+                    } else { // some odd exponents for this variable
+                        busy = false;
+                        result.setLength(0); // test failed
+                    }
+                } // expression differ
             } // names in parallel          
             ivar ++;
         } // while viter
-        return result;
-    } // isNegative_1
+        if (result.length() > 0) {
+            result.deleteCharAt(0);
+        }
+        return result.toString();
+    } // testNegative_1
 
     /** Refines the expressions in <em>this</em> VariableMap
      *  by one level of modulus expansion.
@@ -388,12 +404,14 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
             int b = dispenser.getBase(idisp);
             int m = dispenser.get    (idisp);
             String key   = iter.next();
+        /*
             if (skippable == 1 && m == b - 1) { // skipped = not refined
                 b = 1;
                 m = 0;
             } else {
                 b = b - skippable;
             }
+        */
             BigInteger base     = BigInteger.valueOf(b);
             BigInteger module   = BigInteger.valueOf(m);
             String value = this.get(key); // REFINED_FORM - this has the form "c+f*x"
@@ -424,8 +442,7 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
         while (viter.hasNext()) { // over all variables to be substituted
             name = viter.next();
             if (name != null) {
-                    // result = result.replaceAll("\\*" + name + "\\^", "*(" + expr + ")^");
-                    result = result.replaceAll("\\*" + name + "\\^", "*#" + index + "#^");
+                result = result.replaceAll("\\*" + name + "\\^", "*#" + index + "#^");
             } // if valid mapping
             index ++;
         } // while viter 1
@@ -434,7 +451,7 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
         index = 0;
         while (viter.hasNext()) { // over all variables to be substituted
             name = viter.next();
-            if (true && name != null) {
+            if (name != null) {
                 expr = this.get(name);
                 if (true && expr != null) {
                     result = result.replaceAll("\\*\\#" + index + "\\#\\^", "*(" + expr + ")^");

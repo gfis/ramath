@@ -4,6 +4,7 @@
 # @(#) $Id$
 # 2015-07-14, Dr. Georg Fischer: copied from ..
 #--------------------------------
+MOD=16
 
 all: bricks
 
@@ -31,3 +32,6 @@ prepare_bricks:
 	perl prepare_bricks.pl ../test/PY3.this.tst euler_brick_combined.b.txt | sort -k 1n -k 3n -k 5n > bricks.tmp
 eval_bricks:
 	perl eval_bricks.pl bricks.tmp | sort -k 1n -k 2n -k 3 | uniq > eval.tmp
+eec422:
+	perl mod422.pl $(MOD) two4.1000000.txt
+	perl mod422.pl $(MOD) ../test/T52.this.tst

@@ -75,7 +75,7 @@ CALL TreeSolver -b 3 -l 3 -e "a^3 + 3*b^3 - 9*c^3" -r norm,igtriv
 TEST T15 modified FLT(3) mod 6 no descent?
 CALL TreeSolver -b 6 -l 2 -e "a^3 + 3*b^3 - 9*c^3" -r norm,igtriv
 
-TEST T16 Pythagoras
+TEST T16 FLT(2), Pythagoras
 CALL TreeSolver -b 2 -l 4 -e "a^2 + b^2 - c^2"
 
 # Euler, proof=1 (http://www.cut-the-knot.org/arithmetic/BasicsOfInfiniteDescent.shtml)
@@ -153,8 +153,8 @@ CALL TreeSolver -l 2 -b 3 -e "a^3 + 2*b^3 + 4*c^3 - 9*d^3"
 TEST T40 biased expression
 CALL TreeSolver -b 2 -l 6 -e "-2 + a^2 + b^2" -r showfail
 
-TEST T41 EEC(4,1,3)
-CALL TreeSolver -b 2 -l 4 -e "a^4 + b^4 + c^4 - d^4" -r norm
+TEST T41 EEC(4,1,3), c.f. http://cr.yp.to/sortedsums.html
+CALL TreeSolver -b 2 -l 3 -e "a^4 + b^4 + c^4 - d^4" -r norm,invall
 
 TEST T42 Fermat 2 squares mod 4 = 3 (proof)
 CALL TreeSolver -b 2 -l 3 -e "x^2 + y^2 - 4*z - 3" -r norm,invall,showfail
@@ -180,8 +180,14 @@ CALL TreeSolver -l 3 -b 4 -e "15*x^2 - 7*y^2 - 9" -r norm
 TEST T50 15 7 9 reduced
 CALL TreeSolver -l 3 -b 2 -e "-576+15*x^2-7*y^2" -r norm
 
-TEST T51 15 7 9 reduced, from LT3
-CALL TreeSolver -l 3 -b 2 -e "-2304+15*x^2-7*y^2" -r norm
+TEST T51 FLT(4) related, Nagell 1951, p. 230 no solution
+CALL TreeSolver -l 5 -e "x^4 - y^4 - 2*z^2" -r norm
+
+TEST T52 EEC(4,2,2) OEIS A003824, http://cr.yp.to/sortedsums/two4.1000000
+CALL TreeSolver -l 3 -e "a^4 + b^4 - c^4 -d^4" -r norm,invall
+
+TEST T53 from T52[4]
+CALL TreeSolver -b 2 -l 4 -e "a + 6*a^2-c-6c^2-1 + 8*k" -r norm
 
 # # https://books.google.de/books?id=My19IcewAnoC&lpg=PA317&ots=V3hN58VkXU&dq=Fermat%20identities&hl=de&pg=PA322#v=onepage&q=Fermat%20identities&f=false
 # # Google: Fermat identities

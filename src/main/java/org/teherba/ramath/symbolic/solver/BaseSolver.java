@@ -374,12 +374,10 @@ public class BaseSolver extends Stack<RelationSet> {
      */
     protected void printHeader(RelationSet rset0) {
         if (debug >= 1) {
-            trace.print("Expanding for base=" + getModBase());
-            trace.print(", transposables="    + getTransposableString(rset0));
-            trace.print(", reasons+features=" + reasons.toList());
-            trace.print(", exponentGCDs="     + getExponentGCDs().toString(","));
-        //  trace.print(", tuple="            + rset0.getTuple().toString());
-            trace.println();
+            trace.print  ("Expanding for base=" + getModBase());
+            trace.println(", reasons+features=" + reasons.toList());
+            trace.print  ("exponentGCDs="       + getExponentGCDs().toString(","));
+            trace.println(", transposables="    + getTransposableString(rset0));
         } // debug
     } // printHeader
 
@@ -516,19 +514,8 @@ public class BaseSolver extends Stack<RelationSet> {
     protected void setRootNode(RelationSet rset0) {
         Vector tpcs = rset0.getTransposableClasses();
         setTransposables(tpcs);
-    /*
-        if (tpcs.isMonotone()) { // no variable names can be transposed
-            reasons.purge("transposable"); // TransposeReason is not checked if there are no transposable variables
-        } // isMonotone
-    */
         VariableMap emap0 = rset0.getExpressionMap();
-        if (false && emap0.size() == 0) {
-            System.out.println("BaseSolver assertion??? emap0.size()=" + emap0.size() + ", rset0=" + rset0.toString(true));
-        }    
-        if (true || rset0.getTuple() == null) {
-            rset0.setTuple(emap0, getTransposables());
-        }
-        // ModoMeter meter = new ModoMeter(rset0.getTuple().size(), 1); // assume that all variables are not involved
+        rset0.setTuple(emap0, getTransposables());
         setExponentGCDs(rset0.getExponentGCDs(emap0));
         add(rset0);
     } // setRootNode

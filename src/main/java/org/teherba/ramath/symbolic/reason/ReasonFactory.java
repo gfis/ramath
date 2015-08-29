@@ -247,24 +247,24 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         if (false) {
         } else if (decision.startsWith(VariableMap.FAILURE))   { 
                 if (showFail && solver.debug >= 1) {
-                    solver.trace.print(vmap2.toVector() + ": ");
+                    solver.trace.print(vmap2.toVector() + ":\t");
                     solver.trace.println(decision);
                 }
         } else if (! decision.startsWith(VariableMap.UNKNOWN) &&
                    ! decision.startsWith(VariableMap.SUCCESS)) { // or SAME, transpose, similiar ...
                 if (solver.debug >= 1) {
-                    solver.trace.print(vmap2.toVector() + ": ");
+                    solver.trace.print(vmap2.toVector() + ":\t");
                     solver.trace.println(decision);
                 }
         } else { // UNKNOWN || SUCCESS
                 if (solver.debug >= 1) {
-                    solver.trace.print(vmap2.toVector() + ": ");
+                    solver.trace.print(vmap2.toVector() + ":\t");
                     if (solver.igtriv && decision.indexOf("trivial") >= 0) {
                         decision = VariableMap.UNKNOWN;
                     }
                     solver.trace.print(decision);
-                    solver.trace.print(" " + solver.polish(rset2));
                     solver.trace.print(" -> [" + solver.size() + "]");
+                    solver.trace.print(" " + solver.polish(rset2));
                     solver.trace.println();
                 }
                 queueAgain = true;
