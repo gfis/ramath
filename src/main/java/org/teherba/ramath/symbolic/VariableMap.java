@@ -1,5 +1,6 @@
 /*  VariableMap: maps a set of variables to their values or substitution formulas
  *  @(#) $Id: VariableMap.java 538 2010-09-08 15:08:36Z gfis $
+ *  2015-08-30: normalizeIt
  *  2015-08-19: multiplyBy, substitute
  *  2015-04-26: old_triviality returns String
  *  2015-03-02: refineExpressions(, skippable)
@@ -44,7 +45,7 @@ import  java.util.TreeMap;
  *  Normally, the values are string representations of BigIntegers.
  *  @author Dr. Georg Fischer
  */
-public class VariableMap extends TreeMap<String, String> implements Cloneable , Serializable {
+public class VariableMap extends TreeMap<String, String> implements Cloneable, Serializable {
     private static final long serialVersionUID = 2L;
     public final static String CVSID = "@(#) $Id: VariableMap.java 538 2010-09-08 15:08:36Z gfis $";
 
@@ -268,10 +269,10 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
         return this;
     } // negativeOf
 
-    /** Gets a {@link PolyVector} 
-     *  of the constant expressions when refined variables are substituted from a 
+    /** Gets a {@link PolyVector}
+     *  of the constant expressions when refined variables are substituted from a
      *  binary {@link Dispenser}.
-     *  @return for example: [3,4] for this={x->3+2*x, y->0+4*y} and meter=[0,1] 
+     *  @return for example: [3,4] for this={x->3+2*x, y->0+4*y} and meter=[0,1]
      *  Caution: the form of the expressions must be c+f*x;
      *  this is initiated by {@link Polynomial#getExpressionMap}().
      */
@@ -286,26 +287,27 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
             int behindTimes = value.indexOf("*") + 1;
             if (behindTimes <= 0) {
                 behindTimes = value.length();
-            } 
+            }
             result.set(iname, new Polynomial(value.substring(0, behindTimes) + String.valueOf(digit)));  // REFINED_FORM
             iname ++;
         } // while iter
         return result;
     } // getMeteredValues
 
-    /** Extracts the additive factor <em>a</em> and multiplicative factor <em>m</em> from a refined expression 
-     *  @param expr the refined exproession of the form <em>a+m*x</em>.
+    /** Extracts the additive factor <em>a</em> and
+     *  the multiplicative factor <em>m</em> from a refined expression
+     *  @param expr the refined expression of the form <em>a+m*x</em>.
      *  @return BigInteger[] {a,m}
      */
     public BigInteger[] extractRefinedFactors(String expr) {
         int plusPos  = expr.indexOf("+");
         int timesPos = expr.indexOf("*");
-        return new BigInteger[] 
+        return new BigInteger[]
                 { new BigInteger(expr.substring(0          , plusPos ))
                 , new BigInteger(expr.substring(plusPos + 1, timesPos))
                 };
     } // extractRefinedFactors
-    
+
     /** Compares the additive factors <em>a</em> and multiplicative factors <em>m</em> of two
      *  refined expressions
      *  @param expr1 the 1st refined exproession of the form <em>a+m*x</em>.
@@ -331,14 +333,14 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
         } // !=
         return result;
     } // compareRefinedFactors
-    
+
     /** Determines whether the values (Polynomials) of <em>this</em> {@link VariableMap}
      *  could be mapped those of a second, parallel VariableMap
      *  by transforming one or more variable <em>x</em> to <em>-x-1</em> while
      *  maintaining the values for all other variables the same.
      *  @param vmap2 the 2nd VariableMap to be compared with <em>this</em>
      *  @param expGCDs the greatest common divisors of the variables' exponents in natural order
-     *  @return a mapping of the involved variables if such a mapping exists, 
+     *  @return a mapping of the involved variables if such a mapping exists,
      *  or the empty String otherwise
      */
     public String testNegative_1(VariableMap vmap2, Vector expGCDs) {
@@ -348,7 +350,7 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
         int ivar = 0;
         boolean busy = true;
         while (busy && viter1.hasNext()) {
-            String name1 = viter1.next();       
+            String name1 = viter1.next();
             String name2 = viter2.next();
             if (! name1.equals(name2)) {
                 System.out.println("??? assertion: VariableMaps not parallel in isNegative_1");
@@ -373,7 +375,7 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
                         result.setLength(0); // test failed
                     }
                 } // expression differ
-            } // names in parallel          
+            } // names in parallel
             ivar ++;
         } // while viter
         if (result.length() > 0) {
@@ -388,30 +390,20 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
      *  factors (the bases) and the constants (the values) for the modification
      *  of the mapped expressions.
      *  If dispenser.base = 1 then factor = 1, constant = 0, i.e. the variable is unchanged.
-     *  @param skippable 1 if the highest meter value indicates that the value should not be used, 0 otherwise.
      *  The underlying integer array is parallel to the sorted list of variable names.
      *  For a mapping x -> c+f*x and corresponding dispenser value m mod b,
      *  the new expression is c + f*(m+b*x) = (c+f*m) + (f*b)*x.
      *  Caution: This form of the expression is initiated by {@link Polynomial#getExpressionMap}().
-     *  @return a new VariableMap with the variables mapped to the refined expressions
+     *  @return a new {@link VariableMap} with the variables mapped to the refined expressions
      */
-    public VariableMap refineExpressions(Dispenser dispenser, int skippable) {
+    public VariableMap refineExpressions(Dispenser dispenser) {
         VariableMap result = new VariableMap();
-        // System.out.println(this.toString() + ".refineExpressions(dispenser)");
         Iterator<String> iter = this.keySet().iterator();
         int idisp = 0;
         while (iter.hasNext()) {
             int b = dispenser.getBase(idisp);
             int m = dispenser.get    (idisp);
             String key   = iter.next();
-        /*
-            if (skippable == 1 && m == b - 1) { // skipped = not refined
-                b = 1;
-                m = 0;
-            } else {
-                b = b - skippable;
-            }
-        */
             BigInteger base     = BigInteger.valueOf(b);
             BigInteger module   = BigInteger.valueOf(m);
             String value = this.get(key); // REFINED_FORM - this has the form "c+f*x"
@@ -425,6 +417,31 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
         return result;
     } // refineExpressions
 
+    /** Normalizes the additive factors <em>a</em> and
+     *  the multiplicative factors <em>m</em> in all refined expressions of the map
+     *  such that they have no common divisor.
+     *  The expressions remain unchanged when <em>a = 0</em>.
+     *  @return a new, normalized map
+     */
+    public VariableMap normalize() {
+        VariableMap result = new VariableMap();
+        Iterator<String> viter = this.keySet().iterator();
+        while (viter.hasNext()) {
+            String key   = viter.next();
+            String value = this.get(key); // REFINED_FORM - this has the form "a+m*x"
+            BigInteger[] fam = extractRefinedFactors(value);
+            if (fam[0].compareTo(BigInteger.ONE) > 0) {
+                BigInteger gcd1 = fam[0].gcd(fam[1]);
+                if (gcd1.compareTo(BigInteger.ONE) > 0) { // a, m have a common factor
+                    value =   fam[0].divide(gcd1).toString() + "+"
+                            + fam[1].divide(gcd1).toString() + "*" + key;
+                } // gcd > 1
+            } // a > 1
+            result.put(key, value);
+        } // while viter
+        return result;
+    } // normalizeIt
+
     /** Substitutes variable names with the expressions from <em>this</em> Map (if they are not null),
      *  and returns the replaced String.
      *  Whether uppercase variables should be replaced must already be defined in this map.
@@ -435,9 +452,9 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
         String result = source; // full representation contains "*var^" for all variables
         String name = null;
         String expr = null;
-        Iterator <String> 
+        Iterator <String>
         viter = this.keySet().iterator();
-        int 
+        int
         index = 0;
         while (viter.hasNext()) { // over all variables to be substituted
             name = viter.next();
@@ -488,7 +505,7 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable , 
         } // while
         System.out.print(vmap.toString()); // before refinement
         System.out.println(" refined by [" + meter.toString() + "]: "
-                + vmap.refineExpressions(meter, 0).toString());
+                + vmap.refineExpressions(meter).toString());
         vmap.setValues(meter);
         System.out.println(" set to [" + meter.toString() + "]: "
                 + vmap.toString());

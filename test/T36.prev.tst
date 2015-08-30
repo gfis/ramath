@@ -1,4 +1,4 @@
-Expanding for base=2, reasons+features=base,evenexp,similiar,transpose igtriv,norm,invall
+Expanding for base=2, reasons+features=base,transpose,similiar,evenexp igtriv,norm,invall
 exponentGCDs=[1,1,2,2], transposables={{a,b},{c},{d}}
 ----------------
 expanding queue[0]^-1: a^2 + b^2 - c^2; a*b - 2*d^2 meter=[2,2,2,2] *2
@@ -11,12 +11,12 @@ expanding queue[0]^-1: a^2 + b^2 - c^2; a*b - 2*d^2 meter=[2,2,2,2] *2
 expanding queue[1]^0: a + a^2 + b^2 - c - c^2; b + 2*a*b - 4*d^2 meter=[2,2,2,2] *4
 [1+4*a,0+4*b,1+4*c,0+4*d]:	unknown -> [3] a+2*a^2+2*b^2-c-2*c^2;b+4*a*b-8*d^2
 [3+4*a,0+4*b,1+4*c,0+4*d]:	unknown -> [4] 1+3*a+2*a^2+2*b^2-c-2*c^2;3*b+4*a*b-8*d^2
-[1+4*a,0+4*b,3+4*c,0+4*d]:	negative-1 [3] by {c=>-c-1}
-[3+4*a,0+4*b,3+4*c,0+4*d]:	negative-1 [4] by {c=>-c-1}
+[1+4*a,0+4*b,3+4*c,0+4*d]:	similiar to [3], same  -1+a+2*a^2+2*b^2-3*c-2*c^2;b+4*a*b-8*d^2
+[3+4*a,0+4*b,3+4*c,0+4*d]:	similiar to [4], same  3*a+2*a^2+2*b^2-3*c-2*c^2;3*b+4*a*b-8*d^2
 [1+4*a,0+4*b,1+4*c,2+4*d]:	unknown -> [5] a+2*a^2+2*b^2-c-2*c^2;-2+b+4*a*b-8*d-8*d^2
 [3+4*a,0+4*b,1+4*c,2+4*d]:	unknown -> [6] 1+3*a+2*a^2+2*b^2-c-2*c^2;-2+3*b+4*a*b-8*d-8*d^2
-[1+4*a,0+4*b,3+4*c,2+4*d]:	negative-1 [5] by {c=>-c-1}
-[3+4*a,0+4*b,3+4*c,2+4*d]:	negative-1 [6] by {c=>-c-1}
+[1+4*a,0+4*b,3+4*c,2+4*d]:	similiar to [5], same  -1+a+2*a^2+2*b^2-3*c-2*c^2;-2+b+4*a*b-8*d-8*d^2
+[3+4*a,0+4*b,3+4*c,2+4*d]:	similiar to [6], same  3*a+2*a^2+2*b^2-3*c-2*c^2;-2+3*b+4*a*b-8*d-8*d^2
 expanding queue[2]^0: a + a^2 + b^2 - c - c^2;  - 1 + b + 2*a*b - 4*d - 4*d^2 meter=[2,2,2,2] *4
 ----------------
 expanding queue[3]^1: a + 2*a^2 + 2*b^2 - c - 2*c^2; b + 4*a*b - 8*d^2 meter=[2,2,2,2] *8

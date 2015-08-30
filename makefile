@@ -43,8 +43,8 @@ t:
 proofs:
 	grep -i proof test/T*.prev.tst | cut -b 6-8,18-     > proof.prev.tmp
 	grep -i proof test/T*.this.tst | cut -b 6-8,18- | tee proof.this.tmp
-	diff proof.prev.tmp proof.this.tmp
 	wc -l proof.*
+	diff proof.prev.tmp proof.this.tmp
 # 1234567890123456789
 # test/T47.this.tst:Proof - queue exhausted, queue size = 2
 # 2015-07-23: 10 proofs

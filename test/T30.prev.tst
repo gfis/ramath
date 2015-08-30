@@ -1,4 +1,4 @@
-Expanding for base=2, reasons+features=base,evenexp,similiar,evenexp,similiar
+Expanding for base=2, reasons+features=base,similiar,evenexp,evenexp,similiar
 exponentGCDs=[2,2], transposables={{x},{y}}
 ----------------
 expanding queue[0]^-1: 2 - 4*x^2 + 4*x^4 - 2*y^2 meter=[1,2] *2

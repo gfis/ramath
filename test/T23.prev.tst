@@ -1,4 +1,4 @@
-Expanding for base=2, reasons+features=base,similiar,transpose norm,igtriv
+Expanding for base=2, reasons+features=base,transpose,similiar norm,igtriv
 exponentGCDs=[5,5,5], transposables={{a,b},{c}}
 ----------------
 expanding queue[0]^-1: a^5 + b^5 - c^5 meter=[2,2,2] *2

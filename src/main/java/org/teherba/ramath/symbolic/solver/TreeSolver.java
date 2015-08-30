@@ -119,7 +119,7 @@ public class TreeSolver extends BaseSolver {
         printNode(queueIndex, rset1, meter, factor);
         printSolutions(rset1, vmap1);
         while (meter.hasNext()) { // over all constant combinations - generate all children
-            VariableMap vmap2 = vmap1.refineExpressions(meter, 0);
+            VariableMap vmap2 = vmap1.refineExpressions(meter);
             if (vmap2.size() > 0) {
                 RelationSet rset2 = getRootNode().substitute(vmap2);
                 if (norm) {

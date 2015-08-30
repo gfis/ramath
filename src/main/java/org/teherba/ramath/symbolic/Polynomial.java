@@ -2536,17 +2536,19 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
                     ipoly = 0;
                     while (ipoly < exprs.length) {
 /* lines of the form (without the spaces):
-[1+2*x,0+2*y,1+2*z]: unknown 8*x+24*x^2+32*x^3+16*x^4-16*y^4-4*z-4*z^2 -> [3]
 ----------------
-expanding queue[1]^0: 16*x^4 - 16*y^4 - 4*z^2 meter=[1,1,2] *4
-solution [0,0,0],trivial(3)
-[0+2*x,0+2*y,0+4*z]: similiar to [0], same  16*x^4-16*y^4-16*z^2
+expanding queue[0]^-1: a^4 + b^4 - c^4 - d^4 meter=[2,2,2,2] *2
+solution [0,0,0,0],trivial(3)
+[0+2*a,0+2*b,0+2*c,0+2*d]:	similiar to [0], same  a^4+b^4-c^4-d^4
+[1+2*a,0+2*b,1+2*c,0+2*d]:	unknown -> [1] a+3*a^2+4*a^3+2*a^4+2*b^4-c-3*c^2-4*c^3-2*c^4-2*d^4
+[0+2*a,1+2*b,1+2*c,0+2*d]:	transposed [1] {0/0+2*b,0/1+2*a,2/0+2*d,2/1+2*c} by 0+2*b|0+2*a 1+2*a|1+2*b
 */
                         String line = exprs[ipoly];
                         int unkPos = line.indexOf("unknown");
                         if (unkPos >= 0) {
-                            int arrPos = line.indexOf("->");
-                            poly1 = Polynomial.parse(line.substring(unkPos + "unknown".length(), arrPos));
+                            int cspPos = line.indexOf("]", unkPos);
+                            poly1 = Polynomial.parse(line.substring(cspPos + 1));
+                            // System.out.println("poly1 = " + poly1.toString());
                             vmap1 = poly1.getReductionMap(0);
                             System.out.println(vmap1.toString().replaceAll("\\s", "")
                                     + "\t" + line.substring(1, unkPos - 2));

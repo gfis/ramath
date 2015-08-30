@@ -1,5 +1,6 @@
 /*  ReasonFactory: list of reasons to decide that the tree expansion can be truncated
  *  @(#) $Id: ReasonFactory.java 970 2012-10-25 16:49:32Z gfis $
+ *  2015-08-30: DownsizedMapReason
  *  2015-08-25: EvenExponentReason, isConsiderable
  *  2015-07-23: *Grow* removed
  *  2015-06-01: DoGrowReason
@@ -68,9 +69,10 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         this();
         // the standard reasons
         this.addReason("base"       , rset0);
-        this.addReason("evenexp"    , rset0);
-        this.addReason("similiar"   , rset0);
         this.addReason("transpose"  , rset0);
+        this.addReason("similiar"   , rset0);
+    //  this.addReason("down"       , rset0);
+        this.addReason("evenexp"    , rset0);
         String[] reasonCodes = codeList.split("\\W"); // non-word characters, e.g. ","
         int icode = 0;
         while (icode < reasonCodes.length) {
@@ -113,6 +115,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         BaseReason result = null; // assume success
         if (false) {
         } else if (code.startsWith("base"       )) { result = addReasonClass(code, rset0, "BaseReason"        );
+        } else if (code.startsWith("down"       )) { result = addReasonClass(code, rset0, "DownsizedMapReason");
         } else if (code.startsWith("evenexp"    )) { result = addReasonClass(code, rset0, "EvenExponentReason");
         } else if (code.startsWith("same"       )) { result = addReasonClass(code, rset0, "SameReason"        );
         } else if (code.startsWith("simil"      )) { result = addReasonClass(code, rset0, "SimiliarReason"    );

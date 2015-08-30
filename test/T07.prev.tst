@@ -1,4 +1,4 @@
-Expanding for base=2, reasons+features=base,similiar,transpose norm,invall
+Expanding for base=2, reasons+features=base,transpose,similiar norm,invall
 exponentGCDs=[3,3,3], transposables={{a,b},{c}}
 ----------------
 expanding queue[0]^-1: a^3 + b^3 - c^3 meter=[2,2,2] *2

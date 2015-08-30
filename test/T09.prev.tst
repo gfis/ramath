@@ -1,4 +1,4 @@
-Expanding for base=2, reasons+features=base,similiar,transpose norm,invall
+Expanding for base=2, reasons+features=base,transpose,similiar norm,invall
 exponentGCDs=[1,1,1], transposables={{x,y,z}}
 ----------------
 expanding queue[0]^-1: x^2 + y^2 - 2*x*y*z + z^2 meter=[2,2,2] *2
