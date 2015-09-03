@@ -14,24 +14,25 @@ TESTDIR=test
 WROB=../../mater/ramath/eec/wroblewski
 
 all: solver
-regression: simple symbolic linear matrix solver
+regression: simple symbolic linear matrix solver sandbox
 linear:
-	$(REGR) test/linear.tests 	$(TEST) 2>&1 \
-	| tee regression.log.tmp
+	$(REGR) test/linear.tests 	$(TEST) 2>&1 | tee regression.log.tmp
 	grep FAILED regression.log.tmp
 matrix:
-	$(REGR) test/matrix.tests 	$(TEST) 2>&1 \
-	| tee regression.log.tmp
+	$(REGR) test/matrix.tests 	$(TEST) 2>&1 | tee regression.log.tmp
+	grep FAILED regression.log.tmp
+sandbox:
+	$(REGR) test/sandbox.tests 	$(TEST) 2>&1 | tee regression.log.tmp
 	grep FAILED regression.log.tmp
 simple:
-	$(REGR) test/simple.tests 	$(TEST) 2>&1 \
-	| tee regression.log.tmp
+	$(REGR) test/simple.tests 	$(TEST) 2>&1 | tee regression.log.tmp
 	grep FAILED regression.log.tmp
 solver:
-	$(REGR) test/solver.tests 	$(TEST) 2>&1 \
-	| tee regression.log.tmp
+	$(REGR) test/solver.tests 	$(TEST) 2>&1 | tee regression.log.tmp
 	grep FAILED regression.log.tmp
-	# make proved
+symbolic:
+	$(REGR) test/symbolic.tests $(TEST) 2>&1 | tee regression.log.tmp
+	grep FAILED regression.log.tmp
 lr:
 	make symbolic TEST=LR%
 lrh:
@@ -48,10 +49,6 @@ proofs:
 # 1234567890123456789
 # test/T47.this.tst:Proof - queue exhausted, queue size = 2
 # 2015-07-23: 10 proofs
-symbolic:
-	$(REGR) test/symbolic.tests $(TEST) 2>&1 \
-	| tee regression.log.tmp
-	grep FAILED regression.log.tmp
 fc7: fc1 fc2
 fc1:
 	make solver

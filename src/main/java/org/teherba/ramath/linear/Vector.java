@@ -105,11 +105,12 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
     } // Constructor(3)
 
     /** Constructor for a Vector from a vector expression
-     *  @param vectExpr an array of comma-separated elements in square brackets,
-     *  for example "[3, 4, 5]"
+     *  @param vectExpr an array of comma or space-separated elements 
+     *  (optionally in square brackets),
+     *  for example "[3, 4, 5]" or "3 4 5"
      */
     public Vector(String vectExpr) {
-        String[] values = vectExpr.replaceAll("[\\[\\]\\s]+","").split("\\,");
+        String[] values = vectExpr.replaceAll("[\\[\\]\\s\\,]+"," ").trim().split(" ");
         this.vecLen = values.length;
         this.vector = new /*Type*/int[this.vecLen];
         int ivect = 0;

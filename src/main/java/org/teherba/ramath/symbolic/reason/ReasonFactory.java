@@ -92,7 +92,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         try {
             result = (BaseReason) Class.forName("org.teherba.ramath.symbolic.reason." + className).newInstance();
             if (result != null) { // known reason
-            	result.setRootNode(rset0);
+                result.setRootNode(rset0);
                 if (result.isConsiderable()) { // needs the rootNode
                     result.setCode(code);
                     this.add(result);
@@ -148,7 +148,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
      *  and a list of stored feature codes
      *  @return for example: base,same,similiar norm,invall
      */
-    public String toList() {
+    public String toString() {
         StringBuffer result = new StringBuffer(32);
         String sep = "";
         String code = "";
@@ -169,21 +169,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
             result.append(code);
         } // while fiter
         return result.toString();
-    } // toList
-
-    /** Remove an unnecessary reason from the list
-     *  @param code code of the reason to be removed
-     */
-    public void purge(String code) {
-        int ireas = size() - 1;
-        while (ireas >= 0) {
-            if (this.get(ireas).getCode().equals(code)) {
-                this.remove(ireas);
-                // ireas = 0; // found - break loop / no, may occur several times
-            }
-            ireas --;
-        } // while ireas
-    } // purge
+    } // toString
 
     //----------------------------
     // Check all specified reasons
@@ -242,35 +228,24 @@ public class ReasonFactory extends ArrayList<BaseReason> {
      *  @param solver the complete state of the expansion tree
      *  @param rset2 the new {@link RelationSet} to be checked
      *  @param vmap2 variables with refined expressions
-     *  @return whether to queue <em>rset2</em> for further expansion
+     *  @return whether to queue <em>rset2</em> again for further expansion
      */
     public boolean evaluateReasons(BaseSolver solver, RelationSet rset2, VariableMap vmap2) {
         boolean queueAgain = false;
         String decision = this.checkAll(solver, rset2);
         if (false) {
-        } else if (decision.startsWith(VariableMap.FAILURE))   { 
-                if (showFail && solver.debug >= 1) {
-                    solver.trace.print(vmap2.toVector() + ":\t");
-                    solver.trace.println(decision);
-                }
-        } else if (! decision.startsWith(VariableMap.UNKNOWN) &&
-                   ! decision.startsWith(VariableMap.SUCCESS)) { // or SAME, transpose, similiar ...
-                if (solver.debug >= 1) {
-                    solver.trace.print(vmap2.toVector() + ":\t");
-                    solver.trace.println(decision);
-                }
-        } else { // UNKNOWN || SUCCESS
-                if (solver.debug >= 1) {
-                    solver.trace.print(vmap2.toVector() + ":\t");
-                    if (solver.igtriv && decision.indexOf("trivial") >= 0) {
-                        decision = VariableMap.UNKNOWN;
-                    }
-                    solver.trace.print(decision);
-                    solver.trace.print(" -> [" + solver.size() + "]");
-                    solver.trace.print(" " + solver.polish(rset2));
-                    solver.trace.println();
-                }
-                queueAgain = true;
+        } else if (decision.startsWith(VariableMap.UNKNOWN)) {
+            solver.printDecision(decision, rset2, vmap2);
+            queueAgain = true;
+        } else if (decision.startsWith(VariableMap.SUCCESS)) { 
+            solver.printDecision(decision, rset2, vmap2);
+            queueAgain = true;
+        } else if (decision.startsWith(VariableMap.FAILURE)) { 
+        	if (showFail) {
+	            solver.printDecision(decision, rset2, vmap2);
+	        }
+        } else { // or SAME, transpose, similiar ...
+            solver.printDecision(decision, rset2, vmap2);
         } // unknown
         return queueAgain;
     } // evaluateReasons

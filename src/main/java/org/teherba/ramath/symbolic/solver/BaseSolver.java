@@ -369,13 +369,32 @@ public class BaseSolver extends Stack<RelationSet> {
     // Pseudo-abstract methods common to all Solvers
     //-----------------------------------------------
 
+    /** Prints the decision of a child node in the tree.
+     *  @param decision outcome of the various checks for reasons to cut the tree,
+     *  @param rset2 {@link RelationSet} to be examined
+     *  @param vmap2 {@link VariableMap} of <em>rset2</em>
+     */
+    public void printDecision(String decision, RelationSet rset2, VariableMap vmap2) {
+        if (debug >= 1) {
+            trace.print(vmap2.getConstants() + ":\t"); // toVector
+            trace.print(decision);
+            if (false) {
+            } else if ( decision.startsWith(VariableMap.UNKNOWN) || 
+                        decision.startsWith(VariableMap.SUCCESS)) { // UNKNOWN || SUCCESS
+                trace.print(" -> [" + this.size() + "]");
+                trace.print(" " + this.polish(rset2));
+            } // UNKNOWN || SUCCESS
+            trace.println();
+        } // debug
+    } // printDecision
+
     /** Prints the header message
      *  @param rset0 initial {@link RelationSet}
      */
     protected void printHeader(RelationSet rset0) {
         if (debug >= 1) {
             trace.print  ("Expanding for base=" + getModBase());
-            trace.println(", reasons+features=" + reasons.toList());
+            trace.println(", reasons+features=" + reasons.toString());
             trace.print  ("exponentGCDs="       + getExponentGCDs().toString(","));
             trace.println(", transposables="    + getTransposableString(rset0));
         } // debug
@@ -391,9 +410,9 @@ public class BaseSolver extends Stack<RelationSet> {
         if (debug >= 1) {
             trace.println("expanding queue[" + queueIndex + "]^" 
                     + rset1.getParentIndex()
+                    + ",meter=" + meter.toBaseList()
+                    + "*" + factor.toString()
                     + ": " + rset1.toString()
-                    + " meter=" + meter.toBaseList()
-                    + " *" + factor.toString()
                     );
         }
     } // printNode

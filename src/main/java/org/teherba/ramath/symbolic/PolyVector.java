@@ -29,6 +29,9 @@ import  org.teherba.ramath.linear.Matrix;
 import  org.teherba.ramath.linear.Vector;
 import  org.teherba.ramath.util.IntegerExpander;
 import  org.teherba.ramath.util.ModoMeter;
+import  java.io.BufferedReader;
+import  java.io.FileReader;
+import  java.io.InputStreamReader;
 import  java.io.Serializable;
 import  java.util.ArrayList;
 import  java.util.HashSet; // for triviality
@@ -74,7 +77,7 @@ public class PolyVector implements Cloneable, Serializable {
 
     /** lowercase letters for variable generation */
     private static final String letters = "abcdefghijklmnopqrstuvwxyz";
-    
+
     /** Constructor for a PolyVector of some length,
      *  initialized with successive variable names.
      *  @param numElems number of elements
@@ -84,7 +87,7 @@ public class PolyVector implements Cloneable, Serializable {
     public PolyVector(int numElems, String varName) {
         this(numElems);
         int ipos = letters.indexOf(varName);
-        if (ipos < 0) { // not found 
+        if (ipos < 0) { // not found
             ipos = 0; // assume "a"
         }
         for (int ivect = 0; ivect < this.vecLen && ipos + ivect < letters.length(); ivect ++) {
@@ -269,7 +272,7 @@ public class PolyVector implements Cloneable, Serializable {
     } // triviality
 
     /** Returns a readable representation of the vector, with the {@link #triviality} appended
-     *  @return a String, for example "[3,4,5],NONTRIVIAL" 
+     *  @return a String, for example "[3,4,5],NONTRIVIAL"
      */
     public String describe() {
         return this.toString(",") + "," + this.triviality();
@@ -320,7 +323,7 @@ public class PolyVector implements Cloneable, Serializable {
         return pschema.substitute(vmap);
     } // convolve
 
-    /** Test whether <em>this</em> PolyVector contains a sum of like powers.
+    /** Test whether <em>this</em> {@link PolyVector} contains a sum of like powers.
      *  Usual combinations of the parameters are:
      <pre>
         exp=2 left=2 right=1
@@ -338,7 +341,7 @@ public class PolyVector implements Cloneable, Serializable {
     public boolean isPowerSum(int exp, int left, int right) {
         Polynomial leftSum  = new Polynomial("0");
         Polynomial rightSum = new Polynomial("0");
-        if (left + right == this.vecLen) { 
+        if (left + right == this.vecLen) {
             // check for trivial case: 2 elements are equal
             int isum = 0;
             for (isum = left; isum < this.vecLen; isum ++) {
@@ -363,7 +366,7 @@ public class PolyVector implements Cloneable, Serializable {
         return leftSum.subtract(rightSum).isZero();
     } // isPowerSum
 
-    /** Computes a sum of like powers from <em>this</em> Vector.
+    /** Computes a sum of like powers from <em>this</em> {@link PolyVector}.
      *  Usual combinations of the parameters are:
      <pre>
         exp=2 left=2 right=1
@@ -375,13 +378,13 @@ public class PolyVector implements Cloneable, Serializable {
      *  @param exp exponent
      *  @param left  number of leading  elements which represent the left  side
      *  @param right number of trailing elements which represent the right side
-     *  @return sum of left elements raised to exp minus 
+     *  @return sum of left elements raised to exp minus
      *  the sum of right elements raised to exp
      */
     public Polynomial powerSum(int exp, int left, int right) {
         Polynomial leftSum  = new Polynomial("0");
         Polynomial rightSum = new Polynomial("0");
-        if (left + right == this.vecLen) { 
+        if (left + right == this.vecLen) {
             int isum = 0;
             while (isum < left) {
                 leftSum = leftSum  .add(this.vector[isum].pow(exp));

@@ -329,7 +329,9 @@ public class PolynomialParser extends Polynomial {
                     
                     case IN_CLOSE: // after ')' - eventually insert a '*'
                         if (false) {
-                        } else if (Character.isJavaIdentifierPart(ch)) {
+                        } else if (Character.isJavaIdentifierPart(ch)) { // following identifier
+                            replaceLower("p*");
+                        } else if (ch == '(') { // following "("
                             replaceLower("p*");
                         }
                         readOff = false;

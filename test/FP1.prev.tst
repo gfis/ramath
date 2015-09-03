@@ -4,3 +4,4 @@ PrimeFactorization(2) = 2
 .multiply(same) = 2^2
 .valueOf() = 4
 2.reducePowerOf(2) = 1, 2
+2.modulus(4) =    2

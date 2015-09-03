@@ -19,6 +19,7 @@
  */
 package org.teherba.ramath;
 import  org.teherba.ramath.BigIntegerUtil;
+import  org.teherba.ramath.linear.Vector;
 import  java.io.Serializable;
 import  java.lang.IllegalArgumentException;
 import  java.math.BigInteger;
@@ -125,6 +126,24 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
         } // while iter2
         return result;
     } // multiply
+
+    /** Get the rests of the prime factors (without exponent) 
+     *  with respect to some divisor
+     *  @param divisor compute the rests for this divisor
+     *  @return a {@link Vector} of rests
+     */
+    public Vector modulus(int divisor) {
+        Vector result = new Vector(this.size());
+        Iterator<BigInteger> iter2 = this.keySet().iterator();
+        int ivect = 0;
+        BigInteger bdiv = BigInteger.valueOf(divisor);
+        while (iter2.hasNext()) {
+            BigInteger prime2 = iter2.next();
+            result.set(ivect, prime2.mod(bdiv).intValue());
+            ivect ++;
+        } // while iter2
+        return result;
+    } // modulus
 
     /** Determines 3 factors which allow to perform a square completion properly.
      *  <em>this</em> is the {@link PrimeFactorization} of the factor of v^2.
@@ -250,7 +269,7 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
             if (first) {
                 first = false;
             } else {
-                result.append("*");
+                result.append(" * ");
             }
             result.append(prime.toString());
             Integer exp = this.get(prime);
@@ -280,6 +299,8 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
         BigInteger[] rpair = primfn1.reducePowerOf(number2.intValue());
         System.out.println(primfn1.valueOf().toString() + ".reducePowerOf(" + number2.toString() + ") = " 
                 + rpair[0].toString() + ", " + rpair[1].toString());
+        Vector mods = primfn1.modulus(4);
+        System.out.println(primfn1.valueOf().toString() + ".modulus(4) = " + mods.toString());
     } // main
 
 } // PrimeFactorization

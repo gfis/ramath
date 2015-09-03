@@ -184,10 +184,16 @@ TEST T51 FLT(4) related, Nagell 1951, p. 230 no solution
 CALL TreeSolver -l 5 -e "x^4 - y^4 - 2*z^2" -r norm
 
 TEST T52 EEC(4,2,2) OEIS A003824, http://cr.yp.to/sortedsums/two4.1000000
-CALL TreeSolver -l 3 -e "a^4 + b^4 - c^4 -d^4" -r norm,invall,down
+CALL TreeSolver -b 2 -l 2 -e "a^4 + b^4 - c^4 -d^4" -r norm,invall
 
-TEST T53 like T52, ^2 only
-CALL TreeSolver -b 2 -l 3 -e "a^2 + b^2 - c^2 - d^2" -r norm
+TEST T53 like T52, superset(^2) only
+CALL TreeSolver -b 2 -l 2 -e "a^2 + b^2 - c^2 - d^2" -r norm,invall
+
+TEST T54 like T52, with superset(^2)
+CALL TreeSolver -b 2 -l 2 -e "a^4 + b^4 - c^4 -d^4; w=a^2; x=b^2; y=c^2; z=d^2; w^2 + x^2 - y^2 - z^2" -r norm,invall
+
+TEST T55 like T52, partial superset(^2) 
+CALL TreeSolver -b 2 -l 2 -e "a^4 + b^4 - c^2 - d^2" -r norm,invall
 
 # # https://books.google.de/books?id=My19IcewAnoC&lpg=PA317&ots=V3hN58VkXU&dq=Fermat%20identities&hl=de&pg=PA322#v=onepage&q=Fermat%20identities&f=false
 # # Google: Fermat identities
