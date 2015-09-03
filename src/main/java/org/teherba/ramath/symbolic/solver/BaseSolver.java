@@ -57,9 +57,6 @@ public class BaseSolver extends Stack<RelationSet> {
     /** level of queue element which was previously expanded */
     protected int prevLevel;
 
-    /** Writer for proof trace */
-    public PrintWriter trace;
-
     /** List of reason and feature codes from the commandline */
     protected String codeList;
     /** Factory for reasons to truncate the expansion tree */
@@ -94,7 +91,7 @@ public class BaseSolver extends Stack<RelationSet> {
         initialize();
     } // Constructor(writer)
 
-    /** Closes the solver, especially the result print writer.
+    /** Closes the solver, especially the PrintWriter for the HTTP result
      */
     public void close() {
         trace.close();
@@ -265,6 +262,9 @@ public class BaseSolver extends Stack<RelationSet> {
         this.upperSubst = upperSubst;
     } // setUpperSubst
     //----------------
+    /** Writer for proof trace */
+    public PrintWriter trace;
+
     /** Gets the print writer for traces
      *  @return print writer
      */

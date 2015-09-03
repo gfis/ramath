@@ -1,6 +1,6 @@
 /*  VariableMap: maps a set of variables to their values or substitution formulas
  *  @(#) $Id: VariableMap.java 538 2010-09-08 15:08:36Z gfis $
- *  2015-08-30: normalizeIt
+ *  2015-08-30: deflateIt
  *  2015-08-19: multiplyBy, substitute
  *  2015-04-26: old_triviality returns String
  *  2015-03-02: refineExpressions(, skippable)
@@ -130,19 +130,6 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
     public static final String SIMILIAR  = "similiar";
     /** Result message for a recursion to the same   {@link RelationSet} */
     public static final String SAME      = "same";
-
-    /** Gets the solution state
-     *  @return one of the codes for failure, success or unknown
-     */
-    public String getState() {
-        return solutionState;
-    } // getState
-    /** Sets the solution state
-     *  @param state one of the codes for failure, success or unknown
-     */
-    public void setState(String state) {
-        solutionState = state;
-    } // setState
 
     /*-------------- lightweight methods -----------------------------*/
 
@@ -417,13 +404,32 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
         return result;
     } // refineExpressions
 
-    /** Normalizes the additive factors <em>a</em> and
+    /** Gets a map to permuted variable names
+     *  @param perms indexes for permutation of variable names
+     *  of the keys = variable names.
+     *  @return a new {@link VariableMap} with the variables mapped to some permutation
+     */
+    public VariableMap permuteVariables(int[] perms) {
+        VariableMap result = new VariableMap();
+        String[] names = this.getNameArray();
+        Iterator<String> iter = this.keySet().iterator();
+        int idisp = 0;
+        while (iter.hasNext()) {
+            String key = iter.next();
+            int index  = perms[idisp];
+            result.put(key, names[index]);
+            idisp ++;
+        } // while iter
+        return result;
+    } // permuteVariables
+
+    /** Deflates the additive factors <em>a</em> and
      *  the multiplicative factors <em>m</em> in all refined expressions of the map
      *  such that they have no common divisor.
      *  The expressions remain unchanged when <em>a = 0</em>.
-     *  @return a new, normalized map
+     *  @return a new, deflated map
      */
-    public VariableMap normalize() {
+    public VariableMap deflateIt() {
         VariableMap result = new VariableMap();
         Iterator<String> viter = this.keySet().iterator();
         while (viter.hasNext()) {
@@ -440,7 +446,7 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
             result.put(key, value);
         } // while viter
         return result;
-    } // normalizeIt
+    } // deflateIt
 
     /** Substitutes variable names with the expressions from <em>this</em> Map (if they are not null),
      *  and returns the replaced String.

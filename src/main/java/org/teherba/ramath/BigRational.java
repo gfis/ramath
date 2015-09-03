@@ -2,7 +2,7 @@
  *  @(#) $Id: BigRational.java 231 2009-08-25 08:47:16Z gfis $
  *  2015-06-17: extends BigInteger
  *  2014-04-08: use BigInteger.valueOf(long)
- *  2013-09-13: normalize -> simplify
+ *  2013-09-13: simplify
  *  2013-08-23: Serializable, lcm, gcd
  *  2013-08-21: denom -> numerator, nomin -> denominator
  *  2012-08-20: pow with special handling of exp=1

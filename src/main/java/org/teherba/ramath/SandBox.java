@@ -56,8 +56,9 @@ public class SandBox {
     /** Reads lines with numbers a, b, c, d such that a^4 + b^4 = c^4 + d^4.
      *  Checks these tuples whether they are primitive,
      *  whether they fulfill the powersum property,
-     *  and show the prime factorizations of the sum a^4 + b^4
+     *  and show the prime factorizations of the sum a^4 + b^4 and of the sum a^2 + b^2
      *  @param fileName name of file containing line with tuples of 4 numbers
+     *  The results indicate that there is no prime factor = 3 mod 4.
      */
     public void process422(String fileName) {
         String line = null; // current line from text file
@@ -78,12 +79,18 @@ public class SandBox {
                 if (! vect.isPowerSum(4, 2, 2)) {
                     System.out.print(", no powerSum(4)");
                 }
-                BigInteger sum = BigInteger.valueOf(vect.get(0)).pow(4)
-                        .add    (BigInteger.valueOf(vect.get(1)).pow(4));
-                PrimeFactorization pmfz = new PrimeFactorization(sum);
-                System.out.print(",\tsum=" + sum.toString());
-                System.out.print("\t=" + pmfz.toString());
-                System.out.print("\t, mod(4)=" + pmfz.modulus(4).toString(","));
+                BigInteger sum4 = BigInteger.valueOf(vect.get(0)).pow(4)
+                        .add     (BigInteger.valueOf(vect.get(1)).pow(4));
+                PrimeFactorization pmfz4 = new PrimeFactorization(sum4);
+                System.out.print(",\tsum^4=" + sum4.toString());
+                System.out.print("\t=" + pmfz4.toString());
+                System.out.print("\t, mod(4)=" + pmfz4.modulus(4).toString(","));
+                BigInteger sum2 = BigInteger.valueOf(vect.get(0)).pow(2)
+                        .add     (BigInteger.valueOf(vect.get(1)).pow(2));
+                PrimeFactorization pmfz2 = new PrimeFactorization(sum2);
+                System.out.print(",\tsum^2=" + sum2.toString());
+                System.out.print("\t=" + pmfz2.toString());
+                System.out.print("\t, mod(4)=" + pmfz2.modulus(4).toString(","));
                 System.out.println();
                 limit --;
             } // while ! eof

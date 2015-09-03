@@ -35,6 +35,7 @@ import  org.teherba.ramath.BigIntegerUtil;
 import  org.teherba.ramath.PrimeFactorization;
 import  org.teherba.ramath.linear.Vector;
 import  org.teherba.ramath.util.ExpressionReader;
+import  org.teherba.ramath.util.Permutator;
 import  java.io.Serializable;
 import  java.math.BigInteger;
 import  java.util.Iterator;
@@ -51,7 +52,9 @@ import  java.util.TreeMap;
  *  and the variables can only have values &gt;= 0.
  *  @author Dr. Georg Fischer
  */
-public class RelationSet extends Polynomial implements Cloneable, Serializable {
+public class RelationSet
+        extends Polynomial
+        implements Cloneable, Serializable {
     private static final long serialVersionUID = 3L;
     public final static String CVSID = "@(#) $Id: RelationSet.java 970 2012-10-25 16:49:32Z  $";
 
@@ -384,7 +387,27 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
         return this.toList(false);
     } // toList()
 
-    /** Normalizes all member {@link Polynomial}s
+    /** Deflates all member {@link Polynomial}s in place
+     *  @return <em>this</em> deflated RelationSet
+     */
+    public RelationSet deflateIt() {
+        int ipoly = this.polynomials.size() - 1;
+        while (ipoly >= 0) {
+            this.get(ipoly).deflateIt();
+            ipoly --;
+        } // while ipoly
+        return this;
+    } // deflateIt
+
+    /** Deflates all member {@link Polynomial}s
+     *  @return a new deflated RelationSet
+     */
+    public RelationSet deflate() {
+        RelationSet result = this.clone();
+        return result.deflateIt();
+    } // deflate
+
+    /** Normalizes all member {@link Polynomial}s in place
      *  @return <em>this</em> normalized RelationSet
      */
     public RelationSet normalizeIt() {
@@ -395,6 +418,14 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
         } // while ipoly
         return this;
     } // normalizeIt
+
+    /** Normalizes all member {@link Polynomial}s
+     *  @return a new normalized RelationSet
+     */
+    public RelationSet normalize() {
+        RelationSet result = this.clone();
+        return result.normalizeIt();
+    } // normalize
 
     /** Divides all {@link Polynomial}s of <em>this</em> {@link RelationSet}
      *  by a {@link BigInteger}.
@@ -412,7 +443,7 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
 
     /** Multiplies all {@link Polynomial}s of <em>this</em> {@link RelationSet}
      *  with a {@link BigInteger}.
-     *  This is the inverse operation to {@link #normalizeIt}.
+     *  This is the inverse operation to {@link #deflateIt}.
      *  @param number multiply with this BigInteger
      *  @return reference to <em>this</em> RelationSet which was modified
      */
@@ -448,11 +479,11 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
         return result;
     } // getGrowingFactors
 
-    /** Determines whether <em>this</em> RelationSet can be transformed into <em>rset2</em>
-     *  by an affine map from the variables in <em>this</em> to the variables in <em>rset2</em>.
+    /** Determines whether <em>this</em> {@link RelationSet} can be transformed into <em>rset2</em>
+     *  by an affine map from the variables in <em>this</em> RelationSet to the variables in <em>rset2</em>.
      *  @param rset2 target RelationSet
-     *  @return string representation of the mapping from <em>this</em> to <em>rset2</em>, or <em>null</em>
-     *  if no mapping could be determined
+     *  @return String representation of the mapping from <em>this</em> RelationSet to <em>rset2</em>, or <em>null</em>
+     *  if no such mapping could be determined
      */
     public String similiarity(RelationSet rset2) {
         String result = "";
@@ -475,10 +506,10 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
         return result;
     } // similiarity
 
-    /** Returns a new relation set constructed from a string representation, possibly with an
+    /** Returns a {@link RelationSet} set constructed from a String representation, possibly with an
      *  error message inserted at the point where parsing could not proceed.
-     *  @param input the input string, with whitespace, for example " + 17*a0^2*a1 + a2^2*a3^3 - 4*b4"
-     *  @return a reference to a new relation set
+     *  @param input the input String, with whitespace, for example " + 17*a0^2*a1 + a2^2*a3^3 - 4*b4"
+     *  @return a reference to a new {@link RelationSet}
      */
     public static RelationSet parse(String input) {
         return new RelationSet(input);
@@ -527,7 +558,7 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
         TreeMap<String, Integer> expGCDs = new TreeMap<String, Integer>();
         int ipoly = 0;
         while (ipoly < this.size()) { // over all relations
-	        joinExponentGCDs(expGCDs, this.get(ipoly));
+            joinExponentGCDs(expGCDs, this.get(ipoly));
             ipoly ++;
         } // while ipoly
         Vector result = new Vector(expGCDs.size());
@@ -543,29 +574,55 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
 
     /** Determine whether two variable names of <em>this</em> {@link RelationSet}
      *  are interchangeable (equivalent).
-     *  Caution: primitive, inefficient implementation.
+     *  Caution: this is a rather primitive, inefficient implementation.
      *  @param name1 name of 1st variable
      *  @param name2 name of 2nd variable
      *  @return true of the two variable names can be interchanged in the RelationSet
      *  without loss of structure
      */
-    protected boolean areTransposable(String name1, String name2) {
+    protected boolean allowsTransposition(String name1, String name2) {
+        VariableMap vmap2 = new VariableMap();
+        vmap2.put(name1, name2);
+        vmap2.put(name2, name1);
+        RelationSet rset1 = this                  ;
+        RelationSet rset2 = this.substitute(vmap2);
+        // now try to match each Polynomial from rset1 with another from rset2
+        int len = this.size();
+        int[] partner = new int[len]; // maps the index of a Polynomial in rset1 to the index of a matching Polynomials in rset2
+        int
+        ipoly1 = 0;
+        while (ipoly1 < len) { // presetting: no partners so far
+            partner[ipoly1] = -1;
+            ipoly1 ++;
+        } // while ipoly1
+        ipoly1 = 0;
+        while (ipoly1 < len) { // over all Polynomials in rset1: determine partners in rset2
+            if (partner[ipoly1] < 0) { // no partner so far
+                Polynomial poly1 = rset1.get(ipoly1);
+                int ipoly2 = 0;
+                while (ipoly2 < len) { // over all Polynomials in rset2
+                    if (partner[ipoly2] < 0) { // no partner so far
+                        Polynomial poly2 = rset2.get(ipoly2);
+                        if (poly1.isEqualTo(poly2)) { // make them partners
+                            partner[ipoly1] = ipoly2;
+                            partner[ipoly2] = ipoly1;
+                        } // make partners
+                    } // poly2 had no partner
+                    ipoly2 ++;
+                } // while ipoly2
+            } // poly1 had no partner
+            ipoly1 ++;
+        } // while ipoly1
+        ipoly1 = 0;
         boolean result = true; // assume success
-        VariableMap varm2 = new VariableMap();
-        varm2.put(name1, name2);
-        varm2.put(name2, name1);
-        RelationSet rset2 = this.substitute(varm2);
-        int ipoly = 0;
-        while (ipoly < this.size()) { // over all relations
-            Polynomial poly1 = this .get(ipoly);
-            Polynomial poly2 = rset2.get(ipoly);
-            result = result && (poly1.add(poly2).isZero() || poly1.subtract(poly2).isZero());
-            ipoly ++;
-        } // while ipoly
+        while (result && ipoly1 < len) { // test whether all had partners
+            result = partner[ipoly1] >= 0;
+            ipoly1 ++;
+        } // while ipoly1
         return result;
-    } // areTransposable
+    } // allowsTransposition
 
-    // public Vector getTransposableClasses() is inherited from Polynomial, but uses local 'areTransposable'
+    // public Vector getTransposableClasses() is inherited from Polynomial, but uses local 'allowsTransposition'
 
     /** Extracts a new {@link RelationSet} consisting of the
      *  indivisible parts of the underlying {@link Polynomial}s.
@@ -604,6 +661,40 @@ public class RelationSet extends Polynomial implements Cloneable, Serializable {
         } // while ipoly
         return result;
     } // hasConstant
+
+    /** Determines whether two {@link RelationSet}s are equivalent, that is whether
+     *  there is a permutation of the consituting {@link Polynomial}s
+     *  which {@link Polynomial#isEqualTo are equal}.
+     *  @param rset2 second comparision operand
+     *  @return whether sets of Polynomials are the same
+     */
+    public boolean isEqualTo(RelationSet rset2) {
+        boolean result = false;
+        RelationSet rset1 = this;
+        int card1 = rset1.size();
+        if (card1 != rset2.size()) {
+            // result = false;
+        } else if (card1 == 1) { // single Polynomial
+            result = rset1.get(0).isEqualTo(rset2.get(0));
+        } else if (card1 == 2) { // single Polynomial
+            result = rset1.get(0).isEqualTo(rset2.get(1)) ||
+                     rset1.get(1).isEqualTo(rset2.get(0)) ;
+        } else { // >= 3 Polynomials: try all permutations of tthe array elements
+            Permutator permutator = new Permutator(card1);
+            permutator.next(); // ignore identical mapping
+            while (! result && permutator.hasNext()) { // over all permutations of sub-Polynomials
+                int[] perms = permutator.next();
+                int iperm = 0;
+                boolean same = true; // assume that this combination matches
+                while (same && iperm < card1) { 
+                    same = rset1.get(iperm).isEqualTo(rset2.get(perms[iperm])); // break loop if no sub-match
+                    iperm ++;
+                } // while same
+                result = same; // this combination matched - break loop
+            } // while permutator
+        } // >= 3
+        return result;
+    } // isEqualTo
 
     /** Substitutes variable names with the expressions from a {@link VariableMap} (if they are not null),
      *  and returns a new RelationSet.

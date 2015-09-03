@@ -64,7 +64,7 @@ public class DownsizedMapReason extends BaseReason {
      *  which fails because of <em>varGCD = 8</em>
      */
     public String check(BaseSolver solver, RelationSet rset2) {
-        VariableMap vmap3 = rset2.getTuple().normalize();
+        VariableMap vmap3 = rset2.getTuple().deflateIt();
         RelationSet rset3 = this.getRootNode().substitute(vmap3);
         String result = rset3.evaluate(vmap3);
         if (debug > 0) {

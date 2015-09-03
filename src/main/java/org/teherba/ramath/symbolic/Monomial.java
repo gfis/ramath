@@ -1,5 +1,6 @@
 /*  Monomial: a product with a signed numeric coefficient and optional exponentiated variable(s)
  *  @(#) $Id: Monomial.java 522 2010-07-26 07:14:48Z gfis $
+ *  2015-09-03: isNegative
  *  2015-08-27: getExponentGCDs
  *  2015-08-16: toFactoredString() with powers of prime factors
  *  2015-07-17: degree
@@ -287,6 +288,13 @@ public class Monomial implements Cloneable, Serializable {
     public boolean isConstant() {
         return vars.size() == 0;
     } // isConstant
+
+    /** Determines whether the monomial has a negative sign
+     *  @return true if the monomial is negative, false otherwise
+     */
+    public boolean isNegative() {
+        return this.getCoefficient().compareTo(Coefficient.ZERO) < 0;
+    } // isNegative
 
     /** Determines whether the monomial contains exactly one variable
      *  @return false if the monomial is constant or has more than one variable
@@ -596,8 +604,8 @@ public class Monomial implements Cloneable, Serializable {
         return result;
     } // pow
 
-    /** Modifies <em>this<em> {@link Monomial} such that the 
-     *  specified variable "consumes" as big a power factor of the {@link Coefficient} 
+    /** Modifies <em>this<em> {@link Monomial} such that the
+     *  specified variable "consumes" as big a power factor of the {@link Coefficient}
      *  as possible, and divides the Coefficient accordingly
      *  @param varName try to consume the power factor by this variable
      *  @return the root of the extracted factor;
@@ -609,8 +617,8 @@ public class Monomial implements Cloneable, Serializable {
         PrimeFactorization primfn = new PrimeFactorization(bint.abs());
         BigInteger[] rpair = primfn.reducePowerOf(exp1); // [0] = extracted root, [1] = remaining factor
         this.setCoefficient(Coefficient.valueOf(
-                bint.compareTo(BigInteger.ZERO) < 0 
-                    ? rpair[1].negate() 
+                bint.compareTo(BigInteger.ZERO) < 0
+                    ? rpair[1].negate()
                     : rpair[1]
                 ));
         return rpair[0];

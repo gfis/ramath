@@ -605,7 +605,7 @@ public class Polynomial implements Cloneable, Serializable {
 
     /** Multiplies all {@link Coefficient}s of <em>this</em> {@link Polynomial}
      *  with a {@link BigInteger}.
-     *  This is the inverse operation to {@link #normalizeIt}.
+     *  This is the inverse operation to {@link #deflateIt}.
      *  @param number multiply with this BigInteger
      *  @return reference to <em>this</em> Polynomial which was modified
      */
@@ -1241,7 +1241,7 @@ x^2 + 3*x^3 + 2*x^4
     public static void joinExponentGCDs(TreeMap<String, Integer> expGCDs, Polynomial poly1) {
         Iterator <String> miter = poly1.monomials.keySet().iterator();
         while (miter.hasNext()) { // over all signatures of monomials
-        	Monomial mono1 = poly1.get(miter.next());
+            Monomial mono1 = poly1.get(miter.next());
             TreeMap<String, Integer>  mvars = mono1.getMap();
             Iterator <String> viter = mvars.keySet().iterator();
             while (viter.hasNext()) { // over all variables
@@ -1266,72 +1266,6 @@ x^2 + 3*x^3 + 2*x^4
         joinExponentGCDs(result, this);
         return result;
     } // getExponentGCDs
-
-    /** Determine whether two variable names of <em>this</em> {@link Polynomial}
-     *  are interchangeable (equivalent).
-     *  @param name1 name of 1st variable
-     *  @param name2 name of 2nd variable
-     *  @return true of the two variable names can be interchanged in the Polynomial
-     *  without loss of structure
-     */
-    protected boolean areTransposable(String name1, String name2) {
-        boolean result = true; // irrelevant
-        VariableMap vmap2 = new VariableMap();
-        vmap2.put(name1, name2);
-        vmap2.put(name2, name1);
-        Polynomial poly2 = substitute(vmap2);
-        result = this.add(poly2).isZero() || this.subtract(poly2).isZero();
-        return result;
-    } // areTransposable
-
-    /** Denotes transposition equivalence classes which contain only one single element */
-    public final static int LONELY = 1947;
-
-    /** Determines the equivalence classes (subsets) of variables
-     *  which can be interchanged (renamed) in <em>this</em> Polynomial,
-     *  while the polynomial's structure is still maintained.
-     *  Caution: primitive, inefficient implementation.
-     *  @return an {@link Vector} of indexes into a fictitious array of the sorted variable names of
-     *  <em>this</em> Polynomial. The indexes start with 0, but they are not necessarily consecutive.
-     *  Two variable names having the same index may be interchanged/renamed in the Polynomial
-     *  without loss of structure.
-     *  <p>
-     *  Examples:
-     *  <pre>
-     *  (new Polynomial("a^3 +   b^3 +   c^3 - d^3 = 0")).getTransposition() -> [0, 0, 0, 3]
-     *  (new Polynomial("a^3 + 2*b^3 + 3*c^3 - d^3 = 0")).getTransposition() -> [0, 1, 2, 3]
-     *  </pre>
-     */
-    public Vector getTransposableClasses() {
-        String [] names = getVariableMap().getNameArray();
-        int len = names.length;
-        Vector result = new Vector(len);
-
-        int itran = 0;
-        while (itran < len) { // preset to default (natural, increasing from 0): no equivalent names found
-            result.set(itran, itran);
-            itran ++;
-        } // while presetting
-        itran = 0;
-        while (itran < len) { // search for interchangeable names
-            boolean lonely = true; // whether the equivalence class contains this element only
-            int jtran = itran + 1;
-            while (jtran < len) { //  those not yet investigated
-                if (result.get(jtran) >= jtran && areTransposable(names[itran], names[jtran])) {
-                    result.set(jtran, itran);
-                    lonely = false;
-                } // areTransposable
-                jtran ++;
-            } // while jtran
-        /*
-            if (false && lonely) { // equivalence class contains this element only
-                result.set(itran, Polynomial.LONELY);
-            } // lonely
-        */
-            itran ++;
-        } // while searching
-        return result;
-    } // getTransposableClasses()
 
     //------------
     // Subsetting
@@ -1696,13 +1630,13 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
         if (! ptail.isZero()) {
             phead = phead.add(ptail);
         }
-        phead.normalizeIt().reducePowerCoefficients(vmapt);
+        phead.deflateIt().reducePowerCoefficients(vmapt);
         if (debug2 >= 0) {
             Polynomial ptest = phead.substitute(vmapt);
-            if (! ptest.normalize().equals(this.normalize())) {
+            if (! ptest.deflate().equals(this.deflate())) {
                 System.out.println("??? assertion: "
-                        + ptest.normalize().toString() + " != "
-                        + this .normalize().toString());
+                        + ptest.deflate().toString() + " != "
+                        + this .deflate().toString());
             }
         } // debug2
         vmapt.put("", phead.toString()); // store the result as if being mapped from the empty String
@@ -1737,20 +1671,59 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
         return resultMap;
     } // characterize
 
+    /** Deflates the {@link Coefficient}s of the {@link Monomial}s in place
+     *  (and also returns <em>this</em> - modified - Polynomial).
+     *  </ul>
+     *  @return reference to <em>this</em> - modified - Polynomial
+     */
+    public Polynomial deflateIt() {
+        BigInteger divisor = this.gcdCoefficients(true); // with constant
+        if (this.hasVariable()) {
+            if (false) {
+        /*
+            } else if (this.getLeadTerm().isNegative()) {
+                divisor = divisor.negate();
+                this.divideBy(divisor);
+        */
+            } else if (divisor.compareTo(BigInteger.ONE) != 0) { // divide by GCD if != 1
+                this.divideBy(divisor);
+            }
+        } // hasVariable()
+        return this;
+    } // deflateIt
+
+    /** Deflates the {@link Coefficient}s of the {@link Monomial}s
+     *  and returns the modified Polynomial.
+     *  @return reference to the modified Polynomial
+     */
+    public Polynomial deflate() {
+        Polynomial result = this.clone();
+        return result.deflateIt();
+    } // deflate
+
     /** Normalizes the {@link Coefficient}s of the {@link Monomial}s in place
      *  (and also returns <em>this</em> - modified - Polynomial).
      *  Normalization is a predecessor step for equivalence checking, and proceeds
      *  in this sequence:
      *  <ul>
      *      <li>divide all coefficients by their greatest common divisor (GCD)</li>
+     *      <li>make the sign of the lead term (the last {@link Monomial}) positive</li>
      *  </ul>
      *  @return reference to <em>this</em> - modified - Polynomial
      */
     public Polynomial normalizeIt() {
-        BigInteger divisor = this.gcdCoefficients(true);
-        if (divisor.compareTo(BigInteger.ONE) != 0 && this.hasVariable()) { // divide by GCD if != 1
-            this.divideBy(divisor);
-        }
+        BigInteger divisor = this.gcdCoefficients(true); // with constant
+        if (this.hasVariable()) {
+            if (false) {
+        /*
+            } else if (this.getLeadTerm().isNegative()) {
+                divisor = divisor.negate();
+                this.divideBy(divisor);
+        */
+            } else if (divisor.compareTo(BigInteger.ONE) != 0) { // divide by GCD if != 1
+                this.divideBy(divisor);
+            }
+        } // hasVariable()
         return this;
     } // normalizeIt
 
@@ -1763,15 +1736,116 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
         return result.normalizeIt();
     } // normalize
 
-    /** Determines whether the parameter polynomial is identical with <em>this</em> polynomial,
-     *  including variable names and signs of monomials.
+    /** Determines whether two {@link Polynomial}s are equivalent, that is whether
+     *  they have the same variable names and signs of {@link Monomial}s.
      *  @param poly2 second comparision operand
-     *  @return whether the string representations are the same
+     *  @return whether the String representations of the two Polynomials are the same,
+     *  except for negated signs.
      */
-    public boolean equals(Polynomial poly2) {
-        return this.toString().equals(poly2.toString());
+    protected boolean equals(Polynomial poly2) {
+        return this .toString().equals(
+               poly2.toString() );
     } // equals
 
+    /** Determines whether two {@link Polynomial}s are equivalent, that is whether
+     *  they have the same variable names and signs of {@link Monomial}s.
+     *  @param poly2 second comparision operand
+     *  @return whether the String representations of the two Polynomials are the same
+     */
+    protected boolean isEqualTo(Polynomial poly2) {
+        Polynomial poly1 = this .deflate(); // cloned
+        Polynomial poly3 = poly2.deflate(); // cloned
+        Polynomial add13 = poly1.add     (poly3);
+        Polynomial sub13 = poly1.subtract(poly3);
+        boolean result = poly1.add     (poly3).isZero() || 
+                         poly1.subtract(poly3).isZero();
+        // System.out.println(poly1.toString() +  " isEqualTo? " + poly3.toString() + " => " + result + ",add=" + add13.toString() + ", sub=" + sub13.toString());
+        return result;
+    } // isEqualTo
+
+    /** Determines whether two {@link Polynomial}s are equivalent, that is whether
+     *  <ul>
+     *  <li>they are {@link #equals equal} or</li>
+     *  <li>they have the same variable names and exponents, but they differ by 
+     *  a positive or negative multiplicative factor.</li>
+     *  </ul>
+     *  @param poly2 second comparision operand
+     *  @return true if the two polynomials are equivalent, false otherwise
+     */
+    public boolean isEquivalent(Polynomial poly2) {
+        return this .deflate().toString().equals(
+               poly2.deflate().toString() );
+    } // isEquivalent
+
+    /** Determine whether two variable names of <em>this</em> {@link Polynomial}
+     *  are interchangeable (equivalent).
+     *  Caution: this is a rather primitive, inefficient implementation.
+     *  @param name1 name of 1st variable
+     *  @param name2 name of 2nd variable
+     *  @return true of the two variable names can be interchanged in the Polynomial
+     *  without loss of structure
+     */
+    protected boolean allowsTransposition(String name1, String name2) {
+        VariableMap vmap2 = new VariableMap();
+        vmap2.put(name1, name2);
+        vmap2.put(name2, name1); // now maps interchanged names
+        return this.isEqualTo(substitute(vmap2));
+    } // allowsTransposition
+
+    /** Determines the equivalence classes (subsets) of variables
+     *  which can be interchanged (renamed) in <em>this</em> Polynomial,
+     *  while they still maintain the Polynomial's structure.
+     *  Caution: this is a rather primitive, inefficient implementation.
+     *  @return the classes as a {@link Vector} of indexes into a fictitious array 
+     *  of the sorted variable names of <em>this</em> Polynomial. 
+     *  The indexes start with 0, and they increment, but they are not necessarily consecutive.
+     *  Two variable names having the same index may be interchanged/renamed in <em>this</em> Polynomial
+     *  without loss of structure.
+     *  <p>
+     *  Examples:
+     *  <pre>
+     *  (new Polynomial("a^3 +   b^3 +   c^3 - d^3 = 0")).getTransposableClasses() -> [0, 0, 0, 3]
+     *  (new Polynomial("a^3 + 2*b^3 + 3*c^3 - d^3 = 0")).getTransposableClasses() -> [0, 1, 2, 3]
+     *  </pre>
+     */
+    public Vector getTransposableClasses() {
+        String [] names = getVariableMap().getNameArray();
+        int len = names.length;
+        Vector result = new Vector(len);
+        int itran = 0;
+        while (itran < len) { // preset to default (natural, increasing from 0): no equivalent names found
+            result.set(itran, itran);
+            itran ++;
+        } // while presetting
+        itran = 0;
+        while (itran < len) { // search for interchangeable names
+            int jtran = itran + 1;
+            while (jtran < len) { //  those not yet investigated
+                if (result.get(jtran) >= jtran && allowsTransposition(names[itran], names[jtran])) {
+                    result.set(jtran, itran);
+                } // allowsTransposition
+                jtran ++;
+            } // while jtran
+            itran ++;
+        } // while searching
+        return result;
+    } // getTransposableClasses()
+
+    /** Determines whether two {@link Polynomial}s are equivalent, that is whether,
+     *  <ul>
+     *  <li>after a transposition of the variable names,</li>
+     *  <li>they are {@link #isEquivalent}.</li>
+     *  </ul>
+     *  @param poly2 second comparision operand
+     *  @return null if the two polynomials are not mappable, or
+     *  a {@link VariableMap} from the variables of <em>this</em> Polynomial
+     *  to the variables of <em>poly2</em>
+     */
+    public VariableMap getTransposition(Polynomial poly2) {
+        VariableMap result = this.getVariableMap();
+        return result;
+    } // getTransposition
+    
     /** Tries to establish an affine mapping between the variables
      *  of <em>this</em> Polynomial and a 2nd Polynomial.
      *  The absolute coefficients of the 2nd Polynomial should be greater than or equal to
@@ -1919,8 +1993,8 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
      </pre>
      */
     public VariableMap isMappableTo(Polynomial poly2p) {
-        Polynomial poly2 = poly2p.clone(); // .normalizeIt();
-        Polynomial poly1 = this  .clone(); // .normalizeIt();
+        Polynomial poly2 = poly2p.clone(); // .deflateIt();
+        Polynomial poly1 = this  .clone(); // .deflateIt();
         int debugLimit = 1;
         VariableMap result = new VariableMap();
         boolean busy = true;
@@ -2069,8 +2143,8 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
         String result = null;
         if (true) {
             VariableMap mapt = poly2.getExpressionMap();
-            boolean outcome = this.substitute(mapt).clone().normalizeIt()
-                    .equals(poly2.clone().normalizeIt());
+            boolean outcome = this.substitute(mapt).clone().deflateIt()
+                    .equals(poly2.clone().deflateIt());
             if (! outcome) {
                 if (false) { // old code
                     mapt = this.affineMap   (poly2);
@@ -2096,110 +2170,6 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
         } // if sizes ==
         return result;
     } // similiarity
-
-    /** Determines whether two polynomials are equivalent, that is whether
-     *  they differ by the names of the variables
-     *  and eventually by a factor of (-1) only.
-     *  The <em>renameMap</em> is set as a side effect if the comparision is successful.
-     *  @param poly2 second comparision operand
-     *  @return true if the two polynomials are equivalent, false otherwise
-     */
-    public boolean isEquivalent(Polynomial poly2) {
-        boolean result = false; // assume failure
-        this .normalizeIt();
-        poly2.normalizeIt();
-        TreeMap<String, Polynomial> charzn1 = this .characterize();
-        TreeMap<String, Polynomial> charzn2 = poly2.characterize();
-
-        // compare number of characteristics in both polynomials
-        if (charzn1.size() != charzn2.size()) {
-            if (debug >= 1) {
-                System.out.println("#csize " + charzn1   .size() + " != " + charzn2   .size());
-            }
-            // failure
-        } else { // number of characteristics matches
-            int signSum1 = this .polarity();
-            int signSum2 = poly2.polarity();
-            if (signSum1 != signSum2) { // signSums are >= 0
-                if (debug >= 1) {
-                    System.out.println("#sign " + signSum1 + " != " + signSum2);
-                }
-                // failure
-            } else { // signSums match or are 0
-                VariableMap renameMap1 = this .getVariableMap(); // variables of 'this' mapped to null
-                VariableMap renameMap2 = poly2.getVariableMap(); // variables of 'poly2' mapped to null
-                if (renameMap1.size() != renameMap2.size()) {
-                    if (debug >= 1) {
-                        System.out.println("#vsize " + renameMap1.size() + " != " + renameMap2.size());
-                    }
-                    // failure
-                } else { // equal number of variables
-                    boolean busy = true;
-                    // 1st: compare the characterizations
-                    Iterator<String> citer1 = charzn1.keySet().iterator();
-                    Iterator<String> citer2 = charzn2.keySet().iterator();
-                    busy = true;
-                    while (busy && citer1.hasNext()) {
-                        String chic1 = citer1.next();
-                        String chic2 = citer2.next();
-                        if (debug >= 1) {
-                            System.out.println("#chic1");
-                        }
-                        if (! chic1.equals(chic2)) {
-                            if (debug >= 1) {
-                                System.out.println("#chic " + chic1 + " != " + chic2);
-                            }
-                            busy = false; // failure
-                        } // chic comparision
-                    } // while citer
-                    int signLim = 2; // loop with 2: orginal signs; with 1; 'this' with opposite sign; 0: break loop
-                    if (signSum1 > 0) {
-                        signLim --; // do not negate 'this'
-                    }
-                    while (busy && signLim > 0) { // whole loop did not find a difference in characteristic of monomial
-                        // permute through all variables in poly1 and replace them for poly2 variables
-                        String[] variables1 = renameMap1.keySet().toArray(new String[0]);
-                        int width = variables1.length;
-                        if (debug >= 2) {
-                            System.out.println("#busy3 " + width);
-                        }
-                        Permutator vperm = new Permutator(width);
-                        while (! result && busy && vperm.hasNext()) {
-                            if (debug >= 2) {
-                                System.out.println("#busy4 " + width);
-                            }
-                            Iterator<String> viter2 = renameMap2.keySet().iterator();
-                            int[] perms = vperm.next();
-                            int iperm = 0;
-                            if (debug >= 2) {
-                                System.out.println("#busy5 " + perms.length);
-                            }
-                            while (iperm < width) {
-                                if (debug >= 2) {
-                                    System.out.println("#busy6 " + iperm);
-                                }
-                                renameMap2.put(viter2.next(), variables1[perms[iperm]]);
-                                iperm ++;
-                            } // while ip
-                            Polynomial pren2 = poly2.substitute(renameMap2);
-                            if (debug >= 1) {
-                                System.out.println("#perm " + pren2.toString());
-                            }
-                            result = this.equals(pren2);
-                        } // while vperm
-                        if (debug >= 2) {
-                            System.out.println("#busy8 ");
-                        }
-                        signLim --;
-                        if (! result && signLim > 0) { // negate
-                            this.negativeOf();
-                        } // negate
-                    } // while signLim
-                } // equal number of variables
-            } // equal signs
-        } // equal number of characteristics
-        return result;
-    } // isEquivalent
 
     /** Substitutes all variable names with a constant number (0, 1 and so on),
      *  and returns a new polynomial.
@@ -2261,7 +2231,7 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
      *  @return text with the reason for the decision
      */
     public String evaluate(VariableMap vmap1) {
-        // this.normalizeIt();
+        // this.deflateIt();
         StringBuffer result = new StringBuffer(64);
         Coefficient constant = this.getConstant();
         if (false) {
@@ -2503,7 +2473,7 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
                         poly2 = poly1.substitute(vmap1);
                         System.out.println(sloop
                                 + "\t" + poly2.toString()
-                                + "\t" + poly2.normalizeIt().toString());
+                                + "\t" + poly2.deflateIt().toString());
                         iloop ++;
                     } // while iloop
 
@@ -2539,9 +2509,9 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
 ----------------
 expanding queue[0]^-1: a^4 + b^4 - c^4 - d^4 meter=[2,2,2,2] *2
 solution [0,0,0,0],trivial(3)
-[0+2*a,0+2*b,0+2*c,0+2*d]:	similiar to [0], same  a^4+b^4-c^4-d^4
-[1+2*a,0+2*b,1+2*c,0+2*d]:	unknown -> [1] a+3*a^2+4*a^3+2*a^4+2*b^4-c-3*c^2-4*c^3-2*c^4-2*d^4
-[0+2*a,1+2*b,1+2*c,0+2*d]:	transposed [1] {0/0+2*b,0/1+2*a,2/0+2*d,2/1+2*c} by 0+2*b|0+2*a 1+2*a|1+2*b
+[0+2*a,0+2*b,0+2*c,0+2*d]:  similiar to [0], same  a^4+b^4-c^4-d^4
+[1+2*a,0+2*b,1+2*c,0+2*d]:  unknown -> [1] a+3*a^2+4*a^3+2*a^4+2*b^4-c-3*c^2-4*c^3-2*c^4-2*d^4
+[0+2*a,1+2*b,1+2*c,0+2*d]:  transposed [1] {0/0+2*b,0/1+2*a,2/0+2*d,2/1+2*c} by 0+2*b|0+2*a 1+2*a|1+2*b
 */
                         String line = exprs[ipoly];
                         int unkPos = line.indexOf("unknown");

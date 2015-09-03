@@ -323,9 +323,8 @@ CALL Polynomial -subst "1+2*y" "1+2*z" "x - y"
 TEST SU3 clash with replaced variable^2
 CALL Polynomial -subst "1+2*y^2" "1+2*z^2" "x - y"
 
-
 #-------------------------------
-# Relation Sets
+# RelationSet
 
 TEST RS1 without arguments
 CALL RelationSet
@@ -344,3 +343,30 @@ CALL RelationSet -transp   "a^3 + 2*b^3 + 3*c^3 - d^3 = 0"
 
 TEST RC3 transposition
 CALL RelationSet -transp   "4*e - 4*f = 0"
+
+TEST RC4 transposition 4 Polynomials
+CALL RelationSet -transp   "a^2 + b^2 = c^2; a=x^2; b=y^2; c=z^2"
+
+#-------------------------------
+# TranspositionSet
+
+TEST TS1 TranspositionSet 0
+CALL TranspositionSet "4*e - 5*f"
+
+TEST TS2 TranspositionSet 1
+CALL TranspositionSet "4*e - 4*f"
+
+TEST TS3 TranspositionSet 1
+CALL TranspositionSet "a^2 + b^2 + c^3 - d^3 = 0"
+
+TEST TS4 TranspositionSet 5
+CALL TranspositionSet "a^3 + b^3 + c^3 - d^3 = 0"
+
+TEST TS5 TranspositionSet 0
+CALL TranspositionSet "a^3 + 2*b^3 + 3*c^3 - d^3 = 0"
+
+TEST TS6 TranspositionSet 4 Polynomials: 1
+CALL TranspositionSet "a^2 + b^2 = c^2; a=x^2; b=y^2"
+
+TEST TS7 TranspositionSet 5 Polynomials: 1
+CALL TranspositionSet "a^4 + b^4 = c^4 + d^4; a=w^2; b=x^2; c=y^2; d=z^2"

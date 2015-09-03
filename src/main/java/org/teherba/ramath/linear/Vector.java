@@ -148,7 +148,7 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
     } // sort
 
     /** Return the a Vector with the elements sorted in descending order
-     *  and possibly multiply by -1 such that the element with the
+     *  and possibly multiplied by -1 such that the element with the
      *  greatest absolute value is first.
      *  @return independant copy of the Vector
      */
