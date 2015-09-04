@@ -64,8 +64,8 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
         super();
         Iterator<String> iter = map.keySet().iterator();
         while (iter.hasNext()) {
-            String name = (String) iter.next();
-            this.put(name, (String) map.get(name));
+            String name  = iter.next();
+            this.put(name, map.get(name));
         } // while iter
     } // Constructor(TreeMap)
 
@@ -88,7 +88,7 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
         super();
         Iterator<String> iter = map.keySet().iterator();
         while (iter.hasNext()) {
-            String name = (String) iter.next();
+            String name = iter.next();
             if (upperSubst || name.compareTo("a") >= 0) {
                 this.put(name, value);
             } // if upperSubst
@@ -177,22 +177,6 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
         return result.toString();
     } // toVector
 
-    /** Gets a sorted array of the values of refined expressions 
-     *  without variables names
-     *  @return ["1+8", "1+8", "5+8"], for example
-     */
-    public String[] getRefinedArray() {
-        String[] result = new String[this.size()];
-        int ind = 0;
-        Iterator<String> iter = this.keySet().iterator();
-        while (iter.hasNext()) {
-            String name = iter.next();
-            String expr = this.get(name);
-            result[ind ++] = expr.substring(0, expr.indexOf('*'));
-        } // while iter
-        return result;
-    } // getRefinedArray
-
     /** Gets a sorted array of the variable names
      *  @return ["a", "b", "c"], for example
      */
@@ -220,34 +204,6 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
         } // while iter
         return result;
     } // getValueArray
-
-    /** Gets a solution, that
-     *  are the constants of the expressions for refined variables.
-     *  @return "[3,4,5]", for example
-     *  Caution: the form of the expressions must be c+f*x;
-     *  this is initiated by {@link Polynomial#getExpressionMap}().
-     */
-    public String getConstants() {
-        StringBuffer result = new StringBuffer(256);
-        result.append("[");
-        int count = 0;
-        Iterator<String> iter = this.keySet().iterator();
-        while (iter.hasNext()) {
-            String name = iter.next();
-            count ++;
-            if (count > 1) {
-                result.append(",");
-            }
-            String value = this.get(name).toString();
-            int plusPos = value.indexOf("+");
-            if (plusPos < 0) {
-                plusPos = value.length();
-            }
-            result.append(value.substring(0, plusPos)); // REFINED_FORM
-        } // while iter
-        result.append("]");
-        return result.toString();
-    } // getConstants
 
     /** Multiplies all values of <em>this</em> {@link VariableMap}
      *  with a {@link BigInteger}.
@@ -284,31 +240,6 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
             } // while iter
         return this;
     } // negativeOf
-
-    /** Gets a {@link PolyVector}
-     *  of the constant expressions when refined variables are substituted from a
-     *  binary {@link Dispenser}.
-     *  @return for example: [3,4] for this={x->3+2*x, y->0+4*y} and meter=[0,1]
-     *  Caution: the form of the expressions must be c+f*x;
-     *  this is initiated by {@link Polynomial#getExpressionMap}().
-     */
-    public PolyVector getMeteredValues(Dispenser meter) {
-        PolyVector result = new PolyVector(this.size());
-        Iterator<String> iter = this.keySet().iterator();
-        int iname = 0;
-        while (iter.hasNext()) {
-            String name  = iter.next();
-            String value = this.get(name);
-            String digit = String.valueOf(meter.get(iname));
-            int behindTimes = value.indexOf("*") + 1;
-            if (behindTimes <= 0) {
-                behindTimes = value.length();
-            }
-            result.set(iname, new Polynomial(value.substring(0, behindTimes) + String.valueOf(digit)));  // REFINED_FORM
-            iname ++;
-        } // while iter
-        return result;
-    } // getMeteredValues
 
     /** Extracts the additive factor <em>a</em> and
      *  the multiplicative factor <em>m</em> from a refined expression
@@ -450,6 +381,50 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
         } // while iter
         return result;
     } // permuteVariables
+
+    /** Gets a numeric representation of a permutation mapping between variables.
+     *  This is the inverse method of {@link #permuteVariables}.
+     *  @return a {@link Vector} with natural indexes of the permuted value set
+     */
+    public Vector getPermutationVector() {
+        Vector result = new Vector(this.size());
+        String[] names = this.getNameArray();
+        Iterator<String> iter = this.keySet().iterator();
+        int iold = 0;
+        while (iter.hasNext()) {
+            String oldName = iter.next();
+            String newName = this.get(oldName);
+            int inew = names.length;
+            boolean found = false;
+            while (! found && inew > 0) {
+                inew --;
+                if (names[inew].equals(newName)) {
+                    found = true;
+                }
+            } // while ! found
+            if (! found) {
+                System.out.println("??? assertion in getPermutationVector: " + newName + " not found; vmap=" + this.toString()
+                        + ", iold="    + iold    + ", inew="    + inew
+                        + ", oldName=" + oldName + ", newName=" + newName);
+            }
+            result.set(iold, inew);
+            iold ++;
+        } // while iter
+        return result;
+    } // getPermutationVector
+
+    /** Gets a map which has the keys and values of <em>this</em> {@link VeriableMap} interchanged
+     *  @return a new {@link VariableMap} with the keys as values and vice versa
+     */
+    public VariableMap inverse() {
+        VariableMap result = new VariableMap();
+        Iterator<String> iter = this.keySet().iterator();
+        while (iter.hasNext()) {
+            String key = iter.next();
+            result.put(this.get(key), key);
+        } // while iter
+        return result;
+    } // inverse
 
     /** Deflates the additive factors <em>a</em> and
      *  the multiplicative factors <em>m</em> in all refined expressions of the map

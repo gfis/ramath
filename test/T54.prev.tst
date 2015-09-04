@@ -1,5 +1,6 @@
-Expanding for base=2, reasons+features=base,similiar,evenexp norm,invall
-exponentGCDs=[2,2,2,2,1,1,1,1], transposables={{a},{b},{c},{d},{w},{x},{y},{z}}
+TranspositionSet={[3,2,1,0,7,6,5,4],[2,3,1,0,6,7,5,4],[3,2,0,1,7,6,4,5],[2,3,0,1,6,7,4,5],[1,0,3,2,5,4,7,6],[0,1,3,2,4,5,7,6],[1,0,2,3,5,4,6,7]}
+ExponentGCDs=[2,2,2,2,1,1,1,1]
+Expanding for base=2, reasons+features=base,transpose,same,similiar,evenexp norm,invall
 ----------------
 expanding queue[0]^-1,meter=[2,2,2,2,2,2,2,2]*2: w^2 + x^2 - y^2 - z^2;  - a^2 + w;  - b^2 + x;  - c^2 + y;  - d^2 + z
 solution [0,0,0,0,0,0,0,0],trivial(3)
@@ -7,7 +8,7 @@ solution [0,0,0,0,0,0,0,0],trivial(3)
 [1,0,1,0,1,0,1,0]:	similiar   [1], same  w+w^2+x^2-y-y^2-z^2;-2*a-2*a^2+w;-2*b^2+x;-2*c-2*c^2+y;-2*d^2+z
 [0,1,1,0,0,1,1,0]:	similiar   [1], same  w^2+x+x^2-y-y^2-z^2;-2*a^2+w;-2*b-2*b^2+x;-2*c-2*c^2+y;-2*d^2+z
 [1,0,0,1,1,0,0,1]:	unknown -> [2] w+w^2+x^2-y^2-z-z^2;-2*a-2*a^2+w;-2*b^2+x;-2*c^2+y;-2*d-2*d^2+z
-[0,1,0,1,0,1,0,1]:	similiar   [2], same same  w^2+x+x^2-y^2-z-z^2;-2*a^2+w;-2*b-2*b^2+x;-2*c^2+y;-2*d-2*d^2+z
+[0,1,0,1,0,1,0,1]:	transposed [2] {a=>1+2*a,b=>2*b,c=>2*c,d=>1+2*d,w=>1+2*w,x=>2*x,y=>2*y,z=>1+2*z} by [1,0,2,3,5,4,6,7]
 [1,1,1,1,1,1,1,1]:	similiar   [2], same  w+w^2+x+x^2-y-y^2-z-z^2;-2*a-2*a^2+w;-2*b-2*b^2+x;-2*c-2*c^2+y;-2*d-2*d^2+z
 ----------------
 expanding queue[1]^0,meter=[2,2,2,2,2,2,2,2]*4: w^2 + x^2 - y^2 - z^2;  - 2*a^2 + w;  - 2*b^2 + x;  - 2*c^2 + y;  - 2*d^2 + z

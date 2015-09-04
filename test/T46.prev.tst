@@ -1,5 +1,5 @@
 ExponentGCDs=[1,1]
-Expanding for base=2, reasons+features=base,similiar 
+Expanding for base=2, reasons+features=base,same,similiar 
 ----------------
 expanding queue[0]^-1,meter=[2,2]*2:  - 1 + 30*x + 15*x^2 - 14*y - 7*y^2
 [1,0]:	unknown -> [1] 44+120*x+60*x^2-28*y-28*y^2

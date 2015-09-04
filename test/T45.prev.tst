@@ -1,5 +1,5 @@
 ExponentGCDs=[2,2]
-Expanding for base=2, reasons+features=base,similiar,evenexp norm,showfail
+Expanding for base=2, reasons+features=base,same,similiar,evenexp norm,showfail
 ----------------
 expanding queue[0]^-1,meter=[2,2]*2:  - 9 + 15*x^2 - 7*y^2
 [0,0]:	failure constant=-9, vgcd=4

@@ -967,7 +967,7 @@ x^2 + 3*x^3 + 2*x^4
      *  @return map of variable names mapped to <em>null</em>
      */
     public VariableMap getVariableMap() {
-        return getVariableMap(true);
+        return getVariableMap("", true);
     } // getVariableMap()
 
     /** Gets a map from all variable names in <em>this</em> Polynomial (the key)
@@ -976,7 +976,7 @@ x^2 + 3*x^3 + 2*x^4
      *  @return map of variable names mapped to <em>null</em>
      */
     public VariableMap getVariableMap(boolean upperSubst) {
-        return getVariableMap(null, upperSubst);
+        return getVariableMap("", upperSubst);
     } // getVariableMap(boolean)
 
     /** Gets a map from all variable names (key) to some string value.
@@ -1841,10 +1841,10 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
      *  a {@link VariableMap} from the variables of <em>this</em> Polynomial
      *  to the variables of <em>poly2</em>
      */
-    public VariableMap getTransposition(Polynomial poly2) {
+    public VariableMap getTransposition_88(Polynomial poly2) {
         VariableMap result = this.getVariableMap();
         return result;
-    } // getTransposition
+    } // getTransposition_88
     
     /** Tries to establish an affine mapping between the variables
      *  of <em>this</em> Polynomial and a 2nd Polynomial.
@@ -2133,10 +2133,10 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
         return result;
     } // getGrowingFactors
 
-    /** Determines whether <em>this</em> polynomial can be transformed into <em>poly2</em>
+    /** Determines whether <em>this</em> Polynomial can be transformed into <em>poly2</em>
      *  by an affine map from the variables in <em>this</em> to the variables in <em>poly2</em>.
-     *  @param poly2 target polynomial
-     *  @return string representation of the mapping from <em>this</em> to <em>poly2<em>, or <em>null</em>
+     *  @param poly2 target Polynomial
+     *  @return String representation of the mapping from <em>this</em> to <em>poly2<em>, or <em>null</em>
      *  if no mapping could be determined
      */
     public String similiarity(Polynomial poly2) {

@@ -1,5 +1,5 @@
 ExponentGCDs=[1,1]
-Expanding for base=2, reasons+features=base,similiar norm
+Expanding for base=2, reasons+features=base,same,similiar norm
 ----------------
 expanding queue[0]^-1,meter=[2,2]*2:  - p^2 + p^3 - 2*p*q - q^2 - q^5
 solution [0,0],trivial(3)

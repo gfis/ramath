@@ -258,7 +258,7 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
      *  @return int[]
      */
     public int[] getValues() {
-    	return vector;
+        return vector;
     } // getValues
 
     /*-------------- lightweight derived methods -----------------------------*/
@@ -408,6 +408,25 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
         } // while ielem
         return result;
     } // isConstant
+
+    /** Determines whether the Vector has a single non-zero element
+     *  @return the index of that element >= 0, if it exists, or < otherwise
+     */
+    public int getSingleIndex() {
+        int result = -1;
+        int ielem = 0;
+        while (ielem < this.vecLen) {
+            if (this.vector[ielem] != 0) {
+                if (result == -1) {
+                    result = ielem;
+                } else { // a 2nd: not valid
+                    result = -2;
+                }
+            } // elem != 0
+            ielem ++;
+        } // while ielem
+        return result;
+    } // getSingleIndex
 
     //========================
     // GCD, LCM and companions

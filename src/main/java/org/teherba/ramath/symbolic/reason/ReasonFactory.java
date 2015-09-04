@@ -24,6 +24,7 @@
  */
 package org.teherba.ramath.symbolic.reason;
 import  org.teherba.ramath.symbolic.reason.BaseReason;
+import  org.teherba.ramath.symbolic.RefiningMap;
 import  org.teherba.ramath.symbolic.RelationSet;
 import  org.teherba.ramath.symbolic.VariableMap;
 import  org.teherba.ramath.symbolic.solver.BaseSolver;
@@ -72,8 +73,8 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         // the standard reasons
         this.addReason("base"       , rset0);
         this.addReason("transpose"  , rset0);
+        this.addReason("same"       , rset0);
         this.addReason("similiar"   , rset0);
-    //  this.addReason("down"       , rset0);
         this.addReason("evenexp"    , rset0);
         String[] reasonCodes = codeList.split("\\W"); // non-word characters, e.g. ","
         int icode = 0;
@@ -245,25 +246,25 @@ public class ReasonFactory extends ArrayList<BaseReason> {
      *  with all stored reasons and prints the decision
      *  @param solver the complete state of the expansion tree
      *  @param rset2 the new {@link RelationSet} to be checked
-     *  @param vmap2 variables with refined expressions
+     *  @param rmap2 variables with refined expressions
      *  @return whether to queue <em>rset2</em> again for further expansion
      */
-    public boolean evaluateReasons(BaseSolver solver, RelationSet rset2, VariableMap vmap2) {
+    public boolean evaluateReasons(BaseSolver solver, RelationSet rset2, RefiningMap rmap2) {
         boolean queueAgain = false;
         String decision = this.checkAll(solver, rset2);
         if (false) {
         } else if (decision.startsWith(VariableMap.UNKNOWN)) {
-            solver.printDecision(decision, rset2, vmap2);
+            solver.printDecision(decision, rset2, rmap2);
             queueAgain = true;
         } else if (decision.startsWith(VariableMap.SUCCESS)) { 
-            solver.printDecision(decision, rset2, vmap2);
+            solver.printDecision(decision, rset2, rmap2);
             queueAgain = true;
         } else if (decision.startsWith(VariableMap.FAILURE)) { 
             if (showFail) {
-                solver.printDecision(decision, rset2, vmap2);
+                solver.printDecision(decision, rset2, rmap2);
             }
         } else { // or SAME, transpose, similiar ...
-            solver.printDecision(decision, rset2, vmap2);
+            solver.printDecision(decision, rset2, rmap2);
         } // unknown
         return queueAgain;
     } // evaluateReasons

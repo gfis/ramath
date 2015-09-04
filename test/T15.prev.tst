@@ -1,8 +1,8 @@
 ExponentGCDs=[3,3,3]
-Expanding for base=6, reasons+features=base,similiar igtriv,norm
+Expanding for base=6, reasons+features=base,same,similiar igtriv,norm
 ----------------
 expanding queue[0]^-1,meter=[6,6,6]*6: a^3 + 3*b^3 - 9*c^3
-[0,0,0]:	similiar   [0], same  a^3+3*b^3-9*c^3
+[0,0,0]:	same form as a^3+3*b^3-9*c^3
 [3,3,0]:	unknown -> [1] 2+3*a+6*a^2+4*a^3+9*b+18*b^2+12*b^3-36*c^3
 [3,0,3]:	unknown -> [2] -4+3*a+6*a^2+4*a^3+12*b^3-27*c-54*c^2-36*c^3
 [0,3,3]:	unknown -> [3] -3+4*a^3+9*b+18*b^2+12*b^3-27*c-54*c^2-36*c^3

@@ -1,5 +1,6 @@
 /*  Matrix: a simple, small, square matrix of small numbers
  *  @(#) $Id: Matrix.java 744 2011-07-26 06:29:20Z gfis $
+ *  2015-09-04: Constructor(int) presets elements to 0
  *  2015-04-17: test methods exported to MatrixTester
  *  2015-04-15: inverse
  *  2015-04-04: permute
@@ -68,7 +69,8 @@ public class Matrix implements Cloneable, Serializable {
         this.fraction = 1;
     } // no-args Constructor
 
-    /** Constructor for an empty square Matrix of some size
+    /** Constructor for an empty square Matrix of some size.
+     *  All elements are preset to 0.
      *  @param rlen number of rows/columns
      */
     public Matrix(int rlen) {
@@ -76,6 +78,11 @@ public class Matrix implements Cloneable, Serializable {
         this.colLen = this.rowLen;
         this.matrix = new /*Type*/int[this.rowLen][this.colLen];
         this.fraction = 1;
+        for (int irow = 0; irow < this.rowLen; irow ++) {
+            for (int icol = 0; icol < this.colLen; icol ++) {
+                this.matrix[irow][icol] = (/*Type*/int) 0;
+            } // for icol
+        } // for irow
     } // Constructor(int)
 
     /** Constructor for a Matrix which initializes it from an array of values
@@ -83,7 +90,10 @@ public class Matrix implements Cloneable, Serializable {
      *  @param values linearized array of row values
      */
     public Matrix(int rlen, int[] values) {
-        this(rlen);
+        this.rowLen = rlen;
+        this.colLen = this.rowLen;
+        this.matrix = new /*Type*/int[this.rowLen][this.colLen];
+        this.fraction = 1;
         int ival = 0;
         for (int irow = 0; irow < this.rowLen; irow ++) {
             for (int icol = 0; icol < this.colLen; icol ++) {
@@ -289,14 +299,23 @@ public class Matrix implements Cloneable, Serializable {
         return this.rowLen;
     } // size
 
-    /** Returns an element of the Matrix
-     *  @param irow row    number of the element (zero based)
-     *  @param icol column number of the element (zero based)
-     *  @return a small number
+    /** Gets an element.
+     *  @param rowNo number of the row, zero based
+     *  @param colNo number of the column, zero based
+     *  @return value value of the element 
      */
-    public /*Type*/int get(int irow, int icol) {
-        return this.matrix[irow][icol];
+    public /*Type*/int get(int rowNo, int colNo) {
+        return this.matrix[rowNo][colNo];
     } // get
+
+    /** Sets an element.
+     *  @param rowNo number of the row, zero based
+     *  @param colNo number of the column, zero based
+     *  @param value value of the element 
+     */
+    public void        set(int rowNo, int colNo, /*Type*/int value) {
+        this.matrix[rowNo][colNo] = value;
+    } // set
 
     /** Returns the {@link #fraction}
      *  @return the divisor when the Matrix was the result of {@link #inverse}
@@ -421,6 +440,8 @@ public class Matrix implements Cloneable, Serializable {
                 if (irow > 0) {
                     result.append(sep);
                 }
+                
+                // now one row [0,1,2...
                 if (format.indexOf(sep) >= 0) {
                     result.append('[');
                 }
@@ -433,7 +454,9 @@ public class Matrix implements Cloneable, Serializable {
                 if (format.indexOf(sep) >= 0) {
                     result.append(']');
                 }
-            } else {
+                // end of that row 
+                
+            } else { // no format: print in separate lines
                 for (int icol = 0; icol < this.colLen; icol ++) {
                     // result.append(' ');
                     result.append(String.format(" %3d", this.matrix[irow][icol]));

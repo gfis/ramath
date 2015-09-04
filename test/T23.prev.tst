@@ -1,9 +1,9 @@
 TranspositionSet={[1,0,2]}
 ExponentGCDs=[5,5,5]
-Expanding for base=2, reasons+features=base,transpose,similiar norm,igtriv
+Expanding for base=2, reasons+features=base,transpose,same,similiar norm,igtriv
 ----------------
 expanding queue[0]^-1,meter=[2,2,2]*2: a^5 + b^5 - c^5
-[0,0,0]:	similiar   [0], same  a^5+b^5-c^5
+[0,0,0]:	same form as a^5+b^5-c^5
 [1,1,0]:	unknown -> [1] 1+5*a+20*a^2+40*a^3+40*a^4+16*a^5+5*b+20*b^2+40*b^3+40*b^4+16*b^5-16*c^5
 [1,0,1]:	unknown -> [2] 5*a+20*a^2+40*a^3+40*a^4+16*a^5+16*b^5-5*c-20*c^2-40*c^3-40*c^4-16*c^5
 [0,1,1]:	transposed [2] {a=>1+2*a,b=>2*b,c=>1+2*c} by [1,0,2]

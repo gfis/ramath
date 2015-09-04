@@ -1,6 +1,6 @@
 TranspositionSet={[1,0,2]}
 ExponentGCDs=[2,2,2]
-Expanding for base=2, reasons+features=base,transpose,similiar,evenexp norm,invall
+Expanding for base=2, reasons+features=base,transpose,same,similiar,evenexp norm,invall
 ----------------
 expanding queue[0]^-1,meter=[2,2,2]*2: x^4 + x^2*y^2 + y^4 - z^2
 solution [0,0,0],trivial(3)

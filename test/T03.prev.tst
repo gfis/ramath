@@ -1,9 +1,9 @@
 TranspositionSet={[1,0,3,2],[0,1,3,2],[1,0,2,3]}
 ExponentGCDs=[2,2,2,2]
-Expanding for base=2, reasons+features=base,transpose,similiar,evenexp igtriv,norm,invall,showfail
+Expanding for base=2, reasons+features=base,transpose,same,similiar,evenexp igtriv,norm,invall,showfail
 ----------------
 expanding queue[0]^-1,meter=[2,2,2,2]*2: a^2 + b^2 - 3*c^2 - 3*d^2
-[0,0,0,0]:	similiar   [0], same  a^2+b^2-3*c^2-3*d^2
+[0,0,0,0]:	same form as a^2+b^2-3*c^2-3*d^2
 [1,0,0,0]:	failure constant=1, vgcd=4
 [0,1,0,0]:	failure constant=1, vgcd=4
 [1,1,0,0]:	failure constant=1, vgcd=2

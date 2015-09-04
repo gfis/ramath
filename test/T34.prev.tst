@@ -1,5 +1,5 @@
 ExponentGCDs=[1,2]
-Expanding for base=2, reasons+features=base,similiar,evenexp norm,invall
+Expanding for base=2, reasons+features=base,same,similiar,evenexp norm,invall
 ----------------
 expanding queue[0]^-1,meter=[2,2]*2: 4*x - x^3 + y^2
 solution [0,0],trivial(3)

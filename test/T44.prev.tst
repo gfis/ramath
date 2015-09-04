@@ -1,6 +1,6 @@
 TranspositionSet={[0,2,1]}
 ExponentGCDs=[2,2,2]
-Expanding for base=2, reasons+features=base,transpose,similiar,evenexp 
+Expanding for base=2, reasons+features=base,transpose,same,similiar,evenexp 
 ----------------
 expanding queue[0]^-1,meter=[2,2,2]*2: a^2 + b^2 + c^2 - b^2*c^2
 solution [0,0,0],trivial(3)

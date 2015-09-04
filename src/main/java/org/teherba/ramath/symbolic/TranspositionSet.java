@@ -24,6 +24,7 @@ import  org.teherba.ramath.linear.Vector;
 import  org.teherba.ramath.util.Permutator;
 import  java.io.Serializable;
 import  java.util.ArrayList;
+import  java.util.Iterator;
 
 /** Stores a list of mappings between transposable variable names of a {@link RelationSet}.
  *  The mappings are defined by {@link Vector}s containing the natural indexes of
@@ -33,6 +34,9 @@ import  java.util.ArrayList;
 public class TranspositionSet extends ArrayList<Vector> implements Cloneable , Serializable {
     private static final long serialVersionUID = 2L;
     public final static String CVSID = "@(#) $Id: TranspositionSet.java 538 2010-09-08 15:08:36Z gfis $";
+
+    /** Debugging switch: 0 = no, 1 = moderate, 2 = more, 3 = maximum verbosity */
+    public int debug = 0;
 
     /*----------------- construction ----- -----------------*/
 
@@ -53,18 +57,70 @@ public class TranspositionSet extends ArrayList<Vector> implements Cloneable , S
      *  @param rset1 store mappings of transposable variable names for this {@link RelationSet}
      */
     public TranspositionSet(RelationSet rset1) {
-        VariableMap vmap1 = rset1.getVariableMap();
-        int vlen  = vmap1.size();
-        // split dependants here
-        Permutator permutator = new Permutator(vlen);
-        permutator.next(); // ignore identical mapping
+        VariableMap vmap0 = rset1.getVariableMap();
+        VariableMap vmap1 = vmap0.clone();
+        VariableMap dmap1 = rset1.getDependantMap(); // child  -> parent, w -> a
+        VariableMap dinv1 = dmap1.inverse();         // parent -> child,  a -> w
+        boolean hasDependants = false;
+        if (debug > 1) {
+            System.out.print("1- hasDependants=" + hasDependants);
+            System.out.print(", dmap1=" + dmap1.toString()); 
+            System.out.print(", dinv1=" + dinv1.toString());
+            System.out.print(", vmap0=" + vmap0.toString());
+            System.out.println();
+        }
+        
+        Iterator<String> diter = dmap1.keySet().iterator();
+        if (! hasDependants && vmap0.size() > 2) { // 2 are always not dependant
+            while (diter.hasNext()) {
+                String child  = diter.next();
+                // String parent = dmap1.get(child);
+                vmap1.remove(child); // remove all dependants from vmap1
+                hasDependants = true;
+            } // while diter
+        } // if hasDependants
+        if (debug > 0) {
+            System.out.print("2- hasDependants=" + hasDependants);
+            System.out.print(", dmap1=" + dmap1.toString()); 
+            System.out.print(", dinv1=" + dinv1.toString());
+            System.out.print(", vmap1=" + vmap1.toString());
+            System.out.println();
+        }
+        
+        Permutator permutator = new Permutator(vmap1.size());
+        permutator.next(); // ignore identical (first) mapping
         while (permutator.hasNext()) { // over all permutations of variable names
             int[] perms = permutator.next();
-            VariableMap pmap2 = vmap1.permuteVariables(perms);
+            VariableMap pmap2 = vmap1.permuteVariables(perms); // maps original to permuted variables
+            if (hasDependants) { // add corresponding permutations of children
+                Iterator<String> piter = dinv1.keySet().iterator();
+                while (piter.hasNext()) {
+                    String oldParent = piter.next();          // a
+                    String oldChild  = dinv1.get(oldParent);  // w
+                    String newParent = pmap2.get(oldParent);  // b
+                    String newChild  = dinv1.get(newParent);  // x
+                    if (newChild != null) {
+	                    pmap2.put(oldChild, newChild);        // w -> x
+	                } // newChild != null
+                    if (debug > 0) {
+                        System.out.println("perms=" + (new Vector(perms)).toString(",")
+                                + ", oldParent=" + oldParent + ", oldChild=" + oldChild
+                                + ", newParent=" + newParent + ", newChild=" + newChild
+                            //  + ", pmap2=" + pmap2.toString()
+                                );
+                    }
+                } // while diter            
+            } // hasDependants
             RelationSet rset2 = rset1.substitute(pmap2);
-            // System.out.println(pmap2.toString() +  ": " + rset2.toString());
-            if (rset1.isEqualTo(rset2)) {
-                this.add(new Vector(perms));
+            Vector vperm = pmap2.getPermutationVector(); 
+            boolean same = rset1.isEqualTo(rset2);
+            if (debug > 0) {
+                System.out.println("vperm=" + vperm.toString(",") 
+                        + ", pmap2=" + pmap2.toString()
+                        + ", rset1=" + rset1.toString() + ", rset2=" + rset2.toString() + " => " + same);
+            }
+            if (same) {
+                this.add(vperm);
             } // if isEqualTo
         } // while permutator
     } // Constructor(rset)

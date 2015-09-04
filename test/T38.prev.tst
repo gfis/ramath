@@ -1,5 +1,5 @@
 ExponentGCDs=[3,3,3,3]
-Expanding for base=2, reasons+features=base,similiar 
+Expanding for base=2, reasons+features=base,same,similiar 
 ----------------
 expanding queue[0]^-1,meter=[2,2,1,2]*2: a^3 + 2*b^3 + 4*c^3 - 9*d^3
 solution [0,0,0,0],trivial(3)
@@ -9,7 +9,7 @@ solution [0,0,0,0],trivial(3)
 ----------------
 expanding queue[1]^0,meter=[1,1,2,1]*4: 8*a^3 + 16*b^3 + 4*c^3 - 72*d^3
 solution [0,0,0,0],trivial(3)
-[0,0,0,0]:	similiar   [0], same  8*a^3+16*b^3+32*c^3-72*d^3
+[0,0,0,0]:	same form as 8*a^3+16*b^3+32*c^3-72*d^3
 expanding queue[2]^0,meter=[2,1,2,2]*4:  - 8 + 6*a + 12*a^2 + 8*a^3 + 16*b^3 + 4*c^3 - 54*d - 108*d^2 - 72*d^3
 [1,0,0,1]:	unknown -> [4] -8+12*a+48*a^2+64*a^3+16*b^3+32*c^3-108*d-432*d^2-576*d^3
 [1,0,1,1]:	unknown -> [5] -4+12*a+48*a^2+64*a^3+16*b^3+24*c+48*c^2+32*c^3-108*d-432*d^2-576*d^3

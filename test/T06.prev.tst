@@ -1,6 +1,6 @@
 TranspositionSet={[2,1,0],[1,2,0],[2,0,1],[0,2,1],[1,0,2]}
 ExponentGCDs=[1,1,1]
-Expanding for base=2, reasons+features=base,transpose,similiar igtriv,norm,invall
+Expanding for base=2, reasons+features=base,transpose,same,similiar igtriv,norm,invall
 ----------------
 expanding queue[0]^-1,meter=[2,2,2]*2: x^2 + y^2 - 3*x*y*z + z^2
 [0,0,0]:	unknown -> [1] x^2+y^2-6*x*y*z+z^2

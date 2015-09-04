@@ -1,5 +1,5 @@
 ExponentGCDs=[1,2]
-Expanding for base=2, reasons+features=base,similiar,evenexp 
+Expanding for base=2, reasons+features=base,same,similiar,evenexp 
 ----------------
 expanding queue[0]^-1,meter=[2,2]*2: 56*x + 71*x^2 + 16*x^3 + x^4 - y^2
 solution [0,0],trivial(3)

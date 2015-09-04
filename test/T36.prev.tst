@@ -1,5 +1,5 @@
 ExponentGCDs=[1,1,2,2]
-Expanding for base=2, reasons+features=base,similiar,evenexp igtriv,norm,invall
+Expanding for base=2, reasons+features=base,same,similiar,evenexp igtriv,norm,invall
 ----------------
 expanding queue[0]^-1,meter=[2,2,2,2]*2: a^2 + b^2 - c^2; a*b - 2*d^2
 [0,0,0,0]:	similiar   [0], same same  a^2+b^2-c^2;a*b-2*d^2

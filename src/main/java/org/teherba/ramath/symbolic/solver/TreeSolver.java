@@ -34,41 +34,42 @@ import  java.io.PrintWriter;
 import  java.math.BigInteger;
 import  java.util.Iterator;
 
-/** Tries to solve a set of Diophantine inequalities (a {@link RelationSet})
- *  by some systematic variable tree expansion.
+/** Tries to solve a set of Diophantine equations 
+ *  ("single", "double" or generally a {@link RelationSet})
+ *  by a systematic tree expansion of the variables.
  *  A single Diophantine equation is represented by a {@link Polynomial} compared to zero.
- *  The procedure tries successive, systematic substitutions of all variables in the relation set.
+ *  The procedure tries successive substitutions of all variables in the RelationSet.
  *  <p>
  *  On some level of the tree expansion:
  *  <ul>
  *  <li>all undecided nodes from the previous level are investigated,</li>
  *  <li>the variable set is expanded (somehow, for example with all possible
- *  combinations of one additional bit),</li>
- *  <li>the resulting nodes (relation sets) are filtered through a series of tests,
- *  for example modulo checks or size estimations,</li>
- *  <li>only the nodes which could not be decided are stored for the next iteration.</li>
+ *  combinations of one additional lowest bit),</li>
+ *  <li>the resulting nodes (RelationSets) are filtered through a series of tests,
+ *  so called "reasons", 
+ *  for example checks for proper congruences, transposition of variables,
+ *  infinite descent and so on,</li>
+ *  <li>only the nodes which could NOT be decided are stored for the next iteration.</li>
  *  </ul>
  *  <p>
  *  The tree of undecided nodes is represented by a queue which is processed from
  *  left to right (from low to high indices).
  *  <p>
- *  Expansion of x = 1*x_0 up to nesting level 3:
+ *  A binary expansion of x = 0+1*x_0 proceeds as follows (up to nesting level 3):
  *  <pre>
- *                                             1*x_0
- *  x_0=                  2*x_1+0                                 2*x_1+1
+ *                                            0+1*x_0
+ *  x_0 =                  0+2*x_1                                 1+2*x_1
  *
- *  x_1=        2*x_2+0             2*x_2+1             2*x_2+0             2*x_2+1
- *  x_0=        4*x_2+0             4*x_2+2             4*x_2+1             4*x_2+3
+ *  x_1 =        0+2*x_2             1+2*x_2             0+2*x_2             1+2*x_2
+ *  x_0 =        0+4*x_2             2+4*x_2             1+4*x_2             3+4*x_2
  *
- *  x_2=   2*x_3+0   2*x_3+1   2*x_3+0   2*x_3+1   2*x_3+0   2*x_3+1   2*x_3+0   2*x_3+1
- *  x_1=   4*x_3+0   4*x_3+2   4*x_3+1   4*x_3+3   4*x_3+0   4*x_3+2   4*x_3+1   4*x_3+3
- *  x_0=   8*x_3+0   8*x_3+4   8*x_3+2   8*x_3+6   8*x_3+1   8*x_3+5   8*x_3+3   8*x_3+7
+ *  x_2 =   0+2*x_3   1+2*x_3   0+2*x_3   1+2*x_3   0+2*x_3   1+2*x_3   0+2*x_3   1+2*x_3
+ *  x_1 =   0+4*x_3   2+4*x_3   1+4*x_3   3+4*x_3   0+4*x_3   2+4*x_3   1+4*x_3   3+4*x_3
+ *  x_0 =   0+8*x_3   4+8*x_3   2+8*x_3   6+8*x_3   1+8*x_3   5+8*x_3   3+8*x_3   7+8*x_3
  *  </pre>
- *  In this way the unknown part of the variable is shifted left by one digit position
+ *  In this way the unknown part of the variable is shifted left by one bit position
  *  in each expansion step.
  *  <p>
- *  This solver uses a {@link RelationSet} and a {@link RefiningMap},
- *  whereas its anchestor <em>BinarySolver</em> could only solve one {@link Polynomial} = 0.
  *  @author Dr. Georg Fischer
  */
 public class TreeSolver extends BaseSolver {

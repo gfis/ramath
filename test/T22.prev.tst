@@ -1,9 +1,9 @@
 TranspositionSet={[1,0,2]}
 ExponentGCDs=[3,3,3]
-Expanding for base=2, reasons+features=base,transpose,similiar norm,igtriv
+Expanding for base=2, reasons+features=base,transpose,same,similiar norm,igtriv
 ----------------
 expanding queue[0]^-1,meter=[2,2,2]*2: a^3 + b^3 - c^3
-[0,0,0]:	similiar   [0], same  a^3+b^3-c^3
+[0,0,0]:	same form as a^3+b^3-c^3
 [1,1,0]:	unknown -> [1] 1+3*a+6*a^2+4*a^3+3*b+6*b^2+4*b^3-4*c^3
 [1,0,1]:	unknown -> [2] 3*a+6*a^2+4*a^3+4*b^3-3*c-6*c^2-4*c^3
 [0,1,1]:	transposed [2] {a=>1+2*a,b=>2*b,c=>1+2*c} by [1,0,2]

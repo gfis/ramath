@@ -1,6 +1,6 @@
 TranspositionSet={[1,0,2]}
 ExponentGCDs=[2,2,1]
-Expanding for base=2, reasons+features=base,transpose,similiar,evenexp norm,invall,showfail
+Expanding for base=2, reasons+features=base,transpose,same,similiar,evenexp norm,invall,showfail
 ----------------
 expanding queue[0]^-1,meter=[2,2,2]*2:  - 3 + x^2 + y^2 - 4*z
 [0,0,0]:	failure constant=-3, vgcd=4

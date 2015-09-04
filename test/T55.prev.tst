@@ -1,6 +1,6 @@
 TranspositionSet={[1,0,3,2],[0,1,3,2],[1,0,2,3]}
 ExponentGCDs=[4,4,2,2]
-Expanding for base=2, reasons+features=base,transpose,similiar,evenexp norm,invall
+Expanding for base=2, reasons+features=base,transpose,same,similiar,evenexp norm,invall
 ----------------
 expanding queue[0]^-1,meter=[2,2,2,2]*2: a^4 + b^4 - c^2 - d^2
 solution [0,0,0,0],trivial(3)

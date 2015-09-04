@@ -1,10 +1,10 @@
 TranspositionSet={[2,1,0,3],[1,2,0,3],[2,0,1,3],[0,2,1,3],[1,0,2,3]}
 ExponentGCDs=[3,3,3,3]
-Expanding for base=2, reasons+features=base,transpose,similiar 
+Expanding for base=2, reasons+features=base,transpose,same,similiar 
 ----------------
 expanding queue[0]^-1,meter=[2,2,2,2]*2: a^3 + b^3 + c^3 - d^3
 solution [0,0,0,0],trivial(3)
-[0,0,0,0]:	similiar   [0], same  8*a^3+8*b^3+8*c^3-8*d^3
+[0,0,0,0]:	same form as 8*a^3+8*b^3+8*c^3-8*d^3
 [1,1,0,0]:	unknown -> [1] 2+6*a+12*a^2+8*a^3+6*b+12*b^2+8*b^3+8*c^3-8*d^3
 [1,0,1,0]:	transposed [1] {a=>1+2*a,b=>1+2*b,c=>2*c,d=>2*d} by [0,2,1,3]
 [0,1,1,0]:	transposed [1] {a=>1+2*a,b=>1+2*b,c=>2*c,d=>2*d} by [2,0,1,3]

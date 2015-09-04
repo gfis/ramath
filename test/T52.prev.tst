@@ -1,10 +1,10 @@
 TranspositionSet={[3,2,1,0],[2,3,1,0],[3,2,0,1],[2,3,0,1],[1,0,3,2],[0,1,3,2],[1,0,2,3]}
 ExponentGCDs=[4,4,4,4]
-Expanding for base=2, reasons+features=base,transpose,similiar,evenexp norm,invall
+Expanding for base=2, reasons+features=base,transpose,same,similiar,evenexp norm,invall
 ----------------
 expanding queue[0]^-1,meter=[2,2,2,2]*2: a^4 + b^4 - c^4 - d^4
 solution [0,0,0,0],trivial(3)
-[0,0,0,0]:	similiar   [0], same  a^4+b^4-c^4-d^4
+[0,0,0,0]:	same form as a^4+b^4-c^4-d^4
 [1,0,1,0]:	unknown -> [1] a+3*a^2+4*a^3+2*a^4+2*b^4-c-3*c^2-4*c^3-2*c^4-2*d^4
 [0,1,1,0]:	transposed [1] {a=>1+2*a,b=>2*b,c=>1+2*c,d=>2*d} by [1,0,2,3]
 [1,0,0,1]:	transposed [1] {a=>1+2*a,b=>2*b,c=>1+2*c,d=>2*d} by [0,1,3,2]

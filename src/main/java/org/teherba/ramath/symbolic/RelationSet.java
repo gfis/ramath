@@ -34,6 +34,7 @@ import  org.teherba.ramath.symbolic.VariableMap;
 import  org.teherba.ramath.BigIntegerUtil;
 import  org.teherba.ramath.PrimeFactorization;
 import  org.teherba.ramath.linear.Vector;
+import  org.teherba.ramath.linear.Matrix;
 import  org.teherba.ramath.util.ExpressionReader;
 import  org.teherba.ramath.util.Permutator;
 import  java.io.Serializable;
@@ -182,7 +183,7 @@ public class RelationSet
         } // while filling before
         polynomials.add(index, poly);
     } // insert
-
+    //----------------
     /** Message text from the last evaluation */
     private String message;
     /** Gets the message text from the last evaluation
@@ -197,7 +198,7 @@ public class RelationSet
     public void setMessage(String text) {
         message = text;
     } // setMessage
-
+    //----------------
     /** Nesting level: 0, 1, 2 and so on - number of variable expansions which did already take place */
     private int nestingLevel;
     /** Gets the nesting level
@@ -212,7 +213,7 @@ public class RelationSet
     public void setNestingLevel(int level) {
         nestingLevel = level;
     } // setNestingLevel
-
+    //----------------
     /** Index of parent node in width first search tree */
     private int parentIndex;
     /** Gets the parent index
@@ -227,22 +228,24 @@ public class RelationSet
     public void setParentIndex(int index) {
         parentIndex = index;
     } // setParentIndex
-
+    //----------------
     /** Maps variable names to the accumulated digits assigned during the expansion */
-    private RefiningMap refiningMap;
+    private RefiningMap mapping;
     /** Gets the {@link RefiningMap}.
+     *  Returns the remembered mapping, whereas {@link #getRefiningMap}
+     *  computes a new mapping from the {@link RelationSet}
      *  @return a map of variable names to the accumulated 
      *  additive and multiplicative factors during the expansion
      */
     public RefiningMap getMapping() {
-        return refiningMap;
+        return mapping;
     } // getMapping
     /** Sets the {@link RefiningMap}.
-     *  @param refiningMap map of variable names to the accumulated 
+     *  @param mapping map of variable names to the accumulated 
      *  additive and multiplicative factors during the expansion
      */
-    public void setMapping(RefiningMap refiningMap) {
-        this.refiningMap = refiningMap;
+    public void setMapping(RefiningMap mapping) {
+        this.mapping = mapping;
     } // setMapping
 
     /*-------------- lightweight derived methods -----------------------------*/
@@ -448,13 +451,13 @@ public class RelationSet
             while (ipoly < rsize1) {
                 String message = this.get(ipoly).similiarity(rset2.get(ipoly));
                 if (message == null) {
-                    result = ""; // may delete previous similiarity message
+                    result += "null "; // may delete previous similiarity message
                 } else {
                     result += message + " ";
                 }
                 ipoly ++;
             } // while ipoly
-            if (result.length() == 0) {
+            if (result.indexOf("null ") >= 0) {
                 result = null;
             }
         } // same size
@@ -503,6 +506,69 @@ public class RelationSet
         } // while ipoly
         return result;
     } // getRefiningMap(String, boolean)
+
+    /** Gets a map from dependant - child - variables to their
+     *  - independant - parents.
+     *  @return child variable names mapped to their parent variable names
+     */
+    public VariableMap getDependantMap() {
+        return getDependantMap(true);
+    } // getDependantMap()
+    
+    /** Gets a map from dependant - child - variables to their
+     *  - independant - parents.
+     *  This implementation may be rather inefficient, but it is used only once per proof.
+     *  @param upperSubst whether uppercase variables should be investigated
+     *  @return child variable names mapped to their parent variable names
+     */
+    public VariableMap getDependantMap(boolean upperSubst) {
+        VariableMap result = new VariableMap();
+        String[] indnam = this.getVariableMap(upperSubst).getNameArray();
+        int nlen = indnam.length;
+        TreeMap<String, Integer> namind = new TreeMap<String, Integer>();
+        int iname = 0;
+        while (iname < nlen) {
+            namind.put(indnam[iname], new Integer(iname));
+            iname ++;
+        } // while iname
+        
+        // now build a Matrix which tells whether two names are related in a sub-Polynomial
+        Matrix related = new Matrix(nlen);
+        int ipoly = 0;
+        while (ipoly < this.size()) { // over all equations
+            Polynomial poly1 = this.get(ipoly);
+            String[]  pnames = poly1.getVariableMap(upperSubst).getNameArray();
+            int ipna = 0;
+            while (ipna < pnames.length) {
+                int inam = namind.get(pnames[ipna]).intValue();
+                int jpna = ipna + 1;
+                while (jpna < pnames.length) {
+                    int jnam = namind.get(pnames[jpna]).intValue();
+                    related.set(inam, jnam, 1);
+                    related.set(jnam, inam, 1);
+                    jpna ++;
+                } // while jpna
+                ipna ++;
+            } // while ipna
+            ipoly ++;
+        } // while ipoly
+        if (debug >= 1) {
+            System.out.println("related = ");
+            System.out.println(related.toString());
+        }
+
+        // Determine any name which is related to exactly one other name, and map it to the latter
+        int icol = 0;
+        while (icol < nlen) {
+            Vector column = related.getColumn(icol);
+            int parent = column.getSingleIndex();
+            if (parent >= 0) { // was single
+                result.put(indnam[icol], indnam[parent]);
+            } // was single
+            icol ++;
+        } // while icol
+        return result;
+    } // getDependantMap
 
     /** Gets the greatest common divisors of variable exponents,
      *  in the natural order of the variable names in <em>this</em> {@link RelationSet}
@@ -747,6 +813,10 @@ evaluate: unknown
         } else if (args.length >= 2) {
             String opt = args[iarg ++];
             if (false) {
+            } else if (opt.equals("-depend")   ) {
+                rset1 = RelationSet.parse(args[iarg ++]);
+                System.out.println("(\"" + rset1.toString() + "\").getDependantMap() = "
+                        + rset1.getDependantMap().toString());
             } else if (opt.equals("-f")     ) {
                 String fileName = args[1];
                 rset1 = RelationSet.parse((new ExpressionReader()).read(fileName));

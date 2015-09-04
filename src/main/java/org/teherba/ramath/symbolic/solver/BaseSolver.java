@@ -305,11 +305,11 @@ public class BaseSolver extends Stack<RelationSet> {
     /** Prints the decision of a child node in the tree.
      *  @param decision outcome of the various checks for reasons to cut the tree,
      *  @param rset2 {@link RelationSet} to be examined
-     *  @param vmap2 {@link VariableMap} of <em>rset2</em>
+     *  @param rmap2 {@link VariableMap} of <em>rset2</em>
      */
-    public void printDecision(String decision, RelationSet rset2, VariableMap vmap2) {
+    public void printDecision(String decision, RelationSet rset2, RefiningMap rmap2) {
         if (debug >= 1) {
-            trace.print(vmap2.getConstants() + ":\t"); // toVector
+            trace.print(rmap2.getConstants() + ":\t"); // toVector
             trace.print(decision);
             if (false) {
             } else if ( decision.startsWith(VariableMap.UNKNOWN) || 
@@ -363,20 +363,20 @@ public class BaseSolver extends Stack<RelationSet> {
     /** Prints solutions, if there are any.
      *  Solutions are obtained by replacing the variables by 0 (not implemented: "or by 1").
      *  @param rset1 {@link RelationSet} to be examined
-     *  @param vmap1 {@link VariableMap} of <em>rset1</em>
+     *  @param rmap1 {@link VariableMap} of <em>rset1</em>
      */
-    protected void printSolutions(RelationSet rset1, VariableMap vmap1) {
+    protected void printSolutions(RelationSet rset1, RefiningMap rmap1) {
         if (debug >= 0) {
             boolean first = false;
-            VariableMap vmap2 = vmap1 != null ? vmap1.clone() : new VariableMap();
-            ModoMeter meter = new ModoMeter(vmap2.size(), 2); // run {0,1} through all variables
+            RefiningMap rmap2 = rmap1 != null ? rmap1.clone() : new RefiningMap();
+            ModoMeter meter = new ModoMeter(rmap2.size(), 2); // run {0,1} through all variables
             boolean busy = true;
             while (busy && meter.hasNext()) {
-                vmap2.setValues(meter);
-                RelationSet rset2 = rset1.substitute(vmap2);
-                String decision = rset2.evaluate(vmap2);
+                rmap2.setValues(meter);
+                RelationSet rset2 = rset1.substitute(rmap2);
+                String decision = rset2.evaluate(rmap2);
                 if (decision.startsWith(VariableMap.SUCCESS + " =0")) {
-                    decision = vmap1.getMeteredValues(meter).describe();
+                    decision = rmap1.getMeteredValues(meter).describe();
                     if (! igtriv || ! (decision.indexOf("trivial") >= 0)) {
                         if (! first) {
                             trace.print("solution");

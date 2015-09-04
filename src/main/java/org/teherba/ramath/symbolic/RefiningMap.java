@@ -20,6 +20,7 @@
 package org.teherba.ramath.symbolic;
 import  org.teherba.ramath.symbolic.VariableMap;
 import  org.teherba.ramath.linear.Vector;
+import  org.teherba.ramath.util.Dispenser;
 import  org.teherba.ramath.util.ModoMeter; // for test only
 import  java.io.Serializable;
 import  java.util.Iterator;
@@ -51,6 +52,71 @@ public class RefiningMap extends VariableMap implements Cloneable , Serializable
         } // while iter
         return result;
     } // clone
+
+    /** Gets a solution, that
+     *  are the constants of the expressions for refined variables.
+     *  @return "[3,4,5]", for example
+     */
+    public String getConstants() {
+        StringBuffer result = new StringBuffer(256);
+        result.append("[");
+        int count = 0;
+        Iterator<String> iter = this.keySet().iterator();
+        while (iter.hasNext()) {
+            String name = iter.next();
+            count ++;
+            if (count > 1) {
+                result.append(",");
+            }
+            String value = this.get(name).toString();
+            int plusPos = value.indexOf("+");
+            if (plusPos < 0) {
+                plusPos = value.length();
+            }
+            result.append(value.substring(0, plusPos)); // REFINED_FORM
+        } // while iter
+        result.append("]");
+        return result.toString();
+    } // getConstants
+
+    /** Gets a {@link PolyVector}
+     *  of the constant expressions when refined variables are substituted from a
+     *  binary {@link Dispenser}.
+     *  @return for example: [3,4] for this={x->3+2*x, y->0+4*y} and meter=[0,1]
+     */
+    public PolyVector getMeteredValues(Dispenser meter) {
+        PolyVector result = new PolyVector(this.size());
+        Iterator<String> iter = this.keySet().iterator();
+        int iname = 0;
+        while (iter.hasNext()) {
+            String name  = iter.next();
+            String value = this.get(name);
+            String digit = String.valueOf(meter.get(iname));
+            int behindTimes = value.indexOf("*") + 1;
+            if (behindTimes <= 0) {
+                behindTimes = value.length();
+            }
+            result.set(iname, new Polynomial(value.substring(0, behindTimes) + String.valueOf(digit)));  // REFINED_FORM
+            iname ++;
+        } // while iter
+        return result;
+    } // getMeteredValues
+
+    /** Gets a sorted array of the values of refined expressions 
+     *  without variables names
+     *  @return ["1+8", "1+8", "5+8"], for example
+     */
+    public String[] getRefinedArray() {
+        String[] result = new String[this.size()];
+        int ind = 0;
+        Iterator<String> iter = this.keySet().iterator();
+        while (iter.hasNext()) {
+            String name = iter.next();
+            String expr = this.get(name);
+            result[ind ++] = expr.substring(0, expr.indexOf('*'));
+        } // while iter
+        return result;
+    } // getRefinedArray
 
     /*----------------- test driver ----------------------*/
     /** Test method.

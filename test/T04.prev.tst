@@ -1,5 +1,5 @@
 ExponentGCDs=[4,4,2]
-Expanding for base=2, reasons+features=base,similiar,evenexp 
+Expanding for base=2, reasons+features=base,same,similiar,evenexp 
 ----------------
 expanding queue[0]^-1,meter=[2,2,2]*2: x^4 - y^4 - z^2
 solution [0,0,0],trivial(3)
@@ -9,7 +9,7 @@ solution [0,0,0],trivial(3)
 ----------------
 expanding queue[1]^0,meter=[1,1,2]*4: 16*x^4 - 16*y^4 - 4*z^2
 solution [0,0,0],trivial(3)
-[0,0,0]:	similiar   [0], same  16*x^4-16*y^4-16*z^2
+[0,0,0]:	same form as 16*x^4-16*y^4-16*z^2
 expanding queue[2]^0,meter=[1,1,2]*4: 8*x + 24*x^2 + 32*x^3 + 16*x^4 - 8*y - 24*y^2 - 32*y^3 - 16*y^4 - 4*z^2
 solution [1,1,0],trivial(3)
 [1,1,0]:	unknown -> [4] 8*x+24*x^2+32*x^3+16*x^4-8*y-24*y^2-32*y^3-16*y^4-16*z^2

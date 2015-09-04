@@ -1,10 +1,10 @@
 TranspositionSet={[1,0,2]}
 ExponentGCDs=[2,2,2]
-Expanding for base=2, reasons+features=base,transpose,similiar,evenexp 
+Expanding for base=2, reasons+features=base,transpose,same,similiar,evenexp 
 ----------------
 expanding queue[0]^-1,meter=[2,2,2]*2: a^2 + b^2 - c^2
 solution [0,0,0],trivial(3)
-[0,0,0]:	similiar   [0], same  4*a^2+4*b^2-4*c^2
+[0,0,0]:	same form as 4*a^2+4*b^2-4*c^2
 [1,0,1]:	unknown -> [1] 4*a+4*a^2+4*b^2-4*c-4*c^2
 [0,1,1]:	transposed [1] {a=>1+2*a,b=>2*b,c=>1+2*c} by [1,0,2]
 ----------------

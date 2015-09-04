@@ -52,10 +52,7 @@ public class SameReason extends BaseReason {
      */
     public String check(BaseSolver solver, RelationSet rset2) {
         String result = VariableMap.UNKNOWN;
-        if (solver.size() == 1 
-            //  && rset2.getNestingLevel() > 0 
-                && solver.get(0).toString().equals(rset2.clone().deflateIt().toString())) { 
-            // first queue entry, expanded with [0,0,...0]
+        if (solver.getRootNode().isEqualTo(rset2)) { 
             result  = VariableMap.SAME + " form as " + solver.polish(rset2);
         } // same as [0]
         return result;
