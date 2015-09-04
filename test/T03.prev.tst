@@ -1,5 +1,6 @@
+TranspositionSet={[1,0,3,2],[0,1,3,2],[1,0,2,3]}
+ExponentGCDs=[2,2,2,2]
 Expanding for base=2, reasons+features=base,transpose,similiar,evenexp igtriv,norm,invall,showfail
-exponentGCDs=[2,2,2,2], transposables={{a,b},{c,d}}
 ----------------
 expanding queue[0]^-1,meter=[2,2,2,2]*2: a^2 + b^2 - 3*c^2 - 3*d^2
 [0,0,0,0]:	similiar   [0], same  a^2+b^2-3*c^2-3*d^2

@@ -1,6 +1,6 @@
 /*  EvenExponentReason: checks -x-1 mapping when x has even exponents only
  *  @(#) $Id: EvenExponentReason.java 970 2012-10-25 16:49:32Z gfis $
- *  2015-08-25, Georg Fischer: copied from TransposedReason
+ *  2015-08-25, Georg Fischer
  */
 /*
  * Copyright 2015 Dr. Georg Fischer <punctum at punctum dot kom>
@@ -19,6 +19,7 @@
  */
 package org.teherba.ramath.symbolic.reason;
 import  org.teherba.ramath.symbolic.reason.BaseReason;
+import  org.teherba.ramath.symbolic.RefiningMap;
 import  org.teherba.ramath.symbolic.RelationSet;
 import  org.teherba.ramath.symbolic.VariableMap;
 import  org.teherba.ramath.symbolic.solver.BaseSolver;
@@ -48,19 +49,27 @@ public class EvenExponentReason extends BaseReason {
      *  the starting {@link RelationSet}.
      *  Only a few reasons overwrite this method and return <em>false</em> for
      *  some types of RelationSets.
+     *  This method may be also used to gather and store data which are 
+     *  needed for the specific check.
+     *  @param solver the solver which uses <em>this</em> reason for iteration control
      *  @return <em>true</em> if the <em>this</em> should be considered (default), 
      *  <em>false</em> otherwise.
      */
-    public boolean isConsiderable() {
-        RelationSet rset0 = this.getRootNode();
-        expGCDs = rset0.getExponentGCDs(rset0.getTuple()); // remember it for check below
+    public boolean isConsiderable(BaseSolver solver) {
+    	boolean result = false;
+        RelationSet rset0 = solver.getRootNode();
+        expGCDs = rset0.getExponentGCDs(rset0.getMapping()); // remember it for check below
         boolean odd = true; // assume that all GCDs are odd
         int ivect = expGCDs.size() - 1;
         while (odd && ivect >= 0) { // check whether there is at least one even element
             odd = expGCDs.get(ivect) % 2 != 0;
             ivect --;
         } // while
-        return ! odd; // at least one even = not all odd
+        result = ! odd; // at least one even = not all odd
+        if (true || result) {
+            solver.getWriter().println("ExponentGCDs=" + expGCDs.toString(","));
+        } // if result 
+        return result;
     } // isConsiderable
     
     /** Checks a {@link RelationSet} and determines whether 
@@ -93,10 +102,10 @@ expanding queue[4]^2:  - 8 + 8*x + 24*x^2 + 32*x^3 + 16*x^4 + 16*y^4 - 24*z - 16
         String result = VariableMap.UNKNOWN;
         int level2 = rset2.getNestingLevel();
         int iqueue = solver.size() - 1; // last element
-        VariableMap vmap2 = rset2.getTuple();
+        RefiningMap vmap2 = rset2.getMapping();
         RelationSet rset1 = solver.get(iqueue);
         while (iqueue > 0 && rset1.getNestingLevel() == level2) { // down in the same level
-            VariableMap vmap1 = rset1.getTuple();
+            RefiningMap vmap1 = rset1.getMapping();
             if (debug >= 1) {
                 solver.getWriter().println(""
                         + "check " + vmap2.toString() + " against [" + iqueue + "]\n" 

@@ -1,6 +1,6 @@
 /*  TranspositionSet: a set of mappings between transposable variable names
  *  @(#) $Id: TranspositionSet.java 538 2010-09-08 15:08:36Z gfis $
- *  2015-09-03, Georg Fischer: copied from RefinedMap
+ *  2015-09-03, Georg Fischer
  */
 /*
  * Copyright 2015 Dr. Georg Fischer <punctum at punctum dot kom>
@@ -55,7 +55,7 @@ public class TranspositionSet extends ArrayList<Vector> implements Cloneable , S
     public TranspositionSet(RelationSet rset1) {
         VariableMap vmap1 = rset1.getVariableMap();
         int vlen  = vmap1.size();
-        
+        // split dependants here
         Permutator permutator = new Permutator(vlen);
         permutator.next(); // ignore identical mapping
         while (permutator.hasNext()) { // over all permutations of variable names
@@ -90,30 +90,33 @@ public class TranspositionSet extends ArrayList<Vector> implements Cloneable , S
         return buffer.toString();
     } // toString
 
-    /** Gets a sorted array of the variable names
-     *  @return {"0/1+4*b","0/3+4*a","2/0+4*c"}, for example
+    /** Compares two value sets (refinement expression)
+     *  and tests whether there is a permutation stored in <em>this</em> {@link TranspositionSet}
+     *  which transposes the 1st value set into the 2nd.
+     *  @return the first permutation {@link Vector} if one was found, or null
      */
-    public String[] getExpressions() {
-        String[] result = new String[this.size()];
-        int ind = 0;
-        while (ind < this.size()) {
-            ind ++;
+    public Vector testPermutation(String[] origExprs, String[] permExprs) {
+        Vector result = null;
+        int len = origExprs.length;
+        // assertion: orig.length == perm.length
+        int itset = this.size() - 1;
+        while (result == null && itset >= 0) {
+            int[] perms = this.get(itset).getValues(); // e.g. [1,0,2,3]
+            int iperm = 0;
+            boolean same = true; // assume success
+            while (same && iperm < len) {
+                if (! origExprs[perms[iperm]].equals(permExprs[iperm])) {
+                    same = false;
+                }
+                iperm ++;
+            } // while istr
+            if (same) {
+                result = this.get(itset);
+            }
+            itset --;
         } // while iter
         return result;
-    } // getExpressions
-
-    /** Compares two {@link TranspositionSet}s and determines whether
-     *  one can be thought of as being transformed into the other
-     *  by a transposition of the variable names.
-     *  @param rmap2 TranspositionSet to be compared with <em>this</em>
-     *  @return the empty string if no transposition can be applied,
-     *  or a non-empty string indicating the variable positions
-     *  involved in the transposition
-     */
-    public String getTransposition(TranspositionSet rmap2) {
-        StringBuffer result = new StringBuffer(64);
-        return result.toString();
-    } // getTransposition
+    } // testPermutation
 
     /*----------------- test driver ----------------------*/
     /** Test method.
@@ -125,6 +128,14 @@ public class TranspositionSet extends ArrayList<Vector> implements Cloneable , S
         TranspositionSet tset1 = new TranspositionSet(rset1);
         System.out.println(rset1.toString() + " can be transposed in " + tset1.size() + " ways:");
         System.out.println(tset1.toString());
+        if (tset1.size() > 0) {
+            String[] origExprs = args[iarg ++].split("\\,");
+            String[] permExprs = args[iarg ++].split("\\,");
+            Vector testResult = tset1.testPermutation(origExprs, permExprs);
+            System.out.println("tset1.testTransposition(\""
+                    + args[iarg - 2] + "\", \"" + args[iarg - 1]
+                    + "\") = " + (testResult == null ? "null" : testResult.toString(",")));
+        } // size > 0
     } // main
 
 } // TranspositionSet

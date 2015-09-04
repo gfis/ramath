@@ -24,7 +24,6 @@
  */
 package org.teherba.ramath.symbolic.reason;
 import  org.teherba.ramath.symbolic.reason.BaseReason;
-import  org.teherba.ramath.symbolic.reason.TransposeReason;
 import  org.teherba.ramath.symbolic.RelationSet;
 import  org.teherba.ramath.symbolic.VariableMap;
 import  org.teherba.ramath.symbolic.solver.BaseSolver;
@@ -61,12 +60,15 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         features = new HashMap<String, String>(8);
     } // no-args Constructor
 
-    /** Constructor with code list
-     *  @param codeList list of codes separated by non-word characters
+    /** Constructor with solver, code list and start set
+     *  @param solver the {@link BaseSolver} which uses the reasons from 
+     *  <em>this</em> {@link ReasonFactory} for iteration control
+     *  @param codeList a list of codes for reasons, separated by non-word characters
      *  @param rset0 the starting {@link RelationSet}
      */
-    public ReasonFactory(String codeList, RelationSet rset0) {
+    public ReasonFactory(BaseSolver solver, String codeList, RelationSet rset0) {
         this();
+        this.setSolver(solver);
         // the standard reasons
         this.addReason("base"       , rset0);
         this.addReason("transpose"  , rset0);
@@ -81,6 +83,22 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         } // while icode
     } // Constructor(String)
 
+    //----------------
+    /** the {@link BaseSolver} which uses the reasons of <em>this</em> {@link ReasonFactory} for iteration control */
+    private BaseSolver solver;
+    /** Gets the solver
+     *  @return a {@link BaseSolver}
+     */
+    public BaseSolver getSolver() {
+        return solver;
+    } // getSolver  
+    /** Sets the solver
+     *  @param solver a {@link BaseSolver}
+     */
+    public void setSolver(BaseSolver solver) {
+        this.solver = solver;
+    } // setSolver  
+    //----------------
     /** Attempts to instantiate some reason class
      *  @param code external code for the reason
      *  @param className name of the class for the reason
@@ -93,7 +111,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
             result = (BaseReason) Class.forName("org.teherba.ramath.symbolic.reason." + className).newInstance();
             if (result != null) { // known reason
                 result.setRootNode(rset0);
-                if (result.isConsiderable()) { // needs the rootNode
+                if (result.isConsiderable(solver)) { // needs the rootNode
                     result.setCode(code);
                     this.add(result);
                 } // considerable
@@ -114,12 +132,12 @@ public class ReasonFactory extends ArrayList<BaseReason> {
     public BaseReason addReason(String code, RelationSet rset0) {
         BaseReason result = null; // assume success
         if (false) {
-        } else if (code.startsWith("base"       )) { result = addReasonClass(code, rset0, "BaseReason"        );
-        } else if (code.startsWith("down"       )) { result = addReasonClass(code, rset0, "DownsizedMapReason");
-        } else if (code.startsWith("evenexp"    )) { result = addReasonClass(code, rset0, "EvenExponentReason");
-        } else if (code.startsWith("same"       )) { result = addReasonClass(code, rset0, "SameReason"        );
-        } else if (code.startsWith("simil"      )) { result = addReasonClass(code, rset0, "SimiliarReason"    );
-        } else if (code.startsWith("transp"     )) { result = addReasonClass(code, rset0, "TransposeReason"   );
+        } else if (code.startsWith("base"       )) { result = addReasonClass(code, rset0, "BaseReason"          );
+        } else if (code.startsWith("down"       )) { result = addReasonClass(code, rset0, "DownsizedMapReason"  );
+        } else if (code.startsWith("evenexp"    )) { result = addReasonClass(code, rset0, "EvenExponentReason"  );
+        } else if (code.startsWith("same"       )) { result = addReasonClass(code, rset0, "SameReason"          );
+        } else if (code.startsWith("simil"      )) { result = addReasonClass(code, rset0, "SimiliarReason"      );
+        } else if (code.startsWith("transp"     )) { result = addReasonClass(code, rset0, "TranspositionReason" );
         } else if (code.startsWith("showf"      )) { 
             showFail = true;
             features.put(code, code);
@@ -241,9 +259,9 @@ public class ReasonFactory extends ArrayList<BaseReason> {
             solver.printDecision(decision, rset2, vmap2);
             queueAgain = true;
         } else if (decision.startsWith(VariableMap.FAILURE)) { 
-        	if (showFail) {
-	            solver.printDecision(decision, rset2, vmap2);
-	        }
+            if (showFail) {
+                solver.printDecision(decision, rset2, vmap2);
+            }
         } else { // or SAME, transpose, similiar ...
             solver.printDecision(decision, rset2, vmap2);
         } // unknown

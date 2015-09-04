@@ -27,7 +27,7 @@ package org.teherba.ramath.symbolic.solver;
 import  org.teherba.ramath.symbolic.solver.BaseSolver;
 import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.RelationSet;
-import  org.teherba.ramath.symbolic.VariableMap;
+import  org.teherba.ramath.symbolic.RefiningMap;
 import  org.teherba.ramath.linear.Vector;
 import  org.teherba.ramath.util.ModoMeter;
 import  java.io.PrintWriter;
@@ -67,7 +67,7 @@ import  java.util.Iterator;
  *  In this way the unknown part of the variable is shifted left by one digit position
  *  in each expansion step.
  *  <p>
- *  This solver uses a {@link RelationSet} and a {@link VariableMap},
+ *  This solver uses a {@link RelationSet} and a {@link RefiningMap},
  *  whereas its anchestor <em>BinarySolver</em> could only solve one {@link Polynomial} = 0.
  *  @author Dr. Georg Fischer
  */
@@ -107,7 +107,7 @@ public class TreeSolver extends BaseSolver {
      */
     public void expand(int queueIndex) {
         RelationSet rset1 = this.get(queueIndex); // expand this element (the "parent")
-        VariableMap vmap1 = rset1.getTuple();
+        RefiningMap vmap1 = rset1.getMapping();
         int newLevel      = rset1.getNestingLevel() + 1;
         int base          = this.getModBase();
         BigInteger factor = BigInteger.valueOf(base).pow(newLevel);
@@ -119,13 +119,13 @@ public class TreeSolver extends BaseSolver {
         printNode(queueIndex, rset1, meter, factor);
         printSolutions(rset1, vmap1);
         while (meter.hasNext()) { // over all constant combinations - generate all children
-            VariableMap vmap2 = vmap1.refineExpressions(meter);
+            RefiningMap vmap2 = vmap1.getRefiningMap(meter);
             if (vmap2.size() > 0) {
                 RelationSet rset2 = getRootNode().substitute(vmap2);
                 if (norm) {
                     rset2.deflateIt();
                 }
-                rset2.setTuple(vmap2, this.getTransposables());
+                rset2.setMapping(vmap2);
                 rset2.setNestingLevel(newLevel);
                 rset2.setParentIndex(queueIndex);
                 if (reasons.evaluateReasons(this, rset2, vmap2)) { // queueAgain

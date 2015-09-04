@@ -1,5 +1,5 @@
-Expanding for base=2, reasons+features=base,similiar,evenexp,evenexp,similiar
-exponentGCDs=[4,4,2], transposables={{x},{y},{z}}
+ExponentGCDs=[4,4,2]
+Expanding for base=2, reasons+features=base,similiar,evenexp 
 ----------------
 expanding queue[0]^-1,meter=[2,2,2]*2: x^4 - y^4 - z^2
 solution [0,0,0],trivial(3)

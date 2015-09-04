@@ -1,17 +1,18 @@
+TranspositionSet={[1,0,2]}
+ExponentGCDs=[2,2,2]
 Expanding for base=2, reasons+features=base,transpose,similiar,evenexp norm,invall
-exponentGCDs=[2,2,2], transposables={{x,y},{z}}
 ----------------
 expanding queue[0]^-1,meter=[2,2,2]*2: x^4 + x^2*y^2 + y^4 - z^2
 solution [0,0,0],trivial(3)
 [0,0,0]:	unknown -> [1] 4*x^4+4*x^2*y^2+4*y^4-z^2
 [1,0,1]:	unknown -> [2] 2*x+6*x^2+8*x^3+4*x^4+y^2+4*x*y^2+4*x^2*y^2+4*y^4-z-z^2
-[0,1,1]:	transposed [2] {0/0+2*y,0/1+2*x,2/1+2*z} by 0+2*y|0+2*x 1+2*x|1+2*y
+[0,1,1]:	transposed [2] {x=>1+2*x,y=>2*y,z=>1+2*z} by [1,0,2]
 ----------------
 expanding queue[1]^0,meter=[2,2,2]*4: 4*x^4 + 4*x^2*y^2 + 4*y^4 - z^2
 solution [0,0,0],trivial(3)
 [0,0,0]:	unknown -> [3] 16*x^4+16*x^2*y^2+16*y^4-z^2
 [2,0,0]:	unknown -> [4] 1+8*x+24*x^2+32*x^3+16*x^4+4*y^2+16*x*y^2+16*x^2*y^2+16*y^4-z^2
-[0,2,0]:	transposed [4] {0/0+4*y,0/2+4*x,2/0+4*z} by 0+4*y|0+4*x 2+4*x|2+4*y
+[0,2,0]:	transposed [4] {x=>2+4*x,y=>4*y,z=>4*z} by [1,0,2]
 [2,2,0]:	unknown -> [5] 3+12*x+28*x^2+32*x^3+16*x^4+12*y+16*x*y+16*x^2*y+28*y^2+16*x*y^2+16*x^2*y^2+32*y^3+16*y^4-z^2
 expanding queue[2]^0,meter=[2,2,2]*4: 2*x + 6*x^2 + 8*x^3 + 4*x^4 + y^2 + 4*x*y^2 + 4*x^2*y^2 + 4*y^4 - z - z^2
 solution [1,0,1],trivial(3)
@@ -24,7 +25,7 @@ expanding queue[3]^1,meter=[2,2,2]*8: 16*x^4 + 16*x^2*y^2 + 16*y^4 - z^2
 solution [0,0,0],trivial(3)
 [0,0,0]:	unknown -> [7] 64*x^4+64*x^2*y^2+64*y^4-z^2
 [4,0,0]:	unknown -> [8] 4+32*x+96*x^2+128*x^3+64*x^4+16*y^2+64*x*y^2+64*x^2*y^2+64*y^4-z^2
-[0,4,0]:	transposed [8] {0/0+8*y,0/4+8*x,2/0+8*z} by 0+8*y|0+8*x 4+8*x|4+8*y
+[0,4,0]:	transposed [8] {x=>4+8*x,y=>8*y,z=>8*z} by [1,0,2]
 [4,4,0]:	unknown -> [9] 12+48*x+112*x^2+128*x^3+64*x^4+48*y+64*x*y+64*x^2*y+112*y^2+64*x*y^2+64*x^2*y^2+128*y^3+64*y^4-z^2
 expanding queue[4]^1,meter=[2,2,2]*8: 1 + 8*x + 24*x^2 + 32*x^3 + 16*x^4 + 4*y^2 + 16*x*y^2 + 16*x^2*y^2 + 16*y^4 - z^2
 [2,0,4]:	unknown -> [10] 4*x+24*x^2+64*x^3+64*x^4+4*y^2+32*x*y^2+64*x^2*y^2+64*y^4-z-z^2
@@ -43,7 +44,7 @@ expanding queue[7]^3,meter=[2,2,2]*16: 64*x^4 + 64*x^2*y^2 + 64*y^4 - z^2
 solution [0,0,0],trivial(3)
 [0,0,0]:	unknown -> [16] 256*x^4+256*x^2*y^2+256*y^4-z^2
 [8,0,0]:	unknown -> [17] 16+128*x+384*x^2+512*x^3+256*x^4+64*y^2+256*x*y^2+256*x^2*y^2+256*y^4-z^2
-[0,8,0]:	transposed [17] {0/0+16*y,0/8+16*x,2/0+16*z} by 0+16*y|0+16*x 8+16*x|8+16*y
+[0,8,0]:	transposed [17] {x=>8+16*x,y=>16*y,z=>16*z} by [1,0,2]
 [8,8,0]:	unknown -> [18] 48+192*x+448*x^2+512*x^3+256*x^4+192*y+256*x*y+256*x^2*y+448*y^2+256*x*y^2+256*x^2*y^2+512*y^3+256*y^4-z^2
 expanding queue[8]^3,meter=[2,2,2]*16: 4 + 32*x + 96*x^2 + 128*x^3 + 64*x^4 + 16*y^2 + 64*x*y^2 + 64*x^2*y^2 + 64*y^4 - z^2
 [4,0,0]:	unknown -> [19] 1+16*x+96*x^2+256*x^3+256*x^4+16*y^2+128*x*y^2+256*x^2*y^2+256*y^4-z^2

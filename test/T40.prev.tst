@@ -1,5 +1,6 @@
+TranspositionSet={[1,0]}
+ExponentGCDs=[2,2]
 Expanding for base=2, reasons+features=base,transpose,similiar,evenexp showfail
-exponentGCDs=[2,2], transposables={{a,b}}
 ----------------
 expanding queue[0]^-1,meter=[2,2]*2:  - 2 + a^2 + b^2
 [0,0]:	failure constant=-2, vgcd=4

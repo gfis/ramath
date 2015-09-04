@@ -42,10 +42,13 @@ lrass:
 t:
 	make solver TEST=T%
 proofs:
-	grep -i proof test/T*.prev.tst | cut -b 6-8,18-     > proof.prev.tmp
-	grep -i proof test/T*.this.tst | cut -b 6-8,18- | tee proof.this.tmp
-	wc -l proof.*
-	diff proof.prev.tmp proof.this.tmp
+	grep -i proof test/T*.prev.tst | cut -b 6-8,18-     > test/proof.prev.tst
+	grep -i proof test/T*.this.tst | cut -b 6-8,18- | tee test/proof.this.tst
+	wc -l test/proof.*
+	diff test/proof.prev.tst test/proof.this.tst
+diffy:
+	diff -y test/$(TEST).prev.tst test/$(TEST).this.tst
+
 # 1234567890123456789
 # test/T47.this.tst:Proof - queue exhausted, queue size = 2
 # 2015-07-23: 10 proofs

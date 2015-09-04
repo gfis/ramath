@@ -1048,8 +1048,8 @@ x^2 + 3*x^3 + 2*x^4
      *  (default: true)
      *  @return map of variable names mapped to an expression string
      */
-    public VariableMap getExpressionMap(String value, boolean upperSubst) {
-        VariableMap result = new VariableMap();
+    public RefiningMap getRefiningMap(String value, boolean upperSubst) {
+        RefiningMap result = new RefiningMap();
         Iterator <String> titer = monomials.keySet().iterator();
         while (titer.hasNext()) { // over all signatures of these monomials
             String tsig = titer.next();
@@ -1063,26 +1063,26 @@ x^2 + 3*x^3 + 2*x^4
             } // while viter
         } // while titer
         return result;
-    } // getExpressionMap(String, boolean)
+    } // getRefiningMap(String, boolean)
 
     /** Gets a map from all variable names in <em>this</em> Polynomial (the key)
      *  to an expression involving this variable.
      *  @param value expression with literal "x" as placeholder for the variable names
      *  @return map of variable names mapped to an expression string
      */
-    public VariableMap getExpressionMap(String value) {
-        return getExpressionMap(value, true);
-    } // getExpressionMap(String)
+    public RefiningMap getRefiningMap(String value) {
+        return getRefiningMap(value, true);
+    } // getRefiningMap(String)
 
     /** Gets a map from all variable names in <em>this</em> Polynomial (the keys)
      *  to the expression "0+1*x", where the literal "x" is a placeholder for
      *  the corresponding key (= variable name).
-     *  Caution: this expression is required by {@link VariableMap#refineExpressions}.
+     *  Caution: this expression is required by {@link RefiningMap#refineExpressions}.
      *  @return map of variable names mapped to an expression string
      */
-    public VariableMap getExpressionMap() {
-        return getExpressionMap("0+1*x", true); // REFINED_FORM
-    } // getExpressionMap()
+    public RefiningMap getRefiningMap() {
+        return getRefiningMap("0+1*x", true); // REFINED_FORM
+    } // getRefiningMap()
 
     //-----------------------------------------------
 
@@ -1998,8 +1998,8 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
         int debugLimit = 1;
         VariableMap result = new VariableMap();
         boolean busy = true;
-        VariableMap vmap1 = poly1.getExpressionMap();
-        VariableMap vmap2 = poly2.getExpressionMap();
+        VariableMap vmap1 = poly1.getRefiningMap();
+        VariableMap vmap2 = poly2.getRefiningMap();
         try {
             busy = vmap1.size() == vmap2.size() && poly2.isMonoVariate();
             if (busy) { // same number of variables
@@ -2142,7 +2142,7 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
     public String similiarity(Polynomial poly2) {
         String result = null;
         if (true) {
-            VariableMap mapt = poly2.getExpressionMap();
+            VariableMap mapt = poly2.getRefiningMap();
             boolean outcome = this.substitute(mapt).clone().deflateIt()
                     .equals(poly2.clone().deflateIt());
             if (! outcome) {
@@ -2447,7 +2447,7 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
 
                 } else if (opt.startsWith("-hiter")) {
                     poly1 = Polynomial.parse(args[iarg ++]);
-                    vmap1 = poly1.getExpressionMap("1", true);
+                    vmap1 = poly1.getRefiningMap("1", true);
                     viter = vmap1.keySet().iterator();
                     while (viter.hasNext()) {
                         String vname = viter.next();

@@ -124,7 +124,7 @@ public class QueuingSolver extends BaseSolver {
         if (expr != null) {
             rset0 = RelationSet.parse(expr);
         }
-        rset0.setTuple(rset0.getExpressionMap());
+        rset0.setMapping(rset0.getRefiningMap());
         solver.solve(rset0);
     } // main
 

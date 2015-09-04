@@ -1,5 +1,6 @@
+TranspositionSet={[1,0,2]}
+ExponentGCDs=[2,2,2]
 Expanding for base=2, reasons+features=base,transpose,similiar,evenexp norm,invall,showfail
-exponentGCDs=[2,2,2], transposables={{x,y},{z}}
 ----------------
 expanding queue[0]^-1,meter=[2,2,2]*2: x^2 + y^2 - 3*z^2
 solution [0,0,0],trivial(3)

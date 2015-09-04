@@ -19,6 +19,7 @@
  */
 package org.teherba.ramath.symbolic.reason;
 import  org.teherba.ramath.symbolic.reason.BaseReason;
+import  org.teherba.ramath.symbolic.RefiningMap;
 import  org.teherba.ramath.symbolic.RelationSet;
 import  org.teherba.ramath.symbolic.VariableMap;
 import  org.teherba.ramath.symbolic.solver.BaseSolver;
@@ -64,7 +65,8 @@ public class DownsizedMapReason extends BaseReason {
      *  which fails because of <em>varGCD = 8</em>
      */
     public String check(BaseSolver solver, RelationSet rset2) {
-        VariableMap vmap3 = rset2.getTuple().deflateIt();
+        RefiningMap vmap3 = rset2.getMapping();
+        vmap3.deflateIt();
         RelationSet rset3 = this.getRootNode().substitute(vmap3);
         String result = rset3.evaluate(vmap3);
         if (debug > 0) {
@@ -72,7 +74,7 @@ public class DownsizedMapReason extends BaseReason {
         }
         if (result.startsWith(VariableMap.FAILURE)) {
             result = "downsized with " + vmap3.toString() + ", " + result;
-            rset2.setTuple(vmap3);
+            rset2.setMapping(vmap3);
         }
         return result;
     } // check

@@ -1,15 +1,16 @@
+TranspositionSet={[1,0,2]}
+ExponentGCDs=[5,5,5]
 Expanding for base=2, reasons+features=base,transpose,similiar norm,igtriv
-exponentGCDs=[5,5,5], transposables={{a,b},{c}}
 ----------------
 expanding queue[0]^-1,meter=[2,2,2]*2: a^5 + b^5 - c^5
 [0,0,0]:	similiar   [0], same  a^5+b^5-c^5
 [1,1,0]:	unknown -> [1] 1+5*a+20*a^2+40*a^3+40*a^4+16*a^5+5*b+20*b^2+40*b^3+40*b^4+16*b^5-16*c^5
 [1,0,1]:	unknown -> [2] 5*a+20*a^2+40*a^3+40*a^4+16*a^5+16*b^5-5*c-20*c^2-40*c^3-40*c^4-16*c^5
-[0,1,1]:	transposed [2] {0/0+2*b,0/1+2*a,2/1+2*c} by 0+2*b|0+2*a 1+2*a|1+2*b
+[0,1,1]:	transposed [2] {a=>1+2*a,b=>2*b,c=>1+2*c} by [1,0,2]
 ----------------
 expanding queue[1]^0,meter=[2,2,1]*4: 1 + 5*a + 20*a^2 + 40*a^3 + 40*a^4 + 16*a^5 + 5*b + 20*b^2 + 40*b^3 + 40*b^4 + 16*b^5 - 16*c^5
 [3,1,0]:	unknown -> [3] 61+405*a+1080*a^2+1440*a^3+960*a^4+256*a^5+5*b+40*b^2+160*b^3+320*b^4+256*b^5-8*c^5
-[1,3,0]:	transposed [3] {0/1+4*b,0/3+4*a,2/0+2*c} by 1+4*b|1+4*a 3+4*a|3+4*b
+[1,3,0]:	transposed [3] {a=>3+4*a,b=>1+4*b,c=>2*c} by [1,0,2]
 expanding queue[2]^0,meter=[2,1,2]*4: 5*a + 20*a^2 + 40*a^3 + 40*a^4 + 16*a^5 + 16*b^5 - 5*c - 20*c^2 - 40*c^3 - 40*c^4 - 16*c^5
 [1,0,1]:	unknown -> [4] 5*a+40*a^2+160*a^3+320*a^4+256*a^5+8*b^5-5*c-40*c^2-160*c^3-320*c^4-256*c^5
 [3,0,3]:	unknown -> [5] 405*a+1080*a^2+1440*a^3+960*a^4+256*a^5+8*b^5-405*c-1080*c^2-1440*c^3-960*c^4-256*c^5

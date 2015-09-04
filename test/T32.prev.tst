@@ -1,5 +1,5 @@
+ExponentGCDs=[1,1]
 Expanding for base=2, reasons+features=base,similiar norm,invall
-exponentGCDs=[1,1], transposables={{u},{v}}
 ----------------
 expanding queue[0]^-1,meter=[2,2]*2:  - 98 + 20*u + 4*u^2 - 130*v + 8*u*v - 56*v^2 - 8*v^3
 [0,1]:	unknown -> [1] -73+14*u+4*u^2-133*v+8*u*v-80*v^2-16*v^3

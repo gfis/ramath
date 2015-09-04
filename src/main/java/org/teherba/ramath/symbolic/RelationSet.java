@@ -29,7 +29,7 @@
  */
 package org.teherba.ramath.symbolic;
 import  org.teherba.ramath.symbolic.Polynomial;
-import  org.teherba.ramath.symbolic.RefinedMap;
+import  org.teherba.ramath.symbolic.RefiningMap;
 import  org.teherba.ramath.symbolic.VariableMap;
 import  org.teherba.ramath.BigIntegerUtil;
 import  org.teherba.ramath.PrimeFactorization;
@@ -79,8 +79,7 @@ public class RelationSet
         polynomials = new ArrayList<Polynomial>(4);
         setNestingLevel (0);
         setParentIndex  (-1); // no parent - [0] is the first real queue element
-        setTuple        (new VariableMap()); // implies setRefMap
-        setTupleShift   (BigInteger.ONE);
+        setMapping  (new RefiningMap()); 
         setMessage      ("undefined");
     } // Constructor()
 
@@ -142,9 +141,7 @@ public class RelationSet
         } // while ipoly
         result.setNestingLevel  (this.getNestingLevel   ());
         result.setParentIndex   (this.getParentIndex    ());
-        result.setTuple         (this.getTuple          ());
-        result.setRefMap        (this.getRefMap         ());
-        result.setTupleShift    (this.getTupleShift     ());
+        result.setMapping   (this.getMapping    ());
         result.setMessage       (this.getMessage        ());
         return result;
     } // clone
@@ -231,64 +228,22 @@ public class RelationSet
         parentIndex = index;
     } // setParentIndex
 
-    /** Maps refined expressions to original positions in the VariableMap */
-    private RefinedMap refMap;
-    /** Gets the refined map.
-     *  @return map of refined expressions to original positions in the VariableMap
-     */
-    public RefinedMap getRefMap() {
-        return refMap;
-    } // getRefMap
-    /** Sets the refined map.
-     *  @param refMap map of refined expressions to original positions in the VariableMap
-     */
-    public void setRefMap(RefinedMap refMap) {
-        this.refMap = refMap;
-    } // setRefMap
-
     /** Maps variable names to the accumulated digits assigned during the expansion */
-    private VariableMap tuple;
-    /** Gets the tuple (uncloned).
-     *  @return map of variable names to the accumulated digits assigned during the expansion
+    private RefiningMap refiningMap;
+    /** Gets the {@link RefiningMap}.
+     *  @return a map of variable names to the accumulated 
+     *  additive and multiplicative factors during the expansion
      */
-    public VariableMap getTuple() {
-        return tuple;
-    } // getTuple
-    /** Sets the tuple and the {@link RefinedMap}.
-     *  @param tuple map of variable names to the accumulated digits assigned during the expansion
+    public RefiningMap getMapping() {
+        return refiningMap;
+    } // getMapping
+    /** Sets the {@link RefiningMap}.
+     *  @param refiningMap map of variable names to the accumulated 
+     *  additive and multiplicative factors during the expansion
      */
-    public void setTuple(VariableMap tuple) {
-        this.tuple = tuple;
-        setRefMap(new RefinedMap(tuple));
-    } // setTuple
-
-    /** Sets the tuple and the {@link RefinedMap} with equalized variable names.
-     *  @param tuple map of variable names to the accumulated digits assigned during the expansion
-     *  @param transposables a {@link Vector} of variable name equivalence classes
-     */
-    public void setTuple(VariableMap tuple, Vector transposables) {
-        this.tuple = tuple;
-        setRefMap(new RefinedMap(tuple, transposables));
-    } // setTuple
-
-    /** Multiply {@link org.teherba.ramath.util.ModoMeter ModoMeter} digits by this amount
-     *  and add them to the previous tuple
-     */
-    private BigInteger tupleShift;
-    /** Gets the tuple shift.
-     *  @return multiplicative factor for {@link org.teherba.ramath.util.ModoMeter ModoMeter} digits
-     *  to build the new tuple
-     */
-    public BigInteger getTupleShift() {
-        return tupleShift;
-    } // getTupleShift
-    /** Sets the tuple.
-     *  @param shift multiplicative factor for {@link org.teherba.ramath.util.ModoMeter ModoMeter} digits
-     *  to build the new tuple
-     */
-    public void setTupleShift(BigInteger shift) {
-        this.tupleShift = shift;
-    } // setTupleShift
+    public void setMapping(RefiningMap refiningMap) {
+        this.refiningMap = refiningMap;
+    } // setMapping
 
     /*-------------- lightweight derived methods -----------------------------*/
 
@@ -538,16 +493,16 @@ public class RelationSet
      *  (default: true)
      *  @return map of variable names mapped to an expression string
      */
-    public VariableMap getExpressionMap(String value, boolean upperSubst) {
-        VariableMap result = new VariableMap();
+    public RefiningMap getRefiningMap(String value, boolean upperSubst) {
+        RefiningMap result = new RefiningMap();
         int ipoly = 0;
         while (ipoly < this.size()) { // over all equations
             Polynomial poly1 = this.get(ipoly);
-            result.putAll(poly1.getExpressionMap(value, upperSubst));
+            result.putAll(poly1.getRefiningMap(value, upperSubst));
             ipoly ++;
         } // while ipoly
         return result;
-    } // getExpressionMap(String, boolean)
+    } // getRefiningMap(String, boolean)
 
     /** Gets the greatest common divisors of variable exponents,
      *  in the natural order of the variable names in <em>this</em> {@link RelationSet}

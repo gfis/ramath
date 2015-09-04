@@ -1,5 +1,5 @@
-Expanding for base=2, reasons+features=base,similiar,evenexp,evenexp,similiar
-exponentGCDs=[3,2], transposables={{x},{y}}
+ExponentGCDs=[3,2]
+Expanding for base=2, reasons+features=base,similiar,evenexp 
 ----------------
 expanding queue[0]^-1,meter=[2,2]*2: 4 - x^3 + y^2
 [0,0]:	unknown -> [1] 4-8*x^3+4*y^2

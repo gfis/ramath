@@ -1,9 +1,10 @@
 /*  RaMathServlet.java - Rational and Symbolic Mathematics
  *  @(#) $Id: RaMathServlet.java 199 2009-07-13 20:16:23Z gfis $
+ *  2013-09-21: RefiningMap
  *  2015-07-17: opt=norm; Polynomial -> RelationSet
  *  2015-06-15: Polynomial.parse was not static
  *  2013-10-30: symmetrical form1 and form2
- *  2013-09-21: variableMap
+ *  2013-09-21: VariableMap
  *  2009-07-07, Georg Fischer: for symbolic.Polynomial
  */
 /*
@@ -24,7 +25,7 @@
 package org.teherba.ramath;
 import  org.teherba.ramath.symbolic.RelationSet;
 import  org.teherba.ramath.symbolic.Polynomial;
-import  org.teherba.ramath.symbolic.VariableMap;
+import  org.teherba.ramath.symbolic.RefiningMap;
 import  java.io.IOException;
 import  javax.servlet.RequestDispatcher;
 import  javax.servlet.ServletConfig;
@@ -106,7 +107,7 @@ public class RaMathServlet extends HttpServlet {
     public void generateResponse(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
         	RelationSet rset = null;
-        	VariableMap varMap = null;
+        	RefiningMap rmap = null;
         	int index = 0;
         	boolean found = false;
             HttpSession session = request.getSession();
@@ -127,7 +128,7 @@ public class RaMathServlet extends HttpServlet {
                 if (false) {
                 } else if (area.equals("rset")) {
                     rset = RelationSet.parse(form1);
-                    varMap = rset.getExpressionMap("x"); // maps x -> name
+                    rmap = rset.getRefiningMap("x"); // maps x -> name
                     index = 0;
                     found = true;
                     while (found) {
@@ -139,14 +140,14 @@ public class RaMathServlet extends HttpServlet {
                             if (! value.startsWith("(") || ! value.endsWith(")")) {
                                 value = "(" + value + ")";
                             }
-                            if (varMap.get(key) != null) { // only those which occur in form1
-                            	varMap.put(key, value);
+                            if (rmap.get(key) != null) { // only those which occur in form1
+                            	rmap.put(key, value);
                             }
                         }
                         index ++;
                     } // while found
-                    session.setAttribute("varmap", varMap);
-                    rset = rset.substitute(varMap);
+                    session.setAttribute("varmap", rmap);
+                    rset = rset.substitute(rmap);
                     if (opt.indexOf("norm") >= 0) {
                     	rset.deflateIt();
                     }
@@ -162,7 +163,7 @@ public class RaMathServlet extends HttpServlet {
                 if (false) {
                 } else if (area.equals("rset")) {
                     rset = RelationSet.parse(form2);
-                    varMap = rset.getExpressionMap("x"); // maps x -> name
+                    rmap = rset.getRefiningMap("x"); // maps x -> name
                     index = 0;
                     found = true;
                     while (found) {
@@ -174,14 +175,14 @@ public class RaMathServlet extends HttpServlet {
                             if (! value.startsWith("(") || ! value.endsWith(")")) {
                                 value = "(" + value + ")";
                             }
-                            if (varMap.get(key) != null) { // only those which occur in form1
-                            	varMap.put(key, value);
+                            if (rmap.get(key) != null) { // only those which occur in form1
+                            	rmap.put(key, value);
                             }
                         }
                         index ++;
                     } // while found
-                    session.setAttribute("varmap", varMap);
-                    rset = rset.substitute(varMap);
+                    session.setAttribute("varmap", rmap);
+                    rset = rset.substitute(rmap);
                     if (opt.indexOf("norm") >= 0) {
                     	rset.deflateIt();
                     }

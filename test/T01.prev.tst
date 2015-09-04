@@ -1,5 +1,5 @@
-Expanding for base=2, reasons+features=base,similiar,evenexp,evenexp,similiar
-exponentGCDs=[2,2], transposables={{p},{q}}
+ExponentGCDs=[2,2]
+Expanding for base=2, reasons+features=base,similiar,evenexp 
 ----------------
 expanding queue[0]^-1,meter=[2,2]*2:  - p^2 + 2*q^2
 solution [0,0],trivial(3)

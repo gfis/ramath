@@ -30,7 +30,6 @@
 package org.teherba.ramath.symbolic;
 import  org.teherba.ramath.symbolic.PolyVector;
 import  org.teherba.ramath.util.Dispenser;
-import  org.teherba.ramath.util.ModoMeter; // for test only
 import  org.teherba.ramath.linear.Vector;
 import  java.io.Serializable;
 import  java.math.BigInteger;
@@ -178,6 +177,22 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
         return result.toString();
     } // toVector
 
+    /** Gets a sorted array of the values of refined expressions 
+     *  without variables names
+     *  @return ["1+8", "1+8", "5+8"], for example
+     */
+    public String[] getRefinedArray() {
+        String[] result = new String[this.size()];
+        int ind = 0;
+        Iterator<String> iter = this.keySet().iterator();
+        while (iter.hasNext()) {
+            String name = iter.next();
+            String expr = this.get(name);
+            result[ind ++] = expr.substring(0, expr.indexOf('*'));
+        } // while iter
+        return result;
+    } // getRefinedArray
+
     /** Gets a sorted array of the variable names
      *  @return ["a", "b", "c"], for example
      */
@@ -191,6 +206,20 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
         } // while iter
         return result;
     } // getNameArray
+
+    /** Gets a sorted array of the values
+     *  @return ["1+8*a", "1+8*b", "5+8*c"], for example
+     */
+    public String[] getValueArray() {
+        String[] result = new String[this.size()];
+        int ind = 0;
+        Iterator<String> iter = this.keySet().iterator();
+        while (iter.hasNext()) {
+            String name = iter.next();
+            result[ind ++] = this.get(name);
+        } // while iter
+        return result;
+    } // getValueArray
 
     /** Gets a solution, that
      *  are the constants of the expressions for refined variables.
@@ -380,11 +409,10 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
      *  The underlying integer array is parallel to the sorted list of variable names.
      *  For a mapping x -> c+f*x and corresponding dispenser value m mod b,
      *  the new expression is c + f*(m+b*x) = (c+f*m) + (f*b)*x.
-     *  Caution: This form of the expression is initiated by {@link Polynomial#getExpressionMap}().
-     *  @return a new {@link VariableMap} with the variables mapped to the refined expressions
+     *  @return a new {@link RefiningMap} with the variables mapped to the refined expressions
      */
-    public VariableMap refineExpressions(Dispenser dispenser) {
-        VariableMap result = new VariableMap();
+    public RefiningMap getRefiningMap(Dispenser dispenser) {
+        RefiningMap result = new RefiningMap();
         Iterator<String> iter = this.keySet().iterator();
         int idisp = 0;
         while (iter.hasNext()) {
@@ -402,7 +430,7 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
             idisp ++;
         } // while iter
         return result;
-    } // refineExpressions
+    } // getRefiningMap
 
     /** Gets a map to permuted variable names
      *  @param perms indexes for permutation of variable names
@@ -500,21 +528,6 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
         System.out.println("vmap = " + vmap.toString());
         vmap.put("d2", "0");
         System.out.println("vmap = " + vmap.toString());
-
-        vmap.put("a" , "2+4*a");
-        vmap.put("b" , "3+4*b");
-        vmap.put("c" , "0+2*c");
-        vmap.put("d2", "1+2*d2");
-        ModoMeter meter = new ModoMeter(4, 2); // binary
-        for (int iloop = 0; iloop < 15; iloop ++) { // turn it several times
-            meter.next();
-        } // while
-        System.out.print(vmap.toString()); // before refinement
-        System.out.println(" refined by [" + meter.toString() + "]: "
-                + vmap.refineExpressions(meter).toString());
-        vmap.setValues(meter);
-        System.out.println(" set to [" + meter.toString() + "]: "
-                + vmap.toString());
     } // main
 
 } // VariableMap

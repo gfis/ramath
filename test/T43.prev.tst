@@ -1,9 +1,10 @@
+TranspositionSet={[1,0,2]}
+ExponentGCDs=[2,2,1]
 Expanding for base=2, reasons+features=base,transpose,similiar,evenexp invall
-exponentGCDs=[2,2,1], transposables={{x,y},{z}}
 ----------------
 expanding queue[0]^-1,meter=[2,2,2]*2:  - 1 + x^2 + y^2 - 4*z
 [1,0,0]:	unknown -> [1] 4*x+4*x^2+4*y^2-8*z
-[0,1,0]:	transposed [1] {0/0+2*y,0/1+2*x,2/0+2*z} by 0+2*y|0+2*x 1+2*x|1+2*y
+[0,1,0]:	transposed [1] {x=>1+2*x,y=>2*y,z=>2*z} by [1,0,2]
 [1,0,1]:	similiar   [1], is mappable by: {x=>x,y=>y,z=>z}  -4+4*x+4*x^2+4*y^2-8*z
 [0,1,1]:	unknown -> [2] -4+4*x^2+4*y+4*y^2-8*z
 ----------------

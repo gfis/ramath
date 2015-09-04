@@ -254,6 +254,13 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
         return this.vector[vecLen - 1];
     } // getLast
 
+    /** Gets the values of <em>this</em> {@link Vector} as an <em>int</em> array.
+     *  @return int[]
+     */
+    public int[] getValues() {
+    	return vector;
+    } // getValues
+
     /*-------------- lightweight derived methods -----------------------------*/
 
     /** Computes some power of an integer

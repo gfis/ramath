@@ -108,8 +108,8 @@ CALL RelationSet -rest 2 "x^4 - y^4 - z^2 = 0"
 TEST VM1 VariableMap
 CALL VariableMap
 
-TEST RM1 RefinedMap
-CALL RefinedMap
+TEST RM1 RefiningMap
+CALL RefiningMap
 
 TEST GR1 isGrownFrom(poly)
 CALL Polynomial   -grow "-80-96*x+16*x^2-96*y-128*x*y+16*y^2-96*z-128*x*z-128*y*z-128*x*y*z+16*z^2=0" "- 4 - 8*x + 4*x^2 - 8*y - 16*x*y + 4*y^2 - 8*z - 16*x*z - 16*y*z - 16*x*y*z + 4*z^2 = 0"
@@ -351,22 +351,25 @@ CALL RelationSet -transp   "a^2 + b^2 = c^2; a=x^2; b=y^2; c=z^2"
 # TranspositionSet
 
 TEST TS1 TranspositionSet 0
-CALL TranspositionSet "4*e - 5*f"
+CALL TranspositionSet "4*e - 5*f" "" ""
 
 TEST TS2 TranspositionSet 1
-CALL TranspositionSet "4*e - 4*f"
+CALL TranspositionSet "4*e - 4*f" "e,f" "f,e"
 
 TEST TS3 TranspositionSet 1
-CALL TranspositionSet "a^2 + b^2 + c^3 - d^3 = 0"
+CALL TranspositionSet "a^2 + b^2 + c^3 - d^3 = 0" "a,b,c,d" "b,a,c,d"
 
 TEST TS4 TranspositionSet 5
-CALL TranspositionSet "a^3 + b^3 + c^3 - d^3 = 0"
+CALL TranspositionSet "a^3 + b^3 + c^3 - d^3 = 0" "a,b,c,d" "c,b,a,d"
 
 TEST TS5 TranspositionSet 0
-CALL TranspositionSet "a^3 + 2*b^3 + 3*c^3 - d^3 = 0"
+CALL TranspositionSet "a^3 + 2*b^3 + 3*c^3 - d^3 = 0" "" ""
 
-TEST TS6 TranspositionSet 4 Polynomials: 1
-CALL TranspositionSet "a^2 + b^2 = c^2; a=x^2; b=y^2"
+TEST TS6 TranspositionSet 4 Polynomials: match
+CALL TranspositionSet "a^2 + b^2 = c^2; a=x^2; b=y^2" "a,b,c,x,y" "b,a,c,y,x"
 
-TEST TS7 TranspositionSet 5 Polynomials: 1
-CALL TranspositionSet "a^4 + b^4 = c^4 + d^4; a=w^2; b=x^2; c=y^2; d=z^2"
+TEST TS7 TranspositionSet 4 Polynomials: no match
+CALL TranspositionSet "a^2 + b^2 = c^2; a=x^2; b=y^2" "a,b,c,x,y" "b,a,c,x,y"
+
+# TEST TS8 TranspositionSet 5 Polynomials: 1
+# CALL TranspositionSet "a^4 + b^4 = c^4 + d^4; a=w^2; b=x^2; c=y^2; d=z^2" "a,b,c,d,w,x,y,z" "a,b,d,c,w,x,z,y"

@@ -1,18 +1,19 @@
+TranspositionSet={[1,0,2]}
+ExponentGCDs=[3,3,3]
 Expanding for base=2, reasons+features=base,transpose,similiar norm,invall
-exponentGCDs=[3,3,3], transposables={{a,b},{c}}
 ----------------
 expanding queue[0]^-1,meter=[2,2,2]*2: a^3 + b^3 - c^3
 solution [0,0,0],trivial(3)
 [0,0,0]:	similiar   [0], same  a^3+b^3-c^3
 [1,1,0]:	unknown -> [1] 1+3*a+6*a^2+4*a^3+3*b+6*b^2+4*b^3-4*c^3
 [1,0,1]:	unknown -> [2] 3*a+6*a^2+4*a^3+4*b^3-3*c-6*c^2-4*c^3
-[0,1,1]:	transposed [2] {0/0+2*b,0/1+2*a,2/1+2*c} by 0+2*b|0+2*a 1+2*a|1+2*b
+[0,1,1]:	transposed [2] {a=>1+2*a,b=>2*b,c=>1+2*c} by [1,0,2]
 ----------------
 expanding queue[1]^0,meter=[2,2,2]*4: 1 + 3*a + 6*a^2 + 4*a^3 + 3*b + 6*b^2 + 4*b^3 - 4*c^3
 [3,1,0]:	unknown -> [3] 7+27*a+36*a^2+16*a^3+3*b+12*b^2+16*b^3-16*c^3
-[1,3,0]:	transposed [3] {0/1+4*b,0/3+4*a,2/0+4*c} by 1+4*b|1+4*a 3+4*a|3+4*b
+[1,3,0]:	transposed [3] {a=>3+4*a,b=>1+4*b,c=>4*c} by [1,0,2]
 [3,1,2]:	unknown -> [4] 5+27*a+36*a^2+16*a^3+3*b+12*b^2+16*b^3-12*c-24*c^2-16*c^3
-[1,3,2]:	transposed [4] {0/1+4*b,0/3+4*a,2/2+4*c} by 1+4*b|1+4*a 3+4*a|3+4*b
+[1,3,2]:	transposed [4] {a=>3+4*a,b=>1+4*b,c=>2+4*c} by [1,0,2]
 expanding queue[2]^0,meter=[2,2,2]*4: 3*a + 6*a^2 + 4*a^3 + 4*b^3 - 3*c - 6*c^2 - 4*c^3
 solution [1,0,1],trivial(3)
 [1,0,1]:	unknown -> [5] 3*a+12*a^2+16*a^3+16*b^3-3*c-12*c^2-16*c^3

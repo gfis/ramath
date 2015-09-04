@@ -1,5 +1,5 @@
+ExponentGCDs=[2,2]
 Expanding for base=2, reasons+features=base,similiar,evenexp norm
-exponentGCDs=[2,2], transposables={{x},{y}}
 ----------------
 expanding queue[0]^-1,meter=[2,2]*2:  - 576 + 15*x^2 - 7*y^2
 [0,0]:	similiar   [0], is mappable by: {x=>x,y=>y}  -144+15*x^2-7*y^2

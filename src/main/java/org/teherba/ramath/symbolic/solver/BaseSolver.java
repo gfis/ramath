@@ -27,6 +27,7 @@
  */
 package org.teherba.ramath.symbolic.solver;
 import  org.teherba.ramath.symbolic.reason.ReasonFactory;
+import  org.teherba.ramath.symbolic.RefiningMap;
 import  org.teherba.ramath.symbolic.RelationSet;
 import  org.teherba.ramath.symbolic.VariableMap;
 import  org.teherba.ramath.linear.Vector;
@@ -106,29 +107,13 @@ public class BaseSolver extends Stack<RelationSet> {
         setSubsetting (false);
         setUpperSubst (true);
         queueHead     = 0;
-        codeList      = "transpose,evenexp,similiar"; // default reasons
+        codeList      = ""; // default reasons are defined in ReasonFactory(,,).
     } // initialize
 
     //-----------------------------
     // Bean properties and methods
     //-----------------------------
 
-    /** Greatest common divisors of variable exponents: numbers >= 1 */
-    private Vector exponentGCDs;
-    /** Gets the greatest common divisors of variable exponents, 
-     *  in the natural order of the variable names in a {@link RelationSet}
-     *  @return a Vector of numbers >= 1
-     */
-    public Vector getExponentGCDs() {
-        return this.exponentGCDs;
-    } // getExponentGCDs
-    /** Sets the greatest common divisors of variable exponents,
-     *  in the natural order of the variable names in a {@link RelationSet}
-     *  @param exponentGCDs a Vector of numbers >= 1
-     */
-    public void setExponentGCDs(Vector exponentGCDs) {
-        this.exponentGCDs = exponentGCDs;
-    } // setExponentGCDs
     //----------------
     /** How to search for a previous equivalent {@link RelationSet}:
      *  in all members queued so far (1),
@@ -194,58 +179,6 @@ public class BaseSolver extends Stack<RelationSet> {
     public void setSubsetting(boolean subsetting) {
         this.subsetting = subsetting;
     } // setSubsetting
-    //----------------
-    /** Variable name equivalence classes  */
-    private Vector vtransp;
-    /** Gets the vtransp
-     *  @return a Vector of variable name equivalence classes
-     */
-    public Vector getTransposables() {
-        return this.vtransp;
-    } // getTransposables
-    /** Sets the transposables
-     *  @param vtransp a Vector of variable name equivalence classes
-     */
-    public void   setTransposables(Vector vtransp) {
-        this.vtransp = vtransp;
-    } // setTransposables
-    
-    /** Gets a readable list of transposable variables
-     *  @param rset1 {@link RelationSet} with variable names
-     *  @return a set of sets of variables in equivalence classes, for example for
-     *  a^2+b^2-c^2 the result is "{{a,b},{c}}"
-     */
-    public String getTransposableString(RelationSet rset1) {
-        StringBuffer result = new StringBuffer(16);
-        String [] names = rset1.getVariableMap().getNameArray();
-        int tclass = 0; // one of the transposable classes in 'vtransp'
-        int len = vtransp.size();
-        String sep = "";
-        boolean first = true;
-        result.append("{");
-        while (tclass < len) {
-            int itran = 0;
-            while (itran < len) {
-                if (vtransp.get(itran) == tclass) {
-                    if (sep.equals("")) { // start for class 'tclass'
-                        result.append(first ? "{" : ",{");
-                    }
-                    first = false;
-                    result.append(sep);
-                    sep = ",";
-                    result.append(names[itran]);
-                }
-                itran ++;
-            } // while itran
-            if (! sep.equals("")) { // end for class 'tclass'
-                result.append("}");
-            }
-            sep = "";
-            tclass ++;
-        } // while tclass
-        result.append("}");
-        return result.toString();
-    } // getTransposableString
     //----------------
     /** Whether to substitute uppercase variables */
     private boolean upperSubst;
@@ -395,8 +328,6 @@ public class BaseSolver extends Stack<RelationSet> {
         if (debug >= 1) {
             trace.print  ("Expanding for base=" + getModBase());
             trace.println(", reasons+features=" + reasons.toString());
-            trace.print  ("exponentGCDs="       + getExponentGCDs().toString(","));
-            trace.println(", transposables="    + getTransposableString(rset0));
         } // debug
     } // printHeader
 
@@ -493,21 +424,21 @@ public class BaseSolver extends Stack<RelationSet> {
         int varNo         = vmap1.size(); // total number of variables to be substituted
         ModoMeter meter   = new ModoMeter(varNo, 1); // assume that all variables are not involved
         BigInteger other  = norm ? BigInteger.valueOf(base) : BigInteger.valueOf(base).multiply(factor);
-        VariableMap vmapr = rset1.getRest(other).getExpressionMap(); 
+        RefiningMap rmap1 = rset1.getRest(other).getRefiningMap(); 
         Iterator<String> iter1 = vmap1.keySet().iterator();
         int involvedCount = 0;
         int im = 0;
         while (iter1.hasNext()) {
             String name = iter1.next();
-            if (vmapr.get(name) != null) { // name occurs in rest: this will be involved
+            if (rmap1.get(name) != null) { // name occurs in rest: this will be involved
                 meter.setBase(im, base); // involve it
                 involvedCount ++;
             } // name in rest
             im ++;
         } // while iter1
-        if (invall || involvedCount <= 0) { // vmapr was empty
+        if (invall || involvedCount <= 0) { // rmap1 was empty
             meter = new ModoMeter(varNo, base); // involve all variables / avoid modulo [1,1,1,...]
-        } // vmapr empty
+        } // rmap1 empty
         // meter = new ModoMeter(varNo, base); // enforce involvement of all variables
         return meter;        
     } // getPreparedMeter
@@ -523,7 +454,7 @@ public class BaseSolver extends Stack<RelationSet> {
     /** Gets the initial {@link RelationSet} to be solved
      *  @return root element of the queue of RelationSets
      */
-    protected RelationSet getRootNode() {
+    public RelationSet getRootNode() {
         return this.get(0);
     } // getRootNode
 
@@ -531,11 +462,7 @@ public class BaseSolver extends Stack<RelationSet> {
      *  @param rset0 the initial {@link RelationSet} to be solved
      */
     protected void setRootNode(RelationSet rset0) {
-        Vector tpcs = rset0.getTransposableClasses();
-        setTransposables(tpcs);
-        VariableMap emap0 = rset0.getExpressionMap();
-        rset0.setTuple(emap0, getTransposables());
-        setExponentGCDs(rset0.getExponentGCDs(emap0));
+        rset0.setMapping(rset0.getRefiningMap());
         add(rset0);
     } // setRootNode
 
@@ -547,7 +474,7 @@ public class BaseSolver extends Stack<RelationSet> {
     public boolean solve(RelationSet rset0) {
         prevLevel = -1;
         setRootNode(rset0);
-        reasons = new ReasonFactory(codeList, rset0);
+        reasons = new ReasonFactory(this, codeList, rset0);
         // determine all features
         igtriv = reasons.hasFeature("igtriv");
         invall = reasons.hasFeature("invall");

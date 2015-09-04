@@ -1,10 +1,11 @@
+TranspositionSet={[1,0,2]}
+ExponentGCDs=[4,4,2]
 Expanding for base=2, reasons+features=base,transpose,similiar,evenexp igtriv,norm
-exponentGCDs=[4,4,2], transposables={{x,y},{z}}
 ----------------
 expanding queue[0]^-1,meter=[2,2,2]*2: x^4 + y^4 - z^2
 [0,0,0]:	unknown -> [1] 4*x^4+4*y^4-z^2
 [1,0,1]:	unknown -> [2] 2*x+6*x^2+8*x^3+4*x^4+4*y^4-z-z^2
-[0,1,1]:	transposed [2] {0/0+2*y,0/1+2*x,2/1+2*z} by 0+2*y|0+2*x 1+2*x|1+2*y
+[0,1,1]:	transposed [2] {x=>1+2*x,y=>2*y,z=>1+2*z} by [1,0,2]
 ----------------
 expanding queue[1]^0,meter=[1,1,2]*4: 4*x^4 + 4*y^4 - z^2
 [0,0,0]:	similiar   [0], same  x^4+y^4-z^2

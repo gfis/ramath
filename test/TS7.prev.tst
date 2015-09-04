@@ -1,2 +1,3 @@
-a^4 + b^4 - c^4 - d^4; a - w^2; b - x^2; c - y^2; d - z^2 can be transposed in 7 ways:
-{[3,2,1,0,7,6,5,4],[2,3,1,0,6,7,5,4],[3,2,0,1,7,6,4,5],[2,3,0,1,6,7,4,5],[1,0,3,2,5,4,7,6],[0,1,3,2,4,5,7,6],[1,0,2,3,5,4,6,7]}
+a^2 + b^2 - c^2; a - x^2; b - y^2 can be transposed in 1 ways:
+{[1,0,2,4,3]}
+tset1.testTransposition("a,b,c,x,y", "b,a,c,x,y") = null

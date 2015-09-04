@@ -189,8 +189,8 @@ CALL TreeSolver -b 2 -l 2 -e "a^4 + b^4 - c^4 -d^4" -r norm,invall
 TEST T53 like T52, superset(^2) only
 CALL TreeSolver -b 2 -l 2 -e "a^2 + b^2 - c^2 - d^2" -r norm,invall
 
-TEST T54 like T52, with superset(^2)
-CALL TreeSolver -b 2 -l 2 -e "w^2 + x^2 - y^2 - z^2; w=a^2; x=b^2; y=c^2; z=d^2" -r norm,invall
+# TEST T54 like T52, with superset(^2)
+# CALL TreeSolver -b 2 -l 2 -e "w^2 + x^2 - y^2 - z^2; w=a^2; x=b^2; y=c^2; z=d^2" -r norm,invall
 
 TEST T55 like T52, partial superset(^2) 
 CALL TreeSolver -b 2 -l 2 -e "a^4 + b^4 - c^2 - d^2" -r norm,invall

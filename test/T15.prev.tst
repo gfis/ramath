@@ -1,5 +1,5 @@
+ExponentGCDs=[3,3,3]
 Expanding for base=6, reasons+features=base,similiar igtriv,norm
-exponentGCDs=[3,3,3], transposables={{a},{b},{c}}
 ----------------
 expanding queue[0]^-1,meter=[6,6,6]*6: a^3 + 3*b^3 - 9*c^3
 [0,0,0]:	similiar   [0], same  a^3+3*b^3-9*c^3

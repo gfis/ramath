@@ -82,10 +82,13 @@ public class BaseReason {
      *  the starting {@link RelationSet}.
      *  Only a few reasons overwrite this method and return <em>false</em> for
      *  some types of RelationSets.
+     *  This method may be also used to gather and store data which are 
+     *  needed for the specific check.
+     *  @param solver the solver which uses <em>this</em> reason for iteration control
      *  @return <em>true</em> if the <em>this</em> should be considered (default), 
      *  <em>false</em> otherwise.
      */
-    public boolean isConsiderable() {
+    public boolean isConsiderable(BaseSolver solver) {
         return true;
     } // isConsiderable
     
@@ -108,19 +111,8 @@ public class BaseReason {
      *  </ul>
      */
     public String check(BaseSolver solver, RelationSet rset2) {
-        String result = rset2.evaluate(rset2.getTuple());
+        String result = rset2.evaluate(rset2.getMapping());
         return result;
     } // check
-
-    //-------------
-    // Test driver
-    //-------------
-
-    /** Test method.
-     *  @param args command line arguments
-     */
-    public static void main(String[] args) {
-        BaseReason reason = new BaseReason();
-    } // main
 
 } // BaseReason
