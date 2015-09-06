@@ -276,28 +276,6 @@ public class BaseSolver extends Stack<RelationSet> {
     // Utility methods
     //-----------------
 
-    /** Polish the string representation of a {@link RelationSet}.
-     *  @param rset polish this RelationSet
-     *  @param factor extract this common factor, if possible
-     *  @return polished formula
-     */
-    protected String polish(RelationSet rset, BigInteger factor) {
-        return rset.toString()
-           //   .replaceAll("_\\d+", "")
-                .replaceAll("[_ ]", "") // maybe "*" also
-           //   .replaceAll("\\^2", "²")
-           //   .replaceAll("\\^3", "³")
-                ;
-    } // polish(2)
-
-    /** Polish the string representation of a {@link RelationSet}.
-     *  @param rset polish this RelationSet
-     *  @return polished formula
-     */
-    public String polish(RelationSet rset) {
-        return polish(rset, BigInteger.ONE);
-    } // polish(1)
-
     //-----------------------------------------------
     // Pseudo-abstract methods common to all Solvers
     //-----------------------------------------------
@@ -309,13 +287,13 @@ public class BaseSolver extends Stack<RelationSet> {
      */
     public void printDecision(String decision, RelationSet rset2, RefiningMap rmap2) {
         if (debug >= 1) {
-            trace.print(rmap2.getConstants() + ":\t"); // toVector
-            trace.print(decision);
+            trace.print(rmap2.niceString());
+            trace.print(":\t" + decision);
             if (false) {
             } else if ( decision.startsWith(VariableMap.UNKNOWN) || 
                         decision.startsWith(VariableMap.SUCCESS)) { // UNKNOWN || SUCCESS
                 trace.print(" -> [" + this.size() + "]");
-                trace.print(" " + this.polish(rset2));
+                trace.print(" " + rset2.niceString());
             } // UNKNOWN || SUCCESS
             trace.println();
         } // debug
@@ -328,6 +306,7 @@ public class BaseSolver extends Stack<RelationSet> {
         if (debug >= 1) {
             trace.print  ("Expanding for base=" + getModBase());
             trace.println(", reasons+features=" + reasons.toString());
+            trace.println("Refined variables=" + rset0.getMapping().getNameString());
         } // debug
     } // printHeader
 
@@ -343,7 +322,7 @@ public class BaseSolver extends Stack<RelationSet> {
                     + rset1.getParentIndex()
                     + ",meter=" + meter.toBaseList()
                     + "*" + factor.toString()
-                    + ": " + rset1.toString()
+                    + ": " + rset1.niceString()
                     );
         }
     } // printNode

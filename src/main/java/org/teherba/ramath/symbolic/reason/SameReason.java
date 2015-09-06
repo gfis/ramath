@@ -53,7 +53,7 @@ public class SameReason extends BaseReason {
     public String check(BaseSolver solver, RelationSet rset2) {
         String result = VariableMap.UNKNOWN;
         if (solver.getRootNode().isEqualTo(rset2)) { 
-            result  = VariableMap.SAME + " form as " + solver.polish(rset2);
+            result  = VariableMap.SAME + " form as " + rset2.niceString();
         } // same as [0]
         return result;
     } // check

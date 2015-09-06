@@ -191,6 +191,24 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
         return result;
     } // getNameArray
 
+    /** Gets a concatenated String of the names/keys separated by commas
+     *  @return "a,b,c" for example
+     */
+    public String getNameString() {
+        StringBuffer result = new StringBuffer(64);
+        int ind = 0;
+        Iterator<String> iter = this.keySet().iterator();
+        while (iter.hasNext()) {
+            String name = iter.next();
+            if (ind > 0) {
+            	result.append(',');
+            }
+            result.append(name);
+            ind ++;
+        } // while iter
+        return result.toString();
+    } // getNameString
+
     /** Gets a sorted array of the values
      *  @return ["1+8*a", "1+8*b", "5+8*c"], for example
      */
@@ -382,6 +400,23 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
         return result;
     } // permuteVariables
 
+
+    /** Determines the index position of a value in a String array
+     *  @param value find this value
+     *  @return -1 if the value was not found, or the array index
+     */
+    public static int indexOf(String[] values, String val1) {
+        int result = -1; // not yet found
+        int ielem = 0;
+        while (result < 0 && ielem < values.length) {
+            if (values[ielem].equals(val1)) {
+                result = ielem;
+            }
+            ielem ++;
+        } // while ielem
+        return result;
+    } // indexOf
+    
     /** Gets a numeric representation of a permutation mapping between variables.
      *  This is the inverse method of {@link #permuteVariables}.
      *  @return a {@link Vector} with natural indexes of the permuted value set
@@ -394,18 +429,13 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
         while (iter.hasNext()) {
             String oldName = iter.next();
             String newName = this.get(oldName);
-            int inew = names.length;
-            boolean found = false;
-            while (! found && inew > 0) {
-                inew --;
-                if (names[inew].equals(newName)) {
-                    found = true;
-                }
-            } // while ! found
-            if (! found) {
-                System.out.println("??? assertion in getPermutationVector: " + newName + " not found; vmap=" + this.toString()
+            int inew = indexOf(names, newName);
+            if (inew < 0) {
+                System.err.println("??? assertion in getPermutationVector: " +  newName 
+                        + " not found; vmap=" + this.toString()
                         + ", iold="    + iold    + ", inew="    + inew
                         + ", oldName=" + oldName + ", newName=" + newName);
+                inew = iold;
             }
             result.set(iold, inew);
             iold ++;

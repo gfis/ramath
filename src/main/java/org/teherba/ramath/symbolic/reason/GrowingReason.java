@@ -65,9 +65,9 @@ public class GrowingReason extends BaseReason {
                 String factors = rset2.getGrowingFactors(rset1);
                 if (factors != null) {
                     // busy = false;
-                    result += ", grown from [" + iparent + "]*" + factors + " " + solver.polish(rset2);
+                    result += ", grown from [" + iparent + "]*" + factors + " " + rset2.niceString();
                     if (solver.debug >= 2) {
-                        result += "\n\t\tfrom " + solver.polish(rset1);
+                        result += "\n\t\tfrom " + rset1.niceString();
                     }
                     // condition (2)
                 } else {

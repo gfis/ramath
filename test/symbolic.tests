@@ -249,18 +249,6 @@ CALL Polynomial "-1(2x^3 + y^4)5w3v4 - (z+5)^2"
 #----------------------------------------------
 # similiarity methods
 
-TEST PC1 transp
-CALL Polynomial -transp   "a^3 + b^3 + c^3 - d^3"
-
-TEST PC2 transp
-CALL Polynomial -transp   "a^3 + 2*b^3 + 3*c^3 - d^3"
-
-TEST PC3 transp
-CALL Polynomial -transp  "4*e - 4*f"
-
-TEST PC4 transp
-CALL Polynomial -transp  "x^4 - y^4 - z^2"
-
 TEST PMP1 affineMap = {x=>(2*x),y=>(2*y),z=>(1*z)}
 CALL Polynomial -affine   "x^4 - y^4 - z^2"       "16*x^4 - 16*y^4 - z^2"
 
@@ -329,18 +317,6 @@ CALL RelationSet "a+b>0, a-b>0, a>0"
 
 TEST RS3 with coefficients only
 CALL RelationSet "3;4;5"
-
-TEST RC1 transposition EEC(3)
-CALL RelationSet -transp   "a^3 + b^3 + c^3 - d^3 = 0"
-
-TEST RC2 transposition
-CALL RelationSet -transp   "a^3 + 2*b^3 + 3*c^3 - d^3 = 0"
-
-TEST RC3 transposition
-CALL RelationSet -transp   "4*e - 4*f = 0"
-
-TEST RC4 transposition 4 Polynomials
-CALL RelationSet -transp   "a^2 + b^2 = c^2; a=x^2; b=y^2; c=z^2"
 
 #-------------------------------
 TEST VM1 VariableMap

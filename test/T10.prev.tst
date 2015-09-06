@@ -1,77 +1,78 @@
 TranspositionSet={[2,1,0],[1,2,0],[2,0,1],[0,2,1],[1,0,2]}
 ExponentGCDs=[1,1,1]
 Expanding for base=2, reasons+features=base,transpose,same,similiar norm
+Refined variables=x,y,z
 ----------------
-expanding queue[0]^-1,meter=[2,2,2]*2: x^2 + y^2 - 5*x*y*z + z^2
+expanding queue[0]^-1,meter=[2,2,2]*2: x^2+y^2-5x*y*z+z^2
 solution [0,0,0],trivial(3)
-[0,0,0]:	unknown -> [1] x^2+y^2-10*x*y*z+z^2
-[1,1,0]:	unknown -> [2] 1+2*x+2*x^2+2*y+2*y^2-5*z-10*x*z-10*y*z-20*x*y*z+2*z^2
-[1,0,1]:	transposed [2] {x=>1+2*x,y=>1+2*y,z=>2*z} by [0,2,1]
-[0,1,1]:	transposed [2] {x=>1+2*x,y=>1+2*y,z=>2*z} by [2,0,1]
-[1,1,1]:	unknown -> [3] -1-3*x+2*x^2-3*y-10*x*y+2*y^2-3*z-10*x*z-10*y*z-20*x*y*z+2*z^2
+[0+2x,0+2y,0+2z]:	unknown -> [1] x^2+y^2-10x*y*z+z^2
+[1+2x,1+2y,0+2z]:	unknown -> [2] 1+2x+2x^2+2y+2y^2-5z-10x*z-10y*z-20x*y*z+2z^2
+[1+2x,0+2y,1+2z]:	transposed [2] by [0,2,1]
+[0+2x,1+2y,1+2z]:	transposed [2] by [2,0,1]
+[1+2x,1+2y,1+2z]:	unknown -> [3] -1-3x+2x^2-3y-10x*y+2y^2-3z-10x*z-10y*z-20x*y*z+2z^2
 ----------------
-expanding queue[1]^0,meter=[2,2,2]*4: x^2 + y^2 - 10*x*y*z + z^2
+expanding queue[1]^0,meter=[2,2,2]*4: x^2+y^2-10x*y*z+z^2
 solution [0,0,0],trivial(3)
-[0,0,0]:	unknown -> [4] x^2+y^2-20*x*y*z+z^2
-expanding queue[2]^0,meter=[1,1,2]*4: 1 + 2*x + 2*x^2 + 2*y + 2*y^2 - 5*z - 10*x*z - 10*y*z - 20*x*y*z + 2*z^2
-[1,1,2]:	unknown -> [5] -1-4*x+x^2-4*y-10*x*y+y^2-z-10*x*z-10*y*z-20*x*y*z+4*z^2
-expanding queue[3]^0,meter=[2,2,2]*4:  - 1 - 3*x + 2*x^2 - 3*y - 10*x*y + 2*y^2 - 3*z - 10*x*z - 10*y*z - 20*x*y*z + 2*z^2
-[3,1,1]:	unknown -> [6] -1+x+4*x^2-13*y-20*x*y+4*y^2-13*z-20*x*z-60*y*z-80*x*y*z+4*z^2
-[1,3,1]:	transposed [6] {x=>3+4*x,y=>1+4*y,z=>1+4*z} by [1,0,2]
-[1,1,3]:	transposed [6] {x=>3+4*x,y=>1+4*y,z=>1+4*z} by [1,2,0]
-[3,3,3]:	unknown -> [7] -27-39*x+4*x^2-39*y-60*x*y+4*y^2-39*z-60*x*z-60*y*z-80*x*y*z+4*z^2
+[0+4x,0+4y,0+4z]:	unknown -> [4] x^2+y^2-20x*y*z+z^2
+expanding queue[2]^0,meter=[1,1,2]*4: 1+2x+2x^2+2y+2y^2-5z-10x*z-10y*z-20x*y*z+2z^2
+[1+2x,1+2y,2+4z]:	unknown -> [5] -1-4x+x^2-4y-10x*y+y^2-z-10x*z-10y*z-20x*y*z+4z^2
+expanding queue[3]^0,meter=[2,2,2]*4: -1-3x+2x^2-3y-10x*y+2y^2-3z-10x*z-10y*z-20x*y*z+2z^2
+[3+4x,1+4y,1+4z]:	unknown -> [6] -1+x+4x^2-13y-20x*y+4y^2-13z-20x*z-60y*z-80x*y*z+4z^2
+[1+4x,3+4y,1+4z]:	transposed [6] by [1,0,2]
+[1+4x,1+4y,3+4z]:	transposed [6] by [1,2,0]
+[3+4x,3+4y,3+4z]:	unknown -> [7] -27-39x+4x^2-39y-60x*y+4y^2-39z-60x*z-60y*z-80x*y*z+4z^2
 ----------------
-expanding queue[4]^1,meter=[2,2,2]*8: x^2 + y^2 - 20*x*y*z + z^2
+expanding queue[4]^1,meter=[2,2,2]*8: x^2+y^2-20x*y*z+z^2
 solution [0,0,0],trivial(3)
-[0,0,0]:	unknown -> [8] x^2+y^2-40*x*y*z+z^2
-expanding queue[5]^2,meter=[2,2,2]*8:  - 1 - 4*x + x^2 - 4*y - 10*x*y + y^2 - z - 10*x*z - 10*y*z - 20*x*y*z + 4*z^2
-[3,1,2]:	unknown -> [9] -2-2*x+2*x^2-14*y-20*x*y+2*y^2-11*z-20*x*z-60*y*z-80*x*y*z+8*z^2
-[1,3,2]:	transposed [9] {x=>3+4*x,y=>1+4*y,z=>2+8*z} by [1,0,2]
-[1,1,6]:	unknown -> [10] 1-14*x+2*x^2-14*y-60*x*y+2*y^2+7*z-20*x*z-20*y*z-80*x*y*z+8*z^2
-[3,3,6]:	unknown -> [11] -27-42*x+2*x^2-42*y-60*x*y+2*y^2-33*z-60*x*z-60*y*z-80*x*y*z+8*z^2
-expanding queue[6]^3,meter=[2,2,2]*8:  - 1 + x + 4*x^2 - 13*y - 20*x*y + 4*y^2 - 13*z - 20*x*z - 60*y*z - 80*x*y*z + 4*z^2
-[7,1,1]:	unknown -> [12] 2+9*x+8*x^2-33*y-40*x*y+8*y^2-33*z-40*x*z-280*y*z-320*x*y*z+8*z^2
-[3,5,1]:	unknown -> [13] -5-19*x+8*x^2-5*y-40*x*y+8*y^2-73*z-200*x*z-120*y*z-320*x*y*z+8*z^2
-[3,1,5]:	transposed [13] {x=>3+8*x,y=>5+8*y,z=>1+8*z} by [0,2,1]
-[7,5,5]:	unknown -> [14] -97-111*x+8*x^2-165*y-200*x*y+8*y^2-165*z-200*x*z-280*y*z-320*x*y*z+8*z^2
-expanding queue[7]^3,meter=[2,2,2]*8:  - 27 - 39*x + 4*x^2 - 39*y - 60*x*y + 4*y^2 - 39*z - 60*x*z - 60*y*z - 80*x*y*z + 4*z^2
-[7,3,3]:	unknown -> [15] -31-31*x+8*x^2-99*y-120*x*y+8*y^2-99*z-120*x*z-280*y*z-320*x*y*z+8*z^2
-[3,7,3]:	transposed [15] {x=>7+8*x,y=>3+8*y,z=>3+8*z} by [1,0,2]
-[3,3,7]:	transposed [15] {x=>7+8*x,y=>3+8*y,z=>3+8*z} by [1,2,0]
-[7,7,7]:	unknown -> [16] -196-231*x+8*x^2-231*y-280*x*y+8*y^2-231*z-280*x*z-280*y*z-320*x*y*z+8*z^2
+[0+8x,0+8y,0+8z]:	unknown -> [8] x^2+y^2-40x*y*z+z^2
+expanding queue[5]^2,meter=[2,2,2]*8: -1-4x+x^2-4y-10x*y+y^2-z-10x*z-10y*z-20x*y*z+4z^2
+[3+4x,1+4y,2+8z]:	unknown -> [9] -2-2x+2x^2-14y-20x*y+2y^2-11z-20x*z-60y*z-80x*y*z+8z^2
+[1+4x,3+4y,2+8z]:	transposed [9] by [1,0,2]
+[1+4x,1+4y,6+8z]:	unknown -> [10] 1-14x+2x^2-14y-60x*y+2y^2+7z-20x*z-20y*z-80x*y*z+8z^2
+[3+4x,3+4y,6+8z]:	unknown -> [11] -27-42x+2x^2-42y-60x*y+2y^2-33z-60x*z-60y*z-80x*y*z+8z^2
+expanding queue[6]^3,meter=[2,2,2]*8: -1+x+4x^2-13y-20x*y+4y^2-13z-20x*z-60y*z-80x*y*z+4z^2
+[7+8x,1+8y,1+8z]:	unknown -> [12] 2+9x+8x^2-33y-40x*y+8y^2-33z-40x*z-280y*z-320x*y*z+8z^2
+[3+8x,5+8y,1+8z]:	unknown -> [13] -5-19x+8x^2-5y-40x*y+8y^2-73z-200x*z-120y*z-320x*y*z+8z^2
+[3+8x,1+8y,5+8z]:	transposed [13] by [0,2,1]
+[7+8x,5+8y,5+8z]:	unknown -> [14] -97-111x+8x^2-165y-200x*y+8y^2-165z-200x*z-280y*z-320x*y*z+8z^2
+expanding queue[7]^3,meter=[2,2,2]*8: -27-39x+4x^2-39y-60x*y+4y^2-39z-60x*z-60y*z-80x*y*z+4z^2
+[7+8x,3+8y,3+8z]:	unknown -> [15] -31-31x+8x^2-99y-120x*y+8y^2-99z-120x*z-280y*z-320x*y*z+8z^2
+[3+8x,7+8y,3+8z]:	transposed [15] by [1,0,2]
+[3+8x,3+8y,7+8z]:	transposed [15] by [1,2,0]
+[7+8x,7+8y,7+8z]:	unknown -> [16] -196-231x+8x^2-231y-280x*y+8y^2-231z-280x*z-280y*z-320x*y*z+8z^2
 ----------------
-expanding queue[8]^4,meter=[2,2,2]*16: x^2 + y^2 - 40*x*y*z + z^2
+expanding queue[8]^4,meter=[2,2,2]*16: x^2+y^2-40x*y*z+z^2
 solution [0,0,0],trivial(3)
-[0,0,0]:	unknown -> [17] x^2+y^2-80*x*y*z+z^2
-expanding queue[9]^5,meter=[1,1,2]*16:  - 2 - 2*x + 2*x^2 - 14*y - 20*x*y + 2*y^2 - 11*z - 20*x*z - 60*y*z - 80*x*y*z + 8*z^2
-[3,1,2]:	unknown -> [18] -1-x+x^2-7*y-10*x*y+y^2-11*z-20*x*z-60*y*z-80*x*y*z+16*z^2
-expanding queue[10]^5,meter=[1,1,2]*16: 1 - 14*x + 2*x^2 - 14*y - 60*x*y + 2*y^2 + 7*z - 20*x*z - 20*y*z - 80*x*y*z + 8*z^2
-[1,1,14]:	unknown -> [19] 8-17*x+x^2-17*y-70*x*y+y^2+23*z-20*x*z-20*y*z-80*x*y*z+16*z^2
-expanding queue[11]^5,meter=[1,1,2]*16:  - 27 - 42*x + 2*x^2 - 42*y - 60*x*y + 2*y^2 - 33*z - 60*x*z - 60*y*z - 80*x*y*z + 8*z^2
-[3,3,14]:	unknown -> [20] -26-51*x+x^2-51*y-70*x*y+y^2-17*z-60*x*z-60*y*z-80*x*y*z+16*z^2
-expanding queue[12]^6,meter=[2,2,2]*16: 2 + 9*x + 8*x^2 - 33*y - 40*x*y + 8*y^2 - 33*z - 40*x*z - 280*y*z - 320*x*y*z + 8*z^2
-[7,1,1]:	unknown -> [21] 1+9*x+16*x^2-33*y-80*x*y+16*y^2-33*z-80*x*z-560*y*z-1280*x*y*z+16*z^2
-[15,9,1]:	unknown -> [22] -23-15*x+16*x^2-57*y-80*x*y+16*y^2-673*z-720*x*z-1200*y*z-1280*x*y*z+16*z^2
-[15,1,9]:	transposed [22] {x=>15+16*x,y=>9+16*y,z=>1+16*z} by [0,2,1]
-[7,9,9]:	unknown -> [23] -164-391*x+16*x^2-297*y-720*x*y+16*y^2-297*z-720*x*z-560*y*z-1280*x*y*z+16*z^2
-expanding queue[13]^6,meter=[2,2,2]*16:  - 5 - 19*x + 8*x^2 - 5*y - 40*x*y + 8*y^2 - 73*z - 200*x*z - 120*y*z - 320*x*y*z + 8*z^2
-[11,5,1]:	unknown -> [24] -8-3*x+16*x^2-45*y-80*x*y+16*y^2-273*z-400*x*z-880*y*z-1280*x*y*z+16*z^2
-[3,13,1]:	unknown -> [25] -1-59*x+16*x^2+11*y-80*x*y+16*y^2-193*z-1040*x*z-240*y*z-1280*x*y*z+16*z^2
-[3,5,9]:	unknown -> [26] -35-219*x+16*x^2-125*y-720*x*y+16*y^2-57*z-400*x*z-240*y*z-1280*x*y*z+16*z^2
-[11,13,9]:	unknown -> [27] -379-563*x+16*x^2-469*y-720*x*y+16*y^2-697*z-1040*x*z-880*y*z-1280*x*y*z+16*z^2
-expanding queue[14]^6,meter=[2,2,2]*16:  - 97 - 111*x + 8*x^2 - 165*y - 200*x*y + 8*y^2 - 165*z - 200*x*z - 280*y*z - 320*x*y*z + 8*z^2
-[15,5,5]:	unknown -> [28] -100-95*x+16*x^2-365*y-400*x*y+16*y^2-365*z-400*x*z-1200*y*z-1280*x*y*z+16*z^2
-[7,13,5]:	unknown -> [29] -127-311*x+16*x^2-149*y-400*x*y+16*y^2-445*z-1040*x*z-560*y*z-1280*x*y*z+16*z^2
-[7,5,13]:	transposed [29] {x=>7+16*x,y=>13+16*y,z=>5+16*z} by [0,2,1]
-[15,13,13]:	unknown -> [30] -757-815*x+16*x^2-949*y-1040*x*y+16*y^2-949*z-1040*x*z-1200*y*z-1280*x*y*z+16*z^2
-expanding queue[15]^7,meter=[2,2,2]*16:  - 31 - 31*x + 8*x^2 - 99*y - 120*x*y + 8*y^2 - 99*z - 120*x*z - 280*y*z - 320*x*y*z + 8*z^2
-[15,3,3]:	unknown -> [31] -27-15*x+16*x^2-219*y-240*x*y+16*y^2-219*z-240*x*z-1200*y*z-1280*x*y*z+16*z^2
-[7,11,3]:	unknown -> [32] -61-151*x+16*x^2-83*y-240*x*y+16*y^2-379*z-880*x*z-560*y*z-1280*x*y*z+16*z^2
-[7,3,11]:	transposed [32] {x=>7+16*x,y=>11+16*y,z=>3+16*z} by [0,2,1]
-[15,11,11]:	unknown -> [33] -538-575*x+16*x^2-803*y-880*x*y+16*y^2-803*z-880*x*z-1200*y*z-1280*x*y*z+16*z^2
-expanding queue[16]^7,meter=[2,2,2]*16:  - 196 - 231*x + 8*x^2 - 231*y - 280*x*y + 8*y^2 - 231*z - 280*x*z - 280*y*z - 320*x*y*z + 8*z^2
-[7,7,7]:	unknown -> [34] -98-231*x+16*x^2-231*y-560*x*y+16*y^2-231*z-560*x*z-560*y*z-1280*x*y*z+16*z^2
-[15,15,7]:	unknown -> [35] -461-495*x+16*x^2-495*y-560*x*y+16*y^2-1111*z-1200*x*z-1200*y*z-1280*x*y*z+16*z^2
-[15,7,15]:	transposed [35] {x=>15+16*x,y=>15+16*y,z=>7+16*z} by [0,2,1]
-[7,15,15]:	transposed [35] {x=>15+16*x,y=>15+16*y,z=>7+16*z} by [2,0,1]
+[0+16x,0+16y,0+16z]:	unknown -> [17] x^2+y^2-80x*y*z+z^2
+expanding queue[9]^5,meter=[1,1,2]*16: -2-2x+2x^2-14y-20x*y+2y^2-11z-20x*z-60y*z-80x*y*z+8z^2
+[3+4x,1+4y,2+16z]:	unknown -> [18] -1-x+x^2-7y-10x*y+y^2-11z-20x*z-60y*z-80x*y*z+16z^2
+expanding queue[10]^5,meter=[1,1,2]*16: 1-14x+2x^2-14y-60x*y+2y^2+7z-20x*z-20y*z-80x*y*z+8z^2
+[1+4x,1+4y,14+16z]:	unknown -> [19] 8-17x+x^2-17y-70x*y+y^2+23z-20x*z-20y*z-80x*y*z+16z^2
+expanding queue[11]^5,meter=[1,1,2]*16: -27-42x+2x^2-42y-60x*y+2y^2-33z-60x*z-60y*z-80x*y*z+8z^2
+[3+4x,3+4y,14+16z]:	unknown -> [20] -26-51x+x^2-51y-70x*y+y^2-17z-60x*z-60y*z-80x*y*z+16z^2
+expanding queue[12]^6,meter=[2,2,2]*16: 2+9x+8x^2-33y-40x*y+8y^2-33z-40x*z-280y*z-320x*y*z+8z^2
+[7+16x,1+16y,1+16z]:	unknown -> [21] 1+9x+16x^2-33y-80x*y+16y^2-33z-80x*z-560y*z-1280x*y*z+16z^2
+[15+16x,9+16y,1+16z]:	unknown -> [22] -23-15x+16x^2-57y-80x*y+16y^2-673z-720x*z-1200y*z-1280x*y*z+16z^2
+[15+16x,1+16y,9+16z]:	transposed [22] by [0,2,1]
+[7+16x,9+16y,9+16z]:	unknown -> [23] -164-391x+16x^2-297y-720x*y+16y^2-297z-720x*z-560y*z-1280x*y*z+16z^2
+expanding queue[13]^6,meter=[2,2,2]*16: -5-19x+8x^2-5y-40x*y+8y^2-73z-200x*z-120y*z-320x*y*z+8z^2
+[11+16x,5+16y,1+16z]:	unknown -> [24] -8-3x+16x^2-45y-80x*y+16y^2-273z-400x*z-880y*z-1280x*y*z+16z^2
+[3+16x,13+16y,1+16z]:	unknown -> [25] -1-59x+16x^2+11y-80x*y+16y^2-193z-1040x*z-240y*z-1280x*y*z+16z^2
+[3+16x,5+16y,9+16z]:	unknown -> [26] -35-219x+16x^2-125y-720x*y+16y^2-57z-400x*z-240y*z-1280x*y*z+16z^2
+[11+16x,13+16y,9+16z]:	unknown -> [27] -379-563x+16x^2-469y-720x*y+16y^2-697z-1040x*z-880y*z-1280x*y*z+16z^2
+expanding queue[14]^6,meter=[2,2,2]*16: -97-111x+8x^2-165y-200x*y+8y^2-165z-200x*z-280y*z-320x*y*z+8z^2
+[15+16x,5+16y,5+16z]:	unknown -> [28] -100-95x+16x^2-365y-400x*y+16y^2-365z-400x*z-1200y*z-1280x*y*z+16z^2
+[7+16x,13+16y,5+16z]:	unknown -> [29] -127-311x+16x^2-149y-400x*y+16y^2-445z-1040x*z-560y*z-1280x*y*z+16z^2
+[7+16x,5+16y,13+16z]:	transposed [29] by [0,2,1]
+[15+16x,13+16y,13+16z]:	unknown -> [30] -757-815x+16x^2-949y-1040x*y+16y^2-949z-1040x*z-1200y*z-1280x*y*z+16z^2
+expanding queue[15]^7,meter=[2,2,2]*16: -31-31x+8x^2-99y-120x*y+8y^2-99z-120x*z-280y*z-320x*y*z+8z^2
+[15+16x,3+16y,3+16z]:	unknown -> [31] -27-15x+16x^2-219y-240x*y+16y^2-219z-240x*z-1200y*z-1280x*y*z+16z^2
+[7+16x,11+16y,3+16z]:	unknown -> [32] -61-151x+16x^2-83y-240x*y+16y^2-379z-880x*z-560y*z-1280x*y*z+16z^2
+[7+16x,3+16y,11+16z]:	transposed [32] by [0,2,1]
+[15+16x,11+16y,11+16z]:	unknown -> [33] -538-575x+16x^2-803y-880x*y+16y^2-803z-880x*z-1200y*z-1280x*y*z+16z^2
+expanding queue[16]^7,meter=[2,2,2]*16: -196-231x+8x^2-231y-280x*y+8y^2-231z-280x*z-280y*z-320x*y*z+8z^2
+[7+16x,7+16y,7+16z]:	unknown -> [34] -98-231x+16x^2-231y-560x*y+16y^2-231z-560x*z-560y*z-1280x*y*z+16z^2
+[15+16x,15+16y,7+16z]:	unknown -> [35] -461-495x+16x^2-495y-560x*y+16y^2-1111z-1200x*z-1200y*z-1280x*y*z+16z^2
+[15+16x,7+16y,15+16z]:	transposed [35] by [0,2,1]
+[7+16x,15+16y,15+16z]:	transposed [35] by [2,0,1]
 Maximum level 3 reached at [36]: x^2 + y^2 - 5*x*y*z + z^2

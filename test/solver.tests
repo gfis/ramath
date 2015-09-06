@@ -30,6 +30,12 @@
 #===================================================
 PACKAGE=org.teherba.ramath.symbolic.solver
 
+TEST Q01 FLT(4), biquadratic plus
+CALL TreeSolver -l 3 -e "x^4 + y^4 - z^2" -r norm
+
+TEST Q02 FLT(4), biquadratic plus: shift by 2,2,4
+CALL TreeSolver -l 3 -e "(x+2)^4 + (y+2)^4 - (z+4)^2" -r norm
+
 TEST T01 tree solver, sqrt(2)
 CALL TreeSolver -l 4 -e "2*q^2 - p^2" 
 
@@ -136,7 +142,7 @@ TEST T34 Keith Conrad Descent: Cor. 3.7
 CALL TreeSolver -b 2 -l 3 -e "y^2 = x^3 - 4*x" -r norm,invall
 
 TEST T35 FC7
-CALL TreeSolver -b 2 -l 5 -e " - 49 - 65*u - 28*u^2 - 4*u^3 + 75*v + 60*u*v + 12*u^2*v - 30*v^2 - 12*u*v^2 + 4*v^3" -r similiar,norm,invall
+CALL TreeSolver -b 2 -l 4 -e " - 49 - 65*u - 28*u^2 - 4*u^3 + 75*v + 60*u*v + 12*u^2*v - 30*v^2 - 12*u*v^2 + 4*v^3" -r norm,invall
 
 TEST T36 area of a rational triangle
 CALL TreeSolver -b 2 -l 3 -e "a^2 + b^2 = c^2; a*b = 2*d^2" -r norm,invall,igtriv
@@ -190,7 +196,7 @@ TEST T53 like T52, superset(^2) only
 CALL TreeSolver -b 2 -l 2 -e "a^2 + b^2 - c^2 - d^2" -r norm,invall
 
 TEST T54 like T52, with superset(^2)
-CALL TreeSolver -b 2 -l 2 -e "w^2 + x^2 - y^2 - z^2; w=a^2; x=b^2; y=c^2; z=d^2" -r norm,invall
+CALL TreeSolver -b 2 -l 2 -e "a^2 + b^2 - c^2 -d^2; w^2=a; x^2=b; y^2=c; z^2=d" -r norm,invall
 
 TEST T55 like T52, partial superset(^2) 
 CALL TreeSolver -b 2 -l 2 -e "a^4 + b^4 - c^2 - d^2" -r norm,invall

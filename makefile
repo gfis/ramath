@@ -48,7 +48,11 @@ proofs:
 	diff test/proof.prev.tst test/proof.this.tst
 diffy:
 	diff -y test/$(TEST).prev.tst test/$(TEST).this.tst
-
+rmbak:
+	find src -iname "*.java.bak" | xargs -l rm -v
+ret:
+	rm test/T*.tst
+	make solver
 # 1234567890123456789
 # test/T47.this.tst:Proof - queue exhausted, queue size = 2
 # 2015-07-23: 10 proofs

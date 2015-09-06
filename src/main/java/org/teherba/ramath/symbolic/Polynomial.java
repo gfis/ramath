@@ -1,4 +1,4 @@
-/*  Polynomial: a symbolic, multivariate polynomial with addition, multiplication
+/*  Polynomial: a symbolic, multivariate Polynomial with addition, multiplication
  *  and exponentiation
  *  @(#) $Id: Polynomial.java 744 2011-07-26 06:29:20Z gfis $
  *  2015-08-25: getExponentGCDs
@@ -58,10 +58,10 @@ import  java.util.TreeMap;
  *  (variable names and natural number exponents) of the monomials.
  *  <p>From http://en.wikipedia.org/wiki/Polynomial:
  *  <blockquote>
-In mathematics, a polynomial is a finite length expression constructed from variables
+In mathematics, a Polynomial is a finite length expression constructed from variables
 (also known as indeterminates) and constants, using the operations of addition, subtraction, multiplication,
 and constant non-negative whole number exponents.
-For example, x<sup>2</sup> − 4x + 7 is a polynomial, but x<sup>2</sup> − 4/x + 7x<sup>3/2</sup> is not ...
+For example, x<sup>2</sup> − 4x + 7 is a Polynomial, but x<sup>2</sup> − 4/x + 7x<sup>3/2</sup> is not ...
  *  </blockquote>
  *
  *  Though a monomial may be zero, there is at most one, non-zero constant monomial (without variables) in any Polynomial.
@@ -82,7 +82,7 @@ public class Polynomial implements Cloneable, Serializable {
     /*-------------- class properties -----------------------------*/
 
     /** The sorted map for {@link Monomial}s:
-     *  the {@link Monomial#signature signatures} of all monomials in the polynomial
+     *  the {@link Monomial#signature signatures} of all monomials in the Polynomial
      *  are mapped to the monomials.
      */
     private TreeMap<String, Monomial> monomials;
@@ -90,16 +90,16 @@ public class Polynomial implements Cloneable, Serializable {
     /** A pseudo property which marks all places where future additional properties must be inserted or cloned */
     private int pseudo;
 
-    /** Codes for the comparision of <em>this</em> polynomial with zero.
+    /** Codes for the comparision of <em>this</em> Polynomial with zero.
      *  There are no codes LT0, LE0 since they can be translated to GT0, GE0
      *  by inversion of the sign (method {@link #negativeOf}).
      *  The default, predefined relation is EQ0.
      */
     public static enum Relator
-            { EQ_0  // this polynomial =  0
-            , GT_0  // this polynomial >  0
-            , GE_0  // this polynomial >= 0
-            , NE_0  // this polynomial != 0
+            { EQ_0  // this Polynomial =  0
+            , GT_0  // this Polynomial >  0
+            , GE_0  // this Polynomial >= 0
+            , NE_0  // this Polynomial != 0
             };
 
     /** relation with zero */
@@ -125,8 +125,8 @@ public class Polynomial implements Cloneable, Serializable {
         }
     } // Constructor(Monomial)
 
-    /** Construct from another polynomial
-     *  @param poly another polynomial which is cloned
+    /** Construct from another Polynomial
+     *  @param poly another Polynomial which is cloned
      */
     public Polynomial(Polynomial poly) {
         monomials =  (poly.clone()).getMonomials();
@@ -150,8 +150,8 @@ public class Polynomial implements Cloneable, Serializable {
         setRelation(Relator.EQ_0);
     } // initialize
 
-    /** Deep copy of the polynomial with all {@link Monomial}s.
-     *  @return independant copy of the polynomial
+    /** Deep copy of the Polynomial with all {@link Monomial}s.
+     *  @return independant copy of the Polynomial
      */
     public Polynomial clone() {
         Polynomial result = new Polynomial();
@@ -170,20 +170,18 @@ public class Polynomial implements Cloneable, Serializable {
 
     /*-------------- bean methods, setters and getters -----------------------------*/
 
-    /** Gets one of the {@link Monomial}s of the polynomial.
+    /** Gets one of the {@link Monomial}s of the Polynomial.
      *  @param sig signature (variable names and their exponents) of the desired monomial
-     *  @deprecated
      *  @return monomial
      */
     public Monomial get(String sig) {
         return this.monomials.get(sig);
     } // get
 
-    /** Inserts a {@link Monomial}s into the polynomial.
+    /** Inserts a {@link Monomial}s into the Polynomial.
      *  If there is already a monomial with the parameter signature, it is overwritten.
      *  @param sig signature (variable names and their exponents) of the desired monomial
      *  @param mono2 monomial to be inserted or overwritten.
-     *  @deprecated
      */
     public void put(String sig, Monomial mono2) {
         this.monomials.put(sig, mono2);
@@ -210,7 +208,7 @@ public class Polynomial implements Cloneable, Serializable {
         this.monomials = map;
     } // setMonomials
 
-    /** Gets one of the {@link Monomial}s of the polynomial.
+    /** Gets one of the {@link Monomial}s of the Polynomial.
      *  @param sig signature (variable names and their exponents) of the desired monomial
      *  @return monomial
      */
@@ -218,7 +216,7 @@ public class Polynomial implements Cloneable, Serializable {
         return this.monomials.get(sig);
     } // getMonomial(sig)
 
-    /** Gets one of the {@link Monomial}s of the polynomial.
+    /** Gets one of the {@link Monomial}s of the Polynomial.
      *  @param varName variable name
      *  @param exponent exponent of the variable
      *  @return Monomial
@@ -296,26 +294,24 @@ public class Polynomial implements Cloneable, Serializable {
         return result;
     } // getLeadTerm
 
-    /** Returns the number of monomials (summands) in the polynomial
+    /** Returns the number of {@link Monomial}s (summands) in the Polynomial
      *  @return number of monomials &gt;= 1
      */
     public int size() {
         return monomials.size();
     } // size
-
-    /** Returns a string representation of the polynomial, either compressed or full,
-     *  always with the relation
-     *  @param full whether to return a complete representation suitable for substitution
-     *  or a compressed representation which suppresses positive unary sign and
-     *  coefficients and exponents of 1
-     *  @return "17*a0^2*a1 + a2^2*a3^3 - 4*b4 = 0", for example
+    
+    //----------------
+    /** Returns a String representation of <em>this</em> {@link Polynomial}, either compressed or full
+     *  @param mode 0 = normal, 1 = full (for substitution), 2 = nice / human legible
+     *  @return "17*a0^2*a1 + a2^2*a3^3 - 4*b4", for example for mode = 0
      */
-    public String toString(boolean full) {
+    public String toString(int mode) {
         StringBuffer buffer = new StringBuffer(2048);
         Iterator<String> iter = monomials.keySet().iterator();
         while (iter.hasNext()) {
             String sig = iter.next();
-            buffer.append(monomials.get(sig).toString(full));
+            buffer.append(monomials.get(sig).toString(mode));
         } // while iter
         if (buffer.length() == 0) {
             buffer.append("0");
@@ -323,7 +319,7 @@ public class Polynomial implements Cloneable, Serializable {
         switch (relation) {
             default:
             case EQ_0:
-                if (full) {
+                if (mode == 1) {
                     buffer.append(" = 0");
                 }
                 break;
@@ -337,19 +333,36 @@ public class Polynomial implements Cloneable, Serializable {
                 buffer.append(" != 0");
                 break;
         } // switch relation
-        String result = buffer.toString();
-        return result.substring(result.startsWith(" + ") ? 3 : 0);
-    } // toString
+        return buffer.toString().replaceAll("\\A\\s*\\+\\s*", ""); // leading "+"
+    } // toString(mode)
 
-    /** Returns a string representation of the polynomial, with leading sign,
+    /** Returns a String representation of <em>this</em> {@link Polynomial}, either compressed or full,
+     *  always with the relation
+     *  @param full whether to return a complete representation suitable for substitution
+     *  or a compressed representation which suppresses positive unary sign and
+     *  coefficients and exponents of 1
+     *  @return "17*a0^2*a1 + a2^2*a3^3 - 4*b4 = 0", for example
+     */
+    public String toString(boolean full) {
+        return toString(full ? 1 : 0);
+    } // toString(boolean)
+
+    /** Returns a String representation of <em>this</em> {@link Polynomial}, with leading sign,
      *  in compressed representation, without the relation.
      *  @return "17*a0^2*a1 + a2^2*a3^3 - 4*b4", for example
      */
     public String toString() {
-        return this.toString(false);
+        return this.toString(0); // normal
     } // toString()
 
-    /** Returns a string representation of <em>this</em> {@link Polynomial},
+    /** Returns a nice, human legible String representation of <em>this</em> {@link Polynomial}
+     *  @return "-2x^7*y^8", for example
+     */
+    public String niceString() {
+        return toString(2);
+    } // niceString()
+
+    /** Returns a String representation of <em>this</em> {@link Polynomial},
      *  in compressed representation, without the relation,
      *  and with coefficients splitted into powers of prime factors.
      *  @return "2^2*3*5*x*y^3 + 2*z^4" for example
@@ -368,7 +381,8 @@ public class Polynomial implements Cloneable, Serializable {
         return result.substring(result.startsWith(" + ") ? 3 : 0);
     } // toFactoredString()
 
-    /** Gets the constant {@link Monomial} of the polynomial, if any, or the constant 0.
+    //----------------
+    /** Gets the constant {@link Monomial} of the Polynomial, if any, or the constant 0.
      *  @return the constant monomial if there is one, or 0
      */
     public Coefficient getConstant() {
@@ -380,21 +394,21 @@ public class Polynomial implements Cloneable, Serializable {
         return result;
     } // getConstant
 
-    /** Determines whether there is a non-zero constant {@link Monomial} in the polynomial
+    /** Determines whether there is a non-zero constant {@link Monomial} in the Polynomial
      *  @return true if there is a constant monomial, or false otherwise
      */
     public boolean hasConstant() {
         return monomials.get(Monomial.CONSTANT_SIGNATURE) != null;
     } // hasConstant
 
-    /** Determines whether the polynomial contains no variables (only a constant {@link Monomial}).
-     *  @return true if the polynomial is constant, or false otherwise
+    /** Determines whether the Polynomial contains no variables (only a constant {@link Monomial}).
+     *  @return true if the Polynomial is constant, or false otherwise
      */
     public boolean isConstant() {
         return monomials.size() == 0 || monomials.size() == 1 && hasConstant();
     } // isConstant private static final String FAILURE = "? ";
 
-    /** Determines whether there are one or more variables in the {@link Monomial}s of the polynomial.
+    /** Determines whether there are one or more variables in the {@link Monomial}s of the Polynomial.
      *  @return true if there is at least one variable, or false otherwise
      */
     public boolean hasVariable() {
@@ -412,8 +426,8 @@ public class Polynomial implements Cloneable, Serializable {
 
     /** Determines whether all {@link Monomial}s in <em>this</em> {@link Polynomial}
      *  have the same sign. When all variables are assumed to have values >= 0,
-     *  a biased polynomial has no non-trivial solutions.
-     *  @return true if the polynomial has one type of sign and a constant, or false otherwise
+     *  a biased Polynomial has no non-trivial solutions.
+     *  @return true if the Polynomial has one type of sign and a constant, or false otherwise
      */
     public boolean isBiased() {
         boolean result = true; // assume success
@@ -432,14 +446,14 @@ public class Polynomial implements Cloneable, Serializable {
         return result; //  && monomials.get(Monomial.CONSTANT_SIGNATURE) != null;
     } // isBiased
 
-    /** Gets the <em>polarity</em> of the polynomial, that is the sign of the constant monomial, if present,
+    /** Gets the <em>polarity</em> of the Polynomial, that is the sign of the constant monomial, if present,
      *  or the sum of the signums of all monomials otherwise.
      *  @return
      *  <ul>
      *  <li>the signum of the constant monomial, if present, or otherwise:</li>
      *  <li>s &gt; 0 if there were more positive monomials</li>
      *  <li>s &lt; 0 if there were more negative monomials</li>
-     *  <li>s = 0 if the number of positive and negative monomials is the same, or the polynomial itself is zero</li>
+     *  <li>s = 0 if the number of positive and negative monomials is the same, or the Polynomial itself is zero</li>
      *  </ul>
      */
     public int polarity() {
@@ -527,8 +541,8 @@ public class Polynomial implements Cloneable, Serializable {
         return this;
     } // addTo(Monomial)
 
-    /** Clone and adds all monomials of another polynomial to this polynomial.
-     *  @param poly2 add this polynomial
+    /** Clone and adds all monomials of another Polynomial to this Polynomial.
+     *  @param poly2 add this Polynomial
      *  @return reference to a new object, the sum
      */
     public Polynomial add(Polynomial poly2) {
@@ -541,9 +555,9 @@ public class Polynomial implements Cloneable, Serializable {
         return result;
     } // add(Polynomial)
 
-    /** Subtracts a {@link Monomial} from this polynomial.
+    /** Subtracts a {@link Monomial} from this Polynomial.
      *  @param mono2 subtract this monomial
-     *  @return reference to <em>this</em> polynomial that was modified
+     *  @return reference to <em>this</em> Polynomial that was modified
      */
     protected Polynomial subtractFrom(Monomial mono2) {
         String sig2 = mono2.signature();
@@ -572,8 +586,8 @@ public class Polynomial implements Cloneable, Serializable {
         return this;
     } // negativeOf
 
-    /** Clone and subtract all monomials of another polynomial from this polynomial.
-     *  @param poly2 subtract this polynomial
+    /** Clone and subtract all monomials of another Polynomial from this Polynomial.
+     *  @param poly2 subtract this Polynomial
      *  @return reference to a new object, the difference
      */
     public Polynomial subtract(Polynomial poly2) {
@@ -586,9 +600,9 @@ public class Polynomial implements Cloneable, Serializable {
         return result;
     } // subtract(Polynomial)
 
-    /** Multiplies all monomials of this polynomial with a {@link Monomial}.
+    /** Multiplies all monomials of this Polynomial with a {@link Monomial}.
      *  @param mono2 multiply with this monomial
-     *  @return reference to <em>this</em> polynomial which was modified
+     *  @return reference to <em>this</em> Polynomial which was modified
      */
     protected Polynomial multiplyBy(Monomial mono2) {
         Iterator<String> iter = monomials.keySet().iterator();
@@ -620,8 +634,8 @@ public class Polynomial implements Cloneable, Serializable {
         return this;
     } // multiplyBy(number)
 
-    /** Clone and multiply this polynomial with another Polynomial.
-     *  @param poly2 multiply with this polynomial
+    /** Clone and multiply this Polynomial with another Polynomial.
+     *  @param poly2 multiply with this Polynomial
      *  @return reference to new object, the product
      */
     public Polynomial multiply(Polynomial poly2) {
@@ -661,11 +675,11 @@ public class Polynomial implements Cloneable, Serializable {
         return result;
     } // pow
 
-    /** Divides all monomials of this polynomial by a {@link Monomial}.
+    /** Divides all monomials of this Polynomial by a {@link Monomial}.
      *  The caller should ensure that all monomials are in fact divisible
      *  by <em>mono2</em>, otherwise an exception will be thrown.
      *  @param mono2 divide by this monomial
-     *  @return reference to <em>this</em> polynomial which was modified
+     *  @return reference to <em>this</em> Polynomial which was modified
      */
     protected Polynomial divideBy(Monomial mono2) {
         if (mono2.isZero()) {
@@ -758,7 +772,7 @@ public class Polynomial implements Cloneable, Serializable {
     //===============================================
     // Gröbner bases, Buchberger's algorithm
     //===============================================
-    /** Compute the so-called S-polynomial S(f,g) of Buchberger's algorithm.
+    /** Compute the so-called S-Polynomial S(f,g) of Buchberger's algorithm.
      *  @param poly2 <em>poly2</em> is g and <em>this</em> is f
      *  @return S(f,g) = lcm(lt(f),lt(g)) / lt(f) * f - lcm(lt(f),lt(g)) / lt(g) * g
      */
@@ -775,7 +789,7 @@ public class Polynomial implements Cloneable, Serializable {
      *  and return the rest.
      *  <em>this</em> is the Polynomial f to be divided by the Polynomials F.
      *  See http://de.wikipedia.org/wiki/Benutzer:Ap86/Artikelwerkstatt
-     *  @param polyF divide by these polynomials
+     *  @param polyF divide by these Polynomials
      *  @param store whether to compute the resulting quotient Polynomials Ai
      *  and store them back into <em>polyF</em>
      *  @return <em>polyr</em>, the rest
@@ -813,7 +827,7 @@ public class Polynomial implements Cloneable, Serializable {
                 if (quot != null) { // divides
                     found = true;
                     if (! quot.multiply(ltf).equals(lts)) { // assertion
-                        System.err.println("multiDivide error: "
+                        System.err.println("??? assertion: multiDivide error: "
                                 + quot.multiply(ltf).toString() + " <> "
                                 + lts.toString());
                     } // assertion
@@ -952,10 +966,10 @@ x^2 + 3*x^3 + 2*x^4
         return result.toString();
     } // listVariables
 
-    /** Returns a new polynomial constructed from a string representation, possibly with an
+    /** Returns a new Polynomial constructed from a string representation, possibly with an
      *  error message inserted at the point where parsing could not proceed.
      *  @param input the input string, with whitespace, for example " + 17*a0^2*a1 + a2^2*a3^3 - 4*b4"
-     *  @return a reference to a new polynomial
+     *  @return a reference to a new Polynomial
      */
     public static Polynomial parse(String input) {
         return (new PolynomialParser()).parseFrom(input);
@@ -1232,50 +1246,15 @@ x^2 + 3*x^3 + 2*x^4
     } // gcdCoefficients
 
     /*---------------- heavyweight methods ----------------------*/
-    /** Joins a map of variable names 
-     *  to the greatest common divisors of that variables' exponents
-     *  with the variables' exponents in an additional {@link Polynomial}
-     *  @param expGCDs map assembled so far, which is augmented
-     *  @param poly1 the Polynomial with the additional variable exponents
-     */
-    public static void joinExponentGCDs(TreeMap<String, Integer> expGCDs, Polynomial poly1) {
-        Iterator <String> miter = poly1.monomials.keySet().iterator();
-        while (miter.hasNext()) { // over all signatures of monomials
-            Monomial mono1 = poly1.get(miter.next());
-            TreeMap<String, Integer>  mvars = mono1.getMap();
-            Iterator <String> viter = mvars.keySet().iterator();
-            while (viter.hasNext()) { // over all variables
-                String vname = viter.next();
-                int    vexp  = mono1.getExponent(vname);
-                Integer rexp = expGCDs.get(vname);
-                if (rexp == null) {
-                    expGCDs.put(vname, new Integer(vexp));
-                } else {
-                    expGCDs.put(vname, new Integer(Vector.gcd(rexp.intValue(), vexp)));
-                }
-            } // while viter
-        } // while miter    
-    } // joinExponentGCDs
-
-    /** Gets a map of variable names in <em>this</em> {@link Polynomial}
-     *  to the greatest common divisors of that variables' exponents.
-     *  @return a map of variable names to the greatest common divisors of their exponents
-     */
-    public TreeMap<String, Integer> getExponentGCDs() {
-        TreeMap<String, Integer> result = new TreeMap<String, Integer>();
-        joinExponentGCDs(result, this);
-        return result;
-    } // getExponentGCDs
-
     //------------
     // Subsetting
     //------------
 
     /** Takes all variables from <em>mono2</em> and
      *  creates a sum of {@link Monomial}s for all different powers of these variables
-     *  occurring in <em>this</em> polynomial.
+     *  occurring in <em>this</em> Polynomial.
      *  @param mono2 a multiplication of all desired variables (names with exponent 1 and constant +1)
-     *  @return polynomial whose monomials have constant &gt;= +1, and which consists of
+     *  @return Polynomial whose monomials have constant &gt;= +1, and which consists of
      *  all different powers of the variables in <em>mono2</em>
      */
     private Polynomial getVariablePowers(Monomial mono2) {
@@ -1309,7 +1288,7 @@ x^2 + 3*x^3 + 2*x^4
             Monomial mono3 = poly3.monomials.get(piter3.next()); // specific combination
             Polynomial poly4 = new Polynomial();
             Iterator <String> piter1 = this.monomials.keySet().iterator();
-            while (piter1.hasNext()) { // over all monomials of <em>this</em> polynomial
+            while (piter1.hasNext()) { // over all monomials of <em>this</em> Polynomial
                 Monomial mono5 = this.monomials.get(piter1.next());
                 if (mono5.getVariablePowers(mono2).equals(mono3)) {
                     poly4.addTo(mono5.getFactorOf(mono3));
@@ -1411,13 +1390,13 @@ x^2 + 3*x^3 + 2*x^4
         return this;
     } // reducePowerCoefficients
 
-    /** Performs one square completion step, and widens all subpolynomials
+    /** Performs one square completion step, and widens all subPolynomials
      *  appropriately.
      *  @param varName the variable to be square completed in this step
      *  @param vmapt the {@link VariableMap} assembled so far, maps variables to the
      *  expressions for which they are to be substituted
-     *  @param phead the subpolynomial which is already processed
-     *  @param pbody the subpolynomial for variable <em>varName</em>, to be square completed
+     *  @param phead the subPolynomial which is already processed
+     *  @param pbody the subPolynomial for variable <em>varName</em>, to be square completed
      *  @param ptail the remaining {@link Monomial}s with other variables
      *  @param debug2 = 0: no debugging output, 1 = some, 2 = more, 3 = most
      *  @return the modified, remaining <em>ptail</em>;
@@ -1647,11 +1626,11 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
     // Characterization, Equivalence, Mapping
     //----------------------------------------
 
-    /** Computes a characterization of the polynomial
+    /** Computes a characterization of the Polynomial
      *  suitable for normalization and equivalence checking.
      *  This characterization is independant of the monomials' variable names and of the signs of the monomials.
      *  @return a sorted map whose keys are the {@link Monomial#characteristic} values of the monomials,
-     *  and the values are the sub-polynomials consisting of all monomials with that characteristic value
+     *  and the values are the sub-Polynomials consisting of all monomials with that characteristic value
      */
     public TreeMap<String, Polynomial> characterize() {
         TreeMap <String, Polynomial> resultMap = new TreeMap<String, Polynomial>();
@@ -1770,82 +1749,13 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
      *  a positive or negative multiplicative factor.</li>
      *  </ul>
      *  @param poly2 second comparision operand
-     *  @return true if the two polynomials are equivalent, false otherwise
+     *  @return true if the two Polynomials are equivalent, false otherwise
      */
     public boolean isEquivalent(Polynomial poly2) {
         return this .deflate().toString().equals(
                poly2.deflate().toString() );
     } // isEquivalent
-
-    /** Determine whether two variable names of <em>this</em> {@link Polynomial}
-     *  are interchangeable (equivalent).
-     *  Caution: this is a rather primitive, inefficient implementation.
-     *  @param name1 name of 1st variable
-     *  @param name2 name of 2nd variable
-     *  @return true of the two variable names can be interchanged in the Polynomial
-     *  without loss of structure
-     */
-    protected boolean allowsTransposition(String name1, String name2) {
-        VariableMap vmap2 = new VariableMap();
-        vmap2.put(name1, name2);
-        vmap2.put(name2, name1); // now maps interchanged names
-        return this.isEqualTo(substitute(vmap2));
-    } // allowsTransposition
-
-    /** Determines the equivalence classes (subsets) of variables
-     *  which can be interchanged (renamed) in <em>this</em> Polynomial,
-     *  while they still maintain the Polynomial's structure.
-     *  Caution: this is a rather primitive, inefficient implementation.
-     *  @return the classes as a {@link Vector} of indexes into a fictitious array 
-     *  of the sorted variable names of <em>this</em> Polynomial. 
-     *  The indexes start with 0, and they increment, but they are not necessarily consecutive.
-     *  Two variable names having the same index may be interchanged/renamed in <em>this</em> Polynomial
-     *  without loss of structure.
-     *  <p>
-     *  Examples:
-     *  <pre>
-     *  (new Polynomial("a^3 +   b^3 +   c^3 - d^3 = 0")).getTransposableClasses() -> [0, 0, 0, 3]
-     *  (new Polynomial("a^3 + 2*b^3 + 3*c^3 - d^3 = 0")).getTransposableClasses() -> [0, 1, 2, 3]
-     *  </pre>
-     */
-    public Vector getTransposableClasses() {
-        String [] names = getVariableMap().getNameArray();
-        int len = names.length;
-        Vector result = new Vector(len);
-        int itran = 0;
-        while (itran < len) { // preset to default (natural, increasing from 0): no equivalent names found
-            result.set(itran, itran);
-            itran ++;
-        } // while presetting
-        itran = 0;
-        while (itran < len) { // search for interchangeable names
-            int jtran = itran + 1;
-            while (jtran < len) { //  those not yet investigated
-                if (result.get(jtran) >= jtran && allowsTransposition(names[itran], names[jtran])) {
-                    result.set(jtran, itran);
-                } // allowsTransposition
-                jtran ++;
-            } // while jtran
-            itran ++;
-        } // while searching
-        return result;
-    } // getTransposableClasses()
-
-    /** Determines whether two {@link Polynomial}s are equivalent, that is whether,
-     *  <ul>
-     *  <li>after a transposition of the variable names,</li>
-     *  <li>they are {@link #isEquivalent}.</li>
-     *  </ul>
-     *  @param poly2 second comparision operand
-     *  @return null if the two polynomials are not mappable, or
-     *  a {@link VariableMap} from the variables of <em>this</em> Polynomial
-     *  to the variables of <em>poly2</em>
-     */
-    public VariableMap getTransposition_88(Polynomial poly2) {
-        VariableMap result = this.getVariableMap();
-        return result;
-    } // getTransposition_88
-    
+  
     /** Tries to establish an affine mapping between the variables
      *  of <em>this</em> Polynomial and a 2nd Polynomial.
      *  The absolute coefficients of the 2nd Polynomial should be greater than or equal to
@@ -2172,19 +2082,19 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
     } // similiarity
 
     /** Substitutes all variable names with a constant number (0, 1 and so on),
-     *  and returns a new polynomial.
+     *  and returns a new Polynomial.
      *  @param number value for all variables
-     *  @return a new polynomial
+     *  @return a new Polynomial
      */
     public Polynomial substitute(int number) {
         return substitute(getVariableMap(String.valueOf(number), true));
     } // substitute(int)
 
     /** Substitutes all variable names with a constant number (0, 1 and so on),
-     *  and returns a new polynomial.
+     *  and returns a new Polynomial.
      *  @param number value for all variables
      *  @param upperSubst whether uppercase variables should be substituted
-     *  @return a new polynomial
+     *  @return a new Polynomial
      */
     public Polynomial substitute(int number, boolean upperSubst) {
         return substitute(getVariableMap(String.valueOf(number), upperSubst));
@@ -2220,10 +2130,10 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
      *  <li>the (in)equality fails                 =&gt; FAILURE</li>
      *  <li>the outcome cannot (yet) be decided    =&gt; UNKNOWN</li>
      *  </ul>
-     *  The polynomial is tested for:
+     *  The Polynomial is tested for:
      *  <ul>
      *  <li>constant value, especially zero</li>
-     *  <li>bias, that is the polynomial is known to be either greater or less than zero</li>
+     *  <li>bias, that is the Polynomial is known to be either greater or less than zero</li>
      *  <li>mismatch of the constant monomial and the greatest common divisor of all variable monomials</li>
      *  </ul>
      *  @param vmap1 the map of the variables describing how they were recently substituted
@@ -2340,8 +2250,8 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
 
     /*-------------------- Test Driver --------------------*/
 
-    /** Test method, shows some fixed polynomials with no arguments, or the
-     *  polynomial resulting from the input formula.
+    /** Test method, shows some fixed Polynomials with no arguments, or the
+     *  Polynomial resulting from the input formula.
      *  @param args command line arguments
      */
     public static void main(String[] args) {
@@ -2566,11 +2476,6 @@ solution [0,0,0,0],trivial(3)
                     System.out.println("(\"" + poly1.toString(true) + "\")"
                             + ".substitute(" + vmap1.toString() + ") = " + poly1.substitute(vmap1).toString(true));
                     
-                } else if (opt.startsWith("-transp")) {
-                    poly1 = Polynomial.parse(args[iarg ++]);
-                    System.out.println("getTransposableClasses(\"" + poly1.toString() + "\") = "
-                            + poly1.getTransposableClasses().toString());
-
                 } else if (opt.startsWith("-var")) { // getVariablePowers and groupBy
                     String varName = args[iarg ++];
                     String[] vars = varName.split("\\W"); // non-word characters
@@ -2581,7 +2486,7 @@ solution [0,0,0,0],trivial(3)
                     System.out.println(          "groupBy(" + varName + ")=\n" + poly1.groupBy          (mono4).toList(false));
 
                 } else {
-                    System.err.println("invalid option " + opt);
+                    System.err.println("??? invalid option: \"" + opt + "\"");
                 }
             } // some option
         } // at least 1 argument

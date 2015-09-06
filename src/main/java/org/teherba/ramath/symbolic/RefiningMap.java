@@ -118,6 +118,29 @@ public class RefiningMap extends VariableMap implements Cloneable , Serializable
         return result;
     } // getRefinedArray
 
+    /** Gets a String of the refined expressions separated by commas,
+     *  without "*"
+     *  @return "[1+8x,1+8y,5+8z]", for example
+     */
+    public String niceString() {
+        StringBuffer result = new StringBuffer(64);
+        result.append('[');
+        int ind = 0;
+        Iterator<String> iter = this.keySet().iterator();
+        while (iter.hasNext()) {
+            if (ind > 0) {
+            	result.append(',');
+            }
+            String name = iter.next();
+            String expr = this.get(name);
+            result.append(expr.substring(0, expr.indexOf('*')));
+            result.append(name); // without "*"
+            ind ++;
+        } // while iter
+        result.append(']');
+        return result.toString();
+    } // niceString
+
     /*----------------- test driver ----------------------*/
     /** Test method.
      *  @param args command line arguments

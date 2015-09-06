@@ -90,7 +90,7 @@ public class SimiliarReason extends BaseReason {
         String result = VariableMap.UNKNOWN;
         String message = findSimiliar(solver, rset2);
         if (! message.startsWith("[-1]")) { // no index "[-1]" means a similiar RelationSet was found
-            result = VariableMap.SIMILIAR + "   " + message + " " + solver.polish(rset2);
+            result = VariableMap.SIMILIAR + "   " + message + " " + rset2.niceString();
         } // no index "[-1]"
         return result;
     } // check

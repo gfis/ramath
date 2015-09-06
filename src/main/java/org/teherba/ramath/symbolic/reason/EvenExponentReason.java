@@ -19,11 +19,15 @@
  */
 package org.teherba.ramath.symbolic.reason;
 import  org.teherba.ramath.symbolic.reason.BaseReason;
+import  org.teherba.ramath.symbolic.Monomial;
+import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.RefiningMap;
 import  org.teherba.ramath.symbolic.RelationSet;
 import  org.teherba.ramath.symbolic.VariableMap;
 import  org.teherba.ramath.symbolic.solver.BaseSolver;
 import  org.teherba.ramath.linear.Vector;
+import  java.util.Iterator;
+import  java.util.TreeMap;
 
 /** Checks whether there is another {@link RelationSet} on the same nesting level
  *  of the expansion tree which can be mapped to the RelationSet in question 
@@ -45,6 +49,65 @@ public class EvenExponentReason extends BaseReason {
     /** a copy of the exponentGCDs */
     private Vector expGCDs = null;
         
+    /** Joins a map of variable names 
+     *  to the greatest common divisors of that variables' exponents
+     *  with the variables' exponents in an additional {@link Polynomial}
+     *  @param expGCDs map assembled so far, which is augmented
+     *  @param poly1 the Polynomial with the additional variable exponents
+     */
+    public static void joinExponentGCDs(TreeMap<String, Integer> expGCDs, Polynomial poly1) {
+        Iterator <String> miter = poly1.keySet().iterator();
+        while (miter.hasNext()) { // over all signatures of monomials
+            Monomial mono1 = poly1.get(miter.next());
+            TreeMap<String, Integer>  mvars = mono1.getMap();
+            Iterator <String> viter = mvars.keySet().iterator();
+            while (viter.hasNext()) { // over all variables
+                String vname = viter.next();
+                int    vexp  = mono1.getExponent(vname);
+                Integer rexp = expGCDs.get(vname);
+                if (rexp == null) {
+                    expGCDs.put(vname, new Integer(vexp));
+                } else {
+                    expGCDs.put(vname, new Integer(Vector.gcd(rexp.intValue(), vexp)));
+                }
+            } // while viter
+        } // while miter    
+    } // joinExponentGCDs
+
+    /** Gets a map of variable names in a {@link Polynomial}
+     *  to the greatest common divisors of that variables' exponents.
+     *  @param poly1 get the map from this Polynomial
+     *  @return a map of variable names to the greatest common divisors of their exponents
+     */
+    public static TreeMap<String, Integer> getExponentGCDs(Polynomial poly1) {
+        TreeMap<String, Integer> result = new TreeMap<String, Integer>();
+        joinExponentGCDs(result, poly1);
+        return result;
+    } // getExponentGCDs
+
+    /** Gets the greatest common divisors of variable exponents,
+     *  in the natural order of the variable names in {@link RelationSet} <em>rset1</em> 
+     *  @param rset1 get the GCDs from this RelationSet
+     *  @return a map of variable names to the greatest common divisors of their exponents
+     */
+    public static Vector getExponentGCDs(RelationSet rset1) {
+        TreeMap<String, Integer> expGCDs = new TreeMap<String, Integer>();
+        int ipoly = 0;
+        while (ipoly < rset1.size()) { // over all relations
+            joinExponentGCDs(expGCDs, rset1.get(ipoly));
+            ipoly ++;
+        } // while ipoly
+        Vector result = new Vector(expGCDs.size());
+        int ivar = 0;
+        Iterator<String> viter = expGCDs.keySet().iterator();
+        while (viter.hasNext()) {
+            String varName = viter.next();
+            result.set(ivar, expGCDs.get(varName).intValue());
+            ivar ++;
+        } // while viter
+        return result;
+    } // getExponentGCDs
+
     /** Whether <em>this</em> reason should be considered for 
      *  the starting {@link RelationSet}.
      *  Only a few reasons overwrite this method and return <em>false</em> for
@@ -58,7 +121,7 @@ public class EvenExponentReason extends BaseReason {
     public boolean isConsiderable(BaseSolver solver) {
     	boolean result = false;
         RelationSet rset0 = solver.getRootNode();
-        expGCDs = rset0.getExponentGCDs(rset0.getMapping()); // remember it for check below
+        expGCDs = getExponentGCDs(rset0); // remember them for check below
         boolean odd = true; // assume that all GCDs are odd
         int ivect = expGCDs.size() - 1;
         while (odd && ivect >= 0) { // check whether there is at least one even element

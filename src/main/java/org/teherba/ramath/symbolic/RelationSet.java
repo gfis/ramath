@@ -250,7 +250,7 @@ public class RelationSet
 
     /*-------------- lightweight derived methods -----------------------------*/
 
-    /** Returns the RelationSet as an array of {@link Polynomial}s.
+    /** Returns <em>this</em> {@link RelationSet} as an array of {@link Polynomial}s.
      *  @return array of Polynomials
      */
     public Polynomial[] toArray() {
@@ -263,34 +263,42 @@ public class RelationSet
         return result;
     } // toArray
 
-    /** Returns a string representation of the relation set, either compressed or full
-     *  @param full whether to return a complete representation suitable for substitution
-     *  or a compressed representation which suppresses positive unary sign and
-     *  coefficients and exponents of 1
-     *  @return " + 17*a0^2*a1^1 + a2^2*a3^3 = 0; - 4*b4^1 = 0", for example
+    /** Returns a String representation of <em>this</em> {@link RelationSet}
+     *  @param mode 0 = normal, 1 = full (for substitution), 2 = nice / human legible
+     *  @return " + 17*a0^2*a1^1 + a2^2*a3^3 = 0; - 4*b4^1 = 0", for example for mode = 1
      */
-    public String toString(boolean full) {
+    public String toString(int mode) {
         StringBuffer buffer = new StringBuffer(2048);
         int ipoly = 0;
         while (ipoly < this.size()) {
             if (ipoly > 0) {
                 buffer.append("; ");
             }
-            buffer.append(this.get(ipoly).toString(full));
+            buffer.append(this.get(ipoly).toString(mode));
             ipoly ++;
         } // while ipoly
         return buffer.toString();
-    } // toString
+    } // toString(int)
 
-    /** Returns a string representation of the {@link Polynomial}s in the relation set,
+    /** Returns a String representation of <em>this</em> {@link RelationSet}, either compressed or full
+     *  @param full whether to return a complete representation suitable for substitution
+     *  or a compressed representation which suppresses positive unary sign and
+     *  coefficients and exponents of 1
+     *  @return " + 17*a0^2*a1^1 + a2^2*a3^3 = 0; - 4*b4^1 = 0", for example
+     */
+    public String toString(boolean full) {
+    	return toString(full ? 1 : 0);
+    } // toString(boolean)
+
+    /** Returns a string representation of the {@link Polynomial}s in <em>this</em> {@link RelationSet},
      *  with leading signs, in compressed form.
      *  @return "17*a0^2*a1 + a2^2*a3^3; - 4*b4", for example
      */
     public String toString() {
-        return toString(false);
+        return toString(0);
     } // toString()
 
-    /** Returns a string representation of <em>this</em> {@link RelationSet},
+    /** Returns a String representation of <em>this</em> {@link RelationSet},
      *  in compressed representation, without the relations,
      *  and coefficients splitted into powers of prime factors
      *  @return "2^2*3*5*x*y^3 + 2*z^4; x - y" for example
@@ -308,7 +316,7 @@ public class RelationSet
         return buffer.toString();
     } // toFactoredString
 
-    /** Returns lines with string representations of the {@link Polynomial}s in the relation set,
+    /** Returns lines with String representations of the {@link Polynomial}s in <em>this</em> {@link RelationSet},
      *  either compressed or full
      *  @param full whether to return a complete representation suitable for substitution
      *  or a compressed representation which suppresses positive unary sign and
@@ -337,7 +345,7 @@ public class RelationSet
         return buffer.toString();
     } // toList(full)
 
-    /** Returns lines with string representations of the {@link Polynomial}s in the relation set,
+    /** Returns lines with String representations of the {@link Polynomial}s in <em>this</em> {@link RelationSet},
      *  in compressed form
      *  @return a list of lines separated by newline
      */
@@ -345,6 +353,7 @@ public class RelationSet
         return this.toList(false);
     } // toList()
 
+    //----------------
     /** Deflates all member {@link Polynomial}s in place
      *  @return <em>this</em> deflated RelationSet
      */
@@ -570,81 +579,6 @@ public class RelationSet
         return result;
     } // getDependantMap
 
-    /** Gets the greatest common divisors of variable exponents,
-     *  in the natural order of the variable names in <em>this</em> {@link RelationSet}
-     *  @param vmap (not used)
-     *  @return a map of variable names to the greatest common divisors of their exponents
-     */
-    public Vector getExponentGCDs(VariableMap vmap) {
-        TreeMap<String, Integer> expGCDs = new TreeMap<String, Integer>();
-        int ipoly = 0;
-        while (ipoly < this.size()) { // over all relations
-            joinExponentGCDs(expGCDs, this.get(ipoly));
-            ipoly ++;
-        } // while ipoly
-        Vector result = new Vector(expGCDs.size());
-        int ivar = 0;
-        Iterator<String> viter = expGCDs.keySet().iterator();
-        while (viter.hasNext()) {
-            String varName = viter.next();
-            result.set(ivar, expGCDs.get(varName).intValue());
-            ivar ++;
-        } // while viter
-        return result;
-    } // getExponentGCDs
-
-    /** Determine whether two variable names of <em>this</em> {@link RelationSet}
-     *  are interchangeable (equivalent).
-     *  Caution: this is a rather primitive, inefficient implementation.
-     *  @param name1 name of 1st variable
-     *  @param name2 name of 2nd variable
-     *  @return true of the two variable names can be interchanged in the RelationSet
-     *  without loss of structure
-     */
-    protected boolean allowsTransposition(String name1, String name2) {
-        VariableMap vmap2 = new VariableMap();
-        vmap2.put(name1, name2);
-        vmap2.put(name2, name1);
-        RelationSet rset1 = this                  ;
-        RelationSet rset2 = this.substitute(vmap2);
-        // now try to match each Polynomial from rset1 with another from rset2
-        int len = this.size();
-        int[] partner = new int[len]; // maps the index of a Polynomial in rset1 to the index of a matching Polynomials in rset2
-        int
-        ipoly1 = 0;
-        while (ipoly1 < len) { // presetting: no partners so far
-            partner[ipoly1] = -1;
-            ipoly1 ++;
-        } // while ipoly1
-        ipoly1 = 0;
-        while (ipoly1 < len) { // over all Polynomials in rset1: determine partners in rset2
-            if (partner[ipoly1] < 0) { // no partner so far
-                Polynomial poly1 = rset1.get(ipoly1);
-                int ipoly2 = 0;
-                while (ipoly2 < len) { // over all Polynomials in rset2
-                    if (partner[ipoly2] < 0) { // no partner so far
-                        Polynomial poly2 = rset2.get(ipoly2);
-                        if (poly1.isEqualTo(poly2)) { // make them partners
-                            partner[ipoly1] = ipoly2;
-                            partner[ipoly2] = ipoly1;
-                        } // make partners
-                    } // poly2 had no partner
-                    ipoly2 ++;
-                } // while ipoly2
-            } // poly1 had no partner
-            ipoly1 ++;
-        } // while ipoly1
-        ipoly1 = 0;
-        boolean result = true; // assume success
-        while (result && ipoly1 < len) { // test whether all had partners
-            result = partner[ipoly1] >= 0;
-            ipoly1 ++;
-        } // while ipoly1
-        return result;
-    } // allowsTransposition
-
-    // public Vector getTransposableClasses() is inherited from Polynomial, but uses local 'allowsTransposition'
-
     /** Extracts a new {@link RelationSet} consisting of the
      *  indivisible parts of the underlying {@link Polynomial}s.
      *  @param factor the common constant factor
@@ -834,10 +768,8 @@ evaluate: unknown
                 rset1 = RelationSet.parse(args[iarg ++]);
                 System.out.println(rset1.toString());
                 System.out.println("rest: " + rset1.getRest(new BigInteger(factor)));
-            } else if (opt.equals("-transp")   ) {
-                rset1 = RelationSet.parse(args[iarg ++]);
-                System.out.println("getTransposableClasses(\"" + rset1.toString() + "\") = "
-                        + rset1.getTransposableClasses().toString());
+            } else {
+                System.err.println("??? invalid option: \"" + opt + "\"");
             }
         } // with args
     } // main

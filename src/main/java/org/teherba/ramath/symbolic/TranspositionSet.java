@@ -62,13 +62,6 @@ public class TranspositionSet extends ArrayList<Vector> implements Cloneable , S
         VariableMap dmap1 = rset1.getDependantMap(); // child  -> parent, w -> a
         VariableMap dinv1 = dmap1.inverse();         // parent -> child,  a -> w
         boolean hasDependants = false;
-        if (debug > 1) {
-            System.out.print("1- hasDependants=" + hasDependants);
-            System.out.print(", dmap1=" + dmap1.toString()); 
-            System.out.print(", dinv1=" + dinv1.toString());
-            System.out.print(", vmap0=" + vmap0.toString());
-            System.out.println();
-        }
         
         Iterator<String> diter = dmap1.keySet().iterator();
         if (! hasDependants && vmap0.size() > 2) { // 2 are always not dependant
@@ -80,11 +73,9 @@ public class TranspositionSet extends ArrayList<Vector> implements Cloneable , S
             } // while diter
         } // if hasDependants
         if (debug > 0) {
-            System.out.print("2- hasDependants=" + hasDependants);
-            System.out.print(", dmap1=" + dmap1.toString()); 
-            System.out.print(", dinv1=" + dinv1.toString());
-            System.out.print(", vmap1=" + vmap1.toString());
-            System.out.println();
+            System.out.println("hasDependants=" + hasDependants
+                    + ", dmap1=" + dmap1.toString() + ", dinv1=" + dinv1.toString()
+                    + ", vmap1=" + vmap1.toString());
         }
         
         Permutator permutator = new Permutator(vmap1.size());
@@ -100,26 +91,24 @@ public class TranspositionSet extends ArrayList<Vector> implements Cloneable , S
                     String newParent = pmap2.get(oldParent);  // b
                     String newChild  = dinv1.get(newParent);  // x
                     if (newChild != null) {
-	                    pmap2.put(oldChild, newChild);        // w -> x
-	                } // newChild != null
+                        pmap2.put(oldChild, newChild);        // w -> x
+                    } // newChild != null
                     if (debug > 0) {
                         System.out.println("perms=" + (new Vector(perms)).toString(",")
                                 + ", oldParent=" + oldParent + ", oldChild=" + oldChild
                                 + ", newParent=" + newParent + ", newChild=" + newChild
-                            //  + ", pmap2=" + pmap2.toString()
                                 );
                     }
                 } // while diter            
             } // hasDependants
             RelationSet rset2 = rset1.substitute(pmap2);
-            Vector vperm = pmap2.getPermutationVector(); 
             boolean same = rset1.isEqualTo(rset2);
             if (debug > 0) {
-                System.out.println("vperm=" + vperm.toString(",") 
-                        + ", pmap2=" + pmap2.toString()
+                System.out.println("pmap2=" + pmap2.toString()
                         + ", rset1=" + rset1.toString() + ", rset2=" + rset2.toString() + " => " + same);
             }
             if (same) {
+	            Vector vperm = pmap2.getPermutationVector(); 
                 this.add(vperm);
             } // if isEqualTo
         } // while permutator

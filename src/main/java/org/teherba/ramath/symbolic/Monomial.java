@@ -815,13 +815,69 @@ public class Monomial implements Cloneable, Serializable {
     public boolean equals(Monomial mono2) {
         return this.compareTo(mono2) == 0;
     } // equals
-
-    /** Returns a string representation of the monomial in compressed representation
-     *  @return "- 2*x^7*y^8", for example
+    
+    //----------------
+    /** Returns a String representation of the monomial, either compressed or full
+     *  @param mode 0 = normal, 1 = full (for substitution), 2 = nice / human legible
+     *  @param number String representation of the coefficient, either empty, a number, or a product
+     *  @return "x*y^3", for example for mode = 0, "+ 1*x^1*y^3" for mode = 1
      */
-    public String toString() {
-        return toString(false);
-    } // toString()
+    private String toStringCommon(int mode, String number) {
+        StringBuffer result = new StringBuffer(32);
+        // result.append(sign >= 0 ? " + " : " - ");
+        if (vars.size() == 0) { // no variables, coefficient only
+            if (number.startsWith("-")) {
+                result.append(number.replace("-", " - "));
+            } else {
+                result.append(" + ");
+                result.append(number);
+            }
+        } else { // with variable(s)
+            if (number.equals(" + 0")) {
+                result.append(number);
+                vars.clear(); // just for safety
+            } else if (mode != 1 && number.equals("1")) {
+                result.append(" + ");
+            } else if (mode != 1 && number.equals("-1")) {
+                result.append(" - ");
+            } else {
+                if (number.startsWith("-")) {
+                    result.append(number.replace("-", " - "));
+                } else {
+                    result.append(" + ");
+                    result.append(number);
+                }
+                if (mode != 2) {
+                    result.append("*");
+                }
+            }
+            Iterator<String> iter = vars.keySet().iterator();
+            int count = 0;
+            while (iter.hasNext()) {
+                count ++;
+                if (count > 1) {
+                    result.append("*");
+                }
+                String name = iter.next();
+                result.append(name);
+                int exp = this.getExponent(name);
+                if (mode == 1 || exp > 1) {
+                    result.append("^");
+                    result.append(exp);
+                }
+            } // while iter
+        } // with variable(s)
+        return mode != 2 ? result.toString() : result.toString().replaceAll(" ", "");
+    } // toString(mode)
+
+    /** Returns a string representation of the monomial, either compressed or full
+     *  @param mode 0 = normal, 1 = full (for substitution), 2 = nice / human legible
+     *  @return "x*y^3", for example if mode = 0, "+ 1*x^1*y^3" if mode = 1
+     */
+    public String toString(int mode) {
+        String number = coefficient.toString();
+        return toStringCommon(mode, number);
+    } // toString(mode)
 
     /** Returns a string representation of the monomial, either compressed or full
      *  @param full whether to return a complete representation suitable for substitution
@@ -829,10 +885,26 @@ public class Monomial implements Cloneable, Serializable {
      */
     public String toString(boolean full) {
         String number = coefficient.toString();
-        return toStringCommon(full, number);
+        return toStringCommon(full ? 1 : 0, number);
     } // toString(full)
 
-    /** Returns a string representation of <em>this</em> {@link Monomial},
+    /** Returns a string representation of the monomial in compressed representation
+     *  @return "- 2*x^7*y^8", for example
+     */
+    public String toString() {
+        String number = coefficient.toString();
+        return toStringCommon(0, number);
+    } // toString()
+
+    /** Returns a nice, human legible String representation of the monomial
+     *  @return "-2x^7*y^8", for example
+     */
+    public String niceString() {
+        String number = coefficient.toString();
+        return toStringCommon(2, number);
+    } // niceString()
+
+    /** Returns a String representation of <em>this</em> {@link Monomial},
      *  in compressed form,
      *  and with the coefficient splitted into powers of prime factors
      *  @return "2^2*3*5*x*y^3" for example
@@ -841,66 +913,10 @@ public class Monomial implements Cloneable, Serializable {
         BigInteger bint = this.getCoefficient().bigIntegerValue();
         String number = (bint.compareTo(BigInteger.ZERO) < 0 ? "-" : "")
                 + (new PrimeFactorization(bint.abs())).toString();
-        return toStringCommon(false, number);
+        return toStringCommon(0, number);
     } // toFactoredString()
 
-    /** Returns a string representation of the monomial, either compressed or full
-     *  @param full whether to return a complete representation suitable for substitution
-     *  @param number string representation of the coefficient, either empty, a number, or a product
-     *  @return "x*y^3", for example if full = false, "+ 1*x^1*y^3" if full = true
-     */
-    public String toStringCommon(boolean full, String number) {
-        StringBuffer result = new StringBuffer(32);
-        try {
-            // result.append(sign >= 0 ? " + " : " - ");
-            if (vars.size() == 0) { // no variables, coefficient only
-                if (number.startsWith("-")) {
-                    result.append(number.replace("-", " - "));
-                } else {
-                    result.append(" + ");
-                    result.append(number);
-                }
-            } else { // with variable(s)
-                if (number.equals(" + 0")) {
-                    result.append(number);
-                    vars.clear(); // just for safety
-                } else if (! full && number.equals("1")) {
-                    result.append(" + ");
-                } else if (! full && number.equals("-1")) {
-                    result.append(" - ");
-                } else {
-                    if (number.startsWith("-")) {
-                        result.append(number.replace("-", " - "));
-                        result.append("*");
-                    } else {
-                        result.append(" + ");
-                        result.append(number);
-                        result.append("*");
-                    }
-                }
-                Iterator<String> iter = vars.keySet().iterator();
-                int count = 0;
-                while (iter.hasNext()) {
-                    count ++;
-                    if (count > 1) {
-                        result.append("*");
-                    }
-                    String name = iter.next();
-                    result.append(name);
-                    int exp = this.getExponent(name);
-                    if (full || exp > 1) {
-                        result.append("^");
-                        result.append(exp);
-                    }
-                } // while iter
-            } // with variable(s)
-        } catch (Exception exc) {
-            System.out.println(exc.getMessage());
-            exc.printStackTrace();
-        }
-        return result.toString();
-    } // toString(full)
-
+    //----------------
     /** Takes the variables from <em>mono2</em> and
      *  creates a monomial with the powers of these variables
      *  occurring in <em>this</em> monomial, with constant +1.
