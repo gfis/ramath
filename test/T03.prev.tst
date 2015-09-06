@@ -38,4 +38,4 @@ expanding queue[1]^0,meter=[2,2,2,2]*4: -1+a+a^2+b+b^2-3c-3c^2-3d-3d^2
 [3+4a,1+4b,3+4c,3+4d]:	failure constant=-11, vgcd=2
 [1+4a,3+4b,3+4c,3+4d]:	failure constant=-11, vgcd=2
 [3+4a,3+4b,3+4c,3+4d]:	failure constant=-9, vgcd=2
-Proof - queue exhausted at [2]: a^2 + b^2 - 3*c^2 - 3*d^2
+Proof - queue exhausted at [2]: a^2+b^2-3c^2-3d^2

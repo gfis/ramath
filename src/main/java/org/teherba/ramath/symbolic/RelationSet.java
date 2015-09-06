@@ -142,7 +142,7 @@ public class RelationSet
         } // while ipoly
         result.setNestingLevel  (this.getNestingLevel   ());
         result.setParentIndex   (this.getParentIndex    ());
-        result.setMapping   (this.getMapping    ());
+        result.setMapping       (this.getMapping        ());
         result.setMessage       (this.getMessage        ());
         return result;
     } // clone
@@ -423,29 +423,6 @@ public class RelationSet
         return this;
     } // multiplyBy(number)
 
-    /** Determines whether <em>this</em> RelationSet can be transformed into <em>rset2</em>
-     *  by multiplying the constants of the monomials in <em>rset2</em> by
-     *  some factors &gt;= 1.
-     *  @param rset2 target RelationSet
-     *  @return a list of numbers separated by "," if such factors exist, null otherwise
-     */
-    public String getGrowingFactors(RelationSet rset2) {
-        String result  = null;
-        String factors = ""; // assume success
-        int rsize1 =  this .size();
-        if (rsize1 == rset2.size()) {
-            int ipoly = 0;
-            while (factors != null && ipoly < rsize1) {
-                factors = this.get(ipoly).getGrowingFactors(rset2.get(ipoly));
-                if (factors != null) {
-                    result = result == null ? factors : result + factors;
-                }
-                ipoly ++;
-            } // while ipoly
-        } // same size
-        return result;
-    } // getGrowingFactors
-
     /** Determines whether <em>this</em> {@link RelationSet} can be transformed into <em>rset2</em>
      *  by an affine map from the variables in <em>this</em> RelationSet to the variables in <em>rset2</em>.
      *  @param rset2 target RelationSet
@@ -715,8 +692,8 @@ public class RelationSet
 
     /*--------------- Test driver --------------------*/
 
-    /** Test method, shows some fixed polynomials with no arguments, or the
-     *  polynomial resulting from the input formula.
+    /** Test method, shows some fixed RelationSets with no arguments, or the
+     *  RelationSet resulting from the input formula.
      *  @param args command line arguments
      *  When called without arguments, the output is:
      *  <pre>
@@ -740,34 +717,33 @@ evaluate: unknown
             varMap.put("c", "5*c_2");
             rset2 = rset1.substitute(varMap);
             System.out.println(rset2.toString(true));
+
         } else if (args.length == 1 && ! args[0].startsWith("-")) {
             rset1 = RelationSet.parse(args[iarg ++]);
             System.out.println(rset1.toString(true));
             System.out.println("evaluate: " + rset1.evaluate(null));
+
         } else if (args.length >= 2) {
             String opt = args[iarg ++];
             if (false) {
+
             } else if (opt.equals("-depend")   ) {
                 rset1 = RelationSet.parse(args[iarg ++]);
                 System.out.println("(\"" + rset1.toString() + "\").getDependantMap() = "
                         + rset1.getDependantMap().toString());
+
             } else if (opt.equals("-f")     ) {
                 String fileName = args[1];
                 rset1 = RelationSet.parse((new ExpressionReader()).read(fileName));
                 System.out.println(rset1.toString(true));
                 System.out.println("evaluate: " + rset1.evaluate(null));
-            } else if (opt.startsWith("-grow")) {
-                rset1 = RelationSet.parse(args[iarg ++]);
-                rset2 = RelationSet.parse(args[iarg ++]);
-                System.out.println("(\"" + rset1.toString()
-                        + "\").getGrowingFactors\n(\""
-                        + rset2.toString() + "\") = "
-                        + rset1.getGrowingFactors(rset2));
+
             } else if (opt.equals("-rest")  ) {
                 String factor = args[iarg ++];
                 rset1 = RelationSet.parse(args[iarg ++]);
                 System.out.println(rset1.toString());
                 System.out.println("rest: " + rset1.getRest(new BigInteger(factor)));
+
             } else {
                 System.err.println("??? invalid option: \"" + opt + "\"");
             }

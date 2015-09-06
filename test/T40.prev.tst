@@ -8,4 +8,4 @@ expanding queue[0]^-1,meter=[2,2]*2: -2+a^2+b^2
 [1+2a,0+2b]:	failure constant=-1, vgcd=4
 [0+2a,1+2b]:	failure constant=-1, vgcd=4
 [1+2a,1+2b]:	failure biased
-Proof - queue exhausted at [1]:  - 2 + a^2 + b^2
+Proof - queue exhausted at [1]: -2+a^2+b^2

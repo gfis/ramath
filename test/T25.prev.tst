@@ -113,4 +113,4 @@ expanding queue[32]^17,meter=[2,2]*256: -1596+33x+32x^2-10443y-22656y^2-16384y^3
 expanding queue[33]^17,meter=[2,2]*256: -14538+x+32x^2-45387y-47232y^2-16384y^3
 [1+128x,123+256y]:	unknown -> [64] -7269+x+64x^2-45387y-94464y^2-65536y^3
 [65+128x,251+256y]:	unknown -> [65] -61754+65x+64x^2-189003y-192768y^2-65536y^3
-Maximum level 7 reached at [66]: 2 + x^2 - y^3
+Maximum level 7 reached at [66]: 2+x^2-y^3

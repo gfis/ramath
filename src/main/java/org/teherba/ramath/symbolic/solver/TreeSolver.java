@@ -30,7 +30,7 @@ import  org.teherba.ramath.symbolic.RelationSet;
 import  org.teherba.ramath.symbolic.RefiningMap;
 import  org.teherba.ramath.linear.Vector;
 import  org.teherba.ramath.util.ModoMeter;
-import  java.io.PrintWriter;
+import  java.io.PrintStream;
 import  java.math.BigInteger;
 import  java.util.Iterator;
 
@@ -84,13 +84,13 @@ public class TreeSolver extends BaseSolver {
     /** No-args Constructor - prints on {@link java.lang.System#out}
      */
     public TreeSolver() {
-        super(new PrintWriter(System.out));
+        super(System.out);
     } // no-args Constructor
 
     /** Constructor with writer
      *  @param writer where to write the proof trace
      */
-    public TreeSolver(PrintWriter writer) {
+    public TreeSolver(PrintStream writer) {
         super(writer); // this will also initialize the optional parameters
     } // Constructor(printer)
 
@@ -108,13 +108,18 @@ public class TreeSolver extends BaseSolver {
      */
     public void expand(int queueIndex) {
         RelationSet rset1 = this.get(queueIndex); // expand this element (the "parent")
+        if (debug > 1) {
+            trace     .println("trace: TreeSolver.expand(" + rset1.niceString() + ")");
+            System.out.println("out:   TreeSolver.expand(" + rset1.niceString() + ")");
+        }
+        
         RefiningMap vmap1 = rset1.getMapping();
         int newLevel      = rset1.getNestingLevel() + 1;
         int base          = this.getModBase();
         BigInteger factor = BigInteger.valueOf(base).pow(newLevel);
         ModoMeter meter   = this.getPreparedMeter(rset1, vmap1, factor);  
         if (false && vmap1.size() == 0) {
-            System.out.println("TreeSolver assertion??? vmap1.size()=0, rset1=" + rset1.toString(true));
+            System.err.println("TreeSolver assertion??? vmap1.size()=0, rset1=" + rset1.toString(true));
         }    
         // meter now ready for n-adic expansion, e.g. x -> 2*x+0, 2*x+1
         printNode(queueIndex, rset1, meter, factor);
@@ -129,7 +134,7 @@ public class TreeSolver extends BaseSolver {
                 rset2.setMapping(vmap2);
                 rset2.setNestingLevel(newLevel);
                 rset2.setParentIndex(queueIndex);
-                if (reasons.evaluateReasons(this, rset2, vmap2)) { // queueAgain
+                if (reasons.evaluateReasons(rset2, vmap2)) { // queueAgain
                     this.add(rset2);
                 } // queueAgain
             } // vmap2.size() > 0

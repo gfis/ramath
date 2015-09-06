@@ -8,4 +8,4 @@ solution [0,0],trivial(3)
 [1+2p,1+2q]:	unknown -> [1] 4-4p-4p^2+20q+20q^2
 ----------------
 expanding queue[1]^0,meter=[2,2]*4: 4-4p-4p^2+20q+20q^2
-Proof - queue exhausted at [2]:  - p^2 + 5*q^2
+Proof - queue exhausted at [2]: -p^2+5q^2

@@ -62,4 +62,4 @@ solution [13,0,13],trivial(3)
 expanding queue[12]^4,meter=[2,1,2]*32: -128+160a+256a^2+64b+64b^2-416c-256c^2
 [5+32a,4+8b,13+32c]:	unknown -> [27] -128+320a+1024a^2+64b+64b^2-832c-1024c^2
 [21+32a,4+8b,29+32c]:	unknown -> [28] -384+1344a+1024a^2+64b+64b^2-1856c-1024c^2
-Maximum level 4 reached at [29]: a^2 + b^2 - c^2
+Maximum level 4 reached at [29]: a^2+b^2-c^2

@@ -50,4 +50,4 @@ expanding queue[12]^7,meter=[2,2]*32: -6+10x+16x^2-75y-240y^2-256y^3
 expanding queue[13]^7,meter=[2,2]*32: 3+26x+16x^2-75y-240y^2-256y^3
 [13+32x,21+32y]:	unknown -> [24] -284+26x+32x^2-1323y-2016y^2-1024y^3
 [29+32x,21+32y]:	unknown -> [25] -263+58x+32x^2-1323y-2016y^2-1024y^3
-Maximum level 4 reached at [26]: 4 + x^2 - y^3
+Maximum level 4 reached at [26]: 4+x^2-y^3

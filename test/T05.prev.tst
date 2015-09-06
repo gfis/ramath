@@ -36,4 +36,4 @@ expanding queue[7]^4,meter=[2,1,2]*32: 17+125x+300x^2+320x^3+128x^4+8y^4-9z-8z^2
 expanding queue[8]^4,meter=[2,1,2]*32: -2+x+12x^2+64x^3+128x^4+4y+12y^2+16y^3+8y^4-9z-8z^2
 [1+16x,2+4y,9+32z]:	unknown -> [15] -1+x+24x^2+256x^3+1024x^4+2y+6y^2+8y^3+4y^4-9z-16z^2
 [9+16x,2+4y,25+32z]:	unknown -> [16] 93+729x+1944x^2+2304x^3+1024x^4+2y+6y^2+8y^3+4y^4-25z-16z^2
-Maximum level 4 reached at [17]: x^4 + y^4 - z^2
+Maximum level 4 reached at [17]: x^4+y^4-z^2

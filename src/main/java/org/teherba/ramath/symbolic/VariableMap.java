@@ -29,6 +29,7 @@
  */
 package org.teherba.ramath.symbolic;
 import  org.teherba.ramath.symbolic.PolyVector;
+import  org.teherba.ramath.symbolic.RefiningMap;
 import  org.teherba.ramath.util.Dispenser;
 import  org.teherba.ramath.linear.Vector;
 import  java.io.Serializable;
@@ -259,96 +260,6 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
         return this;
     } // negativeOf
 
-    /** Extracts the additive factor <em>a</em> and
-     *  the multiplicative factor <em>m</em> from a refined expression
-     *  @param expr the refined expression of the form <em>a+m*x</em>.
-     *  @return BigInteger[] {a,m}
-     */
-    public BigInteger[] extractRefinedFactors(String expr) {
-        int plusPos  = expr.indexOf("+");
-        int timesPos = expr.indexOf("*");
-        return new BigInteger[]
-                { new BigInteger(expr.substring(0          , plusPos ))
-                , new BigInteger(expr.substring(plusPos + 1, timesPos))
-                };
-    } // extractRefinedFactors
-
-    /** Compares the additive factors <em>a</em> and multiplicative factors <em>m</em> of two
-     *  refined expressions
-     *  @param expr1 the 1st refined exproession of the form <em>a+m*x</em>.
-     *  @param expr2 the 2nd refined exproession of the form <em>a+m*x</em>.
-     *  @return 0 if the two expressions are the same, -1 for isNegative_1, +1 otherwise
-     */
-    public int compareRefinedFactors(String expr1, String expr2) {
-        int result = 0 + 1;
-        if (expr1.equals(expr2)) {
-            result = 0;
-        } else {
-            BigInteger[] fam1 = extractRefinedFactors(expr1);
-            BigInteger[] fam2 = extractRefinedFactors(expr2);
-            if (! fam1[1].equals(fam2[1])) { // some were not involved
-                // result = 1; already set
-                // System.out.println("??? assertion: multiplicative factors differ in compareRefinedFactors");
-            } else { // same m; for example [1,8] ? [7,8]
-                if (fam1[0].subtract(fam1[1]).negate().equals(fam2[0])) { // - (1 - 8) == 7
-                //  fam2[0].subtract(fam2[1]).negate().equals(fam1[0])   // - (7 - 8) == 1
-                    result = -1;
-                }
-            } // same m
-        } // !=
-        return result;
-    } // compareRefinedFactors
-
-    /** Determines whether the values (Polynomials) of <em>this</em> {@link VariableMap}
-     *  could be mapped those of a second, parallel VariableMap
-     *  by transforming one or more variable <em>x</em> to <em>-x-1</em> while
-     *  maintaining the values for all other variables the same.
-     *  @param vmap2 the 2nd VariableMap to be compared with <em>this</em>
-     *  @param expGCDs the greatest common divisors of the variables' exponents in natural order
-     *  @return a mapping of the involved variables if such a mapping exists,
-     *  or the empty String otherwise
-     */
-    public String testNegative_1(VariableMap vmap2, Vector expGCDs) {
-        StringBuffer result = new StringBuffer(64); // assume failure
-        Iterator<String> viter1 = this .keySet().iterator();
-        Iterator<String> viter2 = vmap2.keySet().iterator();
-        int ivar = 0;
-        boolean busy = true;
-        while (busy && viter1.hasNext()) {
-            String name1 = viter1.next();
-            String name2 = viter2.next();
-            if (! name1.equals(name2)) {
-                System.out.println("??? assertion: VariableMaps not parallel in isNegative_1");
-                busy = false;
-            } else { // names in parallel
-                String expr1 = this .get(name1);
-                String expr2 = vmap2.get(name2);
-                if (expr1.equals(expr2)) { // same expressions
-                    // ignore
-                } else { // expressions differ
-                    if (expGCDs.get(ivar) % 2 == 0) { // only even exponents for this variable
-                        int sign = compareRefinedFactors(expr1, expr2);
-                        if (sign < 0) { // mappable by -x-1
-                            result.append(',');
-                            result.append(name1);
-                            result.append("=>-");
-                            result.append(name1);
-                            result.append("-1");
-                        }
-                    } else { // some odd exponents for this variable
-                        busy = false;
-                        result.setLength(0); // test failed
-                    }
-                } // expression differ
-            } // names in parallel
-            ivar ++;
-        } // while viter
-        if (result.length() > 0) {
-            result.deleteCharAt(0);
-        }
-        return result.toString();
-    } // testNegative_1
-
     /** Refines the expressions in <em>this</em> VariableMap
      *  by one level of modulus expansion.
      *  @param dispenser current state of a {@link Dispenser} containing the
@@ -455,31 +366,6 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
         } // while iter
         return result;
     } // inverse
-
-    /** Deflates the additive factors <em>a</em> and
-     *  the multiplicative factors <em>m</em> in all refined expressions of the map
-     *  such that they have no common divisor.
-     *  The expressions remain unchanged when <em>a = 0</em>.
-     *  @return a new, deflated map
-     */
-    public VariableMap deflateIt() {
-        VariableMap result = new VariableMap();
-        Iterator<String> viter = this.keySet().iterator();
-        while (viter.hasNext()) {
-            String key   = viter.next();
-            String value = this.get(key); // REFINED_FORM - this has the form "a+m*x"
-            BigInteger[] fam = extractRefinedFactors(value);
-            if (fam[0].compareTo(BigInteger.ONE) > 0) {
-                BigInteger gcd1 = fam[0].gcd(fam[1]);
-                if (gcd1.compareTo(BigInteger.ONE) > 0) { // a, m have a common factor
-                    value =   fam[0].divide(gcd1).toString() + "+"
-                            + fam[1].divide(gcd1).toString() + "*" + key;
-                } // gcd > 1
-            } // a > 1
-            result.put(key, value);
-        } // while viter
-        return result;
-    } // deflateIt
 
     /** Substitutes variable names with the expressions from <em>this</em> Map (if they are not null),
      *  and returns the replaced String.

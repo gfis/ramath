@@ -38,4 +38,4 @@ expanding queue[8]^5,meter=[2,2]*32: 32x+320x^2+1024x^3+1024x^4-32y-128y^2
 solution [1,1],trivial(2)
 [1+8x,1+16y]:	unknown -> [11] 64x+1280x^2+8192x^3+16384x^4-64y-512y^2
 [5+8x,9+16y]:	unknown -> [12] 2240+15680x+38144x^2+40960x^3+16384x^4-576y-512y^2
-Maximum level 4 reached at [13]: 2 - 4*x^2 + 4*x^4 - 2*y^2
+Maximum level 4 reached at [13]: 2-4x^2+4x^4-2y^2

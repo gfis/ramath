@@ -192,4 +192,4 @@ solution [1,1,1,1,1,1,1,1],trivial(2)
 [1+8a,1+8b,1+8c,1+8d,5+8w,1+8x,5+8y,5+8z]:	transposed [49] by [2,3,0,1,6,7,4,5]
 [1+8a,1+8b,1+8c,1+8d,1+8w,5+8x,5+8y,5+8z]:	transposed [49] by [3,2,0,1,7,6,4,5]
 [1+8a,1+8b,1+8c,1+8d,5+8w,5+8x,5+8y,5+8z]:	unknown -> [50] a+4a^2+b+4b^2-c-4c^2-d-4d^2; 3-a+10w+8w^2; 3-b+10x+8x^2; 3-c+10y+8y^2; 3-d+10z+8z^2
-Maximum level 2 reached at [51]: a^2 + b^2 - c^2 - d^2;  - a + w^2;  - b + x^2;  - c + y^2;  - d + z^2
+Maximum level 2 reached at [51]: a^2+b^2-c^2-d^2; -a+w^2; -b+x^2; -c+y^2; -d+z^2

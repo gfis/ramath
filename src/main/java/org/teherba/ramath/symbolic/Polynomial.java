@@ -2001,49 +2001,6 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
     } // isMappableTo
 
     /** Determines whether <em>this</em> Polynomial can be transformed into <em>poly2</em>
-     *  by multiplying the constants of the monomials in <em>poly2</em> by
-     *  some factors &lt;&gt; 0.
-     *  @param poly2 target Polynomial
-     *  @return a list of numbers separated by "," if such factors exist, null otherwise
-     */
-    public String getGrowingFactors(Polynomial poly2) {
-        String result = null;
-        int psize1 =  this .size();
-        if (psize1 == poly2.size()) {
-            Iterator <String> iter1 = this .keySet().iterator();
-            Iterator <String> iter2 = poly2.keySet().iterator();
-            boolean busy = true;
-            while (busy && iter1.hasNext()) {
-                String sig1 = iter1.next();
-                String sig2 = iter2.next();
-                if (sig1.equals(sig2)) {
-                    Monomial mono1 = this .get(sig1);
-                    Monomial mono2 = poly2.get(sig2);
-                    Monomial factor  = mono1.divide(mono2);
-                    if (factor != null && factor.isConstant()
-                            && factor.getCoefficient().compareTo(Coefficient.ZERO) > 0
-                            ) { // valid factor
-                        result = (result != null ? result + "," : "") + factor.toString()
-                                .replaceAll(" ", "").replaceAll("\\A\\+", "");
-                        // no factor
-                    } else {
-                        busy = false;
-                        result = null;
-                    }
-                    // sig1 == sig2
-                } else {
-                    busy = false;
-                    result = null;
-                }
-            } // while iter1
-            // same size
-        } else { // different size
-            result = null;
-        }
-        return result;
-    } // getGrowingFactors
-
-    /** Determines whether <em>this</em> Polynomial can be transformed into <em>poly2</em>
      *  by an affine map from the variables in <em>this</em> to the variables in <em>poly2</em>.
      *  @param poly2 target Polynomial
      *  @return String representation of the mapping from <em>this</em> to <em>poly2<em>, or <em>null</em>
@@ -2348,12 +2305,6 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
                         System.out.println("GB: " + polys.get(ipoly));
                         ipoly ++;
                     } // while ipoly
-
-                } else if (opt.startsWith("-grow")) {
-                    poly1 = Polynomial.parse(args[iarg ++]);
-                    poly2 = Polynomial.parse(args[iarg ++]);
-                    System.out.println("(\"" + poly1.toString() + "\").getGrowingFactors\n(\"" + poly2.toString() + "\") = "
-                            + poly1.getGrowingFactors(poly2));
 
                 } else if (opt.startsWith("-hiter")) {
                     poly1 = Polynomial.parse(args[iarg ++]);

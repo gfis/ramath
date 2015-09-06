@@ -101,4 +101,4 @@ expanding queue[29]^14,meter=[2,2]*32: 13-57a+256a^2-256a^3+93b-448a*b+768a^2*b+
 expanding queue[30]^14,meter=[2,2]*32: 47-25a+256a^2-256a^3+125b-448a*b+768a^2*b+256b^2-768a*b^2+256b^3
 [26+32a,15+32b]:	unknown -> [61] 11-281a-1024a^2-1024a^3+445b+2176a*b+3072a^2*b-1024b^2-3072a*b^2+1024b^3
 [10+32a,31+32b]:	unknown -> [62] 342-1241a+2048a^2-1024a^3+1405b-3968a*b+3072a^2*b+2048b^2-3072a*b^2+1024b^3
-Maximum level 4 reached at [63]: 2 + a^2 - a^3 + 2*a*b + 3*a^2*b + b^2 - 3*a*b^2 + b^3
+Maximum level 4 reached at [63]: 2+a^2-a^3+2a*b+3a^2*b+b^2-3a*b^2+b^3

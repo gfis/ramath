@@ -12,4 +12,4 @@ expanding queue[0]^-1,meter=[2,2,2]*2: -3+x^2+y^2-4z
 [1+2x,0+2y,1+2z]:	failure constant=-3, vgcd=2
 [0+2x,1+2y,1+2z]:	failure constant=-3, vgcd=2
 [1+2x,1+2y,1+2z]:	failure constant=-5, vgcd=4
-Proof - queue exhausted at [1]:  - 3 + x^2 + y^2 - 4*z
+Proof - queue exhausted at [1]: -3+x^2+y^2-4z

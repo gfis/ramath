@@ -75,4 +75,4 @@ expanding queue[16]^7,meter=[2,2,2]*16: -196-231x+8x^2-231y-280x*y+8y^2-231z-280
 [15+16x,15+16y,7+16z]:	unknown -> [35] -461-495x+16x^2-495y-560x*y+16y^2-1111z-1200x*z-1200y*z-1280x*y*z+16z^2
 [15+16x,7+16y,15+16z]:	transposed [35] by [0,2,1]
 [7+16x,15+16y,15+16z]:	transposed [35] by [2,0,1]
-Maximum level 3 reached at [36]: x^2 + y^2 - 5*x*y*z + z^2
+Maximum level 3 reached at [36]: x^2+y^2-5x*y*z+z^2

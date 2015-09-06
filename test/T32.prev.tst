@@ -99,4 +99,4 @@ expanding queue[29]^14,meter=[2,2]*32: -22+50u+32u^2-313v+64u*v-1024v^2-1024v^3
 expanding queue[30]^14,meter=[2,2]*32: 11+82u+32u^2-281v+64u*v-1024v^2-1024v^3
 [15+32u,19+32v]:	unknown -> [61] -1159+146u+64u^2-5401v+128u*v-8192v^2-4096v^3
 [31+32u,19+32v]:	unknown -> [62] -1070+210u+64u^2-5337v+128u*v-8192v^2-4096v^3
-Maximum level 4 reached at [63]:  - 98 + 20*u + 4*u^2 - 130*v + 8*u*v - 56*v^2 - 8*v^3
+Maximum level 4 reached at [63]: -98+20u+4u^2-130v+8u*v-56v^2-8v^3

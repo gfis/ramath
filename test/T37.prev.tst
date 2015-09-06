@@ -20,4 +20,4 @@ expanding queue[3]^0,meter=[1,2]*4: -1-2p-2p^2+4p^3-7q-4p*q-22q^2-40q^3-40q^4-16
 expanding queue[4]^0,meter=[2,2]*4: -2-p+4p^2+4p^3-9q-4p*q-22q^2-40q^3-40q^4-16q^5
 [1+4p,1+4q]:	unknown -> [8] -1-p+8p^2+16p^3-9q-8p*q-44q^2-160q^3-320q^4-256q^5
 [3+4p,3+4q]:	unknown -> [9] -63+15p+32p^2+16p^3-417q-8p*q-1084q^2-1440q^3-960q^4-256q^5
-Maximum level 1 reached at [10]:  - p^2 + p^3 - 2*p*q - q^2 - q^5
+Maximum level 1 reached at [10]: -p^2+p^3-2p*q-q^2-q^5

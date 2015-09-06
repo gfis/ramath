@@ -42,7 +42,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
     public final static String CVSID = "@(#) $Id: ReasonFactory.java 970 2012-10-25 16:49:32Z gfis $";
 
     /** Debugging switch: 0 = no, 1 = moderate, 2 = more, 3 = extreme verbosity */
-    private int debug = 1;
+    private int debug = 0;
 
     /** List of various minor solver features */
     protected HashMap<String, String> features;
@@ -65,27 +65,31 @@ public class ReasonFactory extends ArrayList<BaseReason> {
      *  @param solver the {@link BaseSolver} which uses the reasons from 
      *  <em>this</em> {@link ReasonFactory} for iteration control
      *  @param codeList a list of codes for reasons, separated by non-word characters
-     *  @param rset0 the starting {@link RelationSet}
      */
-    public ReasonFactory(BaseSolver solver, String codeList, RelationSet rset0) {
+    public ReasonFactory(BaseSolver solver, String codeList) {
         this();
         this.setSolver(solver);
         // the standard reasons
-        this.addReason("base"       , rset0);
-        this.addReason("transpose"  , rset0);
-        this.addReason("same"       , rset0);
-        this.addReason("similiar"   , rset0);
-        this.addReason("evenexp"    , rset0);
+        this.addReason("base"       );
+        this.addReason("transpose"  );
+        this.addReason("same"       );
+        this.addReason("similiar"   );
+        this.addReason("evenexp"    );
         String[] reasonCodes = codeList.split("\\W"); // non-word characters, e.g. ","
         int icode = 0;
         while (icode < reasonCodes.length) {
-            this.addReason(reasonCodes[icode], rset0); // a reason or a feature
+            this.addReason(reasonCodes[icode]); // a reason or a feature
             icode ++;
         } // while icode
+        if (debug > 0) {
+            solver.getWriter().println("ReasonFactory created");
+        }
     } // Constructor(String)
 
     //----------------
-    /** the {@link BaseSolver} which uses the reasons of <em>this</em> {@link ReasonFactory} for iteration control */
+    /** the {@link BaseSolver} which uses the reasons of <em>this</em> {@link ReasonFactory} 
+     *  for tree expansion control
+     */
     private BaseSolver solver;
     /** Gets the solver
      *  @return a {@link BaseSolver}
@@ -103,16 +107,18 @@ public class ReasonFactory extends ArrayList<BaseReason> {
     /** Attempts to instantiate some reason class
      *  @param code external code for the reason
      *  @param className name of the class for the reason
-     *  @param rset0 the starting {@link RelationSet}
      *  @return instance of the reason class, or null if not found
      */
-    private BaseReason addReasonClass(String code, RelationSet rset0, String className) {
+    private BaseReason addReasonClass(String code, String className) {
+        if (debug > 1) {
+            solver.getWriter().println("addReason, code=" + code + ", className=" + className);
+        }
         BaseReason result = null; // assume that class is not found
         try {
             result = (BaseReason) Class.forName("org.teherba.ramath.symbolic.reason." + className).newInstance();
             if (result != null) { // known reason
-                result.setRootNode(rset0);
-                if (result.isConsiderable(solver)) { // needs the rootNode
+                result.initialize(getSolver());
+                if (result.isConsiderable()) { 
                     result.setCode(code);
                     this.add(result);
                 } // considerable
@@ -127,18 +133,17 @@ public class ReasonFactory extends ArrayList<BaseReason> {
     /** Determine a reason class from its code and add it to the list.
      *  This is the factory method which appends the applicable reasons to the list.
      *  @param code external code for the reason class
-     *  @param rset0 the starting {@link RelationSet}
      *  @return instance of the reason class, or null if not found
      */
-    public BaseReason addReason(String code, RelationSet rset0) {
+    public BaseReason addReason(String code) {
         BaseReason result = null; // assume success
         if (false) {
-        } else if (code.startsWith("base"       )) { result = addReasonClass(code, rset0, "BaseReason"          );
-        } else if (code.startsWith("down"       )) { result = addReasonClass(code, rset0, "DownsizedMapReason"  );
-        } else if (code.startsWith("evenexp"    )) { result = addReasonClass(code, rset0, "EvenExponentReason"  );
-        } else if (code.startsWith("same"       )) { result = addReasonClass(code, rset0, "SameReason"          );
-        } else if (code.startsWith("simil"      )) { result = addReasonClass(code, rset0, "SimiliarReason"      );
-        } else if (code.startsWith("transp"     )) { result = addReasonClass(code, rset0, "TranspositionReason" );
+        } else if (code.startsWith("base"       )) { result = addReasonClass(code, "BaseReason"          );
+    //  } else if (code.startsWith("down"       )) { result = addReasonClass(code, "DownsizedMapReason"  );
+        } else if (code.startsWith("evenexp"    )) { result = addReasonClass(code, "EvenExponentReason"  );
+        } else if (code.startsWith("same"       )) { result = addReasonClass(code, "SameReason"          );
+        } else if (code.startsWith("simil"      )) { result = addReasonClass(code, "SimiliarReason"      );
+        } else if (code.startsWith("transp"     )) { result = addReasonClass(code, "TranspositionReason" );
         } else if (code.startsWith("showf"      )) { 
             showFail = true;
             features.put(code, code);
@@ -194,13 +199,53 @@ public class ReasonFactory extends ArrayList<BaseReason> {
     // Check all specified reasons
     //----------------------------
 
+    /** Checks all siblings of a {@link RelationSet}
+     *  @param reason the reason to be investigated
+     *  @param rset2 the new {@link RelationSet} to be added to the queue
+     *  @return a message String 
+     */
+    private String checkSiblings(BaseReason reason, RelationSet rset2) {
+        String result = VariableMap.UNKNOWN;
+        int level2 = rset2.getNestingLevel();
+        int iqueue = solver.size() - 1; // last element
+        RelationSet rset1 = solver.get(iqueue);
+        while (iqueue > 0 && rset1.getNestingLevel() == level2) { // down in the same level
+            result = reason.compare(iqueue, rset1, rset2);
+            if (! result.startsWith(VariableMap.UNKNOWN)) { // reason successful
+                iqueue = 1; // break loop
+            } // reason successful
+            iqueue --;
+            rset1 = solver.get(iqueue);
+        } // while iqueue
+        return result;
+    } // checkSiblings
+
+    /** Checks all anchestors of a {@link RelationSet}
+     *  @param reason the reason to be investigated
+     *  @param rset2 the new {@link RelationSet} to be added to the queue
+     *  @return a message String 
+     */
+    private String checkAnchestors(BaseReason reason, RelationSet rset2) {
+        String result = VariableMap.UNKNOWN;
+        int level2 = rset2.getNestingLevel();
+        int iqueue = rset2.getParentIndex();
+        while (iqueue >= 0) { // down thru all parents
+            RelationSet rset1 = solver.get(iqueue);
+            result = reason.compare(iqueue, rset1, rset2);
+            if (! result.startsWith(VariableMap.UNKNOWN)) { // reason successful
+                iqueue = 0; // break loop
+            } // reason successful
+            iqueue = rset1.getParentIndex();
+        } // while iqueue
+        return result;
+    } // checkAnchestors
+
     /** Checks a {@link RelationSet}
      *  with all stored reasons and determines whether it
      *  <ul>
      *  <li>can be decided (and be cut from the expansion tree) or</li>
      *  <li>must be further expanded (and therefore will be appended to the queue).</li>
      *  </ul>
-     *  @param solver the complete state of the expansion tree
      *  @param rset2 the new {@link RelationSet} to be added to the queue
      *  @return a message string starting with one of
      *  <ul>
@@ -209,13 +254,37 @@ public class ReasonFactory extends ArrayList<BaseReason> {
      *  <li>{@link VariableMap#UNKNOWN} - the RelationSet cannot be decided and must be further expanded</li>
      *  </ul>
      */
-    private String checkAll(BaseSolver solver, RelationSet rset2) {
+    private String checkAll(RelationSet rset2) {
         String result = "";
         int ireas = 0;
         boolean busy = true;
         while (busy && ireas < size()) {
             BaseReason reason = this.get(ireas);
-            String message = reason.check(solver, rset2);
+            if (debug > 0) {
+                solver.getWriter().println("checking " + reason.getCode() + " for " + rset2.niceString());
+            }
+            String message = VariableMap.UNKNOWN;
+            switch (reason.getWalkMode()) {
+                case BaseReason.WALK_NONE:
+                    message = reason.compare(0, rset2 /* unused */, rset2);
+                    break;
+                case BaseReason.WALK_ROOT:
+                    message = reason.compare(0, solver.getRootNode(), rset2);
+                    break;
+                case BaseReason.WALK_SIBLINGS:
+                    message = checkSiblings  (reason, rset2);
+                    break;
+                case BaseReason.WALK_ANCHESTORS:
+                    message = checkAnchestors(reason, rset2);
+                    break;
+                case BaseReason.WALK_PARENT:
+                    message = reason.check(rset2);
+                    break;
+                default:
+                    solver.getWriter().println("??? assertion: invalid walkMode=" + reason.getWalkMode());
+                    break;
+            } // switch walkMode
+
             if (false) { // message switch
             } else if (message.startsWith(VariableMap.UNKNOWN)) {
                 if (result.length() > 0) {
@@ -237,6 +306,9 @@ public class ReasonFactory extends ArrayList<BaseReason> {
                     result = message;
                 }
             } // end message switch
+            if (debug > 0) {
+                solver.getWriter().println("checked " + ireas + ": " + reason.getCode() + " => " + result);
+            }
             ireas ++;
         } // while ireas
         return result;
@@ -244,14 +316,13 @@ public class ReasonFactory extends ArrayList<BaseReason> {
 
     /** Checks a {@link RelationSet}
      *  with all stored reasons and prints the decision
-     *  @param solver the complete state of the expansion tree
      *  @param rset2 the new {@link RelationSet} to be checked
      *  @param rmap2 variables with refined expressions
      *  @return whether to queue <em>rset2</em> again for further expansion
      */
-    public boolean evaluateReasons(BaseSolver solver, RelationSet rset2, RefiningMap rmap2) {
+    public boolean evaluateReasons(RelationSet rset2, RefiningMap rmap2) {
         boolean queueAgain = false;
-        String decision = this.checkAll(solver, rset2);
+        String decision = this.checkAll(rset2);
         if (false) {
         } else if (decision.startsWith(VariableMap.UNKNOWN)) {
             solver.printDecision(decision, rset2, rmap2);
@@ -274,10 +345,14 @@ public class ReasonFactory extends ArrayList<BaseReason> {
     //-------------
 
     /** Test method.
-     *  @param args command line arguments, see {@link BaseSolver#getArguments}.
+     *  @param args command line arguments
      */
     public static void main(String[] args) {
-        ReasonFactory reasons = new ReasonFactory();
+        BaseSolver solver = new BaseSolver();
+        RelationSet rset0 = new RelationSet("x^2 + y^2 - z^2");
+        solver.setRootNode(rset0);
+        ReasonFactory reasons = new ReasonFactory(solver, "norm");
+        solver.getWriter().println("ReasonFactory: " + reasons.toString());
     } // main
 
 } // ReasonFactory

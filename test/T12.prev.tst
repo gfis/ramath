@@ -13,4 +13,4 @@ solution [0,0,0],trivial(3)
 [1+2x,0+2y,1+2z]:	failure constant=-1, vgcd=2
 [0+2x,1+2y,1+2z]:	failure constant=-1, vgcd=2
 [1+2x,1+2y,1+2z]:	failure constant=-1, vgcd=4
-Proof - queue exhausted at [1]: x^2 + y^2 - 3*z^2
+Proof - queue exhausted at [1]: x^2+y^2-3z^2

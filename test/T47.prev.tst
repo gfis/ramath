@@ -17,4 +17,4 @@ expanding queue[1]^0,meter=[1,3]*9: -9+135x^2-63y^2
 [0+3x,0+9y]:	failure constant=-9, vgcd=27
 [0+3x,3+9y]:	failure constant=-72, vgcd=27
 [0+3x,6+9y]:	failure constant=-261, vgcd=27
-Proof - queue exhausted at [2]:  - 9 + 15*x^2 - 7*y^2
+Proof - queue exhausted at [2]: -9+15x^2-7y^2

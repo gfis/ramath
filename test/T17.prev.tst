@@ -12,4 +12,4 @@ solution [0,0,0],trivial(3)
 [1+2a,0+2b,1+2c]:	failure constant=-3, vgcd=2
 [0+2a,1+2b,1+2c]:	failure constant=-1, vgcd=2
 [1+2a,1+2b,1+2c]:	failure constant=-1, vgcd=2
-Proof - queue exhausted at [1]: a^3 + 2*b^3 - 4*c^3
+Proof - queue exhausted at [1]: a^3+2b^3-4c^3

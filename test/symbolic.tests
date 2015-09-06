@@ -106,21 +106,21 @@ TEST RR4 Rest - all polynomials
 CALL RelationSet -rest 2 "x^4 - y^4 - z^2 = 0"
 
 #-------------------------------
-TEST GR1 isGrownFrom(poly)
-CALL Polynomial   -grow "-80-96*x+16*x^2-96*y-128*x*y+16*y^2-96*z-128*x*z-128*y*z-128*x*y*z+16*z^2=0" "- 4 - 8*x + 4*x^2 - 8*y - 16*x*y + 4*y^2 - 8*z - 16*x*z - 16*y*z - 16*x*y*z + 4*z^2 = 0"
-
-TEST GR2 isGrownFrom(rset)
-CALL RelationSet  -grow "-80-96*x+16*x^2-96*y-128*x*y+16*y^2-96*z-128*x*z-128*y*z-128*x*y*z+16*z^2=0" "- 4 - 8*x + 4*x^2 - 8*y - 16*x*y + 4*y^2 - 8*z - 16*x*z - 16*y*z - 16*x*y*z + 4*z^2 = 0"
-
-TEST GR3 isGrownFrom not all factors
-CALL RelationSet  -grow "-48+16*x+96*x^2+256*x^3+256*x^4-16*y^4-112*z-64*z^2=0" "-8+8*x+24*x^2+32*x^3+16*x^4-16*y^4-24*z-16*z^2=0"
-
-TEST GR4 isGrownFrom different sizes
-CALL RelationSet  -grow "-80-96*x+16*x^2     -128*x*y+16*y^2-96*z-128*x*z-128*y*z-128*x*y*z+16*z^2=0" "- 4 - 8*x + 4*x^2 - 8*y - 16*x*y + 4*y^2 - 8*z - 16*x*z - 16*y*z - 16*x*y*z + 4*z^2 = 0"
-
-TEST GR5 isGrownFrom 
-CALL RelationSet  -grow "- 24 + 16*x + 64*x^2 - 216*y - 576*y^2 - 512*y^3" "- 24 + 8*x + 16*x^2 - 108*y - 144*y^2 - 64*y^3"
-#                        - 24 + 16*x + 64*x^2 - 216*y - 576*y^2 - 512*y^3   - 24 + 8*x + 16*x^2 - 108*y - 144*y^2 - 64*y^3
+# TEST GR1 isGrownFrom(poly)
+# CALL Polynomial   -grow "-80-96*x+16*x^2-96*y-128*x*y+16*y^2-96*z-128*x*z-128*y*z-128*x*y*z+16*z^2=0" "- 4 - 8*x + 4*x^2 - 8*y - 16*x*y + 4*y^2 - 8*z - 16*x*z - 16*y*z - 16*x*y*z + 4*z^2 = 0"
+# 
+# TEST GR2 isGrownFrom(rset)
+# CALL RelationSet  -grow "-80-96*x+16*x^2-96*y-128*x*y+16*y^2-96*z-128*x*z-128*y*z-128*x*y*z+16*z^2=0" "- 4 - 8*x + 4*x^2 - 8*y - 16*x*y + 4*y^2 - 8*z - 16*x*z - 16*y*z - 16*x*y*z + 4*z^2 = 0"
+# 
+# TEST GR3 isGrownFrom not all factors
+# CALL RelationSet  -grow "-48+16*x+96*x^2+256*x^3+256*x^4-16*y^4-112*z-64*z^2=0" "-8+8*x+24*x^2+32*x^3+16*x^4-16*y^4-24*z-16*z^2=0"
+# 
+# TEST GR4 isGrownFrom different sizes
+# CALL RelationSet  -grow "-80-96*x+16*x^2     -128*x*y+16*y^2-96*z-128*x*z-128*y*z-128*x*y*z+16*z^2=0" "- 4 - 8*x + 4*x^2 - 8*y - 16*x*y + 4*y^2 - 8*z - 16*x*z - 16*y*z - 16*x*y*z + 4*z^2 = 0"
+# 
+# TEST GR5 isGrownFrom 
+# CALL RelationSet  -grow "- 24 + 16*x + 64*x^2 - 216*y - 576*y^2 - 512*y^3" "- 24 + 8*x + 16*x^2 - 108*y - 144*y^2 - 64*y^3"
+#                          - 24 + 16*x + 64*x^2 - 216*y - 576*y^2 - 512*y^3   - 24 + 8*x + 16*x^2 - 108*y - 144*y^2 - 64*y^3
 #--------------------------------
 # Lagrange Reduction
 

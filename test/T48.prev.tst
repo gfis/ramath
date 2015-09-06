@@ -34,4 +34,4 @@ expanding queue[7]^4,meter=[4,4]*256: 3+30x+30x^2-63y-224y^2
 [24+64x,73+256y]:	unknown -> [16] -56+90x+120x^2-511y-896y^2
 [40+64x,73+256y]:	negative-1 [16] by {x=>-x-1}
 [56+64x,73+256y]:	negative-1 [15] by {x=>-x-1}
-Maximum level 3 reached at [17]:  - 9 + 15*x^2 - 7*y^2
+Maximum level 3 reached at [17]: -9+15x^2-7y^2

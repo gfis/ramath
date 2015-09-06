@@ -1,5 +1,6 @@
 /*  SimiliarReason: checks whether the RelationSet is similiar to any in the queue
  *  @(#) $Id: SimiliarReason.java 970 2012-10-25 16:49:32Z gfis $
+ *  2015-09-05: initialize, rewritten
  *  2015-02-24, Georg Fischer
  */
 /*
@@ -19,12 +20,12 @@
  */
 package org.teherba.ramath.symbolic.reason;
 import  org.teherba.ramath.symbolic.reason.BaseReason;
+import  org.teherba.ramath.symbolic.solver.BaseSolver;
 import  org.teherba.ramath.symbolic.RelationSet;
 import  org.teherba.ramath.symbolic.VariableMap;
-import  org.teherba.ramath.symbolic.solver.BaseSolver;
 
 /** Checks whether {@link RelationSet} 
- *  is similiar to another RelationSet in the tree / queue.
+ *  is {@link RelationSet similiar} to another RelationSet in the tree / queue.
  *  @author Dr. Georg Fischer
  */
 public class SimiliarReason extends BaseReason {
@@ -38,61 +39,39 @@ public class SimiliarReason extends BaseReason {
     public SimiliarReason() {
     } // no-args Constructor
     
-    /** Tries to find a similiar {@link RelationSet} in the solver's history,
-     *  either in the parents or in all queue elements (depending on the findMode)
-     *  @param solver the complete state of the expansion tree
-     *  @param rset2 RelationSet to be looked up
-     *  @return index of similiar element in queue, or "[-1]" if none was found
+    /** Initializes any data structures for <em>this</em> reason.
+     *  This method is called by {@link ReasonFactory};
+     *  it may be  used to gather and store data which are 
+     *  needed for the specific check.
+     *  @param the {@link BaseSolver solver} which uses the reasons
+     *  during tree expansion
      */
-    protected String findSimiliar(BaseSolver solver, RelationSet rset2) {
-        int isimil = -1; // assume not found
-        int iqueue = solver.size() - 1;
-        String message = null;
-        if (iqueue >= 0) { // root not similiar to itself
-            switch (solver.getFindMode()) {
-                default:
-                case BaseSolver.FIND_IN_PREVIOUS:
-                    while (isimil < 0 && iqueue >= 0) {
-                        message = solver.get(iqueue).similiarity(rset2);
-                        if (message != null) {
-                            isimil = iqueue;
-                        }
-                        iqueue --;
-                    } // while iqueue
-                    break;
-                case BaseSolver.FIND_IN_PARENTS:
-                    iqueue = rset2.getParentIndex();
-                    while (isimil < 0 && iqueue >= 0) {
-                        message = solver.get(iqueue).similiarity(rset2);
-                        if (message != null) {
-                            isimil = iqueue;
-                        }
-                        iqueue = rset2.getParentIndex();
-                    } // while iqueue
-                    break;
-            } // switch findMode
-        } // iqueue > 0
-        return "[" + String.valueOf(isimil) + "], " + message;
-    } // findSimiliar
+    public void initialize(BaseSolver solver) {
+        super.initialize(solver);
+        setWalkMode(WALK_ANCHESTORS);
+    } // initialize
 
-    /** Checks a {@link RelationSet} and determines whether 
-     *  it is simliar to any other in the tree expansion
-     *  @param solver the complete state of the expansion tree
-     *  @param rset2 the new {@link RelationSet} to be added to the queue 
-     *  @return a message string starting with one of 
-     *  <ul>
-     *  <li>{@link VariableMap#UNKNOWN} - the RelationSet cannot be decided and must be further expanded</li>
-     *  <li>{@link VariableMap#FAILURE} - the RelationSet is not possible</li>
-     *  <li>{@link VariableMap#SUCCESS} - there is a solution, but the RelationSet must further be expanded</li>
-     *  </ul>
+    /** Compares the source {@link RelationSet} <em>rset2</em> to be queued with 
+     *  another {@link RelationSet} <em>rset1</em> already queued.
+     *  If the test is successful, a message is printed and returned,
+     *  and <em>rset2</em> is not stored in the following; 
+     *  otherwise the checking process continues.
+     *  @param iqueue index of the target RelationSet <em>rset1</em>
+     *  @param rset1 the old target {@link RelationSet} already queued
+     *  @param rset2 the new source {@link RelationSet} to be added to the queue 
+     *  @return a message String denoting the reasoning details,
+     *  or {@link VariableMap#UNKNOWN} if the comparision is not conclusive.
      */
-    public String check(BaseSolver solver, RelationSet rset2) {
+    public String compare(int iqueue, RelationSet rset1, RelationSet rset2) {
         String result = VariableMap.UNKNOWN;
-        String message = findSimiliar(solver, rset2);
-        if (! message.startsWith("[-1]")) { // no index "[-1]" means a similiar RelationSet was found
-            result = VariableMap.SIMILIAR + "   " + message + " " + rset2.niceString();
-        } // no index "[-1]"
+        if (debug > 0) {
+            getSolver().getWriter().println("findSimiliar(" + rset2.niceString() + ")");
+        }
+        String message = rset1.similiarity(rset2);
+        if (message != null) {
+            result = VariableMap.SIMILIAR + "   [" + iqueue + "], " + message;
+        } // similiar
         return result;
-    } // check
+    } // compare
 
 } // SimiliarReason

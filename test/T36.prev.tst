@@ -3,7 +3,7 @@ Expanding for base=2, reasons+features=base,same,similiar,evenexp igtriv,norm,in
 Refined variables=a,b,c,d
 ----------------
 expanding queue[0]^-1,meter=[2,2,2,2]*2: a^2+b^2-c^2; a*b-2d^2
-[0+2a,0+2b,0+2c,0+2d]:	similiar   [0], same same  a^2+b^2-c^2; a*b-2d^2
+[0+2a,0+2b,0+2c,0+2d]:	similiar   [0], same same 
 [1+2a,0+2b,1+2c,0+2d]:	unknown -> [1] a+a^2+b^2-c-c^2; b+2a*b-4d^2
 [0+2a,1+2b,1+2c,0+2d]:	unknown -> [2] a^2+b+b^2-c-c^2; a+2a*b-4d^2
 [1+2a,0+2b,1+2c,1+2d]:	unknown -> [3] a+a^2+b^2-c-c^2; -1+b+2a*b-4d-4d^2
@@ -191,4 +191,4 @@ expanding queue[36]^12,meter=[2,2,2,2]*16: -1+4a^2+3b+4b^2-5c-4c^2; -1+3a+8a*b-8
 [8+16a,3+16b,13+16c,2+16d]:	unknown -> [114] -3+8a+8a^2+3b+8b^2-13c-8c^2; 1+3a+8b+16a*b-8d-32d^2
 [8+16a,11+16b,5+16c,10+16d]:	unknown -> [115] 5+8a+8a^2+11b+8b^2-5c-8c^2; -7+11a+8b+16a*b-40d-32d^2
 [8+16a,3+16b,13+16c,10+16d]:	unknown -> [116] -3+8a+8a^2+3b+8b^2-13c-8c^2; -11+3a+8b+16a*b-40d-32d^2
-Maximum level 3 reached at [117]: a^2 + b^2 - c^2; a*b - 2*d^2
+Maximum level 3 reached at [117]: a^2+b^2-c^2; a*b-2d^2

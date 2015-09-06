@@ -30,7 +30,6 @@ import  java.io.BufferedReader;
 import  java.io.File;
 import  java.io.FileReader;
 import  java.io.InputStreamReader;
-import  java.io.PrintWriter;
 import  java.io.Serializable;
 import  java.math.BigInteger;
 import  java.util.ArrayList;
@@ -65,18 +64,10 @@ public class PythagoreanTreeGenerator extends BaseSolver implements Serializable
     /** No-args Constructor - prints on {@link java.lang.System#out}
      */
     public PythagoreanTreeGenerator() {
-        super(new PrintWriter(System.out));
+        super(System.out);
         prevLevel = -1;
     } // no-args Constructor
-
-    /** Constructor with writer
-     *  @param writer where to write the proof trace
-     */
-    public PythagoreanTreeGenerator(PrintWriter writer) {
-        super(writer); // this will also initialize the optional parameters
-        prevLevel = -1;
-    } // Constructor(printer)
-    
+   
     /** Initializes the generating matrixes 
      */
     public void setMatrixes() {

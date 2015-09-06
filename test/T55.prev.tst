@@ -96,4 +96,4 @@ solution [1,1,1,1],trivial(2)
 [5+8a,1+8b,5+8c,5+8d]:	unknown -> [32] 36+250a+600a^2+640a^3+256a^4+2b+24b^2+128b^3+256b^4-5c-4c^2-5d-4d^2
 [1+8a,5+8b,5+8c,5+8d]:	transposed [32] by [1,0,2,3]
 [5+8a,5+8b,5+8c,5+8d]:	unknown -> [33] 75+250a+600a^2+640a^3+256a^4+250b+600b^2+640b^3+256b^4-5c-4c^2-5d-4d^2
-Maximum level 2 reached at [34]: a^4 + b^4 - c^2 - d^2
+Maximum level 2 reached at [34]: a^4+b^4-c^2-d^2

@@ -14,4 +14,4 @@ solution [0,0,0],trivial(3)
 expanding queue[2]^1,meter=[2,2,2]*8: 16a^2+16b^2+16c^2-256b^2*c^2
 solution [0,0,0],trivial(3)
 [0+8a,0+8b,0+8c]:	unknown -> [3] 64a^2+64b^2+64c^2-4096b^2*c^2
-Maximum level 2 reached at [4]: a^2 + b^2 + c^2 - b^2*c^2
+Maximum level 2 reached at [4]: a^2+b^2+c^2-b^2*c^2

@@ -29,7 +29,6 @@ import  org.teherba.ramath.symbolic.RelationSet;
 import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.VariableMap;
 import  org.teherba.ramath.util.ModoMeter;
-import  java.io.PrintWriter;
 import  java.math.BigInteger;
 import  java.util.Iterator;
 import  java.util.Vector; // essentially a java.util.Queue (Java 1.6)
@@ -84,15 +83,8 @@ public class QueuingSolver extends BaseSolver {
     /** No-args Constructor - prints on {@link java.lang.System#out}
      */
     public QueuingSolver() {
-        super(new PrintWriter(System.out));
+        super(System.out);
     } // no-args Constructor
-
-    /** Constructor with writer
-     *  @param writer where to write the proof trace
-     */
-    public QueuingSolver(PrintWriter writer) {
-        super(writer); // this will also initialize the optional parameters
-    } // Constructor(printer)
 
     //---------------------
     // Heavyweight Methods

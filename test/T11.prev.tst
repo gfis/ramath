@@ -38,4 +38,4 @@ solution [0,0,0],trivial(3)
 expanding queue[8]^7,meter=[2,2,2]*512: 65536x^2+65536y^2-67108864x*y*z+65536z^2
 solution [0,0,0],trivial(3)
 [0+512x,0+512y,0+512z]:	unknown -> [9] 262144x^2+262144y^2-536870912x*y*z+262144z^2
-Maximum level 8 reached at [10]: x^2 + y^2 - 4*x*y*z + z^2
+Maximum level 8 reached at [10]: x^2+y^2-4x*y*z+z^2

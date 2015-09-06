@@ -129,4 +129,4 @@ expanding queue[25]^9,meter=[2,2,2]*16: -29-31x+8x^2-99y-120x*y+8y^2-53z-72x*z-1
 [7+16x,11+16y,5+16z]:	unknown -> [75] -60-151x+16x^2-83y-240x*y+16y^2-221z-528x*z-336y*z-768x*y*z+16z^2
 [7+16x,3+16y,13+16z]:	unknown -> [76] -37-103x+16x^2-267y-624x*y+16y^2-37z-144x*z-336y*z-768x*y*z+16z^2
 [15+16x,11+16y,13+16z]:	unknown -> [77] -370-399x+16x^2-563y-624x*y+16y^2-469z-528x*z-720y*z-768x*y*z+16z^2
-Maximum level 3 reached at [78]: x^2 + y^2 - 3*x*y*z + z^2
+Maximum level 3 reached at [78]: x^2+y^2-3x*y*z+z^2

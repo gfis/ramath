@@ -13,4 +13,4 @@ expanding queue[2]^1,meter=[3,3]*27: 18+72x+81x^2-27y^3
 [22+27x,0+9y]:	unknown -> [3] 486+1188x+729x^2-729y^3
 [22+27x,3+9y]:	unknown -> [4] 459+1188x+729x^2-243y-729y^2-729y^3
 [22+27x,6+9y]:	unknown -> [5] 270+1188x+729x^2-972y-1458y^2-729y^3
-Maximum level 2 reached at [6]: 2 + x^2 - y^3
+Maximum level 2 reached at [6]: 2+x^2-y^3

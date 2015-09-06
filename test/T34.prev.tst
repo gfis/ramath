@@ -47,4 +47,4 @@ expanding queue[10]^5,meter=[2,2]*16: -13-71x-120x^2-64x^3+2y+8y^2
 expanding queue[11]^5,meter=[2,2]*16: -10-71x-120x^2-64x^3+10y+8y^2
 [5+16x,5+16y]:	unknown -> [21] -5-71x-240x^2-256x^3+10y+16y^2
 [5+16x,13+16y]:	unknown -> [22] 4-71x-240x^2-256x^3+26y+16y^2
-Maximum level 3 reached at [23]: 4*x - x^3 + y^2
+Maximum level 3 reached at [23]: 4x-x^3+y^2

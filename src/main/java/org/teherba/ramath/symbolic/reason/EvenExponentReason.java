@@ -1,5 +1,6 @@
 /*  EvenExponentReason: checks -x-1 mapping when x has even exponents only
  *  @(#) $Id: EvenExponentReason.java 970 2012-10-25 16:49:32Z gfis $
+ *  2015-09-05: initialize
  *  2015-08-25, Georg Fischer
  */
 /*
@@ -19,12 +20,12 @@
  */
 package org.teherba.ramath.symbolic.reason;
 import  org.teherba.ramath.symbolic.reason.BaseReason;
+import  org.teherba.ramath.symbolic.solver.BaseSolver;
 import  org.teherba.ramath.symbolic.Monomial;
 import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.RefiningMap;
 import  org.teherba.ramath.symbolic.RelationSet;
 import  org.teherba.ramath.symbolic.VariableMap;
-import  org.teherba.ramath.symbolic.solver.BaseSolver;
 import  org.teherba.ramath.linear.Vector;
 import  java.util.Iterator;
 import  java.util.TreeMap;
@@ -41,7 +42,7 @@ public class EvenExponentReason extends BaseReason {
     /** Debugging switch: 0 = no, 1 = moderate, 2 = more, 3 = extreme verbosity */
     private int debug = 0;
 
-     /** No-args Constructor
+    /** No-args Constructor
      */
     public EvenExponentReason() {
     } // no-args Constructor
@@ -49,13 +50,54 @@ public class EvenExponentReason extends BaseReason {
     /** a copy of the exponentGCDs */
     private Vector expGCDs = null;
         
+    /** Initializes any data structures for <em>this</em> reason.
+     *  This method is called by {@link ReasonFactory};
+     *  it may be  used to gather and store data which are 
+     *  needed for the specific check.
+     *  @param the {@link BaseSolver solver} which uses the reasons
+     *  during tree expansion
+     */
+    public void initialize(BaseSolver solver) {
+        super.initialize(solver);
+        setWalkMode(WALK_SIBLINGS);
+        expGCDs = this.getExponentGCDs(solver.getRootNode()); // remember them for check below
+        if (debug > 0) {
+            solver.getWriter().println("initialize.getExponentGCDs()=" + expGCDs.toString(","));
+        }
+    } // initialize
+
+    /** Whether <em>this</em> reason should be considered for 
+     *  the starting {@link RelationSet}.
+     *  @param solver the solver which uses <em>this</em> reason for iteration control
+     *  @return <em>true</em> if the <em>this</em> should be considered (default), 
+     *  <em>false</em> otherwise.
+     */
+    public boolean isConsiderable() {
+        boolean result = false;
+        boolean odd = true; // assume that all GCDs are odd
+        int ivect = expGCDs.size() - 1;
+        if (debug > 0) {
+            solver.getWriter().println("isConsiderable, ivect=" + ivect);
+        }
+        while (odd && ivect >= 0) { // check whether there is at least one even element
+            odd = expGCDs.get(ivect) % 2 != 0;
+            ivect --;
+        } // while
+        result = ! odd; // at least one even = not all odd
+        solver.getWriter().println("ExponentGCDs=" + expGCDs.toString(","));
+        if (debug > 0) {
+            solver.getWriter().println("isConsiderable, ExponentGCDs()=" + expGCDs.toString(",") + ", result=" + result);
+        }
+        return result;
+    } // isConsiderable
+    
     /** Joins a map of variable names 
      *  to the greatest common divisors of that variables' exponents
      *  with the variables' exponents in an additional {@link Polynomial}
      *  @param expGCDs map assembled so far, which is augmented
      *  @param poly1 the Polynomial with the additional variable exponents
      */
-    public static void joinExponentGCDs(TreeMap<String, Integer> expGCDs, Polynomial poly1) {
+    private static void joinExponentGCDs(TreeMap<String, Integer> expGCDs, Polynomial poly1) {
         Iterator <String> miter = poly1.keySet().iterator();
         while (miter.hasNext()) { // over all signatures of monomials
             Monomial mono1 = poly1.get(miter.next());
@@ -79,7 +121,7 @@ public class EvenExponentReason extends BaseReason {
      *  @param poly1 get the map from this Polynomial
      *  @return a map of variable names to the greatest common divisors of their exponents
      */
-    public static TreeMap<String, Integer> getExponentGCDs(Polynomial poly1) {
+    private static TreeMap<String, Integer> getExponentGCDs(Polynomial poly1) {
         TreeMap<String, Integer> result = new TreeMap<String, Integer>();
         joinExponentGCDs(result, poly1);
         return result;
@@ -90,10 +132,10 @@ public class EvenExponentReason extends BaseReason {
      *  @param rset1 get the GCDs from this RelationSet
      *  @return a map of variable names to the greatest common divisors of their exponents
      */
-    public static Vector getExponentGCDs(RelationSet rset1) {
+    private static Vector getExponentGCDs(RelationSet rset1) {
         TreeMap<String, Integer> expGCDs = new TreeMap<String, Integer>();
         int ipoly = 0;
-        while (ipoly < rset1.size()) { // over all relations
+        while (ipoly < rset1.size()) { // over all Polynomials
             joinExponentGCDs(expGCDs, rset1.get(ipoly));
             ipoly ++;
         } // while ipoly
@@ -108,38 +150,89 @@ public class EvenExponentReason extends BaseReason {
         return result;
     } // getExponentGCDs
 
-    /** Whether <em>this</em> reason should be considered for 
-     *  the starting {@link RelationSet}.
-     *  Only a few reasons overwrite this method and return <em>false</em> for
-     *  some types of RelationSets.
-     *  This method may be also used to gather and store data which are 
-     *  needed for the specific check.
-     *  @param solver the solver which uses <em>this</em> reason for iteration control
-     *  @return <em>true</em> if the <em>this</em> should be considered (default), 
-     *  <em>false</em> otherwise.
+    /** Determines whether the values (Polynomials) of {@link VariableMap} <em>vmap1</em> 
+     *  could be mapped those of a second, parallel VariableMap
+     *  by transforming one or more variable <em>x</em> to <em>-x-1</em> while
+     *  maintaining the values for all other variables the same.
+     *  @param vmap1 the 1st VariableMap to be compared 
+     *  @param vmap2 the 2nd VariableMap to be compared
+     *  @param expGCDs the greatest common divisors of the variables' exponents in natural order
+     *  @return a mapping of the involved variables if such a mapping exists,
+     *  for example "x=>-x-1,y=>-y-1"
+     *  or the empty String otherwise
      */
-    public boolean isConsiderable(BaseSolver solver) {
-    	boolean result = false;
-        RelationSet rset0 = solver.getRootNode();
-        expGCDs = getExponentGCDs(rset0); // remember them for check below
-        boolean odd = true; // assume that all GCDs are odd
-        int ivect = expGCDs.size() - 1;
-        while (odd && ivect >= 0) { // check whether there is at least one even element
-            odd = expGCDs.get(ivect) % 2 != 0;
-            ivect --;
-        } // while
-        result = ! odd; // at least one even = not all odd
-        if (true || result) {
-            solver.getWriter().println("ExponentGCDs=" + expGCDs.toString(","));
-        } // if result 
+    private static String testNegative_1(VariableMap vmap1, VariableMap vmap2, Vector expGCDs) {
+        StringBuffer result = new StringBuffer(64); // assume failure
+        Iterator<String> viter1 = vmap1.keySet().iterator();
+        Iterator<String> viter2 = vmap2.keySet().iterator();
+        int ivar = 0;
+        boolean busy = true;
+        while (busy && viter1.hasNext()) {
+            String name1 = viter1.next();
+            String name2 = viter2.next();
+            if (! name1.equals(name2)) {
+                // System.err.println("??? assertion: VariableMaps not parallel in isNegative_1");
+                busy = false;
+            } else { // names in parallel
+                String expr1 = vmap1.get(name1);
+                String expr2 = vmap2.get(name2);
+                if (expr1.equals(expr2)) { // same expressions
+                    // ignore
+                } else { // expressions differ
+                    if (expGCDs.get(ivar) % 2 == 0) { // only even exponents for this variable
+                        int sign = RefiningMap.compareRefinedFactors(expr1, expr2);
+                        if (sign < 0) { // mappable by -x-1
+                            result.append(',');
+                            result.append(name1);
+                            result.append("=>-");
+                            result.append(name1);
+                            result.append("-1");
+                        }
+                    } else { // some odd exponents for this variable
+                        busy = false;
+                        result.setLength(0); // test failed
+                    }
+                } // expression differ
+            } // names in parallel
+            ivar ++;
+        } // while viter
+        if (result.length() > 0) {
+            result.deleteCharAt(0);
+        }
+        return result.toString();
+    } // testNegative_1
+
+    /** Compares the source {@link RelationSet} <em>rset2</em> to be queued with 
+     *  another {@link RelationSet} <em>rset1</em> already queued.
+     *  If the test is successful, a message is printed and returned,
+     *  and <em>rset2</em> is not stored in the following; 
+     *  otherwise the checking process continues.
+     *  @param iqueue index of the target RelationSet <em>rset1</em>
+     *  @param rset1 the old target {@link RelationSet} already queued
+     *  @param rset2 the new source {@link RelationSet} to be added to the queue 
+     *  @return a message String denoting the reasoning details,
+     *  or {@link VariableMap#UNKNOWN} if the comparision is not conclusive.
+     */
+    public String compare(int iqueue, RelationSet rset1, RelationSet rset2) {
+        String result = VariableMap.UNKNOWN;
+        VariableMap vmap1 = rset1.getMapping();
+        VariableMap vmap2 = rset2.getMapping();
+        if (debug >= 1) {
+            solver.getWriter().println(""
+                    + "compare " + vmap2.toString() + " with\n" 
+                    + "        " + vmap1.toString());
+        }
+        String message = testNegative_1(vmap1, vmap2, expGCDs);
+        if (message.length() > 0) { // can be mapped by at least one -x-1
+            result = "negative-1 [" + iqueue + "] by {" + message + "}";
+        } // negative-1 found
         return result;
-    } // isConsiderable
-    
+    } // compare
+
     /** Checks a {@link RelationSet} and determines whether 
      *  there is another {@link RelationSet} on the same nesting level
      *  of the expansion tree which differs from the parameter RelationSet only
      *  by a transposition of the variable (names).
-     *  @param solver the complete state of the expansion tree
      *  @param rset2 the new {@link RelationSet} to be added to the queue 
      *  @return a message string starting with one of 
      *  <ul>
@@ -161,24 +254,16 @@ expanding queue[4]^2:  - 8 + 8*x + 24*x^2 + 32*x^3 + 16*x^4 + 16*y^4 - 24*z - 16
      *  and the 3rd to the 1st by {z -> -z-1}. 
      *  The constants of the unmapped variables must be parallel.
      */
-    public String check(BaseSolver solver, RelationSet rset2) {
+    public String check(RelationSet rset2) {
         String result = VariableMap.UNKNOWN;
         int level2 = rset2.getNestingLevel();
         int iqueue = solver.size() - 1; // last element
-        RefiningMap vmap2 = rset2.getMapping();
         RelationSet rset1 = solver.get(iqueue);
         while (iqueue > 0 && rset1.getNestingLevel() == level2) { // down in the same level
-            RefiningMap vmap1 = rset1.getMapping();
-            if (debug >= 1) {
-                solver.getWriter().println(""
-                        + "check " + vmap2.toString() + " against [" + iqueue + "]\n" 
-                        + "      " + vmap1.toString());
-            }
-            String message = vmap1.testNegative_1(vmap2, expGCDs);
-            if (message.length() > 0) { // can be mapped by at least one -x-1
-                result = "negative-1 [" + iqueue + "] by {" + message + "}";
+            result = compare(iqueue, rset1, rset2);
+            if (! result.startsWith(VariableMap.UNKNOWN)) { // reason successful
                 iqueue = 1; // break loop
-            } // negative-1 found
+            } // reason successful
             iqueue --;
             rset1 = solver.get(iqueue);
         } // while iqueue

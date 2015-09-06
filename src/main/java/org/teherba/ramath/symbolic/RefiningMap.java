@@ -23,6 +23,7 @@ import  org.teherba.ramath.linear.Vector;
 import  org.teherba.ramath.util.Dispenser;
 import  org.teherba.ramath.util.ModoMeter; // for test only
 import  java.io.Serializable;
+import  java.math.BigInteger;
 import  java.util.Iterator;
 
 /** Maps a set of variables <em>x</em> to refined expressions <em>a+m*x</em>,
@@ -140,6 +141,46 @@ public class RefiningMap extends VariableMap implements Cloneable , Serializable
         result.append(']');
         return result.toString();
     } // niceString
+
+    /** Extracts the additive factor <em>a</em> and
+     *  the multiplicative factor <em>m</em> from a refined expression
+     *  @param expr the refined expression of the form <em>a+m*x</em>.
+     *  @return BigInteger[] {a,m}
+     */
+    public static BigInteger[] extractRefinedFactors(String expr) {
+        int plusPos  = expr.indexOf("+");
+        int timesPos = expr.indexOf("*");
+        return new BigInteger[]
+                { new BigInteger(expr.substring(0          , plusPos ))
+                , new BigInteger(expr.substring(plusPos + 1, timesPos))
+                };
+    } // extractRefinedFactors
+
+    /** Compares the additive factors <em>a</em> and multiplicative factors <em>m</em> of two
+     *  refined expressions
+     *  @param expr1 the 1st refined exproession of the form <em>a+m*x</em>.
+     *  @param expr2 the 2nd refined exproession of the form <em>a+m*x</em>.
+     *  @return 0 if the two expressions are the same, -1 for isNegative_1, +1 otherwise
+     */
+    public static int compareRefinedFactors(String expr1, String expr2) {
+        int result = 0 + 1;
+        if (expr1.equals(expr2)) {
+            result = 0;
+        } else {
+            BigInteger[] fam1 = extractRefinedFactors(expr1);
+            BigInteger[] fam2 = extractRefinedFactors(expr2);
+            if (! fam1[1].equals(fam2[1])) { // some were not involved
+                // result = 1; already set
+                // System.out.println("??? assertion: multiplicative factors differ in compareRefinedFactors");
+            } else { // same m; for example [1,8] ? [7,8]
+                if (fam1[0].subtract(fam1[1]).negate().equals(fam2[0])) { // - (1 - 8) == 7
+                //  fam2[0].subtract(fam2[1]).negate().equals(fam1[0])   // - (7 - 8) == 1
+                    result = -1;
+                }
+            } // same m
+        } // !=
+        return result;
+    } // compareRefinedFactors
 
     /*----------------- test driver ----------------------*/
     /** Test method.

@@ -88,4 +88,4 @@ solution [1,1,1,1],trivial(2)
 [1+8a,5+8b,1+8c,5+8d]:	transposed [21] by [1,0,3,2]
 [1+8a,1+8b,5+8c,5+8d]:	transposed [20] by [2,3,0,1]
 [5+8a,5+8b,5+8c,5+8d]:	unknown -> [22] 125a+300a^2+320a^3+128a^4+125b+300b^2+320b^3+128b^4-125c-300c^2-320c^3-128c^4-125d-300d^2-320d^3-128d^4
-Maximum level 2 reached at [23]: a^4 + b^4 - c^4 - d^4
+Maximum level 2 reached at [23]: a^4+b^4-c^4-d^4

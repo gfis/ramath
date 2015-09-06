@@ -71,4 +71,4 @@ solution [1,1,1,1],trivial(2)
 [1+8a,5+8b,1+8c,5+8d]:	transposed [16] by [1,0,3,2]
 [1+8a,1+8b,5+8c,5+8d]:	transposed [15] by [2,3,0,1]
 [5+8a,5+8b,5+8c,5+8d]:	unknown -> [17] 5a+4a^2+5b+4b^2-5c-4c^2-5d-4d^2
-Maximum level 2 reached at [18]: a^2 + b^2 - c^2 - d^2
+Maximum level 2 reached at [18]: a^2+b^2-c^2-d^2

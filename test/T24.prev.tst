@@ -77,4 +77,4 @@ expanding queue[21]^12,meter=[2,2]*64: -9088-42336x-64512x^2-32768x^3+832y+1024y
 expanding queue[22]^12,meter=[2,2]*64: -8416-42336x-64512x^2-32768x^3+1856y+1024y^2
 [53+64x,29+64y]:	unknown -> [41] -148032-539328x-651264x^2-262144x^3+3712y+4096y^2
 [53+64x,61+64y]:	unknown -> [42] -145152-539328x-651264x^2-262144x^3+7808y+4096y^2
-Maximum level 5 reached at [43]: 4 - x^3 + y^2
+Maximum level 5 reached at [43]: 4-x^3+y^2

@@ -89,4 +89,4 @@ expanding queue[15]^6,meter=[2,2,2]*16: 80+330x+664x^2+640x^3+256x^4+228y+320x*y
 [13+16x,4+16y,1+16z]:	unknown -> [37] 985+4602x+8240x^2+6656x^3+2048x^4+804y+1664x*y+1024x^2*y+2120y^2+3328x*y^2+2048x^2*y^2+2048y^3+2048y^4-z-8z^2
 [5+16x,12+16y,1+16z]:	negative-1 [37] by {y=>-y-1}
 [13+16x,12+16y,1+16z]:	negative-1 [37] by {y=>-y-1}
-Maximum level 3 reached at [38]: x^4 + x^2*y^2 + y^4 - z^2
+Maximum level 3 reached at [38]: x^4+x^2*y^2+y^4-z^2

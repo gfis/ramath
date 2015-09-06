@@ -41,4 +41,4 @@ expanding queue[7]^5,meter=[2,2]*64: -9+15x^2-63y-112y^2
 [8+16x,9+64y]:	unknown -> [9] 3+30x+30x^2-63y-224y^2
 [0+16x,41+64y]:	unknown -> [10] -92+30x^2-287y-224y^2
 [8+16x,41+64y]:	failure constant=-169, vgcd=2
-Maximum level 5 reached at [11]:  - 9 + 15*x^2 - 7*y^2
+Maximum level 5 reached at [11]: -9+15x^2-7y^2

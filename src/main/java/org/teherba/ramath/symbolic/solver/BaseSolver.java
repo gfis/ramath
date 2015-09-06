@@ -33,7 +33,7 @@ import  org.teherba.ramath.symbolic.VariableMap;
 import  org.teherba.ramath.linear.Vector;
 import  org.teherba.ramath.util.ExpressionReader;
 import  org.teherba.ramath.util.ModoMeter;
-import  java.io.PrintWriter;
+import  java.io.PrintStream;
 import  java.math.BigInteger;
 import  java.util.Iterator;
 import  java.util.Stack; // was java.util.Vector;  essentially a java.util.Queue (Java 1.6)
@@ -80,13 +80,13 @@ public class BaseSolver extends Stack<RelationSet> {
     /** No-args Constructor - prints on {@link java.lang.System#out}f
      */
     public BaseSolver() {
-        this(new PrintWriter(System.out));
+        this(System.out);
     } // no-args Constructor
 
     /** Constructor with writer
      *  @param writer where to write the proof trace
     */
-    public BaseSolver(PrintWriter writer) {
+    public BaseSolver(PrintStream writer) {
         super(); // 256, 256); // increase capacity in bigger chunks
         this.trace = writer;
         initialize();
@@ -101,7 +101,6 @@ public class BaseSolver extends Stack<RelationSet> {
     /** Initializes the optional parameters
      */
     protected void initialize() {
-        setFindMode   (FIND_IN_PREVIOUS);
         setMaxLevel   (4);
         setModBase    (2); // for n-adic modulo expansion (here: binary)
         setSubsetting (false);
@@ -114,26 +113,6 @@ public class BaseSolver extends Stack<RelationSet> {
     // Bean properties and methods
     //-----------------------------
 
-    //----------------
-    /** How to search for a previous equivalent {@link RelationSet}:
-     *  in all members queued so far (1),
-     *  or in parents only (0)
-     */
-    private int findMode;
-    public static final int FIND_IN_PARENTS  = 1;
-    public static final int FIND_IN_PREVIOUS = 0;
-    /** Gets the modus of equivalence searching
-     *  @return whether to search in whole queue, or in parents only
-     */
-    public int getFindMode() {
-        return findMode;
-    } // getFindMode
-    /** Sets the modus of equivalence searching
-     *  @param findMode whether to search in whole queue, or in parents only
-     */
-    public void setFindMode(int findMode) {
-        this.findMode = findMode;
-    } // setFindMode
     //----------------
     /** Maximum nesting (tree height) level */
     private int maxLevel;
@@ -164,6 +143,21 @@ public class BaseSolver extends Stack<RelationSet> {
     public void setModBase(int modBase) {
         this.modBase = modBase;
     } // setModBase
+    //----------------
+    /** Gets the initial {@link RelationSet} to be solved
+     *  @return root element of the queue of RelationSets
+     */
+    public RelationSet getRootNode() {
+        return this.get(0);
+    } // getRootNode
+    /** Sets root element of the queue of {@link RelationSet}s
+     *  @param rset0 the initial {@link RelationSet} to be solved
+     */
+    public void setRootNode(RelationSet rset0) {
+        rset0.setMapping(rset0.getRefiningMap());
+        rset0.setParentIndex(-1);
+        add(rset0);
+    } // setRootNode
     //----------------
     /** Whether to substitute subsets of variables */
     private boolean subsetting;
@@ -196,12 +190,11 @@ public class BaseSolver extends Stack<RelationSet> {
     } // setUpperSubst
     //----------------
     /** Writer for proof trace */
-    public PrintWriter trace;
-
+    protected PrintStream trace;
     /** Gets the print writer for traces
      *  @return print writer
      */
-    public PrintWriter getWriter() {
+    public PrintStream getWriter() {
         return trace;
     } // getWriter
 
@@ -221,7 +214,6 @@ public class BaseSolver extends Stack<RelationSet> {
      *  <li>-l maximum nesting level (default 4)</li>
      *  <li>-m maximum size of queue (default 256)</li>
      *  <li>-r list of reason codes separated by commas</li>
-     *  <li>-q find mode (default 0)</li>
      *  <li>-u do not substitute uppercase variables (default: all variables)</li>
      *  </ul>
      *  @return content of file option or explicit expression string
@@ -254,8 +246,6 @@ public class BaseSolver extends Stack<RelationSet> {
                     }
                 } else if (arg.startsWith("-r") && iargs < args.length) { 
                     codeList = args[iargs ++]; // overwrite default reason list
-                } else if (arg.startsWith("-q")                       ) {
-                    setFindMode(1);
                 } else if (arg.startsWith("-u")                       ) {
                     setUpperSubst(false);
                 } else {
@@ -384,7 +374,7 @@ public class BaseSolver extends Stack<RelationSet> {
             } else {
                 trace.print("Maximum level " + getMaxLevel() + " reached");
             }
-            trace.println(" at [" + size() + "]: " + rset0.toString());
+            trace.println(" at [" + size() + "]: " + rset0.niceString());
         } // debug
     } // printTrailer
 
@@ -430,21 +420,6 @@ public class BaseSolver extends Stack<RelationSet> {
     protected void expand(int queueIndex) {
     } // expand
 
-    /** Gets the initial {@link RelationSet} to be solved
-     *  @return root element of the queue of RelationSets
-     */
-    public RelationSet getRootNode() {
-        return this.get(0);
-    } // getRootNode
-
-    /** Sets root element of the queue of {@link RelationSet}s
-     *  @param rset0 the initial {@link RelationSet} to be solved
-     */
-    protected void setRootNode(RelationSet rset0) {
-        rset0.setMapping(rset0.getRefiningMap());
-        add(rset0);
-    } // setRootNode
-
     /** Refines and evaluates modulus properties for variables in a {@link RelationSet}.
      *  The maximum queue size breaks the expansion loop in any case.
      *  @param rset0 start expansion with this {@link RelationSet}.
@@ -453,7 +428,7 @@ public class BaseSolver extends Stack<RelationSet> {
     public boolean solve(RelationSet rset0) {
         prevLevel = -1;
         setRootNode(rset0);
-        reasons = new ReasonFactory(this, codeList, rset0);
+        reasons = new ReasonFactory(this, codeList);
         // determine all features
         igtriv = reasons.hasFeature("igtriv");
         invall = reasons.hasFeature("invall");
