@@ -18,6 +18,7 @@
  * limitations under the License.
  */
 package org.teherba.ramath.symbolic;
+import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.VariableMap;
 import  org.teherba.ramath.linear.Vector;
 import  org.teherba.ramath.util.Dispenser;
@@ -54,6 +55,23 @@ public class RefiningMap extends VariableMap implements Cloneable , Serializable
         return result;
     } // clone
 
+    /** Returns a {@link RefiningMap} constructed from a String representation,
+     *  @param input the input String, with whitespace, maybe Vector or set brackets,
+     *  for example "{a=>-a-1,b=>-b-1,c=>-c-1,d=>-d-1}"
+     *  @return a reference to a new {@link VariableMap}
+     */
+    public static RefiningMap parse(String input) {
+        VariableMap vmap = VariableMap.parse(input);
+        RefiningMap result = new RefiningMap();
+        Iterator<String> iter = vmap.keySet().iterator();
+        while (iter.hasNext()) {
+            String key = (String) iter.next();
+            result.put(key, (new Polynomial(vmap.get(key))).toString().replaceAll("\\s", ""));
+        } // while iter
+        return result;
+    } // parse
+
+    //----------------
     /** Gets a solution, that
      *  are the constants of the expressions for refined variables.
      *  @return "[3,4,5]", for example

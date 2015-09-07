@@ -450,7 +450,7 @@ public class RelationSet
         return result;
     } // similiarity
 
-    /** Returns a {@link RelationSet} set constructed from a String representation, possibly with an
+    /** Returns a {@link RelationSet} constructed from a String representation, possibly with an
      *  error message inserted at the point where parsing could not proceed.
      *  @param input the input String, with whitespace, for example " + 17*a0^2*a1 + a2^2*a3^3 - 4*b4"
      *  @return a reference to a new {@link RelationSet}
@@ -501,8 +501,7 @@ public class RelationSet
         return getDependantMap(true);
     } // getDependantMap()
     
-    /** Gets a map from dependant - child - variables to their
-     *  - independant - parents.
+    /** Gets a map from dependant - child - variables to their- independant - parents.
      *  This implementation may be rather inefficient, but it is used only once per proof.
      *  @param upperSubst whether uppercase variables should be investigated
      *  @return child variable names mapped to their parent variable names
@@ -609,8 +608,8 @@ public class RelationSet
         } else if (card1 == 1) { // single Polynomial
             result = rset1.get(0).isEqualTo(rset2.get(0));
         } else if (card1 == 2) { // single Polynomial
-            result = rset1.get(0).isEqualTo(rset2.get(1)) ||
-                     rset1.get(1).isEqualTo(rset2.get(0)) ;
+            result =   rset1.get(0).isEqualTo(rset2.get(1))
+                    || rset1.get(1).isEqualTo(rset2.get(0));
         } else { // >= 3 Polynomials: try all permutations of tthe array elements
             Permutator permutator = new Permutator(card1);
             permutator.next(); // ignore identical mapping

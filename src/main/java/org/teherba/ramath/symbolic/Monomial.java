@@ -1,7 +1,6 @@
 /*  Monomial: a product with a signed numeric coefficient and optional exponentiated variable(s)
  *  @(#) $Id: Monomial.java 522 2010-07-26 07:14:48Z gfis $
  *  2015-09-03: isNegative
- *  2015-08-27: getExponentGCDs
  *  2015-08-16: toFactoredString() with powers of prime factors
  *  2015-07-17: degree
  *  2015-03-25: firstName
@@ -311,15 +310,15 @@ public class Monomial implements Cloneable, Serializable {
     } // isZero
 
     /** Determines the degree, that is the sum of exponents of the individual factors
-     *  @param upperConst whether the exponents of uppercase variables should not be counted
+     *  @param upperConst whether the exponents of uppercase variables should be counted
      *  @return degree >= 0
      */
-    public int degree(boolean upperConst) {
+    public int degree(boolean upperSubst) {
         int result = 0;
         Iterator <String> viter = vars.keySet().iterator();
         while (viter.hasNext()) {
             String name = viter.next();
-            if (! upperConst || name.compareTo("a") >= 0) {
+            if (upperSubst || name.compareTo("a") >= 0) {
                 result += this.getExponent(name);
                 // System.out.println("degree: " + name + "^" + this.getExponent(name));
             } // upperSubst
@@ -331,7 +330,7 @@ public class Monomial implements Cloneable, Serializable {
      *  @return degree >= 0
      */
     public int degree() {
-        return this.degree(false);
+        return this.degree(true);
     } // degree()
 
     //=================

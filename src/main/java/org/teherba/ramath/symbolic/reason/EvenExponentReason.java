@@ -40,7 +40,7 @@ public class EvenExponentReason extends BaseReason {
     public final static String CVSID = "@(#) $Id: EvenExponentReason.java 970 2012-10-25 16:49:32Z gfis $";
 
     /** Debugging switch: 0 = no, 1 = moderate, 2 = more, 3 = extreme verbosity */
-    private int debug = 0;
+    private static int debug = 0;
 
     /** No-args Constructor
      */
@@ -121,7 +121,7 @@ public class EvenExponentReason extends BaseReason {
      *  @param poly1 get the map from this Polynomial
      *  @return a map of variable names to the greatest common divisors of their exponents
      */
-    private static TreeMap<String, Integer> getExponentGCDs(Polynomial poly1) {
+    private static TreeMap<String, Integer> getExponentGCDs_99(Polynomial poly1) {
         TreeMap<String, Integer> result = new TreeMap<String, Integer>();
         joinExponentGCDs(result, poly1);
         return result;
@@ -179,6 +179,9 @@ public class EvenExponentReason extends BaseReason {
                 if (expr1.equals(expr2)) { // same expressions
                     // ignore
                 } else { // expressions differ
+                    if (debug >= 1) {
+                        System.out.println("expressions differ: " + expr1 + " != " + expr2);
+                    }
                     if (expGCDs.get(ivar) % 2 == 0) { // only even exponents for this variable
                         int sign = RefiningMap.compareRefinedFactors(expr1, expr2);
                         if (sign < 0) { // mappable by -x-1
@@ -207,6 +210,14 @@ public class EvenExponentReason extends BaseReason {
      *  If the test is successful, a message is printed and returned,
      *  and <em>rset2</em> is not stored in the following; 
      *  otherwise the checking process continues.
+     *  Typical example (from test/T05.this.tst):
+     *  <pre>
+expanding queue[3]^2,meter=[2,1,2]*8: x+3x^2+4x^3+2x^4+2y^4-z-2z^2
+[1+4x,0+2y,1+8z]:   unknown -> [4] x+6x^2+16x^3+16x^4+y^4-z-4z^2
+[3+4x,0+2y,1+8z]:   negative-1 [4] by {x=>-x-1}
+     *  </pre>
+     *  The 2nd unknown Polynomial can be mapped to the 1st by {x -> -x-1}.
+     *  The constants of the unmapped variables must be parallel.
      *  @param iqueue index of the target RelationSet <em>rset1</em>
      *  @param rset1 the old target {@link RelationSet} already queued
      *  @param rset2 the new source {@link RelationSet} to be added to the queue 
@@ -228,46 +239,5 @@ public class EvenExponentReason extends BaseReason {
         } // negative-1 found
         return result;
     } // compare
-
-    /** Checks a {@link RelationSet} and determines whether 
-     *  there is another {@link RelationSet} on the same nesting level
-     *  of the expansion tree which differs from the parameter RelationSet only
-     *  by a transposition of the variable (names).
-     *  @param rset2 the new {@link RelationSet} to be added to the queue 
-     *  @return a message string starting with one of 
-     *  <ul>
-     *  <li>{@link VariableMap#UNKNOWN} - the RelationSet cannot be decided and must be further expanded</li>
-     *  <li>{@link VariableMap#FAILURE} - the RelationSet is not possible</li>
-     *  <li>{@link VariableMap#SUCCESS} - there is a solution, but the RelationSet must further be expanded</li>
-     *  </ul>
-     *  <p>
-     *  Typical example (from test/T05.this.tst):
-     *  <pre>
-expanding queue[3]^2: 8*x + 24*x^2 + 32*x^3 + 16*x^4 + 16*y^4 - 8*z - 16*z^2 meter=[2,1,2] *8
-[1+4*x,0+2*y,1+8*z]: unknown 16*x+96*x^2+256*x^3+256*x^4+16*y^4-16*z-64*z^2 -> [5]
-[3+4*x,0+2*y,1+8*z]: unknown 80+432*x+864*x^2+768*x^3+256*x^4+16*y^4-16*z-64*z^2 -> [6]
-expanding queue[4]^2:  - 8 + 8*x + 24*x^2 + 32*x^3 + 16*x^4 + 16*y^4 - 24*z - 16*z^2 meter=[2,1,2] *8
-[1+4*x,0+2*y,7+8*z]: unknown -48+16*x+96*x^2+256*x^3+256*x^4+16*y^4-112*z-64*z^2 -> [7]
-[3+4*x,0+2*y,7+8*z]: unknown 32+432*x+864*x^2+768*x^3+256*x^4+16*y^4-112*z-64*z^2 -> [8]
-     *  </pre>
-     *  The 2nd unknown Polynomial can be mapped to the 1st by {x -> -x-1},
-     *  and the 3rd to the 1st by {z -> -z-1}. 
-     *  The constants of the unmapped variables must be parallel.
-     */
-    public String check(RelationSet rset2) {
-        String result = VariableMap.UNKNOWN;
-        int level2 = rset2.getNestingLevel();
-        int iqueue = solver.size() - 1; // last element
-        RelationSet rset1 = solver.get(iqueue);
-        while (iqueue > 0 && rset1.getNestingLevel() == level2) { // down in the same level
-            result = compare(iqueue, rset1, rset2);
-            if (! result.startsWith(VariableMap.UNKNOWN)) { // reason successful
-                iqueue = 1; // break loop
-            } // reason successful
-            iqueue --;
-            rset1 = solver.get(iqueue);
-        } // while iqueue
-        return result;
-    } // check
 
 } // EvenExponentReason

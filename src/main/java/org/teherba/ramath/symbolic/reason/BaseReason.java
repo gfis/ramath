@@ -21,6 +21,7 @@
  */
 package org.teherba.ramath.symbolic.reason;
 import  org.teherba.ramath.symbolic.RelationSet;
+import  org.teherba.ramath.symbolic.RefiningMap;
 import  org.teherba.ramath.symbolic.VariableMap;
 import  org.teherba.ramath.symbolic.reason.ReasonFactory;
 import  org.teherba.ramath.symbolic.solver.BaseSolver;
@@ -32,7 +33,7 @@ import  org.teherba.ramath.symbolic.solver.BaseSolver;
  *  the node is queued for further investigation.
  +  <p>
  *  BaseReason is the base class from which all other reasons inherit.
- *  It checks simple zero and modulus properties of the {@link RelationSet} in question.
+ *  It checks simple zero and modulus properties of the {@link RelationSet} <em>rset2</em>.
  *  @author Dr. Georg Fischer
  */
 public class BaseReason {
@@ -60,7 +61,7 @@ public class BaseReason {
     public void initialize(BaseSolver solver) {
         setSolver(solver);
         setRootNode(solver.getRootNode());
-        setWalkMode(WALK_NONE); // -base tests the new node only
+        setWalkMode(WALK_NONE); // -base tests the new source node <em>rset2</em> only
     } // initialize
 
     /** Whether <em>this</em> reason should be considered for 
@@ -174,42 +175,34 @@ public class BaseReason {
         return result;
     } // compare
 
-    /** Checks a {@link RelationSet} and determines whether it
-     *  <ul>
-     *  <li>can be decided (and be cut from the expansion tree) or</li>
-     *  <li>must be further expanded (and therefore will be appended to the queue).</li>
-     *  </ul>
-     *  @param rset2 the new {@link RelationSet} to be added to the queue 
-     *  @return a message string starting with one of 
-     *  <ul>
-     *  <li>{@link VariableMap#FAILURE} - the RelationSet is not possible</li>
-     *  <li>{@link VariableMap#SUCCESS} - there is a solution, but the RelationSet must further be expanded</li>
-     *  <li>{@link VariableMap#UNKNOWN} - the RelationSet cannot be decided and must be further expanded</li>
-     *  </ul>
-     */
-    public String check(RelationSet rset2) {
-        return compare(0, rset2 /* unused */, rset2);
-    } // check
-
     /*---- General Test Driver for all reasons --------------------*/
 
-    /** Test method, reads a target and a source {@link RelationSet},
-     *  {@link #compares} them and prints the result
+    /** Test method, reads a root node, a target <em>rset1</em> 
+     *  and a source {@link RelationSet} <em>rset2</em>,
+     *  {@link #compares} the latter with the <em>compare</em> method 
+     *  of the specified, derived {@link BaseReason reason} and prints the result
      *  @param args command line arguments:
      *  <pre>
-     *  -opt rset1 rset2
+     *  -reason rset0 rset1 rset2
      *  </pre>
      */
     public static void main(String[] args) {
         int iarg = 0;
         String opt  = args[iarg ++];
         String code = opt.replaceAll("\\-", "");
+        RelationSet rset0 = RelationSet.parse(args[iarg ++]);
         RelationSet rset1 = RelationSet.parse(args[iarg ++]);
         RelationSet rset2 = RelationSet.parse(args[iarg ++]);
+        if (iarg + 2 <= args.length) { // some reasons, for example EvenExponent, need mappings
+            RefiningMap rmap1 = RefiningMap.parse(args[iarg ++]);
+            RefiningMap rmap2 = RefiningMap.parse(args[iarg ++]);
+            rset1.setMapping(rmap1);
+            rset2.setMapping(rmap2);
+        } // with mappings
         BaseSolver solver = new BaseSolver();
-        solver.setRootNode(rset1);
-        ReasonFactory reasons = new ReasonFactory(solver, "");
-        BaseReason reason = reasons.addReason(code);
+        solver.setRootNode(rset0);
+        ReasonFactory reasons = new ReasonFactory(solver, code);
+        BaseReason reason = reasons.getReason(code);
         
         solver.getWriter().println(reason.getClass().getSimpleName() + ".compare(\"" 
                 + rset1.toString() + "\", \"" 

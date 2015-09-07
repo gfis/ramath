@@ -49,6 +49,8 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
     private static final long serialVersionUID = 2L;
     public final static String CVSID = "@(#) $Id: VariableMap.java 538 2010-09-08 15:08:36Z gfis $";
 
+    /** Debugging switch: 0 = no, 1 = moderate, 2 = more, 3 = maximum verbosity */
+    public static int debug = 0;
     /*----------------- construction ----- -----------------*/
 
     /** No-args Constructor
@@ -116,6 +118,35 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
             this.put(name, value);
         } // while viter
     } // setValues
+
+    /** Returns a {@link VariableMap} constructed from a String representation,
+     *  @param input the input String, with whitespace, maybe Vector or set brackets,
+     *  for example "{a=>-a-1,b=>-b-1,c=>-c-1,d=>-d-1}"
+     *  @return a reference to a new {@link VariableMap}
+     */
+    public static VariableMap parse(String input) {
+        VariableMap result = new VariableMap();
+        String[] elems = input.replaceAll("[\\s\\[\\]\\{\\}\\(\\)]", "") // remove whitespace and brackets [] {} ()
+                .split("[\\,\\;]"); // "," or ";"
+        int ielem = 0;
+        while (ielem < elems.length) {
+            String[] pair = elems[ielem].split("[\\=\\-]\\>"); // "=>" or "->"
+            if (debug > 0) {
+            	System.out.println("elems[" + ielem + "]=" + elems[ielem]);
+            }
+            if (pair.length == 1) { // key/variable is missing, derive it from (the refined) value/expression
+                String temp = pair[0].replaceAll("\\A[\\W\\d]+", ""); // remove leading non-letters
+                temp = temp.replaceAll("\\W.+", ""); // remove all behind 1st non-word character
+                pair = new String[] { temp, pair[0] };
+            }
+            if (debug > 0) {
+            	System.out.println("pair[0]=" + pair[0] + ", pair[1]=" + pair[1]);
+            }
+            result.put(pair[0], pair[1]);
+            ielem ++;
+        } // while ielem
+        return result;
+    } // parse
 
     /*-------------- state codes -----------------------------*/
     /** state of the variable mapping during the search for solutions */
@@ -202,7 +233,7 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
         while (iter.hasNext()) {
             String name = iter.next();
             if (ind > 0) {
-            	result.append(',');
+                result.append(',');
             }
             result.append(name);
             ind ++;
@@ -327,7 +358,7 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
         } // while ielem
         return result;
     } // indexOf
-    
+
     /** Gets a numeric representation of a permutation mapping between variables.
      *  This is the inverse method of {@link #permuteVariables}.
      *  @return a {@link Vector} with natural indexes of the permuted value set
@@ -342,7 +373,7 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
             String newName = this.get(oldName);
             int inew = indexOf(names, newName);
             if (inew < 0) {
-                System.err.println("??? assertion in getPermutationVector: " +  newName 
+                System.err.println("??? assertion in getPermutationVector: " +  newName
                         + " not found; vmap=" + this.toString()
                         + ", iold="    + iold    + ", inew="    + inew
                         + ", oldName=" + oldName + ", newName=" + newName);
@@ -409,16 +440,22 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
      *  @param args command line arguments
      */
     public static void main(String[] args) {
+        int iarg = 0;
         int width = 3;
         VariableMap vmap = new VariableMap();
-        vmap.put("a" , "3");
-        vmap.put("b" , "4");
-        vmap.put("c" , "5");
-        System.out.println("vmap = " + vmap.toString());
-        vmap.put("b" , "5");
-        System.out.println("vmap = " + vmap.toString());
-        vmap.put("d2", "0");
-        System.out.println("vmap = " + vmap.toString());
+        if (iarg == args.length) {
+            vmap.put("a" , "3");
+            vmap.put("b" , "4");
+            vmap.put("c" , "5");
+            System.out.println("vmap = " + vmap.toString());
+            vmap.put("b" , "5");
+            System.out.println("vmap = " + vmap.toString());
+            vmap.put("d2", "0");
+            System.out.println("vmap = " + vmap.toString());
+        } else if (iarg + 1 == args.length){
+            vmap = VariableMap.parse(args[iarg ++]);
+            System.out.println(vmap.toString());
+        }
     } // main
 
 } // VariableMap

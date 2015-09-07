@@ -77,7 +77,7 @@ public class BaseSolver extends Stack<RelationSet> {
     // Construction
     //--------------
 
-    /** No-args Constructor - prints on {@link java.lang.System#out}f
+    /** No-args Constructor - prints on {@link java.lang.System#out}
      */
     public BaseSolver() {
         this(System.out);

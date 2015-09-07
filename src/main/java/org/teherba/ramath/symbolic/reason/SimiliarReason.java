@@ -65,7 +65,8 @@ public class SimiliarReason extends BaseReason {
     public String compare(int iqueue, RelationSet rset1, RelationSet rset2) {
         String result = VariableMap.UNKNOWN;
         if (debug > 0) {
-            getSolver().getWriter().println("findSimiliar(" + rset2.niceString() + ")");
+            getSolver().getWriter().println("SimiliarReason.compare(" 
+            		+ rset2.niceString() + ", " + rset2.niceString() + ")");
         }
         String message = rset1.similiarity(rset2);
         if (message != null) {

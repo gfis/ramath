@@ -160,6 +160,25 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         return result;
     } // addReason(String)
 
+    /** Gets the applicable {@link BaseReason reason} for the specified code
+     *  @param reasonCode a short String identifying the reason
+     *  @return instance of the applicable reason class, or null
+     */
+    public BaseReason getReason(String reasonCode) {
+        BaseReason result = null;
+        int ireas = 0;
+        while (ireas < this.size()) {
+            BaseReason reason = this.get(ireas);
+            if (reason.getCode().equals(reasonCode)) {
+                result = reason;
+                ireas = this.size(); // break loop
+            }
+            ireas ++;
+        } // while ireas
+        return result;
+    } // getReason
+    
+    //------------------
     /** Determines whether a certain feature is set
      *  @param code name of the feature
      *  @return true if the feature is set, false otherwise
@@ -278,7 +297,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
                     message = checkAnchestors(reason, rset2);
                     break;
                 case BaseReason.WALK_PARENT:
-                    message = reason.check(rset2);
+                    message = reason.compare(0, solver.get(rset2.getParentIndex()), rset2);
                     break;
                 default:
                     solver.getWriter().println("??? assertion: invalid walkMode=" + reason.getWalkMode());

@@ -1,7 +1,6 @@
 /*  Polynomial: a symbolic, multivariate Polynomial with addition, multiplication
  *  and exponentiation
  *  @(#) $Id: Polynomial.java 744 2011-07-26 06:29:20Z gfis $
- *  2015-08-25: getExponentGCDs
  *  2015-07-17: degree, isHomogeneous
  *  2015-06-17: modulus removed, coefficients are BigRatiaonal again
  *  2015-03-25: isPowerSum
@@ -1128,19 +1127,20 @@ x^2 + 3*x^3 + 2*x^4
         return getVariableMap().size() == 1;
     } // isUniVariate
 
+    //----------------
     /** Determines the degree, that is the sum of exponents in all {@link Monomial}s
      *  if it is the same in all Monomials
-     *  @param upperConst whether the exponents of uppercase variables should not be counted
+     *  @param upperSubst whether the exponents of uppercase variables should be counted
      *  @return degree >= 0, or -1 if the {@link Polynomial} has Monomials with different degrees
      */
-    public int degree(boolean upperConst) {
+    public int degree(boolean upperSubst) {
         int result = 0;
         Iterator <String> titer = monomials.keySet().iterator();
         if (! this.isConstant()) {
-            result = monomials.get(titer.next()).degree(upperConst);
+            result = monomials.get(titer.next()).degree(upperSubst);
         }
         while (result >= 0 && titer.hasNext()) {
-            int degm = monomials.get(titer.next()).degree(upperConst);
+            int degm = monomials.get(titer.next()).degree(upperSubst);
             if (degm != result) {
                 result = -1;
             }
@@ -1153,7 +1153,7 @@ x^2 + 3*x^3 + 2*x^4
      *  @return degree >= 0, or -1 if the {@link Polynomial} has Monomials with different degrees
      */
     public int degree() {
-        return this.degree(false);
+        return this.degree(true);
     } // degree()
 
     /** Determines the maximum of the exponents for some variable in all {@link Monomial}s
@@ -1175,14 +1175,14 @@ x^2 + 3*x^3 + 2*x^4
 
     /** Determines the maximum degree, that is the sum of exponents in all {@link Monomial}s
      *  irrespective of the variable names
-     *  @param upperConst whether the exponents of uppercase variables should not be counted
+     *  @param upperSubst whether the exponents of uppercase variables should be counted
      *  @return maxDegree >= 0
      */
-    public int maxDegree(boolean upperConst) {
+    public int maxDegree(boolean upperSubst) {
         int result = 0;
         Iterator <String> titer = monomials.keySet().iterator();
         while (titer.hasNext()) {
-            int degm = monomials.get(titer.next()).degree(upperConst);
+            int degm = monomials.get(titer.next()).degree(upperSubst);
             if (degm > result) {
                 result = degm;
             }
@@ -1195,24 +1195,25 @@ x^2 + 3*x^3 + 2*x^4
      *  @return maxDegree >= 0
      */
     public int maxDegree() {
-        return this.maxDegree(false);
+        return this.maxDegree(true);
     } // maxDegree()
 
    /** Determines whether all {@link Monomial}s are of the same {@link #degree}.
-     *  @param upperConst whether the exponents of uppercase variables should not be counted
+     *  @param upperSubst whether the exponents of uppercase variables should be counted
      *  @return true if the sum of exponents in all Monomials is the same, false otherwise
      */
-    public boolean isHomogeneous(boolean upperConst) {
-        return this.degree(upperConst) >= 0;
+    public boolean isHomogeneous(boolean upperSubst) {
+        return this.degree(upperSubst) >= 0;
     } // isHomogeneous
 
     /** Determines whether all {@link Monomial}s are of the same {@link #degree}.
      *  @return true if the sum of exponents in all Monomials is the same, false otherwise
      */
     public boolean isHomogeneous() {
-        return this.degree(false) >= 0;
+        return this.degree(true) >= 0;
     } // isHomogeneous
 
+    //----------------
     /** Gets the greatest common (positive) divisor of the coefficients of the variable {@link Monomial}s,
      *  or of all monomials if they are integral, or +1.
      *  @param all whether all Monomials should be investigated,
@@ -2274,8 +2275,8 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
 
                 } else if (opt.startsWith("-degree")) {
                     poly1 = Polynomial.parse(args[iarg ++]);
-                    System.out.println(poly1.toString() + ".degree()     = " + poly1.degree()    );
-                    System.out.println(poly1.toString() + ".degree(true) = " + poly1.degree(true));
+                    System.out.println(poly1.toString() + ".degree()      = " + poly1.degree()     );
+                    System.out.println(poly1.toString() + ".degree(false) = " + poly1.degree(false));
 
                 } else if (opt.startsWith("-equiv")) {
                     poly1 = Polynomial.parse(args[iarg ++]);
