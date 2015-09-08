@@ -31,9 +31,6 @@ import  org.teherba.ramath.symbolic.VariableMap;
 public class SimiliarReason extends BaseReason {
     public final static String CVSID = "@(#) $Id: SimiliarReason.java 970 2012-10-25 16:49:32Z gfis $";
 
-    /** Debugging switch: 0 = no, 1 = moderate, 2 = more, 3 = extreme verbosity */
-    private int debug = 0;
-
      /** No-args Constructor
      */
     public SimiliarReason() {
@@ -64,7 +61,7 @@ public class SimiliarReason extends BaseReason {
      */
     public String compare(int iqueue, RelationSet rset1, RelationSet rset2) {
         String result = VariableMap.UNKNOWN;
-        if (debug > 0) {
+        if (debug >= 2) {
             getSolver().getWriter().println("SimiliarReason.compare(" 
             		+ rset2.niceString() + ", " + rset2.niceString() + ")");
         }

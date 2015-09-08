@@ -39,8 +39,17 @@ import  org.teherba.ramath.symbolic.solver.BaseSolver;
 public class BaseReason {
     public final static String CVSID = "@(#) $Id: BaseReason.java 970 2012-10-25 16:49:32Z gfis $";
 
-    /** Debugging switch: 0 = no, 1 = moderate, 2 = more, 3 = extreme verbosity */
-    private int debug = 0;
+    /** Debugging switch: 0 = no, 1 = moderate, 2 = more, 3 = extreme verbosity.
+     *  <em>debug</em> is 0 when reasons are called from the ReasonFactory.
+     *  For the stand-alone tests with {@link BaseReason#main}, 
+     *  <em>debug</em> defaults to 1 and may be set by option <em>-d</em>.
+     *  <em>debug</em> is inherited by all reason subclasses.
+     */
+    protected static int debug = 0;
+
+    /** Additonal parameter for testing, only affective if <em>debug >= 1</em>.
+     */
+    protected static String testParm = "";
 
     //--------------
     // Construction
@@ -49,6 +58,7 @@ public class BaseReason {
     /** No-args Constructor
      */
     public BaseReason() {
+        setDebug(0); // when called from ReasonFactory
     } // no-args Constructor
     
     /** Initializes any data structures for <em>this</em> reason.
@@ -76,6 +86,13 @@ public class BaseReason {
         return true;
     } // isConsiderable
     
+    //----------------
+    /** Sets the debugging switch
+     *  @param deb 0 = no, 1 = moderate, 2 = more, 3 = extreme verbosity.
+     */
+    public void setDebug(int deb) {
+        debug = deb;
+    } // setDebug
     //----------------
     /** External code which identifies <em>this</em> reason */
     protected String code;
@@ -187,27 +204,54 @@ public class BaseReason {
      *  </pre>
      */
     public static void main(String[] args) {
+        RelationSet rset0 = new RelationSet("0");
+        RelationSet rset1 = new RelationSet("0");
+        RelationSet rset2 = new RelationSet("0");
+        RefiningMap rmap1 = new RefiningMap();
+        RefiningMap rmap2 = new RefiningMap();
+        String code = "base";
+        int localDebug = 1;
+        
         int iarg = 0;
-        String opt  = args[iarg ++];
-        String code = opt.replaceAll("\\-", "");
-        RelationSet rset0 = RelationSet.parse(args[iarg ++]);
-        RelationSet rset1 = RelationSet.parse(args[iarg ++]);
-        RelationSet rset2 = RelationSet.parse(args[iarg ++]);
-        if (iarg + 2 <= args.length) { // some reasons, for example EvenExponent, need mappings
-            RefiningMap rmap1 = RefiningMap.parse(args[iarg ++]);
-            RefiningMap rmap2 = RefiningMap.parse(args[iarg ++]);
-            rset1.setMapping(rmap1);
-            rset2.setMapping(rmap2);
-        } // with mappings
+        while (iarg < args.length) {
+            String opt = args[iarg ++];
+            if (false) {
+            } else if (opt.equals("-d")     ) {
+                localDebug = 1;
+                try {
+                    localDebug = Integer.parseInt(args[iarg ++]);
+                } catch (Exception exc) {
+                }
+            } else if (opt.equals("-rset0")) {
+                rset0 = RelationSet.parse(args[iarg ++]);
+            } else if (opt.equals("-rset1")) {
+                rset1 = RelationSet.parse(args[iarg ++]);
+            } else if (opt.equals("-rset2")) {
+                rset2 = RelationSet.parse(args[iarg ++]);
+            } else if (opt.equals("-rmap1")) {
+                rmap1 = RefiningMap.parse(args[iarg ++]);
+            } else if (opt.equals("-rmap2")) {
+                rmap2 = RefiningMap.parse(args[iarg ++]);               
+            } else if (opt.equals("-t")     ) {
+                testParm = args[iarg ++];
+            } else {
+                code = opt.replaceAll("\\-", "");
+            }
+        } // while iarg
+        
+        rset1.setMapping(rmap1);
+        rset2.setMapping(rmap2);
         BaseSolver solver = new BaseSolver();
         solver.setRootNode(rset0);
         ReasonFactory reasons = new ReasonFactory(solver, code);
         BaseReason reason = reasons.getReason(code);
+        debug = localDebug;
         
-        solver.getWriter().println(reason.getClass().getSimpleName() + ".compare(\"" 
-                + rset1.toString() + "\", \"" 
-                + rset2.toString() + "\") = "
+        solver.getWriter().println(reason.getClass().getSimpleName() + ".compare(\n\t\"" 
+                + rset1.niceString() + "\", \n\t\"" 
+                + rset2.niceString() + "\") = \n\t"
                 + reason.compare(0, rset1, rset2));
+
     } // main
 
 } // BaseReason

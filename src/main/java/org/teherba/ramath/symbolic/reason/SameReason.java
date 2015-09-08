@@ -38,9 +38,6 @@ import  java.util.TreeMap;
 public class SameReason extends BaseReason {
     public final static String CVSID = "@(#) $Id: SameReason.java 970 2012-10-25 16:49:32Z gfis $";
 
-    /** Debugging switch: 0 = no, 1 = moderate, 2 = more, 3 = extreme verbosity */
-    private int debug = 0;
-
      /** No-args Constructor
      */
     public SameReason() {
@@ -68,13 +65,13 @@ public class SameReason extends BaseReason {
      *  to the maximum power (exponent) 
      *  of the solver's {@link BaseSolver#modBase} which could be "slipped into" the variable
      *  @param maxBasePowers map assembled so far, which is augmented
-     *  @param poly1 the Polynomial with the additional powers
+     *  @param poly2 the Polynomial with the additional powers
      */
-    private void joinMaxBasePowers(TreeMap<String, Integer> maxBasePowers, Polynomial poly1) {
-        Iterator <String> miter = poly1.keySet().iterator();
+    private void joinMaxBasePowers(TreeMap<String, Integer> maxBasePowers, Polynomial poly2) {
+        Iterator <String> miter = poly2.keySet().iterator();
         Integer ZERO = new Integer(1);
         while (miter.hasNext()) { // over all signatures of monomials
-            Monomial mono1 = poly1.get(miter.next());
+            Monomial mono1 = poly2.get(miter.next());
             BigInteger coef1 = mono1.getCoefficient().bigIntegerValue(); // assume that all coefficients are integral
             TreeMap<String, Integer>  mvars = mono1.getMap();
             Iterator <String> viter = mvars.keySet().iterator();
@@ -82,19 +79,19 @@ public class SameReason extends BaseReason {
                 String vname = viter.next();
                 int vexp = mono1.getExponent(vname);
                 BigInteger slipFactor = base.pow(vexp); // this may "slip into" the variable's power
-                int uexp = 0; // old value of vexp, this did still "slip into"
+                int root = 0; // base^0 always "slips into"
                 while (coef1.mod(slipFactor).equals(BigInteger.ZERO)) { // base fits, maybe higher powers, too?
-                    uexp = vexp;
+                    root ++;
                     vexp *= 2;
-                    slipFactor = slipFactor.multiply(slipFactor);
+                    slipFactor = slipFactor.multiply(slipFactor); // square it
                 } // while vexp
                         
                 Integer oldValue = maxBasePowers.get(vname);
                 if (oldValue == null) { // did not occur so far
-                    maxBasePowers.put(vname, new Integer(uexp));
+                    maxBasePowers.put(vname, new Integer(root));
                 } else { // previous value
                     int old = oldValue.intValue();
-                    maxBasePowers.put(vname, new Integer(uexp < old ? uexp : old)); // the minimum
+                    maxBasePowers.put(vname, new Integer(root < old ? root : old)); // the minimum
                 }
             } // while viter
         } // while miter    
@@ -103,14 +100,14 @@ public class SameReason extends BaseReason {
     /** Gets a map of variable names in {@link RelationSet} <em>rset1</em> 
      *  to the maximum power (exponent) 
      *  of the solver's {@link BaseSolver#modBase} which could be "slipped into" the variable
-     *  @param rset1 get the maximum powers from this RelationSet
+     *  @param rset2 get the maximum powers from this RelationSet
      *  @return a map of variable names to to the maximum power (exponent) 
      */
-    private TreeMap<String, Integer> getMaxBasePowers(RelationSet rset1) {
+    private TreeMap<String, Integer> getMaxBasePowers(RelationSet rset2) {
         TreeMap<String, Integer> result = new TreeMap<String, Integer>();
         int ipoly = 0;
-        while (ipoly < rset1.size()) { // over all Polynomials
-            joinMaxBasePowers(result, rset1.get(ipoly));
+        while (ipoly < rset2.size()) { // over all Polynomials
+            joinMaxBasePowers(result, rset2.get(ipoly));
             ipoly ++;
         } // while ipoly
         return result;
@@ -131,6 +128,34 @@ public class SameReason extends BaseReason {
         String result = VariableMap.UNKNOWN;
         if (rset1.isEqualTo(rset2)) { 
             result  = VariableMap.SAME + " form as " + rset2.niceString();
+        } else {
+            TreeMap<String, Integer> maxBasePowers = getMaxBasePowers(rset2);
+            VariableMap remap = new VariableMap();
+            Iterator <String> miter = maxBasePowers.keySet().iterator();
+            int count = 0;
+            while (miter.hasNext()) { // over all variables
+                String vname = miter.next();
+                int mexp = maxBasePowers.get(vname).intValue();
+                if (mexp > 0) {
+                    count ++;
+                    remap.put(vname, vname + "/" + base.pow(mexp).toString());
+                } // mexp > 1
+            } // while miter
+            if (debug >= 1) {
+                getSolver().getWriter().println("maxBasePowers=" + maxBasePowers.toString() 
+                		+ ", remap=" + remap.toString());
+            } // debug
+            if (count > 0) {
+                RelationSet rset2s = rset2.substitute(remap);
+                if (debug >= 1) {
+                    getSolver().getWriter().println("rset1=" +rset1.toString() 
+                            + "\nrset2s=" +rset2s.toString());
+                } // debug
+                if (rset1.isEqualTo(rset2s)) {
+                    result  = VariableMap.SAME + " with map " + remap.toString();
+                } 
+            } // count > 0
+                
         } // same as [0]
         return result;
     } // compare

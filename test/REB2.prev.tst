@@ -1,2 +1,5 @@
 ExponentGCDs=[]
-BaseReason.compare("0", "4*a^2 + 4*b") = failure biased
+BaseReason.compare(
+	"0", 
+	"4a^2+4b") = 
+	failure biased

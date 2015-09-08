@@ -1,5 +1,6 @@
 /*  VariableMap: maps a set of variables to their values or substitution formulas
  *  @(#) $Id: VariableMap.java 538 2010-09-08 15:08:36Z gfis $
+ *  2015-09-08: substitute with division b constant
  *  2015-08-30: deflateIt
  *  2015-08-19: multiplyBy, substitute
  *  2015-04-26: old_triviality returns String
@@ -38,6 +39,8 @@ import  java.util.Iterator;
 import  java.util.HashSet; // for old_triviality
 import  java.util.Map;
 import  java.util.TreeMap;
+import  java.util.regex.Matcher;
+import  java.util.regex.Pattern;
 
 /** Maps a set of variables to their values (constants) or
  *  expressions/substitution formulas, still with variables.
@@ -132,7 +135,7 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
         while (ielem < elems.length) {
             String[] pair = elems[ielem].split("[\\=\\-]\\>"); // "=>" or "->"
             if (debug > 0) {
-            	System.out.println("elems[" + ielem + "]=" + elems[ielem]);
+                System.out.println("elems[" + ielem + "]=" + elems[ielem]);
             }
             if (pair.length == 1) { // key/variable is missing, derive it from (the refined) value/expression
                 String temp = pair[0].replaceAll("\\A[\\W\\d]+", ""); // remove leading non-letters
@@ -140,7 +143,7 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
                 pair = new String[] { temp, pair[0] };
             }
             if (debug > 0) {
-            	System.out.println("pair[0]=" + pair[0] + ", pair[1]=" + pair[1]);
+                System.out.println("pair[0]=" + pair[0] + ", pair[1]=" + pair[1]);
             }
             result.put(pair[0], pair[1]);
             ielem ++;
@@ -401,7 +404,9 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
     /** Substitutes variable names with the expressions from <em>this</em> Map (if they are not null),
      *  and returns the replaced String.
      *  Whether uppercase variables should be replaced must already be defined in this map.
-     *  @param source replace variable names in this String
+     *  @param source replace variable names in this String, 
+     *  which must be derived from {@link RelationSet#toString toString(true)},
+     *  that is a full representation with "^1" 
      *  @return the new String with variable names replaced
      */
     public String substitute(String source) {
@@ -414,9 +419,7 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
         index = 0;
         while (viter.hasNext()) { // over all variables to be substituted
             name = viter.next();
-            if (name != null) {
-                result = result.replaceAll("\\*" + name + "\\^", "*#" + index + "#^");
-            } // if valid mapping
+            result = result.replaceAll("\\*" + name + "\\^", "*#" + index + "#^");
             index ++;
         } // while viter 1
 
@@ -424,16 +427,28 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
         index = 0;
         while (viter.hasNext()) { // over all variables to be substituted
             name = viter.next();
-            if (name != null) {
-                expr = this.get(name);
-                if (true && expr != null) {
-                    result = result.replaceAll("\\*\\#" + index + "\\#\\^", "*(" + expr + ")^");
-                }
-            } // if valid mapping
+            expr = this.get(name);
+            if (expr != null) {
+                int dpos = expr.indexOf("/"); // assume that only a single number follows
+                if (dpos < 0) { // no division
+                    result = result.replaceAll("\\*\\#" + index + "\\#\\^"      , "*(" + expr + ")^");
+                } else { // with division: separate any exponentiation
+                    String dividend = expr.substring(0, dpos);
+                    String divisor  = expr.substring(dpos + 1);
+                    result = result.replaceAll("\\*\\#" + index + "\\#\\^(\\d+)", "*(" + dividend + ")^$1/" + divisor + "^$1");
+                } // with division
+            }
             index ++;
         } // while viter 2
         return result;
     } // substitute
+
+    /*
+                    Matcher verbMatcher = verbPattern.matcher(testLine);
+                    if (verbMatcher.matches()) {
+                        String verb     = verbMatcher.group(1).toUpperCase();
+                        String rest     = verbMatcher.group(2).trim();
+    */
 
     /*----------------- test driver ----------------------*/
     /** Test method.

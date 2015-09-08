@@ -80,7 +80,7 @@ public class RelationSet
         polynomials = new ArrayList<Polynomial>(4);
         setNestingLevel (0);
         setParentIndex  (-1); // no parent - [0] is the first real queue element
-        setMapping  (new RefiningMap()); 
+        setMapping  (new RefiningMap());
         setMessage      ("undefined");
     } // Constructor()
 
@@ -234,14 +234,14 @@ public class RelationSet
     /** Gets the {@link RefiningMap}.
      *  Returns the remembered mapping, whereas {@link #getRefiningMap}
      *  computes a new mapping from the {@link RelationSet}
-     *  @return a map of variable names to the accumulated 
+     *  @return a map of variable names to the accumulated
      *  additive and multiplicative factors during the expansion
      */
     public RefiningMap getMapping() {
         return mapping;
     } // getMapping
     /** Sets the {@link RefiningMap}.
-     *  @param mapping map of variable names to the accumulated 
+     *  @param mapping map of variable names to the accumulated
      *  additive and multiplicative factors during the expansion
      */
     public void setMapping(RefiningMap mapping) {
@@ -287,7 +287,7 @@ public class RelationSet
      *  @return " + 17*a0^2*a1^1 + a2^2*a3^3 = 0; - 4*b4^1 = 0", for example
      */
     public String toString(boolean full) {
-    	return toString(full ? 1 : 0);
+        return toString(full ? 1 : 0);
     } // toString(boolean)
 
     /** Returns a string representation of the {@link Polynomial}s in <em>this</em> {@link RelationSet},
@@ -500,7 +500,7 @@ public class RelationSet
     public VariableMap getDependantMap() {
         return getDependantMap(true);
     } // getDependantMap()
-    
+
     /** Gets a map from dependant - child - variables to their- independant - parents.
      *  This implementation may be rather inefficient, but it is used only once per proof.
      *  @param upperSubst whether uppercase variables should be investigated
@@ -516,7 +516,7 @@ public class RelationSet
             namind.put(indnam[iname], new Integer(iname));
             iname ++;
         } // while iname
-        
+
         // now build a Matrix which tells whether two names are related in a sub-Polynomial
         Matrix related = new Matrix(nlen);
         int ipoly = 0;
@@ -602,22 +602,21 @@ public class RelationSet
     public boolean isEqualTo(RelationSet rset2) {
         boolean result = false;
         RelationSet rset1 = this;
-        int card1 = rset1.size();
+        int card1  = rset1.size();
         if (card1 != rset2.size()) {
             // result = false;
         } else if (card1 == 1) { // single Polynomial
             result = rset1.get(0).isEqualTo(rset2.get(0));
         } else if (card1 == 2) { // single Polynomial
-            result =   rset1.get(0).isEqualTo(rset2.get(1))
-                    || rset1.get(1).isEqualTo(rset2.get(0));
+            result =   (rset1.get(0).isEqualTo(rset2.get(0)) && rset1.get(1).isEqualTo(rset2.get(1)))
+                    || (rset1.get(0).isEqualTo(rset2.get(1)) && rset1.get(1).isEqualTo(rset2.get(0))) ;
         } else { // >= 3 Polynomials: try all permutations of tthe array elements
             Permutator permutator = new Permutator(card1);
-            permutator.next(); // ignore identical mapping
             while (! result && permutator.hasNext()) { // over all permutations of sub-Polynomials
                 int[] perms = permutator.next();
                 int iperm = 0;
                 boolean same = true; // assume that this combination matches
-                while (same && iperm < card1) { 
+                while (same && iperm < card1) {
                     same = rset1.get(iperm).isEqualTo(rset2.get(perms[iperm])); // break loop if no sub-match
                     iperm ++;
                 } // while same
@@ -705,6 +704,11 @@ evaluate: unknown
         int iarg = 0;
         RelationSet rset1 = new RelationSet();
         RelationSet rset2 = new RelationSet();
+        VariableMap vmap1 = new VariableMap();
+        Iterator<String> viter = null;
+        ExpressionReader ereader = new ExpressionReader();
+        String[] exprs = null;
+
         if (false) {
         } else if (args.length == 0) {
             rset1 = RelationSet.parse("a²+b^2=c^2, a<b, b<c");
@@ -726,22 +730,47 @@ evaluate: unknown
             String opt = args[iarg ++];
             if (false) {
 
-            } else if (opt.equals("-depend")   ) {
+            } else if (opt.startsWith("-depend")) {
                 rset1 = RelationSet.parse(args[iarg ++]);
                 System.out.println("(\"" + rset1.toString() + "\").getDependantMap() = "
                         + rset1.getDependantMap().toString());
 
-            } else if (opt.equals("-f")     ) {
+            } else if (opt.equals    ("-f")     ) {
                 String fileName = args[1];
                 rset1 = RelationSet.parse((new ExpressionReader()).read(fileName));
                 System.out.println(rset1.toString(true));
                 System.out.println("evaluate: " + rset1.evaluate(null));
 
-            } else if (opt.equals("-rest")  ) {
+            } else if (opt.equals    ("-equals")     ) {
+                rset1 = RelationSet.parse(args[iarg ++]);
+                rset2 = RelationSet.parse(args[iarg ++]);
+                System.out.println(rset1.toString());
+                System.out.println(rset2.toString());
+                System.out.println("equals="       + rset1.equals      (rset2) 
+                        +        ", isEqualTo="    + rset1.isEqualTo   (rset2) 
+                        +        ", isEquivalent=" + rset1.isEquivalent(rset2) 
+                        +        ", similiarity="  + rset1.similiarity (rset2) 
+                        );
+
+            } else if (opt.startsWith("-rest")  ) {
                 String factor = args[iarg ++];
                 rset1 = RelationSet.parse(args[iarg ++]);
                 System.out.println(rset1.toString());
                 System.out.println("rest: " + rset1.getRest(new BigInteger(factor)));
+
+            } else if (opt.startsWith("-subst") ) { // expr1, expr2, ... rset
+                exprs = ereader.getArguments(iarg, args);
+                rset1 = RelationSet.parse(exprs[exprs.length - 1]); // the last
+                vmap1 = rset1.getVariableMap();
+                viter = vmap1.keySet().iterator();
+                int iexpr = 0;
+                while (viter.hasNext()) {
+                    String vname = viter.next();
+                    vmap1.put(vname, exprs[iexpr]);
+                    iexpr ++;
+                } // while iexpr
+                System.out.println("(\"" + rset1.niceString() + "\")"
+                        + ".substitute(" + vmap1.toString() + ") = " + rset1.substitute(vmap1).niceString());
 
             } else {
                 System.err.println("??? invalid option: \"" + opt + "\"");

@@ -169,7 +169,7 @@ TEST T43 Fermat 2 squares mod 4 = 1
 CALL TreeSolver -b 2 -l 4 -e "x^2 + y^2 - 4*z - 1" -r invall
 
 TEST T44 Pyth-a2b2 
-CALL TreeSolver -l 2 -e "a^2 + b^2 + c^2 - b^2*c^2"
+CALL TreeSolver -l 2 -e "a^2 + b^2 + c^2 - b^2*c^2" -r showfail
 
 TEST T45 15 7 9 http://db.math.ust.hk/notes_download/elementary/number/ne_N3.pdf
 CALL TreeSolver -l 5 -b 2 -e "15*x^2 - 7*y^2 - 9" -r norm,showfail

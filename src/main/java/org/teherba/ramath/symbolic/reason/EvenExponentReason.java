@@ -39,9 +39,6 @@ import  java.util.TreeMap;
 public class EvenExponentReason extends BaseReason {
     public final static String CVSID = "@(#) $Id: EvenExponentReason.java 970 2012-10-25 16:49:32Z gfis $";
 
-    /** Debugging switch: 0 = no, 1 = moderate, 2 = more, 3 = extreme verbosity */
-    private static int debug = 0;
-
     /** No-args Constructor
      */
     public EvenExponentReason() {
@@ -61,7 +58,7 @@ public class EvenExponentReason extends BaseReason {
         super.initialize(solver);
         setWalkMode(WALK_SIBLINGS);
         expGCDs = this.getExponentGCDs(solver.getRootNode()); // remember them for check below
-        if (debug > 0) {
+        if (debug >= 2) {
             solver.getWriter().println("initialize.getExponentGCDs()=" + expGCDs.toString(","));
         }
     } // initialize
@@ -76,7 +73,7 @@ public class EvenExponentReason extends BaseReason {
         boolean result = false;
         boolean odd = true; // assume that all GCDs are odd
         int ivect = expGCDs.size() - 1;
-        if (debug > 0) {
+        if (debug >= 2) {
             solver.getWriter().println("isConsiderable, ivect=" + ivect);
         }
         while (odd && ivect >= 0) { // check whether there is at least one even element
@@ -85,7 +82,7 @@ public class EvenExponentReason extends BaseReason {
         } // while
         result = ! odd; // at least one even = not all odd
         solver.getWriter().println("ExponentGCDs=" + expGCDs.toString(","));
-        if (debug > 0) {
+        if (debug >= 2) {
             solver.getWriter().println("isConsiderable, ExponentGCDs()=" + expGCDs.toString(",") + ", result=" + result);
         }
         return result;
@@ -179,7 +176,7 @@ public class EvenExponentReason extends BaseReason {
                 if (expr1.equals(expr2)) { // same expressions
                     // ignore
                 } else { // expressions differ
-                    if (debug >= 1) {
+                    if (debug >= 2) {
                         System.out.println("expressions differ: " + expr1 + " != " + expr2);
                     }
                     if (expGCDs.get(ivar) % 2 == 0) { // only even exponents for this variable
@@ -228,7 +225,7 @@ expanding queue[3]^2,meter=[2,1,2]*8: x+3x^2+4x^3+2x^4+2y^4-z-2z^2
         String result = VariableMap.UNKNOWN;
         VariableMap vmap1 = rset1.getMapping();
         VariableMap vmap2 = rset2.getMapping();
-        if (debug >= 1) {
+        if (debug >= 2) {
             solver.getWriter().println(""
                     + "compare " + vmap2.toString() + " with\n" 
                     + "        " + vmap1.toString());

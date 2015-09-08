@@ -303,14 +303,22 @@ CALL Polynomial -solution "6*x^3 - 7*x^2 + 1" 1/2
 # Substitution
 
 TEST SU1 single variable
-CALL Polynomial -subst "2x+1" "2y+1" "6*x^3 - 7*y^2"
+CALL RelationSet -subst "2x+1" "2y+1" "6*x^3 - 7*y^2; x=y"
 
 TEST SU2 clash with replaced variable
-CALL Polynomial -subst "1+2*y" "1+2*z" "x - y"
+CALL RelationSet -subst "1+2*y" "1+2*z" "x - y"
 
 TEST SU3 clash with replaced variable^2
-CALL Polynomial -subst "1+2*y^2" "1+2*z^2" "x - y"
+CALL RelationSet -subst "1+2*y^2" "1+2*z^2" "x - y"
 
+TEST SU4 simple divisor
+CALL RelationSet -subst "x/2" "y/2" "4x^2 + 64y^6"
+
+TEST SU5 expression + divisor
+CALL RelationSet -subst "(x+1)/2" "(y-1)/8" "4x^2 + 64y^2"
+
+TEST SU6 "slipping into"
+CALL RelationSet -subst "a" "b" "c" "d" "w/2" "x/2" "y/2" "z/2" "a^2+b^2-c^2-d^2; -a+4w^2; -b+4x^2; -c+4y^2; -d+4z^2"
 #-------------------------------
 # RelationSet
 
@@ -322,6 +330,15 @@ CALL RelationSet "a+b>0, a-b>0, a>0"
 
 TEST RS3 with coefficients only
 CALL RelationSet "3;4;5"
+
+TEST RS4 equals 4 Polynomials
+CALL RelationSet -equals "x^2+y^2-z^2; a^2=x; b^2=y; c^2=z" "-x^2-y^2+z^2; a^2=x; b^2=y; c^2=z"
+
+TEST RS5 equals 2 Polynomials
+CALL RelationSet -equals "x^2+y^2-z^2; a^2=x;" "-x^2-y^2+z^2; a^2=x"
+
+TEST RS6 equals 1 Polynomial
+CALL RelationSet -equals "x^2+y^2-z^2" "-x^2-y^2+z^2"
 
 #-------------------------------
 TEST VM1 VariableMap
@@ -373,7 +390,10 @@ TEST TS7 TranspositionSet 4 Polynomials: no match
 CALL TranspositionSet "a^2 + b^2 = c^2; a=x^2; b=y^2" "a,b,c,x,y" "b,a,c,x,y"
 
 TEST TS8 TranspositionSet 5 Polynomials: 1
-CALL TranspositionSet "a^4 + b^4 = c^4 + d^4; a=w^2; b=x^2; c=y^2; d=z^2" "a,b,c,d,w,x,y,z" "a,b,d,c,w,x,z,y"
+CALL TranspositionSet \
+     "a^4 + b^4 = c^4 + d^4; a=w^2; b=x^2; c=y^2; d=z^2" \
+     "a,b,c,d,w,x,y,z"\ 
+     "a,b,d,c,w,x,z,y"
 
 #--------------------------------
 # Reasoning
@@ -381,25 +401,50 @@ CALL TranspositionSet "a^4 + b^4 = c^4 + d^4; a=w^2; b=x^2; c=y^2; d=z^2" "a,b,c
 PACKAGE=org.teherba.ramath.symbolic.reason
 
 TEST REB1 BaseReason: failure constant
-CALL BaseReason -base   "0" "0" "4a^2 - 4b + 1"
+CALL BaseReason -base -rset2 "4a^2 - 4b + 1"
 
 TEST REB2 BaseReason: biased
-CALL BaseReason -base   "0" "0" "4a^2 + 4b"
+CALL BaseReason -base -rset2 "4a^2 + 4b"
 
 TEST RES1 SameReason: same form
-CALL BaseReason -same   "2a^2 - 2b + 2" "2a^2 - 2b + 2" "4a^2 - 4b + 4"
+CALL BaseReason -same \
+	-rset0 "2a^2 - 2b + 2" \
+	-rset1 "2a^2 - 2b + 2" \
+	-rset2 "4a^2 - 4b + 4"
 
-# T05:
+TEST RES2 SameReason: same with map
+CALL BaseReason -same \
+	-rset0 "a^2+b^2-c^2-d^2; -a+w^2;  -b+ x^2; -c+ y^2; -d+ z^2" \
+	-rset1 "a^2+b^2-c^2-d^2; -a+w^2;  -b+ x^2; -c+ y^2; -d+ z^2" \
+	-rset2 "a^2+b^2-c^2-d^2; -a+4w^2; -b+4x^2; -c+4y^2; -d+4z^2"
+
+# from T05:
 # [1+2x,0+2y,1+2z]: unknown -> [2] 2x+6x^2+8x^3+4x^4+4y^4-z-z^2
 # [0+2x,1+2y,1+2z]: transposed [2] by [1,0,2]
 TEST RET1 TranspositionReason
-CALL BaseReason -transp "x^4+y^4-z^2" "2x+6x^2+8x^3+4x^4+4y^4-z-z^2" "4*x^4 + 2*y + 6*y^2 + 8*y^3 + 4*y^4 - z - z^2"
+CALL BaseReason -transp \
+	-rset0 "x^4+y^4-z^2" \
+	-rset1 "2x+6x^2+8x^3+4x^4+4y^4-z-z^2" \
+	-rset2 "4x^4+2y+6y^2+8y^3+4y^4-z-z^2"
 
 TEST REE1 EvenExponentReason T52
-CALL BaseReason -evenexp "a^4+b^4-c^4-d^4" "1+a+6a^2+16a^3+16a^4+8b+24b^2+32b^3+16b^4-c-6c^2-16c^3-16c^4-16d^4" "6 + 27*a + 54*a^2 + 48*a^3 + 16*a^4 + 8*b + 24*b^2 + 32*b^3 + 16*b^4 - c - 6*c^2 - 16*c^3 - 16*c^4 - 16*d^4" "[1+4a,2+4b,1+4c,0+4d]" "[3+4a,2+4b,1+4c,0+4d]"
+CALL BaseReason -evenexp \
+	-rset0 "a^4+b^4-c^4-d^4" \
+	-rset1 "1+  a+ 6a^2+16a^3+16a^4+8b+24b^2+32b^3+16b^4-c-6c^2-16c^3-16c^4-16d^4" \
+	-rset2 "6+27a+54a^2+48a^3+16a^4+8b+24b^2+32b^3+16b^4-c-6c^2-16c^3-16c^4-16d^4" \
+	-rmap1 "[1+4a,2+4b,1+4c,0+4d]"\
+	-rmap2 "[3+4a,2+4b,1+4c,0+4d]"
 
 TEST REE2 EvenExponentReason T05
-CALL BaseReason -evenexp "x^4+y^4-z^2" "x + 6*x^2 + 16*x^3 + 16*x^4 + y^4 - z - 4*z^2" "5 + 27*x + 54*x^2 + 48*x^3 + 16*x^4 + y^4 - z - 4*z^2" "[1+4x,0+2y,1+8z]" "[3+4x,0+2y,1+8z]" 
+CALL BaseReason -evenexp \
+	-rset0 "x^4+y^4-z^2" \
+	-rset1 "    x+ 6x^2+16x^3+16x^4+y^4-z-4z^2" \
+	-rset2 "5+27x+54x^2+48x^3+16x^4+y^4-z-4z^2" \
+	-rmap1 "[1+4x,0+2y,1+8z]" \
+	-rmap2 "[3+4x,0+2y,1+8z]" 
 
 TEST REI1 SimiliarReason: is mappable by: {a=>1+2*a,b=>2+3*b,c=>c,d=>d}
-CALL BaseReason -similiar "a^3+b^3+c^3-d^3" "1*(9 + 6*a + 12*a^2 + 8*a^3 + 36*b + 54*b^2 + 27*b^3 + c^3 - d^3)" "a^3+b^3+c^3-d^3"
+CALL BaseReason -similiar \
+	-rset0 "a^3+b^3+c^3-d^3" \
+	-rset1 "9+6a+12a^2+8a^3+36b+54b^2+27b^3+c^3-d^3" \
+	-rset2 "            a^3+            b^3+c^3-d^3"

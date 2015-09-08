@@ -2414,20 +2414,6 @@ solution [0,0,0,0],trivial(3)
                     System.out.println("S(" + poly1.toString() + ", " + poly2.toString() + ") = "
                             + poly1.s_Polynomial(poly2).toString());
 
-                } else if (opt.startsWith("-subst")) { // expr1, expr2, ... poly
-                    exprs = ereader.getArguments(iarg, args);
-                    poly1 = (new PolynomialParser()).parseFrom(exprs[exprs.length - 1]); // the last
-                    vmap1 = poly1.getVariableMap();
-                    viter = vmap1.keySet().iterator();
-                    ipoly = 0;
-                    while (viter.hasNext()) {
-                        String vname = viter.next();
-                        vmap1.put(vname, exprs[ipoly]);
-                        ipoly ++;
-                    } // while ipoly
-                    System.out.println("(\"" + poly1.toString(true) + "\")"
-                            + ".substitute(" + vmap1.toString() + ") = " + poly1.substitute(vmap1).toString(true));
-                    
                 } else if (opt.startsWith("-var")) { // getVariablePowers and groupBy
                     String varName = args[iarg ++];
                     String[] vars = varName.split("\\W"); // non-word characters

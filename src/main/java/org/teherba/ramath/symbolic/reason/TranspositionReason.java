@@ -35,9 +35,6 @@ import  org.teherba.ramath.linear.Vector;
 public class TranspositionReason extends BaseReason {
     public final static String CVSID = "@(#) $Id: TranspositionReason.java 970 2012-10-25 16:49:32Z gfis $";
 
-    /** Debugging switch: 0 = no, 1 = moderate, 2 = more, 3 = extreme verbosity */
-    private int debug = 0;
-
     /** Stores the possible transpositions */
     private TranspositionSet transet = null;
 
@@ -94,7 +91,7 @@ public class TranspositionReason extends BaseReason {
         RefiningMap rmap1 = rset1.getMapping();
         String[] exprs1   = rmap1.getRefinedArray();
         Vector testResult = transet.testPermutation(exprs1, exprs2);
-        if (debug >= 1) {
+        if (debug >= 2) {
             solver.getWriter().println(""
                     + "check " + rmap1.toVector() + " against [" + iqueue + "]"
                     + "="      + rmap2.toVector() 
