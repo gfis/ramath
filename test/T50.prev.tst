@@ -22,4 +22,4 @@ expanding queue[3]^2,meter=[2,2]*16: -13+75x+60x^2-7y-28y^2
 expanding queue[4]^2,meter=[2,2]*16: -46+15x+60x^2-35y-28y^2
 [1+16x,5+16y]:	unknown -> [7] -23+15x+120x^2-35y-56y^2
 [9+16x,13+16y]:	unknown -> [8] -17+135x+120x^2-91y-56y^2
-Maximum level 3 reached at [9]: -576+15x^2-7y^2
+Maximum level 3 at [9]: -576+15x^2-7y^2

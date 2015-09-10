@@ -70,12 +70,15 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         this();
         this.setSolver(solver);
         // the standard reasons
+    /* now defined in BaseSolver
         this.addReason("base"       );
         this.addReason("transpose"  );
+        this.addReason("primitive"  );
         this.addReason("same"       );
         this.addReason("similiar"   );
         this.addReason("evenexp"    );
-        String[] reasonCodes = codeList.split("\\W"); // non-word characters, e.g. ","
+    */
+        String[] reasonCodes = codeList.substring(1).split("\\W"); // leading ","; non-word characters, e.g. ","
         int icode = 0;
         while (icode < reasonCodes.length) {
             this.addReason(reasonCodes[icode]); // a reason or a feature
@@ -141,6 +144,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         } else if (code.startsWith("base"       )) { result = addReasonClass(code, "BaseReason"          );
     //  } else if (code.startsWith("down"       )) { result = addReasonClass(code, "DownsizedMapReason"  );
         } else if (code.startsWith("evenexp"    )) { result = addReasonClass(code, "EvenExponentReason"  );
+        } else if (code.startsWith("primitive"  )) { result = addReasonClass(code, "PrimitiveReason"     );
         } else if (code.startsWith("same"       )) { result = addReasonClass(code, "SameReason"          );
         } else if (code.startsWith("simil"      )) { result = addReasonClass(code, "SimiliarReason"      );
         } else if (code.startsWith("transp"     )) { result = addReasonClass(code, "TranspositionReason" );
@@ -218,18 +222,58 @@ public class ReasonFactory extends ArrayList<BaseReason> {
     // Check all specified reasons
     //----------------------------
 
+    /** Checks all previous nodes of a {@link RelationSet}
+     *  @param reason the reason to be investigated
+     *  @param rset2 the new {@link RelationSet} to be added to the queue
+     *  @return a message String 
+     */
+    private String considerAll(BaseReason reason, RelationSet rset2) {
+        String result = VariableMap.UNKNOWN;
+        int iqueue = solver.size() - 1; // last element
+        boolean busy = true;
+        while (busy && iqueue >= 0) { // down through all nodes in the queue
+            RelationSet rset1 = solver.get(iqueue);
+            result = reason.consider(iqueue, rset1, rset2);
+            if (! result.startsWith(VariableMap.UNKNOWN)) { // reason successful
+                busy = false; // break loop
+            } // reason successful
+            iqueue --;
+        } // while iqueue
+        return result;
+    } // considerAll
+
+    /** Checks all anchestors of a {@link RelationSet}
+     *  @param reason the reason to be investigated
+     *  @param rset2 the new {@link RelationSet} to be added to the queue
+     *  @return a message String 
+     */
+    private String considerAnchestors(BaseReason reason, RelationSet rset2) {
+        String result = VariableMap.UNKNOWN;
+        int iqueue = rset2.getParentIndex();
+        boolean busy = true;
+        while (busy && iqueue >= 0) { // down through all parents
+            RelationSet rset1 = solver.get(iqueue);
+            result = reason.consider(iqueue, rset1, rset2);
+            if (! result.startsWith(VariableMap.UNKNOWN)) { // reason successful
+                busy = false; // break loop
+            } // reason successful
+            iqueue = rset1.getParentIndex();
+        } // while iqueue
+        return result;
+    } // considerAnchestors
+
     /** Checks all siblings of a {@link RelationSet}
      *  @param reason the reason to be investigated
      *  @param rset2 the new {@link RelationSet} to be added to the queue
      *  @return a message String 
      */
-    private String checkSiblings(BaseReason reason, RelationSet rset2) {
+    private String considerSiblings(BaseReason reason, RelationSet rset2) {
         String result = VariableMap.UNKNOWN;
         int level2 = rset2.getNestingLevel();
         int iqueue = solver.size() - 1; // last element
         RelationSet rset1 = solver.get(iqueue);
         while (iqueue > 0 && rset1.getNestingLevel() == level2) { // down in the same level
-            result = reason.compare(iqueue, rset1, rset2);
+            result = reason.consider(iqueue, rset1, rset2);
             if (! result.startsWith(VariableMap.UNKNOWN)) { // reason successful
                 iqueue = 1; // break loop
             } // reason successful
@@ -237,43 +281,27 @@ public class ReasonFactory extends ArrayList<BaseReason> {
             rset1 = solver.get(iqueue);
         } // while iqueue
         return result;
-    } // checkSiblings
+    } // considerSiblings
 
-    /** Checks all anchestors of a {@link RelationSet}
-     *  @param reason the reason to be investigated
-     *  @param rset2 the new {@link RelationSet} to be added to the queue
-     *  @return a message String 
-     */
-    private String checkAnchestors(BaseReason reason, RelationSet rset2) {
-        String result = VariableMap.UNKNOWN;
-        int level2 = rset2.getNestingLevel();
-        int iqueue = rset2.getParentIndex();
-        while (iqueue >= 0) { // down thru all parents
-            RelationSet rset1 = solver.get(iqueue);
-            result = reason.compare(iqueue, rset1, rset2);
-            if (! result.startsWith(VariableMap.UNKNOWN)) { // reason successful
-                iqueue = 0; // break loop
-            } // reason successful
-            iqueue = rset1.getParentIndex();
-        } // while iqueue
-        return result;
-    } // checkAnchestors
-
-    /** Checks a {@link RelationSet}
-     *  with all stored reasons and determines whether it
+    /** Considers all {@link BaseReason#isConsiderable considerable} 
+     *  {@link BaseReason reasons} for {@link RelationSet}, possibly in relation
+     *  to some other RelationSets already queued, 
+     *  and determines whether it
      *  <ul>
      *  <li>can be decided (and be cut from the expansion tree) or</li>
      *  <li>must be further expanded (and therefore will be appended to the queue).</li>
      *  </ul>
-     *  @param rset2 the new {@link RelationSet} to be added to the queue
+     *  @param rset2 the new {@link RelationSet} to be considered and maybe added to the queue
      *  @return a message string starting with one of
      *  <ul>
      *  <li>{@link VariableMap#FAILURE} - the RelationSet is not possible</li>
-     *  <li>{@link VariableMap#SUCCESS} - there is a solution, but the RelationSet must further be expanded</li>
      *  <li>{@link VariableMap#UNKNOWN} - the RelationSet cannot be decided and must be further expanded</li>
+     *  <li>some other string different from the above, 
+     *      denoting the {@link BaseReason reason} why the node was decided
+     *  </li>
      *  </ul>
      */
-    private String checkAll(RelationSet rset2) {
+    private String considerNode(RelationSet rset2) {
         String result = "";
         int ireas = 0;
         boolean busy = true;
@@ -284,20 +312,23 @@ public class ReasonFactory extends ArrayList<BaseReason> {
             }
             String message = VariableMap.UNKNOWN;
             switch (reason.getWalkMode()) {
-                case BaseReason.WALK_NONE:
-                    message = reason.compare(0, rset2 /* unused */, rset2);
-                    break;
-                case BaseReason.WALK_ROOT:
-                    message = reason.compare(0, solver.getRootNode(), rset2);
-                    break;
-                case BaseReason.WALK_SIBLINGS:
-                    message = checkSiblings  (reason, rset2);
+                case BaseReason.WALK_ALL:
+                    message = considerAll       (reason, rset2);
                     break;
                 case BaseReason.WALK_ANCHESTORS:
-                    message = checkAnchestors(reason, rset2);
+                    message = considerAnchestors(reason, rset2);
+                    break;
+                case BaseReason.WALK_NONE:
+                    message = reason.consider(0, rset2 /* unused */, rset2);
                     break;
                 case BaseReason.WALK_PARENT:
-                    message = reason.compare(0, solver.get(rset2.getParentIndex()), rset2);
+                    message = reason.consider(0, solver.get(rset2.getParentIndex()), rset2);
+                    break;
+                case BaseReason.WALK_ROOT:
+                    message = reason.consider(0, solver.getRootNode(), rset2);
+                    break;
+                case BaseReason.WALK_SIBLINGS:
+                    message = considerSiblings  (reason, rset2);
                     break;
                 default:
                     solver.getWriter().println("??? assertion: invalid walkMode=" + reason.getWalkMode());
@@ -331,7 +362,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
             ireas ++;
         } // while ireas
         return result;
-    } // checkAll
+    } // considerNode
 
     /** Checks a {@link RelationSet}
      *  with all stored reasons and prints the decision
@@ -341,21 +372,29 @@ public class ReasonFactory extends ArrayList<BaseReason> {
      */
     public boolean evaluateReasons(RelationSet rset2, RefiningMap rmap2) {
         boolean queueAgain = false;
-        String decision = this.checkAll(rset2);
+        String decision = this.considerNode(rset2);
         if (false) {
         } else if (decision.startsWith(VariableMap.UNKNOWN)) {
             solver.printDecision(decision, rset2, rmap2);
+            solver.printSolutions(rset2, rmap2);
             queueAgain = true;
-        } else if (decision.startsWith(VariableMap.SUCCESS)) { 
+        } else if (decision.startsWith(VariableMap.SUCCESS)) { // will it ever occur?
             solver.printDecision(decision, rset2, rmap2);
+            solver.printSolutions(rset2, rmap2);
             queueAgain = true;
         } else if (decision.startsWith(VariableMap.FAILURE)) { 
             if (showFail) {
                 solver.printDecision(decision, rset2, rmap2);
             }
-        } else { // or SAME, transpose, similiar ...
+        } else { // detailed cut-off: SAME, transpose, negative, non-primitive, similiar ...
             solver.printDecision(decision, rset2, rmap2);
-        } // unknown
+            if (false) {
+            } else if (decision.startsWith("transp")) { 
+            	// original solution is already printed
+            } else {
+	            solver.printSolutions(rset2, rmap2);
+	        }
+        } // detailed cut-off
         return queueAgain;
     } // evaluateReasons
 

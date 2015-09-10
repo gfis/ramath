@@ -1,5 +1,6 @@
 /*  RaMathServlet.java - Rational and Symbolic Mathematics
  *  @(#) $Id: RaMathServlet.java 199 2009-07-13 20:16:23Z gfis $
+ *  2015-09-10: no "(...)" around substitution values
  *  2013-09-21: RefiningMap
  *  2015-07-17: opt=norm; Polynomial -> RelationSet
  *  2015-06-15: Polynomial.parse was not static
@@ -106,14 +107,14 @@ public class RaMathServlet extends HttpServlet {
      */
     public void generateResponse(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
-        	RelationSet rset = null;
-        	RefiningMap rmap = null;
-        	int index = 0;
-        	boolean found = false;
+            RelationSet rset = null;
+            RefiningMap rmap = null;
+            int index = 0;
+            boolean found = false;
             HttpSession session = request.getSession();
-            String view     = getInputField(request, "view"	, "");
-            String area     = getInputField(request, "area"	, "rset");
-            String opt      = getInputField(request, "opt"	, "norm");
+            String view     = getInputField(request, "view" , "");
+            String area     = getInputField(request, "area" , "rset");
+            String opt      = getInputField(request, "opt"  , "norm");
             String form1    = getInputField(request, "form1", "(a-b)^3");
             String form2    = getInputField(request, "form2", "");
             session.setAttribute("view"  , view);
@@ -137,11 +138,13 @@ public class RaMathServlet extends HttpServlet {
                         if (key == null || value == null) {
                             found = false;
                         } else {
+                        /* because of "/"
                             if (! value.startsWith("(") || ! value.endsWith(")")) {
                                 value = "(" + value + ")";
                             }
+                        */
                             if (rmap.get(key) != null) { // only those which occur in form1
-                            	rmap.put(key, value);
+                                rmap.put(key, value);
                             }
                         }
                         index ++;
@@ -149,7 +152,7 @@ public class RaMathServlet extends HttpServlet {
                     session.setAttribute("varmap", rmap);
                     rset = rset.substitute(rmap);
                     if (opt.indexOf("norm") >= 0) {
-                    	rset.deflateIt();
+                        rset.deflateIt();
                     }
                     form2 = rset.niceString();
                     session.setAttribute("form2", form2);
@@ -172,11 +175,13 @@ public class RaMathServlet extends HttpServlet {
                         if (key == null || value == null) {
                             found = false;
                         } else {
+                        /* because of "/"
                             if (! value.startsWith("(") || ! value.endsWith(")")) {
                                 value = "(" + value + ")";
                             }
+                        */
                             if (rmap.get(key) != null) { // only those which occur in form1
-                            	rmap.put(key, value);
+                                rmap.put(key, value);
                             }
                         }
                         index ++;
@@ -184,7 +189,7 @@ public class RaMathServlet extends HttpServlet {
                     session.setAttribute("varmap", rmap);
                     rset = rset.substitute(rmap);
                     if (opt.indexOf("norm") >= 0) {
-                    	rset.deflateIt();
+                        rset.deflateIt();
                     }
                     form1 = rset.niceString();
                     session.setAttribute("form1", form1);

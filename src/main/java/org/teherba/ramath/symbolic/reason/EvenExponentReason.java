@@ -202,7 +202,7 @@ public class EvenExponentReason extends BaseReason {
         return result.toString();
     } // testNegative_1
 
-    /** Compares the source {@link RelationSet} <em>rset2</em> to be queued with 
+    /** Consider the source {@link RelationSet} <em>rset2</em> to be queued together with 
      *  another {@link RelationSet} <em>rset1</em> already queued.
      *  If the test is successful, a message is printed and returned,
      *  and <em>rset2</em> is not stored in the following; 
@@ -221,13 +221,13 @@ expanding queue[3]^2,meter=[2,1,2]*8: x+3x^2+4x^3+2x^4+2y^4-z-2z^2
      *  @return a message String denoting the reasoning details,
      *  or {@link VariableMap#UNKNOWN} if the comparision is not conclusive.
      */
-    public String compare(int iqueue, RelationSet rset1, RelationSet rset2) {
+    public String consider(int iqueue, RelationSet rset1, RelationSet rset2) {
         String result = VariableMap.UNKNOWN;
         VariableMap vmap1 = rset1.getMapping();
         VariableMap vmap2 = rset2.getMapping();
         if (debug >= 2) {
             solver.getWriter().println(""
-                    + "compare " + vmap2.toString() + " with\n" 
+                    + "consider " + vmap2.toString() + " with\n" 
                     + "        " + vmap1.toString());
         }
         String message = testNegative_1(vmap1, vmap2, expGCDs);
@@ -235,6 +235,6 @@ expanding queue[3]^2,meter=[2,1,2]*8: x+3x^2+4x^3+2x^4+2y^4-z-2z^2
             result = "negative-1 [" + iqueue + "] by {" + message + "}";
         } // negative-1 found
         return result;
-    } // compare
+    } // consider
 
 } // EvenExponentReason

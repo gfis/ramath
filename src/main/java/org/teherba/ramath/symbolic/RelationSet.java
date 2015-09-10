@@ -184,6 +184,21 @@ public class RelationSet
         polynomials.add(index, poly);
     } // insert
     //----------------
+    /** Index of this node in the queue */
+    private int index;
+    /** Gets the index
+     *  @return index of the node
+     */
+    public int getIndex() {
+        return this.index;
+    } // getIndex
+    /** Sets the index.
+     *  @param index index of the node
+     */
+    public void setIndex(int index) {
+        this.index = index;
+    } // setIndex
+    //----------------
     /** Message text from the last evaluation */
     private String message;
     /** Gets the message text from the last evaluation
@@ -353,6 +368,34 @@ public class RelationSet
         return this.toList(false);
     } // toList()
 
+    //----------------
+    /** Determines the degree, that is the sum of exponents in all {@link Monomial}s
+     *  if it is the same in all Monomials
+     *  @param upperSubst whether the exponents of uppercase variables should be counted
+     *  @return degree >= 0, or -1 if the {@link Polynomial}s have Monomials with different degrees
+     */
+    public int degree(boolean upperSubst) {
+        int result = -1;
+        int ipoly = this.polynomials.size() - 1;
+        if (ipoly >= 0) {
+            result = this.get(ipoly --).degree(upperSubst); // the first
+        }
+        while (ipoly >= 0) {
+            int degree1 = this.get(ipoly).degree(upperSubst);
+            if (result != degree1) { // != the first
+                result = -1;
+            }
+            ipoly --;
+        } // while ipoly
+        return result;
+    } // degree(boolean)
+
+    /*  Inherited:
+    public int degree() {
+    public boolean isHomogeneous(boolean upperSubst) {
+    public boolean isHomogeneous() {
+    */
+    
     //----------------
     /** Deflates all member {@link Polynomial}s in place
      *  @return <em>this</em> deflated RelationSet

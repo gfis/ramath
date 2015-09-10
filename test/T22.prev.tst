@@ -1,10 +1,11 @@
 TranspositionSet={[1,0,2]}
+isHomogeneous
 ExponentGCDs=[3,3,3]
-Expanding for base=2, reasons+features=base,transpose,same,similiar norm,igtriv
+Expanding for base=2, reasons+features=base,transpose,primitive,same,similiar norm,igtriv
 Refined variables=a,b,c
 ----------------
 expanding queue[0]^-1,meter=[2,2,2]*2: a^3+b^3-c^3
-[0+2a,0+2b,0+2c]:	same form as a^3+b^3-c^3
+[0+2a,0+2b,0+2c]:	non-primitive
 [1+2a,1+2b,0+2c]:	unknown -> [1] 1+3a+6a^2+4a^3+3b+6b^2+4b^3-4c^3
 [1+2a,0+2b,1+2c]:	unknown -> [2] 3a+6a^2+4a^3+4b^3-3c-6c^2-4c^3
 [0+2a,1+2b,1+2c]:	transposed [2] by [1,0,2]
@@ -153,4 +154,4 @@ expanding queue[35]^11,meter=[2,2,2]*32: -189+147a+336a^2+256a^3+3b+6b^2+4b^3-67
 [7+32a,6+8b,15+32c]:	unknown -> [105] -88+147a+672a^2+1024a^3+27b+36b^2+16b^3-675c-1440c^2-1024c^3
 [7+32a,2+8b,31+32c]:	unknown -> [106] -920+147a+672a^2+1024a^3+3b+12b^2+16b^3-2883c-2976c^2-1024c^3
 [23+32a,6+8b,31+32c]:	unknown -> [107] -544+1587a+2208a^2+1024a^3+27b+36b^2+16b^3-2883c-2976c^2-1024c^3
-Maximum level 4 reached at [108]: a^3+b^3-c^3
+Maximum level 4 at [108]: a^3+b^3-c^3

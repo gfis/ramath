@@ -1,10 +1,11 @@
+isHomogeneous
 ExponentGCDs=[3,3,3]
-Expanding for base=2, reasons+features=base,same,similiar norm
+Expanding for base=2, reasons+features=base,primitive,same,similiar norm
 Refined variables=a,b,c
 ----------------
 expanding queue[0]^-1,meter=[2,2,2]*2: a^3+3b^3-9c^3
-solution [0,0,0],trivial(3)
-[0+2a,0+2b,0+2c]:	same form as a^3+3b^3-9c^3
+[0+2a,0+2b,0+2c]:	non-primitive
+-> solution [0,0,0],trivial(3)
 [1+2a,1+2b,0+2c]:	unknown -> [1] 2+3a+6a^2+4a^3+9b+18b^2+12b^3-36c^3
 [1+2a,0+2b,1+2c]:	unknown -> [2] -4+3a+6a^2+4a^3+12b^3-27c-54c^2-36c^3
 [0+2a,1+2b,1+2c]:	unknown -> [3] -3+4a^3+9b+18b^2+12b^3-27c-54c^2-36c^3
@@ -98,4 +99,4 @@ expanding queue[21]^9,meter=[2,2,2]*16: -339+a^3+225b+360b^2+192b^3-1323c-1512c^
 [0+4a,13+16b,7+16c]:	unknown -> [67] 219+4a^3+1521b+1872b^2+768b^3-1323c-3024c^2-2304c^3
 [0+4a,5+16b,15+16c]:	unknown -> [68] -1875+4a^3+225b+720b^2+768b^3-6075c-6480c^2-2304c^3
 [2+4a,13+16b,15+16c]:	unknown -> [69] -1486+3a+6a^2+4a^3+1521b+1872b^2+768b^3-6075c-6480c^2-2304c^3
-Maximum level 3 reached at [70]: a^3+3b^3-9c^3
+Maximum level 3 at [70]: a^3+3b^3-9c^3

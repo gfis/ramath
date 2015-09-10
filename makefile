@@ -41,11 +41,13 @@ lrass:
 	grep assert test/LR*.this.tst
 t:
 	make solver TEST=T%
+# test/T27.prev.tst:Maximum level 5 reached at [64]: 2+2x+x^2-3
+# 123456789012345678
 proofs:
-	grep -i proof test/T*.prev.tst | cut -b 6-8,18-     > test/proof.prev.tst
-	grep -i proof test/T*.this.tst | cut -b 6-8,18- | tee test/proof.this.tst
+	grep -iE "proof" test/T*.prev.tst | cut -b 6-8,18- > test/proof.prev.tst
+	grep -iE "proof" test/T*.this.tst | cut -b 6-8,18- > test/proof.this.tst
 	wc -l test/proof.*
-	diff test/proof.prev.tst test/proof.this.tst
+	diff -y test/proof.prev.tst test/proof.this.tst
 diffy:
 	diff -y test/$(TEST).prev.tst test/$(TEST).this.tst
 rmbak:
@@ -53,6 +55,11 @@ rmbak:
 ret:
 	rm test/T*.tst
 	make solver
+gitadd:
+	git add -v src/main/java/org/teherba/ramath/symbolic/reason/*.java
+gsame:
+	grep "same " test/T*.this.tst
+	
 # 1234567890123456789
 # test/T47.this.tst:Proof - queue exhausted, queue size = 2
 # 2015-07-23: 10 proofs

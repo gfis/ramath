@@ -448,3 +448,10 @@ CALL BaseReason -similiar \
 	-rset0 "a^3+b^3+c^3-d^3" \
 	-rset1 "9+6a+12a^2+8a^3+36b+54b^2+27b^3+c^3-d^3" \
 	-rset2 "            a^3+            b^3+c^3-d^3"
+
+TEST REP1 PrimitiveReason: true
+CALL BaseReason -primitive \
+	-rset0 "a^3+b^3+c^3-d^3" \
+	-rset1 "a^3+b^3+c^3-d^3" \
+	-rset2 "a^3+b^3+c^3-d^3" \
+	-rmap2 "[0+2a,0+2b,0+2c,0+2d]"

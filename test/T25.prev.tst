@@ -10,23 +10,25 @@ expanding queue[1]^0,meter=[1,2]*4: 1+2x+2x^2-3y-6y^2-4y^3
 ----------------
 expanding queue[2]^1,meter=[2,2]*8: -6+x+x^2-27y-36y^2-16y^3
 [1+4x,3+8y]:	unknown -> [3] -3+x+2x^2-27y-72y^2-64y^3
+-> solution [5,3],NONTRIVIAL
 [3+4x,3+8y]:	negative-1 [3] by {x=>-x-1}
 ----------------
 expanding queue[3]^2,meter=[2,2]*16: -3+x+2x^2-27y-72y^2-64y^3
 [5+8x,3+16y]:	unknown -> [4] 5x+4x^2-27y-144y^2-256y^3
+-> solution [5,3],NONTRIVIAL
 [1+8x,11+16y]:	unknown -> [5] -83+x+4x^2-363y-528y^2-256y^3
 ----------------
 expanding queue[4]^3,meter=[2,2]*32: 5x+4x^2-27y-144y^2-256y^3
-solution [5,3],NONTRIVIAL
 [5+16x,3+32y]:	unknown -> [6] 5x+8x^2-27y-288y^2-1024y^3
+-> solution [5,3],NONTRIVIAL
 [13+16x,19+32y]:	unknown -> [7] -209+13x+8x^2-1083y-1824y^2-1024y^3
 expanding queue[5]^3,meter=[2,2]*32: -83+x+4x^2-363y-528y^2-256y^3
 [9+16x,11+32y]:	unknown -> [8] -39+9x+8x^2-363y-1056y^2-1024y^3
 [1+16x,27+32y]:	unknown -> [9] -615+x+8x^2-2187y-2592y^2-1024y^3
 ----------------
 expanding queue[6]^4,meter=[2,2]*64: 5x+8x^2-27y-288y^2-1024y^3
-solution [5,3],NONTRIVIAL
 [5+32x,3+64y]:	unknown -> [10] 5x+16x^2-27y-576y^2-4096y^3
+-> solution [5,3],NONTRIVIAL
 [21+32x,35+64y]:	unknown -> [11] -663+21x+16x^2-3675y-6720y^2-4096y^3
 expanding queue[7]^4,meter=[2,2]*64: -209+13x+8x^2-1083y-1824y^2-1024y^3
 [29+32x,19+64y]:	unknown -> [12] -94+29x+16x^2-1083y-3648y^2-4096y^3
@@ -39,8 +41,8 @@ expanding queue[9]^5,meter=[2,2]*64: -615+x+8x^2-2187y-2592y^2-1024y^3
 [1+32x,59+64y]:	unknown -> [17] -3209+x+16x^2-10443y-11328y^2-4096y^3
 ----------------
 expanding queue[10]^6,meter=[2,2]*128: 5x+16x^2-27y-576y^2-4096y^3
-solution [5,3],NONTRIVIAL
 [5+64x,3+128y]:	unknown -> [18] 5x+32x^2-27y-1152y^2-16384y^3
+-> solution [5,3],NONTRIVIAL
 [37+64x,67+128y]:	unknown -> [19] -2339+37x+32x^2-13467y-25728y^2-16384y^3
 expanding queue[11]^6,meter=[2,2]*128: -663+21x+16x^2-3675y-6720y^2-4096y^3
 [53+64x,35+128y]:	unknown -> [20] -313+53x+32x^2-3675y-13440y^2-16384y^3
@@ -65,8 +67,8 @@ expanding queue[17]^9,meter=[2,2]*128: -3209+x+16x^2-10443y-11328y^2-4096y^3
 [1+64x,123+128y]:	unknown -> [33] -14538+x+32x^2-45387y-47232y^2-16384y^3
 ----------------
 expanding queue[18]^10,meter=[2,2]*256: 5x+32x^2-27y-1152y^2-16384y^3
-solution [5,3],NONTRIVIAL
 [5+128x,3+256y]:	unknown -> [34] 5x+64x^2-27y-2304y^2-65536y^3
+-> solution [5,3],NONTRIVIAL
 [69+128x,131+256y]:	unknown -> [35] -8763+69x+64x^2-51483y-100608y^2-65536y^3
 expanding queue[19]^10,meter=[2,2]*256: -2339+37x+32x^2-13467y-25728y^2-16384y^3
 [101+128x,67+256y]:	unknown -> [36] -1135+101x+64x^2-13467y-51456y^2-65536y^3
@@ -113,4 +115,4 @@ expanding queue[32]^17,meter=[2,2]*256: -1596+33x+32x^2-10443y-22656y^2-16384y^3
 expanding queue[33]^17,meter=[2,2]*256: -14538+x+32x^2-45387y-47232y^2-16384y^3
 [1+128x,123+256y]:	unknown -> [64] -7269+x+64x^2-45387y-94464y^2-65536y^3
 [65+128x,251+256y]:	unknown -> [65] -61754+65x+64x^2-189003y-192768y^2-65536y^3
-Maximum level 7 reached at [66]: 2+x^2-y^3
+Maximum level 7 at [66]: 2+x^2-y^3

@@ -141,23 +141,25 @@ public class BaseReason {
         this.solver = solver;
     } // setSolver  
     //----------------
-    /** How to walk through the expansion tree when comparing 
-     *  the source node <em>rset2</em> against the target node <em>rset1</em>.
-     *  The comparision decides whether the source node <em>rset2</em> 
-     *  must further be investigated, and therefore must be queued.
+    /** How to walk through the expansion tree when considering
+     *  the source node <em>rset2</em> and the target node <em>rset1</em>.
+     *  Consideration decides whether the source node <em>rset2</em> 
+     *  must further be expanded, and therefore must be queued.
      *  The target node <em>rset1</em> is one of the nodes previously queued.
      */
     private int walkMode;
-    /** check a single source node only (default) */
-    public static final int WALK_NONE        = 0;
-    /** check all nodes which have the same parent as the source node */
-    public static final int WALK_SIBLINGS    = 1;
-    /** check the parent of the source node only */
-    public static final int WALK_PARENT      = 2;
-    /** check the parent of the source node, and grandparent, grandgrandparent etc. */
-    public static final int WALK_ANCHESTORS  = 3;
-    /** check the root node only */
-    public static final int WALK_ROOT        = 4;
+    /** Consider all previous nodes */
+    public static final int WALK_ALL         = 0;
+    /** Consider the parent of the source node, and grandparent, grandgrandparent etc. */
+    public static final int WALK_ANCHESTORS  = 1;
+    /** Consider a single source node only (default) */
+    public static final int WALK_NONE        = 2;
+    /** Consider all nodes which have the same parent as the source node */
+    public static final int WALK_SIBLINGS    = 3;
+    /** Consider the parent of the source node only */
+    public static final int WALK_PARENT      = 4;
+    /** Consider the root node only */
+    public static final int WALK_ROOT        = 5;
 
     /** Gets the mode of tree walking
      *  @return one of the codes WALK_*
@@ -173,10 +175,10 @@ public class BaseReason {
     } // setWalkMode
 
     //---------------------------
-    // Check the specific reason
+    // Consider the specific reason
     //---------------------------
 
-    /** Compares the source {@link RelationSet} <em>rset2</em> to be queued with 
+    /** Consider the source {@link RelationSet} <em>rset2</em> to be queued together with 
      *  another {@link RelationSet} <em>rset1</em> already queued.
      *  If the test is successful, a message is printed and returned,
      *  and <em>rset2</em> is not stored in the following; 
@@ -187,16 +189,16 @@ public class BaseReason {
      *  @return a message String denoting the reasoning details,
      *  or {@link VariableMap#UNKNOWN} if the comparision is not conclusive.
      */
-    public String compare(int iqueue, RelationSet rset1, RelationSet rset2) {
+    public String consider(int iqueue, RelationSet rset1, RelationSet rset2) {
         String result = rset2.evaluate(rset2.getMapping());
         return result;
-    } // compare
+    } // consider
 
     /*---- General Test Driver for all reasons --------------------*/
 
     /** Test method, reads a root node, a target <em>rset1</em> 
      *  and a source {@link RelationSet} <em>rset2</em>,
-     *  {@link #compares} the latter with the <em>compare</em> method 
+     *  {@link #compares} the latter with the <em>consider</em> method 
      *  of the specified, derived {@link BaseReason reason} and prints the result
      *  @param args command line arguments:
      *  <pre>
@@ -247,10 +249,10 @@ public class BaseReason {
         BaseReason reason = reasons.getReason(code);
         debug = localDebug;
         
-        solver.getWriter().println(reason.getClass().getSimpleName() + ".compare(\n\t\"" 
+        solver.getWriter().println(reason.getClass().getSimpleName() + ".consider(\n\t\"" 
                 + rset1.niceString() + "\", \n\t\"" 
                 + rset2.niceString() + "\") = \n\t"
-                + reason.compare(0, rset1, rset2));
+                + reason.consider(0, rset1, rset2));
 
     } // main
 

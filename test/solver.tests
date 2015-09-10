@@ -67,7 +67,7 @@ TEST T10 Markoff(5, unsolvable)
 CALL TreeSolver -b 2 -l 3 -e "x^2 + y^2 + z^2 - 5*x*y*z" -r norm
 
 TEST T11 Markoff(4, unsolvable, power)
-CALL TreeSolver      -l 8 -e "x^2 + y^2 + z^2 - 4*x*y*z" 
+CALL TreeSolver      -l 8 -e "x^2 + y^2 + z^2 - 4*x*y*z" -r showfail
 
 TEST T12 modif. Pythagoras (proof) 
 CALL TreeSolver -l 4 -e "x^2 + y^2 - 3*z^2" -r norm,invall,showfail
@@ -82,7 +82,7 @@ TEST T15 modified FLT(3) mod 6 no descent?
 CALL TreeSolver -b 6 -l 2 -e "a^3 + 3*b^3 - 9*c^3" -r norm,igtriv
 
 TEST T16 FLT(2), Pythagoras
-CALL TreeSolver -b 2 -l 4 -e "a^2 + b^2 - c^2"
+CALL TreeSolver -b 2 -l 5 -e "a^2 + b^2 - c^2" -r norm,igtriv
 
 # Euler, proof=1 (http://www.cut-the-knot.org/arithmetic/BasicsOfInfiniteDescent.shtml)
 # also Keith Conrad: Proofs by Descent, Example 1.1
@@ -95,8 +95,8 @@ CALL TreeSolver -l 6 -e "(x + 1)^2 + (y + 1)^2 + (z + 1)^2 - 2*(x + 1) * (y + 1)
 TEST T19 Markov(2, unsolvable, power, proof)
 CALL TreeSolver -l 6 -e "(x + 2)^2 + (y + 2)^2 + (z + 2)^2 - 2*(x + 2) * (y + 2) * (z + 2)"
 
-TEST T20 generating Pythagoras
-CALL TreeSolver -b 2 -l 2 -e "(m^2 - n^2)^2 + (2*m*n)^2 - (m^2 + n^2)^2"
+TEST T20 FLT(2), Pythagoras
+CALL TreeSolver -b 2 -l 4 -e "a^2 + b^2 - c^2" -r norm,invall,igtriv
 
 # TEST T21 EEC(6,1,5), most wanted on euler.free.net, mod 3
 # CALL TreeSolver -b 3 -l 1 -e "a^6 + b^6 + c^6 + d^6 + e^6 - f^6"
@@ -116,9 +116,10 @@ CALL TreeSolver -b 2 -l 7 -e "x^2 + 2 - y^3" -r norm
 
 TEST T26 Squeeze; https://hcmop.wordpress.com/2012/04/09/techniques-in-solving-diophantine-equations-part-2/
 CALL TreeSolver -b 2 -l 6 -e "x * (x + 1) * (x + 7) * (x + 8) - y^2"
+# solutions in http://www.mathsolympiad.org.nz/wp-content/uploads/2009/01/diophantine-equations.pdf
 
 TEST T27 Fermat/Carcavi(7) mod. (x+1)^2 + 2 = (y+1)^3; solution [4,2]
-CALL TreeSolver -b 2 -l 5 -e "(x+1)^2 + 2 - (y+1)^3" 
+CALL TreeSolver -b 2 -l 5 -e "(x+1)^2 + 2 - (y+1)^3" -r showfail
 
 TEST T28 Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3]; http://math.stackexchange.com/questions/677422/solve-x22-y3-using-infinite-descent; growing !
 CALL TreeSolver -b 3 -l 2 -e "x^2 + 2 - y^3" 
@@ -187,7 +188,7 @@ TEST T50 15 7 9 reduced
 CALL TreeSolver -l 3 -b 2 -e "-576+15*x^2-7*y^2" -r norm
 
 TEST T51 FLT(4) related, Nagell 1951, p. 230 no solution
-CALL TreeSolver -l 5 -e "x^4 - y^4 - 2*z^2" -r norm
+CALL TreeSolver -l 4 -e "x^4 - y^4 - 2*z^2" -r norm,invall
 
 TEST T52 EEC(4,2,2) OEIS A003824, http://cr.yp.to/sortedsums/two4.1000000
 CALL TreeSolver -b 2 -l 2 -e "a^4 + b^4 - c^4 -d^4" -r norm,invall

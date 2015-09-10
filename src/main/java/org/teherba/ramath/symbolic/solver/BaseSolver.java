@@ -55,11 +55,6 @@ public class BaseSolver extends Stack<RelationSet> {
     /** index into queue for unresolved {@link RelationSet}s */
     public int queueHead;
 
-    /** level of queue element which was previously expanded */
-    protected int prevLevel;
-
-    /** List of reason and feature codes from the commandline */
-    protected String codeList;
     /** Factory for reasons to truncate the expansion tree */
     protected ReasonFactory reasons;
 
@@ -106,13 +101,44 @@ public class BaseSolver extends Stack<RelationSet> {
         setSubsetting (false);
         setUpperSubst (true);
         queueHead     = 0;
-        codeList      = ""; // default reasons are defined in ReasonFactory(,,).
+        codeList      = ",base,transpose,primitive,same,similiar,evenexp"; // default reasons
+            // the leading comma is needed for proper removal, c.f. modifyCodeList
     } // initialize
 
     //-----------------------------
     // Bean properties and methods
     //-----------------------------
-
+    /** List of reason and feature codes from the commandline */
+    protected String codeList;
+    
+    /** Modifies the {@link #codeList} by appending new codes
+     *  or removing those starting with "no-".
+     *  @param newCodes a list of codes separated with commas
+     */
+    private void modifyCodeList(String newCodes) {
+        String[] codes = newCodes.split("\\,");
+        int icode = 0;
+        while (icode < codes.length) {
+            String code = codes[icode];
+            if (! code.startsWith("no-")) {
+                codeList += "," + code;
+            } else { // with "no- " - remove it
+                code = "," + code.substring(3); // behind "no-"
+                int pos = codeList.indexOf(code);
+                if (pos >= 0) { // found
+                    int pos2 = codeList.indexOf(",", pos + 1); // next comma
+                    if (pos2 < 0) { // no comma at the end
+                        pos2 = codeList.length(); // to the end
+                    }
+                    codeList = codeList.substring(0, pos) + codeList.substring(pos2); // cut it out
+                } // found
+                if (debug >= 2) {
+                	trace.println("code=" + code + ", codeList=" + codeList + ", pos=" + pos);
+                }
+            } // remove
+            icode ++;
+        } // while icode
+    } // modify codeList
     //----------------
     /** Maximum nesting (tree height) level */
     private int maxLevel;
@@ -155,6 +181,7 @@ public class BaseSolver extends Stack<RelationSet> {
      */
     public void setRootNode(RelationSet rset0) {
         rset0.setMapping(rset0.getRefiningMap());
+        rset0.setIndex(0);
         rset0.setParentIndex(-1);
         add(rset0);
     } // setRootNode
@@ -245,7 +272,7 @@ public class BaseSolver extends Stack<RelationSet> {
                     } catch (Exception exc) {
                     }
                 } else if (arg.startsWith("-r") && iargs < args.length) { 
-                    codeList = args[iargs ++]; // overwrite default reason list
+                    modifyCodeList(args[iargs ++]); 
                 } else if (arg.startsWith("-u")                       ) {
                     setUpperSubst(false);
                 } else {
@@ -317,6 +344,9 @@ public class BaseSolver extends Stack<RelationSet> {
         }
     } // printNode
 
+    /** level of queue element which was previously expanded */
+    protected int prevLevel;
+
     /** Prints the separator between different nesting levels
      *  @param level current level from next queue element
      */
@@ -334,7 +364,7 @@ public class BaseSolver extends Stack<RelationSet> {
      *  @param rset1 {@link RelationSet} to be examined
      *  @param rmap1 {@link VariableMap} of <em>rset1</em>
      */
-    protected void printSolutions(RelationSet rset1, RefiningMap rmap1) {
+    public void printSolutions(RelationSet rset1, RefiningMap rmap1) {
         if (debug >= 0) {
             boolean first = false;
             RefiningMap rmap2 = rmap1 != null ? rmap1.clone() : new RefiningMap();
@@ -348,14 +378,14 @@ public class BaseSolver extends Stack<RelationSet> {
                     decision = rmap1.getMeteredValues(meter).describe();
                     if (! igtriv || ! (decision.indexOf("trivial") >= 0)) {
                         if (! first) {
-                            trace.print("solution");
+                            trace.print("-> solution");
                             first = true;
                         }
                         trace.print(" " + decision);
                     }
                 } // SUCCESS =0
                 meter.next();
-                busy = false; // evaluate only once for [0,0,...]
+                // busy = false; // evaluate only once for [0,0,...]
             } // while meter
             if (first) {
                 trace.println();
@@ -370,9 +400,9 @@ public class BaseSolver extends Stack<RelationSet> {
     protected void printTrailer(RelationSet rset0, boolean exhausted) {
         if (debug >= 1) {
             if (exhausted) {
-                trace.print("Proof - queue exhausted");
+                trace.print("Proof");
             } else {
-                trace.print("Maximum level " + getMaxLevel() + " reached");
+                trace.print("Maximum level " + getMaxLevel());
             }
             trace.println(" at [" + size() + "]: " + rset0.niceString());
         } // debug

@@ -381,7 +381,7 @@ public class Polynomial implements Cloneable, Serializable {
     } // toFactoredString()
 
     //----------------
-    /** Gets the constant {@link Monomial} of the Polynomial, if any, or the constant 0.
+    /** Gets the constant {@link Monomial} of <em>this</em> {@link Polynomial}, if any, or the constant 0.
      *  @return the constant monomial if there is one, or 0
      */
     public Coefficient getConstant() {
@@ -400,14 +400,15 @@ public class Polynomial implements Cloneable, Serializable {
         return monomials.get(Monomial.CONSTANT_SIGNATURE) != null;
     } // hasConstant
 
-    /** Determines whether the Polynomial contains no variables (only a constant {@link Monomial}).
+    /** Determines whether <em>this</em> {@link Polynomial} contains no variables (only a constant {@link Monomial}).
      *  @return true if the Polynomial is constant, or false otherwise
      */
     public boolean isConstant() {
         return monomials.size() == 0 || monomials.size() == 1 && hasConstant();
     } // isConstant private static final String FAILURE = "? ";
 
-    /** Determines whether there are one or more variables in the {@link Monomial}s of the Polynomial.
+    /** Determines whether there are one or more variables in the {@link Monomial}s of 
+     *  <em>this</em> {@link Polynomial}.
      *  @return true if there is at least one variable, or false otherwise
      */
     public boolean hasVariable() {
@@ -445,17 +446,19 @@ public class Polynomial implements Cloneable, Serializable {
         return result; //  && monomials.get(Monomial.CONSTANT_SIGNATURE) != null;
     } // isBiased
 
-    /** Gets the <em>polarity</em> of the Polynomial, that is the sign of the constant monomial, if present,
+    /** Gets the <em>polarity</em> of <em>this</em> {@link Polynomial}, 
+     *  that is the sign of the constant monomial, if present,
      *  or the sum of the signums of all monomials otherwise.
      *  @return
      *  <ul>
      *  <li>the signum of the constant monomial, if present, or otherwise:</li>
      *  <li>s &gt; 0 if there were more positive monomials</li>
      *  <li>s &lt; 0 if there were more negative monomials</li>
-     *  <li>s = 0 if the number of positive and negative monomials is the same, or the Polynomial itself is zero</li>
+     *  <li>s = 0 if the number of positive and negative monomials is the same, 
+     *  or the Polynomial itself is zero</li>
      *  </ul>
      */
-    public int polarity() {
+    public int polarity_99() {
         int result = this.getConstant().signum();
         if (result == 0) {
             Iterator<String> iter1 = this.keySet().iterator();
@@ -474,6 +477,7 @@ public class Polynomial implements Cloneable, Serializable {
         return result;
     } // polarity
 
+    //----------------
     /** Determines whether the Polynomial is a sum of like powers
      *  of different variables, without a constant, for example 4*a^2 + 4*b^2 -4*c^2 = 0
      *  @return 0 if the Polynomial is no sum of like powers,
@@ -506,6 +510,7 @@ public class Polynomial implements Cloneable, Serializable {
         } // while iter1
         return result;
     } // isPowerSum
+    
     /*-------------- arithmetic operations -------------------------*/
 
     /** Adds a {@link Monomial} to <em>this</em> {@link Polynomial}.
@@ -1136,7 +1141,7 @@ x^2 + 3*x^3 + 2*x^4
     public int degree(boolean upperSubst) {
         int result = 0;
         Iterator <String> titer = monomials.keySet().iterator();
-        if (! this.isConstant()) {
+        if (! isConstant()) {
             result = monomials.get(titer.next()).degree(upperSubst);
         }
         while (result >= 0 && titer.hasNext()) {
@@ -1153,9 +1158,25 @@ x^2 + 3*x^3 + 2*x^4
      *  @return degree >= 0, or -1 if the {@link Polynomial} has Monomials with different degrees
      */
     public int degree() {
-        return this.degree(true);
+        return degree(true);
     } // degree()
 
+    /** Determines whether all {@link Monomial}s are of the same {@link #degree}.
+     *  @param upperSubst whether the exponents of uppercase variables should be counted
+     *  @return true if the sum of exponents in all Monomials is the same, false otherwise
+     */
+    public boolean isHomogeneous(boolean upperSubst) {
+        return degree(upperSubst) >= 0;
+    } // isHomogeneous
+
+    /** Determines whether all {@link Monomial}s are of the same {@link #degree}.
+     *  @return true if the sum of exponents in all Monomials is the same, false otherwise
+     */
+    public boolean isHomogeneous() {
+        return degree(true) >= 0;
+    } // isHomogeneous
+
+    //----------------
     /** Determines the maximum of the exponents for some variable in all {@link Monomial}s
      *  of <em>this</em> {@link Polynomial}
      *  @param varName determine the maximum degree of this variable
@@ -1197,21 +1218,6 @@ x^2 + 3*x^3 + 2*x^4
     public int maxDegree() {
         return this.maxDegree(true);
     } // maxDegree()
-
-   /** Determines whether all {@link Monomial}s are of the same {@link #degree}.
-     *  @param upperSubst whether the exponents of uppercase variables should be counted
-     *  @return true if the sum of exponents in all Monomials is the same, false otherwise
-     */
-    public boolean isHomogeneous(boolean upperSubst) {
-        return this.degree(upperSubst) >= 0;
-    } // isHomogeneous
-
-    /** Determines whether all {@link Monomial}s are of the same {@link #degree}.
-     *  @return true if the sum of exponents in all Monomials is the same, false otherwise
-     */
-    public boolean isHomogeneous() {
-        return this.degree(true) >= 0;
-    } // isHomogeneous
 
     //----------------
     /** Gets the greatest common (positive) divisor of the coefficients of the variable {@link Monomial}s,
@@ -1658,17 +1664,9 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
      */
     public Polynomial deflateIt() {
         BigInteger divisor = this.gcdCoefficients(true); // with constant
-        if (this.hasVariable()) {
-            if (false) {
-        /*
-            } else if (this.getLeadTerm().isNegative()) {
-                divisor = divisor.negate();
-                this.divideBy(divisor);
-        */
-            } else if (divisor.compareTo(BigInteger.ONE) != 0) { // divide by GCD if != 1
-                this.divideBy(divisor);
-            }
-        } // hasVariable()
+        if (divisor.compareTo(BigInteger.ONE) != 0) { // divide by GCD if != 1
+            this.divideBy(divisor);
+        }
         return this;
     } // deflateIt
 
@@ -1693,17 +1691,9 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
      */
     public Polynomial normalizeIt() {
         BigInteger divisor = this.gcdCoefficients(true); // with constant
-        if (this.hasVariable()) {
-            if (false) {
-        /*
-            } else if (this.getLeadTerm().isNegative()) {
-                divisor = divisor.negate();
-                this.divideBy(divisor);
-        */
-            } else if (divisor.compareTo(BigInteger.ONE) != 0) { // divide by GCD if != 1
-                this.divideBy(divisor);
-            }
-        } // hasVariable()
+        if (divisor.compareTo(BigInteger.ONE) != 0) { // divide by GCD if != 1
+            this.divideBy(divisor);
+        }
         return this;
     } // normalizeIt
 

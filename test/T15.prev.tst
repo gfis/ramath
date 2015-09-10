@@ -1,9 +1,10 @@
+isHomogeneous
 ExponentGCDs=[3,3,3]
-Expanding for base=6, reasons+features=base,same,similiar igtriv,norm
+Expanding for base=6, reasons+features=base,primitive,same,similiar igtriv,norm
 Refined variables=a,b,c
 ----------------
 expanding queue[0]^-1,meter=[6,6,6]*6: a^3+3b^3-9c^3
-[0+6a,0+6b,0+6c]:	same form as a^3+3b^3-9c^3
+[0+6a,0+6b,0+6c]:	non-primitive
 [3+6a,3+6b,0+6c]:	unknown -> [1] 2+3a+6a^2+4a^3+9b+18b^2+12b^3-36c^3
 [3+6a,0+6b,3+6c]:	unknown -> [2] -4+3a+6a^2+4a^3+12b^3-27c-54c^2-36c^3
 [0+6a,3+6b,3+6c]:	unknown -> [3] -3+4a^3+9b+18b^2+12b^3-27c-54c^2-36c^3
@@ -84,4 +85,4 @@ expanding queue[15]^3,meter=[6,6,6]*216: -58+12a+24a^2+16a^3+9b+36b^2+48b^3-243c
 [162+216a,81+216b,27+216c]:	unknown -> [61] 36+108a+144a^2+64a^3+81b+216b^2+192b^3-27c-216c^2-576c^3
 [54+216a,189+216b,135+216c]:	unknown -> [62] -11+12a+48a^2+64a^3+441b+504b^2+192b^3-675c-1080c^2-576c^3
 [162+216a,189+216b,135+216c]:	unknown -> [63] 15+108a+144a^2+64a^3+441b+504b^2+192b^3-675c-1080c^2-576c^3
-Maximum level 2 reached at [64]: a^3+3b^3-9c^3
+Maximum level 2 at [64]: a^3+3b^3-9c^3

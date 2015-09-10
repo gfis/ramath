@@ -14,6 +14,7 @@ expanding queue[1]^0,meter=[2,2,2]*4: x^2+y^2-6x*y*z+z^2
 [0+4x,0+4y,0+4z]:	unknown -> [4] x^2+y^2-12x*y*z+z^2
 expanding queue[2]^0,meter=[2,2,2]*4: 1+2x+2x^2+2y+2y^2-3z-6x*z-6y*z-12x*y*z+2z^2
 [1+4x,1+4y,2+4z]:	unknown -> [5] -4x+4x^2-4y-24x*y+4y^2+z-12x*z-12y*z-48x*y*z+4z^2
+-> solution [5,1,2],NONTRIVIAL [1,5,2],NONTRIVIAL
 [3+4x,1+4y,2+4z]:	unknown -> [6] -1+4x^2-16y-24x*y+4y^2-5z-12x*z-36y*z-48x*y*z+4z^2
 [1+4x,3+4y,2+4z]:	transposed [6] by [1,0,2]
 [3+4x,3+4y,2+4z]:	unknown -> [7] -8-12x+4x^2-12y-24x*y+4y^2-23z-36x*z-36y*z-48x*y*z+4z^2
@@ -28,6 +29,7 @@ expanding queue[4]^1,meter=[2,2,2]*8: x^2+y^2-12x*y*z+z^2
 expanding queue[5]^2,meter=[2,2,2]*8: -4x+4x^2-4y-24x*y+4y^2+z-12x*z-12y*z-48x*y*z+4z^2
 [1+8x,1+8y,2+8z]:	unknown -> [11] -4x+8x^2-4y-48x*y+8y^2+z-24x*z-24y*z-192x*y*z+8z^2
 [5+8x,1+8y,2+8z]:	unknown -> [12] 4x+8x^2-28y-48x*y+8y^2-11z-24x*z-120y*z-192x*y*z+8z^2
+-> solution [5,1,2],NONTRIVIAL
 [1+8x,5+8y,2+8z]:	transposed [12] by [1,0,2]
 [5+8x,5+8y,2+8z]:	unknown -> [13] -12-20x+8x^2-20y-48x*y+8y^2-71z-120x*z-120y*z-192x*y*z+8z^2
 expanding queue[6]^2,meter=[2,2,2]*8: -1+4x^2-16y-24x*y+4y^2-5z-12x*z-36y*z-48x*y*z+4z^2
@@ -43,6 +45,7 @@ expanding queue[7]^2,meter=[2,2,2]*8: -8-12x+4x^2-12y-24x*y+4y^2-23z-36x*z-36y*z
 expanding queue[8]^3,meter=[2,2,2]*8: -x+4x^2-y-12x*y+4y^2-z-12x*z-12y*z-48x*y*z+4z^2
 [1+8x,1+8y,1+8z]:	unknown -> [21] -x+8x^2-y-24x*y+8y^2-z-24x*z-24y*z-192x*y*z+8z^2
 [5+8x,5+8y,1+8z]:	unknown -> [22] -3-5x+8x^2-5y-24x*y+8y^2-73z-120x*z-120y*z-192x*y*z+8z^2
+-> solution [13,5,1],NONTRIVIAL [5,13,1],NONTRIVIAL
 [5+8x,1+8y,5+8z]:	transposed [22] by [0,2,1]
 [1+8x,5+8y,5+8z]:	transposed [22] by [2,0,1]
 expanding queue[9]^3,meter=[2,2,2]*8: -2-3x+4x^2-3y-12x*y+4y^2-25z-36x*z-36y*z-48x*y*z+4z^2
@@ -59,14 +62,15 @@ expanding queue[11]^5,meter=[2,2,2]*16: -4x+8x^2-4y-48x*y+8y^2+z-24x*z-24y*z-192
 [1+16x,9+16y,2+16z]:	transposed [28] by [1,0,2]
 [9+16x,9+16y,2+16z]:	unknown -> [29] -20-36x+16x^2-36y-96x*y+16y^2-239z-432x*z-432y*z-768x*y*z+16z^2
 expanding queue[12]^5,meter=[2,2,2]*16: 4x+8x^2-28y-48x*y+8y^2-11z-24x*z-120y*z-192x*y*z+8z^2
-solution [5,1,2],NONTRIVIAL
 [5+16x,1+16y,2+16z]:	unknown -> [30] 4x+16x^2-28y-96x*y+16y^2-11z-48x*z-240y*z-768x*y*z+16z^2
+-> solution [5,1,2],NONTRIVIAL
 [13+16x,1+16y,2+16z]:	unknown -> [31] 6+20x+16x^2-76y-96x*y+16y^2-35z-48x*z-624y*z-768x*y*z+16z^2
 [5+16x,9+16y,2+16z]:	unknown -> [32] -10-44x+16x^2-12y-96x*y+16y^2-131z-432x*z-240y*z-768x*y*z+16z^2
 [13+16x,9+16y,2+16z]:	unknown -> [33] -28-28x+16x^2-60y-96x*y+16y^2-347z-432x*z-624y*z-768x*y*z+16z^2
 expanding queue[13]^5,meter=[2,2,2]*16: -12-20x+8x^2-20y-48x*y+8y^2-71z-120x*z-120y*z-192x*y*z+8z^2
 [5+16x,5+16y,2+16z]:	unknown -> [34] -6-20x+16x^2-20y-96x*y+16y^2-71z-240x*z-240y*z-768x*y*z+16z^2
 [13+16x,5+16y,2+16z]:	unknown -> [35] -12-4x+16x^2-68y-96x*y+16y^2-191z-240x*z-624y*z-768x*y*z+16z^2
+-> solution [29,5,2],NONTRIVIAL
 [5+16x,13+16y,2+16z]:	transposed [35] by [1,0,2]
 [13+16x,13+16y,2+16z]:	unknown -> [36] -42-52x+16x^2-52y-96x*y+16y^2-503z-624x*z-624y*z-768x*y*z+16z^2
 expanding queue[14]^6,meter=[2,2,2]*16: -1-12x+8x^2-52y-144x*y+8y^2+3z-24x*z-72y*z-192x*y*z+8z^2
@@ -111,6 +115,7 @@ expanding queue[21]^8,meter=[2,2,2]*16: -x+8x^2-y-24x*y+8y^2-z-24x*z-24y*z-192x*
 [1+16x,9+16y,9+16z]:	transposed [64] by [2,0,1]
 expanding queue[22]^8,meter=[2,2,2]*16: -3-5x+8x^2-5y-24x*y+8y^2-73z-120x*z-120y*z-192x*y*z+8z^2
 [13+16x,5+16y,1+16z]:	unknown -> [65] 11x+16x^2-29y-48x*y+16y^2-193z-240x*z-624y*z-768x*y*z+16z^2
+-> solution [13,5,1],NONTRIVIAL
 [5+16x,13+16y,1+16z]:	transposed [65] by [1,0,2]
 [5+16x,5+16y,9+16z]:	unknown -> [66] -34-125x+16x^2-125y-432x*y+16y^2-57z-240x*z-240y*z-768x*y*z+16z^2
 [13+16x,13+16y,9+16z]:	unknown -> [67] -259-325x+16x^2-325y-432x*y+16y^2-489z-624x*z-624y*z-768x*y*z+16z^2
@@ -129,4 +134,4 @@ expanding queue[25]^9,meter=[2,2,2]*16: -29-31x+8x^2-99y-120x*y+8y^2-53z-72x*z-1
 [7+16x,11+16y,5+16z]:	unknown -> [75] -60-151x+16x^2-83y-240x*y+16y^2-221z-528x*z-336y*z-768x*y*z+16z^2
 [7+16x,3+16y,13+16z]:	unknown -> [76] -37-103x+16x^2-267y-624x*y+16y^2-37z-144x*z-336y*z-768x*y*z+16z^2
 [15+16x,11+16y,13+16z]:	unknown -> [77] -370-399x+16x^2-563y-624x*y+16y^2-469z-528x*z-720y*z-768x*y*z+16z^2
-Maximum level 3 reached at [78]: x^2+y^2-3x*y*z+z^2
+Maximum level 3 at [78]: x^2+y^2-3x*y*z+z^2

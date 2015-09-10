@@ -39,8 +39,6 @@ import  java.util.Iterator;
 import  java.util.HashSet; // for old_triviality
 import  java.util.Map;
 import  java.util.TreeMap;
-import  java.util.regex.Matcher;
-import  java.util.regex.Pattern;
 
 /** Maps a set of variables to their values (constants) or
  *  expressions/substitution formulas, still with variables.
@@ -152,8 +150,6 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
     } // parse
 
     /*-------------- state codes -----------------------------*/
-    /** state of the variable mapping during the search for solutions */
-    private String solutionState;
     /** Result message for cases which are definitely non-solvable */
     public static final String FAILURE   = "failure";
     /** Result message for cases which have a known solution */

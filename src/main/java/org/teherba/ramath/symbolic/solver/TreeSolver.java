@@ -123,7 +123,6 @@ public class TreeSolver extends BaseSolver {
         }    
         // meter now ready for n-adic expansion, e.g. x -> 2*x+0, 2*x+1
         printNode(queueIndex, rset1, meter, factor);
-        printSolutions(rset1, vmap1);
         while (meter.hasNext()) { // over all constant combinations - generate all children
             RefiningMap vmap2 = vmap1.getRefiningMap(meter);
             if (vmap2.size() > 0) {
@@ -133,6 +132,7 @@ public class TreeSolver extends BaseSolver {
                 }
                 rset2.setMapping(vmap2);
                 rset2.setNestingLevel(newLevel);
+                rset2.setIndex(this.size());
                 rset2.setParentIndex(queueIndex);
                 if (reasons.evaluateReasons(rset2, vmap2)) { // queueAgain
                     this.add(rset2);

@@ -1,7 +1,6 @@
-/*  SimiliarReason: checks whether the RelationSet is similiar to any in the queue
- *  @(#) $Id: SimiliarReason.java 970 2012-10-25 16:49:32Z gfis $
- *  2015-09-05: initialize, rewritten
- *  2015-02-24, Georg Fischer
+/*  PrimitiveReason: checks whether the RelationSet is the same as the root
+ *  @(#) $Id: PrimitiveReason.java 970 2012-10-25 16:49:32Z gfis $
+ *  2015-09-10, Georg Fischer: copied from SameReason
  */
 /*
  * Copyright 2015 Dr. Georg Fischer <punctum at punctum dot kom>
@@ -21,20 +20,30 @@
 package org.teherba.ramath.symbolic.reason;
 import  org.teherba.ramath.symbolic.reason.BaseReason;
 import  org.teherba.ramath.symbolic.solver.BaseSolver;
+import  org.teherba.ramath.symbolic.Monomial;
+import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.RelationSet;
+import  org.teherba.ramath.symbolic.RefiningMap;
 import  org.teherba.ramath.symbolic.VariableMap;
+import  org.teherba.ramath.Coefficient;
+import  java.math.BigInteger;
+import  java.util.Iterator;
+import  java.util.TreeMap;
 
-/** Checks whether {@link RelationSet} 
- *  is {@link RelationSet similiar} to another RelationSet in the tree / queue.
+/** Checks whether the tree expansion root {@link RelationSet} 
+ *  is the same as the RelationSet in question 
  *  @author Dr. Georg Fischer
  */
-public class SimiliarReason extends BaseReason {
-    public final static String CVSID = "@(#) $Id: SimiliarReason.java 970 2012-10-25 16:49:32Z gfis $";
+public class PrimitiveReason extends BaseReason {
+    public final static String CVSID = "@(#) $Id: PrimitiveReason.java 970 2012-10-25 16:49:32Z gfis $";
 
      /** No-args Constructor
      */
-    public SimiliarReason() {
+    public PrimitiveReason() {
     } // no-args Constructor
+    
+    /** the solver's {@link BaseSolver#modBase} */
+    private BigInteger base = null;
     
     /** Initializes any data structures for <em>this</em> reason.
      *  This method is called by {@link ReasonFactory};
@@ -45,9 +54,26 @@ public class SimiliarReason extends BaseReason {
      */
     public void initialize(BaseSolver solver) {
         super.initialize(solver);
-        setWalkMode(WALK_ANCHESTORS);
+        setWalkMode(WALK_ROOT); // consider with rset1 = [0] = rset0
+        base = BigInteger.valueOf(solver.getModBase());
     } // initialize
 
+    // inherited: BaseReason always isConsiderable()
+
+    /** Whether <em>this</em> reason should be considered for 
+     *  the starting {@link RelationSet}.
+     *  @param solver the solver which uses <em>this</em> reason for iteration control
+     *  @return <em>true</em> if the <em>this</em> should be considered (default), 
+     *  <em>false</em> otherwise.
+     */
+    public boolean isConsiderable() {
+        boolean result = solver.getRootNode().isHomogeneous();
+        if (result) {
+            solver.getWriter().println("isHomogeneous");
+        }
+        return result;
+    } // isConsiderable
+    
     /** Consider the source {@link RelationSet} <em>rset2</em> to be queued together with 
      *  another {@link RelationSet} <em>rset1</em> already queued.
      *  If the test is successful, a message is printed and returned,
@@ -61,15 +87,14 @@ public class SimiliarReason extends BaseReason {
      */
     public String consider(int iqueue, RelationSet rset1, RelationSet rset2) {
         String result = VariableMap.UNKNOWN;
+        RefiningMap rmap2 = rset2.getMapping();
         if (debug >= 2) {
-            getSolver().getWriter().println("SimiliarReason.consider(" 
-                    + rset2.niceString() + ", " + rset2.niceString() + ")");
+            getSolver().getWriter().println("rmap2=" + rmap2.niceString());
+        } // debug
+        if (rmap2.isZero()) {
+            result = "non-primitive";
         }
-        String message = rset1.similiarity(rset2);
-        if (message != null) {
-            result = VariableMap.SIMILIAR + "   [" + iqueue + "], " + message;
-        } // similiar
         return result;
     } // consider
 
-} // SimiliarReason
+} // PrimitiveReason

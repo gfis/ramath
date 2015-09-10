@@ -38,10 +38,13 @@ import  java.util.TreeMap;
 public class SameReason extends BaseReason {
     public final static String CVSID = "@(#) $Id: SameReason.java 970 2012-10-25 16:49:32Z gfis $";
 
-     /** No-args Constructor
+    /** No-args Constructor
      */
     public SameReason() {
     } // no-args Constructor
+    
+    /** the solver's {@link BaseSolver#modBase} */
+    private BigInteger base = null;
     
     /** Initializes any data structures for <em>this</em> reason.
      *  This method is called by {@link ReasonFactory};
@@ -52,15 +55,12 @@ public class SameReason extends BaseReason {
      */
     public void initialize(BaseSolver solver) {
         super.initialize(solver);
-        setWalkMode(WALK_ROOT); // compare with rset1 = [0] = rset0
+        setWalkMode(WALK_ALL);
         base = BigInteger.valueOf(solver.getModBase());
     } // initialize
 
-    // inherited: BaseReason always isConsiderable()
+    // inherited: SameReason always isConsiderable()
 
-    /** the solver's {@link BaseSolver#modBase} */
-    private BigInteger base = null;
-    
     /** Joins a map of variable names 
      *  to the maximum power (exponent) 
      *  of the solver's {@link BaseSolver#modBase} which could be "slipped into" the variable
@@ -113,7 +113,7 @@ public class SameReason extends BaseReason {
         return result;
     } // getMaxBasePowers 
     
-    /** Compares the source {@link RelationSet} <em>rset2</em> to be queued with 
+    /** Consider the source {@link RelationSet} <em>rset2</em> to be queued together with 
      *  another {@link RelationSet} <em>rset1</em> already queued.
      *  If the test is successful, a message is printed and returned,
      *  and <em>rset2</em> is not stored in the following; 
@@ -124,7 +124,7 @@ public class SameReason extends BaseReason {
      *  @return a message String denoting the reasoning details,
      *  or {@link VariableMap#UNKNOWN} if the comparision is not conclusive.
      */
-    public String compare(int iqueue, RelationSet rset1, RelationSet rset2) {
+    public String consider(int iqueue, RelationSet rset1, RelationSet rset2) {
         String result = VariableMap.UNKNOWN;
         if (rset1.isEqualTo(rset2)) { 
             result  = VariableMap.SAME + " form as " + rset2.niceString();
@@ -143,21 +143,27 @@ public class SameReason extends BaseReason {
             } // while miter
             if (debug >= 1) {
                 getSolver().getWriter().println("maxBasePowers=" + maxBasePowers.toString() 
-                		+ ", remap=" + remap.toString());
+                        + ", remap=" + remap.toString());
             } // debug
-            if (count > 0) {
+            if (count > 0 
+                //  && count < maxBasePowers.size()
+                    ) {
                 RelationSet rset2s = rset2.substitute(remap);
-                if (debug >= 1) {
-                    getSolver().getWriter().println("rset1=" +rset1.toString() 
-                            + "\nrset2s=" +rset2s.toString());
-                } // debug
                 if (rset1.isEqualTo(rset2s)) {
-                    result  = VariableMap.SAME + " with map " + remap.toString();
+                    result  = VariableMap.SAME + " " + rset2.niceString() 
+                            + " map " + remap.toString()
+                            + " -> [" + rset1.getIndex() + "] " + rset1.niceString();
                 } 
+                if (debug >= 1) {
+                    getSolver().getWriter().println
+                            ( "rset1^"  + rset1 .getParentIndex() + " =" + rset1 .toString() + "\n"
+                            + "rset2s^" + rset2s.getParentIndex() + "="  + rset2s.toString() 
+                            + ", result=" + result);
+                } // debug
             } // count > 0
                 
         } // same as [0]
         return result;
-    } // compare
+    } // consider
 
 } // SameReason

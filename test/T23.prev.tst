@@ -1,10 +1,11 @@
 TranspositionSet={[1,0,2]}
+isHomogeneous
 ExponentGCDs=[5,5,5]
-Expanding for base=2, reasons+features=base,transpose,same,similiar norm,igtriv
+Expanding for base=2, reasons+features=base,transpose,primitive,same,similiar norm,igtriv
 Refined variables=a,b,c
 ----------------
 expanding queue[0]^-1,meter=[2,2,2]*2: a^5+b^5-c^5
-[0+2a,0+2b,0+2c]:	same form as a^5+b^5-c^5
+[0+2a,0+2b,0+2c]:	non-primitive
 [1+2a,1+2b,0+2c]:	unknown -> [1] 1+5a+20a^2+40a^3+40a^4+16a^5+5b+20b^2+40b^3+40b^4+16b^5-16c^5
 [1+2a,0+2b,1+2c]:	unknown -> [2] 5a+20a^2+40a^3+40a^4+16a^5+16b^5-5c-20c^2-40c^3-40c^4-16c^5
 [0+2a,1+2b,1+2c]:	transposed [2] by [1,0,2]
@@ -25,4 +26,4 @@ expanding queue[4]^2,meter=[2,1,2]*8: 5a+40a^2+160a^3+320a^4+256a^5+8b^5-5c-40c^
 expanding queue[5]^2,meter=[2,1,2]*8: 405a+1080a^2+1440a^3+960a^4+256a^5+8b^5-405c-1080c^2-1440c^3-960c^4-256c^5
 [3+8a,0+2b,3+8c]:	unknown -> [10] 405a+2160a^2+5760a^3+7680a^4+4096a^5+4b^5-405c-2160c^2-5760c^3-7680c^4-4096c^5
 [7+8a,0+2b,7+8c]:	unknown -> [11] 12005a+27440a^2+31360a^3+17920a^4+4096a^5+4b^5-12005c-27440c^2-31360c^3-17920c^4-4096c^5
-Maximum level 2 reached at [12]: a^5+b^5-c^5
+Maximum level 2 at [12]: a^5+b^5-c^5

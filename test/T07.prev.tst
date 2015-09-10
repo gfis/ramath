@@ -1,13 +1,15 @@
 TranspositionSet={[1,0,2]}
+isHomogeneous
 ExponentGCDs=[3,3,3]
-Expanding for base=2, reasons+features=base,transpose,same,similiar norm,invall
+Expanding for base=2, reasons+features=base,transpose,primitive,same,similiar norm,invall
 Refined variables=a,b,c
 ----------------
 expanding queue[0]^-1,meter=[2,2,2]*2: a^3+b^3-c^3
-solution [0,0,0],trivial(3)
-[0+2a,0+2b,0+2c]:	same form as a^3+b^3-c^3
+[0+2a,0+2b,0+2c]:	non-primitive
+-> solution [0,0,0],trivial(3) [2,0,2],trivial(3) [0,2,2],trivial(3)
 [1+2a,1+2b,0+2c]:	unknown -> [1] 1+3a+6a^2+4a^3+3b+6b^2+4b^3-4c^3
 [1+2a,0+2b,1+2c]:	unknown -> [2] 3a+6a^2+4a^3+4b^3-3c-6c^2-4c^3
+-> solution [1,0,1],trivial(3) [3,0,3],trivial(3)
 [0+2a,1+2b,1+2c]:	transposed [2] by [1,0,2]
 ----------------
 expanding queue[1]^0,meter=[2,2,2]*4: 1+3a+6a^2+4a^3+3b+6b^2+4b^3-4c^3
@@ -16,10 +18,11 @@ expanding queue[1]^0,meter=[2,2,2]*4: 1+3a+6a^2+4a^3+3b+6b^2+4b^3-4c^3
 [3+4a,1+4b,2+4c]:	unknown -> [4] 5+27a+36a^2+16a^3+3b+12b^2+16b^3-12c-24c^2-16c^3
 [1+4a,3+4b,2+4c]:	transposed [4] by [1,0,2]
 expanding queue[2]^0,meter=[2,2,2]*4: 3a+6a^2+4a^3+4b^3-3c-6c^2-4c^3
-solution [1,0,1],trivial(3)
 [1+4a,0+4b,1+4c]:	unknown -> [5] 3a+12a^2+16a^3+16b^3-3c-12c^2-16c^3
+-> solution [1,0,1],trivial(3) [5,0,5],trivial(3)
 [1+4a,2+4b,1+4c]:	unknown -> [6] 2+3a+12a^2+16a^3+12b+24b^2+16b^3-3c-12c^2-16c^3
 [3+4a,0+4b,3+4c]:	unknown -> [7] 27a+36a^2+16a^3+16b^3-27c-36c^2-16c^3
+-> solution [3,0,3],trivial(3) [7,0,7],trivial(3)
 [3+4a,2+4b,3+4c]:	unknown -> [8] 2+27a+36a^2+16a^3+12b+24b^2+16b^3-27c-36c^2-16c^3
 ----------------
 expanding queue[3]^1,meter=[2,2,2]*8: 7+27a+36a^2+16a^3+3b+12b^2+16b^3-16c^3
@@ -33,10 +36,11 @@ expanding queue[4]^1,meter=[2,2,2]*8: 5+27a+36a^2+16a^3+3b+12b^2+16b^3-12c-24c^2
 [7+8a,1+8b,6+8c]:	unknown -> [15] 16+147a+168a^2+64a^3+3b+24b^2+64b^3-108c-144c^2-64c^3
 [3+8a,5+8b,6+8c]:	unknown -> [16] -8+27a+72a^2+64a^3+75b+120b^2+64b^3-108c-144c^2-64c^3
 expanding queue[5]^2,meter=[2,2,2]*8: 3a+12a^2+16a^3+16b^3-3c-12c^2-16c^3
-solution [1,0,1],trivial(3)
 [1+8a,0+8b,1+8c]:	unknown -> [17] 3a+24a^2+64a^3+64b^3-3c-24c^2-64c^3
+-> solution [1,0,1],trivial(3) [9,0,9],trivial(3)
 [1+8a,4+8b,1+8c]:	unknown -> [18] 8+3a+24a^2+64a^3+48b+96b^2+64b^3-3c-24c^2-64c^3
 [5+8a,0+8b,5+8c]:	unknown -> [19] 75a+120a^2+64a^3+64b^3-75c-120c^2-64c^3
+-> solution [5,0,5],trivial(3) [13,0,13],trivial(3)
 [5+8a,4+8b,5+8c]:	unknown -> [20] 8+75a+120a^2+64a^3+48b+96b^2+64b^3-75c-120c^2-64c^3
 expanding queue[6]^2,meter=[2,2,2]*8: 2+3a+12a^2+16a^3+12b+24b^2+16b^3-3c-12c^2-16c^3
 [1+8a,2+8b,1+8c]:	unknown -> [21] 1+3a+24a^2+64a^3+12b+48b^2+64b^3-3c-24c^2-64c^3
@@ -44,10 +48,11 @@ expanding queue[6]^2,meter=[2,2,2]*8: 2+3a+12a^2+16a^3+12b+24b^2+16b^3-3c-12c^2-
 [5+8a,2+8b,5+8c]:	unknown -> [23] 1+75a+120a^2+64a^3+12b+48b^2+64b^3-75c-120c^2-64c^3
 [5+8a,6+8b,5+8c]:	unknown -> [24] 27+75a+120a^2+64a^3+108b+144b^2+64b^3-75c-120c^2-64c^3
 expanding queue[7]^2,meter=[2,2,2]*8: 27a+36a^2+16a^3+16b^3-27c-36c^2-16c^3
-solution [3,0,3],trivial(3)
 [3+8a,0+8b,3+8c]:	unknown -> [25] 27a+72a^2+64a^3+64b^3-27c-72c^2-64c^3
+-> solution [3,0,3],trivial(3) [11,0,11],trivial(3)
 [3+8a,4+8b,3+8c]:	unknown -> [26] 8+27a+72a^2+64a^3+48b+96b^2+64b^3-27c-72c^2-64c^3
 [7+8a,0+8b,7+8c]:	unknown -> [27] 147a+168a^2+64a^3+64b^3-147c-168c^2-64c^3
+-> solution [7,0,7],trivial(3) [15,0,15],trivial(3)
 [7+8a,4+8b,7+8c]:	unknown -> [28] 8+147a+168a^2+64a^3+48b+96b^2+64b^3-147c-168c^2-64c^3
 expanding queue[8]^2,meter=[2,2,2]*8: 2+27a+36a^2+16a^3+12b+24b^2+16b^3-27c-36c^2-16c^3
 [3+8a,2+8b,3+8c]:	unknown -> [29] 1+27a+72a^2+64a^3+12b+48b^2+64b^3-27c-72c^2-64c^3
@@ -96,10 +101,11 @@ expanding queue[16]^4,meter=[2,2,2]*16: -8+27a+72a^2+64a^3+75b+120b^2+64b^3-108c
 [3+16a,5+16b,14+16c]:	unknown -> [63] -162+27a+144a^2+256a^3+75b+240b^2+256b^3-588c-672c^2-256c^3
 [11+16a,13+16b,14+16c]:	unknown -> [64] 49+363a+528a^2+256a^3+507b+624b^2+256b^3-588c-672c^2-256c^3
 expanding queue[17]^5,meter=[2,2,2]*16: 3a+24a^2+64a^3+64b^3-3c-24c^2-64c^3
-solution [1,0,1],trivial(3)
 [1+16a,0+16b,1+16c]:	unknown -> [65] 3a+48a^2+256a^3+256b^3-3c-48c^2-256c^3
+-> solution [1,0,1],trivial(3) [17,0,17],trivial(3)
 [1+16a,8+16b,1+16c]:	unknown -> [66] 32+3a+48a^2+256a^3+192b+384b^2+256b^3-3c-48c^2-256c^3
 [9+16a,0+16b,9+16c]:	unknown -> [67] 243a+432a^2+256a^3+256b^3-243c-432c^2-256c^3
+-> solution [9,0,9],trivial(3) [25,0,25],trivial(3)
 [9+16a,8+16b,9+16c]:	unknown -> [68] 32+243a+432a^2+256a^3+192b+384b^2+256b^3-243c-432c^2-256c^3
 expanding queue[18]^5,meter=[2,2,2]*16: 8+3a+24a^2+64a^3+48b+96b^2+64b^3-3c-24c^2-64c^3
 [1+16a,4+16b,1+16c]:	unknown -> [69] 4+3a+48a^2+256a^3+48b+192b^2+256b^3-3c-48c^2-256c^3
@@ -107,10 +113,11 @@ expanding queue[18]^5,meter=[2,2,2]*16: 8+3a+24a^2+64a^3+48b+96b^2+64b^3-3c-24c^
 [9+16a,4+16b,9+16c]:	unknown -> [71] 4+243a+432a^2+256a^3+48b+192b^2+256b^3-243c-432c^2-256c^3
 [9+16a,12+16b,9+16c]:	unknown -> [72] 108+243a+432a^2+256a^3+432b+576b^2+256b^3-243c-432c^2-256c^3
 expanding queue[19]^5,meter=[2,2,2]*16: 75a+120a^2+64a^3+64b^3-75c-120c^2-64c^3
-solution [5,0,5],trivial(3)
 [5+16a,0+16b,5+16c]:	unknown -> [73] 75a+240a^2+256a^3+256b^3-75c-240c^2-256c^3
+-> solution [5,0,5],trivial(3) [21,0,21],trivial(3)
 [5+16a,8+16b,5+16c]:	unknown -> [74] 32+75a+240a^2+256a^3+192b+384b^2+256b^3-75c-240c^2-256c^3
 [13+16a,0+16b,13+16c]:	unknown -> [75] 507a+624a^2+256a^3+256b^3-507c-624c^2-256c^3
+-> solution [13,0,13],trivial(3) [29,0,29],trivial(3)
 [13+16a,8+16b,13+16c]:	unknown -> [76] 32+507a+624a^2+256a^3+192b+384b^2+256b^3-507c-624c^2-256c^3
 expanding queue[20]^5,meter=[2,2,2]*16: 8+75a+120a^2+64a^3+48b+96b^2+64b^3-75c-120c^2-64c^3
 [5+16a,4+16b,5+16c]:	unknown -> [77] 4+75a+240a^2+256a^3+48b+192b^2+256b^3-75c-240c^2-256c^3
@@ -138,10 +145,11 @@ expanding queue[24]^6,meter=[2,2,2]*16: 27+75a+120a^2+64a^3+108b+144b^2+64b^3-75
 [5+16a,6+16b,13+16c]:	unknown -> [95] -116+75a+240a^2+256a^3+108b+288b^2+256b^3-507c-624c^2-256c^3
 [5+16a,14+16b,13+16c]:	unknown -> [96] 42+75a+240a^2+256a^3+588b+672b^2+256b^3-507c-624c^2-256c^3
 expanding queue[25]^7,meter=[2,2,2]*16: 27a+72a^2+64a^3+64b^3-27c-72c^2-64c^3
-solution [3,0,3],trivial(3)
 [3+16a,0+16b,3+16c]:	unknown -> [97] 27a+144a^2+256a^3+256b^3-27c-144c^2-256c^3
+-> solution [3,0,3],trivial(3) [19,0,19],trivial(3)
 [3+16a,8+16b,3+16c]:	unknown -> [98] 32+27a+144a^2+256a^3+192b+384b^2+256b^3-27c-144c^2-256c^3
 [11+16a,0+16b,11+16c]:	unknown -> [99] 363a+528a^2+256a^3+256b^3-363c-528c^2-256c^3
+-> solution [11,0,11],trivial(3) [27,0,27],trivial(3)
 [11+16a,8+16b,11+16c]:	unknown -> [100] 32+363a+528a^2+256a^3+192b+384b^2+256b^3-363c-528c^2-256c^3
 expanding queue[26]^7,meter=[2,2,2]*16: 8+27a+72a^2+64a^3+48b+96b^2+64b^3-27c-72c^2-64c^3
 [3+16a,4+16b,3+16c]:	unknown -> [101] 4+27a+144a^2+256a^3+48b+192b^2+256b^3-27c-144c^2-256c^3
@@ -149,10 +157,11 @@ expanding queue[26]^7,meter=[2,2,2]*16: 8+27a+72a^2+64a^3+48b+96b^2+64b^3-27c-72
 [11+16a,4+16b,11+16c]:	unknown -> [103] 4+363a+528a^2+256a^3+48b+192b^2+256b^3-363c-528c^2-256c^3
 [11+16a,12+16b,11+16c]:	unknown -> [104] 108+363a+528a^2+256a^3+432b+576b^2+256b^3-363c-528c^2-256c^3
 expanding queue[27]^7,meter=[2,2,2]*16: 147a+168a^2+64a^3+64b^3-147c-168c^2-64c^3
-solution [7,0,7],trivial(3)
 [7+16a,0+16b,7+16c]:	unknown -> [105] 147a+336a^2+256a^3+256b^3-147c-336c^2-256c^3
+-> solution [7,0,7],trivial(3) [23,0,23],trivial(3)
 [7+16a,8+16b,7+16c]:	unknown -> [106] 32+147a+336a^2+256a^3+192b+384b^2+256b^3-147c-336c^2-256c^3
 [15+16a,0+16b,15+16c]:	unknown -> [107] 675a+720a^2+256a^3+256b^3-675c-720c^2-256c^3
+-> solution [15,0,15],trivial(3) [31,0,31],trivial(3)
 [15+16a,8+16b,15+16c]:	unknown -> [108] 32+675a+720a^2+256a^3+192b+384b^2+256b^3-675c-720c^2-256c^3
 expanding queue[28]^7,meter=[2,2,2]*16: 8+147a+168a^2+64a^3+48b+96b^2+64b^3-147c-168c^2-64c^3
 [7+16a,4+16b,7+16c]:	unknown -> [109] 4+147a+336a^2+256a^3+48b+192b^2+256b^3-147c-336c^2-256c^3
@@ -179,4 +188,4 @@ expanding queue[32]^8,meter=[2,2,2]*16: 27+147a+168a^2+64a^3+108b+144b^2+64b^3-1
 [15+16a,14+16b,7+16c]:	unknown -> [126] 361+675a+720a^2+256a^3+588b+672b^2+256b^3-147c-336c^2-256c^3
 [7+16a,6+16b,15+16c]:	unknown -> [127] -176+147a+336a^2+256a^3+108b+288b^2+256b^3-675c-720c^2-256c^3
 [7+16a,14+16b,15+16c]:	unknown -> [128] -18+147a+336a^2+256a^3+588b+672b^2+256b^3-675c-720c^2-256c^3
-Maximum level 3 reached at [129]: a^3+b^3-c^3
+Maximum level 3 at [129]: a^3+b^3-c^3

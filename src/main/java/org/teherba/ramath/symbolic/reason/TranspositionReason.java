@@ -73,7 +73,7 @@ public class TranspositionReason extends BaseReason {
         return result;
     } // isConsiderable
 
-    /** Compares the source {@link RelationSet} <em>rset2</em> to be queued with 
+    /** Consider the source {@link RelationSet} <em>rset2</em> to be queued together with 
      *  another {@link RelationSet} <em>rset1</em> already queued.
      *  If the test is successful, a message is printed and returned,
      *  and <em>rset2</em> is not stored in the following; 
@@ -84,7 +84,7 @@ public class TranspositionReason extends BaseReason {
      *  @return a message String denoting the reasoning details,
      *  or {@link VariableMap#UNKNOWN} if the comparision is not conclusive.
      */
-    public String compare(int iqueue, RelationSet rset1, RelationSet rset2) {
+    public String consider(int iqueue, RelationSet rset1, RelationSet rset2) {
         String result = VariableMap.UNKNOWN;
         RefiningMap rmap2 = rset2.getMapping();
         String[] exprs2   = rmap2.getRefinedArray();
@@ -103,7 +103,7 @@ public class TranspositionReason extends BaseReason {
                     + " by " + testResult.toString(",");
         } // transposition found
         return result;
-    } // compare
+    } // consider
 
     /** Checks a {@link RelationSet} and determines whether 
      *  there is another {@link RelationSet} on the same nesting level
@@ -123,7 +123,7 @@ public class TranspositionReason extends BaseReason {
         int iqueue = solver.size() - 1; // last element
         RelationSet rset1 = solver.get(iqueue);
         while (iqueue > 0 && rset1.getNestingLevel() == level2) { // down in the same level
-            result = compare(iqueue, rset1, rset2);
+            result = consider(iqueue, rset1, rset2);
             if (! result.startsWith(VariableMap.UNKNOWN)) { // reason successful
                 iqueue = 1; // break loop
             } // reason successful

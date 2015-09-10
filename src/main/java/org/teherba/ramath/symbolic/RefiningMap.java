@@ -66,7 +66,11 @@ public class RefiningMap extends VariableMap implements Cloneable , Serializable
         Iterator<String> iter = vmap.keySet().iterator();
         while (iter.hasNext()) {
             String key = (String) iter.next();
-            result.put(key, (new Polynomial(vmap.get(key))).toString().replaceAll("\\s", ""));
+            String value = (new Polynomial(vmap.get(key))).toString().replaceAll("\\s", "");
+            if (! value.matches("\\A\\d+[\\+\\-].+")) {
+                value = "0+" + value;
+            }
+            result.put(key, value);
         } // while iter
         return result;
     } // parse
@@ -82,12 +86,12 @@ public class RefiningMap extends VariableMap implements Cloneable , Serializable
         int count = 0;
         Iterator<String> iter = this.keySet().iterator();
         while (iter.hasNext()) {
-            String name = iter.next();
+            String name  = iter.next();
             count ++;
             if (count > 1) {
                 result.append(",");
             }
-            String value = this.get(name).toString();
+            String value = this.get(name);
             int plusPos = value.indexOf("+");
             if (plusPos < 0) {
                 plusPos = value.length();
@@ -97,6 +101,32 @@ public class RefiningMap extends VariableMap implements Cloneable , Serializable
         result.append("]");
         return result.toString();
     } // getConstants
+
+    /** Determines whether all additive factors are 0, 
+     *  and all multiplicative factors are the same.
+     *  @return true for the initial metered values when invall = true
+     */
+    public boolean isZero() {
+        boolean result  = false; // assume failure
+        String name     = null;
+        String value    = null;
+        String constant = null;
+        Iterator<String> iter = this.keySet().iterator();
+        if (iter.hasNext()) { // at least 1 element
+            name  = iter.next();
+            value = this.get(name);
+            if (value.startsWith("0+")) {
+                constant = value.substring(0, value.indexOf("*"));
+                result = true;
+            }
+        } // at least 1 element
+        while (result && iter.hasNext()) {
+            name  = iter.next();
+            value = this.get(name);
+            result = value.startsWith(constant);
+        } // while iter
+        return result;
+    } // isZero
 
     /** Gets a {@link PolyVector}
      *  of the constant expressions when refined variables are substituted from a
@@ -148,7 +178,7 @@ public class RefiningMap extends VariableMap implements Cloneable , Serializable
         Iterator<String> iter = this.keySet().iterator();
         while (iter.hasNext()) {
             if (ind > 0) {
-            	result.append(',');
+                result.append(',');
             }
             String name = iter.next();
             String expr = this.get(name);
