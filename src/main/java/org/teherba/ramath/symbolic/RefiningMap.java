@@ -230,6 +230,38 @@ public class RefiningMap extends VariableMap implements Cloneable , Serializable
         return result;
     } // compareRefinedFactors
 
+    /** architecture independant list of lowercase letters for new name generation */
+    private static final String letters = "abcdefghklmnpqrstuvwxyz"; // i, j, o missing
+
+    /** Create a number of new names not yet occurring in <em>this</em> map.
+     *  @param count create so many new names 
+     *  @return ["a", "b", "c"], for example
+     */
+    public String[] getNewNames(int count) {
+        String[] result = new String[count];
+        String newName = this.lastKey();
+        int ires = 0;
+        int loopCheck = letters.length();
+        while (loopCheck > 0 && ires < count) { // generate and add a new name
+            char ch = newName.charAt(0);
+            if (ch > 'z' || ch < 'a') {
+                ch = 'a';
+            } 
+            int chPos = (letters.indexOf(ch) + 1) % letters.length(); // wrap around
+            newName = letters.substring(chPos, chPos + 1);
+            if (this.get(newName) == null) { // not yet stored
+                // this.put(newName, "0+1*" + newName);
+                result[ires] = newName;
+                ires ++;
+            } // not yet stored
+            loopCheck --;
+        } // while not free
+        if (loopCheck <= 0) {
+            throw new IllegalArgumentException("??? assertion: loopCheck in VariableMap.getNewNames");
+        }
+        return result;
+    } // getNewNames
+
     /*----------------- test driver ----------------------*/
     /** Test method.
      *  @param args command line arguments

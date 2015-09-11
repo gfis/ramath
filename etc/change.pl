@@ -6,10 +6,14 @@
 #------------------------------------
 use strict;
 
-	my $from = shift(@ARGV);
-	my $to   = shift(@ARGV);
-	while (<>) {
-        s/$from/$to/g;
+    my $from = shift(@ARGV);
+    my $to   = shift(@ARGV);
+    print STDERR $ARGV[0] . ":\n";
+    while (<>) {
+        if (m/$from/) {
+            s/$from/$to/g;
+            print STDERR;
+        }
         print;
     } # while <>
 __DATA__

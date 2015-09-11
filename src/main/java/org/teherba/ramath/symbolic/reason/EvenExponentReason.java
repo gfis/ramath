@@ -56,11 +56,12 @@ public class EvenExponentReason extends BaseReason {
      *  needed for the specific check.
      *  @param the {@link BaseSolver solver} which uses the reasons
      *  during tree expansion
+     *  @param startNode the root node of the expansion (sub-)tree
      */
-    public void initialize(BaseSolver solver) {
-        super.initialize(solver);
+    public void initialize(BaseSolver solver, RelationSet startNode) {
+        super.initialize(solver, startNode);
         setWalkMode(WALK_SIBLINGS);
-        expGCDs = this.getExponentGCDs(solver.getRootNode()); // remember them for check below
+        expGCDs = this.getExponentGCDs(startNode); // remember them for check below
         if (debug >= 2) {
             solver.getWriter().println("initialize.getExponentGCDs()=" + expGCDs.toString(","));
         }

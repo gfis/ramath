@@ -51,9 +51,10 @@ public class DownsizedMapReason extends BaseReason {
      *  needed for the specific check.
      *  @param the {@link BaseSolver solver} which uses the reasons
      *  during tree expansion
+     *  @param startNode the root node of the expansion (sub-)tree
      */
-    public void initialize(BaseSolver solver) {
-        super.initialize(solver);
+    public void initialize(BaseSolver solver, RelationSet startNode) {
+        super.initialize(solver, startNode);
         setWalkMode(WALK_ANCHESTORS);
     } // initialize
 
@@ -86,7 +87,7 @@ public class DownsizedMapReason extends BaseReason {
 
     /** Checks a {@link RelationSet} and determines whether 
      *  there is some refined expression in its map
-     *  which leads to a {@link VariableMap#FAILURE failrue}.
+     *  which leads to a {@link VariableMap#FAILURE failure}.
      *  @param rset2 the new {@link RelationSet} to be added to the queue 
      *  @return a message string starting with one of 
      *  <ul>
@@ -105,9 +106,10 @@ public class DownsizedMapReason extends BaseReason {
      *  </pre>
      *  which fails because of <em>varGCD = 8</em>
      */
+    /*
     public String check(RelationSet rset2) {
         RefiningMap vmap3 = downsize(rset2.getMapping());
-        RelationSet rset3 = this.getRootNode().substitute(vmap3);
+        RelationSet rset3 = this.getStartNode().substitute(vmap3);
         String result = rset3.evaluate(vmap3);
         if (debug > 0) {
             solver.getWriter().println("down " + " with " + vmap3.toString() 
@@ -119,5 +121,6 @@ public class DownsizedMapReason extends BaseReason {
         }
         return result;
     } // check
+    */
 
 } // DownsizedMapReason

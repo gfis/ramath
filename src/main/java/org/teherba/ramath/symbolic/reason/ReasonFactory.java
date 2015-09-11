@@ -65,10 +65,12 @@ public class ReasonFactory extends ArrayList<BaseReason> {
      *  @param solver the {@link BaseSolver} which uses the reasons from 
      *  <em>this</em> {@link ReasonFactory} for iteration control
      *  @param codeList a list of codes for reasons, separated by non-word characters
+     *  @param startNode the root node of the expansion (sub-)tree
      */
-    public ReasonFactory(BaseSolver solver, String codeList) {
+    public ReasonFactory(BaseSolver solver, String codeList, RelationSet startNode) {
         this();
         this.setSolver(solver);
+        this.setStartNode(startNode);
         // the standard reasons
     /* now defined in BaseSolver
         this.addReason("base"       );
@@ -78,7 +80,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         this.addReason("similiar"   );
         this.addReason("evenexp"    );
     */
-        String[] reasonCodes = codeList.substring(1).split("\\W"); // leading ","; non-word characters, e.g. ","
+        String[] reasonCodes = codeList.split("\\W"); // leading ","; non-word characters, e.g. ","
         int icode = 0;
         while (icode < reasonCodes.length) {
             this.addReason(reasonCodes[icode]); // a reason or a feature
@@ -107,6 +109,22 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         this.solver = solver;
     } // setSolver  
     //----------------
+    /** the {@link RelationSet} at the root of the (sub-)tree 
+     */
+    private RelationSet startNode;
+    /** Gets the start node
+     *  @return a {@link RelationSet}
+     */
+    public RelationSet getStartNode() {
+        return startNode;
+    } // getStartNode
+    /** Sets the start node
+     *  @param rset0 a {@link RelationSet}
+     */
+    public void setStartNode(RelationSet rset0) {
+        startNode = rset0;
+    } // setStartNode
+    //----------------
     /** Attempts to instantiate some reason class
      *  @param code external code for the reason
      *  @param className name of the class for the reason
@@ -120,7 +138,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         try {
             result = (BaseReason) Class.forName("org.teherba.ramath.symbolic.reason." + className).newInstance();
             if (result != null) { // known reason
-                result.initialize(getSolver());
+                result.initialize(getSolver(), getStartNode());
                 if (result.isConsiderable()) { 
                     result.setCode(code);
                     this.add(result);
@@ -144,6 +162,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         } else if (code.startsWith("base"       )) { result = addReasonClass(code, "BaseReason"          );
     //  } else if (code.startsWith("down"       )) { result = addReasonClass(code, "DownsizedMapReason"  );
         } else if (code.startsWith("evenexp"    )) { result = addReasonClass(code, "EvenExponentReason"  );
+        } else if (code.startsWith("pythagoras" )) { result = addReasonClass(code, "PythagorasReason"    );
         } else if (code.startsWith("primitive"  )) { result = addReasonClass(code, "PrimitiveReason"     );
         } else if (code.startsWith("same"       )) { result = addReasonClass(code, "SameReason"          );
         } else if (code.startsWith("simil"      )) { result = addReasonClass(code, "SimiliarReason"      );
@@ -232,7 +251,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         String result = VariableMap.UNKNOWN;
         int iqueue = rset2.getSiblingIndex();
         boolean busy = true;
-        while (busy && iqueue > solver.ROOT_INDEX) { // down through all nodes in the queue
+        while (busy && iqueue > solver.ROOT_PARENT) { // down through all nodes in the queue
             RelationSet rset1 = solver.get(iqueue);
             result = reason.consider(iqueue, rset1, rset2);
             if (! result.startsWith(VariableMap.UNKNOWN)) { // reason successful
@@ -252,7 +271,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         String result = VariableMap.UNKNOWN;
         int iqueue = rset2.getParentIndex();
         boolean busy = true;
-        while (busy && iqueue > solver.ROOT_INDEX) { // down through all parents
+        while (busy && iqueue > solver.ROOT_PARENT) { // down through all parents
             RelationSet rset1 = solver.get(iqueue);
             result = reason.consider(iqueue, rset1, rset2);
             if (! result.startsWith(VariableMap.UNKNOWN)) { // reason successful
@@ -273,7 +292,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         String result = VariableMap.UNKNOWN;
         int iqueue = rset2.getSiblingIndex();
         boolean busy = true;
-        while (busy && iqueue > solver.ROOT_INDEX) { // -1 for first child
+        while (busy && iqueue > solver.ROOT_PARENT) { // -1 for first child
 	        RelationSet rset1 = solver.get(iqueue);
             result = reason.consider(iqueue, rset1, rset2);
             if (! result.startsWith(VariableMap.UNKNOWN)) { // reason successful
@@ -326,7 +345,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
                     message = reason.consider(0, solver.get(rset2.getParentIndex()), rset2);
                     break;
                 case BaseReason.WALK_ROOT:
-                    message = reason.consider(0, solver.getRootNode(), rset2);
+                    message = reason.consider(0, this.getStartNode(), rset2);
                     break;
                 case BaseReason.WALK_SIBLINGS:
                     message = considerSiblings  (reason, rset2);
@@ -410,7 +429,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         BaseSolver solver = new BaseSolver();
         RelationSet rset0 = new RelationSet("x^2 + y^2 - z^2");
         solver.setRootNode(rset0);
-        ReasonFactory reasons = new ReasonFactory(solver, "norm");
+        ReasonFactory reasons = new ReasonFactory(solver, "base,transpose,same,norm", rset0);
         solver.getWriter().println("ReasonFactory: " + reasons.toString());
     } // main
 

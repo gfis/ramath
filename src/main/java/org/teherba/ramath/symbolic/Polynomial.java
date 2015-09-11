@@ -581,7 +581,7 @@ public class Polynomial implements Cloneable, Serializable {
     /** Inverts the signs of the monomials of <em>this</em> {@link Polynomial}.
      *  @return reference to <em>this</em> modified object.
      */
-    protected Polynomial negativeOf() {
+    public Polynomial negativeOf() {
         Iterator <String> titer = monomials.keySet().iterator();
         while (titer.hasNext()) {
             Monomial mono1 = monomials.get(titer.next());
@@ -1253,9 +1253,10 @@ x^2 + 3*x^3 + 2*x^4
     } // gcdCoefficients
 
     /*---------------- heavyweight methods ----------------------*/
-    //------------
-    // Subsetting
-    //------------
+    
+    //-----------------
+    // Generate subsets
+    //------------------
 
     /** Takes all variables from <em>mono2</em> and
      *  creates a sum of {@link Monomial}s for all different powers of these variables
@@ -1364,6 +1365,8 @@ x^2 + 3*x^3 + 2*x^4
         return result;
     } // getSubPolynomial
 
+    // Elimination of lower power terms
+    
     /** Modifies <em>this<em> {@link Polynomial} such that
      *  all {@link Monomial}s consisting of a power of a variable
      *  "consumes" as much as possible of the {@link Coefficient} into

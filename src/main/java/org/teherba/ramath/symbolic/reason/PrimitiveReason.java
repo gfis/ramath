@@ -45,15 +45,20 @@ public class PrimitiveReason extends BaseReason {
     /** the solver's {@link BaseSolver#modBase} */
     private BigInteger base = null;
     
+    /** copy of the ReasonFactory's startNode */
+    private RelationSet startNode = null;
+
     /** Initializes any data structures for <em>this</em> reason.
      *  This method is called by {@link ReasonFactory};
      *  it may be  used to gather and store data which are 
      *  needed for the specific check.
      *  @param the {@link BaseSolver solver} which uses the reasons
      *  during tree expansion
+     *  @param startNode the root node of the expansion (sub-)tree
      */
-    public void initialize(BaseSolver solver) {
-        super.initialize(solver);
+    public void initialize(BaseSolver solver, RelationSet startNode) {
+        super.initialize(solver, startNode);
+        this.startNode = startNode;
         setWalkMode(WALK_ROOT); // consider with rset1 = [0] = rset0
         base = BigInteger.valueOf(solver.getModBase());
     } // initialize
@@ -67,7 +72,7 @@ public class PrimitiveReason extends BaseReason {
      *  <em>false</em> otherwise.
      */
     public boolean isConsiderable() {
-        boolean result = solver.getRootNode().isHomogeneous();
+        boolean result = startNode.isHomogeneous();
         if (result) {
             solver.getWriter().println("isHomogeneous");
         }

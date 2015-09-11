@@ -1,6 +1,6 @@
 /*  RelationSet: a set of polynomials which relate to zero
  *  @(#) $Id: RelationSet.java 970 2012-10-25 16:49:32Z  $
- *  2015-09-10: message -> siblingIndex
+ *  2015-09-10: message -> siblingIndex; s|getRelationSet
  *  2015-08-25: getExponentGCDs
  *  2015-06-15: RelationSet.parse was not static
  *  2015-02-19: extends Polynomial; inherit a number of methods from there
@@ -32,6 +32,7 @@ package org.teherba.ramath.symbolic;
 import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.RefiningMap;
 import  org.teherba.ramath.symbolic.VariableMap;
+import  org.teherba.ramath.symbolic.reason.ReasonFactory;
 import  org.teherba.ramath.BigIntegerUtil;
 import  org.teherba.ramath.PrimeFactorization;
 import  org.teherba.ramath.linear.Vector;
@@ -199,20 +200,24 @@ public class RelationSet
         this.index = index;
     } // setIndex
     //----------------
-    /** Index of the previous sibling of this node, or -1 for the first child */
-    private int siblingIndex;
-    /** Gets the previous sibling of this node
-     *  @return index of the previous node, or -1 for the first child
+    /** Maps variable names to the accumulated digits assigned during the expansion */
+    private RefiningMap mapping;
+    /** Gets the {@link RefiningMap}.
+     *  Returns the remembered mapping, whereas {@link #getRefiningMap}
+     *  computes a new mapping from the {@link RelationSet}
+     *  @return a map of variable names to the accumulated
+     *  additive and multiplicative factors during the expansion
      */
-    public int getSiblingIndex() {
-        return siblingIndex;
-    } // getSiblingIndex
-    /** Sets the previous sibling of this node
-     *  @param index of the previous node, or -1 for the first child
+    public RefiningMap getMapping() {
+        return mapping;
+    } // getMapping
+    /** Sets the {@link RefiningMap}.
+     *  @param mapping map of variable names to the accumulated
+     *  additive and multiplicative factors during the expansion
      */
-    public void setSiblingIndex(int siblingIndex) {
-        this.siblingIndex = siblingIndex;
-    } // setSiblingIndex
+    public void setMapping(RefiningMap mapping) {
+        this.mapping = mapping;
+    } // setMapping
     //----------------
     /** Nesting level: 0, 1, 2 and so on - number of variable expansions which did already take place */
     private int nestingLevel;
@@ -244,24 +249,39 @@ public class RelationSet
         parentIndex = index;
     } // setParentIndex
     //----------------
-    /** Maps variable names to the accumulated digits assigned during the expansion */
-    private RefiningMap mapping;
-    /** Gets the {@link RefiningMap}.
-     *  Returns the remembered mapping, whereas {@link #getRefiningMap}
-     *  computes a new mapping from the {@link RelationSet}
-     *  @return a map of variable names to the accumulated
-     *  additive and multiplicative factors during the expansion
+    /** The {@link ReasonFactory} which is used for the examination of 
+     *  all nodes in this (sub-)tree
      */
-    public RefiningMap getMapping() {
-        return mapping;
-    } // getMapping
-    /** Sets the {@link RefiningMap}.
-     *  @param mapping map of variable names to the accumulated
-     *  additive and multiplicative factors during the expansion
+    private ReasonFactory reasonFactory;
+    /** Gets the {@link ReasonFactory} which is used for the examination of 
+     *  all nodes in this (sub-)tree
+     *  @return a ReasonFactory
      */
-    public void setMapping(RefiningMap mapping) {
-        this.mapping = mapping;
-    } // setMapping
+    public ReasonFactory getReasonFactory() {
+        return reasonFactory;
+    } // getReasonFactory
+    /** Sets the {@link ReasonFactory} which is used for the examination of 
+     *  all nodes in this (sub-)tree
+     *  @param reasonFactory new ReasonFactory to be used 
+     */
+    public void setReasonFactory(ReasonFactory reasonFactory) {
+        this.reasonFactory = reasonFactory;
+    } // setReasonFactory
+    //----------------
+    /** Index of the previous sibling of this node, or -1 for the first child */
+    private int siblingIndex;
+    /** Gets the previous sibling of this node
+     *  @return index of the previous node, or -1 for the first child
+     */
+    public int getSiblingIndex() {
+        return siblingIndex;
+    } // getSiblingIndex
+    /** Sets the previous sibling of this node
+     *  @param index of the previous node, or -1 for the first child
+     */
+    public void setSiblingIndex(int siblingIndex) {
+        this.siblingIndex = siblingIndex;
+    } // setSiblingIndex
 
     /*-------------- lightweight derived methods -----------------------------*/
 

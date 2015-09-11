@@ -455,3 +455,14 @@ CALL BaseReason -primitive \
 	-rset1 "a^3+b^3+c^3-d^3" \
 	-rset2 "a^3+b^3+c^3-d^3" \
 	-rmap2 "[0+2a,0+2b,0+2c,0+2d]"
+
+TEST REY1 PythagorasReason: normal
+CALL BaseReason -pythagoras \
+	-rset2 "x^2+y^2-z^2" \
+	-rmap2 "[x=>1+2x,y=>0+2y,z=>1+2z]"
+
+TEST REY2 PythagorasReason: proof of FLT(4)
+CALL BaseReason -pythagoras \
+	-rset2 "x^4+y^4-z^2" \
+	-rmap2 "[x=>1+2x,y=>0+2y,z=>1+2z]"
+	

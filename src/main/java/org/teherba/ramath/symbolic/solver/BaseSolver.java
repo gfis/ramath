@@ -55,9 +55,6 @@ public class BaseSolver extends Stack<RelationSet> {
     /** index into queue for unresolved {@link RelationSet}s */
     public int queueHead;
 
-    /** Factory for reasons to truncate the expansion tree */
-    protected ReasonFactory reasons;
-
     //--------------
     //  Features which can be set from outside
     //--------------
@@ -98,10 +95,9 @@ public class BaseSolver extends Stack<RelationSet> {
     protected void initialize() {
         setMaxLevel   (4);
         setModBase    (2); // for n-adic modulo expansion (here: binary)
-        setSubsetting (false);
         setUpperSubst (true);
         queueHead     = 0;
-        codeList      = ",base,transpose,primitive,same,similiar,evenexp"; // default reasons
+        codeList      = ",base,transpose,primitive,same,similiar,evenexp,pythagoras"; // default reason codes
             // the leading comma is needed for proper removal, c.f. modifyCodeList
     } // initialize
 
@@ -109,7 +105,13 @@ public class BaseSolver extends Stack<RelationSet> {
     // Bean properties and methods
     //-----------------------------
     /** List of reason and feature codes from the commandline */
-    protected String codeList;
+    protected String codeList;  
+    /** Gets the list of reason and feature codes
+     *  @return comma separated list of short words
+     */
+    public String getCodeList() {
+        return this.codeList;
+    } // getCodeList
     
     /** Modifies the {@link #codeList} by appending new codes
      *  or removing those starting with "no-".
@@ -138,6 +140,7 @@ public class BaseSolver extends Stack<RelationSet> {
             } // remove
             icode ++;
         } // while icode
+        codeList = codeList.replaceAll("\\A\\,", "");
     } // modify codeList
     //----------------
     /** Maximum nesting (tree height) level */
@@ -171,7 +174,7 @@ public class BaseSolver extends Stack<RelationSet> {
     } // setModBase
     //----------------
     /** A parentIndex which denotes the root, also of a subtree */
-    public static final int ROOT_INDEX = -1;
+    public static final int ROOT_PARENT = -1;
     
     /** Gets the initial {@link RelationSet} to be solved
      *  @return root element of the queue of RelationSets
@@ -185,25 +188,10 @@ public class BaseSolver extends Stack<RelationSet> {
     public void setRootNode(RelationSet rset0) {
         rset0.setMapping(rset0.getRefiningMap());
         rset0.setIndex       (0);
-        rset0.setParentIndex (ROOT_INDEX);
-        rset0.setSiblingIndex(ROOT_INDEX);
+        rset0.setParentIndex (ROOT_PARENT);
+        rset0.setSiblingIndex(ROOT_PARENT);
         add(rset0);
     } // setRootNode
-    //----------------
-    /** Whether to substitute subsets of variables */
-    private boolean subsetting;
-    /** Gets the modus of variable subsetting
-     *  @return whether to substitute subsets
-     */
-    public boolean getSubsetting() {
-        return subsetting;
-    } // getSubsetting
-    /** Sets the modus of variable subsetting
-     *  @param subsetting whether to substitute subsets
-     */
-    public void setSubsetting(boolean subsetting) {
-        this.subsetting = subsetting;
-    } // setSubsetting
     //----------------
     /** Whether to substitute uppercase variables */
     private boolean upperSubst;
@@ -287,9 +275,6 @@ public class BaseSolver extends Stack<RelationSet> {
                 busy = false;
             }
         } // while iargs
-        if (getSubsetting()) {
-            setModBase(getModBase() + 1); // 2 (for 2-adic) suppresses the substitution
-        }
         return result;
     } // getArguments
 
@@ -302,7 +287,7 @@ public class BaseSolver extends Stack<RelationSet> {
     //-----------------------------------------------
 
     /** Prints the decision of a child node in the tree.
-     *  @param decision outcome of the various checks for reasons to cut the tree,
+     *  @param decision outcome of the various checks for {@link BaseReason reasons} to cut the tree,
      *  @param rset2 {@link RelationSet} to be examined
      *  @param rmap2 {@link VariableMap} of <em>rset2</em>
      */
@@ -326,8 +311,8 @@ public class BaseSolver extends Stack<RelationSet> {
     protected void printHeader(RelationSet rset0) {
         if (debug >= 1) {
             trace.print  ("Expanding for base=" + getModBase());
-            trace.println(", reasons+features=" + reasons.toString());
-            trace.println("Refined variables=" + rset0.getMapping().getNameString());
+            trace.println(", reasons+features=" + rset0.getReasonFactory().toString());
+            trace.println("Refined variables="  + rset0.getMapping().getNameString());
         } // debug
     } // printHeader
 
@@ -472,11 +457,12 @@ public class BaseSolver extends Stack<RelationSet> {
     public boolean solve(RelationSet rset0) {
         prevLevel = -1;
         setRootNode(rset0);
-        reasons = new ReasonFactory(this, codeList);
+        ReasonFactory factory = new ReasonFactory(this, codeList, rset0);
+        rset0.setReasonFactory(factory);
         // determine all features
-        igtriv = reasons.hasFeature("igtriv");
-        invall = reasons.hasFeature("invall");
-        norm   = reasons.hasFeature("norm"  );      
+        igtriv = factory.hasFeature("igtriv");
+        invall = factory.hasFeature("invall");
+        norm   = factory.hasFeature("norm"  );      
         printHeader(rset0);
 
         boolean exhausted = false;

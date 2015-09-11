@@ -26,6 +26,7 @@
  */
 package org.teherba.ramath.symbolic.solver;
 import  org.teherba.ramath.symbolic.solver.BaseSolver;
+import  org.teherba.ramath.symbolic.reason.ReasonFactory;
 import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.RelationSet;
 import  org.teherba.ramath.symbolic.RefiningMap;
@@ -125,6 +126,7 @@ public class TreeSolver extends BaseSolver {
         // meter now ready for n-adic expansion, e.g. x -> 2*x+0, 2*x+1
         printNode(queueIndex, rset1, meter, factor);
         int oldSiblingIndex = -1; // for the 1st child
+        ReasonFactory factory = rset1.getReasonFactory();
         while (meter.hasNext()) { // over all constant combinations - generate all children
             RefiningMap vmap2 = vmap1.getRefiningMap(meter);
             if (vmap2.size() > 0) {
@@ -136,10 +138,11 @@ public class TreeSolver extends BaseSolver {
                 rset2.setNestingLevel(newLevel);
                 rset2.setIndex(this.size());
                 rset2.setParentIndex(queueIndex);
+                rset2.setReasonFactory(factory);
                 rset2.setSiblingIndex(oldSiblingIndex);
-                if (reasons.evaluateReasons(rset2, vmap2)) { // result = queueAgain
+                if (factory.evaluateReasons(rset2, vmap2)) { // result = queueAgain
                     // a reason could have modified the complete structure of rset2: a new subtree could be started
-                    if (rset2.getParentIndex() != ROOT_INDEX) {
+                    if (rset2.getParentIndex() != ROOT_PARENT) {
                     	oldSiblingIndex = rset2.getIndex();
                     } // else new subtree: leave it on the node before
                     this.add(rset2);

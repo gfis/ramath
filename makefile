@@ -60,7 +60,7 @@ gitadd:
 gsame:
 	grep "same " test/T*.this.tst
 change:
-	find src -iname "*.java" | xargs -l -i {} perl -i .bak etc/change.pl $(FROM) $(TO) {}
+	find src/main/java/org/teherba/ramath/symbolic/reason -iname "*.java" | xargs -l -i{} perl -i.bak etc/change.pl $(FROM) $(TO) {}
 push:
 	find src/main/java/org/teherba/common -iname "*.java" -mtime -1 -type f \
 	| xargs -l -i{} cp -v {} ../dbat/src/main/java/org/teherba/common

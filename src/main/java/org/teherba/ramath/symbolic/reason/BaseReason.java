@@ -67,10 +67,10 @@ public class BaseReason {
      *  needed for the specific check.
      *  @param the {@link BaseSolver solver} which uses the reasons
      *  during tree expansion
+     *  @param startNode the root node of the expansion (sub-)tree
      */
-    public void initialize(BaseSolver solver) {
+    public void initialize(BaseSolver solver, RelationSet startNode) {
         setSolver(solver);
-        setRootNode(solver.getRootNode());
         setWalkMode(WALK_NONE); // -base tests the new source node <em>rset2</em> only
     } // initialize
 
@@ -108,21 +108,6 @@ public class BaseReason {
     public void setCode(String code) {
         this.code = code;
     } // setCode
-    //----------------
-    /** the initial {@link RelationSet} to be solved */
-    protected RelationSet rootNode;
-    /** Gets the initial {@link RelationSet} to be solved
-     *  @return root element of the queue of RelationSets
-     */
-    protected RelationSet getRootNode() {
-        return this.rootNode;
-    } // getRootNode
-    /** Sets root element of the queue of {@link RelationSet}s
-     *  @param rset0 the initial {@link RelationSet} to be solved
-     */
-    public void setRootNode(RelationSet rset0) {
-        this.rootNode = rset0;
-    } // setRootNode
     //----------------
     /** the {@link BaseSolver} which uses the reasons of <em>this</em> {@link ReasonFactory} 
      *  for tree expansion control
@@ -244,16 +229,21 @@ public class BaseReason {
         rset1.setMapping(rmap1);
         rset2.setMapping(rmap2);
         BaseSolver solver = new BaseSolver();
-        solver.setRootNode(rset0);
-        ReasonFactory reasons = new ReasonFactory(solver, code);
+        ReasonFactory reasons = new ReasonFactory(solver, code, rset0);
         BaseReason reason = reasons.getReason(code);
         debug = localDebug;
-        
-        solver.getWriter().println(reason.getClass().getSimpleName() + ".consider(\n\t\"" 
+        if (debug >= 2 || reason == null) {
+            System.out.println("??? assertion: BaseReason.nullCheck"
+                    + ", reason=" + (reason             == null ? "null" : "ok") 
+                    + ", trace="  + (solver.getWriter() == null ? "null" : "ok") 
+                    + ", rset1="  + (rset1              == null ? "null" : "ok") 
+                    + ", rset2="  + (rset2              == null ? "null" : "ok")
+                    );
+        } // if debug
+        solver.getWriter().println(reason.getClass().getSimpleName() + ".consider(\n\t\""
                 + rset1.niceString() + "\", \n\t\"" 
-                + rset2.niceString() + "\") = \n\t"
+                + rset2.niceString() + "\") = \n\t" 
                 + reason.consider(0, rset1, rset2));
-
     } // main
 
 } // BaseReason

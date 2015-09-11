@@ -1,6 +1,7 @@
 /*  VariableMap: maps a set of variables to their values or substitution formulas
  *  @(#) $Id: VariableMap.java 538 2010-09-08 15:08:36Z gfis $
- *  2015-09-08: substitute with division b constant
+ *  2015-09-11: addNewNames
+ *  2015-09-08: substitute with divisor b = constant 
  *  2015-08-30: deflateIt
  *  2015-08-19: multiplyBy, substitute
  *  2015-04-26: old_triviality returns String
@@ -34,6 +35,7 @@ import  org.teherba.ramath.symbolic.RefiningMap;
 import  org.teherba.ramath.util.Dispenser;
 import  org.teherba.ramath.linear.Vector;
 import  java.io.Serializable;
+import  java.lang.IllegalArgumentException;
 import  java.math.BigInteger;
 import  java.util.Iterator;
 import  java.util.HashSet; // for old_triviality
@@ -254,6 +256,9 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
         return result;
     } // getValueArray
 
+    /*----------------
+        Arithmetics
+    */
     /** Multiplies all values of <em>this</em> {@link VariableMap}
      *  with a {@link BigInteger}.
      *  The values must be valid {@link Polynomial} expressions.
@@ -290,6 +295,9 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
         return this;
     } // negativeOf
 
+    /*----------------
+        Dispensing and Permutation
+    */
     /** Refines the expressions in <em>this</em> VariableMap
      *  by one level of modulus expansion.
      *  @param dispenser current state of a {@link Dispenser} containing the
@@ -340,7 +348,6 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
         } // while iter
         return result;
     } // permuteVariables
-
 
     /** Determines the index position of a value in a String array
      *  @param value find this value
@@ -438,13 +445,6 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
         } // while viter 2
         return result;
     } // substitute
-
-    /*
-                    Matcher verbMatcher = verbPattern.matcher(testLine);
-                    if (verbMatcher.matches()) {
-                        String verb     = verbMatcher.group(1).toUpperCase();
-                        String rest     = verbMatcher.group(2).trim();
-    */
 
     /*----------------- test driver ----------------------*/
     /** Test method.

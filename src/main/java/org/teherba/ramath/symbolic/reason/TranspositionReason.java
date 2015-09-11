@@ -49,11 +49,12 @@ public class TranspositionReason extends BaseReason {
      *  needed for the specific check.
      *  @param the {@link BaseSolver solver} which uses the reasons
      *  during tree expansion
+     *  @param startNode the root node of the expansion (sub-)tree
      */
-    public void initialize(BaseSolver solver) {
-        super.initialize(solver);
+    public void initialize(BaseSolver solver, RelationSet startNode) {
+        super.initialize(solver, startNode);
         setWalkMode(WALK_SIBLINGS);
-        transet = new TranspositionSet(solver.getRootNode());
+        transet = new TranspositionSet(startNode);
     } // initialize
 
     /** Whether <em>this</em> reason should be considered for 
