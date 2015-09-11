@@ -170,6 +170,9 @@ public class BaseSolver extends Stack<RelationSet> {
         this.modBase = modBase;
     } // setModBase
     //----------------
+    /** A parentIndex which denotes the root, also of a subtree */
+    public static final int ROOT_INDEX = -1;
+    
     /** Gets the initial {@link RelationSet} to be solved
      *  @return root element of the queue of RelationSets
      */
@@ -181,8 +184,9 @@ public class BaseSolver extends Stack<RelationSet> {
      */
     public void setRootNode(RelationSet rset0) {
         rset0.setMapping(rset0.getRefiningMap());
-        rset0.setIndex(0);
-        rset0.setParentIndex(-1);
+        rset0.setIndex       (0);
+        rset0.setParentIndex (ROOT_INDEX);
+        rset0.setSiblingIndex(ROOT_INDEX);
         add(rset0);
     } // setRootNode
     //----------------
@@ -449,6 +453,16 @@ public class BaseSolver extends Stack<RelationSet> {
      */
     protected void expand(int queueIndex) {
     } // expand
+
+    /** Adds a {@link RelationSet} <em>rset1</em>to the queue 
+     *  instead of another RelationSet <em>rset2</em>which is prepared just to be queued.
+     *  <em>rset1</em> may start a new subtree with totally different
+     *  variable names and base {@link Polynomial}s.
+     *  @param rset1 RelationSet to be added instead of <em>rset2</em>
+     *  @param rset2 RelationSet which is prepared, and which would soon have been added to the queue
+     */
+    protected void startSubTree(RelationSet rset1, RelationSet rset2) {
+    } // startSubTree
 
     /** Refines and evaluates modulus properties for variables in a {@link RelationSet}.
      *  The maximum queue size breaks the expansion loop in any case.

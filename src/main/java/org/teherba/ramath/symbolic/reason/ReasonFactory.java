@@ -224,14 +224,15 @@ public class ReasonFactory extends ArrayList<BaseReason> {
 
     /** Checks all previous nodes of a {@link RelationSet}
      *  @param reason the reason to be investigated
-     *  @param rset2 the new {@link RelationSet} to be added to the queue
+     *  @param rset2 the new {@link RelationSet} to be added to the queue.
+     *  <em>rset2.getSiblingIndex()</em> must already yield the proper index.
      *  @return a message String 
      */
     private String considerAll(BaseReason reason, RelationSet rset2) {
         String result = VariableMap.UNKNOWN;
-        int iqueue = solver.size() - 1; // last element
+        int iqueue = rset2.getSiblingIndex();
         boolean busy = true;
-        while (busy && iqueue >= 0) { // down through all nodes in the queue
+        while (busy && iqueue > solver.ROOT_INDEX) { // down through all nodes in the queue
             RelationSet rset1 = solver.get(iqueue);
             result = reason.consider(iqueue, rset1, rset2);
             if (! result.startsWith(VariableMap.UNKNOWN)) { // reason successful
@@ -251,7 +252,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         String result = VariableMap.UNKNOWN;
         int iqueue = rset2.getParentIndex();
         boolean busy = true;
-        while (busy && iqueue >= 0) { // down through all parents
+        while (busy && iqueue > solver.ROOT_INDEX) { // down through all parents
             RelationSet rset1 = solver.get(iqueue);
             result = reason.consider(iqueue, rset1, rset2);
             if (! result.startsWith(VariableMap.UNKNOWN)) { // reason successful
@@ -264,21 +265,21 @@ public class ReasonFactory extends ArrayList<BaseReason> {
 
     /** Checks all siblings of a {@link RelationSet}
      *  @param reason the reason to be investigated
-     *  @param rset2 the new {@link RelationSet} to be added to the queue
+     *  @param rset2 the new {@link RelationSet} to be added to the queue.
+     *  <em>rset2.getSiblingIndex()</em> must already yield the proper index.
      *  @return a message String 
      */
     private String considerSiblings(BaseReason reason, RelationSet rset2) {
         String result = VariableMap.UNKNOWN;
-        int level2 = rset2.getNestingLevel();
-        int iqueue = solver.size() - 1; // last element
-        RelationSet rset1 = solver.get(iqueue);
-        while (iqueue > 0 && rset1.getNestingLevel() == level2) { // down in the same level
+        int iqueue = rset2.getSiblingIndex();
+        boolean busy = true;
+        while (busy && iqueue > solver.ROOT_INDEX) { // -1 for first child
+	        RelationSet rset1 = solver.get(iqueue);
             result = reason.consider(iqueue, rset1, rset2);
             if (! result.startsWith(VariableMap.UNKNOWN)) { // reason successful
-                iqueue = 1; // break loop
+            	busy = false; // break loop
             } // reason successful
-            iqueue --;
-            rset1 = solver.get(iqueue);
+            iqueue = rset1.getSiblingIndex();
         } // while iqueue
         return result;
     } // considerSiblings

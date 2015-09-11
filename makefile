@@ -59,6 +59,14 @@ gitadd:
 	git add -v src/main/java/org/teherba/ramath/symbolic/reason/*.java
 gsame:
 	grep "same " test/T*.this.tst
+change:
+	find src -iname "*.java" | xargs -l -i {} perl -i .bak etc/change.pl $(FROM) $(TO) {}
+push:
+	find src/main/java/org/teherba/common -iname "*.java" -mtime -1 -type f \
+	| xargs -l -i{} cp -v {} ../dbat/src/main/java/org/teherba/common
+jfind:
+	find src -iname "*.java" | xargs -l grep -iH $(JF)
+#----------
 	
 # 1234567890123456789
 # test/T47.this.tst:Proof - queue exhausted, queue size = 2
@@ -82,12 +90,6 @@ recr1:
 regr2:
 	make regression TEST=$(TEST)
 #---------------------------------------------------
-push:
-	find src/main/java/org/teherba/common -iname "*.java" -mtime -1 -type f \
-	| xargs -l -i{} cp -v {} ../dbat/src/main/java/org/teherba/common
-jfind:
-	find src -iname "*.java" | xargs -l grep -iH $(JF)
-#----------
 ec221:
 	perl data/genpEC.pl 2 2 1 > ec221.txt
 	diff -C0 pEC221.tmp pEC221.txt

@@ -1,5 +1,6 @@
 /*  TreeSolver: tries to solve a Diophantine equation by monadic variable expansion
  *  @(#) $Id: TreeSolver.java 970 2012-10-25 16:49:32Z gfis $
+ *  2015-09-10: setSiblingIndex
  *  2015-07-23: printSolutions
  *  2015-06-15: RelationSet.parse was not static
  *  2015-05-28: subdirectory solver
@@ -123,6 +124,7 @@ public class TreeSolver extends BaseSolver {
         }    
         // meter now ready for n-adic expansion, e.g. x -> 2*x+0, 2*x+1
         printNode(queueIndex, rset1, meter, factor);
+        int oldSiblingIndex = -1; // for the 1st child
         while (meter.hasNext()) { // over all constant combinations - generate all children
             RefiningMap vmap2 = vmap1.getRefiningMap(meter);
             if (vmap2.size() > 0) {
@@ -134,7 +136,12 @@ public class TreeSolver extends BaseSolver {
                 rset2.setNestingLevel(newLevel);
                 rset2.setIndex(this.size());
                 rset2.setParentIndex(queueIndex);
-                if (reasons.evaluateReasons(rset2, vmap2)) { // queueAgain
+                rset2.setSiblingIndex(oldSiblingIndex);
+                if (reasons.evaluateReasons(rset2, vmap2)) { // result = queueAgain
+                    // a reason could have modified the complete structure of rset2: a new subtree could be started
+                    if (rset2.getParentIndex() != ROOT_INDEX) {
+                    	oldSiblingIndex = rset2.getIndex();
+                    } // else new subtree: leave it on the node before
                     this.add(rset2);
                 } // queueAgain
             } // vmap2.size() > 0

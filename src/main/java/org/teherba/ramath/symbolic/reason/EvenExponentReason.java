@@ -44,8 +44,11 @@ public class EvenExponentReason extends BaseReason {
     public EvenExponentReason() {
     } // no-args Constructor
 
-    /** a copy of the exponentGCDs */
-    private Vector expGCDs = null;
+    /** Local storage of the exponentGCDs.
+     *  This reason {@link #isConsidered} only 
+     *  if at least one of the elements of this {@link Vector} is even.
+     */
+    public Vector expGCDs = null;
         
     /** Initializes any data structures for <em>this</em> reason.
      *  This method is called by {@link ReasonFactory};
@@ -112,17 +115,6 @@ public class EvenExponentReason extends BaseReason {
             } // while viter
         } // while miter    
     } // joinExponentGCDs
-
-    /** Gets a map of variable names in a {@link Polynomial}
-     *  to the greatest common divisors of that variables' exponents.
-     *  @param poly1 get the map from this Polynomial
-     *  @return a map of variable names to the greatest common divisors of their exponents
-     */
-    private static TreeMap<String, Integer> getExponentGCDs_99(Polynomial poly1) {
-        TreeMap<String, Integer> result = new TreeMap<String, Integer>();
-        joinExponentGCDs(result, poly1);
-        return result;
-    } // getExponentGCDs
 
     /** Gets the greatest common divisors of variable exponents,
      *  in the natural order of the variable names in {@link RelationSet} <em>rset1</em> 
@@ -226,9 +218,8 @@ expanding queue[3]^2,meter=[2,1,2]*8: x+3x^2+4x^3+2x^4+2y^4-z-2z^2
         VariableMap vmap1 = rset1.getMapping();
         VariableMap vmap2 = rset2.getMapping();
         if (debug >= 2) {
-            solver.getWriter().println(""
-                    + "consider " + vmap2.toString() + " with\n" 
-                    + "        " + vmap1.toString());
+            solver.getWriter().println("consider(" + iqueue + ", " 
+                    + vmap1.toString() + ", " + vmap2.toString() + ")");
         }
         String message = testNegative_1(vmap1, vmap2, expGCDs);
         if (message.length() > 0) { // can be mapped by at least one -x-1

@@ -1,5 +1,6 @@
 /*  RelationSet: a set of polynomials which relate to zero
  *  @(#) $Id: RelationSet.java 970 2012-10-25 16:49:32Z  $
+ *  2015-09-10: message -> siblingIndex
  *  2015-08-25: getExponentGCDs
  *  2015-06-15: RelationSet.parse was not static
  *  2015-02-19: extends Polynomial; inherit a number of methods from there
@@ -77,11 +78,10 @@ public class RelationSet
      *  The <em>tuple</em> property is undefined.
      */
     public RelationSet() {
-        polynomials = new ArrayList<Polynomial>(4);
+        polynomials     = new ArrayList<Polynomial>(4);
         setNestingLevel (0);
         setParentIndex  (-1); // no parent - [0] is the first real queue element
-        setMapping  (new RefiningMap());
-        setMessage      ("undefined");
+        setMapping      (new RefiningMap());
     } // Constructor()
 
     /** Construct from a single polynomial.
@@ -140,10 +140,10 @@ public class RelationSet
             result.insert(this.get(ipoly).clone());
             ipoly ++;
         } // while ipoly
+        result.setMapping       (this.getMapping        ());
         result.setNestingLevel  (this.getNestingLevel   ());
         result.setParentIndex   (this.getParentIndex    ());
-        result.setMapping       (this.getMapping        ());
-        result.setMessage       (this.getMessage        ());
+        result.setSiblingIndex  (this.getSiblingIndex   ());
         return result;
     } // clone
 
@@ -199,20 +199,20 @@ public class RelationSet
         this.index = index;
     } // setIndex
     //----------------
-    /** Message text from the last evaluation */
-    private String message;
-    /** Gets the message text from the last evaluation
-     *  @return string describing the decision
+    /** Index of the previous sibling of this node, or -1 for the first child */
+    private int siblingIndex;
+    /** Gets the previous sibling of this node
+     *  @return index of the previous node, or -1 for the first child
      */
-    public String getMessage() {
-        return message;
-    } // getMessage
-    /** Sets the message text from the last evaluation
-     *  @param text message text to be stored
+    public int getSiblingIndex() {
+        return siblingIndex;
+    } // getSiblingIndex
+    /** Sets the previous sibling of this node
+     *  @param index of the previous node, or -1 for the first child
      */
-    public void setMessage(String text) {
-        message = text;
-    } // setMessage
+    public void setSiblingIndex(int siblingIndex) {
+        this.siblingIndex = siblingIndex;
+    } // setSiblingIndex
     //----------------
     /** Nesting level: 0, 1, 2 and so on - number of variable expansions which did already take place */
     private int nestingLevel;

@@ -55,7 +55,7 @@ public class SameReason extends BaseReason {
      */
     public void initialize(BaseSolver solver) {
         super.initialize(solver);
-        setWalkMode(WALK_ALL);
+        setWalkMode(WALK_ANCHESTORS); // some more side branches with WALK_ALL in T33, T51, T54, T55
         base = BigInteger.valueOf(solver.getModBase());
     } // initialize
 

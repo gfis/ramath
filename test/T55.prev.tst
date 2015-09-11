@@ -53,22 +53,21 @@ expanding queue[3]^0,meter=[2,2,2,2]*4: 2a+6a^2+8a^3+4a^4+2b+6b^2+8b^3+4b^4-c-c^
 [3+4a,3+4b,3+4c,3+4d]:	negative-1 [8] by {a=>-a-1,b=>-b-1,c=>-c-1,d=>-d-1}
 ----------------
 expanding queue[4]^1,meter=[2,2,2,2]*8: 1+8a+24a^2+32a^3+16a^4+16b^4-c^2-d^2
-[2+8a,0+8b,4+8c,0+8d]:	same 4a+24a^2+64a^3+64a^4+64b^4-c-c^2-d^2 map {a=>a/2,b=>b/2} -> [2] 2a+6a^2+8a^3+4a^4+4b^4-c-c^2-d^2
+[2+8a,0+8b,4+8c,0+8d]:	unknown -> [9] 4a+24a^2+64a^3+64a^4+64b^4-c-c^2-d^2
 -> solution [2,0,4,0],trivial(3)
-[6+8a,0+8b,4+8c,0+8d]:	unknown -> [9] 20+108a+216a^2+192a^3+64a^4+64b^4-c-c^2-d^2
-[2+8a,4+8b,4+8c,0+8d]:	negative-1 [9] by {a=>-a-1}
-[6+8a,4+8b,4+8c,0+8d]:	unknown -> [10] 24+108a+216a^2+192a^3+64a^4+32b+96b^2+128b^3+64b^4-c-c^2-d^2
-[2+8a,0+8b,0+8c,4+8d]:	negative-1 [10] by {a=>-a-1}
--> solution [2,0,0,4],trivial(3)
-[6+8a,0+8b,0+8c,4+8d]:	transposed [9] by [0,1,3,2]
-[2+8a,4+8b,0+8c,4+8d]:	negative-1 [10] by {a=>-a-1}
-[6+8a,4+8b,0+8c,4+8d]:	transposed [10] by [0,1,3,2]
+[6+8a,0+8b,4+8c,0+8d]:	negative-1 [9] by {a=>-a-1}
+[2+8a,4+8b,4+8c,0+8d]:	unknown -> [10] 4+4a+24a^2+64a^3+64a^4+32b+96b^2+128b^3+64b^4-c-c^2-d^2
+[6+8a,4+8b,4+8c,0+8d]:	negative-1 [10] by {a=>-a-1}
+[2+8a,0+8b,0+8c,4+8d]:	transposed [9] by [0,1,3,2]
+[6+8a,0+8b,0+8c,4+8d]:	negative-1 [10] by {a=>-a-1}
+[2+8a,4+8b,0+8c,4+8d]:	transposed [10] by [0,1,3,2]
+[6+8a,4+8b,0+8c,4+8d]:	negative-1 [10] by {a=>-a-1}
 expanding queue[5]^1,meter=[2,2,2,2]*8: 2+8a+24a^2+32a^3+16a^4+8b+24b^2+32b^3+16b^4-c^2-d^2
-[2+8a,2+8b,4+8c,4+8d]:	same 4a+24a^2+64a^3+64a^4+4b+24b^2+64b^3+64b^4-c-c^2-d-d^2 map {a=>a/2,b=>b/2} -> [3] 2a+6a^2+8a^3+4a^4+2b+6b^2+8b^3+4b^4-c-c^2-d-d^2
+[2+8a,2+8b,4+8c,4+8d]:	unknown -> [11] 4a+24a^2+64a^3+64a^4+4b+24b^2+64b^3+64b^4-c-c^2-d-d^2
 -> solution [2,2,4,4],trivial(2)
-[6+8a,2+8b,4+8c,4+8d]:	unknown -> [11] 20+108a+216a^2+192a^3+64a^4+4b+24b^2+64b^3+64b^4-c-c^2-d-d^2
-[2+8a,6+8b,4+8c,4+8d]:	transposed [11] by [1,0,2,3]
-[6+8a,6+8b,4+8c,4+8d]:	negative-1 [11] by {b=>-b-1}
+[6+8a,2+8b,4+8c,4+8d]:	negative-1 [11] by {a=>-a-1}
+[2+8a,6+8b,4+8c,4+8d]:	negative-1 [11] by {b=>-b-1}
+[6+8a,6+8b,4+8c,4+8d]:	negative-1 [11] by {a=>-a-1,b=>-b-1}
 expanding queue[6]^2,meter=[2,2,2,2]*8: 2a+12a^2+32a^3+32a^4+32b^4-c-2c^2-2d^2
 [1+8a,0+8b,1+8c,0+8d]:	unknown -> [12] 2a+24a^2+128a^3+256a^4+256b^4-c-4c^2-4d^2
 -> solution [1,0,1,0],trivial(3)
