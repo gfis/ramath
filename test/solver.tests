@@ -30,12 +30,6 @@
 #===================================================
 PACKAGE=org.teherba.ramath.symbolic.solver
 
-TEST Q01 FLT(4), biquadratic plus
-CALL TreeSolver -l 3 -e "x^4 + y^4 - z^2" -r norm
-
-TEST Q02 FLT(4), biquadratic plus: shift by 2,2,4
-CALL TreeSolver -l 3 -e "(x+2)^4 + (y+2)^4 - (z+4)^2" -r norm
-
 TEST T01 tree solver, sqrt(2)
 CALL TreeSolver -l 4 -e "2*q^2 - p^2" 
 
@@ -196,11 +190,11 @@ CALL TreeSolver -b 2 -l 2 -e "a^4 + b^4 - c^4 -d^4" -r norm,invall
 TEST T53 like T52, superset(^2) only
 CALL TreeSolver -b 2 -l 2 -e "a^2 + b^2 - c^2 - d^2" -r norm,invall
 
-TEST T54 like T52, with superset(^2)
-CALL TreeSolver -b 2 -l 2 -e "a^2 + b^2 - c^2 -d^2; w^2=a; x^2=b; y^2=c; z^2=d" -r norm,invall
+# TEST T54 like T52, with superset(^2)
+# CALL TreeSolver -b 2 -l 2 -e "a^2 + b^2 - c^2 -d^2; w^2=a; x^2=b; y^2=c; z^2=d" -r norm,invall
 
-TEST T55 like T52, partial superset(^2) 
-CALL TreeSolver -b 2 -l 2 -e "a^4 + b^4 - c^2 - d^2" -r norm,invall
+# TEST T55 like T52, partial superset(^2) 
+# CALL TreeSolver -b 2 -l 2 -e "a^4 + b^4 - c^2 - d^2" -r norm,invall
 
 # # https://books.google.de/books?id=My19IcewAnoC&lpg=PA317&ots=V3hN58VkXU&dq=Fermat%20identities&hl=de&pg=PA322#v=onepage&q=Fermat%20identities&f=false
 # # Google: Fermat identities

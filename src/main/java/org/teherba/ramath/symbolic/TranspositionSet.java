@@ -135,10 +135,12 @@ public class TranspositionSet extends ArrayList<Vector> implements Cloneable , S
         return buffer.toString();
     } // toString
 
-    /** Compares two value sets (refinement expression)
+    /** Compares two bare expresssion sets (refinement expressions without the variables)
      *  and tests whether there is a permutation stored in <em>this</em> {@link TranspositionSet}
-     *  which transposes the 1st value set into the 2nd.
-     *  @return the first permutation {@link Vector} if one was found, or null
+     *  which transposes the 1st expression set into the 2nd.
+     *  @param origExprs original bare expression set
+     *  @param permExprs maybe permuted bare expression set
+     *  @return the first permutation {@link Vector} if one was found, or null otherwise
      */
     public Vector testPermutation(String[] origExprs, String[] permExprs) {
         Vector result = null;
@@ -148,14 +150,14 @@ public class TranspositionSet extends ArrayList<Vector> implements Cloneable , S
         while (result == null && itset >= 0) {
             int[] perms = this.get(itset).getValues(); // e.g. [1,0,2,3]
             int iperm = 0;
-            boolean same = true; // assume success
-            while (same && iperm < len) {
+            boolean busy = true; // assume success
+            while (busy && iperm < len) {
                 if (! origExprs[perms[iperm]].equals(permExprs[iperm])) {
-                    same = false;
+                    busy = false;
                 }
                 iperm ++;
             } // while istr
-            if (same) {
+            if (busy) {
                 result = this.get(itset);
             }
             itset --;

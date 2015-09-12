@@ -46,70 +46,79 @@ public class PythagorasReason extends BaseReason {
      */
     public PythagorasReason() {
     } // no-args Constructor
+    
+    /** Local copy of the startNode */
+    private RelationSet startNode = null;
 
-    /** Whether <em>this</em> {@link BaseReason reason} might
-     *  be considered when the congruence conditions are met.
-     *  Set to <em>null</em> if there is no {@link Polynomial}
-     *  of the Pythagorean form, or else an array of suitable 
-     *  variable names for the additonal Polynomials.
-     */
-    public String[] newNames = null;
-        
     /** Initializes any data structures for <em>this</em> reason.
      *  This method is called by {@link ReasonFactory};
      *  it may be  used to gather and store data which are 
      *  needed for the specific check.
-     *  @param the {@link BaseSolver solver} which uses the reasons
-     *  during tree expansion
+     *  @param solver the {@link BaseSolver solver} which uses <em>this</em> reason for iteration control
      *  @param startNode the root node of the expansion (sub-)tree
      */
     public void initialize(BaseSolver solver, RelationSet startNode) {
         super.initialize(solver, startNode);
+        this.startNode = startNode;
         setWalkMode(WALK_NONE);
         if (debug >= 2) {
-            solver.getWriter().println("PythagorasReason.initialize");
+            solver.getWriter().println("PythagorasReason.initialize, rset0=" + startNode.niceString());
         }
-        // newNames = getNewNames(startNode);
     } // initialize
 
     /** Whether <em>this</em> reason should be considered for 
      *  the starting {@link RelationSet}.
-     *  @param solver the solver which uses <em>this</em> reason for iteration control
      *  @return <em>true</em> if the <em>this</em> should be considered (default), 
      *  <em>false</em> otherwise.
      */
     public boolean isConsiderable() {
-        boolean result = solver.getModBase() == 2; // newNames != null;
-        // solver.getWriter().println("ExponentGCDs=" + expGCDs.toString(","));
-        if (debug >= 2) {
-            String sep = "=";
-            solver.getWriter().print("newNames" + sep);
-            if (newNames != null) {
-                int iname = 0;
-                while (iname < newNames.length) {
-                    solver.getWriter().print(sep + newNames[iname]);
-                    sep = ",";
-                    iname ++;
-                } // while iname
-                solver.getWriter().println();
-            } else {
-                solver.getWriter().println("null");
-            }
-        }
+        RelationSet rset0 = this.startNode;
+        boolean result = true
+                && solver.getModBase() == 2 
+                && mayBePythagorean(rset0) > 0
+                ; 
+        // result = true;
         return result;
     } // isConsiderable
     
+    /** Determines whether a {@link RelationSet} contains at least 
+     *  one {@link Polynomial} of the form
+     *  <em>x^2 + y^2 = z^2</em>, maybe with inverted signs or 
+     *  higher even exponents.
+     *  @param rset1 the {@link RelationSet} to be tested
+     *  @return the number of Polynomials which have the Pythagorean form, >= 0
+     *  Caution, side effect: if any Polynomial has the form and two {@link Monomial}s are negative,
+     *  the Polynomial is negated.
+     */
+    private int mayBePythagorean(RelationSet rset1) {
+        int result = 0;
+        int ipoly = 0;
+        while (ipoly < rset1.size()) { // over all Polynomials; size() may increase!
+            Polynomial poly1 = rset1.get(ipoly); // maybe just added
+            VariableMap emap1 = mayBePythagorean(poly1);
+            if (debug >= 1) {
+                solver.getWriter().println("maybePythagorean: poly1=" + poly1.niceString()
+                        + ", emap1=" + emap1.toVector());
+            }
+            if (emap1 != null) {
+                result ++;
+            }
+            ipoly ++;
+        } // while ipoly
+        return result;
+    } // mayBePythagorean(rset)
+
     /** Determines whether a {@link Polynomial} has the form
      *  <em>x^2 + y^2 = z^2</em>, maybe with inverted signs or 
      *  higher even exponents.
      *  @param poly1 the {@link Polynomial} to be tested
-     *  @param rmap1 the {@link RefiningMap} which determines the even/odd parities of the variables
      *  @return a map of variable names to their (even) exponents 
-     *  if the Polynomial has the Pythagorean form, or <em>null</em> otherwise.
+     *  if the Polynomial has the Pythagorean form, 
+     *  or <em>null</em> otherwise.
      *  Caution, side effect: if the result is non-null and 2 {@link Monomial}s are negative,
      *  <em>this</em> Polynomial is negated.
      */
-    private VariableMap testPythagorean(Polynomial poly1, RefiningMap rmap1) {
+    private VariableMap mayBePythagorean(Polynomial poly1) {
         VariableMap result = poly1.getVariableMap();
         if (result.size() == 3) { // x,y,z
             String sig1    = null;
@@ -157,7 +166,7 @@ public class PythagorasReason extends BaseReason {
             result = null;
         }
         return result;
-    } // testPythagorean
+    } // mayBePythagorean(poly)
 
     /** For each suitable {@link Polynomial} in {@link RelationSet} <em>rset1</em>,
      *  add the three {@link Polynomial}s which correspond to the 
@@ -173,7 +182,7 @@ public class PythagorasReason extends BaseReason {
         int ipoly = 0;
         while (ipoly < rset1.size()) { // over all Polynomials; size() may increase!
             Polynomial poly1 = rset1.get(ipoly); // maybe just added
-            VariableMap emap1 = testPythagorean(poly1, rmap1);
+            VariableMap emap1 = mayBePythagorean(poly1);
             if (emap1 != null) { // try to expand poly1 
                 /*  The maps must correspond as follows:
                 + + -   signs in expons (case - - + was negated above)
@@ -286,7 +295,7 @@ public class PythagorasReason extends BaseReason {
         RefiningMap rmap2 = rset2.getMapping();
         if (debug >= 1) {
             solver.getWriter().println("consider(" + iqueue + ", " 
-                    + ", " + rset2.niceString() + "), rmap2=" + rmap2.toString());
+                    + ", " + rset2.niceString() + "), rmap2=" + rmap2.toVector());
         }
         int additional = expandPythagorean(rset2, rmap2);
         if (additional > 0) { // contained one or more Pythagorean Polynomials

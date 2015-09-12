@@ -65,7 +65,7 @@ public class BaseReason {
      *  This method is called by {@link ReasonFactory};
      *  it may be  used to gather and store data which are 
      *  needed for the specific check.
-     *  @param the {@link BaseSolver solver} which uses the reasons
+     *  @param solver the {@link BaseSolver solver} which uses <em>this</em> reason for iteration control
      *  during tree expansion
      *  @param startNode the root node of the expansion (sub-)tree
      */
@@ -183,11 +183,13 @@ public class BaseReason {
 
     /** Test method, reads a root node, a target <em>rset1</em> 
      *  and a source {@link RelationSet} <em>rset2</em>,
-     *  {@link #compares} the latter with the <em>consider</em> method 
+     *  {@link #consider}s the latter with thd method 
      *  of the specified, derived {@link BaseReason reason} and prints the result
-     *  @param args command line arguments:
+     *  @param args command line arguments: 
      *  <pre>
-     *  -reason rset0 rset1 rset2
+     *  java -cp dist/ramath.jar org.teherba.ramath.symbolic.reason.BaseReason \
+     *      [-d n] [-t string] [-rset0 rs] [-rset1 rs] [-rset2 rs] \
+     *      [-rmap1 rm] [-rmap2 rm] -code
      *  </pre>
      */
     public static void main(String[] args) {
@@ -230,20 +232,17 @@ public class BaseReason {
         rset2.setMapping(rmap2);
         BaseSolver solver = new BaseSolver();
         ReasonFactory reasons = new ReasonFactory(solver, code, rset0);
+	    solver.getWriter().println("ReasonFactory: " + reasons.toString() +  ", code=\"" + code + "\"");
         BaseReason reason = reasons.getReason(code);
         debug = localDebug;
-        if (debug >= 2 || reason == null) {
-            System.out.println("??? assertion: BaseReason.nullCheck"
-                    + ", reason=" + (reason             == null ? "null" : "ok") 
-                    + ", trace="  + (solver.getWriter() == null ? "null" : "ok") 
-                    + ", rset1="  + (rset1              == null ? "null" : "ok") 
-                    + ", rset2="  + (rset2              == null ? "null" : "ok")
-                    );
-        } // if debug
-        solver.getWriter().println(reason.getClass().getSimpleName() + ".consider(\n\t\""
-                + rset1.niceString() + "\", \n\t\"" 
-                + rset2.niceString() + "\") = \n\t" 
-                + reason.consider(0, rset1, rset2));
+        if (reason != null) {
+	        solver.getWriter().println(reason.getClass().getSimpleName() + ".consider(\n\t\""
+    	            + rset1.niceString() + "\", \n\t\"" 
+        	        + rset2.niceString() + "\") = \n\t" 
+            	    + reason.consider(0, rset1, rset2));
+        } else {
+	        solver.getWriter().println("Reason \"" + code + "\" is not considered for " + rset2.niceString());
+		}        	
     } // main
 
 } // BaseReason

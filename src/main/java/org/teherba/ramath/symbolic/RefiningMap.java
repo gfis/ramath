@@ -151,11 +151,43 @@ public class RefiningMap extends VariableMap implements Cloneable , Serializable
         return result;
     } // getMeteredValues
 
+    /** Refines the expressions in <em>this</em> VariableMap
+     *  by one level of modulus expansion.
+     *  @param dispenser current state of a {@link Dispenser} containing the
+     *  factors (the bases) and the constants (the values) for the modification
+     *  of the mapped expressions.
+     *  If dispenser.base = 1 then factor = 1, constant = 0, i.e. the variable is unchanged.
+     *  The underlying integer array is parallel to the sorted list of variable names.
+     *  For a mapping x -> c+f*x and corresponding dispenser value m mod b,
+     *  the new expression is c + f*(m+b*x) = (c+f*m) + (f*b)*x.
+     *  @return a new {@link RefiningMap} with the variables mapped to the refined expressions
+     */
+    public RefiningMap getRefinedMap(Dispenser dispenser) {
+        RefiningMap result = new RefiningMap();
+        Iterator<String> iter = this.keySet().iterator();
+        int idisp = 0;
+        while (iter.hasNext()) {
+            int b = dispenser.getBase(idisp);
+            int m = dispenser.get    (idisp);
+            String key   = iter.next();
+            BigInteger base     = BigInteger.valueOf(b);
+            BigInteger module   = BigInteger.valueOf(m);
+            String value = this.get(key); // REFINED_FORM - this has the form "c+f*x"
+            int starPos  = value.indexOf('*');
+            int plusPos  = value.indexOf('+');
+            BigInteger factor   = (new BigInteger(value.substring(plusPos + 1, starPos)));
+            BigInteger constant = (new BigInteger(value.substring(0, plusPos))).add(factor.multiply(module));
+            result.put(key, constant.toString() + "+" + (factor.multiply(base).toString()) + "*" + key);
+            idisp ++;
+        } // while iter
+        return result;
+    } // getRefinedMap
+
     /** Gets a sorted array of the values of refined expressions 
      *  without variables names
      *  @return ["1+8", "1+8", "5+8"], for example
      */
-    public String[] getRefinedArray() {
+    public String[] getBareRefinedArray() {
         String[] result = new String[this.size()];
         int ind = 0;
         Iterator<String> iter = this.keySet().iterator();
@@ -165,7 +197,7 @@ public class RefiningMap extends VariableMap implements Cloneable , Serializable
             result[ind ++] = expr.substring(0, expr.indexOf('*'));
         } // while iter
         return result;
-    } // getRefinedArray
+    } // getBareRefinedArray
 
     /** Gets a String of the refined expressions separated by commas,
      *  without "*"
@@ -278,7 +310,7 @@ public class RefiningMap extends VariableMap implements Cloneable , Serializable
         } // while
         System.out.print(rmap1.toString()); // before refinement
         System.out.println(" refined by [" + meter.toString() + "]: "
-                + rmap1.getRefiningMap(meter).toString());
+                + rmap1.getRefinedMap(meter).toString());
         rmap1.setValues(meter);
         System.out.println("set to [" + meter.toString() + "]: "
                 + rmap1.toString());

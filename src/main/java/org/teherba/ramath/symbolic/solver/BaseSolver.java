@@ -26,7 +26,9 @@
  * limitations under the License.
  */
 package org.teherba.ramath.symbolic.solver;
+import  org.teherba.ramath.symbolic.reason.BaseReason;
 import  org.teherba.ramath.symbolic.reason.ReasonFactory;
+import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.RefiningMap;
 import  org.teherba.ramath.symbolic.RelationSet;
 import  org.teherba.ramath.symbolic.VariableMap;
@@ -123,7 +125,9 @@ public class BaseSolver extends Stack<RelationSet> {
         while (icode < codes.length) {
             String code = codes[icode];
             if (! code.startsWith("no-")) {
-                codeList += "," + code;
+                if (codeList.indexOf("," + code) < 0) { // not yet stored
+                    codeList += "," + code;
+                }
             } else { // with "no- " - remove it
                 code = "," + code.substring(3); // behind "no-"
                 int pos = codeList.indexOf(code);
@@ -135,7 +139,7 @@ public class BaseSolver extends Stack<RelationSet> {
                     codeList = codeList.substring(0, pos) + codeList.substring(pos2); // cut it out
                 } // found
                 if (debug >= 2) {
-                	trace.println("code=" + code + ", codeList=" + codeList + ", pos=" + pos);
+                    trace.println("code=" + code + ", codeList=" + codeList + ", pos=" + pos);
                 }
             } // remove
             icode ++;
@@ -442,7 +446,7 @@ public class BaseSolver extends Stack<RelationSet> {
     /** Adds a {@link RelationSet} <em>rset1</em>to the queue 
      *  instead of another RelationSet <em>rset2</em>which is prepared just to be queued.
      *  <em>rset1</em> may start a new subtree with totally different
-     *  variable names and base {@link Polynomial}s.
+     *  variable names and {@link Polynomial}s.
      *  @param rset1 RelationSet to be added instead of <em>rset2</em>
      *  @param rset2 RelationSet which is prepared, and which would soon have been added to the queue
      */
@@ -459,6 +463,7 @@ public class BaseSolver extends Stack<RelationSet> {
         setRootNode(rset0);
         ReasonFactory factory = new ReasonFactory(this, codeList, rset0);
         rset0.setReasonFactory(factory);
+
         // determine all features
         igtriv = factory.hasFeature("igtriv");
         invall = factory.hasFeature("invall");
@@ -480,7 +485,7 @@ public class BaseSolver extends Stack<RelationSet> {
                     printSeparator(curLevel);
                     expand(queueHead);
                     queueHead ++;
-                }
+                } // still expanding
             }
         } // while busy
         printTrailer(rset0, exhausted);

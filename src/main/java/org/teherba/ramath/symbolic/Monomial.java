@@ -310,7 +310,7 @@ public class Monomial implements Cloneable, Serializable {
     } // isZero
 
     /** Determines the degree, that is the sum of exponents of the individual factors
-     *  @param upperConst whether the exponents of uppercase variables should be counted
+     *  @param upperSubst whether the exponents of uppercase variables should be counted
      *  @return degree >= 0
      */
     public int degree(boolean upperSubst) {

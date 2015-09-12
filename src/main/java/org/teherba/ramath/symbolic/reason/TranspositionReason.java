@@ -47,8 +47,7 @@ public class TranspositionReason extends BaseReason {
      *  This method is called by {@link ReasonFactory};
      *  it may be  used to gather and store data which are 
      *  needed for the specific check.
-     *  @param the {@link BaseSolver solver} which uses the reasons
-     *  during tree expansion
+     *  @param solver the {@link BaseSolver solver} which uses <em>this</em> reason for iteration control
      *  @param startNode the root node of the expansion (sub-)tree
      */
     public void initialize(BaseSolver solver, RelationSet startNode) {
@@ -88,9 +87,9 @@ public class TranspositionReason extends BaseReason {
     public String consider(int iqueue, RelationSet rset1, RelationSet rset2) {
         String result = VariableMap.UNKNOWN;
         RefiningMap rmap2 = rset2.getMapping();
-        String[] exprs2   = rmap2.getRefinedArray();
+        String[] exprs2   = rmap2.getBareRefinedArray();
         RefiningMap rmap1 = rset1.getMapping();
-        String[] exprs1   = rmap1.getRefinedArray();
+        String[] exprs1   = rmap1.getBareRefinedArray();
         Vector testResult = transet.testPermutation(exprs1, exprs2);
         if (debug >= 2) {
             solver.getWriter().println(""
@@ -105,33 +104,5 @@ public class TranspositionReason extends BaseReason {
         } // transposition found
         return result;
     } // consider
-
-    /** Checks a {@link RelationSet} and determines whether 
-     *  there is another {@link RelationSet} on the same nesting level
-     *  of the expansion tree which differs from the parameter RelationSet only
-     *  by a transposition of the variable (names).
-     *  @param rset2 the new {@link RelationSet} to be added to the queue 
-     *  @return a message string starting with one of 
-     *  <ul>
-     *  <li>{@link VariableMap#UNKNOWN} - the RelationSet cannot be decided and must be further expanded</li>
-     *  <li>{@link VariableMap#FAILURE} - the RelationSet is not possible</li>
-     *  <li>{@link VariableMap#SUCCESS} - there is a solution, but the RelationSet must further be expanded</li>
-     *  </ul>
-     */
-    public String check_99(RelationSet rset2) {
-        String result = VariableMap.UNKNOWN;
-        int level2 = rset2.getNestingLevel();
-        int iqueue = solver.size() - 1; // last element
-        RelationSet rset1 = solver.get(iqueue);
-        while (iqueue > 0 && rset1.getNestingLevel() == level2) { // down in the same level
-            result = consider(iqueue, rset1, rset2);
-            if (! result.startsWith(VariableMap.UNKNOWN)) { // reason successful
-                iqueue = 1; // break loop
-            } // reason successful
-            iqueue --;
-            rset1 = solver.get(iqueue);
-        } // while iqueue
-        return result;
-    } // check
 
 } // TranspositionReason

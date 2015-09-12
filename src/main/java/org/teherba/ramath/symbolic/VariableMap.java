@@ -298,38 +298,6 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
     /*----------------
         Dispensing and Permutation
     */
-    /** Refines the expressions in <em>this</em> VariableMap
-     *  by one level of modulus expansion.
-     *  @param dispenser current state of a {@link Dispenser} containing the
-     *  factors (the bases) and the constants (the values) for the modification
-     *  of the mapped expressions.
-     *  If dispenser.base = 1 then factor = 1, constant = 0, i.e. the variable is unchanged.
-     *  The underlying integer array is parallel to the sorted list of variable names.
-     *  For a mapping x -> c+f*x and corresponding dispenser value m mod b,
-     *  the new expression is c + f*(m+b*x) = (c+f*m) + (f*b)*x.
-     *  @return a new {@link RefiningMap} with the variables mapped to the refined expressions
-     */
-    public RefiningMap getRefiningMap(Dispenser dispenser) {
-        RefiningMap result = new RefiningMap();
-        Iterator<String> iter = this.keySet().iterator();
-        int idisp = 0;
-        while (iter.hasNext()) {
-            int b = dispenser.getBase(idisp);
-            int m = dispenser.get    (idisp);
-            String key   = iter.next();
-            BigInteger base     = BigInteger.valueOf(b);
-            BigInteger module   = BigInteger.valueOf(m);
-            String value = this.get(key); // REFINED_FORM - this has the form "c+f*x"
-            int starPos  = value.indexOf('*');
-            int plusPos  = value.indexOf('+');
-            BigInteger factor   = (new BigInteger(value.substring(plusPos + 1, starPos)));
-            BigInteger constant = (new BigInteger(value.substring(0, plusPos))).add(factor.multiply(module));
-            result.put(key, constant.toString() + "+" + (factor.multiply(base).toString()) + "*" + key);
-            idisp ++;
-        } // while iter
-        return result;
-    } // getRefiningMap
-
     /** Gets a map to permuted variable names
      *  @param perms indexes for permutation of variable names
      *  of the keys = variable names.
@@ -350,7 +318,8 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
     } // permuteVariables
 
     /** Determines the index position of a value in a String array
-     *  @param value find this value
+     *  @param values find in this array of Strings
+     *  @param val1 find this value
      *  @return -1 if the value was not found, or the array index
      */
     public static int indexOf(String[] values, String val1) {
@@ -391,7 +360,7 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
         return result;
     } // getPermutationVector
 
-    /** Gets a map which has the keys and values of <em>this</em> {@link VeriableMap} interchanged
+    /** Gets a map which has the keys and values of <em>this</em> {@link VariableMap} interchanged
      *  @return a new {@link VariableMap} with the keys as values and vice versa
      */
     public VariableMap inverse() {

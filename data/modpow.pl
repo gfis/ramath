@@ -5,16 +5,16 @@
 
 use strict;
 
-	my $limit = 32767;
-	my $lim2  = 2048;
-	my @p2 = ();
-	my @p3 = ();
-	my $ip = 0;
-	while ($ip < $limit) {
-		$p2[$ip] = $ip * $ip;
-		$p3[$ip] = $p2[$ip] * $ip;
-		$ip ++;
-	} # while $ip
+    my $limit = 32767;
+    my $lim2  = 2048;
+    my @p2 = ();
+    my @p3 = ();
+    my $ip = 0;
+    while ($ip < $limit) {
+        $p2[$ip] = $ip * $ip;
+        $p3[$ip] = $p2[$ip] * $ip;
+        $ip ++;
+    } # while $ip
     my $mod = 3;
     while ($mod < $limit) {
         my %hash2 = ();
@@ -29,35 +29,35 @@ use strict;
             $hash3{sprintf("%04d", $rest3)} = 1;
             $odd += 2;
         } # while $odd
-		if (0) { # show all rests
-        	print sprintf("%4d", $mod);
-        	foreach my $key(sort(keys(%hash2))) {
-        	    print "," . ($key + 0);
-        	} # foreach $key
-        	print "\n";
-        	print sprintf("%4d", $mod);
-        	foreach my $key(sort(keys(%hash3))) {
-        	    print "," . ($key + 0);
-        	} # foreach $key
-        	print "\n";
-    	} # show all rests
-		if (1) { # show matching
-        	my $count = 0;
-        	my $line = "";
-        	foreach my $key(sort(keys(%hash2))) {
-        		my $val = sprintf("%04d", ($key + 2) % $mod);
-        		if (defined($hash3{$val})) {
-        			$count ++;
-        			$line .= "," . ($val + 0);
-	        	}
-        	} # foreach $key
-        	if ($count <= 10) {
-        		print sprintf("%4d", $mod) . " -> " .substr($line, 1) . "\n";
-        	}
-    	} # show matching
+        if (0) { # show all rests
+            print sprintf("%4d", $mod);
+            foreach my $key(sort(keys(%hash2))) {
+                print "," . ($key + 0);
+            } # foreach $key
+            print "\n";
+            print sprintf("%4d", $mod);
+            foreach my $key(sort(keys(%hash3))) {
+                print "," . ($key + 0);
+            } # foreach $key
+            print "\n";
+        } # show all rests
+        if (1) { # show matching
+            my $count = 0;
+            my $line = "";
+            foreach my $key(sort(keys(%hash2))) {
+                my $val = sprintf("%04d", ($key + 2) % $mod);
+                if (defined($hash3{$val})) {
+                    $count ++;
+                    $line .= "," . ($val + 0);
+                }
+            } # foreach $key
+            if ($count <= 10) {
+                print sprintf("%4d", $mod) . " -> " .substr($line, 1) . "\n";
+            }
+        } # show matching
 
         # print "\n";
-        $mod += 2;
+        $mod += 1;
     } # while $mod
 __DATA__
    3 -> 2,0

@@ -128,7 +128,8 @@ public class TreeSolver extends BaseSolver {
         int oldSiblingIndex = -1; // for the 1st child
         ReasonFactory factory = rset1.getReasonFactory();
         while (meter.hasNext()) { // over all constant combinations - generate all children
-            RefiningMap vmap2 = vmap1.getRefiningMap(meter);
+        	
+            RefiningMap vmap2 = vmap1.getRefinedMap(meter);
             if (vmap2.size() > 0) {
                 RelationSet rset2 = getRootNode().substitute(vmap2);
                 if (norm) {

@@ -1,4 +1,5 @@
-consider(0, , x^2+y^2-z^2), rmap2={x=>1+2*x,y=>2*y,z=>1+2*z}
+ReasonFactory: pythagoras, code="pythagoras"
+consider(0, , x^2+y^2-z^2), rmap2=[1+2*x,0+2*y,1+2*z]
 expand poly1=x^2+y^2-z^2, emap1=[2,2,-2]
 PythagorasReason.consider(
 	"0", 

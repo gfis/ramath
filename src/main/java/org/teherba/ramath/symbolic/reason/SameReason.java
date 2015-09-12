@@ -50,8 +50,7 @@ public class SameReason extends BaseReason {
      *  This method is called by {@link ReasonFactory};
      *  it may be  used to gather and store data which are 
      *  needed for the specific check.
-     *  @param the {@link BaseSolver solver} which uses the reasons
-     *  during tree expansion
+     *  @param solver the {@link BaseSolver solver} which uses <em>this</em> reason for iteration control
      *  @param startNode the root node of the expansion (sub-)tree
      */
     public void initialize(BaseSolver solver, RelationSet startNode) {
@@ -142,7 +141,7 @@ public class SameReason extends BaseReason {
                     remap.put(vname, vname + "/" + base.pow(mexp).toString());
                 } // mexp > 1
             } // while miter
-            if (debug >= 1) {
+            if (debug >= 2) {
                 getSolver().getWriter().println("maxBasePowers=" + maxBasePowers.toString() 
                         + ", remap=" + remap.toString());
             } // debug
@@ -155,7 +154,7 @@ public class SameReason extends BaseReason {
                             + " map " + remap.toString()
                             + " -> [" + rset1.getIndex() + "] " + rset1.niceString();
                 } 
-                if (debug >= 1) {
+                if (debug >= 2) {
                     getSolver().getWriter().println
                             ( "rset1^"  + rset1 .getParentIndex() + " =" + rset1 .toString() + "\n"
                             + "rset2s^" + rset2s.getParentIndex() + "="  + rset2s.toString() 

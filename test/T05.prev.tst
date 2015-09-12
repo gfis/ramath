@@ -1,6 +1,6 @@
 TranspositionSet={[1,0,2]}
 ExponentGCDs=[4,4,2]
-Expanding for base=2, reasons+features=base,transpose,same,similiar,evenexp igtriv,norm
+Expanding for base=2, reasons+features=base,transpose,same,similiar,evenexp,pythagoras igtriv,norm
 Refined variables=x,y,z
 ----------------
 expanding queue[0]^-1,meter=[2,2,2]*2: x^4+y^4-z^2

@@ -1095,7 +1095,6 @@ x^2 + 3*x^3 + 2*x^4
     /** Gets a map from all variable names in <em>this</em> Polynomial (the keys)
      *  to the expression "0+1*x", where the literal "x" is a placeholder for
      *  the corresponding key (= variable name).
-     *  Caution: this expression is required by {@link RefiningMap#refineExpressions}.
      *  @return map of variable names mapped to an expression string
      */
     public RefiningMap getRefiningMap() {

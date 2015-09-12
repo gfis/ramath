@@ -71,15 +71,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         this();
         this.setSolver(solver);
         this.setStartNode(startNode);
-        // the standard reasons
-    /* now defined in BaseSolver
-        this.addReason("base"       );
-        this.addReason("transpose"  );
-        this.addReason("primitive"  );
-        this.addReason("same"       );
-        this.addReason("similiar"   );
-        this.addReason("evenexp"    );
-    */
+        // the standard reasons are defined by the codeList from BaseSolver
         String[] reasonCodes = codeList.split("\\W"); // leading ","; non-word characters, e.g. ","
         int icode = 0;
         while (icode < reasonCodes.length) {
@@ -160,13 +152,12 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         BaseReason result = null; // assume success
         if (false) {
         } else if (code.startsWith("base"       )) { result = addReasonClass(code, "BaseReason"          );
-    //  } else if (code.startsWith("down"       )) { result = addReasonClass(code, "DownsizedMapReason"  );
-        } else if (code.startsWith("evenexp"    )) { result = addReasonClass(code, "EvenExponentReason"  );
-        } else if (code.startsWith("pythagoras" )) { result = addReasonClass(code, "PythagorasReason"    );
-        } else if (code.startsWith("primitive"  )) { result = addReasonClass(code, "PrimitiveReason"     );
+        } else if (code.startsWith("even"       )) { result = addReasonClass(code, "EvenExponentReason"  );
+        } else if (code.startsWith("prim"       )) { result = addReasonClass(code, "PrimitiveReason"     );
+        } else if (code.startsWith("pyth"       )) { result = addReasonClass(code, "PythagorasReason"    );
         } else if (code.startsWith("same"       )) { result = addReasonClass(code, "SameReason"          );
         } else if (code.startsWith("simil"      )) { result = addReasonClass(code, "SimiliarReason"      );
-        } else if (code.startsWith("transp"     )) { result = addReasonClass(code, "TranspositionReason" );
+        } else if (code.startsWith("trans"      )) { result = addReasonClass(code, "TranspositionReason" );
         } else if (code.startsWith("showf"      )) { 
             showFail = true;
             features.put(code, code);

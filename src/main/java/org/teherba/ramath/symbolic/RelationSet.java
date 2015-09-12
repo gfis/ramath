@@ -277,7 +277,7 @@ public class RelationSet
         return siblingIndex;
     } // getSiblingIndex
     /** Sets the previous sibling of this node
-     *  @param index of the previous node, or -1 for the first child
+     *  @param siblingIndex index of the previous node, or -1 for the first child
      */
     public void setSiblingIndex(int siblingIndex) {
         this.siblingIndex = siblingIndex;

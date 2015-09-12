@@ -1,7 +1,7 @@
 TranspositionSet={[1,0,2]}
 isHomogeneous
 ExponentGCDs=[2,2,2]
-Expanding for base=2, reasons+features=base,transpose,primitive,same,similiar,evenexp norm,invall,showfail
+Expanding for base=2, reasons+features=base,transpose,primitive,same,similiar,evenexp,pythagoras norm,invall,showfail
 Refined variables=x,y,z
 ----------------
 expanding queue[0]^-1,meter=[2,2,2]*2: x^2+y^2-3z^2

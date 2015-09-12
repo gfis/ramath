@@ -49,7 +49,7 @@ public class DownsizedMapReason extends BaseReason {
      *  This method is called by {@link ReasonFactory};
      *  it may be  used to gather and store data which are 
      *  needed for the specific check.
-     *  @param the {@link BaseSolver solver} which uses the reasons
+     *  @param solver the {@link BaseSolver solver} which uses the reasons
      *  during tree expansion
      *  @param startNode the root node of the expansion (sub-)tree
      */

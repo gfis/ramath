@@ -52,8 +52,7 @@ public class PrimitiveReason extends BaseReason {
      *  This method is called by {@link ReasonFactory};
      *  it may be  used to gather and store data which are 
      *  needed for the specific check.
-     *  @param the {@link BaseSolver solver} which uses the reasons
-     *  during tree expansion
+     *  @param solver the {@link BaseSolver solver} which uses <em>this</em> reason for iteration control
      *  @param startNode the root node of the expansion (sub-)tree
      */
     public void initialize(BaseSolver solver, RelationSet startNode) {
@@ -67,7 +66,6 @@ public class PrimitiveReason extends BaseReason {
 
     /** Whether <em>this</em> reason should be considered for 
      *  the starting {@link RelationSet}.
-     *  @param solver the solver which uses <em>this</em> reason for iteration control
      *  @return <em>true</em> if the <em>this</em> should be considered (default), 
      *  <em>false</em> otherwise.
      */
