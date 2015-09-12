@@ -1,6 +1,7 @@
 ExponentGCDs=[2,2]
 Expanding for base=2, reasons+features=base,same,similiar,evenexp norm
 Refined variables=x,y
+[0+1x,0+1y]:	unknown -> [1] -576+15x^2-7y^2
 ----------------
 expanding queue[0]^-1,meter=[2,2]*2: -576+15x^2-7y^2
 [0+2x,0+2y]:	similiar   [0], is mappable by: {x=>x,y=>y} 

@@ -177,25 +177,15 @@ public class BaseSolver extends Stack<RelationSet> {
         this.modBase = modBase;
     } // setModBase
     //----------------
-    /** A parentIndex which denotes the root, also of a subtree */
-    public static final int ROOT_PARENT = -1;
-    
     /** Gets the initial {@link RelationSet} to be solved
      *  @return root element of the queue of RelationSets
      */
     public RelationSet getRootNode() {
         return this.get(0);
     } // getRootNode
-    /** Sets root element of the queue of {@link RelationSet}s
-     *  @param rset0 the initial {@link RelationSet} to be solved
-     */
-    public void setRootNode(RelationSet rset0) {
-        rset0.setMapping(rset0.getRefiningMap());
-        rset0.setIndex       (0);
-        rset0.setParentIndex (ROOT_PARENT);
-        rset0.setSiblingIndex(ROOT_PARENT);
-        add(rset0);
-    } // setRootNode
+
+	// setRootNode below before solve
+
     //----------------
     /** Whether to substitute uppercase variables */
     private boolean upperSubst;
@@ -438,6 +428,7 @@ public class BaseSolver extends Stack<RelationSet> {
     /** Expands one {@link RelationSet} in the queue,
      *  evaluates the expanded children,
      *  and requeues all children with status UNKNOWN or SUCCESS.
+     *  Pseudo-abstract.
      *  @param queueIndex position in the queue of the element ({@link RelationSet}) to be expanded, >= 0
      */
     protected void expand(int queueIndex) {
@@ -453,22 +444,43 @@ public class BaseSolver extends Stack<RelationSet> {
     protected void startSubTree(RelationSet rset1, RelationSet rset2) {
     } // startSubTree
 
+    /** A parentIndex which denotes the root, also of a subtree */
+    public static final int ROOT_PARENT = -1;
+    
+    /** Sets root element of the queue of {@link RelationSet}s
+     *  @param rset0 the initial {@link RelationSet} to be solved
+     *  @param codeList list of {@link BaseReason reason} codes to be applied
+     *  @return a new {@link ReasonFactory} for the evaluation of this tree
+     */
+    public ReasonFactory setRootNode(RelationSet rset0, String codeList) {
+    	ReasonFactory factory = new ReasonFactory(this, codeList, rset0);
+        rset0.setReasonFactory(factory);
+        rset0.setMapping      (rset0.getRefiningMap());
+        rset0.setIndex        (0);
+        rset0.setParentIndex  (ROOT_PARENT);
+        rset0.setSiblingIndex (ROOT_PARENT);
+        add(rset0);
+        // determine all features - they are constant for all subtrees
+        igtriv = factory.hasFeature("igtriv");
+        invall = factory.hasFeature("invall");
+        norm   = factory.hasFeature("norm"  );      
+        printHeader(rset0);
+        return factory;
+    } // setRootNode
+    
     /** Refines and evaluates modulus properties for variables in a {@link RelationSet}.
      *  The maximum queue size breaks the expansion loop in any case.
+     *  Pseudo-abstract.
      *  @param rset0 start expansion with this {@link RelationSet}.
      *  @return whether the iteration did stop because the queue was exhausted
      */
     public boolean solve(RelationSet rset0) {
         prevLevel = -1;
-        setRootNode(rset0);
-        ReasonFactory factory = new ReasonFactory(this, codeList, rset0);
-        rset0.setReasonFactory(factory);
-
-        // determine all features
-        igtriv = factory.hasFeature("igtriv");
-        invall = factory.hasFeature("invall");
-        norm   = factory.hasFeature("norm"  );      
-        printHeader(rset0);
+        ReasonFactory factory = setRootNode(rset0, getCodeList());
+        RefiningMap vmap0 = rset0.getMapping();
+        if (! factory.evaluateReasons(rset0, vmap0)) { // decidable without expansion
+        	queueHead ++; // skip over it
+        } // without expansion
 
         boolean exhausted = false;
         boolean busy = true;

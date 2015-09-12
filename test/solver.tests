@@ -30,6 +30,12 @@
 #===================================================
 PACKAGE=org.teherba.ramath.symbolic.solver
 
+# TEST Q01 FLT(4), biquadratic plus
+# CALL TreeSolver -l 3 -e "x^4 + y^4 - z^2" -r norm,invall
+# 
+# TEST Q02 FLT(4), biquadratic plus: shift by 2,2,4
+# CALL TreeSolver -l 3 -e "(x+2)^4 + (y+2)^4 - (z+4)^2" -r norm
+
 TEST T01 tree solver, sqrt(2)
 CALL TreeSolver -l 4 -e "2*q^2 - p^2" 
 
@@ -151,7 +157,10 @@ CALL TreeSolver -l 2 -b 2 -e "a^3 + 2*b^3 + 4*c^3 - 9*d^3"
 TEST T39 1 2 4 9 Proof
 CALL TreeSolver -l 2 -b 3 -e "a^3 + 2*b^3 + 4*c^3 - 9*d^3"
 
-TEST T40 biased expression
+TEST T40A biased expression - in rset0
+CALL TreeSolver -b 2 -l 6 -e "+2 + a^2 + b^2" -r showfail
+
+TEST T40B biased expression - in rset2
 CALL TreeSolver -b 2 -l 6 -e "-2 + a^2 + b^2" -r showfail
 
 TEST T41 EEC(4,1,3), c.f. http://cr.yp.to/sortedsums.html
@@ -190,6 +199,8 @@ CALL TreeSolver -b 2 -l 2 -e "a^4 + b^4 - c^4 -d^4" -r norm,invall
 TEST T53 like T52, superset(^2) only
 CALL TreeSolver -b 2 -l 2 -e "a^2 + b^2 - c^2 - d^2" -r norm,invall
 
+EXIT
+#----
 # TEST T54 like T52, with superset(^2)
 # CALL TreeSolver -b 2 -l 2 -e "a^2 + b^2 - c^2 -d^2; w^2=a; x^2=b; y^2=c; z^2=d" -r norm,invall
 

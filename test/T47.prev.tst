@@ -1,6 +1,7 @@
 ExponentGCDs=[2,2]
 Expanding for base=3, reasons+features=base,same,similiar,evenexp showfail
 Refined variables=x,y
+[0+1x,0+1y]:	unknown -> [1] -9+15x^2-7y^2
 ----------------
 expanding queue[0]^-1,meter=[3,3]*3: -9+15x^2-7y^2
 [0+3x,0+3y]:	same -9+135x^2-63y^2 map {x=>x/3,y=>y/3} -> [0] -9+15x^2-7y^2

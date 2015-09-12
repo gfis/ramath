@@ -1,6 +1,7 @@
 ExponentGCDs=[2,2]
 Expanding for base=4, reasons+features=base,same,similiar,evenexp norm
 Refined variables=x,y
+[0+1x,0+1y]:	unknown -> [1] -9+15x^2-7y^2
 ----------------
 expanding queue[0]^-1,meter=[4,4]*4: -9+15x^2-7y^2
 [0+4x,1+4y]:	unknown -> [1] -2+30x^2-7y-14y^2

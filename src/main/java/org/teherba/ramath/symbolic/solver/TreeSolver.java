@@ -112,7 +112,6 @@ public class TreeSolver extends BaseSolver {
         RelationSet rset1 = this.get(queueIndex); // expand this element (the "parent")
         if (debug > 1) {
             trace     .println("trace: TreeSolver.expand(" + rset1.niceString() + ")");
-            System.out.println("out:   TreeSolver.expand(" + rset1.niceString() + ")");
         }
         
         RefiningMap vmap1 = rset1.getMapping();
@@ -131,7 +130,7 @@ public class TreeSolver extends BaseSolver {
         	
             RefiningMap vmap2 = vmap1.getRefinedMap(meter);
             if (vmap2.size() > 0) {
-                RelationSet rset2 = getRootNode().substitute(vmap2);
+                RelationSet rset2 = factory.getStartNode().substitute(vmap2);
                 if (norm) {
                     rset2.deflateIt();
                 }

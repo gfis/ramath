@@ -1,6 +1,8 @@
 ExponentGCDs=[4,4,2]
 Expanding for base=2, reasons+features=base,same,similiar,evenexp,pythagoras norm,invall
 Refined variables=x,y,z
+[0+1x,0+1y,0+1z]:	unknown -> [1] -x^4+y^4+2z^2
+-> solution [0,0,0],trivial(3) [1,1,0],trivial(3)
 ----------------
 expanding queue[0]^-1,meter=[2,2,2]*2: -x^4+y^4+2z^2
 [0+2x,0+2y,0+2z]:	unknown -> [1] -2x^4+2y^4+z^2

@@ -1,6 +1,7 @@
 ExponentGCDs=[2,3]
 Expanding for base=2, reasons+features=base,same,similiar,evenexp norm,invall
 Refined variables=x,y
+[0+1x,0+1y]:	unknown -> [1] 4+x^2-y^3
 ----------------
 expanding queue[0]^-1,meter=[2,2]*2: 4+x^2-y^3
 [0+2x,0+2y]:	unknown -> [1] 1+x^2-2y^3

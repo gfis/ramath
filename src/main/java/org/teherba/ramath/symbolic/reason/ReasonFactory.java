@@ -36,6 +36,18 @@ import  java.util.Iterator;
 
 /** Factory and store for a list of reason classes
  *  which decide whether to cut the tree expansion at some point.
+ *  The reasons are processed ("{@lonk BaseReason#consider considered}"
+ *  in the order in which they were added to
+ *  the internal {@link ArrayList}.
+ *  <p>
+ *  The basic operation is to consider the various reason why a 
+ *  new {@link RelationSet} can be decided and therefore needs not
+ *  to be stored in the tree for further expansion.
+ *  Often, a second RelationSet is examined in comparision to the
+ *  new RelationSet in question.
+ *  The class contains methods which {@link BaseReason#walkMode walk} 
+ *  through the expansion tree in different ways in order to examine 
+ *  the second RelationSet.
  *  @author Dr. Georg Fischer
  */
 public class ReasonFactory extends ArrayList<BaseReason> {
@@ -117,6 +129,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         startNode = rset0;
     } // setStartNode
     //----------------
+    
     /** Attempts to instantiate some reason class
      *  @param code external code for the reason
      *  @param className name of the class for the reason
@@ -183,7 +196,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         int ireas = 0;
         while (ireas < this.size()) {
             BaseReason reason = this.get(ireas);
-            if (reason.getCode().equals(reasonCode)) {
+            if (reason.getCode().startsWith(reasonCode)) {
                 result = reason;
                 ireas = this.size(); // break loop
             }
@@ -417,10 +430,9 @@ public class ReasonFactory extends ArrayList<BaseReason> {
      *  @param args command line arguments
      */
     public static void main(String[] args) {
-        BaseSolver solver = new BaseSolver();
-        RelationSet rset0 = new RelationSet("x^2 + y^2 - z^2");
-        solver.setRootNode(rset0);
-        ReasonFactory reasons = new ReasonFactory(solver, "base,transpose,same,norm", rset0);
+        BaseSolver solver     = new BaseSolver();
+        RelationSet rset0     = new RelationSet("x^2 + y^2 - z^2");
+        ReasonFactory reasons = solver.setRootNode(rset0, "base,transpose,same,norm");
         solver.getWriter().println("ReasonFactory: " + reasons.toString());
     } // main
 

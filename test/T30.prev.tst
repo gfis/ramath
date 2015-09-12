@@ -1,6 +1,8 @@
 ExponentGCDs=[2,2]
-Expanding for base=2, reasons+features=base,same,similiar,evenexp
+Expanding for base=2, reasons+features=base,same,similiar,evenexp 
 Refined variables=x,y
+[0+1x,0+1y]:	unknown -> [1] 2-4x^2+4x^4-2y^2
+-> solution [0,1],trivial(1) [1,1],trivial(2)
 ----------------
 expanding queue[0]^-1,meter=[1,2]*2: 2-4x^2+4x^4-2y^2
 [0+1x,1+2y]:	unknown -> [1] -4x^2+4x^4-8y-8y^2

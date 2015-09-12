@@ -27,8 +27,9 @@ import  java.io.Serializable;
 import  java.math.BigInteger;
 import  java.util.Iterator;
 
-/** Maps a set of variables <em>x</em> to refined expressions <em>a+m*x</em>,
- *  and defines methods for such an expression map.
+/** Maps a set of variables <em>xi</em> to refined expressions of the form 
+ *  <em>ai+mi*xi</em>, where <em>ai, mi</em> are constants,
+ *  and defines methods for such expression maps.
  *  @author Dr. Georg Fischer
  */
 public class RefiningMap extends VariableMap implements Cloneable , Serializable {
@@ -66,7 +67,10 @@ public class RefiningMap extends VariableMap implements Cloneable , Serializable
         Iterator<String> iter = vmap.keySet().iterator();
         while (iter.hasNext()) {
             String key = (String) iter.next();
-            String value = (new Polynomial(vmap.get(key))).toString().replaceAll("\\s", "");
+            String value = (new Polynomial(vmap.get(key))).toString(true) // with "1*x^1"
+                    .replaceAll("\\s" , "")
+                    .replaceAll("\\^1", "")
+                    ; 
             if (! value.matches("\\A\\d+[\\+\\-].+")) {
                 value = "0+" + value;
             }
@@ -101,32 +105,6 @@ public class RefiningMap extends VariableMap implements Cloneable , Serializable
         result.append("]");
         return result.toString();
     } // getConstants
-
-    /** Determines whether all additive factors are 0, 
-     *  and all multiplicative factors are the same.
-     *  @return true for the initial metered values when invall = true
-     */
-    public boolean isZero() {
-        boolean result  = false; // assume failure
-        String name     = null;
-        String value    = null;
-        String constant = null;
-        Iterator<String> iter = this.keySet().iterator();
-        if (iter.hasNext()) { // at least 1 element
-            name  = iter.next();
-            value = this.get(name);
-            if (value.startsWith("0+")) {
-                constant = value.substring(0, value.indexOf("*"));
-                result = true;
-            }
-        } // at least 1 element
-        while (result && iter.hasNext()) {
-            name  = iter.next();
-            value = this.get(name);
-            result = value.startsWith(constant);
-        } // while iter
-        return result;
-    } // isZero
 
     /** Gets a {@link PolyVector}
      *  of the constant expressions when refined variables are substituted from a

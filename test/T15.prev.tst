@@ -2,6 +2,7 @@ isHomogeneous
 ExponentGCDs=[3,3,3]
 Expanding for base=6, reasons+features=base,primitive,same,similiar igtriv,norm
 Refined variables=a,b,c
+[0+1a,0+1b,0+1c]:	unknown -> [1] a^3+3b^3-9c^3
 ----------------
 expanding queue[0]^-1,meter=[6,6,6]*6: a^3+3b^3-9c^3
 [0+6a,0+6b,0+6c]:	non-primitive

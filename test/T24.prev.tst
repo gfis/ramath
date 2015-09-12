@@ -1,6 +1,7 @@
 ExponentGCDs=[3,2]
-Expanding for base=2, reasons+features=base,same,similiar,evenexp
+Expanding for base=2, reasons+features=base,same,similiar,evenexp 
 Refined variables=x,y
+[0+1x,0+1y]:	unknown -> [1] 4-x^3+y^2
 ----------------
 expanding queue[0]^-1,meter=[2,2]*2: 4-x^3+y^2
 [0+2x,0+2y]:	same 4-8x^3+4y^2 map {x=>x/2,y=>y/2} -> [0] 4-x^3+y^2

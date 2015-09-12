@@ -3,6 +3,7 @@ isHomogeneous
 ExponentGCDs=[5,5,5]
 Expanding for base=2, reasons+features=base,transpose,primitive,same,similiar norm,igtriv
 Refined variables=a,b,c
+[0+1a,0+1b,0+1c]:	unknown -> [1] a^5+b^5-c^5
 ----------------
 expanding queue[0]^-1,meter=[2,2,2]*2: a^5+b^5-c^5
 [0+2a,0+2b,0+2c]:	non-primitive

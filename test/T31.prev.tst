@@ -1,6 +1,7 @@
 ExponentGCDs=[1,1]
 Expanding for base=2, reasons+features=base,same,similiar norm,invall
 Refined variables=a,b
+[0+1a,0+1b]:	unknown -> [1] 2+a^2-a^3+2a*b+3a^2*b+b^2-3a*b^2+b^3
 ----------------
 expanding queue[0]^-1,meter=[2,2]*2: 2+a^2-a^3+2a*b+3a^2*b+b^2-3a*b^2+b^3
 [1+2a,0+2b]:	unknown -> [1] 1-a-4a^2-4a^3+5b+16a*b+12a^2*b-4b^2-12a*b^2+4b^3

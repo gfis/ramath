@@ -1,6 +1,7 @@
 ExponentGCDs=[2,2]
 Expanding for base=2, reasons+features=base,same,similiar,evenexp norm,showfail
 Refined variables=x,y
+[0+1x,0+1y]:	unknown -> [1] -9+15x^2-7y^2
 ----------------
 expanding queue[0]^-1,meter=[2,2]*2: -9+15x^2-7y^2
 [0+2x,0+2y]:	failure constant=-9, vgcd=4

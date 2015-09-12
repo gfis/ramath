@@ -32,6 +32,8 @@ package org.teherba.ramath.symbolic;
 import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.RefiningMap;
 import  org.teherba.ramath.symbolic.VariableMap;
+import  org.teherba.ramath.symbolic.reason.BaseReason;
+import  org.teherba.ramath.symbolic.reason.TranspositionReason;
 import  org.teherba.ramath.symbolic.reason.ReasonFactory;
 import  org.teherba.ramath.BigIntegerUtil;
 import  org.teherba.ramath.PrimeFactorization;
@@ -688,6 +690,25 @@ public class RelationSet
         } // >= 3
         return result;
     } // isEqualTo
+    
+    /** Determines whether two variables in <em>this</em> {@link RelationSet}
+     *  are transposable, that is they can be interchanged without loss of structure.
+     *  Caution: this method uses and works only with a 
+     *  stored {@link RefiningMap} and a prepared TransitionReason 
+     *  obtained from the internal {@link ReasonFactory}.
+     *  @param vnam1 name of 1st variable
+     *  @param vnam2 name of 2st variable
+     *  @return true if the varaibles could be interchanged, false otherwise
+     */
+    public boolean areTransposable(String vnam1, String vnam2) {
+        boolean result = false;
+        VariableMap vmap = this.getMapping();
+        BaseReason reason = this.getReasonFactory().getReason("transp");
+        if (reason != null) { // maybe the whole rset has no transposable variables
+	        result = ((TranspositionReason) reason).areTransposable(vmap, vnam1, vnam2);
+	    }
+	    return result;
+    } // areTransposable
 
     /** Substitutes variable names with the expressions from a {@link VariableMap} (if they are not null),
      *  and returns a new RelationSet.

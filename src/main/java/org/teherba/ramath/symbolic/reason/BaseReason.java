@@ -65,6 +65,7 @@ public class BaseReason {
      *  This method is called by {@link ReasonFactory};
      *  it may be  used to gather and store data which are 
      *  needed for the specific check.
+     *  Pseudo-abstract.
      *  @param solver the {@link BaseSolver solver} which uses <em>this</em> reason for iteration control
      *  during tree expansion
      *  @param startNode the root node of the expansion (sub-)tree
@@ -76,9 +77,10 @@ public class BaseReason {
 
     /** Whether <em>this</em> reason should be considered for 
      *  the starting {@link RelationSet}.
-     *  The default is true = always considered.
+     *  The default is <em>true</em> = always considered.
      *  Only a few reasons overwrite this method and return <em>false</em> for
      *  some types of RelationSets.
+     *  Pseudo-abstract.
      *  @return <em>true</em> if the <em>this</em> should be considered (default), 
      *  <em>false</em> otherwise.
      */
@@ -168,6 +170,7 @@ public class BaseReason {
      *  If the test is successful, a message is printed and returned,
      *  and <em>rset2</em> is not stored in the following; 
      *  otherwise the checking process continues.
+     *  Pseudo-abstract.
      *  @param iqueue index of the target RelationSet <em>rset1</em>
      *  @param rset1 the old target {@link RelationSet} already queued
      *  @param rset2 the new source {@link RelationSet} to be added to the queue 
@@ -200,6 +203,7 @@ public class BaseReason {
         RefiningMap rmap2 = new RefiningMap();
         String code = "base";
         int localDebug = 1;
+        testParm = "";
         
         int iarg = 0;
         while (iarg < args.length) {

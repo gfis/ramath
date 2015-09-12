@@ -1,7 +1,9 @@
 isHomogeneous
 ExponentGCDs=[3,3,3,3]
-Expanding for base=2, reasons+features=base,primitive,same,similiar
+Expanding for base=2, reasons+features=base,primitive,same,similiar 
 Refined variables=a,b,c,d
+[0+1a,0+1b,0+1c,0+1d]:	unknown -> [1] a^3+2b^3+4c^3-9d^3
+-> solution [0,0,0,0],trivial(3)
 ----------------
 expanding queue[0]^-1,meter=[2,2,1,2]*2: a^3+2b^3+4c^3-9d^3
 [0+2a,0+2b,0+1c,0+2d]:	same 8a^3+16b^3+4c^3-72d^3 map {a=>a/2,b=>b/2,d=>d/2} -> [0] a^3+2b^3+4c^3-9d^3

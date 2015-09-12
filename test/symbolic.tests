@@ -400,6 +400,9 @@ CALL TranspositionSet \
 
 PACKAGE=org.teherba.ramath.symbolic.reason
 
+TEST REF1 ReasonFactory
+CALL ReasonFactory
+
 TEST REB1 BaseReason: failure constant
 CALL BaseReason -base -rset2 "4a^2 - 4b + 1"
 
@@ -426,6 +429,13 @@ CALL BaseReason -transp \
 	-rset0 "x^4+y^4-z^2" \
 	-rset1 "2x+6x^2+8x^3+4x^4+4y^4-z-z^2" \
 	-rset2 "4x^4+2y+6y^2+8y^3+4y^4-z-z^2"
+	
+TEST RET2 TranspositionReason areTransposable(x,y) = true
+CALL BaseReason -transp -t "a,c" \
+	-rset0 "a^3+b^3+c^3-d^3" \
+	-rset1 "a^3+b^3+c^3-d^3" \
+	-rset2 "a^3+b^3+c^3-d^3" \
+	-rmap2 "[0+1*a,0+1*b,0+1*c,0+1*d]" 
 
 TEST REE1 EvenExponentReason T52
 CALL BaseReason -evenexp \
@@ -455,6 +465,27 @@ CALL BaseReason -primitive \
 	-rset1 "a^3+b^3+c^3-d^3" \
 	-rset2 "a^3+b^3+c^3-d^3" \
 	-rmap2 "[0+2a,0+2b,0+2c,0+2d]"
+
+TEST REP2 PrimitiveReason: false: m=1
+CALL BaseReason -primitive \
+	-rset0 "a^2+b^2-c^2" \
+	-rset1 "a^2+b^2-c^2" \
+	-rset2 "a^2+b^2-c^2" \
+	-rmap2 "[0+1a,0+1b,0+1c]"
+
+TEST REP3 PrimitiveReason: false: a different
+CALL BaseReason -primitive \
+	-rset0 "a^2+b^2-c^2" \
+	-rset1 "a^2+b^2-c^2" \
+	-rset2 "a^2+b^2-c^2" \
+	-rmap2 "[0+2a,0+2b,1+2c]"
+
+TEST REP4 PrimitiveReason: false: m different
+CALL BaseReason -primitive \
+	-rset0 "a^2+b^2-c^2" \
+	-rset1 "a^2+b^2-c^2" \
+	-rset2 "a^2+b^2-c^2" \
+	-rmap2 "[0+2a,0+2b,0+3c]"
 
 TEST REY1 PythagorasReason: normal
 CALL BaseReason -pythagoras \

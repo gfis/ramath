@@ -3,6 +3,7 @@ isHomogeneous
 ExponentGCDs=[2,2,2]
 Expanding for base=2, reasons+features=base,transpose,primitive,same,similiar,evenexp,pythagoras igtriv,norm
 Refined variables=a,b,c
+[0+1a,0+1b,0+1c]:	unknown -> [1] a^2+b^2-c^2
 ----------------
 expanding queue[0]^-1,meter=[2,2,2]*2: a^2+b^2-c^2
 [0+2a,0+2b,0+2c]:	non-primitive

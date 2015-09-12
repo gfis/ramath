@@ -1,6 +1,8 @@
 ExponentGCDs=[1,2]
-Expanding for base=2, reasons+features=base,same,similiar,evenexp
+Expanding for base=2, reasons+features=base,same,similiar,evenexp 
 Refined variables=x,y
+[0+1x,0+1y]:	unknown -> [1] 56x+71x^2+16x^3+x^4-y^2
+-> solution [0,0],trivial(3)
 ----------------
 expanding queue[0]^-1,meter=[2,2]*2: 56x+71x^2+16x^3+x^4-y^2
 [0+2x,0+2y]:	same 112x+284x^2+128x^3+16x^4-4y^2 map {x=>x/2,y=>y/2} -> [0] 56x+71x^2+16x^3+x^4-y^2

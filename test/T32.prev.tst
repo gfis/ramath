@@ -1,6 +1,7 @@
 ExponentGCDs=[1,1]
 Expanding for base=2, reasons+features=base,same,similiar norm,invall
 Refined variables=u,v
+[0+1u,0+1v]:	unknown -> [1] -98+20u+4u^2-130v+8u*v-56v^2-8v^3
 ----------------
 expanding queue[0]^-1,meter=[2,2]*2: -98+20u+4u^2-130v+8u*v-56v^2-8v^3
 [0+2u,1+2v]:	unknown -> [1] -73+14u+4u^2-133v+8u*v-80v^2-16v^3

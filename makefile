@@ -50,15 +50,16 @@ proofs:
 	diff -y test/proof.prev.tst test/proof.this.tst
 diffy:
 	diff -y test/$(TEST).prev.tst test/$(TEST).this.tst
-rmbak:
-	find src -iname "*.java.bak" | xargs -l rm -v
 ret:
 	rm test/T*.tst
 	make solver
 gitadd:
+	git add -v src/main/java/org/teherba/ramath/symbolic/*.java
 	git add -v src/main/java/org/teherba/ramath/symbolic/reason/*.java
-gsame:
-	grep "same " test/T*.this.tst
+	git add -v test/*.prev.tst
+	find src -iname "*.java.bak" | xargs -l rm -v
+tfind:
+	grep -iEH "$(TF)" test/T*.this.tst
 change:
 	find src/main/java/org/teherba/ramath/symbolic/reason -iname "*.java" | xargs -l -i{} perl -i.bak etc/change.pl $(FROM) $(TO) {}
 push:

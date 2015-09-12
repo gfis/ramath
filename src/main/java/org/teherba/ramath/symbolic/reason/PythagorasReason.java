@@ -237,10 +237,17 @@ public class PythagorasReason extends BaseReason {
                 +0 -1  y odd
                 +0 +0  not possible
                 +1 +1  not possible
-                -1 -1  undecidable
+                -1 -1  undecidable, if transposable then assume 1 0
                 */
                 if (pari[0] == pari[1]) { // both the same
-                    possible = false;
+                	if (pari[0] == -1) { 
+                		if (rset1.areTransposable(pnam[0], pnam[1])) { // assume x odd and y even without loss of generality
+	                		pari[0] = 1; // x odd
+    	            		pari[1] = 0; // y even
+    	            	} // if transposable
+                	} else {
+                    	possible = false;
+	                }
                 } else { // both are different - remove the undefined ones
                     if (pari[0] == -1) { // the other is 0 or 1
                         pari[0] = 1 - pari[1]; // make them opposite
