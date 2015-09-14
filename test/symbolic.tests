@@ -400,6 +400,14 @@ PACKAGE=org.teherba.ramath.symbolic.reason
 TEST REF1 ReasonFactory
 CALL ReasonFactory
 
+# expanding queue[1]^0,meter=[2,2]*4: -4+15x^2-7y-7y^2 (TPE1)
+# [0+4x,1+4y]:	unknown -> [2] -2+30x^2-7y-14y^2
+TEST REA1 ModAccelerator
+CALL BaseReason -accel \
+	-rset0 "-9+15x^2-7y^2" \
+	-rset2 "-2+30x^2-7y-14y^2" \
+	-rmap2 "[0+4x,1+4y]" 
+
 TEST REB1 BaseReason: failure constant
 CALL BaseReason -base -rset2 "4a^2 - 4b + 1"
 

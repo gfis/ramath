@@ -115,7 +115,7 @@ TEST TE31 EEC(3) mod 2
 CALL TreeSolver -b 2 -l 2 -e "a^3 + b^3 + c^3 - d^3" 
 
 TEST TE32 1 2 4 9 http://db.math.ust.hk/notes_download/elementary/number/ne_N3.pdf
-CALL TreeSolver -b 2 -l 2 -e "a^3 + 2*b^3 + 4*c^3 - 9*d^3" -r norm,igtriv
+CALL TreeSolver -b 2 -l 2 -e "a^3 + 2*b^3 + 4*c^3 - 9*d^3" -r norm,igtriv,accel
 
 TEST TE33 2 4 9 Proof
 CALL TreeSolver -b 3 -l 2 -e "a^3 + 2*b^3 + 4*c^3 - 9*d^3" -r igtriv
@@ -142,7 +142,7 @@ CALL TreeSolver -b 2 -l 3 -e "a^4 + b^4 + c^4 - d^4" -r norm,invall
 # Pell's equations
 
 TEST TPE1 Pell 15 7 9 http://db.math.ust.hk/notes_download/elementary/number/ne_N3.pdf
-CALL TreeSolver -l 5 -b 2 -e "15*x^2 - 7*y^2 - 9" -r norm,showfail
+CALL TreeSolver -l 5 -b 2 -e "15*x^2 - 7*y^2 - 9" -r norm,showfail,accel
 
 TEST TPE2 15 7 9
 CALL TreeSolver -l 2 -b 2 -e "15*(x+1)^2 - 7*(y+1)^2 - 9"

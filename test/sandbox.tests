@@ -1,0 +1,11 @@
+#!java -cp ../dist/ramath.jar org.teherba.common.RegressionTester
+#
+# $Id sandbox.tests $
+# Test of some experimental methods
+# 2015-08-31, Dr. Georg Fischer: copied from solver.tests
+#
+#===================================================
+PACKAGE=org.teherba.ramath
+
+TEST BX1 eec422
+CALL SandBox -eec422 data/two4.1000000.txt 
