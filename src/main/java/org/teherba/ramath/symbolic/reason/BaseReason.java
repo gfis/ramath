@@ -25,6 +25,7 @@ import  org.teherba.ramath.symbolic.RefiningMap;
 import  org.teherba.ramath.symbolic.VariableMap;
 import  org.teherba.ramath.symbolic.reason.ReasonFactory;
 import  org.teherba.ramath.symbolic.solver.BaseSolver;
+import  org.apache.log4j.Logger;
 
 /** Checks some reason why a node (a {@link RelationSet} <em>rset2</em>) in the tree expansion
  *  of a {@link BaseSolver} needs not to be investigated any further.
@@ -41,7 +42,7 @@ public class BaseReason {
 
     /** Debugging switch: 0 = no, 1 = moderate, 2 = more, 3 = extreme verbosity.
      *  <em>debug</em> is 0 when reasons are called from the ReasonFactory.
-     *  For the stand-alone tests with {@link BaseReason#main}, 
+     *  For the stand-alone tests with {@link BaseReason#main},
      *  <em>debug</em> defaults to 1 and may be set by option <em>-d</em>.
      *  <em>debug</em> is inherited by all reason subclasses.
      */
@@ -60,10 +61,10 @@ public class BaseReason {
     public BaseReason() {
         setDebug(0); // when called from ReasonFactory
     } // no-args Constructor
-    
+
     /** Initializes any data structures for <em>this</em> reason.
      *  This method is called by {@link ReasonFactory};
-     *  it may be  used to gather and store data which are 
+     *  it may be  used to gather and store data which are
      *  needed for the specific check.
      *  Pseudo-abstract.
      *  @param solver the {@link BaseSolver solver} which uses <em>this</em> reason for iteration control
@@ -75,19 +76,19 @@ public class BaseReason {
         setWalkMode(WALK_NONE); // -base tests the new source node <em>rset2</em> only
     } // initialize
 
-    /** Whether <em>this</em> reason should be considered for 
+    /** Whether <em>this</em> reason should be considered for
      *  the starting {@link RelationSet}.
      *  The default is <em>true</em> = always considered.
      *  Only a few reasons overwrite this method and return <em>false</em> for
      *  some types of RelationSets.
      *  Pseudo-abstract.
-     *  @return <em>true</em> if the <em>this</em> should be considered (default), 
+     *  @return <em>true</em> if the <em>this</em> should be considered (default),
      *  <em>false</em> otherwise.
      */
     public boolean isConsiderable() {
         return true;
     } // isConsiderable
-    
+
     //----------------
     /** Sets the debugging switch
      *  @param deb 0 = no, 1 = moderate, 2 = more, 3 = extreme verbosity.
@@ -103,7 +104,7 @@ public class BaseReason {
      */
     public String getCode() {
         return code;
-    } // getCode  
+    } // getCode
     /** Sets the external code, called by {@link ReasonFactory}
      *  @param code a short String which identifies <em>this</em> reason
      */
@@ -111,7 +112,7 @@ public class BaseReason {
         this.code = code;
     } // setCode
     //----------------
-    /** the {@link BaseSolver} which uses the reasons of <em>this</em> {@link ReasonFactory} 
+    /** the {@link BaseSolver} which uses the reasons of <em>this</em> {@link ReasonFactory}
      *  for tree expansion control
      */
     protected BaseSolver solver;
@@ -120,17 +121,17 @@ public class BaseReason {
      */
     public BaseSolver getSolver() {
         return solver;
-    } // getSolver  
+    } // getSolver
     /** Sets the solver
      *  @param solver a {@link BaseSolver}
      */
     public void setSolver(BaseSolver solver) {
         this.solver = solver;
-    } // setSolver  
+    } // setSolver
     //----------------
     /** How to walk through the expansion tree when considering
      *  the source node <em>rset2</em> and the target node <em>rset1</em>.
-     *  Consideration decides whether the source node <em>rset2</em> 
+     *  Consideration decides whether the source node <em>rset2</em>
      *  must further be expanded, and therefore must be queued.
      *  The target node <em>rset1</em> is one of the nodes previously queued.
      */
@@ -165,15 +166,15 @@ public class BaseReason {
     // Consider the specific reason
     //---------------------------
 
-    /** Consider the source {@link RelationSet} <em>rset2</em> to be queued together with 
+    /** Consider the source {@link RelationSet} <em>rset2</em> to be queued together with
      *  another {@link RelationSet} <em>rset1</em> already queued.
      *  If the test is successful, a message is printed and returned,
-     *  and <em>rset2</em> is not stored in the following; 
+     *  and <em>rset2</em> is not stored in the following;
      *  otherwise the checking process continues.
      *  Pseudo-abstract.
      *  @param iqueue index of the target RelationSet <em>rset1</em>
      *  @param rset1 the old target {@link RelationSet} already queued
-     *  @param rset2 the new source {@link RelationSet} to be added to the queue 
+     *  @param rset2 the new source {@link RelationSet} to be added to the queue
      *  @return a message String denoting the reasoning details,
      *  or {@link VariableMap#UNKNOWN} if the comparision is not conclusive.
      */
@@ -184,11 +185,14 @@ public class BaseReason {
 
     /*---- General Test Driver for all reasons --------------------*/
 
-    /** Test method, reads a root node, a target <em>rset1</em> 
+    /** Local logger for exceptions */
+    private static Logger log;
+
+    /** Test method, reads a root node, a target <em>rset1</em>
      *  and a source {@link RelationSet} <em>rset2</em>,
-     *  {@link #consider}s the latter with thd method 
+     *  {@link #consider}s the latter with thd method
      *  of the specified, derived {@link BaseReason reason} and prints the result
-     *  @param args command line arguments: 
+     *  @param args command line arguments:
      *  <pre>
      *  java -cp dist/ramath.jar org.teherba.ramath.symbolic.reason.BaseReason \
      *      [-d n] [-t string] [-rset0 rs] [-rset1 rs] [-rset2 rs] \
@@ -196,57 +200,65 @@ public class BaseReason {
      *  </pre>
      */
     public static void main(String[] args) {
-        RelationSet rset0 = new RelationSet("0");
-        RelationSet rset1 = new RelationSet("0");
-        RelationSet rset2 = new RelationSet("0");
-        RefiningMap rmap1 = new RefiningMap();
-        RefiningMap rmap2 = new RefiningMap();
-        String code = "base";
-        int localDebug = 1;
-        testParm = "";
-        
-        int iarg = 0;
-        while (iarg < args.length) {
-            String opt = args[iarg ++];
-            if (false) {
-            } else if (opt.equals("-d")     ) {
-                localDebug = 1;
-                try {
-                    localDebug = Integer.parseInt(args[iarg ++]);
-                } catch (Exception exc) {
+        log = Logger.getLogger(BaseReason.class.getName());
+        try {
+            RelationSet rset0 = new RelationSet("0");
+            RelationSet rset1 = new RelationSet("0");
+            RelationSet rset2 = new RelationSet("0");
+            RefiningMap rmap1 = new RefiningMap();
+            RefiningMap rmap2 = new RefiningMap();
+            String code = "base";
+            int localDebug = 1;
+            testParm = "";
+
+            int iarg = 0;
+            while (iarg < args.length) {
+                String opt = args[iarg ++];
+                if (false) {
+                } else if (opt.equals("-d")     ) {
+                    localDebug = 1;
+                    try {
+                        localDebug = Integer.parseInt(args[iarg ++]);
+                    } catch (Exception exc) {
+                    }
+                } else if (opt.equals("-rset0")) {
+                    rset0 = RelationSet.parse(args[iarg ++]);
+                } else if (opt.equals("-rset1")) {
+                    rset1 = RelationSet.parse(args[iarg ++]);
+                } else if (opt.equals("-rset2")) {
+                    rset2 = RelationSet.parse(args[iarg ++]);
+                } else if (opt.equals("-rmap1")) {
+                    rmap1 = RefiningMap.parse(args[iarg ++]);
+                } else if (opt.equals("-rmap2")) {
+                    rmap2 = RefiningMap.parse(args[iarg ++]);
+                } else if (opt.equals("-t")     ) {
+                    testParm = args[iarg ++];
+                } else {
+                    code = opt.replaceAll("\\-", "");
                 }
-            } else if (opt.equals("-rset0")) {
-                rset0 = RelationSet.parse(args[iarg ++]);
-            } else if (opt.equals("-rset1")) {
-                rset1 = RelationSet.parse(args[iarg ++]);
-            } else if (opt.equals("-rset2")) {
-                rset2 = RelationSet.parse(args[iarg ++]);
-            } else if (opt.equals("-rmap1")) {
-                rmap1 = RefiningMap.parse(args[iarg ++]);
-            } else if (opt.equals("-rmap2")) {
-                rmap2 = RefiningMap.parse(args[iarg ++]);               
-            } else if (opt.equals("-t")     ) {
-                testParm = args[iarg ++];
+            } // while iarg
+
+            rset1.setMapping(rmap1);
+            rset2.setMapping(rmap2);
+            BaseSolver solver = new BaseSolver();
+            solver.setCodeList("," + code);
+            ReasonFactory factory = solver.setRootNode(rset0, code);
+            solver.getWriter().println("ReasonFactory: " + factory.toString() +  ", code=\"" + code + "\"");
+            BaseReason reason = factory.getReason(code);
+            debug = localDebug;
+            if (reason != null) {
+            	String message = reason.consider(0, rset1, rset2);
+                solver.getWriter().println(reason.getClass().getSimpleName() + ".consider(\n\t\""
+                        + rset1.niceString() + "\", \n\t\""
+                        + rset2.niceString() + "\") = \n\t"
+                        + message);
             } else {
-                code = opt.replaceAll("\\-", "");
+                solver.getWriter().println("Reason \"" + code + "\" is not considered for " + rset2.niceString());
             }
-        } // while iarg
-        
-        rset1.setMapping(rmap1);
-        rset2.setMapping(rmap2);
-        BaseSolver solver = new BaseSolver();
-        ReasonFactory reasons = new ReasonFactory(solver, code, rset0);
-	    solver.getWriter().println("ReasonFactory: " + reasons.toString() +  ", code=\"" + code + "\"");
-        BaseReason reason = reasons.getReason(code);
-        debug = localDebug;
-        if (reason != null) {
-	        solver.getWriter().println(reason.getClass().getSimpleName() + ".consider(\n\t\""
-    	            + rset1.niceString() + "\", \n\t\"" 
-        	        + rset2.niceString() + "\") = \n\t" 
-            	    + reason.consider(0, rset1, rset2));
-        } else {
-	        solver.getWriter().println("Reason \"" + code + "\" is not considered for " + rset2.niceString());
-		}        	
+        } catch (Exception exc) {
+            log.error(exc.getMessage(), exc);
+            exc.printStackTrace();
+        }
     } // main
 
 } // BaseReason

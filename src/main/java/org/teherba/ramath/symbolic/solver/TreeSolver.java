@@ -35,8 +35,9 @@ import  org.teherba.ramath.util.ModoMeter;
 import  java.io.PrintStream;
 import  java.math.BigInteger;
 import  java.util.Iterator;
+import  org.apache.log4j.Logger;
 
-/** Tries to solve a set of Diophantine equations 
+/** Tries to solve a set of Diophantine equations
  *  ("single", "double" or generally a {@link RelationSet})
  *  by a systematic tree expansion of the variables.
  *  A single Diophantine equation is represented by a {@link Polynomial} compared to zero.
@@ -48,7 +49,7 @@ import  java.util.Iterator;
  *  <li>the variable set is expanded (somehow, for example with all possible
  *  combinations of one additional lowest bit),</li>
  *  <li>the resulting nodes (RelationSets) are filtered through a series of tests,
- *  so called "reasons", 
+ *  so called "reasons",
  *  for example checks for proper congruences, transposition of variables,
  *  infinite descent and so on,</li>
  *  <li>only the nodes which could NOT be decided are stored for the next iteration.</li>
@@ -78,7 +79,7 @@ public class TreeSolver extends BaseSolver {
     public final static String CVSID = "@(#) $Id: TreeSolver.java 970 2012-10-25 16:49:32Z gfis $";
 
     /* debug is inherited */
-    
+
     //--------------
     // Construction
     //--------------
@@ -113,60 +114,75 @@ public class TreeSolver extends BaseSolver {
         if (debug > 1) {
             trace     .println("trace: TreeSolver.expand(" + rset1.niceString() + ")");
         }
-        
-        RefiningMap vmap1 = rset1.getMapping();
-        int newLevel      = rset1.getNestingLevel() + 1;
-        int base          = this.getModBase();
-        BigInteger factor = BigInteger.valueOf(base).pow(newLevel);
-        ModoMeter meter   = this.getPreparedMeter(rset1, vmap1, factor);  
-        if (false && vmap1.size() == 0) {
-            System.err.println("TreeSolver assertion??? vmap1.size()=0, rset1=" + rset1.toString(true));
-        }    
-        // meter now ready for n-adic expansion, e.g. x -> 2*x+0, 2*x+1
-        printNode(queueIndex, rset1, meter, factor);
-        int oldSiblingIndex = -1; // for the 1st child
-        ReasonFactory factory = rset1.getReasonFactory();
-        while (meter.hasNext()) { // over all constant combinations - generate all children
-        	
-            RefiningMap vmap2 = vmap1.getRefinedMap(meter);
-            if (vmap2.size() > 0) {
-                RelationSet rset2 = factory.getStartNode().substitute(vmap2);
-                if (norm) {
-                    rset2.deflateIt();
-                }
-                rset2.setMapping(vmap2);
-                rset2.setNestingLevel(newLevel);
-                rset2.setIndex(this.size());
-                rset2.setParentIndex(queueIndex);
-                rset2.setReasonFactory(factory);
-                rset2.setSiblingIndex(oldSiblingIndex);
-                if (factory.evaluateReasons(rset2, vmap2)) { // result = queueAgain
-                    // a reason could have modified the complete structure of rset2: a new subtree could be started
-                    if (rset2.getParentIndex() != ROOT_PARENT) {
-                    	oldSiblingIndex = rset2.getIndex();
-                    } // else new subtree: leave it on the node before
-                    this.add(rset2);
-                } // queueAgain
-            } // vmap2.size() > 0
-            meter.next();
-        } // while meter.hasNext() - generate all children
+        ReasonFactory factory1 = rset1.getReasonFactory();
+        if (factory1 != null) { // otherwise it is a pseudo node behind a subtree node
+            RefiningMap vmap1  = rset1.getMapping();
+            int newLevel       = rset1.getNestingLevel() + 1;
+            int base           = this.getModBase();
+            BigInteger factor  = BigInteger.valueOf(base).pow(newLevel);
+            ModoMeter meter    = this.getPreparedMeter(rset1, vmap1, factor);
+            if (false && vmap1.size() == 0) {
+                System.err.println("TreeSolver assertion??? vmap1.size()=0, rset1=" + rset1.toString(true));
+            }
+            // meter now ready for n-adic expansion, e.g. x -> 2*x+0, 2*x+1
+            printNode(queueIndex, rset1, meter, factor);
+            int oldSiblingIndex = -1; // for the 1st child
+            while (meter.hasNext()) { // over all constant combinations - generate all children
+
+                RefiningMap vmap2 = vmap1.getRefinedMap(meter);
+                if (vmap2.size() > 0) {
+                    RelationSet rset2 = factory1.getStartNode().substitute(vmap2);
+                    if (norm) {
+                        rset2.deflateIt();
+                    }
+                    rset2.setIndex(this.size()); // next free queue entry
+                    rset2.setMapping(vmap2);
+                    rset2.setNestingLevel(newLevel);
+                    rset2.setParentIndex(queueIndex);
+                    rset2.setReasonFactory(factory1);
+                    rset2.setSiblingIndex(oldSiblingIndex);
+                    if (factory1.evaluateReasons(rset2, vmap2)) { // result = queueAgain
+                        // a reason could have modified the complete structure of rset2: a new subtree could be started
+                        if (rset2.getReasonFactory() != null) {
+                            oldSiblingIndex = rset2.getIndex();
+                        } else {
+                            // a reason inserted a copy and turned it into a pseudo node:
+                            // leave oldSiblingIndex as before
+                        }
+                        this.add(rset2);
+                    } // queueAgain
+                } // vmap2.size() > 0
+                meter.next();
+            } // while meter.hasNext() - generate all children
+            // not behind the startNode of a subtree
+        } else { // pseudo node behind the startNode of a subtree
+        	printPseudoNode(queueIndex, rset1);
+        } // pseudo
     } // expand
 
     //-------------
     // Test driver
     //-------------
+    /** Local logger for exceptions */
+    private static Logger log;
 
     /** Test method.
      *  @param args command line arguments, see {@link BaseSolver#getArguments}.
      */
     public static void main(String[] args) {
-        TreeSolver solver = new TreeSolver();
-        String expr = solver.getArguments(0, args);
-        RelationSet rset0 = new RelationSet("(3+a)^2+(4+b)^2=(5+c)^2"); // solution a=b=c=0
-        if (expr != null) {
-            rset0 = RelationSet.parse(expr);
+        log = Logger.getLogger(TreeSolver.class.getName());
+        try {
+            TreeSolver solver = new TreeSolver();
+            String expr = solver.getArguments(0, args);
+            RelationSet rset0 = new RelationSet("(3+a)^2+(4+b)^2=(5+c)^2"); // solution a=b=c=0
+            if (expr != null) {
+                rset0 = RelationSet.parse(expr);
+            }
+            solver.solve(rset0);
+        } catch (Exception exc) {
+            log.error(exc.getMessage(), exc);
+            exc.printStackTrace();
         }
-        solver.solve(rset0);
     } // main
 
 } // TreeSolver

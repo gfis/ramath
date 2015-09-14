@@ -1,3 +1,5 @@
+Expanding for base=2, reasons+features=similiar
+Refined variables=a,b,c,d
 ReasonFactory: similiar, code="similiar"
 SimiliarReason.consider(
 	"9+6a+12a^2+8a^3+36b+54b^2+27b^3+c^3-d^3", 

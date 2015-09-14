@@ -1,3 +1,5 @@
+Expanding for base=2, reasons+features=same
+Refined variables=a,b,c,d,w,x,y,z
 ReasonFactory: same, code="same"
 SameReason.consider(
 	"a^2+b^2-c^2-d^2; -a+w^2; -b+x^2; -c+y^2; -d+z^2", 

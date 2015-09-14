@@ -1,3 +1,5 @@
+Expanding for base=2, reasons+features=base
+Refined variables=
 ReasonFactory: base, code="base"
 BaseReason.consider(
 	"0", 

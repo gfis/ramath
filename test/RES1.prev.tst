@@ -1,3 +1,5 @@
+Expanding for base=2, reasons+features=same
+Refined variables=a,b
 ReasonFactory: same, code="same"
 SameReason.consider(
 	"2+2a^2-2b", 

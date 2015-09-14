@@ -99,22 +99,28 @@ public class BaseSolver extends Stack<RelationSet> {
         setModBase    (2); // for n-adic modulo expansion (here: binary)
         setUpperSubst (true);
         queueHead     = 0;
-        codeList      = ",base,transpose,primitive,same,similiar,evenexp,pythagoras"; // default reason codes
-            // the leading comma is needed for proper removal, c.f. modifyCodeList
+        codeList      = ",base,transpose,primitive,same,similiar,evenexp"; // default reason codes ,pythagoras
+                // the leading comma is needed for proper removal, c.f. modifyCodeList
     } // initialize
 
     //-----------------------------
     // Bean properties and methods
     //-----------------------------
     /** List of reason and feature codes from the commandline */
-    protected String codeList;  
+    private String codeList;
     /** Gets the list of reason and feature codes
      *  @return comma separated list of short words
      */
     public String getCodeList() {
         return this.codeList;
     } // getCodeList
-    
+    /** Sets the list of reason and feature codes
+     *  @return comma separated list of short words
+     */
+    public void setCodeList(String codeList) {
+        this.codeList = codeList;
+    } // setCodeList
+
     /** Modifies the {@link #codeList} by appending new codes
      *  or removing those starting with "no-".
      *  @param newCodes a list of codes separated with commas
@@ -184,7 +190,7 @@ public class BaseSolver extends Stack<RelationSet> {
         return this.get(0);
     } // getRootNode
 
-	// setRootNode below before solve
+    // setRootNode below before solve
 
     //----------------
     /** Whether to substitute uppercase variables */
@@ -257,8 +263,8 @@ public class BaseSolver extends Stack<RelationSet> {
                         setMaxLevel(Integer.parseInt(args[iargs ++]));
                     } catch (Exception exc) {
                     }
-                } else if (arg.startsWith("-r") && iargs < args.length) { 
-                    modifyCodeList(args[iargs ++]); 
+                } else if (arg.startsWith("-r") && iargs < args.length) {
+                    modifyCodeList(args[iargs ++]);
                 } else if (arg.startsWith("-u")                       ) {
                     setUpperSubst(false);
                 } else {
@@ -290,7 +296,7 @@ public class BaseSolver extends Stack<RelationSet> {
             trace.print(rmap2.niceString());
             trace.print(":\t" + decision);
             if (false) {
-            } else if ( decision.startsWith(VariableMap.UNKNOWN) || 
+            } else if ( decision.startsWith(VariableMap.UNKNOWN) ||
                         decision.startsWith(VariableMap.SUCCESS)) { // UNKNOWN || SUCCESS
                 trace.print(" -> [" + this.size() + "]");
                 trace.print(" " + rset2.niceString());
@@ -310,7 +316,7 @@ public class BaseSolver extends Stack<RelationSet> {
         } // debug
     } // printHeader
 
-    /** Prints the message for a node to be expanded
+    /** Prints the message for a node to be expanded.
      *  @param queueIndex expand this queue element
      *  @param rset1 {@link RelationSet} at position <em>queueIndex</em>
      *  @param meter which {@link ModoMeter} will be used for the expansion
@@ -318,10 +324,23 @@ public class BaseSolver extends Stack<RelationSet> {
      */
     protected void printNode(int queueIndex, RelationSet rset1, ModoMeter meter, BigInteger factor) {
         if (debug >= 1) {
-            trace.println("expanding queue[" + queueIndex + "]^" 
+            trace.println("expanding queue[" + queueIndex + "]^"
                     + rset1.getParentIndex()
                     + ",meter=" + meter.toBaseList()
                     + "*" + factor.toString()
+                    + ": " + rset1.niceString()
+                    );
+        }
+    } // printNode
+
+    /** Prints the message for a pseudo node which is ignored.
+     *  @param queueIndex index of this queue element
+     *  @param rset1 {@link RelationSet} at position <em>queueIndex</em>
+     */
+    protected void printPseudoNode(int queueIndex, RelationSet rset1) {
+        if (debug >= 1) {
+            trace.println("pseudo node at [" + queueIndex + "]^"
+                    + rset1.getParentIndex()
                     + ": " + rset1.niceString()
                     );
         }
@@ -406,7 +425,7 @@ public class BaseSolver extends Stack<RelationSet> {
         int varNo         = vmap1.size(); // total number of variables to be substituted
         ModoMeter meter   = new ModoMeter(varNo, 1); // assume that all variables are not involved
         BigInteger other  = norm ? BigInteger.valueOf(base) : BigInteger.valueOf(base).multiply(factor);
-        RefiningMap rmap1 = rset1.getRest(other).getRefiningMap(); 
+        RefiningMap rmap1 = rset1.getRest(other).getRefiningMap();
         Iterator<String> iter1 = vmap1.keySet().iterator();
         int involvedCount = 0;
         int im = 0;
@@ -422,7 +441,7 @@ public class BaseSolver extends Stack<RelationSet> {
             meter = new ModoMeter(varNo, base); // involve all variables / avoid modulo [1,1,1,...]
         } // rmap1 empty
         // meter = new ModoMeter(varNo, base); // enforce involvement of all variables
-        return meter;        
+        return meter;
     } // getPreparedMeter
 
     /** Expands one {@link RelationSet} in the queue,
@@ -434,40 +453,66 @@ public class BaseSolver extends Stack<RelationSet> {
     protected void expand(int queueIndex) {
     } // expand
 
-    /** Adds a {@link RelationSet} <em>rset1</em>to the queue 
-     *  instead of another RelationSet <em>rset2</em>which is prepared just to be queued.
-     *  <em>rset1</em> may start a new subtree with totally different
-     *  variable names and {@link Polynomial}s.
-     *  @param rset1 RelationSet to be added instead of <em>rset2</em>
-     *  @param rset2 RelationSet which is prepared, and which would soon have been added to the queue
+    /** Starts a new subtree with a {@link RelationSet} <em>rset1</em>
+     *  which is added to the queue just before the original, prepared RelationSet
+     *  <em>rset2</em> is added. The new subtree may use totally different
+     *  variable names, {@link Polynomial}s and a corresponding, new {@link ReasonFactory}.
+     *  @param rset1 RelationSet which is the startNode of the new subtree
+     *  @param rset2 RelationSet which is prepared, and which will be added behind <em>rset1</em>.
+     *  The ReasonFactory of <em>rset2</em> becomes <em>null</em>, therefore
+     *  this node is not evaluated anymore.
      */
-    protected void startSubTree(RelationSet rset1, RelationSet rset2) {
-    } // startSubTree
+    public void fork(RelationSet rset1, RelationSet rset2) {
+        // prepare and store rset1
+        if (debug >= 2) {
+            trace.println("fork1 rset1=" + rset1.niceString() + ", rset2=" + rset2.niceString());
+        }
+        rset1.setIndex         (this.size());
+        ReasonFactory factory1 = new ReasonFactory(this, this.getCodeList(), rset1);
+        if (debug >= 2) {
+            trace.println("fork2 factory1=" + factory1.toString());
+        }
+        rset1.setReasonFactory (factory1);
+        rset1.setParentIndex   (ROOT_PARENT);
+        rset1.setSiblingIndex  (ROOT_PARENT); // no older sibling
+        this.add(rset1);
+        if (debug >= 2) {
+            trace.println("fork3 size=" + this.size());
+        }
+
+        // modify rset2
+        rset2.setIndex(rset2.getIndex() + 1); // we will insert rset1 before rset2
+        rset2.setReasonFactory(null); // turn it into a "pseudo" node
+        // solver.expand() will add rset2 soon
+        if (debug >= 2) {
+            trace.println("fork4");
+        }
+    } // fork
 
     /** A parentIndex which denotes the root, also of a subtree */
     public static final int ROOT_PARENT = -1;
-    
+
     /** Sets root element of the queue of {@link RelationSet}s
      *  @param rset0 the initial {@link RelationSet} to be solved
      *  @param codeList list of {@link BaseReason reason} codes to be applied
      *  @return a new {@link ReasonFactory} for the evaluation of this tree
      */
     public ReasonFactory setRootNode(RelationSet rset0, String codeList) {
-    	ReasonFactory factory = new ReasonFactory(this, codeList, rset0);
-        rset0.setReasonFactory(factory);
-        rset0.setMapping      (rset0.getRefiningMap());
-        rset0.setIndex        (0);
-        rset0.setParentIndex  (ROOT_PARENT);
-        rset0.setSiblingIndex (ROOT_PARENT);
+        rset0.setIndex         (0);
+        rset0.setMapping       (rset0.getRefiningMap());
+        ReasonFactory factory0 = new ReasonFactory(this, codeList, rset0);
+        rset0.setReasonFactory (factory0);
+        rset0.setParentIndex   (ROOT_PARENT);
+        rset0.setSiblingIndex  (ROOT_PARENT);
         add(rset0);
         // determine all features - they are constant for all subtrees
-        igtriv = factory.hasFeature("igtriv");
-        invall = factory.hasFeature("invall");
-        norm   = factory.hasFeature("norm"  );      
+        igtriv = factory0.hasFeature("igtriv");
+        invall = factory0.hasFeature("invall");
+        norm   = factory0.hasFeature("norm"  );
         printHeader(rset0);
-        return factory;
+        return factory0;
     } // setRootNode
-    
+
     /** Refines and evaluates modulus properties for variables in a {@link RelationSet}.
      *  The maximum queue size breaks the expansion loop in any case.
      *  Pseudo-abstract.
@@ -479,7 +524,7 @@ public class BaseSolver extends Stack<RelationSet> {
         ReasonFactory factory = setRootNode(rset0, getCodeList());
         RefiningMap vmap0 = rset0.getMapping();
         if (! factory.evaluateReasons(rset0, vmap0)) { // decidable without expansion
-        	queueHead ++; // skip over it
+            queueHead ++; // skip over it
         } // without expansion
 
         boolean exhausted = false;

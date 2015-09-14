@@ -5,12 +5,12 @@
 
 use strict;
 
-    my $limit = 32767;
-    my $lim2  = 2048;
+    my $limit = 100;
+    my $lim2  = 4096;
     my @p2 = ();
     my @p3 = ();
     my $ip = 0;
-    while ($ip < $limit) {
+    while ($ip < $lim2) {
         $p2[$ip] = $ip * $ip;
         $p3[$ip] = $p2[$ip] * $ip;
         $ip ++;
@@ -20,16 +20,16 @@ use strict;
         my %hash2 = ();
         my %hash3 = ();
         my $odd = 3;
-        while ($odd < $limit) {
+        while ($odd < $lim2) {
             # my $oddpow2 = $odd * $odd;
             # my $oddpow3 = $oddpow2 * $odd;
             my $rest2 = $p2[$odd] % $mod;
             my $rest3 = $p3[$odd] % $mod;
             $hash2{sprintf("%04d", $rest2)} = 1;
             $hash3{sprintf("%04d", $rest3)} = 1;
-            $odd += 2;
+            $odd += 1;
         } # while $odd
-        if (0) { # show all rests
+        if (1) { # show all rests
             print sprintf("%4d", $mod);
             foreach my $key(sort(keys(%hash2))) {
                 print "," . ($key + 0);

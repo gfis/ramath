@@ -143,9 +143,11 @@ public class RelationSet
             result.insert(this.get(ipoly).clone());
             ipoly ++;
         } // while ipoly
+        result.setIndex         (this.getIndex          ()); // should be adapted
         result.setMapping       (this.getMapping        ());
         result.setNestingLevel  (this.getNestingLevel   ());
         result.setParentIndex   (this.getParentIndex    ());
+        result.setReasonFactory (this.getReasonFactory  ());
         result.setSiblingIndex  (this.getSiblingIndex   ());
         return result;
     } // clone

@@ -1,4 +1,6 @@
 TranspositionSet={[1,0,2]}
+Expanding for base=2, reasons+features=transp
+Refined variables=x,y,z
 ReasonFactory: transp, code="transp"
 TranspositionReason.consider(
 	"2x+6x^2+8x^3+4x^4+4y^4-z-z^2", 

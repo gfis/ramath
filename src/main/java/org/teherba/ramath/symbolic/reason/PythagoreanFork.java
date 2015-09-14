@@ -1,5 +1,6 @@
-/*  PythagorasReason: insert a new subtree with more variables
- *  @(#) $Id: PythagorasReason.java 970 2012-10-25 16:49:32Z gfis $
+/*  PythagoreanFork: insert a new subtree with more variables
+ *  @(#) $Id: PythagoreanFork.java 970 2012-10-25 16:49:32Z gfis $
+ *  2015-09-13: renamed fromPythagorasReason
  *  2015-09-11, Georg Fischer: copied from EvenExponentReason.java
  */
 /*
@@ -33,18 +34,18 @@ import  java.math.BigInteger;
 
 /** Checks whether the source node contains a {@link Polynomial}
  *  of the form <em>x^2 + y^2 = z^2</em> with odd <em>x, z</em> and even <em>y</em>, and adds 
- *  <em>x = m^2 - n^2; y = 2m*n; z = m^2 + n^2</em> to that target node.
- *  Moreoover, a new expansion subtree is started, and a corresponding {@link ReasonFactory} is set up
- *  for that subtree.
- *  For the transformatin c.f. Keith Conrad: Proofs by Descent, p. 4.
+ *  3 Polynomials <em>x = m^2 - n^2; y = 2m*n; z = m^2 + n^2</em> to that target node.
+ *  Moreoover, a new expansion subtree is {@link BaseSolver#fork forked}, 
+ *  and a corresponding new {@link ReasonFactory} is set up for that subtree.
+ *  For the transformation see Keith Conrad: Proofs by Descent, p. 4, ^Fermat's proof of <em>x^4 + y^4 = z^2</em>.
  *  @author Dr. Georg Fischer
  */
-public class PythagorasReason extends BaseReason {
-    public final static String CVSID = "@(#) $Id: PythagorasReason.java 970 2012-10-25 16:49:32Z gfis $";
+public class PythagoreanFork extends BaseReason {
+    public final static String CVSID = "@(#) $Id: PythagoreanFork.java 970 2012-10-25 16:49:32Z gfis $";
 
     /** No-args Constructor
      */
-    public PythagorasReason() {
+    public PythagoreanFork() {
     } // no-args Constructor
     
     /** Local copy of the startNode */
@@ -62,7 +63,7 @@ public class PythagorasReason extends BaseReason {
         this.startNode = startNode;
         setWalkMode(WALK_NONE);
         if (debug >= 2) {
-            solver.getWriter().println("PythagorasReason.initialize, rset0=" + startNode.niceString());
+            solver.getWriter().println("PythagoreanFork.initialize, rset0=" + startNode.niceString());
         }
     } // initialize
 
@@ -201,8 +202,8 @@ public class PythagorasReason extends BaseReason {
                 Polynomial ypoly = null;
                 Polynomial zpoly = null;
                 String[] ntemp = rmap1.getNewNames(2); // m, n
-                String m = ntemp[0];
-                String n = ntemp[1];
+                String varm = ntemp[0];
+                String varn = ntemp[1];
                 Iterator<String> viter = emap1.keySet().iterator();
                 boolean possible = true; // assume success
                 while (possible && viter.hasNext()) { // iterate over 3 variables x,y,z from x^(2n) + y^(2m) - z^(2k)
@@ -217,7 +218,7 @@ public class PythagorasReason extends BaseReason {
                         possible = newPari % 2 == 1 || newPari < 0;
                         if (possible) {         // z - odd
                             zpoly = new Polynomial(vname + "^" + Math.abs(eexpr) + "=" 
-                                    + m + "^2+" + n + "^2"); // z = m^2 + n^2
+                                    + varm + "^2+" + varn + "^2"); // z = m^2 + n^2
                         }
                     } else { // positive x or y
                         pnam[ipari] = vname;
@@ -240,14 +241,14 @@ public class PythagorasReason extends BaseReason {
                 -1 -1  undecidable, if transposable then assume 1 0
                 */
                 if (pari[0] == pari[1]) { // both the same
-                	if (pari[0] == -1) { 
-                		if (rset1.areTransposable(pnam[0], pnam[1])) { // assume x odd and y even without loss of generality
-	                		pari[0] = 1; // x odd
-    	            		pari[1] = 0; // y even
-    	            	} // if transposable
-                	} else {
-                    	possible = false;
-	                }
+                    if (pari[0] == -1) { 
+                        if (rset1.areTransposable(pnam[0], pnam[1])) { // assume x odd and y even without loss of generality
+                            pari[0] = 1; // x odd
+                            pari[1] = 0; // y even
+                        } // if transposable
+                    } else {
+                        possible = false;
+                    }
                 } else { // both are different - remove the undefined ones
                     if (pari[0] == -1) { // the other is 0 or 1
                         pari[0] = 1 - pari[1]; // make them opposite
@@ -262,22 +263,22 @@ public class PythagorasReason extends BaseReason {
                     // ignore
                 } else if (pari[0] == 1) { // x odd, y even
                             xpoly = new Polynomial(pnam[0] + "^" + Math.abs(pexp[0]) + "=" 
-                                    + m + "^2-" + n + "^2"); // x = m^2 - n^2
+                                    + varm + "^2-" + varn + "^2"); // x = m^2 - n^2
                             ypoly = new Polynomial(pnam[1] + "^" + Math.abs(pexp[1]) + "=" 
-                                    + m + "*2*" + n       ); // y = m*2*n
+                                    + varm + "*2*" + varn       ); // y = m*2*n
                 } else /* if (pari[1] == 1) */ { // y odd, x even
                             xpoly = new Polynomial(pnam[0] + "^" + Math.abs(pexp[0]) + "=" 
-                                    + m + "*2*" + n       ); // y = m*2*n
+                                    + varm + "*2*" + varn       ); // y = m*2*n
                             ypoly = new Polynomial(pnam[1] + "^" + Math.abs(pexp[1]) + "=" 
-                                    + m + "^2-" + n + "^2"); // x = m^2 - n^2
+                                    + varm + "^2-" + varn + "^2"); // x = m^2 - n^2
                 }
 
                 if (possible) { // all fits - add additional Polynomials
                     rset1.insert(xpoly);
                     rset1.insert(ypoly);
                     rset1.insert(zpoly);
-                    rmap1.put(m, "0+1*" + m);
-                    rmap1.put(n, "0+1*" + n);
+                    rmap1.put(varm, "0+1*" + varm);
+                    rmap1.put(varn, "0+1*" + varn);
                     // all fits
                 } // all fits
             } // try to expand poly1
@@ -299,17 +300,23 @@ public class PythagorasReason extends BaseReason {
      */
     public String consider(int iqueue, RelationSet dummy1, RelationSet rset2) {
         String result = VariableMap.UNKNOWN;
-        RefiningMap rmap2 = rset2.getMapping();
+        RelationSet rset1 = rset2.clone(); // maybe used for a fork
+        RefiningMap rmap1 = rset1.getMapping();
         if (debug >= 1) {
             solver.getWriter().println("consider(" + iqueue + ", " 
-                    + ", " + rset2.niceString() + "), rmap2=" + rmap2.toVector());
+                    + ", " + rset1.niceString() + "), rmap1=" + rmap1.toVector());
         }
-        int additional = expandPythagorean(rset2, rmap2);
-        if (additional > 0) { // contained one or more Pythagorean Polynomials
-            result = "new subtree [" + iqueue + "], " + additional + " new variables: " 
-                + rset2.niceString() +  " " + rmap2.toVector();
+        int additional = expandPythagorean(rset1, rmap1);
+        if (additional > 0) { // contained one or more Pythagorean Polynomials which were augmented by 3 more
+            if (debug >= 1) {
+                solver.getWriter().println("fork subtree [" + iqueue + "], " + additional + " new variables: " 
+                    + rset1.niceString() +  " " + rmap1.toVector());
+            }
+            result = " subtree [" + iqueue + "], " + additional + " new variables: " 
+                    + rset1.niceString() +  " " + rmap1.toVector();
+            solver.fork(rset1, rset2);
         } // contained Pythagorean Polynomials
         return result;
     } // consider
 
-} // PythagorasReason
+} // PythagoreanFork

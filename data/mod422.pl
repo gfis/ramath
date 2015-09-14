@@ -12,16 +12,28 @@ use strict;
     my $t;
     while (<>) {
         s/\s+\Z//; # chompr
-        if (m{unknown} and m{\A\[\d+\+$pow2\*}) {
+        if (m{unknown} and m{\A\[\d+\+$pow2\D}) {
             # [1+4*a,0+4*b,1+4*c,0+4*d]:    unknown -> [3] a+6*a^2+16*a^3+16*a^4+16*b^4-c-6*c^2-16*c^3-16*c^4-16*d^4
             s{\:.*}{}; # remove all behind ':'
             s{\A\[}{\,};
             @mods = m{\,(\d+)\+}g;
             # print "test: " . join(";", @mods) . "\n";
+            &store();
         } elsif (m{\A\d}) {
             @mods = map { $_ % $pow2    } split(/\s+/, $_);
+            &store();
         }
         
+    } # while <>
+
+    my $count = 0;
+    foreach my $key (sort(keys(%hash))) {
+        print $key . "\t\t" . $hash{$key} . "\n";
+        $count ++;
+    }
+    print "$count tuples\n";
+    
+sub store {
         if ($mods[0] > $mods[1]) { # sort first 2 ascending
             $t = $mods[0]; $mods[0] = $mods[1]; $mods[1] = $t;
         }
@@ -38,14 +50,7 @@ use strict;
         } else {
             $hash{$strs} = 1;
         }
-    } # while <>
-
-    my $count = 0;
-    foreach my $key (sort(keys(%hash))) {
-        print $key . "\t\t" . $hash{$key} . "\n";
-        $count ++;
-    }
-    print "$count tuples\n";
+} # store
 __DATA__
 158 59 134 133
 239 7 227 157

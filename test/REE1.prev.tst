@@ -1,4 +1,6 @@
 ExponentGCDs=[4,4,4,4]
+Expanding for base=2, reasons+features=evenexp
+Refined variables=a,b,c,d
 ReasonFactory: evenexp, code="evenexp"
 EvenExponentReason.consider(
 	"1+a+6a^2+16a^3+16a^4+8b+24b^2+32b^3+16b^4-c-6c^2-16c^3-16c^4-16d^4", 

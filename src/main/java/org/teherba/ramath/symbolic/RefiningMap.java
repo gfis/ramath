@@ -70,6 +70,7 @@ public class RefiningMap extends VariableMap implements Cloneable , Serializable
             String value = (new Polynomial(vmap.get(key))).toString(true) // with "1*x^1"
                     .replaceAll("\\s" , "")
                     .replaceAll("\\^1", "")
+                    .replaceAll("\\=0", "")
                     ; 
             if (! value.matches("\\A\\d+[\\+\\-].+")) {
                 value = "0+" + value;

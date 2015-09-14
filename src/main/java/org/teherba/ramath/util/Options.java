@@ -272,6 +272,7 @@ public class Options {
                     linearReader.close();
                 } catch (Exception exc) {
                     log.error(exc.getMessage(), exc);
+                    exc.printStackTrace();
                 }
             } else {
                 busy = false;

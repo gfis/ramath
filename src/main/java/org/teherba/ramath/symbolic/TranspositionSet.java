@@ -77,41 +77,44 @@ public class TranspositionSet extends ArrayList<Vector> implements Cloneable , S
                     + ", dmap1=" + dmap1.toString() + ", dinv1=" + dinv1.toString()
                     + ", vmap1=" + vmap1.toString());
         }
-        
-        Permutator permutator = new Permutator(vmap1.size());
-        permutator.next(); // ignore identical (first) mapping
-        while (permutator.hasNext()) { // over all permutations of variable names
-            int[] perms = permutator.next();
-            VariableMap pmap2 = vmap1.permuteVariables(perms); // maps original to permuted variables
-            if (hasDependants) { // add corresponding permutations of children
-                Iterator<String> piter = dinv1.keySet().iterator();
-                while (piter.hasNext()) {
-                    String oldParent = piter.next();          // a
-                    String oldChild  = dinv1.get(oldParent);  // w
-                    String newParent = pmap2.get(oldParent);  // b
-                    String newChild  = dinv1.get(newParent);  // x
-                    if (newChild != null) {
-                        pmap2.put(oldChild, newChild);        // w -> x
-                    } // newChild != null
-                    if (debug > 0) {
-                        System.out.println("perms=" + (new Vector(perms)).toString(",")
-                                + ", oldParent=" + oldParent + ", oldChild=" + oldChild
-                                + ", newParent=" + newParent + ", newChild=" + newChild
-                                );
-                    }
-                } // while diter            
-            } // hasDependants
-            RelationSet rset2 = rset1.substitute(pmap2);
-            boolean same = rset1.isEqualTo(rset2);
-            if (debug > 0) {
-                System.out.println("pmap2=" + pmap2.toString()
-                        + ", rset1=" + rset1.toString() + ", rset2=" + rset2.toString() + " => " + same);
-            }
-            if (same) {
-	            Vector vperm = pmap2.getPermutationVector(); 
-                this.add(vperm);
-            } // if isEqualTo
-        } // while permutator
+        if (vmap1.size() <= 5) {
+	        Permutator permutator = new Permutator(vmap1.size());
+	        permutator.next(); // ignore identical (first) mapping
+	        while (permutator.hasNext()) { // over all permutations of variable names
+	            int[] perms = permutator.next();
+	            VariableMap pmap2 = vmap1.permuteVariables(perms); // maps original to permuted variables
+	            if (hasDependants) { // add corresponding permutations of children
+	                Iterator<String> piter = dinv1.keySet().iterator();
+	                while (piter.hasNext()) {
+	                    String oldParent = piter.next();          // a
+	                    String oldChild  = dinv1.get(oldParent);  // w
+	                    String newParent = pmap2.get(oldParent);  // b
+	                    String newChild  = dinv1.get(newParent);  // x
+	                    if (newChild != null) {
+	                        pmap2.put(oldChild, newChild);        // w -> x
+	                    } // newChild != null
+	                    if (debug > 0) {
+	                        System.out.println("perms=" + (new Vector(perms)).toString(",")
+	                                + ", oldParent=" + oldParent + ", oldChild=" + oldChild
+	                                + ", newParent=" + newParent + ", newChild=" + newChild
+	                                );
+	                    }
+	                } // while diter            
+	            } // hasDependants
+	            RelationSet rset2 = rset1.substitute(pmap2);
+	            boolean same = rset1.isEqualTo(rset2);
+	            if (debug > 0) {
+	                System.out.println("pmap2=" + pmap2.toString()
+	                        + ", rset1=" + rset1.toString() + ", rset2=" + rset2.toString() + " => " + same);
+	            }
+	            if (same) {
+		            Vector vperm = pmap2.getPermutationVector(); 
+	                this.add(vperm);
+	            } // if isEqualTo
+	        } // while permutator
+		} else { // > limit
+			System.err.println("Construction of TranspositionSet(" + vmap1.size() + ") takes too long");
+		}
     } // Constructor(rset)
 
     /** Returns a String representation of <em>this</em> {@link TranspositionSet}

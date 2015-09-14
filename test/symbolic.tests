@@ -151,6 +151,9 @@ CALL Polynomial -reduce "15x^2 - 7*(x-w)^2 - 9"
 TEST LR9 squareCompletion, from T45 with sum
 CALL Polynomial -reduce "15x^2 - 7*(x+w)^2 - 9"
 
+TEST LRA squareCompletion, from T28
+CALL Polynomial -reduce "2+8x+9x^2-3y^3"
+
 TEST LT1 getReductionMap from T45
 CALL Polynomial -redsol -f test/T45.this.tst
 
@@ -159,6 +162,9 @@ CALL Polynomial -redsol -f test/T48.this.tst
 
 TEST LT3 getReductionMap from T50
 CALL Polynomial -redsol -f test/T50.this.tst
+
+TEST LT4 getReductionMap from T28
+CALL Polynomial -redsol -f test/T28.this.tst
 
 #------------------------------------
 TEST P00 constant
@@ -436,6 +442,12 @@ CALL BaseReason -transp -t "a,c" \
 	-rset1 "a^3+b^3+c^3-d^3" \
 	-rset2 "a^3+b^3+c^3-d^3" \
 	-rmap2 "[0+1*a,0+1*b,0+1*c,0+1*d]" 
+	
+TEST RET3 TranspositionReason
+CALL BaseReason -transp \
+	-rset0 "x^4+y^4+z^2; -2a*b+y^2; -a^2+b^2+z; a^2+b^2-x^2; a-2c*d; b-c^2+d^2; c^2+d^2-x" \
+	-rset1 "x^4+y^4+z^2; -2a*b+y^2; -a^2+b^2+z; a^2+b^2-x^2; a-2c*d; b-c^2+d^2; c^2+d^2-x" \
+	-rset2 "y^4+x^4+z^2; -2a*b+y^2; -a^2+b^2+z; a^2+b^2-x^2; a-2c*d; b-c^2+d^2; c^2+d^2-x"
 
 TEST REE1 EvenExponentReason T52
 CALL BaseReason -evenexp \
@@ -487,15 +499,24 @@ CALL BaseReason -primitive \
 	-rset2 "a^2+b^2-c^2" \
 	-rmap2 "[0+2a,0+2b,0+3c]"
 
-TEST REY1 PythagorasReason: normal
+TEST REP5 PrimitiveReason: from REY2
+CALL BaseReason -primitive \
+	-rset0 "x^4+y^4-z^2; -a^2+b^2+x^2; -2a*b+y^2; a^2+b^2-z; b-2c*d; -c^2+d^2+x; -a+c^2+d^2" \
+	-rset1 "x^4+y^4-z^2; -a^2+b^2+x^2; -2a*b+y^2; a^2+b^2-z; b-2c*d; -c^2+d^2+x; -a+c^2+d^2" \
+	-rset2 "x^4+y^4-z^2; -a^2+b^2+x^2; -2a*b+y^2; a^2+b^2-z; b-2c*d; -c^2+d^2+x; -a+c^2+d^2" \
+	-rmap2 "[0+1*a,0+2*b,0+1*c,0+1*d,1+2*x=0,0+2*y=0,1+2*z=0]"
+	
+TEST REY1 PythagoreanFork: normal
 CALL BaseReason -pythagoras \
+	-d 2 \
 	-rset0 "x^2+y^2-z^2" \
 	-rset2 "x^2+y^2-z^2" \
 	-rmap2 "[1+2*x,0+2*y,1+2*z]"
 
-TEST REY2 PythagorasReason: proof of FLT(4)
+TEST REY2 PythagoreanFork: proof of FLT(4)
 CALL BaseReason -pythagoras \
+	-d 2 \
 	-rset0 "x^4+y^4-z^2" \
 	-rset2 "x^4+y^4-z^2" \
-	-rmap2 "[x=>1+2*x,y=>0+2*y,z=>1+2*z]"
+	-rmap2 "[1+2*x,0+2*y,1+2*z]"
 	

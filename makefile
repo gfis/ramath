@@ -7,9 +7,10 @@
 # 2013-02-27: RegressionTester
 # 2011-07-06, Dr. Georg Fischer
 #--------------------------------
-TEST=
 # REGR=java -Xss512m -Xms1024m -Xmx2048m -cp dist/ramath.jar org.teherba.common.RegressionTester
 REGR=java -cp dist/ramath.jar org.teherba.common.RegressionTester
+SRC=src/main/java/org/teherba/ramath
+TEST=
 TESTDIR=test
 WROB=../../mater/ramath/eec/wroblewski
 
@@ -44,8 +45,8 @@ t:
 # test/T27.prev.tst:Maximum level 5 reached at [64]: 2+2x+x^2-3
 # 123456789012345678
 proofs:
-	grep -iE "proof" test/T*.prev.tst | cut -b 6-8,18- > test/proof.prev.tst
-	grep -iE "proof" test/T*.this.tst | cut -b 6-8,18- > test/proof.this.tst
+	grep -iE "proof" test/T*.prev.tst | cut -b 6-9,18- > test/proof.prev.tst
+	grep -iE "proof" test/T*.this.tst | cut -b 6-9,18- > test/proof.this.tst
 	wc -l test/proof.*
 	diff -y test/proof.prev.tst test/proof.this.tst
 diffy:
@@ -54,19 +55,21 @@ ret:
 	rm test/T*.tst
 	make solver
 gitadd:
-	git add -v src/main/java/org/teherba/ramath/symbolic/*.java
-	git add -v src/main/java/org/teherba/ramath/symbolic/reason/*.java
+	git add -v $(SRC)/symbolic/*.java
+	git add -v $(SRC)/symbolic/reason/*.java
 	git add -v test/*.prev.tst
 	find src -iname "*.java.bak" | xargs -l rm -v
 tfind:
 	grep -iEH "$(TF)" test/T*.this.tst
 change:
-	find src/main/java/org/teherba/ramath/symbolic/reason -iname "*.java" | xargs -l -i{} perl -i.bak etc/change.pl $(FROM) $(TO) {}
+	find $(SRC)/symbolic/reason -iname "*.java" | xargs -l -i{} perl -i.bak etc/change.pl $(FROM) $(TO) {}
+gitch:
+	git mv -v $(SRC)/symbolic/reason/$(FROM).java $(SRC)/symbolic/reason/$(TO).java 
 push:
-	find src/main/java/org/teherba/common -iname "*.java" -mtime -1 -type f \
+	find $(SRC)/../common -iname "*.java" -mtime -1 -type f \
 	| xargs -l -i{} cp -v {} ../dbat/src/main/java/org/teherba/common
 jfind:
-	find src -iname "*.java" | xargs -l grep -iH $(JF)
+	find $(SRC) -iname "*.java" | xargs -l grep -iH $(JF)
 #----------
 	
 # 1234567890123456789

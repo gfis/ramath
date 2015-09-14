@@ -45,6 +45,7 @@ import  java.util.Iterator;
  *  to be stored in the tree for further expansion.
  *  Often, a second RelationSet is examined in comparision to the
  *  new RelationSet in question.
+ *  <p>
  *  The class contains methods which {@link BaseReason#walkMode walk} 
  *  through the expansion tree in different ways in order to examine 
  *  the second RelationSet.
@@ -153,6 +154,9 @@ public class ReasonFactory extends ArrayList<BaseReason> {
             // ignore any error almost silently - this reason will not be known
             result = null;
         }
+        if (debug > 1) {
+            solver.getWriter().println("addReason, code=" + code + " => " + (result == null ? "failed" : "ok"));
+        }
         return result;
     } // addReasonClass
 
@@ -167,7 +171,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         } else if (code.startsWith("base"       )) { result = addReasonClass(code, "BaseReason"          );
         } else if (code.startsWith("even"       )) { result = addReasonClass(code, "EvenExponentReason"  );
         } else if (code.startsWith("prim"       )) { result = addReasonClass(code, "PrimitiveReason"     );
-        } else if (code.startsWith("pyth"       )) { result = addReasonClass(code, "PythagorasReason"    );
+        } else if (code.startsWith("pyth"       )) { result = addReasonClass(code, "PythagoreanFork"    );
         } else if (code.startsWith("same"       )) { result = addReasonClass(code, "SameReason"          );
         } else if (code.startsWith("simil"      )) { result = addReasonClass(code, "SimiliarReason"      );
         } else if (code.startsWith("trans"      )) { result = addReasonClass(code, "TranspositionReason" );

@@ -154,7 +154,7 @@ public class RaMathServlet extends HttpServlet {
                     if (opt.indexOf("norm") >= 0) {
                         rset.deflateIt();
                     }
-                    form2 = rset.niceString();
+                    form2 = rset.toString();
                     session.setAttribute("form2", form2);
                 } else if (area.equals("cfra")) {
                 } else if (area.equals("eecj")) {
@@ -191,7 +191,7 @@ public class RaMathServlet extends HttpServlet {
                     if (opt.indexOf("norm") >= 0) {
                         rset.deflateIt();
                     }
-                    form1 = rset.niceString();
+                    form1 = rset.toString();
                     session.setAttribute("form1", form1);
                 } else if (area.equals("cfra")) {
                 } else if (area.equals("eecj")) {

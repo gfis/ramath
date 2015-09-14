@@ -44,13 +44,19 @@ CALL TreeSolver -l 4 -e "5*q^2 - p^2"
 
 TEST T03 Fermat (proof in 2 steps)
 CALL TreeSolver -l 4 -e "a^2 + b^2 - 3*(c^2 + d^2)" -r norm,invall,igtriv,showfail
-
+#----
 TEST T04 tree solver, biquadratic minus
-CALL TreeSolver -l 3 -e "x^4 - y^4 - z^2" 
+CALL TreeSolver -l 4 -e "x^4 - y^4 - z^2" -r norm,igtriv,no-pytha
 
 TEST T05 FLT(4), biquadratic plus
-CALL TreeSolver -l 4 -e "x^4 + y^4 - z^2" -r norm,igtriv
+CALL TreeSolver -l 3 -e "x^4 + y^4 - z^2" -r norm,igtriv,no-pytha
 
+TEST T0A tree solver, biquadratic minus
+CALL TreeSolver -l 1make TEST=T0A -e "x^4 - y^4 - z^2" -r norm,igtriv
+
+TEST T0B FLT(4), biquadratic plus
+CALL TreeSolver -l 2 -e "x^4 + y^4 - z^2" -r norm,igtriv
+#----
 TEST T06 Markov(3, solvable)
 CALL TreeSolver -l 3 -e "x^2 + y^2 + z^2 - 3*x*y*z" -r norm,invall,igtriv
 
@@ -70,7 +76,7 @@ TEST T11 Markoff(4, unsolvable, power)
 CALL TreeSolver      -l 8 -e "x^2 + y^2 + z^2 - 4*x*y*z" -r showfail
 
 TEST T12 modif. Pythagoras (proof) 
-CALL TreeSolver -l 4 -e "x^2 + y^2 - 3*z^2" -r norm,invall,showfail
+CALL TreeSolver -l 4 -e "x^2 + y^2 - 3*z^2" -r norm,invall,showfail,no-pytha
 
 TEST T13 modified FLT(3) mod 2
 CALL TreeSolver -b 2 -l 3 -e "a^3 + 3*b^3 - 9*c^3" -r norm
@@ -82,7 +88,7 @@ TEST T15 modified FLT(3) mod 6 no descent?
 CALL TreeSolver -b 6 -l 2 -e "a^3 + 3*b^3 - 9*c^3" -r norm,igtriv
 
 TEST T16 FLT(2), Pythagoras
-CALL TreeSolver -b 2 -l 5 -e "a^2 + b^2 - c^2" -r norm,igtriv
+CALL TreeSolver -b 2 -l 3 -e "a^2 + b^2 - c^2" -r norm,igtriv,no-pytha
 
 # Euler, proof=1 (http://www.cut-the-knot.org/arithmetic/BasicsOfInfiniteDescent.shtml)
 # also Keith Conrad: Proofs by Descent, Example 1.1
@@ -96,7 +102,7 @@ TEST T19 Markov(2, unsolvable, power, proof)
 CALL TreeSolver -l 6 -e "(x + 2)^2 + (y + 2)^2 + (z + 2)^2 - 2*(x + 2) * (y + 2) * (z + 2)"
 
 TEST T20 FLT(2), Pythagoras
-CALL TreeSolver -b 2 -l 4 -e "a^2 + b^2 - c^2" -r norm,invall,igtriv
+CALL TreeSolver -b 2 -l 3 -e "a^2 + b^2 - c^2" -r norm,invall,igtriv,no-pytha
 
 # TEST T21 EEC(6,1,5), most wanted on euler.free.net, mod 3
 # CALL TreeSolver -b 3 -l 1 -e "a^6 + b^6 + c^6 + d^6 + e^6 - f^6"
@@ -118,11 +124,16 @@ TEST T26 Squeeze; https://hcmop.wordpress.com/2012/04/09/techniques-in-solving-d
 CALL TreeSolver -b 2 -l 6 -e "x * (x + 1) * (x + 7) * (x + 8) - y^2"
 # solutions in http://www.mathsolympiad.org.nz/wp-content/uploads/2009/01/diophantine-equations.pdf
 
+#----
 TEST T27 Fermat/Carcavi(7) mod. (x+1)^2 + 2 = (y+1)^3; solution [4,2]
 CALL TreeSolver -b 2 -l 5 -e "(x+1)^2 + 2 - (y+1)^3" -r showfail
 
 TEST T28 Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3]; http://math.stackexchange.com/questions/677422/solve-x22-y3-using-infinite-descent; growing !
-CALL TreeSolver -b 3 -l 2 -e "x^2 + 2 - y^3" 
+CALL TreeSolver -b 3 -l 7 -e "x^2 + 2 - y^3" -r norm
+
+# TEST T2A Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3]
+# CALL TreeSolver -b 27 -l 2 -e "x^2 + 2 - y^3" -r norm 
+#----
 
 TEST T29 Fermat/Carcavi(8) x^2 + 4 = y^3; solutions [2,2],[11,5]
 CALL TreeSolver -b 2 -l 4 -e "x^2 + 4 - y^3" -r norm,invall
@@ -146,7 +157,7 @@ TEST T35 FC7
 CALL TreeSolver -b 2 -l 4 -e " - 49 - 65*u - 28*u^2 - 4*u^3 + 75*v + 60*u*v + 12*u^2*v - 30*v^2 - 12*u*v^2 + 4*v^3" -r norm,invall
 
 TEST T36 area of a rational triangle
-CALL TreeSolver -b 2 -l 3 -e "a^2 + b^2 = c^2; a*b = 2*d^2" -r norm,invall,igtriv
+CALL TreeSolver -b 2 -l 3 -e "a^2 + b^2 = c^2; a*b = 2*d^2" -r norm,invall,igtriv,no-pytha
 
 TEST T37 p^3 - q^5 - (p + q)^2; p,q prime; http://db.math.ust.hk/notes_download/elementary/number/ne_N3.pdf
 CALL TreeSolver -l 1 -e "p^3 - q^5 - (p + q)^2" -r norm
@@ -157,10 +168,10 @@ CALL TreeSolver -l 2 -b 2 -e "a^3 + 2*b^3 + 4*c^3 - 9*d^3"
 TEST T39 1 2 4 9 Proof
 CALL TreeSolver -l 2 -b 3 -e "a^3 + 2*b^3 + 4*c^3 - 9*d^3"
 
-TEST T40A biased expression - in rset0
+TEST T40 biased expression - in rset0
 CALL TreeSolver -b 2 -l 6 -e "+2 + a^2 + b^2" -r showfail
 
-TEST T40B biased expression - in rset2
+TEST T4B biased expression - in rset2
 CALL TreeSolver -b 2 -l 6 -e "-2 + a^2 + b^2" -r showfail
 
 TEST T41 EEC(4,1,3), c.f. http://cr.yp.to/sortedsums.html
@@ -191,10 +202,14 @@ TEST T50 15 7 9 reduced
 CALL TreeSolver -l 3 -b 2 -e "-576+15*x^2-7*y^2" -r norm
 
 TEST T51 FLT(4) related, Nagell 1951, p. 230 no solution
-CALL TreeSolver -l 4 -e "x^4 - y^4 - 2*z^2" -r norm,invall
+CALL TreeSolver -l 3 -e "x^4 - y^4 - 2*z^2" -r norm,invall,no-pytha
 
 TEST T52 EEC(4,2,2) OEIS A003824, http://cr.yp.to/sortedsums/two4.1000000
 CALL TreeSolver -b 2 -l 2 -e "a^4 + b^4 - c^4 -d^4" -r norm,invall
+# TEST TE3 EEC(4,2,2) mod 3
+# CALL TreeSolver -b 3 -l 1 -e "a^4 + b^4 - c^4 -d^4" -r norm,invall
+# TEST TE4 EEC(4,2,2) mod 4
+# CALL TreeSolver -b 4 -l 1 -e "a^4 + b^4 - c^4 -d^4" -r norm,invall
 
 TEST T53 like T52, superset(^2) only
 CALL TreeSolver -b 2 -l 2 -e "a^2 + b^2 - c^2 - d^2" -r norm,invall
