@@ -167,6 +167,15 @@ public class Polynomial implements Cloneable, Serializable {
         return result;
     } // clone
 
+    /** Returns a new Polynomial constructed from a string representation, possibly with an
+     *  error message inserted at the point where parsing could not proceed.
+     *  @param input the input string, with whitespace, for example " + 17*a0^2*a1 + a2^2*a3^3 - 4*b4"
+     *  @return a reference to a new Polynomial
+     */
+    public static Polynomial parse(String input) {
+        return (new PolynomialParser()).parseFrom(input);
+    } // parse
+
     /*-------------- bean methods, setters and getters -----------------------------*/
 
     /** Gets one of the {@link Monomial}s of the Polynomial.
@@ -278,7 +287,7 @@ public class Polynomial implements Cloneable, Serializable {
         this.relation = relation;
     } // setRelation
 
-    /*-------------- lightweight derived methods -----------------------------*/
+    /*-------------- lightweight methods -----------------------------*/
 
     /** Returns the lead term, that is the "greatest" {@link Monomial}
      *  with respect to the monomial order defined by the TreeMap <em>monomials</em>.
@@ -300,7 +309,20 @@ public class Polynomial implements Cloneable, Serializable {
         return monomials.size();
     } // size
     
-    //----------------
+    /** Returns a slash prepended list of the variables, in increasing exponent order
+     *  @return "/a1,a0/a2,a3/b4;" for "+ 17*a0^2*a1 + a2^2*a3^3 - 4*b4", for example
+     */
+    public String listVariables() {
+        StringBuffer result = new StringBuffer(2048);
+        Iterator<String> iter = monomials.keySet().iterator();
+        while (iter.hasNext()) {
+            String sig = iter.next();
+            result.append(sig.substring(sig.indexOf('/')));
+        } // while iter
+        result.append(';');
+        return result.toString();
+    } // listVariables
+
     /** Returns a String representation of <em>this</em> {@link Polynomial}, either compressed or full
      *  @param mode 0 = normal, 1 = full (for substitution), 2 = nice / human legible
      *  @return "17*a0^2*a1 + a2^2*a3^3 - 4*b4", for example for mode = 0
@@ -954,31 +976,6 @@ x^2 - y^2 + x^3 - y^3
 x - y + x^2 + x*y - y^2 + 2*x^2*y
 x^2 + 3*x^3 + 2*x^4
 */
-    /*-------------- lightweight methods -----------------------------*/
-
-    /** Returns a slash prepended list of the variables, in increasing exponent order
-     *  @return "/a1,a0/a2,a3/b4;" for "+ 17*a0^2*a1 + a2^2*a3^3 - 4*b4", for example
-     */
-    public String listVariables() {
-        StringBuffer result = new StringBuffer(2048);
-        Iterator<String> iter = monomials.keySet().iterator();
-        while (iter.hasNext()) {
-            String sig = iter.next();
-            result.append(sig.substring(sig.indexOf('/')));
-        } // while iter
-        result.append(';');
-        return result.toString();
-    } // listVariables
-
-    /** Returns a new Polynomial constructed from a string representation, possibly with an
-     *  error message inserted at the point where parsing could not proceed.
-     *  @param input the input string, with whitespace, for example " + 17*a0^2*a1 + a2^2*a3^3 - 4*b4"
-     *  @return a reference to a new Polynomial
-     */
-    public static Polynomial parse(String input) {
-        return (new PolynomialParser()).parseFrom(input);
-    } // parse
-
     //-----------------------------------------------
 
     /** Gets a map from all variable names (key) to <em>null</em> (value).

@@ -375,13 +375,24 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
 
     /** Substitutes variable names with the expressions from <em>this</em> Map (if they are not null),
      *  and returns the replaced String.
-     *  Whether uppercase variables should be replaced must already be defined in this map.
      *  @param source replace variable names in this String, 
      *  which must be derived from {@link RelationSet#toString toString(true)},
      *  that is a full representation with "^1" 
      *  @return the new String with variable names replaced
      */
     public String substitute(String source) {
+        return substitute(source, true);
+    } // substitute(String)
+    
+    /** Substitutes variable names with the expressions from <em>this</em> Map (if they are not null),
+     *  and returns the replaced String.
+     *  @param source replace variable names in this String, 
+     *  which must be derived from {@link RelationSet#toString toString(true)},
+     *  that is a full representation with "^1" 
+     *  @param upperSubst whether to substitute uppercase variables (default: true)
+     *  @return the new String with variable names replaced
+     */
+    public String substitute(String source, boolean upperSubst) {
         String result = source; // full representation contains "*var^" for all variables
         String name = null;
         String expr = null;
@@ -391,7 +402,9 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
         index = 0;
         while (viter.hasNext()) { // over all variables to be substituted
             name = viter.next();
-            result = result.replaceAll("\\*" + name + "\\^", "*#" + index + "#^");
+            if (upperSubst || name.charAt(0) >= 'a') {
+                result = result.replaceAll("\\*" + name + "\\^", "*#" + index + "#^");
+            } // if upperSubst
             index ++;
         } // while viter 1
 
@@ -399,17 +412,19 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
         index = 0;
         while (viter.hasNext()) { // over all variables to be substituted
             name = viter.next();
-            expr = this.get(name);
-            if (expr != null) {
-                int dpos = expr.indexOf("/"); // assume that only a single number follows
-                if (dpos < 0) { // no division
-                    result = result.replaceAll("\\*\\#" + index + "\\#\\^"      , "*(" + expr + ")^");
-                } else { // with division: separate any exponentiation
-                    String dividend = expr.substring(0, dpos);
-                    String divisor  = expr.substring(dpos + 1);
-                    result = result.replaceAll("\\*\\#" + index + "\\#\\^(\\d+)", "*(" + dividend + ")^$1/" + divisor + "^$1");
-                } // with division
-            }
+            if (upperSubst || name.charAt(0) >= 'a') {
+                expr = this.get(name);
+                if (expr != null) {
+                    int dpos = expr.indexOf("/"); // assume that only a single number follows
+                    if (dpos < 0) { // no division
+                        result = result.replaceAll("\\*\\#" + index + "\\#\\^"      , "*(" + expr + ")^");
+                    } else { // with division: separate any exponentiation
+                        String dividend = expr.substring(0, dpos);
+                        String divisor  = expr.substring(dpos + 1);
+                        result = result.replaceAll("\\*\\#" + index + "\\#\\^(\\d+)", "*(" + dividend + ")^$1/" + divisor + "^$1");
+                    } // with division
+                } // expr != null
+            } // if upperSubst
             index ++;
         } // while viter 2
         return result;

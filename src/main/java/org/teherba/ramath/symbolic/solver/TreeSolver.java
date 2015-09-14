@@ -131,7 +131,7 @@ public class TreeSolver extends BaseSolver {
 
                 RefiningMap vmap2 = vmap1.getRefinedMap(meter);
                 if (vmap2.size() > 0) {
-                    RelationSet rset2 = factory1.getStartNode().substitute(vmap2);
+                    RelationSet rset2 = factory1.getStartNode().substitute(vmap2, getUpperSubst());
                     if (norm) {
                         rset2.deflateIt();
                     }

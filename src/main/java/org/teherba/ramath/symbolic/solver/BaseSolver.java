@@ -406,7 +406,7 @@ public class BaseSolver extends Stack<RelationSet> {
             } else {
                 trace.print("Maximum level " + getMaxLevel());
             }
-            trace.println(" at [" + size() + "]: " + rset0.niceString());
+            trace.println(" [" + size() + "] mod " + getModBase() + ": " + rset0.niceString());
         } // debug
     } // printTrailer
 

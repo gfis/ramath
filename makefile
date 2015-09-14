@@ -45,8 +45,8 @@ t:
 # test/T27.prev.tst:Maximum level 5 reached at [64]: 2+2x+x^2-3
 # 123456789012345678
 proofs:
-	grep -iE "proof" test/T*.prev.tst | cut -b 6-9,18- > test/proof.prev.tst
-	grep -iE "proof" test/T*.this.tst | cut -b 6-9,18- > test/proof.this.tst
+	grep -iE "proof" test/T*.prev.tst | cut -b 6-9,19- > test/proof.prev.tst
+	grep -iE "proof" test/T*.this.tst | cut -b 6-9,19- > test/proof.this.tst
 	wc -l test/proof.*
 	diff -y test/proof.prev.tst test/proof.this.tst
 diffy:

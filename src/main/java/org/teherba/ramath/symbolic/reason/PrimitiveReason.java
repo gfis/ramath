@@ -58,7 +58,7 @@ public class PrimitiveReason extends BaseReason {
     public void initialize(BaseSolver solver, RelationSet startNode) {
         super.initialize(solver, startNode);
         this.startNode = startNode;
-        setWalkMode(WALK_ROOT); // consider with rset1 = [0] = rset0
+        setWalkMode(WALK_NONE); // consider with rset1 = [0] = rset0
         base = BigInteger.valueOf(solver.getModBase());
     } // initialize
 

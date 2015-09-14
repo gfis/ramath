@@ -154,17 +154,8 @@ CALL Polynomial -reduce "15x^2 - 7*(x+w)^2 - 9"
 TEST LRA squareCompletion, from T28
 CALL Polynomial -reduce "2+8x+9x^2-3y^3"
 
-TEST LT1 getReductionMap from T45
-CALL Polynomial -redsol -f test/T45.this.tst
-
-TEST LT2 getReductionMap from T48
-CALL Polynomial -redsol -f test/T48.this.tst
-
-TEST LT3 getReductionMap from T50
-CALL Polynomial -redsol -f test/T50.this.tst
-
-TEST LT4 getReductionMap from T28
-CALL Polynomial -redsol -f test/T28.this.tst
+TEST LT1 getReductionMap
+CALL Polynomial -redsol -f test/TPE1.this.tst
 
 #------------------------------------
 TEST P00 constant
@@ -374,28 +365,28 @@ CALL RelationSet -depend "a^4 + b^4 = c^4 + d^4"
 #-------------------------------
 # TranspositionSet
 
-TEST TS1 TranspositionSet 0
+TEST PT1 TranspositionSet 0
 CALL TranspositionSet "4*e - 5*f" "" ""
 
-TEST TS2 TranspositionSet 1
+TEST PT2 TranspositionSet 1
 CALL TranspositionSet "4*e - 4*f" "e,f" "f,e"
 
-TEST TS3 TranspositionSet 1
+TEST PT3 TranspositionSet 1
 CALL TranspositionSet "a^2 + b^2 + c^3 - d^3 = 0" "a,b,c,d" "b,a,c,d"
 
-TEST TS4 TranspositionSet 5
+TEST PT4 TranspositionSet 5
 CALL TranspositionSet "a^3 + b^3 + c^3 - d^3 = 0" "a,b,c,d" "c,b,a,d"
 
-TEST TS5 TranspositionSet 0
+TEST PT5 TranspositionSet 0
 CALL TranspositionSet "a^3 + 2*b^3 + 3*c^3 - d^3 = 0" "" ""
 
-TEST TS6 TranspositionSet 4 Polynomials: match
+TEST PT6 TranspositionSet 4 Polynomials: match
 CALL TranspositionSet "a^2 + b^2 = c^2; a=x^2; b=y^2" "a,b,c,x,y" "b,a,c,y,x"
 
-TEST TS7 TranspositionSet 4 Polynomials: no match
+TEST PT7 TranspositionSet 4 Polynomials: no match
 CALL TranspositionSet "a^2 + b^2 = c^2; a=x^2; b=y^2" "a,b,c,x,y" "b,a,c,x,y"
 
-TEST TS8 TranspositionSet 5 Polynomials: 1
+TEST PT8 TranspositionSet 5 Polynomials: 1
 CALL TranspositionSet \
      "a^4 + b^4 = c^4 + d^4; a=w^2; b=x^2; c=y^2; d=z^2" \
      "a,b,c,d,w,x,y,z"\ 

@@ -1,15 +1,15 @@
-T01.:Proof at [1]: -p^2+2q^2
-T02.:Proof at [2]: -p^2+5q^2
-T03.:Proof at [2]: a^2+b^2-3c^2-3d^2
-T11.:Proof at [1]: x^2+y^2-4x*y*z+z^2
-T12.:Proof at [1]: x^2+y^2-3z^2
-T14.:Proof at [3]: a^3+3b^3-9c^3
-T17.:Proof at [1]: a^3+2b^3-4c^3
-T19.:Proof at [1]: -4-4x+x^2-4y-4x*y+y^2-4z-4x*z-4y*z-2x*y*z+z^2
-T27.:Proof at [1]: 2+2x+x^2-3y-3y^2-y^3
-T39.:Proof at [1]: a^3+2b^3+4c^3-9d^3
-T40At:Proof at [1]: 2+a^2+b^2
-T40Bt:Proof at [1]: -2+a^2+b^2
-T42.:Proof at [1]: -3+x^2+y^2-4z
-T44.:Proof at [1]: a^2+b^2+c^2-b^2*c^2
-T47.:Proof at [1]: -9+15x^2-7y^2
+TBI1:Proof [1] mod 2: 2+a^2+b^2
+TBI2:Proof [1] mod 2: -2+a^2+b^2
+TE33:Proof [1] mod 3: a^3+2b^3+4c^3-9d^3
+TEC3:Proof [1] mod 2: 2+2x+x^2-3y-3y^2-y^3
+TF33:Proof [3] mod 3: a^3+3b^3-9c^3
+TF35:Proof [1] mod 2: a^3+2b^3-4c^3
+TFB2:Proof [1] mod 2: a^2+b^2+c^2-b^2*c^2
+TM23:Proof [1] mod 2: -4-4x+x^2-4y-4x*y+y^2-4z-4x*z-4y*z-2x*y*z+z^2
+TM41:Proof [1] mod 2: x^2+y^2-4x*y*z+z^2
+TP13:Proof [2] mod 2: a^2+b^2-3c^2-3d^2
+TP22:Proof [1] mod 2: x^2+y^2-3z^2
+TP23:Proof [1] mod 2: -3+x^2+y^2-4z
+TPE3:Proof [1] mod 3: -9+15x^2-7y^2
+TQR1:Proof [1] mod 2: -p^2+2q^2
+TQR2:Proof [2] mod 2: -p^2+5q^2

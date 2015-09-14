@@ -30,198 +30,199 @@
 #===================================================
 PACKAGE=org.teherba.ramath.symbolic.solver
 
-# TEST Q01 FLT(4), biquadratic plus
-# CALL TreeSolver -l 3 -e "x^4 + y^4 - z^2" -r norm,invall
-# 
-# TEST Q02 FLT(4), biquadratic plus: shift by 2,2,4
-# CALL TreeSolver -l 3 -e "(x+2)^4 + (y+2)^4 - (z+4)^2" -r norm
+#----
+# biased
 
-TEST T01 tree solver, sqrt(2)
+TEST TBI1 biased expression - in rset0
+CALL TreeSolver -b 2 -l 6 -e "+2 + a^2 + b^2" -r showfail
+
+TEST TBI2 biased expression - in rset2
+CALL TreeSolver -b 2 -l 6 -e "-2 + a^2 + b^2" -r showfail
+
+#----
+# Square root
+TEST TQR1 tree solver, sqrt(2)
 CALL TreeSolver -l 4 -e "2*q^2 - p^2" 
 
-TEST T02 tree solver, sqrt(5) (proof in 2 steps)
+TEST TQR2 tree solver, sqrt(5) (proof in 2 steps)
 CALL TreeSolver -l 4 -e "5*q^2 - p^2" 
 
-TEST T03 Fermat (proof in 2 steps)
+#--------
+# Fermat 
+
+TEST TP13 Fermat (proof in 2 steps)
 CALL TreeSolver -l 4 -e "a^2 + b^2 - 3*(c^2 + d^2)" -r norm,invall,igtriv,showfail
-#----
-TEST T04 tree solver, biquadratic minus
-CALL TreeSolver -l 4 -e "x^4 - y^4 - z^2" -r norm,igtriv,no-pytha
 
-TEST T05 FLT(4), biquadratic plus
-CALL TreeSolver -l 3 -e "x^4 + y^4 - z^2" -r norm,igtriv,no-pytha
-
-TEST T0A tree solver, biquadratic minus
-CALL TreeSolver -l 1make TEST=T0A -e "x^4 - y^4 - z^2" -r norm,igtriv
-
-TEST T0B FLT(4), biquadratic plus
-CALL TreeSolver -l 2 -e "x^4 + y^4 - z^2" -r norm,igtriv
-#----
-TEST T06 Markov(3, solvable)
-CALL TreeSolver -l 3 -e "x^2 + y^2 + z^2 - 3*x*y*z" -r norm,invall,igtriv
-
-TEST T07 FLT(3) mod 2
-CALL TreeSolver -b 2 -l 3 -e "a^3 + b^3 - c^3" -r norm,invall
-
-TEST T08 EEC(3) mod 2
-CALL TreeSolver -b 2 -l 2 -e "a^3 + b^3 + c^3 - d^3" 
-
-TEST T09 Markoff(2, unsolvable, power)
-CALL TreeSolver      -l 8 -e "x^2 + y^2 + z^2 - 2*x*y*z" -r norm,invall
-
-TEST T10 Markoff(5, unsolvable)
-CALL TreeSolver -b 2 -l 3 -e "x^2 + y^2 + z^2 - 5*x*y*z" -r norm
-
-TEST T11 Markoff(4, unsolvable, power)
-CALL TreeSolver      -l 8 -e "x^2 + y^2 + z^2 - 4*x*y*z" -r showfail
-
-TEST T12 modif. Pythagoras (proof) 
+TEST TP22 modif. Pythagoras (proof) 
 CALL TreeSolver -l 4 -e "x^2 + y^2 - 3*z^2" -r norm,invall,showfail,no-pytha
 
-TEST T13 modified FLT(3) mod 2
+TEST TP21 Fermat 2 squares mod 4 = 1
+CALL TreeSolver -b 2 -l 3 -e "x^2 + y^2 - 4*z - 1" -r invall
+
+TEST TP23 Fermat 2 squares mod 4 = 3 (proof)
+CALL TreeSolver -b 2 -l 3 -e "x^2 + y^2 - 4*z - 3" -r norm,invall,showfail
+
+#----
+TEST TF21 FLT(2), Pythagoras
+CALL TreeSolver -b 2 -l 3 -e "a^2 + b^2 - c^2" -r norm,igtriv,no-pytha
+#--
+TEST TF31 FLT(3) mod 2
+CALL TreeSolver -b 2 -l 3 -e "a^3 + b^3 - c^3" -r norm,invall
+
+TEST TF32 modified FLT(3) mod 2
 CALL TreeSolver -b 2 -l 3 -e "a^3 + 3*b^3 - 9*c^3" -r norm
 
-TEST T14 modified FLT(3) mod 3 proof
+TEST TF33 modified FLT(3) mod 3 proof
 CALL TreeSolver -b 3 -l 3 -e "a^3 + 3*b^3 - 9*c^3" -r norm,igtriv
 
-TEST T15 modified FLT(3) mod 6 no descent?
+TEST TF34 modified FLT(3) mod 6 no descent?
 CALL TreeSolver -b 6 -l 2 -e "a^3 + 3*b^3 - 9*c^3" -r norm,igtriv
-
-TEST T16 FLT(2), Pythagoras
-CALL TreeSolver -b 2 -l 3 -e "a^2 + b^2 - c^2" -r norm,igtriv,no-pytha
 
 # Euler, proof=1 (http://www.cut-the-knot.org/arithmetic/BasicsOfInfiniteDescent.shtml)
 # also Keith Conrad: Proofs by Descent, Example 1.1
-TEST T17 FLT(3) modified
+TEST TF35 FLT(3) modified
 CALL TreeSolver -b 2 -l 4 -e "a^3 + 2*b^3 - 4*c^3" -r "norm,invall,showfail"
 
-TEST T18 Markov(2, unsolvable, power, proof)
-CALL TreeSolver -l 6 -e "(x + 1)^2 + (y + 1)^2 + (z + 1)^2 - 2*(x + 1) * (y + 1) * (z + 1)" 
-
-TEST T19 Markov(2, unsolvable, power, proof)
-CALL TreeSolver -l 6 -e "(x + 2)^2 + (y + 2)^2 + (z + 2)^2 - 2*(x + 2) * (y + 2) * (z + 2)"
-
-TEST T20 FLT(2), Pythagoras
-CALL TreeSolver -b 2 -l 3 -e "a^2 + b^2 - c^2" -r norm,invall,igtriv,no-pytha
-
-# TEST T21 EEC(6,1,5), most wanted on euler.free.net, mod 3
-# CALL TreeSolver -b 3 -l 1 -e "a^6 + b^6 + c^6 + d^6 + e^6 - f^6"
-
-TEST T22 FLT(3)=Fermat/Carcavi(6) mod 3
+TEST TF36 FLT(3)=Fermat/Carcavi(6) mod 3
 CALL TreeSolver -b 2 -l 4 -e "a^3 + b^3 - c^3" -r igtriv,norm
+#--
+TEST TF41 FLT(4), biquadratic minus
+CALL TreeSolver -l 4 -e "x^4 - y^4 - z^2" -r norm,igtriv
 
-TEST T23 FLT(5) mod 2
+TEST TF42 FLT(4), biquadratic plus
+CALL TreeSolver -l 3 -e "x^4 + y^4 - z^2" -r norm,igtriv
+
+TEST TF43 Oeuvres de Fermat 5, p. 154 Remarques de A. Genocchi
+CALL TreeSolver -b 2 -l 3 -e "x^4 + x^2*y^2 + y^4 - z^2" -r norm,invall
+
+TEST TF44 FLT(4) related, Nagell 1951, p. 230 no solution
+CALL TreeSolver -l 3 -e "x^4 - y^4 - 2*z^2" -r norm,invall,no-pytha
+
+#--
+TEST TF51 FLT(5) mod 2
 CALL TreeSolver -b 2 -l 2 -e "a^5 + b^5 - c^5" -r igtriv,norm
 
+TEST TFA1 area of a rational triangle
+CALL TreeSolver -b 2 -l 3 -e "a^2 + b^2 = c^2; a*b = 2*d^2" -r norm,invall,igtriv,no-pytha
+
+TEST TFB2 Pyth-a2b2 
+CALL TreeSolver -l 2 -e "a^2 + b^2 + c^2 - b^2*c^2" -r showfail
+
+#--------
+# EEC: Euler's Extended Conjecture
+
+TEST TE31 EEC(3) mod 2
+CALL TreeSolver -b 2 -l 2 -e "a^3 + b^3 + c^3 - d^3" 
+
+TEST TE32 1 2 4 9 http://db.math.ust.hk/notes_download/elementary/number/ne_N3.pdf
+CALL TreeSolver -b 2 -l 2 -e "a^3 + 2*b^3 + 4*c^3 - 9*d^3" -r norm,igtriv
+
+TEST TE33 2 4 9 Proof
+CALL TreeSolver -b 3 -l 2 -e "a^3 + 2*b^3 + 4*c^3 - 9*d^3" -r igtriv
+
+TEST TE41 EEC(4,2,2) OEIS A003824, http://cr.yp.to/sortedsums/two4.1000000
+CALL TreeSolver -b 2 -l 2 -e "a^4 + b^4 - c^4 -d^4" -r norm,invall
+
+# TEST TE42 EEC(4,2,2) mod 3
+# CALL TreeSolver -b 3 -l 1 -e "a^4 + b^4 - c^4 -d^4" -r norm,invall
+
+# TEST TE43 EEC(4,2,2) mod 4
+# CALL TreeSolver -b 4 -l 1 -e "a^4 + b^4 - c^4 -d^4" -r norm,invall
+
+TEST TE44 superset(^2) only
+CALL TreeSolver -b 2 -l 2 -e "a^2 + b^2 - c^2 - d^2" -r norm,invall
+
+TEST TE45 EEC(4,1,3), c.f. http://cr.yp.to/sortedsums.html
+CALL TreeSolver -b 2 -l 3 -e "a^4 + b^4 + c^4 - d^4" -r norm,invall
+
+# TEST TE61 EEC(6,1,5), most wanted on euler.free.net, mod 3
+# CALL TreeSolver -b 3 -l 1 -e "a^6 + b^6 + c^6 + d^6 + e^6 - f^6"
+
+#----
+# Pell's equations
+
+TEST TPE1 Pell 15 7 9 http://db.math.ust.hk/notes_download/elementary/number/ne_N3.pdf
+CALL TreeSolver -l 5 -b 2 -e "15*x^2 - 7*y^2 - 9" -r norm,showfail
+
+TEST TPE2 15 7 9
+CALL TreeSolver -l 2 -b 2 -e "15*(x+1)^2 - 7*(y+1)^2 - 9"
+
+TEST TPE3 15 7 9 Proof
+CALL TreeSolver -l 2 -b 3 -e "15*x^2 - 7*y^2 - 9" -r showfail
+
+TEST TPE4 15 7 9 mod 4
+CALL TreeSolver -l 3 -b 4 -e "15*x^2 - 7*y^2 - 9" -r norm
+
+TEST TPE5 15 7 9 reduced
+CALL TreeSolver -l 3 -b 2 -e "-576+15*x^2-7*y^2" -r norm
+
+#--------
+# Markoff chains
+
+TEST TM21 Markoff(2, unsolvable, power)
+CALL TreeSolver      -l 8 -e "x^2 + y^2 + z^2 - 2*x*y*z" -r norm,invall
+
+TEST TM22 Markov(2, unsolvable, power, proof)
+CALL TreeSolver -l 6 -e "(x + 1)^2 + (y + 1)^2 + (z + 1)^2 - 2*(x + 1) * (y + 1) * (z + 1)" 
+
+TEST TM23 Markov(2, unsolvable, power, proof)
+CALL TreeSolver -l 6 -e "(x + 2)^2 + (y + 2)^2 + (z + 2)^2 - 2*(x + 2) * (y + 2) * (z + 2)"
+
+TEST TM31 Markov(3, solvable)
+CALL TreeSolver -l 3 -e "x^2 + y^2 + z^2 - 3*x*y*z" -r norm,invall,igtriv
+
+TEST TM41 Markoff(4, unsolvable, power)
+CALL TreeSolver      -l 8 -e "x^2 + y^2 + z^2 - 4*x*y*z" -r showfail
+
+TEST TM51 Markoff(5, unsolvable)
+CALL TreeSolver -b 2 -l 3 -e "x^2 + y^2 + z^2 - 5*x*y*z" -r norm
+
+#--------
+# Elliptic curves
+
 # Smart p. 11 Elliptic Curve; Solutions: x=5,y=+-11; x=2,y=+-2
-TEST T24 Smart p. 11 Elliptic Curve
+TEST TEC1 Smart p. 11 Elliptic Curve
 CALL TreeSolver -b 2 -l 5 -e "y^2 - x^3 + 4 = 0" 
 
-TEST T25 Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3]; http://math.stackexchange.com/questions/677422/solve-x22-y3-using-infinite-descent; growing !
+TEST TEC2 Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3]; http://math.stackexchange.com/questions/677422/solve-x22-y3-using-infinite-descent; growing !
 CALL TreeSolver -b 2 -l 7 -e "x^2 + 2 - y^3" -r norm
 
-TEST T26 Squeeze; https://hcmop.wordpress.com/2012/04/09/techniques-in-solving-diophantine-equations-part-2/
+TEST TEC3 Fermat/Carcavi(7) mod. (x+1)^2 + 2 = (y+1)^3; solution [4,2]
+CALL TreeSolver -b 2 -l 5 -e "(x+1)^2 + 2 - (y+1)^3" -r showfail
+
+TEST TEC4 Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3]; http://math.stackexchange.com/questions/677422/solve-x22-y3-using-infinite-descent; growing !
+CALL TreeSolver -b 3 -l 7 -e "x^2 + 2 - y^3" -r norm
+
+# TEST TEC5 Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3]
+# CALL TreeSolver -b 27 -l 2 -e "x^2 + 2 - y^3" -r norm 
+
+TEST TEC6 Fermat/Carcavi(8) x^2 + 4 = y^3; solutions [2,2],[11,5]
+CALL TreeSolver -b 2 -l 4 -e "x^2 + 4 - y^3" -r norm,invall
+
+TEST TEC7 Fermat/Carcavi(10); solutions [1,1],[2,5]; http://www.jstor.org/stable/2974148?seq=1#page_scan_tab_contents
+CALL TreeSolver -b 2 -l 4 -e "(2*x^2 - 1)^2 - (2*y^2 - 1)" 
+
+TEST TEC8 Fermat/Carcavi(7) x^2 + 2 = y^3; -> (a+b, a-b)
+CALL TreeSolver -b 2 -l 4 -e "(a+b)^2 + 2 - (a-b)^3" -r norm,invall 
+
+TEST TEC9 FC7, behind solution
+CALL TreeSolver -b 2 -l 4 -e "(5 + 2*v + 2*u)^2 + 2 - (5 + 2*v)^3" -r norm,invall
+
+TEST TECA Keith Conrad Descent: Cor. 3.7
+CALL TreeSolver -b 2 -l 3 -e "y^2 = x^3 - 4*x" -r norm,invall
+
+#--------
+# Squeeze ?
+TEST TSQ1 Squeeze; https://hcmop.wordpress.com/2012/04/09/techniques-in-solving-diophantine-equations-part-2/
 CALL TreeSolver -b 2 -l 6 -e "x * (x + 1) * (x + 7) * (x + 8) - y^2"
 # solutions in http://www.mathsolympiad.org.nz/wp-content/uploads/2009/01/diophantine-equations.pdf
 
-#----
-TEST T27 Fermat/Carcavi(7) mod. (x+1)^2 + 2 = (y+1)^3; solution [4,2]
-CALL TreeSolver -b 2 -l 5 -e "(x+1)^2 + 2 - (y+1)^3" -r showfail
-
-TEST T28 Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3]; http://math.stackexchange.com/questions/677422/solve-x22-y3-using-infinite-descent; growing !
-CALL TreeSolver -b 3 -l 7 -e "x^2 + 2 - y^3" -r norm
-
-# TEST T2A Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3]
-# CALL TreeSolver -b 27 -l 2 -e "x^2 + 2 - y^3" -r norm 
-#----
-
-TEST T29 Fermat/Carcavi(8) x^2 + 4 = y^3; solutions [2,2],[11,5]
-CALL TreeSolver -b 2 -l 4 -e "x^2 + 4 - y^3" -r norm,invall
-
-TEST T30 Fermat/Carcavi(10); solutions [1,1],[2,5]; http://www.jstor.org/stable/2974148?seq=1#page_scan_tab_contents
-CALL TreeSolver -b 2 -l 4 -e "(2*x^2 - 1)^2 - (2*y^2 - 1)" 
-
-TEST T31 Fermat/Carcavi(7) x^2 + 2 = y^3; -> (a+b, a-b)
-CALL TreeSolver -b 2 -l 4 -e "(a+b)^2 + 2 - (a-b)^3" -r norm,invall 
-
-TEST T32 FC7, behind solution
-CALL TreeSolver -b 2 -l 4 -e "(5 + 2*v + 2*u)^2 + 2 - (5 + 2*v)^3" -r norm,invall
-
-TEST T33 Oeuvres de Fermat 5, p. 154 Remarques de A. Genocchi
-CALL TreeSolver -b 2 -l 3 -e "x^4 + x^2*y^2 + y^4 - z^2" -r norm,invall
-
-TEST T34 Keith Conrad Descent: Cor. 3.7
-CALL TreeSolver -b 2 -l 3 -e "y^2 = x^3 - 4*x" -r norm,invall
-
-TEST T35 FC7
-CALL TreeSolver -b 2 -l 4 -e " - 49 - 65*u - 28*u^2 - 4*u^3 + 75*v + 60*u*v + 12*u^2*v - 30*v^2 - 12*u*v^2 + 4*v^3" -r norm,invall
-
-TEST T36 area of a rational triangle
-CALL TreeSolver -b 2 -l 3 -e "a^2 + b^2 = c^2; a*b = 2*d^2" -r norm,invall,igtriv,no-pytha
-
-TEST T37 p^3 - q^5 - (p + q)^2; p,q prime; http://db.math.ust.hk/notes_download/elementary/number/ne_N3.pdf
+TEST TX51 p^3 - q^5 - (p + q)^2; p,q prime; http://db.math.ust.hk/notes_download/elementary/number/ne_N3.pdf
 CALL TreeSolver -l 1 -e "p^3 - q^5 - (p + q)^2" -r norm
 
-TEST T38 1 2 4 9 http://db.math.ust.hk/notes_download/elementary/number/ne_N3.pdf
-CALL TreeSolver -l 2 -b 2 -e "a^3 + 2*b^3 + 4*c^3 - 9*d^3"
-
-TEST T39 1 2 4 9 Proof
-CALL TreeSolver -l 2 -b 3 -e "a^3 + 2*b^3 + 4*c^3 - 9*d^3"
-
-TEST T40 biased expression - in rset0
-CALL TreeSolver -b 2 -l 6 -e "+2 + a^2 + b^2" -r showfail
-
-TEST T4B biased expression - in rset2
-CALL TreeSolver -b 2 -l 6 -e "-2 + a^2 + b^2" -r showfail
-
-TEST T41 EEC(4,1,3), c.f. http://cr.yp.to/sortedsums.html
-CALL TreeSolver -b 2 -l 3 -e "a^4 + b^4 + c^4 - d^4" -r norm,invall
-
-TEST T42 Fermat 2 squares mod 4 = 3 (proof)
-CALL TreeSolver -b 2 -l 3 -e "x^2 + y^2 - 4*z - 3" -r norm,invall,showfail
-
-TEST T43 Fermat 2 squares mod 4 = 1
-CALL TreeSolver -b 2 -l 4 -e "x^2 + y^2 - 4*z - 1" -r invall
-
-TEST T44 Pyth-a2b2 
-CALL TreeSolver -l 2 -e "a^2 + b^2 + c^2 - b^2*c^2" -r showfail
-
-TEST T45 15 7 9 http://db.math.ust.hk/notes_download/elementary/number/ne_N3.pdf
-CALL TreeSolver -l 5 -b 2 -e "15*x^2 - 7*y^2 - 9" -r norm,showfail
-
-TEST T46 15 7 9
-CALL TreeSolver -l 2 -b 2 -e "15*(x+1)^2 - 7*(y+1)^2 - 9"
-
-TEST T47 15 7 9 Proof
-CALL TreeSolver -l 2 -b 3 -e "15*x^2 - 7*y^2 - 9" -r showfail
-
-TEST T48 15 7 9 mod 4
-CALL TreeSolver -l 3 -b 4 -e "15*x^2 - 7*y^2 - 9" -r norm
-
-TEST T50 15 7 9 reduced
-CALL TreeSolver -l 3 -b 2 -e "-576+15*x^2-7*y^2" -r norm
-
-TEST T51 FLT(4) related, Nagell 1951, p. 230 no solution
-CALL TreeSolver -l 3 -e "x^4 - y^4 - 2*z^2" -r norm,invall,no-pytha
-
-TEST T52 EEC(4,2,2) OEIS A003824, http://cr.yp.to/sortedsums/two4.1000000
-CALL TreeSolver -b 2 -l 2 -e "a^4 + b^4 - c^4 -d^4" -r norm,invall
-# TEST TE3 EEC(4,2,2) mod 3
-# CALL TreeSolver -b 3 -l 1 -e "a^4 + b^4 - c^4 -d^4" -r norm,invall
-# TEST TE4 EEC(4,2,2) mod 4
-# CALL TreeSolver -b 4 -l 1 -e "a^4 + b^4 - c^4 -d^4" -r norm,invall
-
-TEST T53 like T52, superset(^2) only
-CALL TreeSolver -b 2 -l 2 -e "a^2 + b^2 - c^2 - d^2" -r norm,invall
 
 EXIT
 #----
-# TEST T54 like T52, with superset(^2)
-# CALL TreeSolver -b 2 -l 2 -e "a^2 + b^2 - c^2 -d^2; w^2=a; x^2=b; y^2=c; z^2=d" -r norm,invall
-
-# TEST T55 like T52, partial superset(^2) 
-# CALL TreeSolver -b 2 -l 2 -e "a^4 + b^4 - c^2 - d^2" -r norm,invall
-
 # # https://books.google.de/books?id=My19IcewAnoC&lpg=PA317&ots=V3hN58VkXU&dq=Fermat%20identities&hl=de&pg=PA322#v=onepage&q=Fermat%20identities&f=false
 # # Google: Fermat identities
 # # The Mathematical Career of Pierre de Fermat, 1601-1665  von Michael Sean Mahoney p.320 ff.

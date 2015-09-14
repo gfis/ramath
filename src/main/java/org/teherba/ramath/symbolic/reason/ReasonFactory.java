@@ -168,6 +168,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
     public BaseReason addReason(String code) {
         BaseReason result = null; // assume success
         if (false) {
+        } else if (code.startsWith("accel"      )) { result = addReasonClass(code, "ModAccelerator"      );
         } else if (code.startsWith("base"       )) { result = addReasonClass(code, "BaseReason"          );
         } else if (code.startsWith("even"       )) { result = addReasonClass(code, "EvenExponentReason"  );
         } else if (code.startsWith("prim"       )) { result = addReasonClass(code, "PrimitiveReason"     );

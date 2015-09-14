@@ -714,13 +714,22 @@ public class RelationSet
 
     /** Substitutes variable names with the expressions from a {@link VariableMap} (if they are not null),
      *  and returns a new RelationSet.
-     *  @param vmap map of variable names to (expressions or null);
-     *  whether uppercase variables should be replaced must already have been
-     *  defined during the construction of this map.
+     *  Uppercase variables will be replaced.
+     *  @param vmap map of variable names to (expressions or null)
      *  @return a new RelationSet
      */
     public RelationSet substitute(VariableMap vmap) {
-        return RelationSet.parse(vmap.substitute(this.toString(true)));
+        return this.substitute(vmap, true);
+    } // substitute(VariableMap)
+
+    /** Substitutes variable names with the expressions from a {@link VariableMap} (if they are not null),
+     *  and returns a new RelationSet.
+     *  @param vmap map of variable names to (expressions or null);
+     *  @param upperSubst whether uppercase variables should be replaced 
+     *  @return a new RelationSet
+     */
+    public RelationSet substitute(VariableMap vmap, boolean upperSubst) {
+        return RelationSet.parse(vmap.substitute(this.toString(true), upperSubst));
     } // substitute(VariableMap)
 
     /** Evaluates a {@link RelationSet} without any proof history by evaluating
