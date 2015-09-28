@@ -1,6 +1,7 @@
 /*  Test Euler's Extended Conjecture by brute force;
  *  compute tuples of the form a^3 + b^3 + c^3 = d^3
  *  @(#) $Id: EulersExtendedConjecture.java 182 2009-07-02 04:29:14Z gfis $
+ *  2015-09-27: Choudhry
  *  2014-04-08: use BigInteger.valueOf(long)
  *  2013-08-08: methods renamed and parameters aligned, Vector.gcd
  *  2008-10-07, Georg Fischer
@@ -74,7 +75,7 @@ public class EulersExtendedConjecture {
      *  @param maxA maximum value of kth base number
      */
     public EulersExtendedConjecture(int k, int maxA) {
-    	show = false;
+        show = false;
         this.k  = k;
         this.maxA = maxA;
         this.list = new ArrayList<Vector>(256);
@@ -131,13 +132,13 @@ public class EulersExtendedConjecture {
         int itup = 1;
         Vector vect1 = new Vector(tuple);
         int factor = vect1.extractGcd();
-       	if (! vect1.isPowerSum(k, m, n)) {
-       		System.out.println(vect1.toString("(,)") + " no power sum");
-       	} else if (show) {
-       		System.out.println(vect1.toString("(,)"));
-       	} else {
-			list.add(vect1);
-		}
+        if (! vect1.isPowerSum(k, m, n)) {
+            System.out.println(vect1.toString("(,)") + " no power sum");
+        } else if (show) {
+            System.out.println(vect1.toString("(,)"));
+        } else {
+            list.add(vect1);
+        }
     } // evaluateTuple
 
     /** Evaluate (1,2) tuples up to some maximum index of the kth base number
@@ -402,7 +403,7 @@ a^2 +
                     d =  2 * m*m +  4 * m + 42;
                     if (a != b && a != c && a != d && b != c && b != d && c != d) {
                     //  System.out.println(a + "\t" + b + "\t" + c + "\t" + d + "\t"+ m + "\t" + t + "\t" + f);
-                    	evaluateTuple(3, 3, 1, new int[]{ a, b, c, d });
+                        evaluateTuple(3, 3, 1, new int[]{ a, b, c, d });
                     }
         } // for m
         return list;
@@ -427,7 +428,7 @@ DATA ((2*m - 1)*(2*m^3 -  6*m^2 + 0*m - 1))^3
                     d = (2*m - 1)*(3*m*m*m -  3*m*m + 3*m    );
                     if (a != b && a != c && a != d && b != c && b != d && c != d) {
                     //  System.out.println(a + "\t" + b + "\t" + c + "\t" + d + "\t"+ m + "\t" + t + "\t" + f);
-                    	evaluateTuple(3, 3, 1, new int[]{ a, b, c, d });
+                        evaluateTuple(3, 3, 1, new int[]{ a, b, c, d });
                     }
         } // for m
         return list;
@@ -450,13 +451,41 @@ DATA ((2*m - 1)*(2*m^3 -  6*m^2 + 0*m - 1))^3
                     d =  6 * pow(t, 3) * m * f + m * (m + t) * (pow(m, 4) + pow(m, 2) * pow(t, 2) + pow(t, 4)) + 3 * m * (m - t) * pow(f, 2);
                     if (a != b && a != c && a != d && b != c && b != d && c != d) {
                     //  System.out.println(a + "\t" + b + "\t" + c + "\t" + d + "\t"+ m + "\t" + t + "\t" + f);
-                    	evaluateTuple(3, 3, 1, new int[]{ a, b, c, d });
+                        evaluateTuple(3, 3, 1, new int[]{ a, b, c, d });
                     }
                 } // for f
             } // for t
         } // for m
         return list;
     } // evalKorneck3
+
+
+    /** Evaluates Choudhry's formula (1997) for cubic diophantine equations
+     *  up to some limit of the parameter values.
+     *  <pre>
+     *  a^3 + b^3 = c^3 + d^3
+     *  @param limit abs(max(m, n))
+     */
+    public ArrayList<Vector> evalChoudry3(int limit) {
+        int u, v, w, x, y, z, a, b, c, d;
+        for (a = -limit; a <= limit; a++) {
+            for (b = -limit; b <= limit; b++) {
+                for (c = -limit; c <= limit; c++) {
+                    u = pow(a, 4) + 2*pow(a, 3)*b +3*pow(a, 2)*pow(b, 2) + 2*a*pow(b, 3) + pow(b, 4);
+                    x =   (u + (2*a + b)*pow(c, 3));
+                    y = - (u - (a   - b)*pow(c, 3));
+                    z = c*(- pow(a, 3) + pow(b, 3) + pow(c, 3));
+                    w = - ((2*pow(a, 3) + 3*pow(a, 2)*b + 3*a*pow(b, 2) + pow(b, 3))*c + pow(c, 4));
+                    if (       x !=  y && x !=  z && x !=  w && y !=  z && y !=  w && z !=  w
+                            && x != -y && x != -z && x != -w && y != -z && y != -w && z != -w
+                            ) {
+                        evaluateTuple(3, 4, 0, new int[]{ x, y, z, w });
+                    }
+                } // for c
+            } // for b
+        } // for a
+        return list;
+    } // evalChoudry3
 
     /** Evaluates Vieta's formula (1591) for cubic diophantine equations
      *  up to some limit of the parameter values,
@@ -467,8 +496,8 @@ DATA ((2*m - 1)*(2*m^3 -  6*m^2 + 0*m - 1))^3
      *  x = 2*n*m^3 - n^4
      *  y =   n*m^3 + n^4
      *  z = m^4 +   n^3*m
-	 *  </pre>
-	 @param limit limit for absolute value of parameters w, x, y, z
+     *  </pre>
+     @param limit limit for absolute value of parameters w, x, y, z
      */
     public ArrayList<Vector> evalVieta3(int limit) {
         int n, m, w, x, y, z;
@@ -497,42 +526,44 @@ DATA ((2*m - 1)*(2*m^3 -  6*m^2 + 0*m - 1))^3
      */
     public static void main(String[] args) {
         try {
-        	int iarg 	= 0;
-        	String opt	= args[iarg ++];
-        	int maxA 	= Integer.parseInt(args[iarg ++]);
-            int k 		= Integer.parseInt(args[iarg ++]);
-   	        int m 		= Integer.parseInt(args[iarg ++]);
+            int iarg    = 0;
+            String opt  = args[iarg ++];
+            int maxA    = Integer.parseInt(args[iarg ++]);
+            int k       = Integer.parseInt(args[iarg ++]);
+            int m       = Integer.parseInt(args[iarg ++]);
             EulersExtendedConjecture eec = new EulersExtendedConjecture(k, maxA);
             eec.show = true;
             if (false) {
-            } else if (opt.startsWith("dutch1"	)) {
-				eec.evalDutch1  (m);
-            } else if (opt.startsWith("dutch2"	)) {
-				eec.evalDutch2  (m);
-            } else if (opt.startsWith("euler"	)) {
-            } else if (opt.startsWith("korneck"	)) {
-				eec.evalKorneck3(m);
-            } else if (opt.startsWith("vieta"	)) {
-				eec.evalVieta3(m);
+            } else if (opt.startsWith("dutch1"  )) {
+                eec.evalDutch1  (m);
+            } else if (opt.startsWith("dutch2"  )) {
+                eec.evalDutch2  (m);
+            } else if (opt.startsWith("euler"   )) {
+            } else if (opt.startsWith("choud"   )) {
+                eec.evalChoudry3(m);
+            } else if (opt.startsWith("korneck" )) {
+                eec.evalKorneck3(m);
+            } else if (opt.startsWith("vieta"   )) {
+                eec.evalVieta3(m);
             } else if (opt.startsWith("run")) {
-        	    int n 		= Integer.parseInt(args[iarg ++]);
-	            switch (k) {
-	                case 2:
-	                    eec.run_2_2_1();
-	                    break;
-	                case 3:
-	                    eec.run_3_3_1();
-	                    break;
-	                case 4:
-	                    eec.run_4_4_1();
-	                    break;
-	                case 5:
-	                    eec.run_5_5_1();
-	                    break;
-	                default:
-	                    System.err.println("unknown exponent k = " + k);
-	            } // switch
-			} // case opt
+                int n       = Integer.parseInt(args[iarg ++]);
+                switch (k) {
+                    case 2:
+                        eec.run_2_2_1();
+                        break;
+                    case 3:
+                        eec.run_3_3_1();
+                        break;
+                    case 4:
+                        eec.run_4_4_1();
+                        break;
+                    case 5:
+                        eec.run_5_5_1();
+                        break;
+                    default:
+                        System.err.println("unknown exponent k = " + k);
+                } // switch
+            } // case opt
         } catch (Exception exc) {
             System.err.println(exc.getMessage());
             exc.printStackTrace();

@@ -43,6 +43,8 @@ CALL EulersExtendedConjecture dutch1   4096 3 8
 TEST E09 generate from Dutch's formula 2
 CALL EulersExtendedConjecture dutch2   4096 3 8
 
+TEST E10 generate from Choudhry's formula
+CALL EulersExtendedConjecture choud    4096 3 4
 
 #-------------------------
 # Tests of utility classes
