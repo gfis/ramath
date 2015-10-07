@@ -1,45 +1,46 @@
 ExponentGCDs=[2,2]
-Expanding for base=2, reasons+features=base,same,similiar,evenexp norm,showfail
+Expanding for base=2, reasons+features=base,same,similiar,evenexp,accel norm,showfail
 Refined variables=x,y
-[0+1x,0+1y]:	unknown -> [1] -9+15x^2-7y^2
+[0+3x,0+3y]:	unknown accelerated by y*3 x*3 -> [1] -9+15x^2-7y^2
 ----------------
 expanding queue[0]^-1,meter=[2,2]*2: -9+15x^2-7y^2
-[0+2x,0+2y]:	failure constant=-9, vgcd=4
-[1+2x,0+2y]:	failure constant=3, vgcd=2
-[0+2x,1+2y]:	unknown -> [1] -4+15x^2-7y-7y^2
-[1+2x,1+2y]:	failure constant=-1, vgcd=4
+[0+6x,0+6y]:	failure constant=-1, vgcd=4
+[3+6x,0+6y]:	failure constant=7, vgcd=2
+[0+6x,3+6y]:	unknown -> [1] -2+15x^2-7y-7y^2
+[3+6x,3+6y]:	failure constant=7, vgcd=4
 ----------------
-expanding queue[1]^0,meter=[2,2]*4: -4+15x^2-7y-7y^2
-[0+4x,1+4y]:	unknown -> [2] -2+30x^2-7y-14y^2
-[2+4x,1+4y]:	failure constant=11, vgcd=2
-[0+4x,3+4y]:	negative-1 [2] by {y=>-y-1}
-[2+4x,3+4y]:	failure constant=-3, vgcd=2
+expanding queue[1]^0,meter=[2,2]*4: -2+15x^2-7y-7y^2
+[0+12x,3+12y]:	unknown -> [2] -1+30x^2-7y-14y^2
+[6+12x,3+12y]:	failure constant=13, vgcd=2
+[0+12x,9+12y]:	negative-1 [2] by {y=>-y-1}
+[6+12x,9+12y]:	failure constant=-1, vgcd=2
 ----------------
-expanding queue[2]^1,meter=[1,2]*8: -2+30x^2-7y-14y^2
-[0+4x,1+8y]:	unknown -> [3] -1+15x^2-7y-28y^2
-[0+4x,5+8y]:	failure constant=-23, vgcd=2
+expanding queue[2]^1,meter=[1,2]*8: -1+30x^2-7y-14y^2
+[0+12x,3+24y]:	failure constant=-1, vgcd=2
+[0+12x,15+24y]:	unknown -> [3] -11+15x^2-35y-28y^2
 ----------------
-expanding queue[3]^2,meter=[2,2]*16: -1+15x^2-7y-28y^2
-[0+8x,1+16y]:	failure constant=-1, vgcd=2
-[4+8x,1+16y]:	unknown -> [4] 7+30x+30x^2-7y-56y^2
-[0+8x,9+16y]:	unknown -> [5] -18+30x^2-63y-56y^2
-[4+8x,9+16y]:	failure constant=-21, vgcd=2
+expanding queue[3]^2,meter=[2,2]*16: -11+15x^2-35y-28y^2
+[0+24x,15+48y]:	failure constant=-11, vgcd=2
+[12+24x,15+96y]:	unknown accelerated by y*2 -> [4] 2+30x+30x^2-35y-56y^2
+[0+24x,39+48y]:	unknown -> [5] -37+30x^2-91y-56y^2
+[12+24x,39+48y]:	failure constant=-59, vgcd=2
 ----------------
-expanding queue[4]^3,meter=[1,2]*32: 7+30x+30x^2-7y-56y^2
-[4+8x,1+32y]:	failure constant=7, vgcd=2
-[4+8x,17+32y]:	unknown -> [6] -28+15x+15x^2-119y-112y^2
-expanding queue[5]^3,meter=[1,2]*32: -18+30x^2-63y-56y^2
-[0+8x,9+32y]:	unknown -> [7] -9+15x^2-63y-112y^2
-[0+8x,25+32y]:	failure constant=-137, vgcd=2
+expanding queue[4]^3,meter=[1,2]*32: 2+30x+30x^2-35y-56y^2
+[12+24x,15+192y]:	unknown -> [6] 1+15x+15x^2-70y-448y^2
+[12+24x,111+192y]:	unknown -> [7] -146+15x+15x^2-518y-448y^2
+expanding queue[5]^3,meter=[1,2]*32: -37+30x^2-91y-56y^2
+[0+24x,39+96y]:	failure constant=-37, vgcd=2
+[0+24x,87+96y]:	unknown -> [8] -92+15x^2-203y-112y^2
 ----------------
-expanding queue[6]^4,meter=[2,2]*64: -28+15x+15x^2-119y-112y^2
-[4+16x,17+64y]:	unknown -> [8] -14+15x+30x^2-119y-224y^2
-[12+16x,17+64y]:	negative-1 [8] by {x=>-x-1}
-[4+16x,49+64y]:	failure constant=-259, vgcd=2
-[12+16x,49+64y]:	failure constant=-229, vgcd=2
-expanding queue[7]^5,meter=[2,2]*64: -9+15x^2-63y-112y^2
-[0+16x,9+64y]:	failure constant=-9, vgcd=2
-[8+16x,9+64y]:	unknown -> [9] 3+30x+30x^2-63y-224y^2
-[0+16x,41+64y]:	unknown -> [10] -92+30x^2-287y-224y^2
-[8+16x,41+64y]:	failure constant=-169, vgcd=2
-Maximum level 5 [11] mod 2: -9+15x^2-7y^2
+expanding queue[6]^4,meter=[2,1]*64: 1+15x+15x^2-70y-448y^2
+[12+48x,15+192y]:	failure constant=1, vgcd=2
+[36+48x,15+192y]:	failure constant=31, vgcd=2
+expanding queue[7]^4,meter=[2,1]*64: -146+15x+15x^2-518y-448y^2
+[12+48x,111+192y]:	unknown -> [9] -73+15x+30x^2-259y-224y^2
+[36+48x,111+192y]:	negative-1 [9] by {x=>-x-1}
+expanding queue[8]^5,meter=[2,2]*64: -92+15x^2-203y-112y^2
+[0+48x,87+384y]:	unknown accelerated by y*2 -> [10] -46+30x^2-203y-224y^2
+[24+48x,87+192y]:	failure constant=-77, vgcd=2
+[0+48x,183+192y]:	failure constant=-407, vgcd=2
+[24+48x,183+384y]:	unknown accelerated by y*2 -> [11] -196+30x+30x^2-427y-224y^2
+Maximum level 5 [12] mod 2: -9+15x^2-7y^2

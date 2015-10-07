@@ -32,12 +32,12 @@ import  org.teherba.ramath.BigIntegerUtil;
 import  java.util.Iterator;
 import  java.math.BigInteger;
 
-/** For a {@link RelatonSet#isHomogeneous homogeneous} {@link RelationSet},
+/** For a {@link RelationSet#isHomogeneous homogeneous} {@link RelationSet},
  *  all {@link Polynomial}s are investigated as follows.
  *  For all {@link Monomial}s except one (the "missing" Monomial) the GCD of
  *  the coefficients is computed.
  *  For all such GCDs > 1, the variable in the missing Monomial must be divisible by that
- *  GCD, and the variable is therefore replaced by a multiple of the GCD. 
+ *  GCD, and the variable is therefore replaced by a multiple of the GCD.
  *  The process is repeated until no such variable can be found anymore.
  *  If the missing Monomial was the constant, the RelationSet fails.
  *  @author Dr. Georg Fischer
@@ -49,13 +49,13 @@ public class ModAccelerator extends BaseReason {
      */
     public ModAccelerator() {
     } // no-args Constructor
-    
+
     /** Local copy of the startNode */
     private RelationSet startNode = null;
 
     /** Initializes any data structures for <em>this</em> reason.
      *  This method is called by {@link ReasonFactory};
-     *  it may be  used to gather and store data which are 
+     *  it may be  used to gather and store data which are
      *  needed for the specific check.
      *  @param solver the {@link BaseSolver solver} which uses <em>this</em> reason for iteration control
      *  @param startNode the root node of the expansion (sub-)tree
@@ -73,7 +73,7 @@ public class ModAccelerator extends BaseReason {
      *  For all {@link Monomial}s except one (the "missing" Monomial) the GCD of
      *  the coefficients is computed.
      *  For all such GCDs > 1, the variable in the missing Monomial must be divisible by that
-     *  GCD, and the variable is therefore replaced by a multiple of the GCD. 
+     *  GCD, and the variable is therefore replaced by a multiple of the GCD.
      *  The process is repeated until no such variable can be found anymore.
      *  If the missing Monomial was the constant, the RelationSet fails.
      *  @param poly2 Polynomial to be investigated
@@ -90,7 +90,7 @@ public class ModAccelerator extends BaseReason {
         Iterator<String> miter = poly2.keySet().iterator();
         Monomial  [] monoms = new Monomial  [plen];
         BigInteger[] coeffs = new BigInteger[plen];
-        int 
+        int
         imono = 0;
         while (miter.hasNext()) { // get 2 arrays
             String sig2 = miter.next();
@@ -104,7 +104,7 @@ public class ModAccelerator extends BaseReason {
             }
             imono ++;
         } // while miter
-    
+
         // now work on the arrays: leave 1 element out and compute the GCD of the others
         imono = 0; // index of the the missing monomial
         while (result.length() == 0 && imono < plen) {
@@ -122,10 +122,10 @@ public class ModAccelerator extends BaseReason {
                 } // kmono != imono
                 kmono ++;
             } // while kmono
-            
-            if (gcd_1.compareTo(BigInteger.ONE) > 0 
+
+            if (gcd_1.compareTo(BigInteger.ONE) > 0
                     && ! coeffs[imono].mod(gcd_1).equals(BigInteger.ZERO) // coeffs[imono] not divisible by gcd_1
-                    //       56             16        
+                    //       56             16
                     ) { // gcd_1 > 1
                 if (monoms[imono].size() == 1) { // uniVariate
                     BigInteger[] divmod = gcd_1.divideAndRemainder(gcd_1.gcd(coeffs[imono])); // 16 / 8, rest 0
@@ -141,12 +141,12 @@ public class ModAccelerator extends BaseReason {
                         result = vname + "*" + divmod[0].toString(); // x*m
                         if (debug >= 1) {
                             solver.getWriter().println("accelerated by " + divmod[0].toString()
-                                    + ", poly2=" + poly2.niceString() 
+                                    + ", poly2=" + poly2.niceString()
                                     + ", gcd_1=" + gcd_1.toString()
                                     + ", vname=" + vname + ", expr=" + expr + ", rmap2=" + rmap2.toVector());
                         }
                     } else { // must be the constant
-                        
+
                     } // constant
                 } // if uniVariate
             } // gcd_1 > 1
@@ -156,7 +156,7 @@ public class ModAccelerator extends BaseReason {
     } // getAcceleration
 
     /** Determines whether the current node can be "accelerated", that is whether
-     *  it contains a {@link Polynomial} which is still {@link #isAcceleratable acceleratable}.
+     *  it contains a {@link Polynomial} which is still acceleratable.
      *  @param rmap2 current {@link RefiningMap} defining the state of the expansion
      *  @param upperSubst whether to substitute uppercase variables (default: true)
      *  @return the empty String if accelartion was not possible, or
@@ -173,7 +173,7 @@ public class ModAccelerator extends BaseReason {
                 ) {
             RelationSet rset2 = startNode.substitute(rmap2, upperSubst);
             int ipoly = rset2.size() - 1;
-			boolean found = false;
+            boolean found = false;
             while (ipoly >= 0
                     && loopCheck >= 0
                     ) { // find the first acceleratable Polynomial
@@ -191,31 +191,31 @@ public class ModAccelerator extends BaseReason {
             loopCheck --;
         } // while busy
         if (loopCheck <= 0) {
-        	System.err.println("??? assertion: accelerate loopCheck");
+            System.err.println("??? assertion: accelerate loopCheck");
         }
         return result;
     } // accelerate
 
     /** Consider the source {@link RelationSet} <em>rset2</em> to be queued.
      *  If the test is successful, a message is printed and returned,
-     *  and <em>rset2</em> is not stored in the following; 
+     *  and <em>rset2</em> is not stored in the following;
      *  otherwise the checking process continues.
      *  @param iqueue index of the target RelationSet <em>rset1</em> (unused)
      *  @param dummy1 the old target {@link RelationSet} already queued (unused)
-     *  @param rset2 the new source {@link RelationSet} to be added to the queue 
+     *  @param rset2 the new source {@link RelationSet} to be added to the queue
      *  @return a message String denoting the reasoning details,
      *  or {@link VariableMap#UNKNOWN} if the comparision is not conclusive.
      */
     public String consider(int iqueue, RelationSet dummy1, RelationSet rset2) {
         String result = VariableMap.UNKNOWN;
         if (debug >= 1) {
-            solver.getWriter().println("consider(" + iqueue + ", " 
+            solver.getWriter().println("consider(" + iqueue + ", "
                     + ", " + rset2.niceString() + ")");
         }
         String message = accelerate(solver.getUpperSubst(), rset2.getMapping());
         if (message.length() > 0) {
             result += " accelerated by" + message;
-        } 
+        }
         return result;
     } // consider
 

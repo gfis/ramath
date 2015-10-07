@@ -36,18 +36,18 @@ import  java.util.Iterator;
 
 /** Factory and store for a list of reason classes
  *  which decide whether to cut the tree expansion at some point.
- *  The reasons are processed ("{@lonk BaseReason#consider considered}"
+ *  The reasons are processed ("{@link BaseReason#consider considered}"
  *  in the order in which they were added to
  *  the internal {@link ArrayList}.
  *  <p>
- *  The basic operation is to consider the various reason why a 
+ *  The basic operation is to consider the various reason why a
  *  new {@link RelationSet} can be decided and therefore needs not
  *  to be stored in the tree for further expansion.
  *  Often, a second RelationSet is examined in comparision to the
  *  new RelationSet in question.
  *  <p>
- *  The class contains methods which {@link BaseReason#walkMode walk} 
- *  through the expansion tree in different ways in order to examine 
+ *  The class contains methods which {@link BaseReason#walkMode walk}
+ *  through the expansion tree in different ways in order to examine
  *  the second RelationSet.
  *  @author Dr. Georg Fischer
  */
@@ -75,7 +75,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
     } // no-args Constructor
 
     /** Constructor with solver, code list and start set
-     *  @param solver the {@link BaseSolver} which uses the reasons from 
+     *  @param solver the {@link BaseSolver} which uses the reasons from
      *  <em>this</em> {@link ReasonFactory} for iteration control
      *  @param codeList a list of codes for reasons, separated by non-word characters
      *  @param startNode the root node of the expansion (sub-)tree
@@ -97,7 +97,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
     } // Constructor(String)
 
     //----------------
-    /** the {@link BaseSolver} which uses the reasons of <em>this</em> {@link ReasonFactory} 
+    /** the {@link BaseSolver} which uses the reasons of <em>this</em> {@link ReasonFactory}
      *  for tree expansion control
      */
     private BaseSolver solver;
@@ -106,15 +106,15 @@ public class ReasonFactory extends ArrayList<BaseReason> {
      */
     public BaseSolver getSolver() {
         return solver;
-    } // getSolver  
+    } // getSolver
     /** Sets the solver
      *  @param solver a {@link BaseSolver}
      */
     public void setSolver(BaseSolver solver) {
         this.solver = solver;
-    } // setSolver  
+    } // setSolver
     //----------------
-    /** the {@link RelationSet} at the root of the (sub-)tree 
+    /** the {@link RelationSet} at the root of the (sub-)tree
      */
     private RelationSet startNode;
     /** Gets the start node
@@ -130,7 +130,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         startNode = rset0;
     } // setStartNode
     //----------------
-    
+
     /** Attempts to instantiate some reason class
      *  @param code external code for the reason
      *  @param className name of the class for the reason
@@ -145,7 +145,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
             result = (BaseReason) Class.forName("org.teherba.ramath.symbolic.reason." + className).newInstance();
             if (result != null) { // known reason
                 result.initialize(getSolver(), getStartNode());
-                if (result.isConsiderable()) { 
+                if (result.isConsiderable()) {
                     result.setCode(code);
                     this.add(result);
                 } // considerable
@@ -176,10 +176,10 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         } else if (code.startsWith("same"       )) { result = addReasonClass(code, "SameReason"          );
         } else if (code.startsWith("simil"      )) { result = addReasonClass(code, "SimiliarReason"      );
         } else if (code.startsWith("trans"      )) { result = addReasonClass(code, "TranspositionReason" );
-        } else if (code.startsWith("showf"      )) { 
+        } else if (code.startsWith("showf"      )) {
             showFail = true;
             features.put(code, code);
-        } else { 
+        } else {
         /*  Unknown reasons are silently ignored.
             Assume a feature instead. Feature codes are also not checked.
             BaseSolver currently understands the following features:
@@ -209,7 +209,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         } // while ireas
         return result;
     } // getReason
-    
+
     //------------------
     /** Determines whether a certain feature is set
      *  @param code name of the feature
@@ -219,7 +219,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         return features.get(code) != null;
     } // hasFeature
 
-    /** Returns a list of accepted reason codes, a space, 
+    /** Returns a list of accepted reason codes, a space,
      *  and a list of stored feature codes
      *  @return for example: base,same,similiar norm,invall
      */
@@ -254,7 +254,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
      *  @param reason the reason to be investigated
      *  @param rset2 the new {@link RelationSet} to be added to the queue.
      *  <em>rset2.getSiblingIndex()</em> must already yield the proper index.
-     *  @return a message String 
+     *  @return a message String
      */
     private String considerAll(BaseReason reason, RelationSet rset2) {
         String result = VariableMap.UNKNOWN;
@@ -274,7 +274,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
     /** Checks all anchestors of a {@link RelationSet}
      *  @param reason the reason to be investigated
      *  @param rset2 the new {@link RelationSet} to be added to the queue
-     *  @return a message String 
+     *  @return a message String
      */
     private String considerAnchestors(BaseReason reason, RelationSet rset2) {
         String result = VariableMap.UNKNOWN;
@@ -295,26 +295,26 @@ public class ReasonFactory extends ArrayList<BaseReason> {
      *  @param reason the reason to be investigated
      *  @param rset2 the new {@link RelationSet} to be added to the queue.
      *  <em>rset2.getSiblingIndex()</em> must already yield the proper index.
-     *  @return a message String 
+     *  @return a message String
      */
     private String considerSiblings(BaseReason reason, RelationSet rset2) {
         String result = VariableMap.UNKNOWN;
         int iqueue = rset2.getSiblingIndex();
         boolean busy = true;
         while (busy && iqueue > solver.ROOT_PARENT) { // -1 for first child
-	        RelationSet rset1 = solver.get(iqueue);
+            RelationSet rset1 = solver.get(iqueue);
             result = reason.consider(iqueue, rset1, rset2);
             if (! result.startsWith(VariableMap.UNKNOWN)) { // reason successful
-            	busy = false; // break loop
+                busy = false; // break loop
             } // reason successful
             iqueue = rset1.getSiblingIndex();
         } // while iqueue
         return result;
     } // considerSiblings
 
-    /** Considers all {@link BaseReason#isConsiderable considerable} 
+    /** Considers all {@link BaseReason#isConsiderable considerable}
      *  {@link BaseReason reasons} for {@link RelationSet}, possibly in relation
-     *  to some other RelationSets already queued, 
+     *  to some other RelationSets already queued,
      *  and determines whether it
      *  <ul>
      *  <li>can be decided (and be cut from the expansion tree) or</li>
@@ -325,7 +325,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
      *  <ul>
      *  <li>{@link VariableMap#FAILURE} - the RelationSet is not possible</li>
      *  <li>{@link VariableMap#UNKNOWN} - the RelationSet cannot be decided and must be further expanded</li>
-     *  <li>some other string different from the above, 
+     *  <li>some other string different from the above,
      *      denoting the {@link BaseReason reason} why the node was decided
      *  </li>
      *  </ul>
@@ -411,18 +411,18 @@ public class ReasonFactory extends ArrayList<BaseReason> {
             solver.printDecision(decision, rset2, rmap2);
             solver.printSolutions(rset2, rmap2);
             queueAgain = true;
-        } else if (decision.startsWith(VariableMap.FAILURE)) { 
+        } else if (decision.startsWith(VariableMap.FAILURE)) {
             if (showFail) {
                 solver.printDecision(decision, rset2, rmap2);
             }
         } else { // detailed cut-off: SAME, transpose, negative, non-primitive, similiar ...
             solver.printDecision(decision, rset2, rmap2);
             if (false) {
-            } else if (decision.startsWith("transp")) { 
-            	// original solution is already printed
+            } else if (decision.startsWith("transp")) {
+                // original solution is already printed
             } else {
-	            solver.printSolutions(rset2, rmap2);
-	        }
+                solver.printSolutions(rset2, rmap2);
+            }
         } // detailed cut-off
         return queueAgain;
     } // evaluateReasons

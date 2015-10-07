@@ -2244,24 +2244,10 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
                     poly2 = Polynomial.parse(args[iarg ++]);
                     System.out.println("(\"" + poly1.toString() + "\").affineMap(\""    + poly2.toString() + "\") = "
                             + poly1.affineMap   (poly2));
-
+            /*
                 } else if (opt.startsWith("-bachet")) {
-                    // input is x,y,c of a Mordell equation y^2 = x^3 + c
-                    Polynomial x = Polynomial.parse(args[iarg ++]);
-                    Polynomial y = Polynomial.parse(args[iarg ++]);
-                    Polynomial c = Polynomial.parse(args[iarg ++]);
-                    Polynomial denomX = x.pow(4).subtract((new Polynomial("8")).multiply(c).multiply(x));
-                    Polynomial nominX = (new Polynomial("4")).multiply(y.pow(2));
-                    Polynomial denomY =         (new Polynomial("8")).multiply(c.pow(2)
-                                        ).subtract(
-                                                (new Polynomial("20")).multiply(c).multiply(x.pow(3))
-                                        ).subtract(
-                                                x.pow(6)
-                                        );
-                    Polynomial nominY = (new Polynomial("8")).multiply(y.pow(3));
-                    System.out.println(denomX.toString() + " / " + nominX.toString());
-                    System.out.println(denomY.toString() + " / " + nominY.toString());
-
+                	// c.f. Sandbox.main
+            */
                 } else if (opt.startsWith("-degree")) {
                     poly1 = Polynomial.parse(args[iarg ++]);
                     System.out.println(poly1.toString() + ".degree()      = " + poly1.degree()     );

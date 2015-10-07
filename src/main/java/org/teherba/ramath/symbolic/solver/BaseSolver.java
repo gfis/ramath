@@ -99,7 +99,7 @@ public class BaseSolver extends Stack<RelationSet> {
         setModBase    (2); // for n-adic modulo expansion (here: binary)
         setUpperSubst (true);
         queueHead     = 0;
-        codeList      = ",base,transpose,primitive,evenexp,accelerate,same,similiar"; // default reason codes ,pythagoras
+        codeList      = ",base,transpose,primitive,same,similiar,evenexp"; // default reason codes ,pythagoras
                 // the leading comma is needed for proper removal, c.f. modifyCodeList
     } // initialize
 
@@ -115,7 +115,7 @@ public class BaseSolver extends Stack<RelationSet> {
         return this.codeList;
     } // getCodeList
     /** Sets the list of reason and feature codes
-     *  @return comma separated list of short words
+     *  @param codeList comma separated list of short words
      */
     public void setCodeList(String codeList) {
         this.codeList = codeList;

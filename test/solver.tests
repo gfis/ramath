@@ -98,6 +98,15 @@ CALL TreeSolver -b 2 -l 3 -e "x^4 + x^2*y^2 + y^4 - z^2" -r norm,invall
 TEST TF44 FLT(4) related, Nagell 1951, p. 230 no solution
 CALL TreeSolver -l 3 -e "x^4 - y^4 - 2*z^2" -r norm,invall,no-pytha
 
+TEST TF45 FLT(4), biquadratic plus near miss +1
+CALL TreeSolver -l 3 -e "x^4 + y^4 + 1 - z^2" -r norm,igtriv
+
+TEST TF46 FLT(4), biquadratic plus near miss -1
+CALL TreeSolver -l 3 -e "x^4 + y^4 - 1 - z^2" -r norm,igtriv
+
+TEST TF47 FLT(4), biquadratic form 18
+CALL TreeSolver -l 3 -e "x^4 + 18*x^2*y^2 + y^4 - z^2" -r norm,igtriv
+
 #--
 TEST TF51 FLT(5) mod 2
 CALL TreeSolver -b 2 -l 2 -e "a^5 + b^5 - c^5" -r igtriv,norm
