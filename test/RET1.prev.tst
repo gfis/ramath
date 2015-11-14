@@ -3,6 +3,6 @@ Expanding for base=2, reasons+features=transp
 Refined variables=x,y,z
 ReasonFactory: transp, code="transp"
 TranspositionReason.consider(
-	"2x+6x^2+8x^3+4x^4+4y^4-z-z^2", 
-	"4x^4+2y+6y^2+8y^3+4y^4-z-z^2") = 
+	"2x+6x²+8x³+4x⁴+4y⁴-z-z²", 
+	"4x⁴+2y+6y²+8y³+4y⁴-z-z²") = 
 	transposed [0] by [1,0,2]

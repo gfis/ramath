@@ -1,11 +1,11 @@
-# flat	Dutch.X04	 - 36 + 14*w + w^2
-# flat	Dutch.X04	4 + 18*w - w^2
-# flat	Dutch.X04	40 + 2*w^2
-# flat	Dutch.X04	48 - 8*w + 2*w^2
-# merg	Dutch.X04	 - 36 + 14*x_y_z + x_y_z^2
-# merg	Dutch.X04	4 + 18*x_y_z - x_y_z^2
-# merg	Dutch.X04	40 + 2*x_y_z^2
-# merg	Dutch.X04	48 - 8*x_y_z + 2*x_y_z^2
+# flat	Dutch.X04	 - 8*w + 2*w^2 + 48
+# flat	Dutch.X04	14*w + w^2 - 36
+# flat	Dutch.X04	18*w - w^2 + 4
+# flat	Dutch.X04	2*w^2 + 40
+# merg	Dutch.X04	 - 8*x_y_z + 2*x_y_z^2 + 48
+# merg	Dutch.X04	14*x_y_z + x_y_z^2 - 36
+# merg	Dutch.X04	18*x_y_z - x_y_z^2 + 4
+# merg	Dutch.X04	2*x_y_z^2 + 40
 # orig	Dutch.X04	-(2*(w-1)^2+4*(w-1)+42)^3
 # orig	Dutch.X04	(1*(w-1)^2+16*(w-1)-21)^3
 # orig	Dutch.X04	+(-1*(w-1)^2+16*(w-1)+21)^3

@@ -11,5 +11,6 @@ TP13:Proof [2] mod 2: a^2+b^2-3c^2-3d^2
 TP22:Proof [1] mod 2: x^2+y^2-3z^2
 TP23:Proof [1] mod 2: -3+x^2+y^2-4z
 TPE3:Proof [1] mod 3: -9+15x^2-7y^2
+TPE6:Proof [1] mod 5: -9+15x^2-7y^2
 TQR1:Proof [1] mod 2: -p^2+2q^2
 TQR2:Proof [2] mod 2: -p^2+5q^2

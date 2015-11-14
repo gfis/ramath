@@ -1,9 +1,9 @@
 # orig	Euler-Binet.X08	(1-(p-3*q)*(p^2+3*q^2))^3
-# flat	Euler-Binet.X08	1 - p^3 + 3*p^2*q - 3*p*q^2 + 9*q^3
-# merg	Euler-Binet.X08	1 + 8*x_y_z^3
+# flat	Euler-Binet.X08	 - p^3 + 3*p^2*q - 3*p*q^2 + 9*q^3 + 1
+# merg	Euler-Binet.X08	8*x_y_z^3 + 1
 # orig	Euler-Binet.X08	+(-1+(p+3*q)*(p^2+3*q^2))^3
-# flat	Euler-Binet.X08	 - 1 + p^3 + 3*p^2*q + 3*p*q^2 + 9*q^3
-# merg	Euler-Binet.X08	 - 1 + 16*x_y_z^3
+# flat	Euler-Binet.X08	p^3 + 3*p^2*q + 3*p*q^2 + 9*q^3 - 1
+# merg	Euler-Binet.X08	16*x_y_z^3 - 1
 # orig	Euler-Binet.X08	-((p+3*q)-(p^2+3*q^2)^2)^3
 # flat	Euler-Binet.X08	p - p^4 + 3*q - 6*p^2*q^2 - 9*q^4
 # merg	Euler-Binet.X08	4*x_y_z - 16*x_y_z^4

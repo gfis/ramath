@@ -1,13 +1,13 @@
-# flat	Pythagoras.Y02	 - 1 - 2*x - x^2 - 2*y - 2*x*y
-# flat	Pythagoras.Y02	 - 1 - 2*x - x^2 - 2*y - 2*x*y - 2*y^2
+# flat	Pythagoras.Y02	 - 2*x - x^2 - 2*y - 2*x*y - 1
+# flat	Pythagoras.Y02	 - 2*x - x^2 - 2*y - 2*x*y - 2*y^2 - 1
 # flat	Pythagoras.Y02	 - 2*y - 2*x*y - 2*y^2
-# merg	Pythagoras.Y02	 - 1 - 4*x_y_z - 3*x_y_z^2
-# merg	Pythagoras.Y02	 - 1 - 4*x_y_z - 5*x_y_z^2
 # merg	Pythagoras.Y02	 - 2*x_y_z - 4*x_y_z^2
+# merg	Pythagoras.Y02	 - 4*x_y_z - 3*x_y_z^2 - 1
+# merg	Pythagoras.Y02	 - 4*x_y_z - 5*x_y_z^2 - 1
 # orig	Pythagoras.Y02	-(-1-2*x-2*y-x^2-2*y^2-2*x*y)
 # orig	Pythagoras.Y02	+(-1-2*x-2*y-x^2-2*x*y)^2
 # orig	Pythagoras.Y02	+(-2*y-2*y^2-2*x*y)^2
-# poly	Pythagoras.Y02	2 + 6*x + 7*x^2 + 4*x^3 + x^4 + 6*y + 14*x*y + 12*x^2*y + 4*x^3*y + 10*y^2 + 16*x*y^2 + 8*x^2*y^2 + 8*y^3 + 8*x*y^3 + 4*y^4
+# poly	Pythagoras.Y02	6*x + 7*x^2 + 4*x^3 + x^4 + 6*y + 14*x*y + 12*x^2*y + 4*x^3*y + 10*y^2 + 16*x*y^2 + 8*x^2*y^2 + 8*y^3 + 8*x*y^3 + 4*y^4 + 2
 000012	[3,4,5]	Pythagoras.Y02	factor=1	parm= [0,1]
 000012	[3,4,5]	Pythagoras.Y02	factor=100	parm= [9,10]
 000012	[3,4,5]	Pythagoras.Y02	factor=121	parm= [10,11]

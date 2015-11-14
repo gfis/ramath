@@ -1,9 +1,9 @@
-# flat	Pythagoras.Y01	1 + 2*x
-# flat	Pythagoras.Y01	1 + 2*x + 2*x^2
+# flat	Pythagoras.Y01	2*x + 1
 # flat	Pythagoras.Y01	2*x + 2*x^2
-# merg	Pythagoras.Y01	1 + 2*x_y_z
-# merg	Pythagoras.Y01	1 + 2*x_y_z + 2*x_y_z^2
+# flat	Pythagoras.Y01	2*x + 2*x^2 + 1
+# merg	Pythagoras.Y01	2*x_y_z + 1
 # merg	Pythagoras.Y01	2*x_y_z + 2*x_y_z^2
+# merg	Pythagoras.Y01	2*x_y_z + 2*x_y_z^2 + 1
 # orig	Pythagoras.Y01	-(1+2*x+2*x^2)^2
 # orig	Pythagoras.Y01	+(1+2*x)^2
 # orig	Pythagoras.Y01	+(2*x+2*x^2)^2

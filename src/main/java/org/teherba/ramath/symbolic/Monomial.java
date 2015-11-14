@@ -1,5 +1,6 @@
 /*  Monomial: a product with a signed numeric coefficient and optional exponentiated variable(s)
  *  @(#) $Id: Monomial.java 522 2010-07-26 07:14:48Z gfis $
+ *  2015-11-04: with SmallScript.toSuperscript
  *  2015-09-03: isNegative
  *  2015-08-16: toFactoredString() with powers of prime factors
  *  2015-07-17: degree
@@ -31,6 +32,7 @@ import  org.teherba.ramath.BigRational;
 import  org.teherba.ramath.Coefficient;
 import  org.teherba.ramath.PrimeFactorization;
 import  org.teherba.ramath.util.Permutator; // for orderTest
+import  org.teherba.common.SmallScript;
 import  java.io.Serializable;
 import  java.math.BigInteger;
 import  java.util.ArrayList;
@@ -399,6 +401,9 @@ public class Monomial implements Cloneable, Serializable {
         if (withCoeff) {
             result.append(';');
             result.append(this.getCoefficient().toString().replaceFirst("\\-", ""));
+        }
+        if (result.length() == 0) {
+        	result.append("~~~~"); // higher than all normal signatures
         }
         return result.toString();
     } // characteristic(2)
@@ -814,7 +819,7 @@ public class Monomial implements Cloneable, Serializable {
     public boolean equals(Monomial mono2) {
         return this.compareTo(mono2) == 0;
     } // equals
-    
+
     //----------------
     /** Returns a String representation of the monomial, either compressed or full
      *  @param mode 0 = normal, 1 = full (for substitution), 2 = nice / human legible
@@ -847,7 +852,7 @@ public class Monomial implements Cloneable, Serializable {
                     result.append(number);
                 }
                 if (mode != 2) {
-                    result.append("*");
+                    result.append('*');
                 }
             }
             Iterator<String> iter = vars.keySet().iterator();
@@ -855,15 +860,46 @@ public class Monomial implements Cloneable, Serializable {
             while (iter.hasNext()) {
                 count ++;
                 if (count > 1) {
-                    result.append("*");
+                    result.append('*');
                 }
                 String name = iter.next();
                 result.append(name);
                 int exp = this.getExponent(name);
-                if (mode == 1 || exp > 1) {
-                    result.append("^");
-                    result.append(exp);
-                }
+                switch (mode) {
+                    default:
+                    case 0:
+                        if (exp > 1) {
+                            result.append('^');
+                            result.append(exp);
+                        }
+                        break;
+                    case 1:
+                        result.append('^');
+                        result.append(exp);
+                        break;
+                    case 2:
+                        switch (exp) {
+                            case 1:
+                                break;
+                            case 2:
+                                result.append('\u00b2');
+                                break;
+                            case 3:
+                                result.append('\u00b3');
+                                break;
+                            default:
+                                if (true) {
+                                    // Windows console can't display these
+                                    // even with 'chcp 1253' or 'chcp 65001'
+                                    result.append(SmallScript.toSuperscript(exp));
+                                } else {
+                                    result.append('^');
+                                    result.append(exp);
+                                }
+                                break;
+                        } // switch exp
+                        break;
+                } // switch mode
             } // while iter
         } // with variable(s)
         return mode != 2 ? result.toString() : result.toString().replaceAll(" ", "");
@@ -1046,9 +1082,6 @@ lcm( + 24*a^6*b^6*c*x4^8, + 100*a^5*b^4) =  + 600*a^6*b^6*c*x4^8
             System.out.println("CONSTANT_SIGNATURE=" + Monomial.CONSTANT_SIGNATURE);
 
             Monomial mono4 = new Monomial(new String[] { "a", "b" });
-/*
-            System.out.println("getVariablePowers(" + mono4.toString() + ") = " + mono1.getVariablePowers(mono4).toString());
-*/
             Monomial mono5 = (new Monomial("a", 4))
                     .multiply(new Monomial("b", 2));
             System.out.println("getFactorOf(" + mono5.toString() + ") = "       + mono1.getFactorOf      (mono5).toString());

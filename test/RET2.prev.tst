@@ -3,8 +3,8 @@ Expanding for base=2, reasons+features=transp
 Refined variables=a,b,c,d
 ReasonFactory: transp, code="transp"
 vmap=[0+1*a,0+1*b,0+1*c,0+1*d], index(a)=0, index(c)=2
-areTransposable(a^3+b^3+c^3-d^3, a, c) = true
+areTransposable(a³+b³+c³-d³, a, c) = true
 TranspositionReason.consider(
-	"a^3+b^3+c^3-d^3", 
-	"a^3+b^3+c^3-d^3") = 
+	"a³+b³+c³-d³", 
+	"a³+b³+c³-d³") = 
 	transposed [0] by [1,0,2,3]

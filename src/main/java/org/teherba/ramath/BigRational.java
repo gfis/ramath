@@ -1,5 +1,6 @@
 /*  BigRational: a fraction as a pair of BigIntegers
  *  @(#) $Id: BigRational.java 231 2009-08-25 08:47:16Z gfis $
+ *  2015-11-14: numerator -> num, denominator -> den (again)
  *  2015-06-17: extends BigInteger
  *  2014-04-08: use BigInteger.valueOf(long)
  *  2013-09-13: simplify
@@ -45,12 +46,12 @@ public class BigRational
     private static int debug = 0;
 
     /** dividend, the number which is divided by the denominator, see https://en.wikipedia.org/wiki/Quotient */
-    private BigInteger numerator  ;
+    private BigInteger num;
     /** divisor, the number which divides the numerator */
-    private BigInteger denominator;
+    private BigInteger den;
 
     /** Construct from a String: either a decimal number (with decimal dot),
-     *  or a fraction of the form numerator  /denominator.
+     *  or a fraction of the form numerator/denominator.
      *  All characters except from digits, '.' and '/' are stripped.
      *  @param rawNumber string with digits, decimal dot or slash.
      */
@@ -62,8 +63,8 @@ public class BigRational
             slashPos = number.length();
             number += "/1";
         } // integral
-        this.numerator   = new BigInteger(number.substring(0, slashPos), 10);
-        this.denominator = new BigInteger(number.substring(slashPos + 1), 10);
+        this.num   = new BigInteger(number.substring(0, slashPos), 10);
+        this.den = new BigInteger(number.substring(slashPos + 1), 10);
     } // Constructor String
 
     /** Construct from a byte array containing a BigInteger
@@ -71,53 +72,53 @@ public class BigRational
      */
     public BigRational(byte[] bytes) {
     	// super("0");
-        this.numerator   = new BigInteger(bytes);
-        this.denominator = BigInteger.ONE;
+        this.num   = new BigInteger(bytes);
+        this.den = BigInteger.ONE;
     } // Constructor(byte[])
 
     /** Constructing with 1 BigInteger argument; the denominator will be 1
-     *  @param numerator   numerator of the instance
+     *  @param num numerator of the instance
      *  @return a new instance 
      */
-    public static BigRational valueOf(BigInteger numerator) {
+    public static BigRational valueOf(BigInteger num) {
         BigRational result = new BigRational("0");
-        result.setA(numerator);
-        result.setB(BigInteger.ONE);
+        result.setNum(num);
+        result.setDen(BigInteger.ONE);
         return result;
     } // valueOf
 
     /** Constructing with 1 long argument; the denominator will be 1
-     *  @param numerator   numerator of the instance
+     *  @param num   numerator of the instance
      *  @return a new instance 
      */
-    public static BigRational valueOf(long numerator) {
+    public static BigRational valueOf(long num) {
         BigRational result = new BigRational("0");
-        result.setA(numerator);
-        result.setB(BigInteger.ONE);
+        result.setNum(num);
+        result.setDen(BigInteger.ONE);
         return result;
     } // valueOf
 
     /** Constructing with 2 BigInteger arguments
-     *  @param numerator   numerator   of the instance
-     *  @param denominator denominator of the instance
+     *  @param num   numerator   of the instance
+     *  @param den denominator of the instance
      *  @return a new instance 
      */
-    public static BigRational valueOf(BigInteger numerator, BigInteger denominator) {
+    public static BigRational valueOf(BigInteger num, BigInteger den) {
         BigRational result = new BigRational("0");
-        result.setA(numerator);
-        result.setB(denominator);
+        result.setNum(num);
+        result.setDen(den);
         return result;
     } // Constructor 2
 
     /** Constructor with 2 long arguments
-     *  @param numerator   numerator   of the instance
-     *  @param denominator denominator of the instance
+     *  @param num numerator   of the instance
+     *  @param den den of the instance
      *  @return a new instance 
      */
-    public static BigRational valueOf(long numerator, long denominator) {
+    public static BigRational valueOf(long num, long den) {
         BigRational result = new BigRational("0");
-        result.setA(numerator);
-        result.setB(denominator);
+        result.setNum(num);
+        result.setDen(den);
         return result;
     } // Constructor 2
 
@@ -138,18 +139,18 @@ public class BigRational
     /** constant 2 */
     public static BigRational TWO  = BigRational.valueOf(2);
 
-    /** Deep copy of the rational number with denominator and nominator.
+    /** Deep copy of the rational number with numerator and denominator
      *  @return independant, simplified copy of the rational number
      */
     public BigRational clone() {
-        return (BigRational.valueOf(numerator, denominator)).simplify();
+        return (BigRational.valueOf(num, den)).simplify();
     } // clone
 
     /** Sets a BigRational to a BigDecimal; the denominator will be a power of 10.
      *  @param bdec represent this exact
      */
     public void set(BigDecimal bdec) {
-        this.numerator   = bdec.unscaledValue();
+        this.num = bdec.unscaledValue();
         int sc10 = bdec.scale();
         StringBuffer pow10 = new StringBuffer(sc10 + 1);
         pow10.append('1');
@@ -157,64 +158,64 @@ public class BigRational
             pow10.append('0');
             sc10 --;
         } // while scale
-        this.denominator   = new BigInteger(pow10.toString());
+        this.den = new BigInteger(pow10.toString());
     } // set(BigDecimal)
 
-    /** Gets the denominator
-     *  @return denominator of this fraction
+    /** Gets the numerator
+     *  @return  numerator of this fraction
      */
-    protected BigInteger getNumerator() {
-        return this.numerator  ;
-    } // getNumerator
+    protected BigInteger getNum() {
+        return this.num;
+    } // getNum
 
-    /** Gets the nominantor
-     *  @return nominator of this fraction
+    /** Gets the denominantor
+     *  @return  denominator of this fraction
      */
-    protected BigInteger getDenominator() {
-        return this.denominator;
-    } // getDenominator
+    protected BigInteger getDen() {
+        return this.den;
+    } // getDen
 
     /** Gets the "a" coefficient of a continued fraction [a0;b1/a1,b2/a2...]
-     *  @return numerator of this fraction
+     *  @return  numerator of this fraction
      */
-    public BigInteger getA() {
-        return this.numerator  ;
+    private BigInteger getA_deprecated() {
+        return this.num;
     } // getA
 
     /** Gets the "b" coefficient of a continued fraction [a0;b1/a1,b2/a2...]
-     *  @return denominator of this fraction
+     *  @return  denominator of this fraction
      */
-    public BigInteger getB() {
-        return this.denominator;
+    private BigInteger getB_depricated() {
+        return this.den;
     } // getB
 
     /** sets the "a" coefficient of a continued fraction [a0;b1/a1,b2/a2...]
-     *  @param a numerator of this fraction
+     *  @param a  numerator of this fraction
      */
-    public void setA(BigInteger a) {
-        this.numerator   = a;
-    } // setA
+    public void setNum(BigInteger a) {
+        this.num = a;
+    } // setNum
 
     /** sets the "b" coefficient of a continued fraction [a0;b1/a1,b2/a2...]
-     *  @param b denominator of this fraction
+     *  @param b  denominator of this fraction
      */
-    public void setB(BigInteger b) {
-        this.denominator = b;
-    } // setB
+    public void setDen(BigInteger b) {
+        this.den = b;
+    } // setDen
 
     /** sets the "a" coefficient of a continued fraction [a0;b1/a1,b2/a2...]
-     *  @param a numerator of this fraction
+     *  @param a  numerator of this fraction
      */
-    public void setA(long a) {
-        setA(BigInteger.valueOf(a));
-    } // setA
+    public void setNum(long a) {
+        setNum(BigInteger.valueOf(a));
+    } // setNum
 
     /** sets the "b" coefficient of a continued fraction [a0;b1/a1,b2/a2...]
-     *  @param b denominator of this fraction
+     *  @param b  denominator of this fraction
      */
-    public void setB(long b) {
-        setB(BigInteger.valueOf(b));
-    } // setB
+    public void setDen(long b) {
+        setDen(BigInteger.valueOf(b));
+    } // setDen
 
     /** Returns a BigRational whose value is  <em>(this + val)</em>
      *  The resulting fraction is simplified: <em>a/b + c = (a + c*b)/(b)</em>
@@ -223,9 +224,9 @@ public class BigRational
      */
     public BigRational add     (BigInteger  val) {
         return  BigRational.valueOf
-                ( (this.numerator  )
-                  .add     (val               .multiply(this.denominator))
-                , (this.denominator)
+                ( (this.num)
+                  .add     (val               .multiply(this.den))
+                , (this.den)
                 ).simplify();
     } // add(BigInteger)
 
@@ -236,9 +237,9 @@ public class BigRational
      */
     public BigRational add     (BigRational val) {
         return  BigRational.valueOf
-                ( (this.numerator  .multiply(val.getDenominator()))
-                  .add     (val.getNumerator().multiply(this.denominator))
-                , (this.denominator.multiply(val.getDenominator()))
+                ( (this.num.multiply(val.getDen()))
+                  .add     (val.getNum().multiply(this.den))
+                , (this.den.multiply(val.getDen()))
                 ).simplify();
     } // add(BigRational)
 
@@ -249,9 +250,9 @@ public class BigRational
      */
     public BigRational subtract(BigInteger  val) {
         return  BigRational.valueOf
-                ( (this.numerator  )
-                  .subtract(val               .multiply(this.denominator))
-                , (this.denominator)
+                ( (this.num)
+                  .subtract(val               .multiply(this.den))
+                , (this.den)
                 ).simplify();
     } // subtract(BigInteger)
 
@@ -262,9 +263,9 @@ public class BigRational
      */
     public BigRational subtract(BigRational val) {
         return  BigRational.valueOf
-                ( (this.numerator  .multiply(val.getDenominator()))
-                  .subtract(val.getNumerator().multiply(this.denominator))
-                , (this.denominator.multiply(val.getDenominator()))
+                ( (this.num.multiply(val.getDen()))
+                  .subtract(val.getNum().multiply(this.den))
+                , (this.den.multiply(val.getDen()))
                 ).simplify();
     } // subtract(BigRational)
 
@@ -275,8 +276,8 @@ public class BigRational
      */
     public BigRational multiply(BigInteger  val) {
         return  BigRational.valueOf
-                ( (this.numerator  ).multiply(val                 )
-                , (this.denominator                               )
+                ( (this.num).multiply(val                 )
+                , (this.den                               )
                 ).simplify();
     } // multiply(BigInteger)
 
@@ -287,8 +288,8 @@ public class BigRational
      */
     public BigRational multiply(BigRational val) {
         return  BigRational.valueOf
-                ( (this.numerator  .multiply(val.getNumerator  ()))
-                , (this.denominator.multiply(val.getDenominator()))
+                ( (this.num.multiply(val.getNum()))
+                , (this.den.multiply(val.getDen()))
                 ).simplify();
     } // multiply(BigRational)
 
@@ -299,8 +300,8 @@ public class BigRational
      */
     public BigRational divide  (BigInteger  val) {
         return BigRational.valueOf
-                ( (this.numerator                                 )
-                , (this.denominator                               ).multiply(val                )
+                ( (this.num)
+                , (this.den                               ).multiply(val                )
                 ).simplify();
     } // divide  (BigInteger)
 
@@ -310,7 +311,7 @@ public class BigRational
      *  @return [this / val, this mod val]
      */
     public BigInteger[] divideAndRemainder(BigRational val) {
-    	BigInteger[] result = this.getNumerator().divideAndRemainder(val.getNumerator());
+    	BigInteger[] result = this.getNum().divideAndRemainder(val.getNum());
         return result;
     } // divideAndRemeinder(BigRational)
 
@@ -321,8 +322,8 @@ public class BigRational
      */
     public BigRational divide  (BigRational val) {
         return  (BigRational.valueOf
-                ( (this.numerator  .multiply(val.getDenominator() )                             )
-                , (this.denominator                               ).multiply(val.getNumerator() )                        )
+                ( (this.num.multiply(val.getDen() )                             )
+                , (this.den                               ).multiply(val.getNum() )                        )
                 ).simplify();
     } // divide  (BigRational)
 
@@ -345,14 +346,14 @@ public class BigRational
                 result = result.multiply(result);
                 break;
             case -1:
-                result = BigRational.valueOf(this.denominator, this.numerator).simplify();
+                result = BigRational.valueOf(this.den, this.num).simplify();
                 break;
             default:
                 if (exp >= 0) {
-                    result = BigRational.valueOf(this.numerator  .pow(exp), this.denominator.pow(exp));
+                    result = BigRational.valueOf(this.num.pow(exp), this.den.pow(exp));
                 } else {
                     exp = - exp;
-                    result = BigRational.valueOf(this.denominator.pow(exp), this.numerator  .pow(exp)).simplify();
+                    result = BigRational.valueOf(this.den.pow(exp), this.num.pow(exp)).simplify();
                 }
                 break;
         } // switch exp
@@ -364,7 +365,7 @@ public class BigRational
      *  @return the greatest common divisor of the numerators
      */
     public BigRational gcd(BigRational brat2) {
-        return BigRational.valueOf(this.numerator.gcd(brat2.getNumerator()));
+        return BigRational.valueOf(this.num.gcd(brat2.getNum()));
     } // gcd(BigRational)
 
     /** Computes the least common multiple of the numerators
@@ -372,8 +373,8 @@ public class BigRational
      *  @return the least common multiple of the numerators
      */
     public BigRational lcm(BigRational brat2) {
-        BigInteger num1 = this.numerator;
-        BigInteger num2 = brat2.getNumerator();
+        BigInteger num1 = this.num;
+        BigInteger num2 = brat2.getNum();
         return BigRational.valueOf(num1.multiply(num2).divide(num1.gcd(num2)));
     } // lcm(BigRational)
 
@@ -394,18 +395,18 @@ public class BigRational
      */
     public BigRational simplify() {
         BigRational result = this;
-        BigInteger  common = this.numerator  .gcd(this.denominator);
+        BigInteger  common = this.num.gcd(this.den);
         if (common.compareTo(BigInteger.ONE) > 0) {
-            if (common.compareTo(this.denominator) == 0) {
-                result = BigRational.valueOf( this.numerator  .divide(common));
+            if (common.compareTo(this.den) == 0) {
+                result = BigRational.valueOf( this.num.divide(common));
             } else {
-                result = BigRational.valueOf( this.numerator  .divide(common)
-                                            , this.denominator.divide(common));
+                result = BigRational.valueOf( this.num.divide(common)
+                                            , this.den.divide(common));
             }
         }
-        if (this.denominator.signum() < 0) { // denominator is always made positive
-            result = BigRational.valueOf( result.getNumerator  ().negate()
-                                        , result.getDenominator().negate());
+        if (this.den.signum() < 0) { // denominator is always made positive
+            result = BigRational.valueOf( result.getNum().negate()
+                                        , result.getDen().negate());
         }
         return result;
     } // simplify
@@ -415,7 +416,7 @@ public class BigRational
      */
     public BigRational abs() {
         this.simplify(); // makes denominator positive
-        return BigRational.valueOf(numerator.signum() < 0 ? numerator.negate() : numerator, denominator);
+        return BigRational.valueOf(num.signum() < 0 ? num.negate() : num, den);
     } // abs
 
     /** Returns the sign of <em>this</em> BigRational.
@@ -423,14 +424,14 @@ public class BigRational
      */
     public int signum() {
         this.simplify(); // makes denominator positive
-        return numerator  .signum();
+        return num.signum();
     } // signum
 
     /** Returns the BigRational with inverted sign.
      *  @return a copy of the object with the opposite sign
      */
     public BigRational negate() {
-        return (BigRational.valueOf(numerator  .negate(), denominator)).simplify();
+        return (BigRational.valueOf(num.negate(), den)).simplify();
     } // negate
 
     /** Compares this BigRational with the specified BigRational.
@@ -444,7 +445,7 @@ public class BigRational
      *  less than, equal to, or greater than <em>num2</em>.
      */
     public int compareTo(BigRational num2) {
-        return this.numerator  .multiply(num2.getDenominator()).compareTo(this.denominator.multiply(num2.getNumerator()));
+        return this.num.multiply(num2.getDen()).compareTo(this.den.multiply(num2.getNum()));
     } // compareTo
 
     /** Compares this BigRational with the specified BigInteger.
@@ -458,7 +459,7 @@ public class BigRational
      *  less than, equal to, or greater than <em>num2</em>.
      */
     public int compareTo(BigInteger num2) {
-        return this.numerator.compareTo(this.denominator.multiply(num2));
+        return this.num.compareTo(this.den.multiply(num2));
     } // compareTo
 
     /** Determines whether <em>this</em> BigRational has the same value as the parameter.
@@ -482,8 +483,8 @@ public class BigRational
      *  @return value as BigDecimal
      */
     public BigDecimal getDecimal() {
-        MathContext mc = new MathContext((this.denominator.bitLength() / 10 + 1) * 3); // 10^3 ~= 2^10
-        return new BigDecimal(this.numerator  ).divide(new BigDecimal(this.denominator), mc);
+        MathContext mc = new MathContext((this.den.bitLength() / 10 + 1) * 3); // 10^3 ~= 2^10
+        return new BigDecimal(this.num).divide(new BigDecimal(this.den), mc);
     } // getDecimal
 
     /** Gets the integral part of the rational number, or 1.
@@ -491,8 +492,8 @@ public class BigRational
      */
     public BigInteger getInteger() {
         BigInteger result = BigInteger.ONE;
-        if (denominator.abs().equals(BigInteger.ONE)) {
-            result = new BigInteger(numerator  .toByteArray()); // clone it
+        if (den.abs().equals(BigInteger.ONE)) {
+            result = new BigInteger(num.toByteArray()); // clone it
         }
         return result;
     } // getInteger
@@ -501,17 +502,14 @@ public class BigRational
      *  @return true if the reduced denominator is 1, false otherwise.
      */
     public boolean isInteger() {
-        return this.simplify().getDenominator().equals(BigInteger.ONE);
+        return this.simplify().getDen().equals(BigInteger.ONE);
     } // isInteger
 
     /** Returns 1 / this
      *  @return inverted fraction
      */
     public BigRational invert() {
-        return BigRational.valueOf
-                (  this.denominator
-                ,  this.numerator
-                );
+        return BigRational.valueOf(this.den, this.num);
     } // invert
 
     /** Returns a string representation of the fraction in radix 10
@@ -519,10 +517,10 @@ public class BigRational
      */
     public String toString() {
         StringBuffer result = new StringBuffer(64);
-        result.append(this.numerator  .toString());
-        if (! denominator.equals(BigInteger.ONE)) {
+        result.append(this.num.toString());
+        if (! den.equals(BigInteger.ONE)) {
             result.append("/");
-            result.append(this.denominator.toString());
+            result.append(this.den.toString());
         }
         return result.toString();
     } // toString
@@ -531,7 +529,7 @@ public class BigRational
      *  @return "a/b"
      */
     public String toString(int radix) {
-        return this.numerator  .toString(radix) + "/" + this.denominator.toString(radix);
+        return this.num.toString(radix) + "/" + this.den.toString(radix);
     } // toString(radix)
 
     /** Test method.

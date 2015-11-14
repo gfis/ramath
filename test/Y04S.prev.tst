@@ -1,11 +1,11 @@
-# flat	Cubic.Y04	 - 2 - 2*x - x^2 - x^3
-# flat	Cubic.Y04	1 - 2*x - x^2 - x^3
-# flat	Cubic.Y04	1 + 2*x + x^2
-# flat	Cubic.Y04	2 + x + 2*x^2
-# merg	Cubic.Y04	 - 2 - 2*x_y_z - x_y_z^2 - x_y_z^3
-# merg	Cubic.Y04	1 - 2*x_y_z - x_y_z^2 - x_y_z^3
-# merg	Cubic.Y04	1 + 2*x_y_z + x_y_z^2
-# merg	Cubic.Y04	2 + x_y_z + 2*x_y_z^2
+# flat	Cubic.Y04	 - 2*x - x^2 - x^3 - 2
+# flat	Cubic.Y04	 - 2*x - x^2 - x^3 + 1
+# flat	Cubic.Y04	2*x + x^2 + 1
+# flat	Cubic.Y04	x + 2*x^2 + 2
+# merg	Cubic.Y04	 - 2*x_y_z - x_y_z^2 - x_y_z^3 - 2
+# merg	Cubic.Y04	 - 2*x_y_z - x_y_z^2 - x_y_z^3 + 1
+# merg	Cubic.Y04	2*x_y_z + x_y_z^2 + 1
+# merg	Cubic.Y04	x_y_z + 2*x_y_z^2 + 2
 # orig	Cubic.Y04	-(-2-2*x-x^2-x^3)^3
 # orig	Cubic.Y04	-(1+2*x+x^2)^3
 # orig	Cubic.Y04	-(2+x+2*x^2)^3

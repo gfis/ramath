@@ -198,10 +198,11 @@ public class BigIntegerUtil {
      *  @return the least common multiple of the numbers
      *  Caution, this implementation cares for the numerators only !!!
      */
+/*
     public static BigRational lcm(BigRational num1, BigRational num2) {
-        return num1.multiply(num2.getNumerator()).divide(num1.getNumerator().gcd(num2.getNumerator()));
+        return num1.multiply(num2.getNum()).divide(num1.getNum().gcd(num2.getNum()));
     } // lcm
-
+*/
     /** Computes the binomial coefficient <em>num1 choose num2</em>, that is
      *  the <em>num2</em>th entry in row <em>num1</em> of Pascal's triangle.
      *  Code adapted from {@link <a href="http://stackoverflow.com/questions/2201113/combinatoric-n-choose-r-in-java-math">stackoverflow.com</a>}

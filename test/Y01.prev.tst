@@ -1,12 +1,12 @@
 # orig	Pythagoras.Y01	+(1+2*x)^2
-# flat	Pythagoras.Y01	1 + 2*x
-# merg	Pythagoras.Y01	1 + 2*x_y_z
+# flat	Pythagoras.Y01	2*x + 1
+# merg	Pythagoras.Y01	2*x_y_z + 1
 # orig	Pythagoras.Y01	+(2*x+2*x^2)^2
 # flat	Pythagoras.Y01	2*x + 2*x^2
 # merg	Pythagoras.Y01	2*x_y_z + 2*x_y_z^2
 # orig	Pythagoras.Y01	-(1+2*x+2*x^2)^2
-# flat	Pythagoras.Y01	1 + 2*x + 2*x^2
-# merg	Pythagoras.Y01	1 + 2*x_y_z + 2*x_y_z^2
+# flat	Pythagoras.Y01	2*x + 2*x^2 + 1
+# merg	Pythagoras.Y01	2*x_y_z + 2*x_y_z^2 + 1
 # poly	Pythagoras.Y01	0
 000012	[3,4,5]	Pythagoras.Y01	factor=1	parm= [1]
 000030	[5,12,13]	Pythagoras.Y01	factor=1	parm= [2]

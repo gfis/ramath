@@ -207,7 +207,7 @@ public class ContinuedFraction extends ArrayList/*1.5*/<BigRational>/*1.5*/  {
     public void set(BigRational brat, int mode) {
         BigRational elem = BigRational.valueOf(0);
         final BigInteger MINUS_ONE = BigInteger.ZERO.subtract(BigInteger.ONE);
-        BigInteger[] quotRem = new BigInteger[] { brat.getA(), brat.getB() };
+        BigInteger[] quotRem = new BigInteger[] { brat.getNum(), brat.getDen() };
         BigInteger divisor = null;
         int toggle = mode & 1; // starting with odd or even (c.f. below)
         int loopCheck = 32767;
@@ -270,16 +270,16 @@ public class ContinuedFraction extends ArrayList/*1.5*/<BigRational>/*1.5*/  {
                 System.out.println();
             } // debug
             elem = BigRational.valueOf(0);
-            elem.setA(quotRem[0]);
-            elem.setB(partB);
+            elem.setNum(quotRem[0]);
+            elem.setDen(partB);
             this.add(elem);
             // this.add(BigRational.valueOf(quotRem[0], partB)); // partial quotient
             quotRem[0] = divisor;
         } // while rational not exhausted
         // append a dummy element which reproduces the original BigRational (without shortening)
         elem = BigRational.valueOf(0);
-        elem.setA(divisor);
-        elem.setB(BigInteger.ZERO);
+        elem.setNum(divisor);
+        elem.setDen(BigInteger.ZERO);
         this.add(elem);
         // this.add(BigRational.valueOf(divisor, BigInteger.ZERO));
     } // set(BigRational, mode)
@@ -294,8 +294,8 @@ public class ContinuedFraction extends ArrayList/*1.5*/<BigRational>/*1.5*/  {
         int index = 0;
         while (index < list.size()) {
             BigRational result = BigRational.valueOf(0);
-            result.setB(1);
-            result.setA(list.get(index));
+            result.setDen(1);
+            result.setNum(list.get(index));
             this.add(result);
             index ++;
         } // while index
@@ -379,13 +379,13 @@ public class ContinuedFraction extends ArrayList/*1.5*/<BigRational>/*1.5*/  {
                 ----------  =>  ------------   = -----
                 ap + b2/a2      ap * a2 + b2      a1
             */
-            BigInteger a1 = partial.getA().multiply(a2).add(b2);
-            BigInteger b1 = partial.getB().multiply(a2);
+            BigInteger a1 = partial.getNum().multiply(a2).add(b2);
+            BigInteger b1 = partial.getDen().multiply(a2);
             a2 = a1;
             b2 = b1;
             result[index] = BigRational.valueOf(0);
-            result[index].setA(a2);
-            result[index].setB(b2);
+            result[index].setNum(a2);
+            result[index].setDen(b2);
             if (debug >= 2) {
                 System.out.print(result[index].toString() + " ");
             }
@@ -446,15 +446,15 @@ public class ContinuedFraction extends ArrayList/*1.5*/<BigRational>/*1.5*/  {
             Nk  = ak * Nk-1 + bk * Nk-2
         */
             if (srcIndex == 0) {
-                akm0 = partial.getA();
-                bkm0 = BigInteger.ONE; // partial.getB();
+                akm0 = partial.getNum();
+                bkm0 = BigInteger.ONE; // partial.getDen();
             } else {
-                akm0 = partial.getA().multiply(akm1).add(partial.getB().multiply(akm2));
-                bkm0 = partial.getA().multiply(bkm1).add(partial.getB().multiply(bkm2));
+                akm0 = partial.getNum().multiply(akm1).add(partial.getDen().multiply(akm2));
+                bkm0 = partial.getNum().multiply(bkm1).add(partial.getDen().multiply(bkm2));
             }
             result[tarIndex] = BigRational.valueOf(0);
-            result[tarIndex].setA(akm0);
-            result[tarIndex].setB(bkm0);
+            result[tarIndex].setNum(akm0);
+            result[tarIndex].setDen(bkm0);
             if (debug >= 2) {
                 System.out.print(result[tarIndex].toString() + " ");
             }
@@ -571,8 +571,8 @@ public class ContinuedFraction extends ArrayList/*1.5*/<BigRational>/*1.5*/  {
         int isol  = 0;
         while (isol < maxSolutions && ielem < numElem) {
             BigRational partial = expansion[ielem];
-            BigInteger y = expansion[ielem].getNumerator  ();
-            BigInteger x = expansion[ielem].getDenominator();
+            BigInteger y = expansion[ielem].getNum();
+            BigInteger x = expansion[ielem].getDen();
             BigInteger value = x.multiply(x).multiply(n).subtract(y.multiply(y));
             if (value.abs().compareTo(constant1) == 0) {
                 if (debug >= 2) {
@@ -595,17 +595,17 @@ public class ContinuedFraction extends ArrayList/*1.5*/<BigRational>/*1.5*/  {
         while (index < this.size()) {
             BigRational brat = (BigRational) this.get(index);
             if (index == 0) {
-                result.append(brat.getA().toString());
-                // getB() = 1 is irrelevant for integral part
+                result.append(brat.getNum().toString());
+                // getDen() = 1 is irrelevant for integral part
             } else {
                 if (index == 1) {
                     result.append("; ");
                 } else {
                     result.append(", ");
                 }
-                result.append(brat.getB().toString());
+                result.append(brat.getDen().toString());
                 result.append('/');
-                result.append(brat.getA().toString());
+                result.append(brat.getNum().toString());
             } // index != 0
             index ++;
         } // while
@@ -713,13 +713,13 @@ public class ContinuedFraction extends ArrayList/*1.5*/<BigRational>/*1.5*/  {
                 BigRational result = BigRational.valueOf(0);
                 switch (index) {
                     case 0:
-                        result.setA(3);
-                        result.setB(1);
+                        result.setNum(3);
+                        result.setDen(1);
                         break;
                     case 1:
                     default:
-                        result.setA(6);
-                        result.setB(4 * index * index - 4 * index + 1);
+                        result.setNum(6);
+                        result.setDen(4 * index * index - 4 * index + 1);
                         break;
                 } // switch index
                 return result;
@@ -731,17 +731,17 @@ public class ContinuedFraction extends ArrayList/*1.5*/<BigRational>/*1.5*/  {
                 BigRational result = BigRational.valueOf(0);
                 switch (index) {
                     case 0:
-                        result.setA(2);
-                        result.setB(1);
+                        result.setNum(2);
+                        result.setDen(1);
                         break;
                     case 1:
-                        result.setA(3);
-                        result.setB(4);
+                        result.setNum(3);
+                        result.setDen(4);
                         break;
                     default:
                         int term = 2 * index;
-                        result.setA(4);
-                        result.setB((term - 3) * (term - 1));
+                        result.setNum(4);
+                        result.setDen((term - 3) * (term - 1));
                         break;
                 } // switch index
                 return result;

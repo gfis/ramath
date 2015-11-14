@@ -1,15 +1,15 @@
 # orig	Dutch.X05	(1*(w+1)^2+16*(w+1)-21)^3
-# flat	Dutch.X05	 - 4 + 18*w + w^2
-# merg	Dutch.X05	 - 4 + 18*x_y_z + x_y_z^2
+# flat	Dutch.X05	18*w + w^2 - 4
+# merg	Dutch.X05	18*x_y_z + x_y_z^2 - 4
 # orig	Dutch.X05	+(-1*(w+1)^2+16*(w+1)+21)^3
-# flat	Dutch.X05	36 + 14*w - w^2
-# merg	Dutch.X05	36 + 14*x_y_z - x_y_z^2
+# flat	Dutch.X05	14*w - w^2 + 36
+# merg	Dutch.X05	14*x_y_z - x_y_z^2 + 36
 # orig	Dutch.X05	+(2*(w+1)^2-4*(w+1)+42)^3
-# flat	Dutch.X05	40 + 2*w^2
-# merg	Dutch.X05	40 + 2*x_y_z^2
+# flat	Dutch.X05	2*w^2 + 40
+# merg	Dutch.X05	2*x_y_z^2 + 40
 # orig	Dutch.X05	-(2*(w+1)^2+4*(w+1)+42)^3
-# flat	Dutch.X05	48 + 8*w + 2*w^2
-# merg	Dutch.X05	48 + 8*x_y_z + 2*x_y_z^2
+# flat	Dutch.X05	8*w + 2*w^2 + 48
+# merg	Dutch.X05	8*x_y_z + 2*x_y_z^2 + 48
 # poly	Dutch.X05	0
 000032	[1,9,10,12]	Dutch.X05	factor=4	parm= [0]
 000164	[15,42,49,58]	Dutch.X05	factor=1	parm= [1]

@@ -1,11 +1,11 @@
-# flat	Dutch.X03	 - 36 + 22*w - w^2
-# flat	Dutch.X03	 - 60 + 10*w + w^2
-# flat	Dutch.X03	48 - 8*w + 2*w^2
-# flat	Dutch.X03	72 - 16*w + 2*w^2
-# merg	Dutch.X03	 - 36 + 22*x_y_z - x_y_z^2
-# merg	Dutch.X03	 - 60 + 10*x_y_z + x_y_z^2
-# merg	Dutch.X03	48 - 8*x_y_z + 2*x_y_z^2
-# merg	Dutch.X03	72 - 16*x_y_z + 2*x_y_z^2
+# flat	Dutch.X03	 - 16*w + 2*w^2 + 72
+# flat	Dutch.X03	 - 8*w + 2*w^2 + 48
+# flat	Dutch.X03	10*w + w^2 - 60
+# flat	Dutch.X03	22*w - w^2 - 36
+# merg	Dutch.X03	 - 16*x_y_z + 2*x_y_z^2 + 72
+# merg	Dutch.X03	 - 8*x_y_z + 2*x_y_z^2 + 48
+# merg	Dutch.X03	10*x_y_z + x_y_z^2 - 60
+# merg	Dutch.X03	22*x_y_z - x_y_z^2 - 36
 # orig	Dutch.X03	-(2*(w-3)^2+4*(w-3)+42)^3
 # orig	Dutch.X03	(1*(w-3)^2+16*(w-3)-21)^3
 # orig	Dutch.X03	+(-1*(w-3)^2+16*(w-3)+21)^3

@@ -1,2 +1,2 @@
-1 + x.degree()      = -1
-1 + x.degree(false) = -1
+x + 1.degree()      = -1
+x + 1.degree(false) = -1

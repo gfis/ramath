@@ -1,10 +1,10 @@
-# flat	Dutch.X12	 - 1 + 2*m - 6*m^2 - 4*m^3 + 5*m^4
+# flat	Dutch.X12	 - 2*m + 6*m^2 - 14*m^3 + 4*m^4 + 1
 # flat	Dutch.X12	 - 3*m + 9*m^2 - 9*m^3 + 6*m^4
-# flat	Dutch.X12	1 - 2*m + 6*m^2 - 14*m^3 + 4*m^4
+# flat	Dutch.X12	2*m - 6*m^2 - 4*m^3 + 5*m^4 - 1
 # flat	Dutch.X12	3*m + 3*m^4
-# merg	Dutch.X12	 - 1 + 2*x_y_z - 6*x_y_z^2 - 4*x_y_z^3 + 5*x_y_z^4
+# merg	Dutch.X12	 - 2*x_y_z + 6*x_y_z^2 - 14*x_y_z^3 + 4*x_y_z^4 + 1
 # merg	Dutch.X12	 - 3*x_y_z + 9*x_y_z^2 - 9*x_y_z^3 + 6*x_y_z^4
-# merg	Dutch.X12	1 - 2*x_y_z + 6*x_y_z^2 - 14*x_y_z^3 + 4*x_y_z^4
+# merg	Dutch.X12	2*x_y_z - 6*x_y_z^2 - 4*x_y_z^3 + 5*x_y_z^4 - 1
 # merg	Dutch.X12	3*x_y_z + 3*x_y_z^4
 # orig	Dutch.X12	-((2*m-1)*(3*m^3-3*m^2+3*m))^3
 # orig	Dutch.X12	((2*m-1)*(2*m^3-6*m^2+0*m-1))^3

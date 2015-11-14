@@ -1,11 +1,11 @@
-# flat	Dutch.X11	 - 21 + 16*m + m^2
-# flat	Dutch.X11	21 + 16*m - m^2
-# flat	Dutch.X11	42 - 4*m + 2*m^2
-# flat	Dutch.X11	42 + 4*m + 2*m^2
-# merg	Dutch.X11	 - 21 + 16*x_y_z + x_y_z^2
-# merg	Dutch.X11	21 + 16*x_y_z - x_y_z^2
-# merg	Dutch.X11	42 - 4*x_y_z + 2*x_y_z^2
-# merg	Dutch.X11	42 + 4*x_y_z + 2*x_y_z^2
+# flat	Dutch.X11	 - 4*m + 2*m^2 + 42
+# flat	Dutch.X11	16*m - m^2 + 21
+# flat	Dutch.X11	16*m + m^2 - 21
+# flat	Dutch.X11	4*m + 2*m^2 + 42
+# merg	Dutch.X11	 - 4*x_y_z + 2*x_y_z^2 + 42
+# merg	Dutch.X11	16*x_y_z - x_y_z^2 + 21
+# merg	Dutch.X11	16*x_y_z + x_y_z^2 - 21
+# merg	Dutch.X11	4*x_y_z + 2*x_y_z^2 + 42
 # orig	Dutch.X11	-(2*m^2+4*m+42)^3
 # orig	Dutch.X11	(1*m^2+16*m-21)^3
 # orig	Dutch.X11	+(-1*m^2+16*m+21)^3

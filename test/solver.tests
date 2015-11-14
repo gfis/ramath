@@ -48,7 +48,7 @@ TEST TQR2 tree solver, sqrt(5) (proof in 2 steps)
 CALL TreeSolver -l 4 -e "5*q^2 - p^2" 
 
 #--------
-# Fermat 
+# Fermat - Squares
 
 TEST TP13 Fermat (proof in 2 steps)
 CALL TreeSolver -l 4 -e "a^2 + b^2 - 3*(c^2 + d^2)" -r norm,invall,igtriv,showfail
@@ -62,6 +62,8 @@ CALL TreeSolver -b 2 -l 3 -e "x^2 + y^2 - 4*z - 1" -r invall
 TEST TP23 Fermat 2 squares mod 4 = 3 (proof)
 CALL TreeSolver -b 2 -l 3 -e "x^2 + y^2 - 4*z - 3" -r norm,invall,showfail
 
+TEST TP24 Ribenboim FLT Lectures (8A)
+CALL TreeSolver -b 2 -l 3 -e "x^2 + y^2 - u^2 - v^2; x*y=2*u*v" -r norm
 #----
 TEST TF21 FLT(2), Pythagoras
 CALL TreeSolver -b 2 -l 3 -e "a^2 + b^2 - c^2" -r norm,igtriv,no-pytha
@@ -70,13 +72,13 @@ TEST TF31 FLT(3) mod 2
 CALL TreeSolver -b 2 -l 3 -e "a^3 + b^3 - c^3" -r norm,invall
 
 TEST TF32 modified FLT(3) mod 2
-CALL TreeSolver -b 2 -l 3 -e "a^3 + 3*b^3 - 9*c^3" -r norm
+CALL TreeSolver -b 2 -l 3 -e "a^3 + 3*b^3 - 9*c^3" -r norm,igtriv,accel
 
 TEST TF33 modified FLT(3) mod 3 proof
 CALL TreeSolver -b 3 -l 3 -e "a^3 + 3*b^3 - 9*c^3" -r norm,igtriv
 
 TEST TF34 modified FLT(3) mod 6 no descent?
-CALL TreeSolver -b 6 -l 2 -e "a^3 + 3*b^3 - 9*c^3" -r norm,igtriv
+CALL TreeSolver -b 6 -l 2 -e "a^3 + 3*b^3 - 9*c^3" -r norm,igtriv,accel
 
 # Euler, proof=1 (http://www.cut-the-knot.org/arithmetic/BasicsOfInfiniteDescent.shtml)
 # also Keith Conrad: Proofs by Descent, Example 1.1
@@ -133,10 +135,10 @@ TEST TE41 EEC(4,2,2) OEIS A003824, http://cr.yp.to/sortedsums/two4.1000000
 CALL TreeSolver -b 2 -l 2 -e "a^4 + b^4 - c^4 -d^4" -r norm,invall
 
 # TEST TE42 EEC(4,2,2) mod 3
-# CALL TreeSolver -b 3 -l 1 -e "a^4 + b^4 - c^4 -d^4" -r norm,invall
+# CALL TreeSolver -b 3 -l 1 -e "a^4 + b^4 - c^4 - d^4" -r norm,invall
 
 # TEST TE43 EEC(4,2,2) mod 4
-# CALL TreeSolver -b 4 -l 1 -e "a^4 + b^4 - c^4 -d^4" -r norm,invall
+# CALL TreeSolver -b 4 -l 1 -e "a^4 + b^4 - c^4 - d^4" -r norm,invall
 
 TEST TE44 superset(^2) only
 CALL TreeSolver -b 2 -l 2 -e "a^2 + b^2 - c^2 - d^2" -r norm,invall
@@ -163,7 +165,10 @@ TEST TPE4 15 7 9 mod 4
 CALL TreeSolver -l 3 -b 4 -e "15*x^2 - 7*y^2 - 9" -r norm
 
 TEST TPE5 15 7 9 reduced
-CALL TreeSolver -l 3 -b 2 -e "-576+15*x^2-7*y^2" -r norm
+CALL TreeSolver -l 1 -b 7 -e "15*x^2 - 7*y^2 - 9" -r norm,showfail,invall
+
+TEST TPE6 15 7 9 Proof
+CALL TreeSolver -l 3 -b 5 -e "15*x^2 - 7*y^2 - 9" -r norm,showfail,invall
 
 #--------
 # Markoff chains
@@ -220,6 +225,12 @@ CALL TreeSolver -b 2 -l 4 -e "(5 + 2*v + 2*u)^2 + 2 - (5 + 2*v)^3" -r norm,inval
 TEST TECA Keith Conrad Descent: Cor. 3.7
 CALL TreeSolver -b 2 -l 3 -e "y^2 = x^3 - 4*x" -r norm,invall
 
+TEST TECB Keith Mordell's Eqn PPT
+CALL TreeSolver -b 2 -l 6 -e "y^2 = x^3 + 7"   -r norm
+
+TEST TECC Keith Mordell's Eqn PPT
+CALL TreeSolver -b 2 -l 3 -e "y^2 = x^3 - 6"   -r norm
+
 #--------
 # Squeeze ?
 TEST TSQ1 Squeeze; https://hcmop.wordpress.com/2012/04/09/techniques-in-solving-diophantine-equations-part-2/
@@ -229,6 +240,8 @@ CALL TreeSolver -b 2 -l 6 -e "x * (x + 1) * (x + 7) * (x + 8) - y^2"
 TEST TX51 p^3 - q^5 - (p + q)^2; p,q prime; http://db.math.ust.hk/notes_download/elementary/number/ne_N3.pdf
 CALL TreeSolver -l 1 -e "p^3 - q^5 - (p + q)^2" -r norm
 
+TEST TX52 Legendre 2^m
+CALL TreeSolver -b 2 -l 3 -e "x^3 + y^3 - 2*z^3"   -r norm
 
 EXIT
 #----

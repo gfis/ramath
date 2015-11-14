@@ -335,26 +335,26 @@ CALL Polynomial -groebner "x^2 + 1" "x"
 #  y^2 + x*z + y
 # CALL Polynomial -groebner -f $(DATA)
 
-TEST G16 Groebner Basis (http://de.wikipedia.org/wiki/Gr%C3%B6bnerbasis)
-DATA
- x^2 + y^2 + z^2 - 1 = 0
- x^2 - y + z^2 = 0
- x - z = 0
-CALL Polynomial -groebner -f $(DATA)
-
-TEST G17 Groebner Basis (de.wikipedia.org, x <-> z)
-DATA
- z^2 + y^2 + x^2 - 1 = 0
- z^2 - y + x^2 = 0
- z - x = 0
-CALL Polynomial -groebner -f $(DATA)
-
-TEST G19 Groebner Basis monomes of Euklid / specialization
-DATA
- (m^2 - n^2)^2 - (m^2 - 1^2)^2 = 0
- (2*m*n)^2     - (2*m*1)^2     = 0
- (m^2 + n^2)^2 - (m^2 + 1^2)^2 = 0
-CALL Polynomial -groebner -f $(DATA)
+# TEST G16 Groebner Basis (http://de.wikipedia.org/wiki/Gr%C3%B6bnerbasis)
+# DATA
+#  x^2 + y^2 + z^2 - 1 = 0
+#  x^2 - y + z^2 = 0
+#  x - z = 0
+# CALL Polynomial -groebner -f $(DATA)
+# 
+# TEST G17 Groebner Basis (de.wikipedia.org, x <-> z)
+# DATA
+#  z^2 + y^2 + x^2 - 1 = 0
+#  z^2 - y + x^2 = 0
+#  z - x = 0
+# CALL Polynomial -groebner -f $(DATA)
+# 
+# TEST G19 Groebner Basis monomes of Euklid / specialization
+# DATA
+#  (m^2 - n^2)^2 - (m^2 - 1^2)^2 = 0
+#  (2*m*n)^2     - (2*m*1)^2     = 0
+#  (m^2 + n^2)^2 - (m^2 + 1^2)^2 = 0
+# CALL Polynomial -groebner -f $(DATA)
 
 # gfis@nunki:~/work/gits/ramath$ Singular
 # > ring r1=0, (m,n), lp;

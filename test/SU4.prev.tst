@@ -1,1 +1,1 @@
-("4x^2+64y^6").substitute({x=>x/2,y=>y/2}) = x^2+y^6
+("4x²+64y⁶").substitute({x=>x/2,y=>y/2}) = x²+y⁶

@@ -465,7 +465,7 @@ public class Polynomial implements Cloneable, Serializable {
                 result = false;
             }
         } // while iter1
-        return result; //  && monomials.get(Monomial.CONSTANT_SIGNATURE) != null;
+        return result;
     } // isBiased
 
     /** Gets the <em>polarity</em> of <em>this</em> {@link Polynomial}, 
@@ -2250,8 +2250,8 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
             */
                 } else if (opt.startsWith("-degree")) {
                     poly1 = Polynomial.parse(args[iarg ++]);
-                    System.out.println(poly1.toString() + ".degree()      = " + poly1.degree()     );
-                    System.out.println(poly1.toString() + ".degree(false) = " + poly1.degree(false));
+                    System.out.println("(" + poly1.toString() + ").degree()      = " + poly1.degree()     );
+                    System.out.println("(" + poly1.toString() + ").degree(false) = " + poly1.degree(false));
 
                 } else if (opt.startsWith("-equiv")) {
                     poly1 = Polynomial.parse(args[iarg ++]);
