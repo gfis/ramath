@@ -367,7 +367,7 @@ public class Monomial implements Cloneable, Serializable {
      *  </ul>
      *  @param withCoeff whether to append the absolute value of the coefficient
      *  @param withVars  whether to append the variable names (otherwise their exponents only)
-     *  @return for example (true, false): "/08/02/04;16384" for the monomial "16384*a^4*b^2*x4^8"
+     *  @return for example (true, false): "/08/02/04;16384" for the Monomial "16384*a^4*b^2*x4^8"
      */
     public String characteristic(boolean withCoeff, boolean withVars) {
         StringBuffer result = new StringBuffer(32); // resulting list of exponents
@@ -417,7 +417,7 @@ public class Monomial implements Cloneable, Serializable {
      *  </ul>
      *  @return for example "/08/02/04;16384" for the monomial "16384*a^4*b^2*x4^8"
      */
-    public String characteristic() {
+    public String characteristic_99() {
         return characteristic(true, false);
     } // characteristic()
 
@@ -1078,7 +1078,10 @@ lcm( + 24*a^6*b^6*c*x4^8, + 100*a^5*b^4) =  + 600*a^6*b^6*c*x4^8
             mono1 = mono1.pow(2);
             System.out.println(mono1.toString());
             System.out.println("signature="      + mono1.signature     ());
-            System.out.println("characteristic=" + mono1.characteristic());
+        //  System.out.println("characteristic()=" + mono1.characteristic());
+            System.out.println("characteristic(false,true )=" + mono1.characteristic(false, true ));
+            System.out.println("characteristic(true ,false)=" + mono1.characteristic(true , false));
+            System.out.println("characteristic(true, true )=" + mono1.characteristic(true , true ));
             System.out.println("CONSTANT_SIGNATURE=" + Monomial.CONSTANT_SIGNATURE);
 
             Monomial mono4 = new Monomial(new String[] { "a", "b" });

@@ -7,7 +7,9 @@
  + 128*a^2*b*x4^4
  + 16384*a^4*b^2*x4^8
 signature=/x4.08/b.02/a.04
-characteristic=/08/02/04;16384
+characteristic(false,true )=/x4.08/b.02/a.04
+characteristic(true ,false)=/08/02/04;16384
+characteristic(true, true )=/x4.08/b.02/a.04;16384
 CONSTANT_SIGNATURE=~~~~
 getFactorOf( + a^4*b^2) =  + 16384*x4^8
  + 24*a^4*b^2*x4^8 /  + 100*a^3*b^2 =  + 0

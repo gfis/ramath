@@ -1,6 +1,7 @@
 /*  Polynomial: a symbolic, multivariate Polynomial with addition, multiplication
  *  and exponentiation
  *  @(#) $Id: Polynomial.java 744 2011-07-26 06:29:20Z gfis $
+ *  2015-11-16: Groebner bases moved to Ideal.java
  *  2015-07-17: degree, isHomogeneous
  *  2015-06-17: modulus removed, coefficients are BigRatiaonal again
  *  2015-03-25: isPowerSum
@@ -289,26 +290,13 @@ public class Polynomial implements Cloneable, Serializable {
 
     /*-------------- lightweight methods -----------------------------*/
 
-    /** Returns the lead term, that is the "greatest" {@link Monomial}
-     *  with respect to the monomial order defined by the TreeMap <em>monomials</em>.
-     *  @return the last element in the TreeMap <em>monomials</em>
-     */
-    public Monomial getLeadTerm() {
-        Monomial result = null;
-        String lastKey = monomials.lastKey();
-        if (lastKey != null) {
-            result = monomials.get(lastKey);
-        }
-        return result;
-    } // getLeadTerm
-
     /** Returns the number of {@link Monomial}s (summands) in the Polynomial
      *  @return number of monomials &gt;= 1
      */
     public int size() {
         return monomials.size();
     } // size
-    
+
     /** Returns a slash prepended list of the variables, in increasing exponent order
      *  @return "/a1,a0/a2,a3/b4;" for "+ 17*a0^2*a1 + a2^2*a3^3 - 4*b4", for example
      */
@@ -429,7 +417,7 @@ public class Polynomial implements Cloneable, Serializable {
         return monomials.size() == 0 || monomials.size() == 1 && hasConstant();
     } // isConstant private static final String FAILURE = "? ";
 
-    /** Determines whether there are one or more variables in the {@link Monomial}s of 
+    /** Determines whether there are one or more variables in the {@link Monomial}s of
      *  <em>this</em> {@link Polynomial}.
      *  @return true if there is at least one variable, or false otherwise
      */
@@ -468,7 +456,7 @@ public class Polynomial implements Cloneable, Serializable {
         return result;
     } // isBiased
 
-    /** Gets the <em>polarity</em> of <em>this</em> {@link Polynomial}, 
+    /** Gets the <em>polarity</em> of <em>this</em> {@link Polynomial},
      *  that is the sign of the constant monomial, if present,
      *  or the sum of the signums of all monomials otherwise.
      *  @return
@@ -476,7 +464,7 @@ public class Polynomial implements Cloneable, Serializable {
      *  <li>the signum of the constant monomial, if present, or otherwise:</li>
      *  <li>s &gt; 0 if there were more positive monomials</li>
      *  <li>s &lt; 0 if there were more negative monomials</li>
-     *  <li>s = 0 if the number of positive and negative monomials is the same, 
+     *  <li>s = 0 if the number of positive and negative monomials is the same,
      *  or the Polynomial itself is zero</li>
      *  </ul>
      */
@@ -532,7 +520,7 @@ public class Polynomial implements Cloneable, Serializable {
         } // while iter1
         return result;
     } // isPowerSum
-    
+
     /*-------------- arithmetic operations -------------------------*/
 
     /** Adds a {@link Monomial} to <em>this</em> {@link Polynomial}.
@@ -750,11 +738,12 @@ public class Polynomial implements Cloneable, Serializable {
      *  @return quotient
      */
     public Polynomial divide(Polynomial poly2) {
+        Polynomial result = this.clone();
         if (poly2.keySet().size() != 1) {
             throw new IllegalArgumentException("divisor may have only one monomial");
+        } else {
+            result.divideBy(poly2.getMonomials().firstEntry().getValue()); // it is the only one
         }
-        Polynomial result = this.clone();
-        result.divideBy(poly2.getLeadTerm()); // it is the only one
         return result;
     } // divide(Polynomial)
 
@@ -794,188 +783,6 @@ public class Polynomial implements Cloneable, Serializable {
         return result;
     } // hasSolution
 
-
-    //===============================================
-    // Gröbner bases, Buchberger's algorithm
-    //===============================================
-    /** Compute the so-called S-Polynomial S(f,g) of Buchberger's algorithm.
-     *  @param poly2 <em>poly2</em> is g and <em>this</em> is f
-     *  @return S(f,g) = lcm(lt(f),lt(g)) / lt(f) * f - lcm(lt(f),lt(g)) / lt(g) * g
-     */
-    public Polynomial s_Polynomial(Polynomial poly2) {
-        Monomial ltf    = this .getLeadTerm();
-        Monomial ltg    = poly2.getLeadTerm();
-        Monomial lcmfg  = ltf.lcm(ltg);
-        Monomial monof  = lcmfg.divide(ltf);
-        Monomial monog  = lcmfg.divide(ltg);
-        return (new Polynomial(monof)).multiply(this).subtract((new Polynomial(monog)).multiply(poly2));
-    } // s_Polynomial(Polynomial)
-
-    /** Divide a multivariate Polynomial by a set of other multivariate {@link Polynomial}s,
-     *  and return the rest.
-     *  <em>this</em> is the Polynomial f to be divided by the Polynomials F.
-     *  See http://de.wikipedia.org/wiki/Benutzer:Ap86/Artikelwerkstatt
-     *  @param polyF divide by these Polynomials
-     *  @param store whether to compute the resulting quotient Polynomials Ai
-     *  and store them back into <em>polyF</em>
-     *  @return <em>polyr</em>, the rest
-     */
-    public Polynomial multiDivide(ArrayList<Polynomial> polyF, boolean store) {
-        Polynomial polys = this.clone();
-        Polynomial polyr = new Polynomial(); // the rest
-        Polynomial[] polyA = new Polynomial[polyF.size()];
-        int ipoly = 0;
-        if (store) {
-            ipoly = polyF.size() - 1;
-            while (ipoly >= 0) {
-                polyA[ipoly] = new Polynomial(); // set Ai = 0
-                ipoly --;
-            } // while ipoly
-        } // if store
-        int loopCheck = 512;
-        boolean busy = true;
-        while (busy && ! polys.isZero() && loopCheck >= 0) {
-            Monomial lts = null;
-            ipoly = 0;
-            boolean found = false;
-            while (! found && ipoly < polyF.size()) {
-                lts = polys.getLeadTerm();
-                Monomial ltf  = polyF.get(ipoly).getLeadTerm();
-                Monomial quot = lts.divide(ltf);
-                if (debug >= 0 && store) {
-                    System.out.println("mdiv s = " + polys.toString()
-                            + ": (lts: "        + lts   .toString()
-                            + ") / (ltf[" + ipoly + "]: "   + ltf   .toString()
-                            + ") = (quot: "  + quot
-                            + "), rest "      + polyr .toString()
-                            );
-                }
-                if (quot != null) { // divides
-                    found = true;
-                    if (! quot.multiply(ltf).equals(lts)) { // assertion
-                        System.err.println("??? assertion: multiDivide error: "
-                                + quot.multiply(ltf).toString() + " <> "
-                                + lts.toString());
-                    } // assertion
-                    if (store) {
-                      polyA[ipoly].addTo(quot);
-                    } // if store
-                    polys = polys.subtract((new Polynomial(quot)).multiply(polyF.get(ipoly)));
-                } // divides
-                ipoly ++;
-            } // while ipoly
-            if (! found) {
-                busy = false;
-                polyr = polys;
-            /*
-                polyr.addTo       (lts);
-                polys.subtractFrom(lts);
-            */
-            }
-            loopCheck --;
-        } // while s != 0
-        if (loopCheck < 0) {
-            System.err.println("infinite loop in (" + this.toString() + ").multiDivide(...)");
-        } // loopCheck
-        if (store) {
-            if (debug >= 0 && store) {
-                System.out.print("multipleDivide: " + this.toString() + " = ");
-                for (ipoly = 0; ipoly < polyA.length; ipoly ++) {
-                    if (! polyA[ipoly].isZero()) {
-                        System.out.print(" + (" + polyA[ipoly].toString()
-                                + ") * (" + polyF.get(ipoly).toString()
-                                + ")");
-                    } // A[i] != 0
-                } // for ipoly
-                System.out.println(" + [Rest = " + polyr.toString() + "]");
-            }
-        } // if store
-        return polyr;
-    } // multiDivide()
-
-    /** Compute the Gröbner basis of a set of {@link Polynomial}s with Buchberger's algorithm.
-     *  See http://en.wikipedia.org/wiki/Gr%C3%B6bner_basis and especially
-     *  http://en.wikipedia.org/wiki/Buchberger%27s_algorithm
-     *  @param polyF a set of Polynomials F = (f1, f2 ...)
-     *  @param store whether to print debugging information
-     *  @return another set polygi, the Gröbner base G = (g1, g2 ...)
-     */
-    public static ArrayList<Polynomial> groebnerBasis(ArrayList<Polynomial> polyF, boolean store) {
-        ArrayList<Polynomial> polyG = new ArrayList<Polynomial>(32); // the future result
-        int ipF = 0;
-        while (ipF < polyF.size()) { // copy F to G
-            polyG.add(polyF.get(ipF ++));
-        } // while copying
-
-        int sizeG = polyG.size();
-        int ipG = 0;
-        int jpG = 0;
-        int kpG = 0;
-        int kpN = 0;
-        boolean steady = false;
-        while (! steady) {
-            ArrayList<Polynomial> polyN = new ArrayList<Polynomial>(32); // the new elements
-            sizeG = polyG.size();
-            ipG = 0;
-            while (ipG < sizeG) { // cross ipG with all lower jpG
-                jpG = 0;
-                while (jpG < sizeG) {
-                    if (ipG != jpG) {
-                        Polynomial sijG = polyG.get(ipG).s_Polynomial(polyG.get(jpG));
-                        Polynomial rest = sijG.multiDivide(polyG, store);
-                        if (! rest.isZero()) {
-                            boolean foundG = false;
-                            kpG = 0;
-                            while (! foundG && kpG < polyG.size()) {
-                                foundG = rest.equals(polyG.get(kpG));
-                                kpG ++;
-                            } // while kpG
-                            boolean foundN = false;
-                            kpN = 0;
-                            while (! foundN && kpN < polyN.size()) {
-                                foundN = rest.equals(polyN.get(kpN));
-                                kpN ++;
-                            } // while kpN
-                            if (! foundG && ! foundN) {
-                                if (store && debug >= 0) {
-                                    System.out.println("adding [" + (polyG.size() + polyN.size())
-                                            + "] = " + rest.toString());
-                                }
-                                polyN.add(rest);
-                                ipG = sizeG; // break both loops
-                                jpG = sizeG;
-                            }
-                        } // rest != 0
-                    } // if ipG != jpG
-                    jpG ++;
-                } // while jpG
-                ipG ++;
-            } // while ipG
-            steady = polyN.size() == 0;
-            if (! steady) {
-                kpN = 0;
-                while (kpN < polyN.size()) {
-                    polyG.add(polyN.get(kpN));
-                    kpN ++;
-                } // while kpN
-            } // ! steady
-        } // while ! steady
-        return polyG;
-    } // groebnerBasis
-/* Mencinger Fig. 8
-IN:
- x^2 + y*z + x
- z^2 + x*y + z
- y^2 + x*z + y
-OUT:
-x + x^2 + y*z   #5
-z + x*y + z^2   #4
-y + y^2 + x*z
-x - y + x^2 - x*y - y^2 - 2*x*y^2
-x^2 - y^2 + x^3 - y^3
-x - y + x^2 + x*y - y^2 + 2*x^2*y
-x^2 + 3*x^3 + 2*x^4
-*/
     //-----------------------------------------------
 
     /** Gets a map from all variable names (key) to <em>null</em> (value).
@@ -1249,7 +1056,7 @@ x^2 + 3*x^3 + 2*x^4
     } // gcdCoefficients
 
     /*---------------- heavyweight methods ----------------------*/
-    
+
     //-----------------
     // Generate subsets
     //------------------
@@ -1362,7 +1169,7 @@ x^2 + 3*x^3 + 2*x^4
     } // getSubPolynomial
 
     // Elimination of lower power terms
-    
+
     /** Modifies <em>this<em> {@link Polynomial} such that
      *  all {@link Monomial}s consisting of a power of a variable
      *  "consumes" as much as possible of the {@link Coefficient} into
@@ -1383,7 +1190,7 @@ x^2 + 3*x^3 + 2*x^4
                 String var1 = mono1.firstName();
                 BigInteger croot = mono1.reducePowerCoefficient(var1);
                 String vexpr = vmap.get(var1);
-                if (    // false && 
+                if (    // false &&
                         ! croot.equals(BigInteger.ONE)) { // could extract a root > 1
                     vexpr = "(" + vmap.get(var1) + ")*" + croot.toString();
                 } // could extract a root > 1
@@ -1558,7 +1365,7 @@ x^2 + 3*x^3 + 2*x^4
      *  and the Polynomial is widened appropriately.
      *  @param debug2 = 0: no debugging output, 1 = some, 2 = more, 3 = most
      *  @return a new {@link VariableMap} with a mapping from variables to expression which
-     *  transforms this into the reduced Polynomial, 
+     *  transforms this into the reduced Polynomial,
      *  and the reduced Polynomial mapped from "" (the empty String)
      *  <p>Trace of testcase LR1:
      *  <pre>
@@ -1644,7 +1451,7 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
         int count = 0;
         while (titer.hasNext()) { // over all monomials
             Monomial mono = this.monomials.get(titer.next());
-            String tchic = mono.characteristic();
+            String tchic = mono.characteristic(true, false);
             Polynomial subPoly = resultMap.get(tchic);
             if (subPoly == null) {
                 subPoly = new Polynomial(mono);
@@ -1683,8 +1490,8 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
      *  Normalization is a predecessor step for equivalence checking, and proceeds
      *  in this sequence:
      *  <ul>
-     *      <li>divide all coefficients by their greatest common divisor (GCD)</li>
-     *      <li>make the sign of the lead term (the last {@link Monomial}) positive</li>
+     *      <li>deflate: divide all coefficients by their greatest common divisor (GCD)</li>
+     *      <li>make the sign of the first {@link Monomial} positive</li>
      *  </ul>
      *  @return reference to <em>this</em> - modified - Polynomial
      */
@@ -1693,6 +1500,23 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
         if (divisor.compareTo(BigInteger.ONE) != 0) { // divide by GCD if != 1
             this.divideBy(divisor);
         }
+        Iterator <String> titer = getMonomials().keySet().iterator();
+        boolean first = true;
+        boolean busy  = true;
+        while (busy && titer.hasNext()) {
+            Monomial mono1 = monomials.get(titer.next());
+            if (first) {
+                first = false;
+                Coefficient coeff1 = mono1.getCoefficient();
+                if (coeff1.compareTo(Coefficient.ZERO) < 0) { // c.f. Monomial.isNegative()
+                    mono1.setCoefficient(Coefficient.valueOf(coeff1.negate()));
+                } else { // positive - break loop
+                    busy = false;
+                }
+            } else {
+                mono1.setCoefficient(Coefficient.valueOf(mono1.getCoefficient().negate()));
+            }
+        } // while titer
         return this;
     } // normalizeIt
 
@@ -1726,7 +1550,7 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
         Polynomial poly3 = poly2.deflate(); // cloned
         Polynomial add13 = poly1.add     (poly3);
         Polynomial sub13 = poly1.subtract(poly3);
-        boolean result = poly1.add     (poly3).isZero() || 
+        boolean result = poly1.add     (poly3).isZero() ||
                          poly1.subtract(poly3).isZero();
         // System.out.println(poly1.toString() +  " isEqualTo? " + poly3.toString() + " => " + result + ",add=" + add13.toString() + ", sub=" + sub13.toString());
         return result;
@@ -1735,7 +1559,7 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
     /** Determines whether two {@link Polynomial}s are equivalent, that is whether
      *  <ul>
      *  <li>they are {@link #equals equal} or</li>
-     *  <li>they have the same variable names and exponents, but they differ by 
+     *  <li>they have the same variable names and exponents, but they differ by
      *  a positive or negative multiplicative factor.</li>
      *  </ul>
      *  @param poly2 second comparision operand
@@ -1745,86 +1569,6 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
         return this .deflate().toString().equals(
                poly2.deflate().toString() );
     } // isEquivalent
-  
-    /** Tries to establish an affine mapping between the variables
-     *  of <em>this</em> Polynomial and a 2nd Polynomial.
-     *  The absolute coefficients of the 2nd Polynomial should be greater than or equal to
-     *  the absolute coefficients of <em>this</em> Polynomial.
-     *  The set of variable names in both Polynomials must be identical.
-     *  Currently, only univariate Monomials are treated properly,
-     *  and the offsets <em>bi</em> are assumed to be 0.
-     *  @param poly2 second comparision operand
-     *  @return a map from this set of variables to the 2nd set
-     *  in the form (ai*xi + bi) -&gt; xi'
-     *  <pre>
-     *  this  = x^4     - y^4    - z^2  = 0
-     *  poly2 = 16*x^4  - 16*y^4 - z^2  = 0
-     *  ------------------------------------------------
-     *  this.affineMap(poly2) = { x -> 2*x, y -> 2*y, z ->   z }  AND
-     *  poly2.affineMap(this) = { x ->   x, y ->   y, z -> 4*z }
-     *  </pre>
-     */
-    public VariableMap affineMap(Polynomial poly2) {
-        boolean success = true;
-        VariableMap result = this.getVariableMap();
-        try {
-            Set<String> set1 = this .keySet();
-            Set<String> set2 = poly2.keySet();
-            if (set1.size() == set2.size() && poly2.isMonoVariate()) {
-                Iterator <String> iter1 = set1.iterator();
-                Iterator <String> iter2 = set2.iterator();
-                boolean busy = true;
-                while (success && busy && iter1.hasNext()) { // over all signatures
-                    String sig1 = iter1.next();
-                    String sig2 = iter2.next();
-                    busy = sig1.equals(sig2);
-                    if (busy) { // sigs ==
-                        Monomial mono1 = this .get(sig1);
-                        Monomial mono2 = poly2.get(sig2);
-                        BigInteger coeff1 = mono1.getCoefficient();
-                        BigInteger coeff2 = mono2.getCoefficient();
-                        if (! sig1.equals(Monomial.CONSTANT_SIGNATURE)) { // skip constant
-                            if (coeff2.mod(coeff1.abs()).equals(BigInteger.ZERO)) { // coeff2 is multiple of coeff1
-                                coeff2 = coeff2.divide(coeff1);
-                                Iterator<String> miter1 = mono1.keySet().iterator();
-                                String var1 = miter1.next();
-                                int exp1 = mono1.getExponent(var1);
-                                BigInteger factor = coeff2.equals(BigInteger.ONE)
-                                        ? BigInteger.ONE
-                                        : BigIntegerUtil.root(coeff2, exp1);
-                                if (factor.compareTo(BigInteger.ONE) >= 0) { // 1 or root > 1
-                                    String value = result.get(var1);
-                                    if (value == null) { // new
-                                        result.put(var1, "(" + factor.toString() + "*" + var1 + ")");
-                                    } else { // previously stored - must be the same
-                                        success = success && value.startsWith("(" + factor.toString() + "*");
-                                    } // previously
-                                    // factor is root
-                                } else { // factor is no root
-                                    success = false;
-                                }
-                            } else {
-                                success = false;
-                            }
-                            // ! constant
-                        } else { // compare the constants
-                            success = success && (coeff1.equals(coeff2));
-                        }
-                        // if sigs ==
-                    } else {
-                        success = false;
-                    }
-                } // while iter1
-                // keySets of same size
-            } else {
-                success = false;
-            }
-        } catch (Exception exc) {
-            System.err.println(exc.getMessage());
-            exc.printStackTrace();
-        }
-        return success ? result : null;
-    } // affineMap
 
     /** For a variable, return the - univariate - {@link Monomial}s
      *  in <em>this</em> Polynomial which have
@@ -2003,24 +1747,16 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
             boolean outcome = this.substitute(mapt).clone().deflateIt()
                     .equals(poly2.clone().deflateIt());
             if (! outcome) {
-                if (false) { // old code
-                    mapt = this.affineMap   (poly2);
-                    outcome = mapt != null;
-                    if (outcome) {
-                        result = "affine map: "     + mapt.toString();
-                    }
-                } else { // new code
-                    mapt = this.isMappableTo(poly2); // this is the way to map the new element to one in the queue
-                    outcome = mapt != null;
-                    if (outcome) {
-                        result = "is mappable by: " + mapt.toString();
-                        if (debug >= 2) {
-                            result += " ("  + this .toString()
-                                    + " => " + poly2.toString()
-                                    +  ") ";
-                        } // debug
-                    }
-                } // new
+                mapt = this.isMappableTo(poly2); // this is the way to map the new element to one in the queue
+                outcome = mapt != null;
+                if (outcome) {
+                    result = "is mappable by: " + mapt.toString();
+                    if (debug >= 2) {
+                        result += " ("  + this .toString()
+                                + " => " + poly2.toString()
+                                +  ") ";
+                    } // debug
+                }
             } else { // equals
                 result = "same";
             }
@@ -2050,7 +1786,7 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
     /** Substitutes variable names with the expressions from a {@link VariableMap} (if they are not null),
      *  and returns a new Polynomial.
      *  @param vmap map of variable names to (expressions or null);
-     *  whether uppercase variables should be replaced must already have been 
+     *  whether uppercase variables should be replaced must already have been
      *  defined during the construction of this map.
      *  @return a new Polynomial
      */
@@ -2239,15 +1975,6 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
             } else { // some option
                 if (false) {
 
-                } else if (opt.startsWith("-affine")) {
-                    poly1 = Polynomial.parse(args[iarg ++]);
-                    poly2 = Polynomial.parse(args[iarg ++]);
-                    System.out.println("(\"" + poly1.toString() + "\").affineMap(\""    + poly2.toString() + "\") = "
-                            + poly1.affineMap   (poly2));
-            /*
-                } else if (opt.startsWith("-bachet")) {
-                	// c.f. Sandbox.main
-            */
                 } else if (opt.startsWith("-degree")) {
                     poly1 = Polynomial.parse(args[iarg ++]);
                     System.out.println("(" + poly1.toString() + ").degree()      = " + poly1.degree()     );
@@ -2263,24 +1990,6 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
                     poly1 = Polynomial.parse(ereader.read(args[iarg ++]));
                     System.out.println(poly1.toString());
                     poly1.printProperties();
-
-                } else if (opt.startsWith("-groebner")) {
-                    exprs = ereader.getArguments(iarg, args);
-                    ipoly = 0;
-                    polys = new ArrayList<Polynomial>(16);
-                    System.out.println("Input:");
-                    while (ipoly < exprs.length) {
-                        polys.add((new PolynomialParser()).parseFrom(exprs[ipoly]));
-                        System.out.println(polys.get(ipoly));
-                        ipoly ++;
-                    } // while ipoly
-                    polys = Polynomial.groebnerBasis(polys, true);
-                    System.out.println("Groebner Basis:");
-                    ipoly = 0;
-                    while (ipoly < polys.size()) {
-                        System.out.println("GB: " + polys.get(ipoly));
-                        ipoly ++;
-                    } // while ipoly
 
                 } else if (opt.startsWith("-hiter")) {
                     poly1 = Polynomial.parse(args[iarg ++]);
@@ -2320,19 +2029,6 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
                     System.out.println("(\"" + poly1.toString() + "\").isMappableTo(\"" + poly2.toString() + "\") = "
                             + poly1.isMappableTo(poly2));
 
-                } else if (opt.startsWith("-mdiv")) {
-                    exprs = ereader.getArguments(iarg, args);
-                    ipoly = 0;
-                    poly1 = (new PolynomialParser()).parseFrom(exprs[ipoly]);
-                    ipoly ++;
-                    polys = new ArrayList<Polynomial>(16);
-                    while (ipoly < exprs.length) {
-                        polys.add((new PolynomialParser()).parseFrom(exprs[ipoly]));
-                        ipoly ++;
-                    } // while ipoly
-                    System.out.println("multiDivide(" + poly1.toString() + ") = "
-                            + poly1.multiDivide(polys, true).toString());
-
                 } else if (opt.startsWith("-psum")) {
                     poly1 = Polynomial.parse(args[iarg ++]);
                     System.out.println("(\"" + poly1.toString() + "\").isPowerSum() = "
@@ -2363,7 +2059,7 @@ solution [0,0,0,0],trivial(3)
                         ipoly ++;
                     } // while ipoly
                     // -redsol
-                    
+
                 } else if (opt.startsWith("-reduce")) { // poly
                     poly1 = Polynomial.parse(args[iarg ++]);
                     vmap1 = poly1.getReductionMap(1);
@@ -2381,13 +2077,6 @@ solution [0,0,0,0],trivial(3)
                     BigRational brat1 = new BigRational(args[iarg ++]);
                     System.out.println(brat1.toString() + " solves " + poly1.toString()
                             + "? " + poly1.hasSolution(brat1));
-
-                } else if (opt.startsWith("-spoly")) {
-                    exprs = ereader.getArguments(iarg, args);
-                    poly1 = Polynomial.parse(exprs[0]);
-                    poly2 = Polynomial.parse(exprs[1]);
-                    System.out.println("S(" + poly1.toString() + ", " + poly2.toString() + ") = "
-                            + poly1.s_Polynomial(poly2).toString());
 
                 } else if (opt.startsWith("-var")) { // getVariablePowers and groupBy
                     String varName = args[iarg ++];

@@ -133,7 +133,7 @@ public class TreeSolver extends BaseSolver {
                 if (vmap2.size() > 0) {
                     RelationSet rset2 = factory1.getStartNode().substitute(vmap2, getUpperSubst());
                     if (norm) {
-                        rset2.deflateIt();
+                        rset2.normalizeIt();
                     }
                     rset2.setIndex(this.size()); // next free queue entry
                     rset2.setMapping(vmap2);

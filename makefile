@@ -15,7 +15,10 @@ TESTDIR=test
 WROB=../../mater/ramath/eec/wroblewski
 
 all: solver
-regression: simple symbolic linear matrix solver sandbox
+regression: simple symbolic ideal linear matrix solver sandbox
+ideal:
+	$(REGR) test/ideal.tests 	$(TEST) 2>&1 | tee regression.log.tmp
+	grep FAILED regression.log.tmp
 linear:
 	$(REGR) test/linear.tests 	$(TEST) 2>&1 | tee regression.log.tmp
 	grep FAILED regression.log.tmp

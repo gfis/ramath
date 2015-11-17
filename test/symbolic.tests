@@ -203,6 +203,9 @@ CALL Polynomial -f $(DATA)
 # TEST P09 prepareCompletion
 # CALL Polynomial -reduce "3x1^2 - 3*x1*x2 + 7*x1*x3"  
 # 
+TEST P09 superscript exponents
+CALL Polynomial "x¹⁴ + 3x²²+4x³+2x⁴⁴⁴+2y⁴-z-2z⁴"
+
 TEST P10 abstract matrix times (3,4,5,6)
 DATA
  (a11*3 + a12*4 + a13*5 + a14*6)^3
@@ -259,12 +262,6 @@ CALL Polynomial "-1(2x^3 + y^4)5w3v4 - (z+5)^2"
 #----------------------------------------------
 # similiarity methods
 
-TEST PMP1 affineMap = {x=>(2*x),y=>(2*y),z=>(1*z)}
-CALL Polynomial -affine   "x^4 - y^4 - z^2"       "16*x^4 - 16*y^4 - z^2"
-
-TEST PMP2 affineMap = null
-CALL Polynomial -affine   "16*x^4 - 16*y^4 - z^2" "x^4 - y^4 - z^2"
-
 TEST PMP3 isMappableTo = {x=>2*x,y=>2*y,z=>z}
 CALL Polynomial -mappable "16*x^4 - 16*y^4 -    z^2" "x^4 - y^4 -z^2"
 
@@ -282,9 +279,6 @@ CALL Polynomial -mappable "1*(9 + 6*a + 12*a^2 + 8*a^3 + 36*b + 54*b^2 + 27*b^3 
 
 TEST PMP8 isMappableTo = null, should be = {a=>1+2*a,b=>2+3*b,c=>c,d=>d} (wrong because of the factor 5)
 CALL Polynomial -mappable "5*(9 + 6*a + 12*a^2 + 8*a^3 + 36*b + 54*b^2 + 27*b^3 + c^3 - d^3)" "a^3+b^3+c^3-d^3"
-
-TEST PMP9 affineMap = null, should be = {a=>1+2*a,b=>2+3*b,c=>c,d=>d} (wrong because of the factor 5)
-CALL Polynomial -affine "a^3+b^3+c^3-d^3" "5*(9 + 6*a + 12*a^2 + 8*a^3 + 36*b + 54*b^2 + 27*b^3 + c^3 - d^3)"
 
 #----------------
 TEST W05 binomial: 6th power with 3 variables

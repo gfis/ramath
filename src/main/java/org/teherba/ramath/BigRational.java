@@ -35,9 +35,9 @@ import  java.math.RoundingMode;
 /** BigRational - a fraction as a pair of {@link BigInteger}s, and functions for them.
  *  @author Dr. Georg Fischer
  */
-public class BigRational 
-        // extends BigInteger 
-        implements Cloneable, Serializable 
+public class BigRational
+        // extends BigInteger
+        implements Cloneable, Serializable
         {
     private static final long serialVersionUID = 1L;
     public final static String CVSID = "@(#) $Id: BigRational.java 231 2009-08-25 08:47:16Z gfis $";
@@ -45,15 +45,15 @@ public class BigRational
     /** Debugging switch: 0 = no, 1 = moderate, 2 = more, 3 = extreme verbosity */
     private static int debug = 0;
 
-    /** dividend, the number which is divided by the denominator, see https://en.wikipedia.org/wiki/Quotient */
+    /** dividend, numerator,  the integer number which is divided by the denominator, see https://en.wikipedia.org/wiki/Quotient */
     private BigInteger num;
-    /** divisor, the number which divides the numerator */
+    /** divisor, denominator, the natural number which divides the numerator (always positive) */
     private BigInteger den;
 
     /** Construct from a String: either a decimal number (with decimal dot),
      *  or a fraction of the form numerator/denominator.
-     *  All characters except from digits, '.' and '/' are stripped.
-     *  @param rawNumber string with digits, decimal dot or slash.
+     *  @param rawNumber String with decimal digits, decimal dot or slash;
+     *  all characters except from 0-9, '.' and '/' are stripped.
      */
     public BigRational(String rawNumber) {
         // super("0");
@@ -63,7 +63,7 @@ public class BigRational
             slashPos = number.length();
             number += "/1";
         } // integral
-        this.num   = new BigInteger(number.substring(0, slashPos), 10);
+        this.num = new BigInteger(number.substring(0, slashPos) , 10);
         this.den = new BigInteger(number.substring(slashPos + 1), 10);
     } // Constructor String
 
@@ -71,14 +71,14 @@ public class BigRational
      *  @param bytes the result of BigInteger.toByteArray()
      */
     public BigRational(byte[] bytes) {
-    	// super("0");
-        this.num   = new BigInteger(bytes);
+        // super("0");
+        this.num = new BigInteger(bytes);
         this.den = BigInteger.ONE;
     } // Constructor(byte[])
 
     /** Constructing with 1 BigInteger argument; the denominator will be 1
      *  @param num numerator of the instance
-     *  @return a new instance 
+     *  @return a new instance
      */
     public static BigRational valueOf(BigInteger num) {
         BigRational result = new BigRational("0");
@@ -89,7 +89,7 @@ public class BigRational
 
     /** Constructing with 1 long argument; the denominator will be 1
      *  @param num   numerator of the instance
-     *  @return a new instance 
+     *  @return a new instance
      */
     public static BigRational valueOf(long num) {
         BigRational result = new BigRational("0");
@@ -101,7 +101,7 @@ public class BigRational
     /** Constructing with 2 BigInteger arguments
      *  @param num   numerator   of the instance
      *  @param den denominator of the instance
-     *  @return a new instance 
+     *  @return a new instance
      */
     public static BigRational valueOf(BigInteger num, BigInteger den) {
         BigRational result = new BigRational("0");
@@ -113,7 +113,7 @@ public class BigRational
     /** Constructor with 2 long arguments
      *  @param num numerator   of the instance
      *  @param den den of the instance
-     *  @return a new instance 
+     *  @return a new instance
      */
     public static BigRational valueOf(long num, long den) {
         BigRational result = new BigRational("0");
@@ -124,7 +124,7 @@ public class BigRational
 
     /** Construct from a BigDecimal; the denominator will be a power of 10.
      *  @param bdec represent this exact
-     *  @return a new instance 
+     *  @return a new instance
      */
     public static BigRational valueOf(BigDecimal bdec) {
         BigRational result = new BigRational("0");
@@ -174,20 +174,6 @@ public class BigRational
     protected BigInteger getDen() {
         return this.den;
     } // getDen
-
-    /** Gets the "a" coefficient of a continued fraction [a0;b1/a1,b2/a2...]
-     *  @return  numerator of this fraction
-     */
-    private BigInteger getA_deprecated() {
-        return this.num;
-    } // getA
-
-    /** Gets the "b" coefficient of a continued fraction [a0;b1/a1,b2/a2...]
-     *  @return  denominator of this fraction
-     */
-    private BigInteger getB_depricated() {
-        return this.den;
-    } // getB
 
     /** sets the "a" coefficient of a continued fraction [a0;b1/a1,b2/a2...]
      *  @param a  numerator of this fraction
@@ -311,7 +297,7 @@ public class BigRational
      *  @return [this / val, this mod val]
      */
     public BigInteger[] divideAndRemainder(BigRational val) {
-    	BigInteger[] result = this.getNum().divideAndRemainder(val.getNum());
+        BigInteger[] result = this.getNum().divideAndRemainder(val.getNum());
         return result;
     } // divideAndRemeinder(BigRational)
 
@@ -329,7 +315,7 @@ public class BigRational
 
     /** Returns a BigRational whose value is (this**exp) - raised to some exponent.
      *  The resulting fraction is simplified.
-     *  @param exp the power to which this BigRational is to be raised, may be negative
+     *  @param exp the power to which this BigRational is to be raised, may be -1
      *  @return this**exp
      */
     public BigRational pow     (int exp) {
@@ -352,8 +338,11 @@ public class BigRational
                 if (exp >= 0) {
                     result = BigRational.valueOf(this.num.pow(exp), this.den.pow(exp));
                 } else {
+                	throw new IllegalArgumentException("negative exponent in 'pow': " + exp);
+                /*
                     exp = - exp;
                     result = BigRational.valueOf(this.den.pow(exp), this.num.pow(exp)).simplify();
+                */
                 }
                 break;
         } // switch exp
@@ -549,7 +538,7 @@ public class BigRational
         System.out.println("3/4 / 5/7 = " + (BigRational.valueOf(3,4)).divide   (BigRational.valueOf(5,7)).getDecimal().toString());
         System.out.println("3/4 * 4/3 = " + (BigRational.valueOf(3,4)).multiply (BigRational.valueOf(4,3))             .toString());
         System.out.println("3/4 pow 3 = " + (BigRational.valueOf(3,4)).pow      (3                   )                 .toString());
-        System.out.println("3/4 pow -2= " + (BigRational.valueOf(3,4)).pow      (-2                  )                 .toString());
+        System.out.println("3/4 pow -1= " + (BigRational.valueOf(3,4)).pow      (-1                  )                 .toString());
         System.out.println("3/4 <>5/7 = " + (BigRational.valueOf(3,4)).compareTo(BigRational.valueOf(5,7)));
         System.out.println("3/4 == 5/7 = "     + (BigRational.valueOf(3,4)).equals   (BigRational.valueOf(5,7)));
         System.out.println("3/4 == -12/-16 = " + (BigRational.valueOf(3,4)).equals   (new BigRational("-12/-16")));
