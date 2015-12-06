@@ -1,5 +1,6 @@
 /*  Coefficient: extends either BigInteger or BigRational
  *  @(#) $Id: Coefficient.java 231 2009-08-25 08:47:16Z gfis $
+ *  2015-12-06: toString(int mode)
  *  2015-07-20: moved from ./symbolic, lifted to BigRational
  *  2015-06-17: Georg Fischer: copied from BigRational
  */
@@ -21,6 +22,7 @@
 package org.teherba.ramath;
 import  org.teherba.ramath.BigRational;
 import  org.teherba.ramath.BigIntegerUtil;
+import  org.teherba.ramath.PrimeFactorization;
 import  org.teherba.ramath.symbolic.Monomial;
 import  java.io.Serializable;
 import  java.math.BigInteger;
@@ -36,6 +38,13 @@ public class Coefficient
         {
     private static final long serialVersionUID = 1L;
     public final static String CVSID = "@(#) $Id: Coefficient.java 231 2009-08-25 08:47:16Z gfis $";
+
+    /** constant 0 */
+    public static final Coefficient ZERO = new Coefficient("0");
+    /** constant 1 */
+    public static final Coefficient ONE  = new Coefficient("1");
+    /** constant 2 */
+    public static final Coefficient TWO  = new Coefficient("2");
 
     /** Construct from a String: an optional sign, and either a decimal number (with decimal dot),
      *  or a fraction of the form <em>numerator/denominator</em>.
@@ -93,11 +102,21 @@ public class Coefficient
         return this;
     } // bigIntegerValue
 
-    /** constant 0 */
-    public static final Coefficient ZERO = new Coefficient("0");
-    /** constant 1 */
-    public static final Coefficient ONE  = new Coefficient("1");
-    /** constant 2 */
-    public static final Coefficient TWO  = new Coefficient("2");
-    
+    /** Returns a String representation of <em>this</em> {@link Coefficient}, 
+     *  either as decimal number or as product of prime factor powers
+     *  @param mode 0 = normal, 1 = full (for substitution), 2 = nice / human legible,
+     *  3 = with prime factors
+     *  @return "17*a0^2*a1 + a2^2*a3^3 - 4*b4", for example for mode = 0
+     */
+/*
+    public String toString(int mode) {
+        String result = null;
+        if (mode <= 2 || true) { // normal
+            result = this.toString();
+        } else { // >= 3: with PrimeFactorization
+            result = (new PrimeFactorization(this.bigIntegerValue())).toString(mode);
+        } // if mode
+        return result;
+    } // toString(mode)
+*/    
 } // Coefficient

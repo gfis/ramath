@@ -1,6 +1,7 @@
 /*  PolynomialParser: parser for the recognition of arithmetic expressions
  *  @(#) $Id: PolynomialParser.java 522 2010-07-26 07:14:48Z gfis $
- *  2015-11-17: handle superscript digits with getNUmericValue
+ *  2015-12-06: prime factorizations were messed up
+ *  2015-11-17: handle superscript digits with getNumericValue
  *  2015-07-17: relaxed rules for '*': may be omitted after a number or ')'
  *  2013-09-20: BigRational -> BigIntegerUtil
  *  2013-08-14: decode %-escaped sequence and reprocess the corresponding character
@@ -67,6 +68,7 @@ public class PolynomialParser extends Polynomial {
             { IN_START      // at the beginning of the input string
             , IN_NAME       // after the first letter of a name
             , IN_NUMBER     // after the first digit of a number
+            , IN_EXPONENT   // after the first superscripted digit
             , IN_OPERATOR   // after first character of a relational or boolean operator, or after '%'
             , IN_CLOSE      // after ')' - eventually insert '*'
             };
@@ -189,19 +191,19 @@ public class PolynomialParser extends Polynomial {
                                 replaceLower("q^");
                                 buffer.setLength(0);
                                 buffer.append('1');
-                                state = State.IN_NUMBER;
+                                state = State.IN_EXPONENT;
                                 break;
                             case '²': // '\u00b2', super 2
                                 replaceLower("q^");
                                 buffer.setLength(0);
                                 buffer.append('2');
-                                state = State.IN_NUMBER;
+                                state = State.IN_EXPONENT;
                                 break;
                             case '³': // '\u00b3', super 3
                                 replaceLower("q^");
                                 buffer.setLength(0);
                                 buffer.append('3');
-                                state = State.IN_NUMBER;
+                                state = State.IN_EXPONENT;
                                 break;
                             case '(':
                                 pushOper("y("); // higher than all other precedences
@@ -228,7 +230,7 @@ public class PolynomialParser extends Polynomial {
                                     replaceLower("q^");
                                     buffer.setLength(0);
                                     buffer.append(Character.forDigit(ch - 0x2070, 10));
-                                    state = State.IN_NUMBER;
+                                    state = State.IN_EXPONENT;
                                 } else if (Character.isDigit(ch)) {
                                     buffer.setLength(0);
                                     buffer.append(ch);
@@ -265,6 +267,43 @@ public class PolynomialParser extends Polynomial {
                                 state = State.IN_START;
                                 break;
                             case '¹': // '\u00b9', super 1, right-associative ??? 
+                            case '²': // '\u00b2', super 2, right-associative ???
+                            case '³': // '\u00b3', super 3, right-associative ???
+                                postfix.add(buffer.toString());
+                                readOff = false;
+                                state = State.IN_START;
+                                break;
+                            default:
+                                if (false) {
+                                } else if (ch >= '\u2070' && ch <= '\u2079') {
+                                    postfix.add(buffer.toString());
+                                    readOff = false;
+                                    state = State.IN_START;
+                                } else if (ch >= '0' && ch <= '9') { // Character.isDigit(ch)) {
+                                    buffer.append(ch);
+                                } else if (Character.isLetter(ch)) { // imply a multiplication operator
+                                    postfix.add(buffer.toString());
+                                    replaceLower("p*");
+                                    readOff = false;
+                                    state = State.IN_START;
+                                } else {
+                                    postfix.add(buffer.toString());
+                                    readOff = false;
+                                    state = State.IN_START;
+                                }
+                                break;
+                        } // switch ch
+                        break; // IN_NUMBER
+
+                    case IN_EXPONENT: // similiar to, but not identical with IN_NUMBER
+                        switch (ch) {
+                            case '(':
+                                postfix.add(buffer.toString());
+                                replaceLower("p*");
+                                readOff = false;
+                                state = State.IN_START;
+                                break;
+                            case '¹': // '\u00b9', super 1, right-associative ??? 
                                 buffer.append('1');
                                 break;
                             case '²': // '\u00b2', super 2, right-associative ???
@@ -277,8 +316,11 @@ public class PolynomialParser extends Polynomial {
                                 if (false) {
                                 } else if (ch >= '\u2070' && ch <= '\u2079') {
                                     buffer.append(Character.forDigit(ch - 0x2070, 10));
-                                } else if (Character.isDigit(ch)) {
-                                    buffer.append(ch);
+                                } else if (ch >= '0' && ch <= '9') { // Character.isDigit(ch)) {
+                                    postfix.add(buffer.toString());
+                                    replaceLower("p*");
+                                    readOff = false;
+                                    state = State.IN_START;
                                 } else if (Character.isLetter(ch)) { // imply a multiplication operator
                                     postfix.add(buffer.toString());
                                     replaceLower("p*");

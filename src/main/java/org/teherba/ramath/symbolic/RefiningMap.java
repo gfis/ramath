@@ -67,7 +67,7 @@ public class RefiningMap extends VariableMap implements Cloneable , Serializable
         Iterator<String> iter = vmap.keySet().iterator();
         while (iter.hasNext()) {
             String key = (String) iter.next();
-            String value = (new Polynomial(vmap.get(key))).toString(true) // with "1*x^1"
+            String value = (new Polynomial(vmap.get(key))).toString(1) // with "1*x^1"
                     .replaceAll("\\s" , "")
                     .replaceAll("\\^1", "")
                     .replaceAll("\\=0", "")

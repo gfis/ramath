@@ -146,7 +146,7 @@ public class ParameterEquation {
     /** a set of variable names */
     private static final String letters = "abcdefghijklmnopqrstuvwxyz";
 
-    /** Expands the parameters of a set of polynomials,
+    /** Expands the parameters of a set of {@link Polynomial}s,
      *  and prints the resulting constants.
      *  @param expressions a set of polynomial formulas
      *  @param maxDigit expand the variables' values up to but below this limit
@@ -212,7 +212,7 @@ public class ParameterEquation {
                 ipoly ++;
             } // while filling polys
             sumPoly = sumPoly.substitute(sumMap);
-            String tuple = (new Polynomial(normExpr.toString())).toString(true)
+            String tuple = (new Polynomial(normExpr.toString())).toString(1)
                     .replaceAll("\\*\\w\\^1",",")
                     .replaceAll(" = 0", "");
             Vector vect = Vector.read(tuple);

@@ -264,6 +264,8 @@ CALL     PrimeFactorization 900
 TEST FP5 PrimeFactorization 19472906
 CALL     PrimeFactorization 19472906
 
+TEST FP6 PrimeFactorization 14400000
+CALL     PrimeFactorization 14400000
 #-------------------------------
 # Mixed Tests
 PACKAGE=org.teherba.ramath

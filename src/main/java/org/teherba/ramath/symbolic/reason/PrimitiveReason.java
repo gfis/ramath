@@ -126,7 +126,7 @@ public class PrimitiveReason extends BaseReason {
             getSolver().getWriter().println("rmap2=" + rmap2.niceString());
         } // debug
         if (isNonPrimitive(rmap2)) {
-            result = "non-primitive";
+            result = "non-primitive"; // <- message for this reason
         }
         return result;
     } // consider

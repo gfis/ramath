@@ -72,27 +72,28 @@ public class ModAccelerator extends BaseReason {
     /** Determines whether a {@link Polynomial} can be "accelerated".
      *  For all {@link Monomial}s except one (the "missing" Monomial) the GCD of
      *  the coefficients is computed.
-     *  For all such GCDs > 1, the variable in the missing Monomial must be divisible by that
-     *  GCD, and the variable is therefore replaced by a multiple of the GCD.
+     *  For all such GCDs > 1, the variable in the missing Monomial 
+     *  must be divisible by that GCD, and the variable is therefore 
+     *  replaced by a multiple of the GCD.
      *  The process is repeated until no such variable can be found anymore.
      *  If the missing Monomial was the constant, the RelationSet fails.
      *  @param poly2 Polynomial to be investigated
      *  @param upperSubst whether to substitute uppercase variables (default: true)
      *  @param rmap2 current {@link RefiningMap} defining the state of the expansion
-     *  @return "factor*vname" if a variable could be accelerated, or the empty String if no more
-     *  acceleratable variables were found.
+     *  @return "factor*vname" if a variable could be accelerated, 
+     *  or the empty String if no more acceleratable variables were found.
      *  <p>
      *  Caution, side effect: rmap2 is modified
      */
     public String getAcceleration(Polynomial poly2, boolean upperSubst,   RefiningMap rmap2) {
         String result = "";
         int plen = poly2.size();
-        Iterator<String> miter = poly2.keySet().iterator();
-        Monomial  [] monoms = new Monomial  [plen];
-        BigInteger[] coeffs = new BigInteger[plen];
+        Monomial  [] monoms = new Monomial  [plen]; // array of the Monomials
+        BigInteger[] coeffs = new BigInteger[plen]; // corresponding array of Coefficients
         int
         imono = 0;
-        while (miter.hasNext()) { // get 2 arrays
+        Iterator<String> miter = poly2.keySet().iterator(); 
+        while (miter.hasNext()) { // over ALL Monomials: get both arrays 
             String sig2 = miter.next();
             Monomial mono2 = poly2.get(sig2);
             monoms[imono] = mono2;
@@ -103,7 +104,7 @@ public class ModAccelerator extends BaseReason {
                         + ", monom=" + monoms[imono].toString());
             }
             imono ++;
-        } // while miter
+        } // while miter - get both arrays
 
         // now work on the arrays: leave 1 element out and compute the GCD of the others
         imono = 0; // index of the the missing monomial
@@ -111,7 +112,7 @@ public class ModAccelerator extends BaseReason {
             boolean first = true;
             BigInteger gcd_1 = null;
             int kmono = 0; // index of the other monomials
-            while (kmono < plen) { // compute the gcd of all except [imono]
+            while (kmono < plen) { // compute the GCD of all except element [imono]
                 if (kmono != imono) {
                     if (first) { // first monomial
                         first = false;
@@ -167,7 +168,7 @@ public class ModAccelerator extends BaseReason {
     public String accelerate(boolean upperSubst,   RefiningMap rmap2) {
         boolean busy = true;
         String result = "";
-        int loopCheck = 128;
+        int loopCheck = 64;
         while (busy
                 && loopCheck >= 0
                 ) {
@@ -201,8 +202,8 @@ public class ModAccelerator extends BaseReason {
      *  and <em>rset2</em> is not stored in the following;
      *  otherwise the checking process continues.
      *  @param iqueue index of the target RelationSet <em>rset1</em> (unused)
-     *  @param dummy1 the old target {@link RelationSet} already queued (unused)
-     *  @param rset2 the new source {@link RelationSet} to be added to the queue
+     *  @param dummy1 the old target RelationSet already queued (unused)
+     *  @param rset2 the new source RelationSet to be added to the queue
      *  @return a message String denoting the reasoning details,
      *  or {@link VariableMap#UNKNOWN} if the comparision is not conclusive.
      */

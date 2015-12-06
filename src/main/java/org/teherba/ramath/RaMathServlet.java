@@ -96,6 +96,8 @@ public class RaMathServlet extends HttpServlet {
         String value = request.getParameter(name);
         if (value == null) {
             value = "";
+        } else {
+            value = value.trim();
         }
         return value;
     } // getInputField
@@ -122,7 +124,8 @@ public class RaMathServlet extends HttpServlet {
             session.setAttribute("opt"   , opt);
             session.setAttribute("form1" , form1);
             session.setAttribute("form2" , form2);
-
+            
+            int mode = 3; // with PrimeFactorization
             String newPage = "index";
             if (false) {
             } else if (view.equals("upper")) {
@@ -154,7 +157,7 @@ public class RaMathServlet extends HttpServlet {
                     if (opt.indexOf("norm") >= 0) {
                         rset.deflateIt();
                     }
-                    form2 = rset.toString();
+                    form2 = rset.toString(mode);
                     session.setAttribute("form2", form2);
                 } else if (area.equals("cfra")) {
                 } else if (area.equals("eecj")) {
@@ -191,7 +194,7 @@ public class RaMathServlet extends HttpServlet {
                     if (opt.indexOf("norm") >= 0) {
                         rset.deflateIt();
                     }
-                    form1 = rset.toString();
+                    form1 = rset.toString(mode);
                     session.setAttribute("form1", form1);
                 } else if (area.equals("cfra")) {
                 } else if (area.equals("eecj")) {

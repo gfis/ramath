@@ -44,7 +44,7 @@ import  java.util.regex.Pattern;
 
 /** Superclass for solvers for Diophantine {@link RelationSet}s,
  *  with bean properties and commandline arguments processing.
- *  The solvers maintain a queue (resp. flattened tree) of unresolved,
+ *  The solvers maintain a queue (resp. a flattened tree) of unresolved,
  *  derived {@link RelationSet}s which is used during an iterative search for solutions.
  *  The queue could have been a stack, but we want to walk the tree width-first.
  *  @author Dr. Georg Fischer
@@ -492,7 +492,7 @@ public class BaseSolver extends Stack<RelationSet> {
     /** A parentIndex which denotes the root, also of a subtree */
     public static final int ROOT_PARENT = -1;
 
-    /** Sets root element of the queue of {@link RelationSet}s
+    /** Sets the root element of the tree of {@link RelationSet}s
      *  @param rset0 the initial {@link RelationSet} to be solved
      *  @param codeList list of {@link BaseReason reason} codes to be applied
      *  @return a new {@link ReasonFactory} for the evaluation of this tree
@@ -504,7 +504,7 @@ public class BaseSolver extends Stack<RelationSet> {
         rset0.setReasonFactory (factory0);
         rset0.setParentIndex   (ROOT_PARENT);
         rset0.setSiblingIndex  (ROOT_PARENT);
-        add(rset0);
+        add(rset0); // queueHead is still 0
         // determine all features - they are constant for all subtrees
         igtriv = factory0.hasFeature("igtriv");
         invall = factory0.hasFeature("invall");

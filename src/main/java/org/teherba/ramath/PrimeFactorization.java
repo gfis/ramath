@@ -20,13 +20,14 @@
 package org.teherba.ramath;
 import  org.teherba.ramath.BigIntegerUtil;
 import  org.teherba.ramath.linear.Vector;
+import  org.teherba.common.SmallScript;
 import  java.io.Serializable;
 import  java.lang.IllegalArgumentException;
 import  java.math.BigInteger;
 import  java.util.Iterator;
 import  java.util.TreeMap;
 
-/** This class handles prime factorizations of positive {@link BigInteger}s.
+/** This class handles prime factorizations of <em>positive</em> {@link BigInteger}s.
  *  The prime factors are mapped to their exponents.
  *  ZERO and ONE are represented by an empty map.
  *  @author Dr. Georg Fischer
@@ -145,28 +146,6 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
         return result;
     } // modulus
 
-    /** Determines 3 factors which allow to perform a square completion properly.
-     *  <em>this</em> is the {@link PrimeFactorization} of the factor of v^2.
-     *  @param gcd1 the GCD of the subpolynomial for v^1
-     *  @return 
-     *  <ul>
-     *  <li>[0] = rootv: (rootv*varName)^2 will become the lead term</li>
-     *  <li>[0] = widev: multiply the whole Polynomial by this factor</li>
-     *  <li>[0] = divs1: divide the cofactor of varName^1 by this divisor to get the square completion</li>
-     *  </ul>
-     */
-    public BigInteger[] getCompletion2(BigInteger gcd1) {
-        BigInteger[] result = new BigInteger[] 
-                { BigInteger.ONE      // rootv
-                , BigInteger.ONE      // widev
-                , BigIntegerUtil.TWO  // divs1
-                };
-        result[1] = this.wideToPower(2);
-        result[0] = (new PrimeFactorization(result[1].multiply(this.valueOf()))).root(2).valueOf();
-        result[2] = result[1].multiply(BigIntegerUtil.TWO); // for power 2
-        return result;
-    } // getCompletion2
-
     /** Returns the least number which turns <em>this</em>
      *  {@link PrimeFactorization} into some power number, 
      *  or 1 if the PrimeFactorization represents already such a power
@@ -246,39 +225,44 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
         return new BigInteger[] { rootv, rfact };
     } // reducePowerOf
 
-    /** Returns the least number which turns <em>this</em>
-     *  {@link PrimeFactorization} into some power number times a binomial factor, 
-     *  or 1 if the PrimeFactorization represents already such a power
-     *  @param power widen the number to this power >= 2
-     *  @return a BigInteger factor
+    /** Returns a string representation of the {@link PrimeFactorization} 
+     *  @param mode 0 = normal, 1 = full (for substitution), 2 = nice / human legible,
+     *  3 = with prime factors
+     *  @return "2^2*3*5" for 60 and mode=0
      */
-    public BigInteger wideToBinomialPower(int power, BigInteger binomial) {
-        BigInteger result = this.wideToPower(power).multiply(binomial);
-        return result;
-    } // wideToBinomialPower
+    public String toString(int mode) {
+        StringBuffer result = new StringBuffer(64);
+        Iterator<BigInteger> iter = this.keySet().iterator();
+        int iprime = 0;
+        while (iter.hasNext()) {
+            BigInteger prime = iter.next();
+            if (iprime > 0) {
+                switch (mode) {
+                    case 0:
+                        result.append("*");
+                        break;
+                    default:
+                    case 1:
+                        result.append(" * ");
+                        break;
+                    case 3:
+                    case 4: // superscript exponents, imply "*"
+                        break;
+                } // switch mode
+            }
+            result.append(prime.toString());
+            Integer exp = this.get(prime);
+            SmallScript.appendExponent(result, mode, exp);
+            iprime ++;
+        } // while iter
+        return result.toString();
+    } // toString(mode)
 
     /** Returns a string representation of the {@link PrimeFactorization} 
      *  @return "2^2*3*5" for 60
      */
     public String toString() {
-        StringBuffer result = new StringBuffer(64);
-        Iterator<BigInteger> iter = this.keySet().iterator();
-        boolean first = true;
-        while (iter.hasNext()) {
-            BigInteger prime = iter.next();
-            if (first) {
-                first = false;
-            } else {
-                result.append(" * ");
-            }
-            result.append(prime.toString());
-            Integer exp = this.get(prime);
-            if (exp > 1) {
-                result.append("^");
-                result.append(Integer.toString(exp));
-            } // exp > 1
-        } // while iter
-        return result.toString();
+        return toString(0);
     } // toString
 
     /** Test method.
@@ -290,6 +274,8 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
             
         PrimeFactorization primfn1 = new PrimeFactorization(number);
         System.out.println("PrimeFactorization(" + number.toString() + ") = " + primfn1.toString());
+        System.out.println(".toString(3) = " + primfn1.toString(3));
+        System.out.println(".toString(4) = " + primfn1.toString(4));
         PrimeFactorization primfn4 = new PrimeFactorization(primfn1.wideToPower(4));
         System.out.println(".wideToPower(4) = " + primfn4.toString());
         System.out.println(".root(2) = " + primfn4.multiply(primfn1).root(2).toString());

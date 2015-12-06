@@ -1,5 +1,6 @@
 /*  RelationSet: a set of polynomials which relate to zero
  *  @(#) $Id: RelationSet.java 970 2012-10-25 16:49:32Z  $
+ *  2015-12-06: toString(boolean) -> toString(1)
  *  2015-09-10: message -> siblingIndex; s|getRelationSet
  *  2015-08-25: getExponentGCDs
  *  2015-06-15: RelationSet.parse was not static
@@ -303,7 +304,8 @@ public class RelationSet
     } // toArray
 
     /** Returns a String representation of <em>this</em> {@link RelationSet}
-     *  @param mode 0 = normal, 1 = full (for substitution), 2 = nice / human legible
+     *  @param mode 0 = normal, 1 = full (for substitution), 2 = nice / human legible,
+     *  3 = with prime factors
      *  @return " + 17*a0^2*a1^1 + a2^2*a3^3 = 0; - 4*b4^1 = 0", for example for mode = 1
      */
     public String toString(int mode) {
@@ -318,16 +320,6 @@ public class RelationSet
         } // while ipoly
         return buffer.toString();
     } // toString(int)
-
-    /** Returns a String representation of <em>this</em> {@link RelationSet}, either compressed or full
-     *  @param full whether to return a complete representation suitable for substitution
-     *  or a compressed representation which suppresses positive unary sign and
-     *  coefficients and exponents of 1
-     *  @return " + 17*a0^2*a1^1 + a2^2*a3^3 = 0; - 4*b4^1 = 0", for example
-     */
-    public String toString(boolean full) {
-        return toString(full ? 1 : 0);
-    } // toString(boolean)
 
     /** Returns a string representation of the {@link Polynomial}s in <em>this</em> {@link RelationSet},
      *  with leading signs, in compressed form.
@@ -729,7 +721,7 @@ public class RelationSet
      *  @return a new RelationSet
      */
     public RelationSet substitute(VariableMap vmap, boolean upperSubst) {
-        return RelationSet.parse(vmap.substitute(this.toString(true), upperSubst));
+        return RelationSet.parse(vmap.substitute(this.toString(1), upperSubst));
     } // substitute(VariableMap)
 
     /** Evaluates a {@link RelationSet} without any proof history by evaluating
@@ -814,11 +806,11 @@ evaluate: unknown
             varMap.put("b", "4*b_2");
             varMap.put("c", "5*c_2");
             rset2 = rset1.substitute(varMap);
-            System.out.println(rset2.toString(true));
+            System.out.println(rset2.toString(1));
 
         } else if (args.length == 1 && ! args[0].startsWith("-")) {
             rset1 = RelationSet.parse(args[iarg ++]);
-            System.out.println(rset1.toString(true));
+            System.out.println(rset1.toString(1));
             System.out.println("evaluate: " + rset1.evaluate(null));
 
         } else if (args.length >= 2) {
@@ -833,7 +825,7 @@ evaluate: unknown
             } else if (opt.equals    ("-f")     ) {
                 String fileName = args[1];
                 rset1 = RelationSet.parse((new ExpressionReader()).read(fileName));
-                System.out.println(rset1.toString(true));
+                System.out.println(rset1.toString(1));
                 System.out.println("evaluate: " + rset1.evaluate(null));
 
             } else if (opt.equals    ("-equals")     ) {

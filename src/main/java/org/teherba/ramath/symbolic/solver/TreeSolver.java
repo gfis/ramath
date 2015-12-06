@@ -122,13 +122,12 @@ public class TreeSolver extends BaseSolver {
             BigInteger factor  = BigInteger.valueOf(base).pow(newLevel);
             ModoMeter meter    = this.getPreparedMeter(rset1, vmap1, factor);
             if (false && vmap1.size() == 0) {
-                System.err.println("TreeSolver assertion??? vmap1.size()=0, rset1=" + rset1.toString(true));
+                System.err.println("TreeSolver assertion??? vmap1.size()=0, rset1=" + rset1.toString(1));
             }
             // meter now ready for n-adic expansion, e.g. x -> 2*x+0, 2*x+1
             printNode(queueIndex, rset1, meter, factor);
             int oldSiblingIndex = -1; // for the 1st child
             while (meter.hasNext()) { // over all constant combinations - generate all children
-
                 RefiningMap vmap2 = vmap1.getRefinedMap(meter);
                 if (vmap2.size() > 0) {
                     RelationSet rset2 = factory1.getStartNode().substitute(vmap2, getUpperSubst());

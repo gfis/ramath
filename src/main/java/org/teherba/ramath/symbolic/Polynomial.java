@@ -1,6 +1,7 @@
 /*  Polynomial: a symbolic, multivariate Polynomial with addition, multiplication
  *  and exponentiation
  *  @(#) $Id: Polynomial.java 744 2011-07-26 06:29:20Z gfis $
+ *  2015-12-06: toString(boolean) -> toString(1)
  *  2015-11-16: Groebner bases moved to Ideal.java
  *  2015-07-17: degree, isHomogeneous
  *  2015-06-17: modulus removed, coefficients are BigRatiaonal again
@@ -312,7 +313,8 @@ public class Polynomial implements Cloneable, Serializable {
     } // listVariables
 
     /** Returns a String representation of <em>this</em> {@link Polynomial}, either compressed or full
-     *  @param mode 0 = normal, 1 = full (for substitution), 2 = nice / human legible
+     *  @param mode 0 = normal, 1 = full (for substitution), 2 = nice / human legible,
+     *  3 = with prime factors
      *  @return "17*a0^2*a1 + a2^2*a3^3 - 4*b4", for example for mode = 0
      */
     public String toString(int mode) {
@@ -344,17 +346,6 @@ public class Polynomial implements Cloneable, Serializable {
         } // switch relation
         return buffer.toString().replaceAll("\\A\\s*\\+\\s*", ""); // leading "+"
     } // toString(mode)
-
-    /** Returns a String representation of <em>this</em> {@link Polynomial}, either compressed or full,
-     *  always with the relation
-     *  @param full whether to return a complete representation suitable for substitution
-     *  or a compressed representation which suppresses positive unary sign and
-     *  coefficients and exponents of 1
-     *  @return "17*a0^2*a1 + a2^2*a3^3 - 4*b4 = 0", for example
-     */
-    public String toString(boolean full) {
-        return toString(full ? 1 : 0);
-    } // toString(boolean)
 
     /** Returns a String representation of <em>this</em> {@link Polynomial}, with leading sign,
      *  in compressed representation, without the relation.
@@ -1791,7 +1782,7 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
      *  @return a new Polynomial
      */
     public Polynomial substitute(VariableMap vmap) {
-        return Polynomial.parse(vmap.substitute(this.toString(true)));
+        return Polynomial.parse(vmap.substitute(this.toString(1)));
     } // substitute(VariableMap)
 
     /** Replaces all different variables by "x_y_z", and returns the corresponding Polynomial.
@@ -1965,7 +1956,7 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
             vmap1.put("a", "5*a+1");
             vmap1.put("b", "5*b+1");
             poly2 = poly1.substitute(vmap1);
-            System.out.println(poly2.toString(true));
+            System.out.println(poly2.toString(1));
         } else {
             String opt = args[iarg ++];
             if (! opt.startsWith("-") || ! opt.matches("\\-[a-z]+")) {

@@ -1,7 +1,9 @@
-PrimeFactorization(900) = 2^2 * 3^2 * 5^2
-.wideToPower(4) = 2^2 * 3^2 * 5^2
-.root(2) = 2^2 * 3^2 * 5^2
-.multiply(same) = 2^4 * 3^4 * 5^4
+PrimeFactorization(900) = 2^2*3^2*5^2
+.toString(3) = 2²3²5²
+.toString(4) = 2²3²5²
+.wideToPower(4) = 2^2*3^2*5^2
+.root(2) = 2^2*3^2*5^2
+.multiply(same) = 2^4*3^4*5^4
 .valueOf() = 810000
 900.reducePowerOf(2) = 30, 1
 900.modulus(4) =    2   3   1

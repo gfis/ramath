@@ -376,7 +376,7 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
     /** Substitutes variable names with the expressions from <em>this</em> Map (if they are not null),
      *  and returns the replaced String.
      *  @param source replace variable names in this String, 
-     *  which must be derived from {@link RelationSet#toString toString(true)},
+     *  which must be derived from {@link RelationSet#toString toString(1)},
      *  that is a full representation with "^1" 
      *  @return the new String with variable names replaced
      */
@@ -387,7 +387,7 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
     /** Substitutes variable names with the expressions from <em>this</em> Map (if they are not null),
      *  and returns the replaced String.
      *  @param source replace variable names in this String, 
-     *  which must be derived from {@link RelationSet#toString toString(true)},
+     *  which must be derived from {@link RelationSet#toString toString(1)},
      *  that is a full representation with "^1" 
      *  @param upperSubst whether to substitute uppercase variables (default: true)
      *  @return the new String with variable names replaced

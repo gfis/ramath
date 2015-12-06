@@ -1,5 +1,6 @@
 /*  Monomial: a product with a signed numeric coefficient and optional exponentiated variable(s)
  *  @(#) $Id: Monomial.java 522 2010-07-26 07:14:48Z gfis $
+ *  2015-12-06: toString(boolean) -> toString(1)
  *  2015-11-04: with SmallScript.toSuperscript
  *  2015-09-03: isNegative
  *  2015-08-16: toFactoredString() with powers of prime factors
@@ -403,23 +404,10 @@ public class Monomial implements Cloneable, Serializable {
             result.append(this.getCoefficient().toString().replaceFirst("\\-", ""));
         }
         if (result.length() == 0) {
-        	result.append("~~~~"); // higher than all normal signatures
+            result.append("~~~~"); // higher than all normal signatures
         }
         return result.toString();
     } // characteristic(2)
-
-    /** Gets some characteristic value which is independant of the variable names,
-     *  and which characterizes exponents and the absolute value of the coefficient (but not the sign),
-     *  for normalization and equivalence checking as a separated string concatenation of
-     *  <ul>
-     *  <li>the exponents (sorted increasingly)</li>
-     *  <li>the absolute value of the coefficient</li>
-     *  </ul>
-     *  @return for example "/08/02/04;16384" for the monomial "16384*a^4*b^2*x4^8"
-     */
-    public String characteristic_99() {
-        return characteristic(true, false);
-    } // characteristic()
 
     //========================
     // Arithmetic operations
@@ -821,13 +809,23 @@ public class Monomial implements Cloneable, Serializable {
     } // equals
 
     //----------------
-    /** Returns a String representation of the monomial, either compressed or full
-     *  @param mode 0 = normal, 1 = full (for substitution), 2 = nice / human legible
-     *  @param number String representation of the coefficient, either empty, a number, or a product
-     *  @return "x*y^3", for example for mode = 0, "+ 1*x^1*y^3" for mode = 1
+    /** Returns a string representation of the monomial, either compressed or full
+     *  @param mode 0 = normal, 1 = full (for substitution), 2 = nice / human legible,
+     *  3 = with prime factors
+     *  @return "x*y^3", for example if mode = 0, "+ 1*x^1*y^3" if mode = 1
      */
-    private String toStringCommon(int mode, String number) {
+    public String toString(int mode) {
         StringBuffer result = new StringBuffer(32);
+        String number = null;
+        if (mode <= 2) { // normal 
+            number = coefficient.toString();
+        } else { // >= 3: with PrimeFactorization
+            if (isNegative()) {
+                number = "-" + (new PrimeFactorization(coefficient.negate())).toString(mode);
+            } else {
+                number =       (new PrimeFactorization(coefficient         )).toString(mode);
+            }
+        } // if mode
         // result.append(sign >= 0 ? " + " : " - ");
         if (vars.size() == 0) { // no variables, coefficient only
             if (number.startsWith("-")) {
@@ -837,7 +835,8 @@ public class Monomial implements Cloneable, Serializable {
                 result.append(number);
             }
         } else { // with variable(s)
-            if (number.equals(" + 0")) {
+            if (false) {
+            } else if (number.equals(" + 0")) {
                 result.append(number);
                 vars.clear(); // just for safety
             } else if (mode != 1 && number.equals("1")) {
@@ -851,7 +850,7 @@ public class Monomial implements Cloneable, Serializable {
                     result.append(" + ");
                     result.append(number);
                 }
-                if (mode != 2) {
+                if (mode < 2) {
                     result.append('*');
                 }
             }
@@ -865,78 +864,24 @@ public class Monomial implements Cloneable, Serializable {
                 String name = iter.next();
                 result.append(name);
                 int exp = this.getExponent(name);
-                switch (mode) {
-                    default:
-                    case 0:
-                        if (exp > 1) {
-                            result.append('^');
-                            result.append(exp);
-                        }
-                        break;
-                    case 1:
-                        result.append('^');
-                        result.append(exp);
-                        break;
-                    case 2:
-                        switch (exp) {
-                            case 1:
-                                break;
-                            case 2:
-                                result.append('\u00b2');
-                                break;
-                            case 3:
-                                result.append('\u00b3');
-                                break;
-                            default:
-                                if (true) {
-                                    // Windows console can't display these
-                                    // even with 'chcp 1253' or 'chcp 65001'
-                                    result.append(SmallScript.toSuperscript(exp));
-                                } else {
-                                    result.append('^');
-                                    result.append(exp);
-                                }
-                                break;
-                        } // switch exp
-                        break;
-                } // switch mode
+                SmallScript.appendExponent(result, mode, exp);
             } // while iter
         } // with variable(s)
         return mode != 2 ? result.toString() : result.toString().replaceAll(" ", "");
     } // toString(mode)
 
-    /** Returns a string representation of the monomial, either compressed or full
-     *  @param mode 0 = normal, 1 = full (for substitution), 2 = nice / human legible
-     *  @return "x*y^3", for example if mode = 0, "+ 1*x^1*y^3" if mode = 1
-     */
-    public String toString(int mode) {
-        String number = coefficient.toString();
-        return toStringCommon(mode, number);
-    } // toString(mode)
-
-    /** Returns a string representation of the monomial, either compressed or full
-     *  @param full whether to return a complete representation suitable for substitution
-     *  @return "x*y^3", for example if full = false, "+ 1*x^1*y^3" if full = true
-     */
-    public String toString(boolean full) {
-        String number = coefficient.toString();
-        return toStringCommon(full ? 1 : 0, number);
-    } // toString(full)
-
     /** Returns a string representation of the monomial in compressed representation
      *  @return "- 2*x^7*y^8", for example
      */
     public String toString() {
-        String number = coefficient.toString();
-        return toStringCommon(0, number);
+        return toString(0);
     } // toString()
 
     /** Returns a nice, human legible String representation of the monomial
      *  @return "-2x^7*y^8", for example
      */
     public String niceString() {
-        String number = coefficient.toString();
-        return toStringCommon(2, number);
+        return toString(2);
     } // niceString()
 
     /** Returns a String representation of <em>this</em> {@link Monomial},
@@ -948,7 +893,7 @@ public class Monomial implements Cloneable, Serializable {
         BigInteger bint = this.getCoefficient().bigIntegerValue();
         String number = (bint.compareTo(BigInteger.ZERO) < 0 ? "-" : "")
                 + (new PrimeFactorization(bint.abs())).toString();
-        return toStringCommon(0, number);
+        return toString(3);
     } // toFactoredString()
 
     //----------------
