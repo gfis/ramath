@@ -1903,7 +1903,7 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
      *  purposes.
      */
     private void printProperties() {
-       System.out.println(""
+        System.out.println(""
                 + "; vgcd="             + this.gcdCoefficients (false)
                 + "; gcd="              + this.gcdCoefficients (true)
                 + "; isZero="           + this.isZero          ()

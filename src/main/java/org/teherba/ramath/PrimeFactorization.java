@@ -234,6 +234,7 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
         StringBuffer result = new StringBuffer(64);
         Iterator<BigInteger> iter = this.keySet().iterator();
         int iprime = 0;
+        int oldExp = 0; // previous value of 'exp'
         while (iter.hasNext()) {
             BigInteger prime = iter.next();
             if (iprime > 0) {
@@ -246,13 +247,17 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
                         result.append(" * ");
                         break;
                     case 3:
-                    case 4: // superscript exponents, imply "*"
+                    case 4: // superscript exponents
+                        if (oldExp == 1) {
+                            result.append('\u00b9'); // super 1: otherwise consecutive digits
+                        }
                         break;
                 } // switch mode
             }
             result.append(prime.toString());
-            Integer exp = this.get(prime);
+            int exp = this.get(prime);
             SmallScript.appendExponent(result, mode, exp);
+            oldExp = exp;
             iprime ++;
         } // while iter
         return result.toString();

@@ -1,5 +1,6 @@
 /*  Collection of several experimental methods
  *  @(#) $Id: SandBox.java 808 2011-09-20 16:56:14Z gfis $
+ *  2016-01-03: printDifferences
  *  2015-10-05: -bachet
  *  2015-08-31, Georg Fischer: copied from MatrixGenerator
  */
@@ -25,6 +26,7 @@ import  org.teherba.ramath.PrimeFactorization;
 import  org.teherba.ramath.linear.Vector;
 import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.PolyVector;
+import  org.teherba.ramath.symbolic.VariableMap;
 import  java.io.BufferedReader;
 import  java.io.FileReader;
 import  java.io.InputStreamReader;
@@ -33,7 +35,9 @@ import  org.apache.log4j.Logger;
 
 /** Collection of several experimental methods:
  *  <ul>
+ *  <li>{@link #printDifferences} - n-th order differences of a univariate {@link Polynomial}'s values</li>
  *  <li>{@link #process422} - {@link PrimeFactorization} of EEC(4,2,2) data</li>
+ *  <li>{@link #processBachet} - evaluate Bachet's duplication formula for Mordell equations</li>
  *  </ul>
  *  @author Dr. Georg Fischer
  */
@@ -56,6 +60,138 @@ public class SandBox {
     //===========================
     // Experimental methods
     //===========================
+
+    /** Evaluates a univariate {@link Polynomial} for a
+     *  sequence of values and print the 1st, 2nd and higher
+     *  order differences of the Polynomial's values.
+     *  @param args commandline arguments: polynomial [start [high]]
+     *  @param startValue 
+     *  @param highValue  
+     */
+    private void printDifferences(String[] args) {
+        int startValue =  0; // start with this value of the (single) variable
+        int highValue  = 32; // end one before this value
+        int iarg = 1; // skip over "-pdiff"
+        Polynomial poly1 = Polynomial.parse(args[iarg ++]);
+        if (iarg < args.length) {
+            try {
+                startValue = Integer.parseInt(args[iarg ++]);
+            } catch (Exception exc) {
+            }
+        }
+        if (iarg < args.length) {
+            try {
+                highValue  = Integer.parseInt(args[iarg ++]);
+            } catch (Exception exc) {
+            }
+        }
+        String spaces = "                "; // 16 blanks for formatting of BigIntegers
+        int maxDeg = poly1.maxDegree() + 2;
+        BigInteger[] olds = new BigInteger[maxDeg];
+        BigInteger[] news = new BigInteger[maxDeg]; // must be parallel
+        int
+        ind = 0;
+        while (ind < maxDeg) { // preset with zero differences
+            olds[ind] = BigInteger.ZERO;
+            news[ind] = olds[ind];
+            ind ++;
+        } // while ind
+        VariableMap vmap = poly1.getVariableMap();
+        if (vmap.size() > 1) { // not uniVariate
+            System.out.println("\"" + poly1.toString() + "\" is not univariate");
+        } else { // uniVariate
+            String varName = vmap.getNameString(); // comma separated, but there is only one variable
+            int num = startValue;
+            while (num < highValue) {
+                vmap.put(varName, String.valueOf(num));
+                Polynomial poly2 = poly1.substitute(vmap);
+                // System.out.println("substituted poly2: " + poly2.toString());
+/*
+	my $ind = 0;
+	$ndif[$ind] = &form($num);
+	while ($ind < scalar(@ndif) - 1 and $odif[$ind] > 0) {
+		$ndif[$ind + 1] = $ndif[$ind] - $odif[$ind];
+		$ind ++; 
+	} # while $ind
+	print " ", sprintf("%2d %10d %10d %10d %10d %10d %10d\n", $num, @ndif);
+	# print "----\n";
+	@odif = @ndif;
+*/
+                ind = 0;
+                if (poly2.isZero()) {
+                    news[ind]   = BigInteger.ZERO;
+                } else {
+                    String sig2 = poly2.getMonomials().firstKey();
+                    news[ind]   = poly2.getMonomials().get(sig2).getCoefficient();
+                }
+                while (ind < maxDeg - 1 && ind < num) { // compute differences
+                    news[ind + 1] = news[ind].subtract(olds[ind]);
+                    ind ++;
+                } // while ind
+                System.out.print(String.format("%4d", num));
+                ind = 0;
+                while (ind < maxDeg) { // print and copy
+                    String bnum = news[ind].toString();
+                    int len = 10 - bnum.length();
+                    if (len < 0) {
+                        len = 0;
+                    }
+                    System.out.print(spaces.substring(0, len) + bnum);
+                    olds[ind] = news[ind];
+                    ind ++;
+                } // while ind
+                System.out.println();
+                num ++;
+            } // while num
+        } // uniVariate
+    } // printDifferences
+
+    /** Reads lines with numbers a, b, c, d such that a^4 + b^4 = c^4 + d^4.
+     *  Checks these tuples whether they are primitive,
+     *  whether they fulfill the powersum property,
+     *  and show the prime factorizations of the sum a^4 + b^4 and of the sum a^2 + b^2
+     *  @param fileName name of file containing line with tuples of 4 numbers
+     *  The results indicate that there is no prime factor = 3 mod 4.
+     */
+    public void process422(String fileName) {
+        String line = null; // current line from text file
+        try {
+            BufferedReader lineReader = new BufferedReader
+                    ( (fileName.equals("-"))
+                    ? new InputStreamReader(System.in)
+                    : new FileReader(fileName)
+                    );
+            int limit = 128;
+            while (limit > 0 && (line = lineReader.readLine()) != null) { // read and process lines
+                Vector vect = new Vector(line.trim());
+                System.out.print(vect.toString());
+                int gcdv = vect.gcd();
+                if (gcdv > 1) {
+                    System.out.print(" gcd=" + gcdv);
+                }
+                if (! vect.isPowerSum(4, 2, 2)) {
+                    System.out.print(", no powerSum(4)");
+                }
+                BigInteger sum4 = BigInteger.valueOf(vect.get(0)).pow(4)
+                        .add     (BigInteger.valueOf(vect.get(1)).pow(4));
+                PrimeFactorization pmfz4 = new PrimeFactorization(sum4);
+                System.out.print(",\tsum^4=" + sum4.toString());
+                System.out.print("\t=" + pmfz4.toString());
+                System.out.print("\t, mod(4)=" + pmfz4.modulus(4).toString(","));
+                BigInteger sum2 = BigInteger.valueOf(vect.get(0)).pow(2)
+                        .add     (BigInteger.valueOf(vect.get(1)).pow(2));
+                PrimeFactorization pmfz2 = new PrimeFactorization(sum2);
+                System.out.print(",\tsum^2=" + sum2.toString());
+                System.out.print("\t=" + pmfz2.toString());
+                System.out.print("\t, mod(4)=" + pmfz2.modulus(4).toString(","));
+                System.out.println();
+                limit --;
+            } // while ! eof
+            lineReader.close();
+        } catch (Exception exc) {
+            log.error(exc.getMessage(), exc);
+        } // try
+    } // process422
 
     /** Evaluateds Bachet's duplication formula for Mordell equations
      *  <pre>
@@ -122,61 +258,15 @@ public class SandBox {
         } // 4 arguments
     } // processBachet
 
-    /** Reads lines with numbers a, b, c, d such that a^4 + b^4 = c^4 + d^4.
-     *  Checks these tuples whether they are primitive,
-     *  whether they fulfill the powersum property,
-     *  and show the prime factorizations of the sum a^4 + b^4 and of the sum a^2 + b^2
-     *  @param fileName name of file containing line with tuples of 4 numbers
-     *  The results indicate that there is no prime factor = 3 mod 4.
-     */
-    public void process422(String fileName) {
-        String line = null; // current line from text file
-        try {
-            BufferedReader lineReader = new BufferedReader
-                    ( (fileName.equals("-"))
-                    ? new InputStreamReader(System.in)
-                    : new FileReader(fileName)
-                    );
-            int limit = 128;
-            while (limit > 0 && (line = lineReader.readLine()) != null) { // read and process lines
-                Vector vect = new Vector(line.trim());
-                System.out.print(vect.toString());
-                int gcdv = vect.gcd();
-                if (gcdv > 1) {
-                    System.out.print(" gcd=" + gcdv);
-                }
-                if (! vect.isPowerSum(4, 2, 2)) {
-                    System.out.print(", no powerSum(4)");
-                }
-                BigInteger sum4 = BigInteger.valueOf(vect.get(0)).pow(4)
-                        .add     (BigInteger.valueOf(vect.get(1)).pow(4));
-                PrimeFactorization pmfz4 = new PrimeFactorization(sum4);
-                System.out.print(",\tsum^4=" + sum4.toString());
-                System.out.print("\t=" + pmfz4.toString());
-                System.out.print("\t, mod(4)=" + pmfz4.modulus(4).toString(","));
-                BigInteger sum2 = BigInteger.valueOf(vect.get(0)).pow(2)
-                        .add     (BigInteger.valueOf(vect.get(1)).pow(2));
-                PrimeFactorization pmfz2 = new PrimeFactorization(sum2);
-                System.out.print(",\tsum^2=" + sum2.toString());
-                System.out.print("\t=" + pmfz2.toString());
-                System.out.print("\t, mod(4)=" + pmfz2.modulus(4).toString(","));
-                System.out.println();
-                limit --;
-            } // while ! eof
-            lineReader.close();
-        } catch (Exception exc) {
-            log.error(exc.getMessage(), exc);
-        } // try
-    } // process422
-
     //==========================
     // Main
     //==========================
     /** Test method.
      *  @param args command line arguments:
      *  <ul>
-     *  <li>-eec422 filename</li>
      *  <li>-bachet x y c [n]</li>
+     *  <li>-eec422 filename</li>
+     *  <li>-pdiff polynomial [start [end]]</li>
      *  </ul>
      */
     /*-------------------- Test Driver --------------------*/
@@ -189,11 +279,13 @@ public class SandBox {
         } else { // some option
             String opt = args[iarg ++];
             if (false) {
-            } else if (opt.startsWith("-eec422")) {
+            } else if (opt.startsWith("-bachet"  )) {
+                sandBox.processBachet(args);
+            } else if (opt.startsWith("-eec422"  )) {
                 String fileName = args[iarg ++];
                 sandBox.process422(fileName);
-            } else if (opt.startsWith("-bachet")) {
-                sandBox.processBachet(args);
+            } else if (opt.startsWith("-pdiff"   )) {
+                sandBox.printDifferences(args);
             } else {
                 System.err.println("invalid option " + opt);
             } // some option

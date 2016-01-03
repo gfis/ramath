@@ -234,6 +234,18 @@ CALL TreeSolver -b 2 -l 3 -e "y^2 = x^3 - 6"   -r norm
 TEST TECD Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3]
 CALL TreeSolver -b 9 -l 2 -e "x^2 + 2 - y^3" -r norm
 
+TEST TECE Fermat/Carcavi(10) (2*x^2 - 1)^2 = 2y^2 - 1; solutions [1,1] and [2,5]
+CALL TreeSolver -b 2 -l 4 -e "(2*x^2 - 1)^2 = 2y^2 - 1" -r norm
+
+TEST TECF Fermat/Carcavi(10) (2*x^2 - 1)^2 = 2y^2 - 1; solutions [1,1] and [2,5]
+CALL TreeSolver -b 4 -l 3 -e "(2*x^2 - 1)^2 = 2y^2 - 1" -r norm
+
+TEST TECG Fermat/Carcavi(1) no solution
+CALL TreeSolver -b 3 -l 3 -e "3k - 1 = x^2 + 3 y^2" -r norm,showfail
+
+TEST TECH Fermat/Carcavi(8) x^2 + 4 = y^3; solutions [2,2],[11,5]
+CALL TreeSolver -b 6 -l 3 -e "x^2 + 4 - y^3" -r norm
+
 TEST QEC2 Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3]
 CALL QueuingSolver -b 2 -l 7 -e "x^2 + 2 - y^3" -r norm
 
