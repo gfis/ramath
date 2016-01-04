@@ -1,6 +1,7 @@
-/*  Polynomial: a symbolic, multivariate Polynomial with addition, multiplication
- *  and exponentiation
+/*  Polynomial: a symbolic, multivariate Polynomial with addition, multiplication,
+ *  exponentiation, comparision and other operations
  *  @(#) $Id: Polynomial.java 744 2011-07-26 06:29:20Z gfis $
+ *  2016-02-03: derivative(varx, order)
  *  2015-12-06: toString(boolean) -> toString(1)
  *  2015-11-16: Groebner bases moved to Ideal.java
  *  2015-07-17: degree, isHomogeneous
@@ -55,7 +56,7 @@ import  java.util.Map;
 import  java.util.Set;
 import  java.util.TreeMap;
 
-/** A Polynomial is a sum of {@link Monomial}s, ordered by the signatures
+/** A {@link Polynomial} is a sum of {@link Monomial}s, ordered by the signatures
  *  (variable names and natural number exponents) of the monomials.
  *  <p>From http://en.wikipedia.org/wiki/Polynomial:
  *  <blockquote>
@@ -65,7 +66,8 @@ and constant non-negative whole number exponents.
 For example, x<sup>2</sup> − 4x + 7 is a Polynomial, but x<sup>2</sup> − 4/x + 7x<sup>3/2</sup> is not ...
  *  </blockquote>
  *
- *  Though a monomial may be zero, there is at most one, non-zero constant monomial (without variables) in any Polynomial.
+ *  Though a monomial may be zero, there is at most one, 
+ *  non-zero constant monomial (without variables) in any Polynomial.
  *  A single zero Polynomial is represented by an empty map of monomials.
  *  <p>
  *  In this class, methods which have a preposition in their name operate on and
@@ -88,7 +90,9 @@ public class Polynomial implements Cloneable, Serializable {
      */
     private TreeMap<String, Monomial> monomials;
 
-    /** A pseudo property which marks all places where future additional properties must be inserted or cloned */
+    /** A pseudo property which marks all places where future 
+     * additional properties must be inserted or cloned 
+     */
     private int pseudo;
 
     /** Codes for the comparision of <em>this</em> Polynomial with zero.
@@ -382,7 +386,8 @@ public class Polynomial implements Cloneable, Serializable {
     } // toFactoredString()
 
     //----------------
-    /** Gets the constant {@link Monomial} of <em>this</em> {@link Polynomial}, if any, or the constant 0.
+    /** Gets the constant {@link Monomial} of <em>this</em> {@link Polynomial}, 
+     *  if any, or the constant 0.
      *  @return the constant monomial if there is one, or 0
      */
     public Coefficient getConstant() {
@@ -401,7 +406,8 @@ public class Polynomial implements Cloneable, Serializable {
         return monomials.get(Monomial.CONSTANT_SIGNATURE) != null;
     } // hasConstant
 
-    /** Determines whether <em>this</em> {@link Polynomial} contains no variables (only a constant {@link Monomial}).
+    /** Determines whether <em>this</em> {@link Polynomial} contains no variables 
+     * (only a constant {@link Monomial}).
      *  @return true if the Polynomial is constant, or false otherwise
      */
     public boolean isConstant() {
@@ -1785,6 +1791,64 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
         return Polynomial.parse(vmap.substitute(this.toString(1)));
     } // substitute(VariableMap)
 
+    /** Compute the (partial) nth order derivative of <em>this</em> {@link Polynomial}
+     *  with respect to one variable.
+     *  @param varx derivate for this variable
+     *  @param order order n of derivation: first, second etc.
+     *  @return a new Polynomial, the nth order derivative.
+     *  For <em>order = 0</em>, a copy of <em>this</em> Polynomial is returned.
+     *  For <em>x^3+x^2</em> the 1st order derivative is <em>3x^2+2x</em>, 
+     *  and the 2nd order derivative is <em>6x</em>.
+     */
+    public Polynomial derivative(String varx, int order) {
+        Polynomial result = new Polynomial(); // 0 = 0
+        if (varx != null) {
+            Iterator <String> titer = this.getMonomials().keySet().iterator();
+            while (titer.hasNext()) {
+                Monomial mono1 = monomials.get(titer.next());
+                int exp = mono1.getExponent(varx);
+                if (exp > 0) {
+                    Monomial mono2 = mono1.clone();
+                    BigInteger coeff2 = mono2.getCoefficient().bigIntegerValue();
+                    int iord = 0;
+                    while (iord < order) {
+                        coeff2 = coeff2.multiply(BigInteger.valueOf(exp)); // derivation rule for powers
+                        exp --;
+                        iord ++;
+                    } // while iord
+                    if (exp >= 0) {
+                        mono2.setCoefficient(Coefficient.valueOf(coeff2));
+                        mono2.putExponent(varx, exp);
+                        result.addTo(mono2);
+                    } // else 0 - do not add
+                } // else varx not present - ignore this Monomial resp. add 0
+            } // while titer
+        } // varx != null
+        return result;
+    } // derivative
+
+    /** Compute the (partial) 1st order derivative of <em>this</em> {@link Polynomial}
+     *  with respect to one variable.
+     *  @param varx derivate for this variable
+     *  @return a new Polynomial, the 1st order derivative.
+     *  For <em>x^3+x^2</em> the 1st order derivative is <em>3x^2+2x</em>, 
+     *  and the 2nd order derivative is <em>6x</em>.
+     */
+    public Polynomial derivative(String varx) {
+        return this.derivative(varx, 1);
+    } // derivative
+
+    /** Compute the (partial) 1st order derivative of <em>this</em> {@link Polynomial}
+     *  with respect to the first (only) variable.
+     *  @return a new Polynomial, the 1st order derivative.
+     *  For <em>x^3+x^2</em> the 1st order derivative is <em>3x^2+2x</em>, 
+     *  and the 2nd order derivative is <em>6x</em>.
+     */
+    public Polynomial derivative() {
+        String varx = this.getVariableMap().getFirstName();
+        return this.derivative(varx, 1);
+    } // derivative
+
     /** Replaces all different variables by "x_y_z", and returns the corresponding Polynomial.
      *  @return a new Polynomial with all variables replaced by a single variable.
      */
@@ -1970,17 +2034,42 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
                     poly1 = Polynomial.parse(args[iarg ++]);
                     System.out.println("(" + poly1.toString() + ").degree()      = " + poly1.degree()     );
                     System.out.println("(" + poly1.toString() + ").degree(false) = " + poly1.degree(false));
+                    // -degree
+
+                } else if (opt.startsWith("-derive")) {
+                    poly1 = Polynomial.parse(args[iarg ++]);
+                    if (iarg < args.length) {
+                        String varx = args[iarg ++];
+                        int order = 1;
+                        if (iarg < args.length) { // with order
+                            try {
+                                order = Integer.parseInt(args[iarg ++]);
+                            } catch (Exception exc) {
+                            }
+                        } // with order 
+                        System.out.println("(" + poly1.toString() + ").derivative(\"" 
+                                + varx + "\", " + order + ") = " 
+                                + poly1.derivative(varx, order).toString()
+                                );
+                    } else { // first variable
+                        System.out.println("(" + poly1.toString() + ").derivative() = " 
+                                + poly1.derivative().toString()
+                                );
+                    }
+                    // -derive
 
                 } else if (opt.startsWith("-equiv")) {
                     poly1 = Polynomial.parse(args[iarg ++]);
                     poly2 = Polynomial.parse(args[iarg ++]);
                     System.out.println(poly1.toString() + " <"
                             + (poly1.isEquivalent(poly2) ? "equiv" : "notequiv") + "> " + poly2);
+                    // -equiv
 
                 } else if (opt.startsWith("-f")) {
                     poly1 = Polynomial.parse(ereader.read(args[iarg ++]));
                     System.out.println(poly1.toString());
                     poly1.printProperties();
+                    // -f
 
                 } else if (opt.startsWith("-hiter")) {
                     poly1 = Polynomial.parse(args[iarg ++]);
@@ -1992,6 +2081,7 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
                         System.out.print("(\"" + poly1.toString() + "\").getHighTerms(\"" + vname + "\") = ");
                         System.out.println(highTerms[0].toString() + ", " + highTerms[1].toString());
                     } // while iter1
+                    // -hiter
 
                 } else if (opt.startsWith("-incr")) {
                     // input is: poly vi ei; variable vi runs from 0 to ei
@@ -2013,17 +2103,19 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
                                 + "\t" + poly2.deflateIt().toString());
                         iloop ++;
                     } // while iloop
+                    // -incr
 
                 } else if (opt.startsWith("-mappable")) {
                     poly1 = Polynomial.parse(args[iarg ++]);
                     poly2 = Polynomial.parse(args[iarg ++]);
                     System.out.println("(\"" + poly1.toString() + "\").isMappableTo(\"" + poly2.toString() + "\") = "
                             + poly1.isMappableTo(poly2));
+                    // -mappable
 
                 } else if (opt.startsWith("-psum")) {
                     poly1 = Polynomial.parse(args[iarg ++]);
-                    System.out.println("(\"" + poly1.toString() + "\").isPowerSum() = "
-                            + poly1.isPowerSum());
+                    System.out.println("(\"" + poly1.toString() + "\").isPowerSum() = " + poly1.isPowerSum());
+                    // -psum
 
                 } else if (opt.startsWith("-redsol")) { // -f TreeSolver-resultfile
                     exprs = ereader.getArguments(iarg, args);
@@ -2056,18 +2148,21 @@ solution [0,0,0,0],trivial(3)
                     vmap1 = poly1.getReductionMap(1);
                     System.out.println("(\"" + poly1.toString() + "\")"
                             + ".getReductionMap(1)" + " = "+  vmap1.toString());
+                    // -reduce
 
                 } else if (opt.startsWith("-rest")) { // factor, poly
                     String factor = args[iarg ++];
                     poly1 = Polynomial.parse(args[iarg ++]);
                     System.out.println("getRest(" + poly1.toString() + ", " + factor + ") -> "
                             +  poly1.getRest(new Coefficient(factor)).toString());
+                    // -rest
 
                 } else if (opt.startsWith("-solut")) { // poly brat
                     poly1 =            Polynomial.parse(args[iarg ++]);
                     BigRational brat1 = new BigRational(args[iarg ++]);
                     System.out.println(brat1.toString() + " solves " + poly1.toString()
                             + "? " + poly1.hasSolution(brat1));
+                    // -solut
 
                 } else if (opt.startsWith("-var")) { // getVariablePowers and groupBy
                     String varName = args[iarg ++];
@@ -2077,6 +2172,7 @@ solution [0,0,0,0],trivial(3)
                     Monomial mono4 = new Monomial(vars);
                     System.out.println("getVariablePowers(" + varName + ")="   + poly1.getVariablePowers(mono4));
                     System.out.println(          "groupBy(" + varName + ")=\n" + poly1.groupBy          (mono4).toList(false));
+                    // -var
 
                 } else {
                     System.err.println("??? invalid option: \"" + opt + "\"");

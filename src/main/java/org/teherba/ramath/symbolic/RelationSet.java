@@ -254,20 +254,20 @@ public class RelationSet
         parentIndex = index;
     } // setParentIndex
     //----------------
-    /** The {@link ReasonFactory} which is used for the examination of 
+    /** The {@link ReasonFactory} which is used for the examination of
      *  all nodes in this (sub-)tree
      */
     private ReasonFactory reasonFactory;
-    /** Gets the {@link ReasonFactory} which is used for the examination of 
+    /** Gets the {@link ReasonFactory} which is used for the examination of
      *  all nodes in this (sub-)tree
      *  @return a ReasonFactory
      */
     public ReasonFactory getReasonFactory() {
         return reasonFactory;
     } // getReasonFactory
-    /** Sets the {@link ReasonFactory} which is used for the examination of 
+    /** Sets the {@link ReasonFactory} which is used for the examination of
      *  all nodes in this (sub-)tree
-     *  @param reasonFactory new ReasonFactory to be used 
+     *  @param reasonFactory new ReasonFactory to be used
      */
     public void setReasonFactory(ReasonFactory reasonFactory) {
         this.reasonFactory = reasonFactory;
@@ -366,10 +366,10 @@ public class RelationSet
                 buffer.append(String.valueOf(ipoly));
                 buffer.append("] ");
             }
-            Polynomial poly1 = this.get(ipoly);
-            buffer.append(poly1.getFactor().toString());
+            Polynomial rset1 = this.get(ipoly);
+            buffer.append(rset1.getFactor().toString());
             buffer.append("*(");
-            buffer.append(poly1.toString());
+            buffer.append(rset1.toString());
             buffer.append(')');
             ipoly ++;
         } // while ipoly
@@ -411,7 +411,51 @@ public class RelationSet
     public boolean isHomogeneous(boolean upperSubst) {
     public boolean isHomogeneous() {
     */
-    
+    //--------
+    /** Compute the (partial) nth order derivative of <em>this</em> {@link RelationSet}
+     *  with respect to one variable.
+     *  @param varx derivate for this variable
+     *  @param order order n of derivation: first, second etc.
+     *  @return a new RelationSet, the nth order derivative.
+     *  For <em>order = 0</em>, a copy of <em>this</em> RelationSet is returned.
+     *  For <em>x^3+x^2</em> the 1st order derivative is <em>3x^2+2x</em>,
+     *  and the 2nd order derivative is <em>6x</em>.
+     */
+    public RelationSet derivative(String varx, int order) {
+        RelationSet result = new RelationSet(); // 0 = 0
+        int ipoly = this.polynomials.size() - 1;
+        while (ipoly >= 0) {
+            Polynomial rset1 = this.get(ipoly).derivative(varx, order);
+            if (! rset1.isZero()) {
+                result.insert(rset1);
+            }
+            ipoly --;
+        } // while ipoly
+        return result;
+    } // derivative
+
+    /** Compute the (partial) 1st order derivative of <em>this</em> {@link RelationSet}
+     *  with respect to the first (only) variable.
+     *  @return a new RelationSet, the 1st order derivative.
+     *  For <em>x^3+x^2</em> the 1st order derivative is <em>3x^2+2x</em>,
+     *  and the 2nd order derivative is <em>6x</em>.
+     */
+    public RelationSet derivative() {
+        String varx = this.getVariableMap().getFirstName();
+        return this.derivative(varx, 1);
+    } // derivative
+
+    /** Compute the (partial) 1st order derivative of <em>this</em> {@link RelationSet}
+     *  with respect to one variable.
+     *  @param varx derivate for this variable
+     *  @return a new RelationSet, the 1st order derivative.
+     *  For <em>x^3+x^2</em> the 1st order derivative is <em>3x^2+2x</em>,
+     *  and the 2nd order derivative is <em>6x</em>.
+     */
+    public RelationSet derivative(String varx) {
+        return this.derivative(varx, 1);
+    } // derivative
+
     //----------------
     /** Deflates all member {@link Polynomial}s in place
      *  @return <em>this</em> deflated RelationSet
@@ -527,8 +571,8 @@ public class RelationSet
         VariableMap result = new VariableMap();
         int ipoly = 0;
         while (ipoly < this.size()) { // over all equations
-            Polynomial poly1 = this.get(ipoly);
-            result.putAll(poly1.getVariableMap(value, upperSubst));
+            Polynomial rset1 = this.get(ipoly);
+            result.putAll(rset1.getVariableMap(value, upperSubst));
             ipoly ++;
         } // while ipoly
         return result;
@@ -545,8 +589,8 @@ public class RelationSet
         RefiningMap result = new RefiningMap();
         int ipoly = 0;
         while (ipoly < this.size()) { // over all equations
-            Polynomial poly1 = this.get(ipoly);
-            result.putAll(poly1.getRefiningMap(value, upperSubst));
+            Polynomial rset1 = this.get(ipoly);
+            result.putAll(rset1.getRefiningMap(value, upperSubst));
             ipoly ++;
         } // while ipoly
         return result;
@@ -580,8 +624,8 @@ public class RelationSet
         Matrix related = new Matrix(nlen);
         int ipoly = 0;
         while (ipoly < this.size()) { // over all equations
-            Polynomial poly1 = this.get(ipoly);
-            String[]  pnames = poly1.getVariableMap(upperSubst).getNameArray();
+            Polynomial rset1 = this.get(ipoly);
+            String[]  pnames = rset1.getVariableMap(upperSubst).getNameArray();
             int ipna = 0;
             while (ipna < pnames.length) {
                 int inam = namind.get(pnames[ipna]).intValue();
@@ -684,11 +728,11 @@ public class RelationSet
         } // >= 3
         return result;
     } // isEqualTo
-    
+
     /** Determines whether two variables in <em>this</em> {@link RelationSet}
      *  are transposable, that is they can be interchanged without loss of structure.
-     *  Caution: this method uses and works only with a 
-     *  stored {@link RefiningMap} and a prepared TransitionReason 
+     *  Caution: this method uses and works only with a
+     *  stored {@link RefiningMap} and a prepared TransitionReason
      *  obtained from the internal {@link ReasonFactory}.
      *  @param vnam1 name of 1st variable
      *  @param vnam2 name of 2st variable
@@ -699,9 +743,9 @@ public class RelationSet
         VariableMap vmap = this.getMapping();
         BaseReason reason = this.getReasonFactory().getReason("transp");
         if (reason != null) { // maybe the whole rset has no transposable variables
-	        result = ((TranspositionReason) reason).areTransposable(vmap, vnam1, vnam2);
-	    }
-	    return result;
+            result = ((TranspositionReason) reason).areTransposable(vmap, vnam1, vnam2);
+        }
+        return result;
     } // areTransposable
 
     /** Substitutes variable names with the expressions from a {@link VariableMap} (if they are not null),
@@ -717,7 +761,7 @@ public class RelationSet
     /** Substitutes variable names with the expressions from a {@link VariableMap} (if they are not null),
      *  and returns a new RelationSet.
      *  @param vmap map of variable names to (expressions or null);
-     *  @param upperSubst whether uppercase variables should be replaced 
+     *  @param upperSubst whether uppercase variables should be replaced
      *  @return a new RelationSet
      */
     public RelationSet substitute(VariableMap vmap, boolean upperSubst) {
@@ -796,72 +840,101 @@ evaluate: unknown
         ExpressionReader ereader = new ExpressionReader();
         String[] exprs = null;
 
-        if (false) {
-        } else if (args.length == 0) {
-            rset1 = RelationSet.parse("a²+b^2=c^2, a<b, b<c");
-            System.out.println(rset1.toString());
-            System.out.println("evaluate: " + rset1.evaluate(null));
-            VariableMap varMap = rset1.getVariableMap();
-            varMap.put("a", "3*a_2");
-            varMap.put("b", "4*b_2");
-            varMap.put("c", "5*c_2");
-            rset2 = rset1.substitute(varMap);
-            System.out.println(rset2.toString(1));
-
-        } else if (args.length == 1 && ! args[0].startsWith("-")) {
-            rset1 = RelationSet.parse(args[iarg ++]);
-            System.out.println(rset1.toString(1));
-            System.out.println("evaluate: " + rset1.evaluate(null));
-
-        } else if (args.length >= 2) {
-            String opt = args[iarg ++];
+        if (true) { // for same indentation as in Polynomial
             if (false) {
+            } else if (args.length == 0) {
+                rset1 = RelationSet.parse("a²+b^2=c^2, a<b, b<c");
+                System.out.println(rset1.toString());
+                System.out.println("evaluate: " + rset1.evaluate(null));
+                VariableMap varMap = rset1.getVariableMap();
+                varMap.put("a", "3*a_2");
+                varMap.put("b", "4*b_2");
+                varMap.put("c", "5*c_2");
+                rset2 = rset1.substitute(varMap);
+                System.out.println(rset2.toString(1));
 
-            } else if (opt.startsWith("-depend")) {
+            } else if (args.length == 1 && ! args[0].startsWith("-")) {
                 rset1 = RelationSet.parse(args[iarg ++]);
-                System.out.println("(\"" + rset1.toString() + "\").getDependantMap() = "
-                        + rset1.getDependantMap().toString());
-
-            } else if (opt.equals    ("-f")     ) {
-                String fileName = args[1];
-                rset1 = RelationSet.parse((new ExpressionReader()).read(fileName));
                 System.out.println(rset1.toString(1));
                 System.out.println("evaluate: " + rset1.evaluate(null));
 
-            } else if (opt.equals    ("-equals")     ) {
-                rset1 = RelationSet.parse(args[iarg ++]);
-                rset2 = RelationSet.parse(args[iarg ++]);
-                System.out.println(rset1.toString());
-                System.out.println(rset2.toString());
-                System.out.println("equals="       + rset1.equals      (rset2) 
-                        +        ", isEqualTo="    + rset1.isEqualTo   (rset2) 
-                        +        ", isEquivalent=" + rset1.isEquivalent(rset2) 
-                        +        ", similiarity="  + rset1.similiarity (rset2) 
-                        );
+            } else if (args.length >= 2) {
+                String opt = args[iarg ++];
+                if (false) {
 
-            } else if (opt.startsWith("-rest")  ) {
-                String factor = args[iarg ++];
-                rset1 = RelationSet.parse(args[iarg ++]);
-                System.out.println(rset1.toString());
-                System.out.println("rest: " + rset1.getRest(new BigInteger(factor)));
+                } else if (opt.startsWith("-depend")) {
+                    rset1 = RelationSet.parse(args[iarg ++]);
+                    System.out.println("(\"" + rset1.toString() + "\").getDependantMap() = "
+                            + rset1.getDependantMap().toString());
+                    // -depend
 
-            } else if (opt.startsWith("-subst") ) { // expr1, expr2, ... rset
-                exprs = ereader.getArguments(iarg, args);
-                rset1 = RelationSet.parse(exprs[exprs.length - 1]); // the last
-                vmap1 = rset1.getVariableMap();
-                viter = vmap1.keySet().iterator();
-                int iexpr = 0;
-                while (viter.hasNext()) {
-                    String vname = viter.next();
-                    vmap1.put(vname, exprs[iexpr]);
-                    iexpr ++;
-                } // while iexpr
-                System.out.println("(\"" + rset1.niceString() + "\")"
-                        + ".substitute(" + vmap1.toString() + ") = " + rset1.substitute(vmap1).niceString());
+                } else if (opt.startsWith("-derive")) {
+                    rset1 = RelationSet.parse(args[iarg ++]);
+                    if (iarg < args.length) {
+                        String varx = args[iarg ++];
+                        int order = 1;
+                        if (iarg < args.length) { // with order
+                            try {
+                                order = Integer.parseInt(args[iarg ++]);
+                            } catch (Exception exc) {
+                            }
+                        } // with order
+                        System.out.println("(" + rset1.toString() + ").derivative(\""
+                                + varx + "\", " + order + ") = "
+                                + rset1.derivative(varx, order).toString()
+                                );
+                    } else { // first variable
+                        System.out.println("(" + rset1.toString() + ").derivative() = "
+                                + rset1.derivative().toString()
+                                );
+                    }
+                    // -derive
 
-            } else {
-                System.err.println("??? invalid option: \"" + opt + "\"");
-            }
+                } else if (opt.equals    ("-f")     ) {
+                    String fileName = args[1];
+                    rset1 = RelationSet.parse((new ExpressionReader()).read(fileName));
+                    System.out.println(rset1.toString(1));
+                    System.out.println("evaluate: " + rset1.evaluate(null));
+                    // -f
+
+                } else if (opt.equals    ("-equals")     ) {
+                    rset1 = RelationSet.parse(args[iarg ++]);
+                    rset2 = RelationSet.parse(args[iarg ++]);
+                    System.out.println(rset1.toString());
+                    System.out.println(rset2.toString());
+                    System.out.println("equals="       + rset1.equals      (rset2)
+                            +        ", isEqualTo="    + rset1.isEqualTo   (rset2)
+                            +        ", isEquivalent=" + rset1.isEquivalent(rset2)
+                            +        ", similiarity="  + rset1.similiarity (rset2)
+                            );
+                    // -equals
+
+                } else if (opt.startsWith("-rest")  ) {
+                    String factor = args[iarg ++];
+                    rset1 = RelationSet.parse(args[iarg ++]);
+                    System.out.println(rset1.toString());
+                    System.out.println("rest: " + rset1.getRest(new BigInteger(factor)));
+                    // -rest
+
+                } else if (opt.startsWith("-subst") ) { // expr1, expr2, ... rset
+                    exprs = ereader.getArguments(iarg, args);
+                    rset1 = RelationSet.parse(exprs[exprs.length - 1]); // the last
+                    vmap1 = rset1.getVariableMap();
+                    viter = vmap1.keySet().iterator();
+                    int iexpr = 0;
+                    while (viter.hasNext()) {
+                        String vname = viter.next();
+                        vmap1.put(vname, exprs[iexpr]);
+                        iexpr ++;
+                    } // while iexpr
+                    System.out.println("(\"" + rset1.niceString() + "\")"
+                            + ".substitute(" + vmap1.toString() + ") = " + rset1.substitute(vmap1).niceString());
+                    // -subst
+
+                } else {
+                    System.err.println("??? invalid option: \"" + opt + "\"");
+                }
+            } // if (true) - indentation
         } // with args
     } // main
 

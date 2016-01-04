@@ -1,6 +1,6 @@
 /*  VariableMap: maps a set of variables to their values or substitution formulas
  *  @(#) $Id: VariableMap.java 538 2010-09-08 15:08:36Z gfis $
- *  2015-09-11: addNewNames
+ *  2016-01-04: getFirstName
  *  2015-09-08: substitute with divisor b = constant 
  *  2015-08-30: deflateIt
  *  2015-08-19: multiplyBy, substitute
@@ -223,6 +223,20 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
         } // while iter
         return result;
     } // getNameArray
+
+    /** Gets the first variable name
+     *  @return "a", for example, or null if the map is empty
+     */
+    public String getFirstName() {
+        String result = null;
+        int ind = 0;
+        Iterator<String> iter = this.keySet().iterator();
+        while (iter.hasNext() && ind < 1) {
+            result = iter.next();
+            ind ++;
+        } // while iter
+        return result;
+    } // getFirstName
 
     /** Gets a concatenated String of the names/keys separated by commas
      *  @return "a,b,c" for example
