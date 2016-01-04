@@ -227,7 +227,7 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
 
     /** Returns a string representation of the {@link PrimeFactorization} 
      *  @param mode 0 = normal, 1 = full (for substitution), 2 = nice / human legible,
-     *  3 = with prime factors
+     *  3 = with prime factors, 4 = with HTML coloring
      *  @return "2^2*3*5" for 60 and mode=0
      */
     public String toString(int mode) {
@@ -254,9 +254,18 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
                         break;
                 } // switch mode
             }
-            result.append(prime.toString());
             int exp = this.get(prime);
-            SmallScript.appendExponent(result, mode, exp);
+            if (prime != null && mode == 4) { 
+                result.append("<span class=\"p");
+                result.append(prime.compareTo(BigInteger.TEN) < 0 ? prime.toString() : "1"); // classes .p2,.p3,.p5,.p7
+                result.append("\">");
+                result.append(prime.toString());
+                SmallScript.appendExponent(result, mode, exp);
+                result.append("</span>");
+            } else {
+                result.append(prime.toString());
+                SmallScript.appendExponent(result, mode, exp);
+            }
             oldExp = exp;
             iprime ++;
         } // while iter

@@ -2,6 +2,7 @@
 <%--
     Main form for application 'ramath'
     @(#) $Id: index.jsp 195 2009-07-09 05:38:17Z gfis $
+    2016-01-04: new layout, 1 textarea only, form2c - HTML coloring
     2015-07-17: opt=norm; poly -> rset
     2013-09-21: valueMap -> varMap
     2009-07-07: copied from xtrans
@@ -39,7 +40,7 @@
 </head>
 <%
     String CVSID = "@(#) $Id: index.jsp 195 2009-07-09 05:38:17Z gfis $";
-    int width  = 100;
+    int width  = 80;
     int height = 4;
     String[] optArea    = new String []
             { "rset"    // 0
@@ -57,6 +58,7 @@
     field = session.getAttribute("opt"      );  String opt   = (field != null) ? (String) field : "norm";
     field = session.getAttribute("form1"    );  String form1 = (field != null) ? (String) field : "(a-b)^4";
     field = session.getAttribute("form2"    );  String form2 = (field != null) ? (String) field : "";
+    field = session.getAttribute("form2c"    ); String form2c= (field != null) ? (String) field : "";
     field = session.getAttribute("varmap"   );
     VariableMap varMap = (field != null) ? (VariableMap) field : new VariableMap();
     int index = 0;
@@ -118,7 +120,7 @@
         <table cellpadding="0" border="<%= border %>">
            <tr>
                 <td colspan="2">
-                    <textarea name="form1" cols="<%= width %>" rows="<%= height %>"><%= form1 %>
+                    <textarea name="form1" wrap="virtual" cols="<%= width %>" rows="<%= height %>"><%= form1 %>
                     </textarea>
                 </td>
             </tr>
@@ -126,30 +128,24 @@
                 <td align="left">
                     <input type="submit" value="Compute" /> with substitutions
                 </td>
-                <td align="right">
-                    <img src="img/up.svg" alt="up arrow" width="80" />
-                </td>
             </tr>
          </table>
     </form><!-- upper -->
 
     <form action="servlet" method="get">
-        <input type = "hidden" name="view" value="lower" />
-        <input type = "hidden" name="area" value="<%= area %>" />
-        <input type = "hidden" name="opt"  value="<%= opt  %>" />
-        <table cellpadding="0" border="<%= border %>">
+        <input type = "hidden" name="view"   value="lower" />
+        <input type = "hidden" name="area"   value="<%= area   %>" />
+        <input type = "hidden" name="opt"    value="<%= opt    %>" />
+        <input type = "hidden" name="form2"  value="<%= form2  %>" />
+        <table cellpadding="0" border="<%= border %>" width="640px">
             <tr valign="top">
-                <td align="left">
-                    <img src="img/down.svg" alt="down arrow"  width="80" />
-                </td>
-                <td align="right">
-                    <input type="submit" value="Compute" />
+                <td colspan="2">
+                    <%= form2c %>
                 </td>
             </tr>
             <tr valign="top">
-                <td colspan="2">
-                    <textarea name="form2" cols="<%= width %>" rows="<%= height %>"><%= form2 %>
-                    </textarea>
+                <td align="left">
+                    <input type="submit" value="Replace" /> input field
                 </td>
             </tr>
             <tr>

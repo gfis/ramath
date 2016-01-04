@@ -1,20 +1,27 @@
-/*	dbat.css - Cascaded Style Sheet
-	@(#) $Id: stylesheet.css 74 2009-01-09 06:55:45Z gfis $
-	2007-01-08: colors for table column highlighting
-	2003-03-22:	without HTML comments and tags
-	2000-11-20,	Georg Fischer
+/*  dbat.css - Cascaded Style Sheet
+    @(#) $Id: stylesheet.css 74 2009-01-09 06:55:45Z gfis $
+    2016-01-04: p1,p2,p3,p5,p7 for prime number coloring
+    2007-01-08: colors for table column highlighting
+    2003-03-22: without HTML comments and tags
+    2000-11-20, Georg Fischer
 */
-.grn	{ color:black    ; background-color: lightgreen      }
-.red	{ color:black    ; background-color: lightsalmon     }
+.grn    { color:black    ; background-color: lightgreen      }
+.red    { color:black    ; background-color: lightsalmon     }
+
+.p1     { color:black    ; background-color: lightgray       }
+.p2     { color:black    ; background-color: lightsalmon     }
+.p3     { color:black    ; background-color: yellow          }
+.p5     { color:black    ; background-color: lightgreen      }
+.p7     { color:black    ; background-color: lightblue       }
 
 body,p,h1,h2,h3,h4,dl,dd,dt,ul,ol,li,div,td,th,address,blockquote,nobr,b,i,a,br,img
-	{ font-family:Verdana,Arial,sans-serif; }
-dt	
-	{ font-weight: bold }
+    { font-family:Verdana,Arial,sans-serif; }
+dt  
+    { font-weight: bold }
 tt
-	{ font-family:Courier; }
+    { font-family:Courier; }
 td
-	{ vertical-align:top }
+    { vertical-align:top }
 body
-	{ background-color:white }
+    { background-color:white }
 

@@ -65,8 +65,6 @@ public class SandBox {
      *  sequence of values and print the 1st, 2nd and higher
      *  order differences of the Polynomial's values.
      *  @param args commandline arguments: polynomial [start [high]]
-     *  @param startValue 
-     *  @param highValue  
      */
     private void printDifferences(String[] args) {
         int startValue =  0; // start with this value of the (single) variable
@@ -107,15 +105,15 @@ public class SandBox {
                 Polynomial poly2 = poly1.substitute(vmap);
                 // System.out.println("substituted poly2: " + poly2.toString());
 /*
-	my $ind = 0;
-	$ndif[$ind] = &form($num);
-	while ($ind < scalar(@ndif) - 1 and $odif[$ind] > 0) {
-		$ndif[$ind + 1] = $ndif[$ind] - $odif[$ind];
-		$ind ++; 
-	} # while $ind
-	print " ", sprintf("%2d %10d %10d %10d %10d %10d %10d\n", $num, @ndif);
-	# print "----\n";
-	@odif = @ndif;
+    my $ind = 0;
+    $ndif[$ind] = &form($num);
+    while ($ind < scalar(@ndif) - 1 and $odif[$ind] > 0) {
+        $ndif[$ind + 1] = $ndif[$ind] - $odif[$ind];
+        $ind ++;
+    } # while $ind
+    print " ", sprintf("%2d %10d %10d %10d %10d %10d %10d\n", $num, @ndif);
+    # print "----\n";
+    @odif = @ndif;
 */
                 ind = 0;
                 if (poly2.isZero()) {

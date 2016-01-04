@@ -114,18 +114,20 @@ public class RaMathServlet extends HttpServlet {
             int index = 0;
             boolean found = false;
             HttpSession session = request.getSession();
-            String view     = getInputField(request, "view" , "");
-            String area     = getInputField(request, "area" , "rset");
-            String opt      = getInputField(request, "opt"  , "norm");
-            String form1    = getInputField(request, "form1", "(a-b)^3");
-            String form2    = getInputField(request, "form2", "");
+            String view     = getInputField(request, "view"  , "");
+            String area     = getInputField(request, "area"  , "rset");
+            String opt      = getInputField(request, "opt"   , "norm");
+            String form1    = getInputField(request, "form1" , "(a-b)^3");
+            String form2    = getInputField(request, "form2" , "");
+            String form2c   = getInputField(request, "form2c", ""); // HTML colored
             session.setAttribute("view"  , view);
             session.setAttribute("area"  , area);
             session.setAttribute("opt"   , opt);
             session.setAttribute("form1" , form1);
             session.setAttribute("form2" , form2);
+            session.setAttribute("form2c", form2c);
             
-            int mode = 3; // with PrimeFactorization
+            int mode = 3; // with PrimeFactorization and HTML coloring
             String newPage = "index";
             if (false) {
             } else if (view.equals("upper")) {
@@ -157,8 +159,10 @@ public class RaMathServlet extends HttpServlet {
                     if (opt.indexOf("norm") >= 0) {
                         rset.deflateIt();
                     }
-                    form2 = rset.toString(mode);
-                    session.setAttribute("form2", form2);
+                    form2  = rset.toString(mode);
+                    session.setAttribute("form2" , form2);
+                    form2c = rset.toString(mode + 1);
+                    session.setAttribute("form2c", form2c);
                 } else if (area.equals("cfra")) {
                 } else if (area.equals("eecj")) {
                 } else { // invalid area
