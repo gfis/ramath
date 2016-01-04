@@ -166,7 +166,7 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
     /*-------------- lightweight methods -----------------------------*/
 
     /** Returns a string representation of the variable map
-     *  @return "{a=3,b=4,c=5}", for example
+     *  @return "{a=>3,b=>4,c=>5}", for example
      */
     public String toString() {
         StringBuffer result = new StringBuffer(256);

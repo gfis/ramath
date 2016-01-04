@@ -1,5 +1,6 @@
 /*  RelationSet: a set of polynomials which relate to zero
  *  @(#) $Id: RelationSet.java 970 2012-10-25 16:49:32Z  $
+ *  2016-01-04: PairMap
  *  2015-12-06: toString(boolean) -> toString(1)
  *  2015-09-10: message -> siblingIndex; s|getRelationSet
  *  2015-08-25: getExponentGCDs
@@ -30,6 +31,7 @@
  * limitations under the License.
  */
 package org.teherba.ramath.symbolic;
+import  org.teherba.ramath.symbolic.PairMap;
 import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.RefiningMap;
 import  org.teherba.ramath.symbolic.VariableMap;
@@ -83,6 +85,7 @@ public class RelationSet
      */
     public RelationSet() {
         polynomials     = new ArrayList<Polynomial>(4);
+        setPairMap      (new PairMap());
         setNestingLevel (0);
         setParentIndex  (-1); // no parent - [0] is the first real queue element
         setMapping      (new RefiningMap());
@@ -144,6 +147,7 @@ public class RelationSet
             result.insert(this.get(ipoly).clone());
             ipoly ++;
         } // while ipoly
+        result.setPairMap       (this.getPairMap        ().clone());
         result.setIndex         (this.getIndex          ()); // should be adapted
         result.setMapping       (this.getMapping        ());
         result.setNestingLevel  (this.getNestingLevel   ());
@@ -204,6 +208,21 @@ public class RelationSet
     public void setIndex(int index) {
         this.index = index;
     } // setIndex
+    //----------------
+    /** Attributes for pairs of variables */
+    private PairMap pairMap;
+    /** Gets the {@link PairMap}.
+     *  @return a map of ordered pairs of variable names to some property code
+     */
+    public PairMap getPairMap() {
+        return pairMap;
+    } // getPairMap
+    /** Sets the {@link PairMap}.
+     *  @param pairMap map of ordered pairs of variable names to some property code
+     */
+    public void setPairMap(PairMap pairMap) {
+        this.pairMap = pairMap;
+    } // setPairMap
     //----------------
     /** Maps variable names to the accumulated digits assigned during the expansion */
     private RefiningMap mapping;

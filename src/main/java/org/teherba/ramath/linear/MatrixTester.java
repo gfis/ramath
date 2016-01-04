@@ -19,10 +19,10 @@
  */
 package org.teherba.ramath.linear;
 import  org.teherba.ramath.linear.Matrix;
-import  org.teherba.ramath.linear.Options;
 import  org.teherba.ramath.linear.Vector;
 import  org.teherba.ramath.linear.VectorArray;
 import  org.teherba.ramath.util.ModoMeter;
+import  org.teherba.ramath.util.Options;
 import  org.teherba.ramath.util.Permutator;
 import  org.teherba.ramath.EulersExtendedConjecture;
 import  java.io.BufferedReader;

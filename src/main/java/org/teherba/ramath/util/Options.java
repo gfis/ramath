@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.teherba.ramath.linear;
+package org.teherba.ramath.util;
 import  org.teherba.ramath.linear.Matrix;
 import  org.teherba.ramath.linear.Vector;
 import  java.io.BufferedReader;
@@ -69,7 +69,7 @@ public class Options {
     public Options(String[] args, int iarg) {
         this.args = args;
         this.iarg = iarg;
-        log = Logger.getLogger(MatrixTester.class.getName());
+        log = Logger.getLogger(Options.class.getName());
     } // Constructor(args, iarg)
 
     /*-------------- simple access methods -----------------------------*/
@@ -305,7 +305,7 @@ public class Options {
         int ires = alist.size();
         Vector result = new Vector(ires --);
         while (ires >= 0) {
-            result.vector[ires] = alist.get(ires);
+            result.set(ires, alist.get(ires));
             ires --;
         }
         return result;

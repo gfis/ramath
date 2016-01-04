@@ -108,6 +108,20 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
         return result;
     } // valueOf
 
+    /** Get the radical, or square-free kernel, of <em>this</em> {@link PrimeFactorization},
+     *  that is the (positive) product of the prime numbers without their exponents.
+     *  @return product of all prime number without their powers, or 1 for an empty map
+     */
+    public BigInteger radical() {
+        BigInteger result = BigInteger.ONE;
+        Iterator<BigInteger> iter = this.keySet().iterator();
+        while (iter.hasNext()) {
+            BigInteger prime = iter.next();
+            result = result.multiply(prime);
+        } // while iter
+        return result;
+    } // radical
+
     /** Multiplies two {@link PrimeFactorization}s by merging the
      *  two TreeMaps and adding the exponents
      *  @param primfn2 second PrimeFactorization 
@@ -225,7 +239,7 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
         return new BigInteger[] { rootv, rfact };
     } // reducePowerOf
 
-    /** Returns a string representation of the {@link PrimeFactorization} 
+    /** Returns a String representation of the {@link PrimeFactorization} 
      *  @param mode 0 = normal, 1 = full (for substitution), 2 = nice / human legible,
      *  3 = with prime factors, 4 = with HTML coloring
      *  @return "2^2*3*5" for 60 and mode=0
@@ -292,7 +306,8 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
         System.out.println(".toString(4) = " + primfn1.toString(4));
         PrimeFactorization primfn4 = new PrimeFactorization(primfn1.wideToPower(4));
         System.out.println(".wideToPower(4) = " + primfn4.toString());
-        System.out.println(".root(2) = " + primfn4.multiply(primfn1).root(2).toString());
+        System.out.println(".root(2) = "   + primfn4.multiply(primfn1).root(2).toString());
+        System.out.println(".radical() = " + primfn4.radical().toString());
         PrimeFactorization primfn2 = primfn1.multiply(primfn1);
         System.out.println(".multiply(same) = " + primfn2.toString());
         System.out.println(".valueOf() = " + primfn2.valueOf().toString());
