@@ -3,7 +3,7 @@ Expanding for base=9, reasons+features=base,same,similiar,evenexp norm
 Refined variables=x,y
 [0+1x,0+1y]:	unknown -> [1] x²-y³+2
 ----------------
-expanding queue[0]^-1,meter=[9,9]*9: x²-y³+2
+expanding queue[0]^-1,meter=[9,9]: x²-y³+2
 [4+9x,0+9y]:	unknown -> [1] 8x+9x²-81y³+2
 [5+9x,0+9y]:	negative-1 [1] by {x=>-x-1}
 [4+9x,3+9y]:	unknown -> [2] 8x+9x²-27y-81y²-81y³-1
@@ -12,16 +12,16 @@ expanding queue[0]^-1,meter=[9,9]*9: x²-y³+2
 [4+9x,6+9y]:	unknown -> [3] 8x+9x²-108y-162y²-81y³-22
 [5+9x,6+9y]:	negative-1 [3] by {x=>-x-1}
 ----------------
-expanding queue[1]^0,meter=[9,1]*81: 8x+9x²-81y³+2
+expanding queue[1]^0,meter=[9,1]: 8x+9x²-81y³+2
 [22+81x,0+9y]:	unknown -> [4] 44x+81x²-9y³+6
-expanding queue[2]^0,meter=[9,1]*81: 8x+9x²-27y-81y²-81y³-1
+expanding queue[2]^0,meter=[9,1]: 8x+9x²-27y-81y²-81y³-1
 [76+81x,3+9y]:	unknown -> [5] 152x+81x²-3y-9y²-9y³+71
-expanding queue[3]^0,meter=[9,1]*81: 8x+9x²-108y-162y²-81y³-22
+expanding queue[3]^0,meter=[9,1]: 8x+9x²-108y-162y²-81y³-22
 [49+81x,6+9y]:	unknown -> [6] 98x+81x²-12y-18y²-9y³+27
 ----------------
-expanding queue[4]^1,meter=[9,1]*729: 44x+81x²-9y³+6
+expanding queue[4]^1,meter=[9,1]: 44x+81x²-9y³+6
 [508+729x,0+9y]:	unknown -> [7] 1016x+729x²-y³+354
-expanding queue[5]^2,meter=[9,9]*729: 152x+81x²-3y-9y²-9y³+71
+expanding queue[5]^2,meter=[9,9]: 152x+81x²-3y-9y²-9y³+71
 [724+729x,3+81y]:	unknown -> [8] 1448x+729x²-3y-81y²-729y³+719
 [481+729x,12+81y]:	unknown -> [9] 962x+729x²-48y-324y²-729y³+315
 [238+729x,21+81y]:	unknown -> [10] 476x+729x²-147y-567y²-729y³+65
@@ -31,7 +31,7 @@ expanding queue[5]^2,meter=[9,9]*729: 152x+81x²-3y-9y²-9y³+71
 [724+729x,57+81y]:	unknown -> [14] 1448x+729x²-1083y-1539y²-729y³+465
 [481+729x,66+81y]:	unknown -> [15] 962x+729x²-1452y-1782y²-729y³-77
 [238+729x,75+81y]:	unknown -> [16] 476x+729x²-1875y-2025y²-729y³-501
-expanding queue[6]^3,meter=[9,9]*729: 98x+81x²-12y-18y²-9y³+27
+expanding queue[6]^3,meter=[9,9]: 98x+81x²-12y-18y²-9y³+27
 [49+729x,6+81y]:	unknown -> [17] 98x+729x²-12y-162y²-729y³+3
 [535+729x,15+81y]:	unknown -> [18] 1070x+729x²-75y-405y²-729y³+388
 [292+729x,24+81y]:	unknown -> [19] 584x+729x²-192y-648y²-729y³+98

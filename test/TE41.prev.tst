@@ -6,7 +6,7 @@ Refined variables=a,b,c,d
 [0+1a,0+1b,0+1c,0+1d]:	unknown -> [1] a⁴+b⁴-c⁴-d⁴
 -> solution [0,0,0,0],trivial(3) [1,0,1,0],trivial(3) [0,1,1,0],trivial(3) [1,0,0,1],trivial(3) [0,1,0,1],trivial(3) [1,1,1,1],trivial(2)
 ----------------
-expanding queue[0]^-1,meter=[2,2,2,2]*2: a⁴+b⁴-c⁴-d⁴
+expanding queue[0]^-1,meter=[2,2,2,2]: a⁴+b⁴-c⁴-d⁴
 [0+2a,0+2b,0+2c,0+2d]:	non-primitive
 -> solution [0,0,0,0],trivial(3) [2,0,2,0],trivial(3) [0,2,2,0],trivial(3) [2,0,0,2],trivial(3) [0,2,0,2],trivial(3) [2,2,2,2],trivial(2)
 [1+2a,0+2b,1+2c,0+2d]:	unknown -> [1] a+3a²+4a³+2a⁴+2b⁴-c-3c²-4c³-2c⁴-2d⁴
@@ -17,7 +17,7 @@ expanding queue[0]^-1,meter=[2,2,2,2]*2: a⁴+b⁴-c⁴-d⁴
 [1+2a,1+2b,1+2c,1+2d]:	unknown -> [2] a+3a²+4a³+2a⁴+b+3b²+4b³+2b⁴-c-3c²-4c³-2c⁴-d-3d²-4d³-2d⁴
 -> solution [1,1,1,1],trivial(2) [3,1,3,1],trivial(2) [1,3,3,1],trivial(2) [3,1,1,3],trivial(2) [1,3,1,3],trivial(2) [3,3,3,3],trivial(2)
 ----------------
-expanding queue[1]^0,meter=[2,2,2,2]*4: a+3a²+4a³+2a⁴+2b⁴-c-3c²-4c³-2c⁴-2d⁴
+expanding queue[1]^0,meter=[2,2,2,2]: a+3a²+4a³+2a⁴+2b⁴-c-3c²-4c³-2c⁴-2d⁴
 [1+4a,0+4b,1+4c,0+4d]:	unknown -> [3] a+6a²+16a³+16a⁴+16b⁴-c-6c²-16c³-16c⁴-16d⁴
 -> solution [1,0,1,0],trivial(3) [5,0,5,0],trivial(3) [1,4,1,4],trivial(2) [5,4,5,4],trivial(2)
 [3+4a,0+4b,1+4c,0+4d]:	negative-1 [3] by {a=>-a-1}
@@ -38,7 +38,7 @@ expanding queue[1]^0,meter=[2,2,2,2]*4: a+3a²+4a³+2a⁴+2b⁴-c-3c²-4c³-2c�
 [1+4a,2+4b,3+4c,2+4d]:	negative-1 [5] by {c=>-c-1}
 [3+4a,2+4b,3+4c,2+4d]:	negative-1 [5] by {a=>-a-1,c=>-c-1}
 -> solution [3,2,3,2],trivial(2) [7,2,7,2],trivial(2) [3,6,3,6],trivial(2) [7,6,7,6],trivial(2)
-expanding queue[2]^0,meter=[2,2,2,2]*4: a+3a²+4a³+2a⁴+b+3b²+4b³+2b⁴-c-3c²-4c³-2c⁴-d-3d²-4d³-2d⁴
+expanding queue[2]^0,meter=[2,2,2,2]: a+3a²+4a³+2a⁴+b+3b²+4b³+2b⁴-c-3c²-4c³-2c⁴-d-3d²-4d³-2d⁴
 [1+4a,1+4b,1+4c,1+4d]:	unknown -> [6] a+6a²+16a³+16a⁴+b+6b²+16b³+16b⁴-c-6c²-16c³-16c⁴-d-6d²-16d³-16d⁴
 -> solution [1,1,1,1],trivial(2) [5,1,5,1],trivial(2) [1,5,5,1],trivial(2) [5,1,1,5],trivial(2) [1,5,1,5],trivial(2) [5,5,5,5],trivial(2)
 [3+4a,1+4b,1+4c,1+4d]:	negative-1 [6] by {a=>-a-1}
@@ -62,7 +62,7 @@ expanding queue[2]^0,meter=[2,2,2,2]*4: a+3a²+4a³+2a⁴+b+3b²+4b³+2b⁴-c-3c
 [3+4a,3+4b,3+4c,3+4d]:	negative-1 [6] by {a=>-a-1,b=>-b-1,c=>-c-1,d=>-d-1}
 -> solution [3,3,3,3],trivial(2) [7,3,7,3],trivial(2) [3,7,7,3],trivial(2) [7,3,3,7],trivial(2) [3,7,3,7],trivial(2) [7,7,7,7],trivial(2)
 ----------------
-expanding queue[3]^1,meter=[2,2,2,2]*8: a+6a²+16a³+16a⁴+16b⁴-c-6c²-16c³-16c⁴-16d⁴
+expanding queue[3]^1,meter=[2,2,2,2]: a+6a²+16a³+16a⁴+16b⁴-c-6c²-16c³-16c⁴-16d⁴
 [1+8a,0+8b,1+8c,0+8d]:	unknown -> [7] a+12a²+64a³+128a⁴+128b⁴-c-12c²-64c³-128c⁴-128d⁴
 -> solution [1,0,1,0],trivial(3) [9,0,9,0],trivial(3) [1,8,1,8],trivial(2) [9,8,9,8],trivial(2)
 [1+8a,4+8b,1+8c,0+8d]:	unknown -> [8] a+12a²+64a³+128a⁴+64b+192b²+256b³+128b⁴-c-12c²-64c³-128c⁴-128d⁴+8
@@ -75,7 +75,7 @@ expanding queue[3]^1,meter=[2,2,2,2]*8: a+6a²+16a³+16a⁴+16b⁴-c-6c²-16c³-
 [5+8a,0+8b,5+8c,4+8d]:	transposed [10] by [2,3,0,1]
 [5+8a,4+8b,5+8c,4+8d]:	unknown -> [12] 125a+300a²+320a³+128a⁴+64b+192b²+256b³+128b⁴-125c-300c²-320c³-128c⁴-64d-192d²-256d³-128d⁴
 -> solution [5,4,5,4],trivial(2) [13,4,13,4],trivial(2) [5,12,5,12],trivial(2) [13,12,13,12],trivial(2)
-expanding queue[4]^1,meter=[2,2,2,2]*8: a+6a²+16a³+16a⁴+8b+24b²+32b³+16b⁴-c-6c²-16c³-16c⁴-16d⁴+1
+expanding queue[4]^1,meter=[2,2,2,2]: a+6a²+16a³+16a⁴+8b+24b²+32b³+16b⁴-c-6c²-16c³-16c⁴-16d⁴+1
 [5+8a,2+8b,1+8c,0+8d]:	unknown -> [13] 125a+300a²+320a³+128a⁴+8b+48b²+128b³+128b⁴-c-12c²-64c³-128c⁴-128d⁴+20
 [5+8a,6+8b,1+8c,0+8d]:	negative-1 [13] by {b=>-b-1}
 [1+8a,2+8b,5+8c,0+8d]:	unknown -> [14] a+12a²+64a³+128a⁴+8b+48b²+128b³+128b⁴-125c-300c²-320c³-128c⁴-128d⁴-19
@@ -84,7 +84,7 @@ expanding queue[4]^1,meter=[2,2,2,2]*8: a+6a²+16a³+16a⁴+8b+24b²+32b³+16b�
 [5+8a,6+8b,1+8c,4+8d]:	negative-1 [15] by {b=>-b-1}
 [1+8a,2+8b,5+8c,4+8d]:	unknown -> [16] a+12a²+64a³+128a⁴+8b+48b²+128b³+128b⁴-125c-300c²-320c³-128c⁴-64d-192d²-256d³-128d⁴-27
 [1+8a,6+8b,5+8c,4+8d]:	negative-1 [16] by {b=>-b-1}
-expanding queue[5]^1,meter=[2,2,2,2]*8: a+6a²+16a³+16a⁴+8b+24b²+32b³+16b⁴-c-6c²-16c³-16c⁴-8d-24d²-32d³-16d⁴
+expanding queue[5]^1,meter=[2,2,2,2]: a+6a²+16a³+16a⁴+8b+24b²+32b³+16b⁴-c-6c²-16c³-16c⁴-8d-24d²-32d³-16d⁴
 [1+8a,2+8b,1+8c,2+8d]:	unknown -> [17] a+12a²+64a³+128a⁴+8b+48b²+128b³+128b⁴-c-12c²-64c³-128c⁴-8d-48d²-128d³-128d⁴
 -> solution [1,2,1,2],trivial(2) [9,2,9,2],trivial(2) [1,10,1,10],trivial(2) [9,10,9,10],trivial(2)
 [1+8a,6+8b,1+8c,2+8d]:	negative-1 [17] by {b=>-b-1}
@@ -97,7 +97,7 @@ expanding queue[5]^1,meter=[2,2,2,2]*8: a+6a²+16a³+16a⁴+8b+24b²+32b³+16b�
 [5+8a,2+8b,5+8c,6+8d]:	negative-1 [18] by {d=>-d-1}
 [5+8a,6+8b,5+8c,6+8d]:	negative-1 [18] by {b=>-b-1,d=>-d-1}
 -> solution [5,6,5,6],trivial(2) [13,6,13,6],trivial(2) [5,14,5,14],trivial(2) [13,14,13,14],trivial(2)
-expanding queue[6]^2,meter=[2,2,2,2]*8: a+6a²+16a³+16a⁴+b+6b²+16b³+16b⁴-c-6c²-16c³-16c⁴-d-6d²-16d³-16d⁴
+expanding queue[6]^2,meter=[2,2,2,2]: a+6a²+16a³+16a⁴+b+6b²+16b³+16b⁴-c-6c²-16c³-16c⁴-d-6d²-16d³-16d⁴
 [1+8a,1+8b,1+8c,1+8d]:	unknown -> [19] a+12a²+64a³+128a⁴+b+12b²+64b³+128b⁴-c-12c²-64c³-128c⁴-d-12d²-64d³-128d⁴
 -> solution [1,1,1,1],trivial(2) [9,1,9,1],trivial(2) [1,9,9,1],trivial(2) [9,1,1,9],trivial(2) [1,9,1,9],trivial(2) [9,9,9,9],trivial(2)
 [5+8a,5+8b,1+8c,1+8d]:	unknown -> [20] 125a+300a²+320a³+128a⁴+125b+300b²+320b³+128b⁴-c-12c²-64c³-128c⁴-d-12d²-64d³-128d⁴+39

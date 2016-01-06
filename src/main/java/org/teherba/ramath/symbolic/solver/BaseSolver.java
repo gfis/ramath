@@ -283,7 +283,9 @@ public class BaseSolver extends Stack<RelationSet> {
     //-----------------
 
     //-----------------------------------------------
-    // Pseudo-abstract methods common to all Solvers
+    // Pseudo-abstract methods common to all Solvers.
+    // 'print...' and 'expandReasons'  are used by TreeSolver,
+    // 'show...'  and 'explainReasons' are used QueuingSolver
     //-----------------------------------------------
 
     /** Prints the decision of a child node in the tree.
@@ -305,6 +307,28 @@ public class BaseSolver extends Stack<RelationSet> {
         } // debug
     } // printDecision
 
+    /** Prints the decision of a child node in the tree.
+     *  @param decision outcome of the various checks for {@link BaseReason reasons} to cut the tree,
+     *  @param rset2 {@link RelationSet} to be examined
+     *  @param rmap2 {@link VariableMap} of <em>rset2</em>
+     */
+    public void showDecision(String decision, RelationSet rset2, RefiningMap rmap2) {
+        if (debug >= 1) {
+            trace.print(rset2.getIndex() + "^"
+                    + rset2.getParentIndex()
+                    + ":\t");
+            trace.print(rmap2.niceString());
+            trace.print("\t" + decision);
+            if (false) {
+            } else if ( decision.startsWith(VariableMap.UNKNOWN) ||
+                        decision.startsWith(VariableMap.SUCCESS)) { // UNKNOWN || SUCCESS
+            //  trace.print(" -> [" + (this.size() + 1) + "]");
+                trace.print(" " + rset2.niceString());
+            } // UNKNOWN || SUCCESS
+            trace.println();
+        } // debug
+    } // showDecision
+
     /** Prints the header message
      *  @param rset0 initial {@link RelationSet}
      */
@@ -320,18 +344,33 @@ public class BaseSolver extends Stack<RelationSet> {
      *  @param queueIndex expand this queue element
      *  @param rset1 {@link RelationSet} at position <em>queueIndex</em>
      *  @param meter which {@link ModoMeter} will be used for the expansion
-     *  @param factor the common shift for all variables (if any)
      */
-    protected void printNode(int queueIndex, RelationSet rset1, ModoMeter meter, BigInteger factor) {
+    protected void printNode(int queueIndex, RelationSet rset1, ModoMeter meter) {
         if (debug >= 1) {
             trace.println("expanding queue[" + queueIndex + "]^"
                     + rset1.getParentIndex()
                     + ",meter=" + meter.toBaseList()
-                    + "*" + factor.toString()
+            //      + "*" + factor.toString()
                     + ": " + rset1.niceString()
                     );
         }
     } // printNode
+
+    /** Prints the message for a node to be expanded.
+     *  @param queueIndex expand this queue element
+     *  @param rset1 {@link RelationSet} at position <em>queueIndex</em>
+     *  @param meter which {@link ModoMeter} will be used for the expansion
+     */
+    protected void showNode_99(int queueIndex, RelationSet rset1, ModoMeter meter) {
+        if (debug >= 1) {
+            trace.print("[" + queueIndex + "]^"
+                    + rset1.getParentIndex()
+            //      + ",meter=" + meter.toBaseList()
+            //      + "*" + factor.toString()
+            //      + ": " + rset1.niceString()
+                    );
+        }
+    } // showNode
 
     /** Prints the message for a pseudo node which is ignored.
      *  @param queueIndex index of this queue element
@@ -349,6 +388,9 @@ public class BaseSolver extends Stack<RelationSet> {
     /** level of queue element which was previously expanded */
     protected int prevLevel;
 
+    /** parent of queue element which was previously expanded */
+    protected int prevParent;
+
     /** Prints the separator between different nesting levels
      *  @param level current level from next queue element
      */
@@ -360,6 +402,24 @@ public class BaseSolver extends Stack<RelationSet> {
             }
         } // debug
     } // printSeparator
+
+    /** Prints the separator between different nesting levels
+     *  @param level current level from next queue element
+     *  @param parent index of current parent
+     */
+    protected void showSeparator(int level, int parent) {
+        if (debug >= 1) {
+            if (prevLevel < level) {
+                prevLevel = level;
+                trace.println("#----------------"); // 16 x "-"
+            } else {
+                if (prevParent < parent) {
+                    trace.println("#"); 
+                }
+            }
+            prevParent = parent;
+        } // debug
+    } // showSeparator
 
     /** Prints solutions, if there are any.
      *  Solutions are obtained by replacing the variables by 0 (not implemented: "or by 1").
@@ -394,6 +454,40 @@ public class BaseSolver extends Stack<RelationSet> {
             }
         } // debug
     } // printSolutions
+
+    /** Prints solutions, if there are any.
+     *  Solutions are obtained by replacing the variables by 0 (not implemented: "or by 1").
+     *  @param rset1 {@link RelationSet} to be examined
+     *  @param rmap1 {@link VariableMap} of <em>rset1</em>
+     */
+    public void showSolutions(RelationSet rset1, RefiningMap rmap1) {
+        if (debug >= 0) {
+            boolean first = false;
+            RefiningMap rmap2 = rmap1 != null ? rmap1.clone() : new RefiningMap();
+            ModoMeter meter = new ModoMeter(rmap2.size(), 2); // run {0,1} through all variables
+            boolean busy = true;
+            while (busy && meter.hasNext()) {
+                rmap2.setValues(meter);
+                RelationSet rset2 = rset1.substitute(rmap2);
+                String decision = rset2.evaluate(rmap2);
+                if (decision.startsWith(VariableMap.SUCCESS + " =0")) {
+                    decision = rmap1.getMeteredValues(meter).describe();
+                    if (! igtriv || ! (decision.indexOf("trivial") >= 0)) {
+                        if (! first) {
+                            trace.print("#\t\t\t-> solution");
+                            first = true;
+                        }
+                        trace.print(" " + decision);
+                    }
+                } // SUCCESS =0
+                meter.next();
+                // busy = false; // evaluate only once for [0,0,...]
+            } // while meter
+            if (first) {
+                trace.println();
+            }
+        } // debug
+    } // showSolutions
 
     /** Prints the trailer message
      *  @param rset0 the starting {@link RelationSet}, which is shown again in the trailer message
@@ -440,17 +534,61 @@ public class BaseSolver extends Stack<RelationSet> {
         if (invall || involvedCount <= 0) { // rmap1 was empty
             meter = new ModoMeter(varNo, base); // involve all variables / avoid modulo [1,1,1,...]
         } // rmap1 empty
-        // meter = new ModoMeter(varNo, base); // enforce involvement of all variables
         return meter;
     } // getPreparedMeter
 
     /** Expands one {@link RelationSet} in the queue,
      *  evaluates the expanded children,
      *  and requeues all children with status UNKNOWN or SUCCESS.
-     *  Pseudo-abstract.
+     *  Binary expansion (for example) replaces all variables x_i by 0+2*x_j and 1+2*x_j (j=i+1).
+     *  The constants which are added run from (0,0,0 ... 0), (1,0,0 ... 0) ... through to (1,1,1 ... 1);
+     *  they are obtained from a {@link ModoMeter}.
      *  @param queueIndex position in the queue of the element ({@link RelationSet}) to be expanded, >= 0
      */
-    protected void expand(int queueIndex) {
+    public void expand(int queueIndex) {
+        RelationSet rset1 = this.get(queueIndex); // expand this element (the "parent")
+        if (debug > 1) {
+            trace     .println("trace: TreeSolver.expand(" + rset1.niceString() + ")");
+        }
+        ReasonFactory factory1 = rset1.getReasonFactory();
+        if (factory1 != null) { // otherwise it is a pseudo node behind a subtree node
+            RefiningMap vmap1  = rset1.getMapping();
+            int newLevel       = rset1.getNestingLevel() + 1;
+            BigInteger factor  = BigInteger.valueOf(this.getModBase()).pow(newLevel);
+            ModoMeter meter    = this.getPreparedMeter(rset1, vmap1, factor);
+            // meter now ready for n-adic expansion, e.g. x -> 2*x+0, 2*x+1
+            printNode(queueIndex, rset1, meter);
+            int oldSiblingIndex = -1; // for the 1st child
+            while (meter.hasNext()) { // over all constant combinations - generate all children
+                RefiningMap vmap2 = vmap1.getRefinedMap(meter);
+                if (vmap2.size() > 0) {
+                    RelationSet rset2 = factory1.getStartNode().substitute(vmap2, this.getUpperSubst());
+                    if (norm) {
+                        rset2.normalizeIt();
+                    }
+                    rset2.setIndex(this.size()); // next free queue entry
+                    rset2.setMapping(vmap2);
+                    rset2.setNestingLevel(newLevel);
+                    rset2.setParentIndex(queueIndex);
+                    rset2.setReasonFactory(factory1);
+                    rset2.setSiblingIndex(oldSiblingIndex);
+                    if (factory1.evaluateReasons(rset2)) { // result = queueAgain
+                        // a reason could have modified the complete structure of rset2: a new subtree could be started
+                        if (rset2.getReasonFactory() != null) {
+                            oldSiblingIndex = rset2.getIndex();
+                        } else {
+                            // a reason inserted a copy and turned it into a pseudo node:
+                            // leave oldSiblingIndex as before
+                        }
+                        this.add(rset2);
+                    } // queueAgain
+                } // vmap2.size() > 0
+                meter.next();
+            } // while meter.hasNext() - generate all children
+            // not behind the startNode of a subtree
+        } else { // pseudo node behind the startNode of a subtree
+            printPseudoNode(queueIndex, rset1);
+        } // pseudo
     } // expand
 
     /** Starts a new subtree with a {@link RelationSet} <em>rset1</em>
@@ -522,8 +660,7 @@ public class BaseSolver extends Stack<RelationSet> {
     public boolean solve(RelationSet rset0) {
         prevLevel = -1;
         ReasonFactory factory = setRootNode(rset0, getCodeList());
-        RefiningMap vmap0 = rset0.getMapping();
-        if (! factory.evaluateReasons(rset0, vmap0)) { // decidable without expansion
+        if (! factory.evaluateReasons(rset0)) { // decidable without expansion
             queueHead ++; // skip over it
         } // without expansion
 

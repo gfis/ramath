@@ -1,6 +1,6 @@
 /*  PythagoreanFork: insert a new subtree with more variables
  *  @(#) $Id: PythagoreanFork.java 970 2012-10-25 16:49:32Z gfis $
- *  2015-09-13: renamed fromPythagorasReason
+ *  2015-09-13: renamed from PythagorasReason
  *  2015-09-11, Georg Fischer: copied from EvenExponentReason.java
  */
 /*

@@ -132,7 +132,7 @@ TEST TE33 2 4 9 Proof
 CALL TreeSolver -b 3 -l 2 -e "a^3 + 2*b^3 + 4*c^3 - 9*d^3" -r igtriv
 
 TEST TE41 EEC(4,2,2) OEIS A003824, http://cr.yp.to/sortedsums/two4.1000000
-CALL TreeSolver -b 2 -l 2 -e "a^4 + b^4 - c^4 -d^4" -r norm,invall
+CALL TreeSolver -b 2 -l 2 -e "a^4 + b^4 - c^4 - d^4" -r norm,invall
 
 # TEST TE42 EEC(4,2,2) mod 3
 # CALL TreeSolver -b 3 -l 1 -e "a^4 + b^4 - c^4 - d^4" -r norm,invall
@@ -245,9 +245,26 @@ CALL TreeSolver -b 3 -l 3 -e "3k - 1 = x^2 + 3 y^2" -r norm,showfail
 
 TEST TECH Fermat/Carcavi(8) x^2 + 4 = y^3; solutions [2,2],[11,5]
 CALL TreeSolver -b 6 -l 3 -e "x^2 + 4 - y^3" -r norm
+#--------
+# new - QueuingSolver
+
+TEST QF33 modified FLT(3) mod 3 proof
+CALL QueuingSolver -b 3 -l 4 -e "a^3 + 3*b^3 - 9*c^3" -r norm,igtriv
+
+TEST QF42 FLT(4), biquadratic plus
+CALL QueuingSolver -l 4 -e "x^4 + y^4 - z^2" -r norm,igtriv
+
+TEST QP13 Fermat (proof in 2 steps)
+CALL QueuingSolver -l 4 -e "a^2 + b^2 - 3*(c^2 + d^2)" -r norm,invall,igtriv,showfail
+
+TEST QPE3 15 7 9 Proof
+CALL QueuingSolver -l 3 -b 3 -e "15*x^2 - 7*y^2 - 9" -r showfail
+
+TEST QPE4 15 7 9 mod 4
+CALL QueuingSolver -l 4 -b 4 -e "15*x^2 - 7*y^2 - 9" -r norm
 
 TEST QEC2 Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3]
-CALL QueuingSolver -b 2 -l 7 -e "x^2 + 2 - y^3" -r norm
+CALL QueuingSolver -b 2 -l 8 -e "x^2 + 2 - y^3" -r norm
 
 #--------
 # Squeeze ?

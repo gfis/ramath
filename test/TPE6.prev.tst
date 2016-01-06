@@ -3,7 +3,7 @@ Expanding for base=5, reasons+features=base,same,similiar,evenexp norm,invall,sh
 Refined variables=x,y
 [0+1x,0+1y]:	unknown -> [1] 15x²-7y²-9
 ----------------
-expanding queue[0]^-1,meter=[5,5]*5: 15x²-7y²-9
+expanding queue[0]^-1,meter=[5,5]: 15x²-7y²-9
 [0+5x,0+5y]:	failure constant=-9, vgcd=25
 [1+5x,0+5y]:	failure constant=6, vgcd=25
 [2+5x,0+5y]:	failure constant=51, vgcd=25

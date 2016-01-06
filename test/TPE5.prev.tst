@@ -3,7 +3,7 @@ Expanding for base=7, reasons+features=base,same,similiar,evenexp norm,invall,sh
 Refined variables=x,y
 [0+1x,0+1y]:	unknown -> [1] 15x²-7y²-9
 ----------------
-expanding queue[0]^-1,meter=[7,7]*7: 15x²-7y²-9
+expanding queue[0]^-1,meter=[7,7]: 15x²-7y²-9
 [0+7x,0+7y]:	failure constant=-9, vgcd=49
 [1+7x,0+7y]:	failure constant=6, vgcd=7
 [2+7x,0+7y]:	failure constant=51, vgcd=7
@@ -54,7 +54,7 @@ expanding queue[0]^-1,meter=[7,7]*7: 15x²-7y²-9
 [5+7x,6+7y]:	failure constant=114, vgcd=7
 [6+7x,6+7y]:	failure constant=279, vgcd=7
 ----------------
-expanding queue[1]^0,meter=[7,7]*49: 90x+105x²-49y²+18
+expanding queue[1]^0,meter=[7,7]: 90x+105x²-49y²+18
 [3+49x,0+49y]:	failure constant=18, vgcd=7
 [10+49x,0+49y]:	failure constant=213, vgcd=7
 [17+49x,0+49y]:	failure constant=618, vgcd=7
@@ -104,7 +104,7 @@ expanding queue[1]^0,meter=[7,7]*49: 90x+105x²-49y²+18
 [31+49x,42+49y]:	negative-1 [6] by {y=>-y-1}
 [38+49x,42+49y]:	failure constant=1329, vgcd=7
 [45+49x,42+49y]:	failure constant=2574, vgcd=7
-expanding queue[2]^0,meter=[7,7]*49: 90x+105x²-14y-49y²+17
+expanding queue[2]^0,meter=[7,7]: 90x+105x²-14y-49y²+17
 [3+49x,1+49y]:	failure constant=17, vgcd=7
 [10+49x,1+49y]:	failure constant=212, vgcd=7
 [17+49x,1+49y]:	failure constant=617, vgcd=7
@@ -154,7 +154,7 @@ expanding queue[2]^0,meter=[7,7]*49: 90x+105x²-14y-49y²+17
 [31+49x,43+49y]:	failure constant=209, vgcd=7
 [38+49x,43+49y]:	failure constant=1244, vgcd=7
 [45+49x,43+49y]:	failure constant=2489, vgcd=7
-expanding queue[3]^0,meter=[7,7]*49: 90x+105x²-28y-49y²+14
+expanding queue[3]^0,meter=[7,7]: 90x+105x²-28y-49y²+14
 [3+49x,2+49y]:	unknown -> [16] 90x+735x²-28y-343y²+2
 [10+49x,2+49y]:	failure constant=209, vgcd=7
 [17+49x,2+49y]:	failure constant=614, vgcd=7
@@ -204,7 +204,7 @@ expanding queue[3]^0,meter=[7,7]*49: 90x+105x²-28y-49y²+14
 [31+49x,44+49y]:	failure constant=122, vgcd=7
 [38+49x,44+49y]:	failure constant=1157, vgcd=7
 [45+49x,44+49y]:	failure constant=2402, vgcd=7
-expanding queue[4]^0,meter=[7,7]*49: 90x+105x²-42y-49y²+9
+expanding queue[4]^0,meter=[7,7]: 90x+105x²-42y-49y²+9
 [3+49x,3+49y]:	failure constant=9, vgcd=7
 [10+49x,3+49y]:	failure constant=204, vgcd=7
 [17+49x,3+49y]:	unknown -> [23] 510x+735x²-42y-343y²+87

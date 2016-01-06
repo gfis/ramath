@@ -5,7 +5,7 @@ Refined variables=x,y,z
 [0+1x,0+1y,0+1z]:	unknown -> [1] x²+y²-4x*y*z+z²
 -> solution [0,0,0],trivial(3)
 ----------------
-expanding queue[0]^-1,meter=[2,2,2]*2: x²+y²-4x*y*z+z²
+expanding queue[0]^-1,meter=[2,2,2]: x²+y²-4x*y*z+z²
 [0+2x,0+2y,0+2z]:	same 4x²+4y²-32x*y*z+4z² map {x=>x/2,y=>y/2,z=>z/2} -> [0] x²+y²-4x*y*z+z²
 -> solution [0,0,0],trivial(3)
 [1+2x,0+2y,0+2z]:	failure constant=1, vgcd=4

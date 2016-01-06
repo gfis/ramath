@@ -6,7 +6,7 @@ Refined variables=x,y,z
 [0+1x,0+1y,0+1z]:	unknown -> [1] x²+y²-3z²
 -> solution [0,0,0],trivial(3)
 ----------------
-expanding queue[0]^-1,meter=[2,2,2]*2: x²+y²-3z²
+expanding queue[0]^-1,meter=[2,2,2]: x²+y²-3z²
 [0+2x,0+2y,0+2z]:	non-primitive
 -> solution [0,0,0],trivial(3)
 [1+2x,0+2y,0+2z]:	failure constant=1, vgcd=4

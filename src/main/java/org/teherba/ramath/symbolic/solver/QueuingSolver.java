@@ -1,6 +1,6 @@
 /*  QueuingSolver: tries to solve a Diophantine equation by variable expansion
  *  @(#) $Id: QueuingSolver.java 970 2012-10-25 16:49:32Z gfis $
- *  2015-11-25: expand copied from TreeSolver and solve from BaseSolver, with fork methods
+ *  2015-11-25: 'expand' copied from TreeSolver and 'solve' from BaseSolver, TEC2 == QEC2
  *  2015-09-10: setSiblingIndex
  *  2015-07-23: deactivated, replaced by TreeSolver
  *  2015-06-15: RelationSet.parse was not static
@@ -27,6 +27,7 @@
  */
 package org.teherba.ramath.symbolic.solver;
 import  org.teherba.ramath.symbolic.solver.BaseSolver;
+import  org.teherba.ramath.symbolic.branch.BaseBranch;
 import  org.teherba.ramath.symbolic.reason.ReasonFactory;
 import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.RelationSet;
@@ -102,6 +103,8 @@ public class QueuingSolver extends BaseSolver {
     // Heavyweight Methods
     //---------------------
 
+    // setRootNode
+    
     /** Expands one {@link RelationSet} in the queue,
      *  evaluates the expanded children,
      *  and requeues all children with status UNKNOWN or SUCCESS.
@@ -112,54 +115,33 @@ public class QueuingSolver extends BaseSolver {
      */
     public void expand(int queueIndex) {
         RelationSet rset1 = this.get(queueIndex); // expand this element (the "parent")
-        if (debug > 1) {
-            trace     .println("trace: QueuingSolver.expand(" + rset1.niceString() + ")");
-        }
         ReasonFactory factory1 = rset1.getReasonFactory();
         if (factory1 != null) { // otherwise it is a pseudo node behind a subtree node
-            RefiningMap vmap1  = rset1.getMapping();
-            int newLevel       = rset1.getNestingLevel() + 1;
-            int base           = this.getModBase();
-            BigInteger factor  = BigInteger.valueOf(base).pow(newLevel);
-            ModoMeter meter    = this.getPreparedMeter(rset1, vmap1, factor);
-            if (false && vmap1.size() == 0) {
-                System.err.println("QueuingSolver assertion??? vmap1.size()=0, rset1=" + rset1.toString(1));
-            }
-            // meter now ready for n-adic expansion, e.g. x -> 2*x+0, 2*x+1
-            printNode(queueIndex, rset1, meter, factor);
-            int oldSiblingIndex = -1; // for the 1st child
-            while (meter.hasNext()) { // over all constant combinations - generate all children
-                RefiningMap vmap2 = vmap1.getRefinedMap(meter);
-                if (vmap2.size() > 0) {
-                    RelationSet rset2 = factory1.getStartNode().substitute(vmap2, getUpperSubst());
-                    if (norm) {
-                        rset2.normalizeIt();
-                    }
-                    rset2.setIndex(this.size()); // next free queue entry
-                    rset2.setMapping(vmap2);
-                    rset2.setNestingLevel(newLevel);
-                    rset2.setParentIndex(queueIndex);
-                    rset2.setReasonFactory(factory1);
-                    rset2.setSiblingIndex(oldSiblingIndex);
-                    if (factory1.evaluateReasons(rset2, vmap2)) { // result = queueAgain
-                        // a reason could have modified the complete structure of rset2: a new subtree could be started
-                        if (rset2.getReasonFactory() != null) {
-                            oldSiblingIndex = rset2.getIndex();
-                        } else {
-                            // a reason inserted a copy and turned it into a pseudo node:
-                            // leave oldSiblingIndex as before
-                        }
-                        this.add(rset2);
-                    } // queueAgain
-                } // vmap2.size() > 0
-                meter.next();
-            } // while meter.hasNext() - generate all children
+            if (factory1.explainReasons(rset1)) { // result = queueAgain
+                BaseBranch branch   = factory1.getApplicableBranch(rset1, queueIndex);
+                int nestingLevel    = rset1.getNestingLevel() + 1;
+            /*
+                int oldSiblingIndex = -1; // for the 1st child
+                branch.setNestingLevel      (nestingLevel);
+                branch.setParentIndex       (queueIndex);
+                branch.setOldSiblingIndex   (oldSiblingIndex);
+            */
+                RefiningMap vmap1   = rset1.getMapping();
+                BigInteger factor   = BigInteger.valueOf(this.getModBase()).pow(nestingLevel);
+                ModoMeter meter     = this.getPreparedMeter(rset1, vmap1, factor);
+
+                while (meter.hasNext()) { // over all constant combinations - generate all children
+                    branch.createChildNode(this, factory1, vmap1, meter);
+                    meter.next();
+                } // while meter.hasNext() - generate all children
+            
+            } // queueAgain
             // not behind the startNode of a subtree
         } else { // pseudo node behind the startNode of a subtree
-        	printPseudoNode(queueIndex, rset1);
+            printPseudoNode(queueIndex, rset1);
         } // pseudo
     } // expand
-
+     
     /** Refines and evaluates modulus properties for variables in a {@link RelationSet}.
      *  The maximum queue size breaks the expansion loop in any case.
      *  Pseudo-abstract.
@@ -169,27 +151,22 @@ public class QueuingSolver extends BaseSolver {
     public boolean solve(RelationSet rset0) {
         prevLevel = -1;
         ReasonFactory factory = setRootNode(rset0, getCodeList());
-        RefiningMap vmap0 = rset0.getMapping();
-        if (! factory.evaluateReasons(rset0, vmap0)) { // decidable without expansion
-            queueHead ++; // skip over it
-        } // without expansion
 
         boolean exhausted = false;
         boolean busy = true;
         while (busy) {
+            RelationSet rset1 = this.get(queueHead);
+            int curLevel = rset1.getNestingLevel();
+            if (curLevel > getMaxLevel()) { // nesting too deep - give up
+                busy   = false;
+            } else { // still expanding
+                showSeparator(curLevel, rset1.getParentIndex());
+                expand(queueHead);
+            } // still expanding
+            queueHead ++;
             if (queueHead >= size()) { // queue exhausted
                 busy = false;
                 exhausted = true;
-            } else {
-                RelationSet rset1 = this.get(queueHead);
-                int curLevel = rset1.getNestingLevel();
-                if (curLevel > getMaxLevel()) { // nesting too deep - give up
-                    busy   = false;
-                } else { // still expanding
-                    printSeparator(curLevel);
-                    expand(queueHead);
-                    queueHead ++;
-                } // still expanding
             }
         } // while busy
         printTrailer(rset0, exhausted);

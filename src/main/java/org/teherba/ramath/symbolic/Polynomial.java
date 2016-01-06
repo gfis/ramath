@@ -66,7 +66,7 @@ and constant non-negative whole number exponents.
 For example, x<sup>2</sup> − 4x + 7 is a Polynomial, but x<sup>2</sup> − 4/x + 7x<sup>3/2</sup> is not ...
  *  </blockquote>
  *
- *  Though a monomial may be zero, there is at most one, 
+ *  Though a monomial may be zero, there is at most one,
  *  non-zero constant monomial (without variables) in any Polynomial.
  *  A single zero Polynomial is represented by an empty map of monomials.
  *  <p>
@@ -90,8 +90,8 @@ public class Polynomial implements Cloneable, Serializable {
      */
     private TreeMap<String, Monomial> monomials;
 
-    /** A pseudo property which marks all places where future 
-     * additional properties must be inserted or cloned 
+    /** A pseudo property which marks all places where future
+     * additional properties must be inserted or cloned
      */
     private int pseudo;
 
@@ -386,7 +386,7 @@ public class Polynomial implements Cloneable, Serializable {
     } // toFactoredString()
 
     //----------------
-    /** Gets the constant {@link Monomial} of <em>this</em> {@link Polynomial}, 
+    /** Gets the constant {@link Monomial} of <em>this</em> {@link Polynomial},
      *  if any, or the constant 0.
      *  @return the constant monomial if there is one, or 0
      */
@@ -406,7 +406,7 @@ public class Polynomial implements Cloneable, Serializable {
         return monomials.get(Monomial.CONSTANT_SIGNATURE) != null;
     } // hasConstant
 
-    /** Determines whether <em>this</em> {@link Polynomial} contains no variables 
+    /** Determines whether <em>this</em> {@link Polynomial} contains no variables
      * (only a constant {@link Monomial}).
      *  @return true if the Polynomial is constant, or false otherwise
      */
@@ -1797,7 +1797,7 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
      *  @param order order n of derivation: first, second etc.
      *  @return a new Polynomial, the nth order derivative.
      *  For <em>order = 0</em>, a copy of <em>this</em> Polynomial is returned.
-     *  For <em>x^3+x^2</em> the 1st order derivative is <em>3x^2+2x</em>, 
+     *  For <em>x^3+x^2</em> the 1st order derivative is <em>3x^2+2x</em>,
      *  and the 2nd order derivative is <em>6x</em>.
      */
     public Polynomial derivative(String varx, int order) {
@@ -1831,7 +1831,7 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
      *  with respect to one variable.
      *  @param varx derivate for this variable
      *  @return a new Polynomial, the 1st order derivative.
-     *  For <em>x^3+x^2</em> the 1st order derivative is <em>3x^2+2x</em>, 
+     *  For <em>x^3+x^2</em> the 1st order derivative is <em>3x^2+2x</em>,
      *  and the 2nd order derivative is <em>6x</em>.
      */
     public Polynomial derivative(String varx) {
@@ -1841,7 +1841,7 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
     /** Compute the (partial) 1st order derivative of <em>this</em> {@link Polynomial}
      *  with respect to the first (only) variable.
      *  @return a new Polynomial, the 1st order derivative.
-     *  For <em>x^3+x^2</em> the 1st order derivative is <em>3x^2+2x</em>, 
+     *  For <em>x^3+x^2</em> the 1st order derivative is <em>3x^2+2x</em>,
      *  and the 2nd order derivative is <em>6x</em>.
      */
     public Polynomial derivative() {
@@ -1862,7 +1862,8 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
         return this.substitute(vmap);
     } // mergeVariables
 
-    /** Evaluates <em>this</em> Polynomial without any proof history, and returns whether
+    /** Evaluates <em>this</em> {@link Polynomial} without any proof history,
+     *  and returns whether
      *  <ul>
      *  <li>its (in)equality holds / is true       =&gt; SUCCESS</li>
      *  <li>the (in)equality fails                 =&gt; FAILURE</li>
@@ -2046,13 +2047,13 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
                                 order = Integer.parseInt(args[iarg ++]);
                             } catch (Exception exc) {
                             }
-                        } // with order 
-                        System.out.println("(" + poly1.toString() + ").derivative(\"" 
-                                + varx + "\", " + order + ") = " 
+                        } // with order
+                        System.out.println("(" + poly1.toString() + ").derivative(\""
+                                + varx + "\", " + order + ") = "
                                 + poly1.derivative(varx, order).toString()
                                 );
                     } else { // first variable
-                        System.out.println("(" + poly1.toString() + ").derivative() = " 
+                        System.out.println("(" + poly1.toString() + ").derivative() = "
                                 + poly1.derivative().toString()
                                 );
                     }

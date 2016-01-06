@@ -4,27 +4,27 @@ Expanding for base=2, reasons+features=base,primitive,same,similiar,accel igtriv
 Refined variables=a,b,c,d
 [0+1a,0+1b,0+1c,0+1d]:	unknown -> [1] a³+2b³+4c³-9d³
 ----------------
-expanding queue[0]^-1,meter=[2,1,1,2]*2: a³+2b³+4c³-9d³
+expanding queue[0]^-1,meter=[2,1,1,2]: a³+2b³+4c³-9d³
 [0+2a,0+2b,0+2c,0+2d]:	unknown accelerated by b*2 c*2 -> [1] 4a³+b³+2c³-36d³
 [1+2a,0+1b,0+1c,1+2d]:	unknown -> [2] 3a+6a²+4a³+b³+2c³-27d-54d²-36d³-4
 ----------------
-expanding queue[1]^0,meter=[1,2,1,1]*4: 4a³+b³+2c³-36d³
+expanding queue[1]^0,meter=[1,2,1,1]: 4a³+b³+2c³-36d³
 [0+2a,0+4b,0+2c,0+2d]:	same a³+16b³+4c³-9d³ map {b=>b/2} -> [0] a³+2b³+4c³-9d³
 [0+2a,2+4b,0+2c,0+2d]:	unknown -> [3] a³+12b+24b²+16b³+4c³-9d³+2
-expanding queue[2]^0,meter=[2,2,1,2]*4: 3a+6a²+4a³+b³+2c³-27d-54d²-36d³-4
+expanding queue[2]^0,meter=[2,2,1,2]: 3a+6a²+4a³+b³+2c³-27d-54d²-36d³-4
 [1+4a,0+2b,0+1c,1+4d]:	unknown -> [4] 3a+12a²+16a³+4b³+c³-27d-108d²-144d³-2
 [3+4a,1+2b,0+1c,1+4d]:	unknown -> [5] 27a+36a²+16a³+3b+6b²+4b³+c³-27d-108d²-144d³+5
 [3+4a,0+2b,0+1c,3+4d]:	unknown -> [6] 27a+36a²+16a³+4b³+c³-243d-324d²-144d³-54
 [1+4a,1+2b,0+1c,3+4d]:	unknown -> [7] 3a+12a²+16a³+3b+6b²+4b³+c³-243d-324d²-144d³-60
 ----------------
-expanding queue[3]^1,meter=[2,1,1,2]*8: a³+12b+24b²+16b³+4c³-9d³+2
+expanding queue[3]^1,meter=[2,1,1,2]: a³+12b+24b²+16b³+4c³-9d³+2
 [2+4a,2+4b,0+2c,2+4d]:	unknown -> [8] 3a+6a²+4a³+6b+12b²+8b³+2c³-27d-54d²-36d³-3
-expanding queue[4]^2,meter=[2,1,2,2]*8: 3a+12a²+16a³+4b³+c³-27d-108d²-144d³-2
+expanding queue[4]^2,meter=[2,1,2,2]: 3a+12a²+16a³+4b³+c³-27d-108d²-144d³-2
 [1+8a,0+2b,0+2c,1+8d]:	unknown -> [9] 3a+24a²+64a³+2b³+4c³-27d-216d²-576d³-1
 [5+8a,0+2b,1+2c,1+8d]:	unknown -> [10] 75a+120a²+64a³+2b³+3c+6c²+4c³-27d-216d²-576d³+15
 [5+8a,0+2b,0+2c,5+8d]:	unknown -> [11] 75a+120a²+64a³+2b³+4c³-675d-1080d²-576d³-125
 [1+8a,0+2b,1+2c,5+8d]:	unknown -> [12] 3a+24a²+64a³+2b³+3c+6c²+4c³-675d-1080d²-576d³-140
-expanding queue[5]^2,meter=[2,2,2,2]*8: 27a+36a²+16a³+3b+6b²+4b³+c³-27d-108d²-144d³+5
+expanding queue[5]^2,meter=[2,2,2,2]: 27a+36a²+16a³+3b+6b²+4b³+c³-27d-108d²-144d³+5
 [7+8a,1+4b,0+2c,1+8d]:	unknown -> [13] 147a+168a²+64a³+3b+12b²+16b³+4c³-27d-216d²-576d³+42
 [3+8a,3+4b,0+2c,1+8d]:	unknown -> [14] 27a+72a²+64a³+27b+36b²+16b³+4c³-27d-216d²-576d³+9
 [3+8a,1+4b,1+2c,1+8d]:	unknown -> [15] 27a+72a²+64a³+3b+12b²+16b³+3c+6c²+4c³-27d-216d²-576d³+3
@@ -33,12 +33,12 @@ expanding queue[5]^2,meter=[2,2,2,2]*8: 27a+36a²+16a³+3b+6b²+4b³+c³-27d-108
 [7+8a,3+4b,0+2c,5+8d]:	unknown -> [18] 147a+168a²+64a³+27b+36b²+16b³+4c³-675d-1080d²-576d³-91
 [7+8a,1+4b,1+2c,5+8d]:	unknown -> [19] 147a+168a²+64a³+3b+12b²+16b³+3c+6c²+4c³-675d-1080d²-576d³-97
 [3+8a,3+4b,1+2c,5+8d]:	unknown -> [20] 27a+72a²+64a³+27b+36b²+16b³+3c+6c²+4c³-675d-1080d²-576d³-130
-expanding queue[6]^2,meter=[2,1,2,2]*8: 27a+36a²+16a³+4b³+c³-243d-324d²-144d³-54
+expanding queue[6]^2,meter=[2,1,2,2]: 27a+36a²+16a³+4b³+c³-243d-324d²-144d³-54
 [3+8a,0+2b,0+2c,3+8d]:	unknown -> [21] 27a+72a²+64a³+2b³+4c³-243d-648d²-576d³-27
 [7+8a,0+2b,1+2c,3+8d]:	unknown -> [22] 147a+168a²+64a³+2b³+3c+6c²+4c³-243d-648d²-576d³+13
 [7+8a,0+2b,0+2c,7+8d]:	unknown -> [23] 147a+168a²+64a³+2b³+4c³-1323d-1512d²-576d³-343
 [3+8a,0+2b,1+2c,7+8d]:	unknown -> [24] 27a+72a²+64a³+2b³+3c+6c²+4c³-1323d-1512d²-576d³-382
-expanding queue[7]^2,meter=[2,2,2,2]*8: 3a+12a²+16a³+3b+6b²+4b³+c³-243d-324d²-144d³-60
+expanding queue[7]^2,meter=[2,2,2,2]: 3a+12a²+16a³+3b+6b²+4b³+c³-243d-324d²-144d³-60
 [1+8a,1+4b,0+2c,3+8d]:	unknown -> [25] 3a+24a²+64a³+3b+12b²+16b³+4c³-243d-648d²-576d³-30
 [5+8a,3+4b,0+2c,3+8d]:	unknown -> [26] 75a+120a²+64a³+27b+36b²+16b³+4c³-243d-648d²-576d³-8
 [5+8a,1+4b,1+2c,3+8d]:	unknown -> [27] 75a+120a²+64a³+3b+12b²+16b³+3c+6c²+4c³-243d-648d²-576d³-14

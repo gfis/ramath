@@ -101,64 +101,6 @@ public class TreeSolver extends BaseSolver {
     // Heavyweight Methods
     //---------------------
 
-    /** Expands one {@link RelationSet} in the queue,
-     *  evaluates the expanded children,
-     *  and requeues all children with status UNKNOWN or SUCCESS.
-     *  Binary expansion (for example) replaces all variables x_i by 0+2*x_j and 1+2*x_j (j=i+1).
-     *  The constants which are added run from (0,0,0 ... 0), (1,0,0 ... 0) ... through to (1,1,1 ... 1);
-     *  they are obtained from a {@link ModoMeter}.
-     *  @param queueIndex position in the queue of the element ({@link RelationSet}) to be expanded, >= 0
-     */
-    public void expand(int queueIndex) {
-        RelationSet rset1 = this.get(queueIndex); // expand this element (the "parent")
-        if (debug > 1) {
-            trace     .println("trace: TreeSolver.expand(" + rset1.niceString() + ")");
-        }
-        ReasonFactory factory1 = rset1.getReasonFactory();
-        if (factory1 != null) { // otherwise it is a pseudo node behind a subtree node
-            RefiningMap vmap1  = rset1.getMapping();
-            int newLevel       = rset1.getNestingLevel() + 1;
-            int base           = this.getModBase();
-            BigInteger factor  = BigInteger.valueOf(base).pow(newLevel);
-            ModoMeter meter    = this.getPreparedMeter(rset1, vmap1, factor);
-            if (false && vmap1.size() == 0) {
-                System.err.println("TreeSolver assertion??? vmap1.size()=0, rset1=" + rset1.toString(1));
-            }
-            // meter now ready for n-adic expansion, e.g. x -> 2*x+0, 2*x+1
-            printNode(queueIndex, rset1, meter, factor);
-            int oldSiblingIndex = -1; // for the 1st child
-            while (meter.hasNext()) { // over all constant combinations - generate all children
-                RefiningMap vmap2 = vmap1.getRefinedMap(meter);
-                if (vmap2.size() > 0) {
-                    RelationSet rset2 = factory1.getStartNode().substitute(vmap2, getUpperSubst());
-                    if (norm) {
-                        rset2.normalizeIt();
-                    }
-                    rset2.setIndex(this.size()); // next free queue entry
-                    rset2.setMapping(vmap2);
-                    rset2.setNestingLevel(newLevel);
-                    rset2.setParentIndex(queueIndex);
-                    rset2.setReasonFactory(factory1);
-                    rset2.setSiblingIndex(oldSiblingIndex);
-                    if (factory1.evaluateReasons(rset2, vmap2)) { // result = queueAgain
-                        // a reason could have modified the complete structure of rset2: a new subtree could be started
-                        if (rset2.getReasonFactory() != null) {
-                            oldSiblingIndex = rset2.getIndex();
-                        } else {
-                            // a reason inserted a copy and turned it into a pseudo node:
-                            // leave oldSiblingIndex as before
-                        }
-                        this.add(rset2);
-                    } // queueAgain
-                } // vmap2.size() > 0
-                meter.next();
-            } // while meter.hasNext() - generate all children
-            // not behind the startNode of a subtree
-        } else { // pseudo node behind the startNode of a subtree
-        	printPseudoNode(queueIndex, rset1);
-        } // pseudo
-    } // expand
-
     //-------------
     // Test driver
     //-------------
