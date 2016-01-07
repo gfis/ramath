@@ -23,12 +23,14 @@ import  org.teherba.ramath.symbolic.RefiningMap;
 import  org.teherba.ramath.symbolic.reason.ReasonFactory;
 import  org.teherba.ramath.symbolic.solver.BaseSolver;
 import  org.teherba.ramath.util.Dispenser;
+import  org.teherba.ramath.util.ModoMeter;
+import  java.math.BigInteger;
 import  org.apache.log4j.Logger;
 
-/** For a node which cannot be decided, a branch class determines and queues one or 
+/** For a node which cannot be decided, a branch class determines and queues one or
  *  more following node(s) which subsequently need(s) to be investigated.
- *  There may be several optional branching strategies which are all tried in sequence, 
- *  and the first applicable branch stops this sequence, but 
+ *  There may be several optional branching strategies which are all tried in sequence,
+ *  and the first applicable branch stops this sequence, but
  *  the last branch, which does a symmetrical modular expansion,
  *  is always applicable.
  +  <p>
@@ -114,7 +116,7 @@ public class BaseBranch {
     // Check for and apply the specific branch
     //-----------------------------------------
 
-    /** Whether <em>this</em> branch can be apploed for the 
+    /** Whether <em>this</em> branch can be apploed for the
      *  current {@link RelationSet}.
      *  This method is tested for all coded branches, and the
      *  first with result <em>true</em> stops the testing sequence.
@@ -128,12 +130,12 @@ public class BaseBranch {
     } // isApplicable
 
     /*---------------------------------------
-        Properties which rema1in constant 
+        Properties which rema1in constant
         over iterated activations of 'createChildNode
     */
     /** Level of the node to be created */
     private int nestingLevel;
-    /** Sets the nesting level 
+    /** Sets the nesting level
      *  @param nestingLevel the nesting level to be set
      */
     public void setNestingLevel(int nestingLevel) {
@@ -142,7 +144,7 @@ public class BaseBranch {
     //----
     /** Index of the previous sibling of a node */
     private int oldSiblingIndex;
-    /** Sets the index of the previous sibling of a node 
+    /** Sets the index of the previous sibling of a node
      *  @param oldSiblingIndex the index of the previous sibling to be set
      */
     public void setOldSiblingIndex(int oldSiblingIndex) {
@@ -157,27 +159,65 @@ public class BaseBranch {
     public void setParentIndex(int parentIndex) {
         this.parentIndex = parentIndex;
     } // setParentIndex
-    
+    //----
+    /** a {@link RefiningMap} for the node to be expanded */
+    private RefiningMap refMap;
+    /** Sets the {@link RefiningMap} for the node to be expanded
+     *  @param refMap {@link RefiningMap} for the node to be expanded
+     */
+    public void setRefiningMap(RefiningMap refMap) {
+        this.refMap = refMap;
+    } // setRefiningMap
+    /** Gets the {@link RefiningMap} for the node to be expanded
+     *  @return {@link RefiningMap} for the node to be expanded
+     */
+    public RefiningMap getRefiningMap() {
+        return this.refMap;
+    } // getRefiningMap
+    //----
+    /** a {@link Dispenser} to be used for expansion */
+    private Dispenser meter;
+    /** Sets the {@link Dispenser} to be used for expansion
+     *  @param meter {@link Dispenser} to be used for expansion
+     */
+    public void setDispenser(Dispenser meter) {
+        this.meter = meter;
+    } // setDispenser
+    /** Gets the {@link Dispenser} to be used for expansion
+     *  @return {@link Dispenser} to be used for expansion
+     */
+    public Dispenser getDispenser() {
+        return this.meter;
+    } // getDispenser
+    //--------------------------
     /** Prepares more data structures for <em>this</em> branch.
      *  This method is called by {@link BaseSolver#expand}.
      *  Pseudo-abstract.
      *  @param solver the {@link BaseSolver solver} which uses <em>this</em> branch for iteration control
      *  during tree expansion
-     *  @param startNode the root node of the expansion (sub-)tree
+     *  @param rset1 the node to be expanded
      */
-    public void prepare(BaseSolver solver, RelationSet startNode) {
-        setSolver(solver);
+    public void prepare(BaseSolver solver, RelationSet rset1) {
+        this.setSolver(solver);
+        this.setParentIndex    (rset1.getIndex());
+        int curLevel           = rset1.getNestingLevel() + 1;
+        this.setNestingLevel   (curLevel);
+        this.setOldSiblingIndex(-1);
+        RefiningMap vmap1      = rset1.getMapping();
+        this.setRefiningMap    (vmap1);
+        BigInteger factor      = BigInteger.valueOf(solver.getModBase()).pow(curLevel);
+        ModoMeter meter        = solver.getPreparedMeter(rset1, vmap1, factor);
+        this.setDispenser      (meter);
     } // prepare
 
     //----------------
-    /** Creates a child node - append it to the queue. 
+    /** Creates a child node, and append it to the queue.
      *  @param solver the {@link BaseSolver} which uses the reasons and branches
      *  @param factory1 {@link ReasonFactory} for tree pruning
-     *  @param vmap1 {@link RefiningMap} which controls the expansion of variables
-     *  @param meter current state of {@link Dispenser} for variable expansion
      */
-    public void createChildNode(BaseSolver solver, ReasonFactory factory1, RefiningMap vmap1, Dispenser meter) {
-        RefiningMap vmap2 = vmap1.getRefinedMap(meter);
+    public void addChildNode(BaseSolver solver, ReasonFactory factory1) {
+        RefiningMap vmap1   = this.getRefiningMap();
+        RefiningMap vmap2   = vmap1.getRefinedMap(this.getDispenser());
         if (vmap2.size() > 0) {
             RelationSet rset2 = factory1.getStartNode().substitute(vmap2, solver.getUpperSubst());
             if (solver.norm) {
@@ -198,9 +238,9 @@ public class BaseBranch {
             }
             solver.add(rset2);
         } // vmap2.size() > 0
-    } // createChildNode
-    
-    /** Check the current - otherwise undecidable - node ({@link RelationSet}) 
+    } // addChildNode
+
+    /** Check the current - otherwise undecidable - node ({@link RelationSet})
      *  <em>rset1</em>, and if possible, expand it in a specific way
      *  for all possible combinations of values.
      *  Pseudo-abstract.

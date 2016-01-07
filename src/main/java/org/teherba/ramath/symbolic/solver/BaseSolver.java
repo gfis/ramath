@@ -356,22 +356,6 @@ public class BaseSolver extends Stack<RelationSet> {
         }
     } // printNode
 
-    /** Prints the message for a node to be expanded.
-     *  @param queueIndex expand this queue element
-     *  @param rset1 {@link RelationSet} at position <em>queueIndex</em>
-     *  @param meter which {@link ModoMeter} will be used for the expansion
-     */
-    protected void showNode_99(int queueIndex, RelationSet rset1, ModoMeter meter) {
-        if (debug >= 1) {
-            trace.print("[" + queueIndex + "]^"
-                    + rset1.getParentIndex()
-            //      + ",meter=" + meter.toBaseList()
-            //      + "*" + factor.toString()
-            //      + ": " + rset1.niceString()
-                    );
-        }
-    } // showNode
-
     /** Prints the message for a pseudo node which is ignored.
      *  @param queueIndex index of this queue element
      *  @param rset1 {@link RelationSet} at position <em>queueIndex</em>
@@ -514,7 +498,7 @@ public class BaseSolver extends Stack<RelationSet> {
      *  @param factor <em>base^newLevel</em>
      *  @return an appropriate {@link ModoMeter}
      */
-    protected ModoMeter getPreparedMeter(RelationSet rset1, VariableMap vmap1, BigInteger factor) {
+    public ModoMeter getPreparedMeter(RelationSet rset1, VariableMap vmap1, BigInteger factor) {
         int base          = this.getModBase();
         int varNo         = vmap1.size(); // total number of variables to be substituted
         ModoMeter meter   = new ModoMeter(varNo, 1); // assume that all variables are not involved

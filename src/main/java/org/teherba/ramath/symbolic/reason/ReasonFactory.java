@@ -89,7 +89,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         this();
         this.setSolver(solver);
         this.setStartNode(startNode);
-        
+
         // the standard reasons are defined by the codeList from BaseSolver
         String[] codes = codeList.split("\\W"); // leading ","; non-word characters, e.g. ","
         int icode = 0;
@@ -98,7 +98,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
             icode ++;
         } // while icode
         this.addBranch("branch", "BaseBranch"); // always the last branch class
-        
+
         if (debug > 0) {
             solver.getWriter().println("ReasonFactory created");
         }
@@ -184,9 +184,9 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         }
     } // addReason
 
-    /** Determine a reason or branch class from its code 
+    /** Determine a reason or branch class from its code
      *  and add an instance thereof to the list.
-     *  This is the factory method which appends the applicable reasons or branches 
+     *  This is the factory method which appends the applicable reasons or branches
      *  to <em>this</em> list respectively to {@link #branches}.
      *  Additional codes are stored in HashMap {@link #features}.
      *  @param code external code for the reason or branch class
@@ -239,14 +239,11 @@ public class ReasonFactory extends ArrayList<BaseReason> {
     /** Determines the branch to be applied by checking all available
      *  branches in sequence. The last one (the {@link BaseBranch}) is always applicable.
      *  @param rset1 {@link RelationSet} to be expanded
-     *  @param parentIndex the queue index of <em>rset1</em>
-     *  @return a subclass of {@link BaseBranch} 
+     *  @return a subclass of {@link BaseBranch}
      */
-    public BaseBranch getApplicableBranch(RelationSet rset1, int parentIndex) {
+    public BaseBranch getApplicableBranch(RelationSet rset1) {
         BaseBranch result = new BaseBranch();
-        result.setNestingLevel   (rset1.getNestingLevel() + 1);
-        result.setOldSiblingIndex(-1);
-        result.setParentIndex    (parentIndex);
+        result.prepare(this.getSolver(), rset1);
         return result;
     } // getApplicableBranch
 
@@ -491,7 +488,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
      *  @return whether to queue <em>rset2</em> again for further expansion
      */
     public boolean explainReasons(RelationSet rset2) {
-    	RefiningMap rmap2 = rset2.getMapping();
+        RefiningMap rmap2 = rset2.getMapping();
         boolean queueAgain = false;
         String decision = this.considerNode(rset2);
         if (false) {
@@ -525,7 +522,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
      *  @return whether to queue <em>rset2</em> again for further expansion
      */
     public boolean evaluateReasons(RelationSet rset2) {
-    	return evaluateReasons(rset2, rset2.getMapping());
+        return evaluateReasons(rset2, rset2.getMapping());
     } // evaluateReasons
 
     //-------------

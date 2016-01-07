@@ -33,6 +33,7 @@ import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.RelationSet;
 import  org.teherba.ramath.symbolic.RefiningMap;
 import  org.teherba.ramath.linear.Vector;
+import  org.teherba.ramath.util.Dispenser;
 import  org.teherba.ramath.util.ModoMeter;
 import  java.io.PrintStream;
 import  java.math.BigInteger;
@@ -104,44 +105,34 @@ public class QueuingSolver extends BaseSolver {
     //---------------------
 
     // setRootNode
-    
+
     /** Expands one {@link RelationSet} in the queue,
      *  evaluates the expanded children,
      *  and requeues all children with status UNKNOWN or SUCCESS.
      *  Binary expansion (for example) replaces all variables x_i by 0+2*x_j and 1+2*x_j (j=i+1).
      *  The constants which are added run from (0,0,0 ... 0), (1,0,0 ... 0) ... through to (1,1,1 ... 1);
      *  they are obtained from a {@link ModoMeter}.
-     *  @param queueIndex position in the queue of the element ({@link RelationSet}) to be expanded, >= 0
+     *  @param curIndex position in the queue of the node
+     *  ({@link RelationSet}) to be expanded, >= 0
      */
-    public void expand(int queueIndex) {
-        RelationSet rset1 = this.get(queueIndex); // expand this element (the "parent")
+    public void expand(int curIndex) {
+        RelationSet rset1 = this.get(curIndex); // expand this element (the "parent")
         ReasonFactory factory1 = rset1.getReasonFactory();
         if (factory1 != null) { // otherwise it is a pseudo node behind a subtree node
             if (factory1.explainReasons(rset1)) { // result = queueAgain
-                BaseBranch branch   = factory1.getApplicableBranch(rset1, queueIndex);
-                int nestingLevel    = rset1.getNestingLevel() + 1;
-            /*
-                int oldSiblingIndex = -1; // for the 1st child
-                branch.setNestingLevel      (nestingLevel);
-                branch.setParentIndex       (queueIndex);
-                branch.setOldSiblingIndex   (oldSiblingIndex);
-            */
-                RefiningMap vmap1   = rset1.getMapping();
-                BigInteger factor   = BigInteger.valueOf(this.getModBase()).pow(nestingLevel);
-                ModoMeter meter     = this.getPreparedMeter(rset1, vmap1, factor);
-
-                while (meter.hasNext()) { // over all constant combinations - generate all children
-                    branch.createChildNode(this, factory1, vmap1, meter);
-                    meter.next();
-                } // while meter.hasNext() - generate all children
-            
+                BaseBranch branch   = factory1.getApplicableBranch(rset1);
+                Dispenser dispenser = branch.getDispenser();
+                while (dispenser.hasNext()) { // over all constant combinations - generate all children
+                    branch.addChildNode(this, factory1);
+                    dispenser.next();
+                } // while dispenser.hasNext() - generate all children
             } // queueAgain
             // not behind the startNode of a subtree
         } else { // pseudo node behind the startNode of a subtree
-            printPseudoNode(queueIndex, rset1);
+            printPseudoNode(curIndex, rset1);
         } // pseudo
     } // expand
-     
+
     /** Refines and evaluates modulus properties for variables in a {@link RelationSet}.
      *  The maximum queue size breaks the expansion loop in any case.
      *  Pseudo-abstract.
