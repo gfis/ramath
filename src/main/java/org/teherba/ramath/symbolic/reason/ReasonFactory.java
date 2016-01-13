@@ -147,13 +147,11 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         BaseBranch result = null; // assume that class is not found
         try {
             result = (BaseBranch) Class.forName("org.teherba.ramath.symbolic.branch." + className).newInstance();
-            if (result != null) { // known reason
-                result.initialize(getSolver(), getStartNode());
-                if (result.isApplicable()) {
-                    result.setCode(code);
-                    branches.add(result);
-                } // considerable
-            } // known reason
+            if (result != null) { // known branch
+                result.initialize(getSolver());
+                result.setCode(code);
+                branches.add(result);
+            } // known branch
         } catch (Exception exc) {
             // ignore any error almost silently - this branch will not be known
             result = null;
@@ -242,9 +240,17 @@ public class ReasonFactory extends ArrayList<BaseReason> {
      *  @return a subclass of {@link BaseBranch}
      */
     public BaseBranch getApplicableBranch(RelationSet rset1) {
-        BaseBranch result = new BaseBranch();
-        result.prepare(this.getSolver(), rset1);
-        return result;
+        BaseBranch result = null;
+        int ilist = 0;
+        while (ilist < branches.size()) {
+            result = branches.get(ilist);
+            if (result.isApplicable(rset1)) {
+                // result.prepare(rset1);
+                ilist = branches.size(); // break loop
+            }
+            ilist ++;
+        } // while ilist
+        return result; 
     } // getApplicableBranch
 
     /** Gets the applicable {@link BaseReason reason} for the specified code

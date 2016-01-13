@@ -208,7 +208,7 @@ TEST TEC4 Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3]; http://math.stackexch
 CALL TreeSolver -b 3 -l 7 -e "x^2 + 2 - y^3" -r norm
 
 TEST TEC5 Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3]
-CALL TreeSolver -b 6 -l 2 -e "x^2 + 2 - y^3" -r norm 
+CALL TreeSolver -b 6 -l 3 -e "x^2 + 2 - y^3" -r norm 
 
 TEST TEC6 Fermat/Carcavi(8) x^2 + 4 = y^3; solutions [2,2],[11,5]
 CALL TreeSolver -b 2 -l 4 -e "x^2 + 4 - y^3" -r norm,invall
@@ -265,6 +265,9 @@ CALL QueuingSolver -l 4 -b 4 -e "15*x^2 - 7*y^2 - 9" -r norm
 
 TEST QEC2 Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3]
 CALL QueuingSolver -b 2 -l 8 -e "x^2 + 2 - y^3" -r norm
+
+TEST QEC5 Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3]
+CALL QueuingSolver -b 6 -l 3 -e "x^2 + 2 - y^3" -r norm 
 
 #--------
 # Squeeze ?
