@@ -245,6 +245,16 @@ CALL TreeSolver -b 3 -l 3 -e "3k - 1 = x^2 + 3 y^2" -r norm,showfail
 
 TEST TECH Fermat/Carcavi(8) x^2 + 4 = y^3; solutions [2,2],[11,5]
 CALL TreeSolver -b 6 -l 3 -e "x^2 + 4 - y^3" -r norm
+
+TEST TECI Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3] - derived
+CALL TreeSolver -b 6 -l 2 -e "r*(27r + 5) = c*(16*c^2 + 12*c  +3)"
+
+TEST TECJ Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3] - derived
+CALL TreeSolver -b 3 -l 2 -e "(54*r + 5)^2 + 2 = (24 * t + 3) ^3"
+
+TEST TECK Fermat/Carcavi(8) x^2 + 4 = y^3; solutions [2,2],[11,5]
+CALL TreeSolver -b 6 -l 2 -e "x^2 + 4 - y^3" -r norm,invall
+
 #--------
 # new - QueuingSolver
 

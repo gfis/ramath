@@ -131,7 +131,7 @@ public class BigIntegerUtil {
      *  @param n exponent
      *  @return the exact root, or 0
      */
-    public static BigInteger root3(BigInteger a, int n) {
+    public static BigInteger root3_deprecated(BigInteger a, int n) {
         BigInteger exp    = BigInteger.valueOf(n);
         BigInteger exp_1  = exp.subtract(BigInteger.ONE);
         BigInteger result = BigInteger.ONE; // a.divide(new BigInteger(new byte[] { (byte) (n + 4) })).max(BigInteger.ONE); // initial guess

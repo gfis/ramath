@@ -293,6 +293,39 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
         return toString(0);
     } // toString
 
+    /** Returns a String representation of the {@link PrimeFactorization},
+     *  and, fo rall prime factors, compute the mod function with respect to a small integer
+     *  @param modulus compute the mod function with a respect to this int
+     *  @return "2^2*43(3mod8)*53(5mod8)" for 60 and mod 8
+     */
+    public String toModString(int modulus) {
+        StringBuffer result = new StringBuffer(256);
+        Iterator<BigInteger> iter = this.keySet().iterator();
+        int iprime = 0;
+        BigInteger bmod = BigInteger.valueOf(modulus);
+        String modStr = "mod" + String.valueOf(modulus) + ")";
+        while (iter.hasNext()) {
+            BigInteger prime = iter.next();
+            if (iprime > 0) {
+                result.append('*');
+            }
+            int exp = this.get(prime);
+            result.append(prime.toString());
+            if (exp > 1) {
+            	result.append('^');
+                result.append(String.valueOf(exp));
+            }
+            if (prime.compareTo(bmod) > 0) {
+                BigInteger pmod = prime.mod(bmod);
+                result.append('(');
+                result.append(pmod.toString());
+                result.append(modStr);
+            } 
+            iprime ++;
+        } // while iter
+        return result.toString();
+    } // toModString
+
     /** Test method.
      *  The first commandline argument is factorized.
      */

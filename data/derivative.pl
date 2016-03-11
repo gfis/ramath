@@ -28,12 +28,35 @@ while ($num < 32) {
 	$num ++;
 } # while $i
 
-sub form {
+sub form1 {
 	my ($parm) = @_;
-	my $res = $parm;
-	return $res * $res;
+	my $res = 54*$parm + 5;
 } # form
  
+sub form2 {
+	my ($parm) = @_;
+	my $res = 6*$parm + 5;
+	return $res * $res + 2;
+} # form
+
+sub form {
+	my ($parm) = @_;
+	my $res = 6*$parm + 3;
+	return $res * $res * $res;
+} # form
+
+sub form4 {
+	my ($parm) = @_;
+	my $res = 8 * $parm + 1;
+	return 27*($res * $res * $res);
+} # form 
+
+sub form6 {
+	my ($parm) = @_;
+	my $res = 2 * $parm + 1;
+	return ($res * $res * $res);
+} # form 
+
 sub form7 {
 	my ($parm) = @_;
 	my $res = $parm * (27 * $parm + 5);
@@ -46,11 +69,6 @@ sub form5 {
 	return $res;
 } # form 
 
-sub form4 {
-	my ($parm) = @_;
-	my $res = 8 * $parm + 1;
-	return $res * $res * $res;
-} # form 
 
 sub form8 {
 	my ($parm) = @_;

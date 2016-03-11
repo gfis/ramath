@@ -1,6 +1,7 @@
 /*  Collection of several experimental methods
  *  @(#) $Id: SandBox.java 808 2011-09-20 16:56:14Z gfis $
- *  2016-01-03: printDifferences
+ *  2016-03-11: -reprs
+ *  2016-01-03: -pdiff printDifferences
  *  2015-10-05: -bachet
  *  2015-08-31, Georg Fischer: copied from MatrixGenerator
  */
@@ -21,6 +22,7 @@
  */
 package org.teherba.ramath;
 import  org.teherba.ramath.BigRational;
+import  org.teherba.ramath.BigIntegerUtil;
 import  org.teherba.ramath.ContinuedFraction;
 import  org.teherba.ramath.PrimeFactorization;
 import  org.teherba.ramath.linear.Vector;
@@ -61,6 +63,8 @@ public class SandBox {
     // Experimental methods
     //===========================
 
+    private static final String spaces = "                                "; // 32 blanks for formatting of BigIntegers
+
     /** Evaluates a univariate {@link Polynomial} for a
      *  sequence of values and print the 1st, 2nd and higher
      *  order differences of the Polynomial's values.
@@ -83,7 +87,6 @@ public class SandBox {
             } catch (Exception exc) {
             }
         }
-        String spaces = "                "; // 16 blanks for formatting of BigIntegers
         int maxDeg = poly1.maxDegree() + 2;
         BigInteger[] olds = new BigInteger[maxDeg];
         BigInteger[] news = new BigInteger[maxDeg]; // must be parallel
@@ -98,10 +101,10 @@ public class SandBox {
         if (vmap.size() > 1) { // not uniVariate
             System.out.println("\"" + poly1.toString() + "\" is not univariate");
         } else { // uniVariate
-            String varName = vmap.getNameString(); // comma separated, but there is only one variable
+            String vnam1 = vmap.getNameString(); // comma separated, but there is only one variable
             int num = startValue;
             while (num < highValue) {
-                vmap.put(varName, String.valueOf(num));
+                vmap.put(vnam1, String.valueOf(num));
                 Polynomial poly2 = poly1.substitute(vmap);
                 // System.out.println("substituted poly2: " + poly2.toString());
 /*
@@ -143,6 +146,131 @@ public class SandBox {
             } // while num
         } // uniVariate
     } // printDifferences
+
+    /** Evaluates a univariate {@link Polynomial} for a
+     *  sequence of variable values and, for the resulting values, print the 
+     *  representations of the form p^2 + f*q^2.
+     *  @param args commandline arguments: polynomial [high [f]]
+     */
+    private void printRepresentations(String[] args) {
+        int startValue =    0; // start with this value of the (single) variable
+        int highValue  = 4096; // end one before this value
+        int factor     =    1; // default: respresentation by a sum of 2 squares
+        int iarg = 1; // skip over "-reprs"
+        Polynomial poly1 = Polynomial.parse(args[iarg ++]);
+        if (iarg < args.length) {
+            try {
+                highValue  = Integer.parseInt(args[iarg ++]);
+            } catch (Exception exc) {
+            }
+        }
+        if (iarg < args.length) {
+            try {
+                factor     = Integer.parseInt(args[iarg ++]);
+            } catch (Exception exc) {
+            }
+        }
+        BigInteger bfact = BigInteger.valueOf(factor);
+        VariableMap vmap = poly1.getVariableMap();
+        if (vmap.size() > 1) { // not uniVariate
+            System.out.println("\"" + poly1.toString() + "\" is not univariate");
+        } else { // uniVariate
+            String vnam1 = vmap.getNameString(); // comma separated, but there is only one variable
+            int num = startValue;
+            while (num < highValue) {
+                vmap.put(vnam1, String.valueOf(num));
+                Polynomial poly2 = poly1.substitute(vmap);
+                BigInteger value = BigInteger.ZERO;
+                if (! poly2.isZero()) {
+                    String sig2 = poly2.getMonomials().firstKey();
+                    value = poly2.getMonomials().get(sig2).getCoefficient();
+                }
+                PrimeFactorization pfact = new PrimeFactorization(value);
+                System.out.print(String.format("%5d", num));
+                String bnum = pfact.toString();
+                int len = 20 - bnum.length();
+                if (len < 0) {
+                    len = 0;
+                }
+                System.out.print(spaces.substring(0, len) + bnum);
+
+                boolean busy = true;
+                BigInteger spe = BigInteger.ONE;
+                int ipair = 0;
+                while (busy) {
+                    BigInteger spe2 = spe.multiply(spe).multiply(bfact);
+                    BigInteger squ2 = value.subtract(spe2);
+                    busy = (factor == 1 && spe2.compareTo(squ2)  < 0)
+                        || (factor >  1 && spe2.compareTo(value) < 0);
+                    if (busy) {
+                        BigInteger squ = BigIntegerUtil.root2(squ2, 2);
+                        if (! squ.equals(BigInteger.ZERO)) {
+                            if (ipair > 0) {
+                                System.out.println();
+                                System.out.print(spaces.substring(0, 5 + 20));
+                            }
+                            System.out.print(" = (" + (new PrimeFactorization(spe)).toString() + ")^2" 
+                                    + (factor == 1 ? "" : " * " + String.valueOf(factor))
+                                    + " + (" + (new PrimeFactorization(squ)).toString() + ")^2");
+                            ipair ++;
+                        }
+                    } // if busy
+                    spe = spe.add(BigInteger.ONE);
+                } // while busy
+                System.out.println();
+                num ++;
+            } // while num
+        } // uniVariate
+    } // printRepresentations
+
+    /** Evaluates a univariate {@link Polynomial} for a
+     *  sequence of odd variable values and print the 
+     *  prime factorization of the resulting values
+     *  together with the modulus with respect to m of the primes.
+     *  @param args commandline arguments: polynomial [high [m]]
+     */
+    private void printSquareSumPrimes(String[] args) {
+        int startValue =    1; // start with this value of the (single) variable
+        int highValue  = 4096; // end one before this value
+        int modulus    =    8; // default: mod 8
+        int iarg = 1; // skip over "-pdiff"
+        Polynomial poly1 = Polynomial.parse(args[iarg ++]);
+        if (iarg < args.length) {
+            try {
+                highValue  = Integer.parseInt(args[iarg ++]);
+            } catch (Exception exc) {
+            }
+        }
+        if (iarg < args.length) {
+            try {
+                modulus    = Integer.parseInt(args[iarg ++]);
+            } catch (Exception exc) {
+            }
+        }
+        VariableMap vmap = poly1.getVariableMap();
+        if (vmap.size() > 1) { // not uniVariate
+            System.out.println("\"" + poly1.toString() + "\" is not univariate");
+        } else { // uniVariate
+            String vnam1 = vmap.getNameString(); // comma separated, but there is only one variable
+            int num = startValue;
+            while (num < highValue) {
+                vmap.put(vnam1, String.valueOf(num));
+                Polynomial poly2 = poly1.substitute(vmap);
+                String sig2 = poly2.getMonomials().firstKey();
+                BigInteger coef = poly2.getMonomials().get(sig2).getCoefficient();
+                PrimeFactorization pfact = new PrimeFactorization(coef);
+                System.out.print(String.format("%5d", num));
+                String bnum = coef.toString();
+                int len = 20 - bnum.length();
+                if (len < 0) {
+                    len = 0;
+                }
+                System.out.print(spaces.substring(0, len) + bnum);
+                System.out.println(" " + pfact.toModString(modulus));
+                num += 2;
+            } // while num
+        } // uniVariate
+    } // printSquareSumPrimes
 
     /** Reads lines with numbers a, b, c, d such that a^4 + b^4 = c^4 + d^4.
      *  Checks these tuples whether they are primitive,
@@ -205,22 +333,22 @@ public class SandBox {
             Polynomial x = Polynomial.parse(args[iarg ++]);
             Polynomial y = Polynomial.parse(args[iarg ++]);
             Polynomial c = Polynomial.parse(args[iarg ++]);
-            Polynomial denomX = x.pow(4).subtract((new Polynomial("8")).multiply(c).multiply(x));
-            Polynomial nominX = (new Polynomial("4")).multiply(y.pow(2));
-            Polynomial denomY =         (new Polynomial("8")).multiply(c.pow(2)
-                                ).subtract(
-                                        (new Polynomial("20")).multiply(c).multiply(x.pow(3))
-                                ).subtract(
-                                        x.pow(6)
-                                );
-            Polynomial nominY = (new Polynomial("8")).multiply(y.pow(3));
+            Polynomial numX = x.pow(4).subtract((new Polynomial("8")).multiply(c).multiply(x));
+            Polynomial denX = (new Polynomial("4")).multiply(y.pow(2));
+            Polynomial numY = (new Polynomial("8")).multiply(c.pow(2)
+                              ).subtract((new Polynomial("20")).multiply(c).multiply(x.pow(3))
+                              ).subtract(x.pow(6)
+                              );
+            Polynomial denY = (new Polynomial("8")).multiply(y.pow(3));
             System.out.println("y^2 = x^3 + c with"
                     +  " x = " + x.toString()
                     + ", y = " + y.toString()
                     + ", c = " + c.toString());
-            System.out.print  ("x -> (" + denomX.toString() + ") / (" + nominX.toString() + "), ");
-            System.out.println("y -> (" + denomY.toString() + ") / (" + nominY.toString() + ")");
-            // 3 argumnets
+            System.out.println("x -> (" + numX.toString() + ") /");
+            System.out.println("     (" + denX.toString() + "), ");
+            System.out.println("y -> (" + numY.toString() + ") /");
+            System.out.println("     (" + denY.toString() + ")"  );
+            // 3 arguments
         } else { // 4 arguments
             // input is x,y,c,n of a Mordell equation y^2 = x^3 + c with Bachet's formula repeated n times
             BigRational x = new BigRational(args[iarg ++]);
@@ -235,10 +363,8 @@ public class SandBox {
                 BigRational newX =  x.pow(4).subtract((new BigRational("8")).multiply(c).multiply(x))
                                     .divide((new BigRational("4")).multiply(y.pow(2)));
                 BigRational newY =  ((new BigRational("8")).multiply(c.pow(2)
-                                    ).subtract(
-                                            (new BigRational("20")).multiply(c).multiply(x.pow(3))
-                                    ).subtract(
-                                            x.pow(6)
+                                    ).subtract((new BigRational("20")).multiply(c).multiply(x.pow(3))
+                                    ).subtract(x.pow(6)
                                     ))
                                     .divide((new BigRational("8")).multiply(y.pow(3)));
                 x = newX;
@@ -262,9 +388,11 @@ public class SandBox {
     /** Test method.
      *  @param args command line arguments:
      *  <ul>
-     *  <li>-bachet x y c [n]</li>
-     *  <li>-eec422 filename</li>
-     *  <li>-pdiff polynomial [start [end]]</li>
+     *  <li>-bachet x y c [n]: evaluate Bachet's duplication formula</li>
+     *  <li>-eec422  filename: evaluate tuples of the form a^4 + b^4 = c^4 + d^4</li>
+     *  <li>-pdiff   polynomial [start [end]]: print successive differences</li>
+     *  <li>-repres  polynomial [end [f]]: print representations of values by p^2 + f*q^2</lI>
+     *  <li>-sqsprim polynomial [end [m]]: print prime factorizations of values and the modulus m of the primes</lI>
      *  </ul>
      */
     /*-------------------- Test Driver --------------------*/
@@ -278,12 +406,16 @@ public class SandBox {
             String opt = args[iarg ++];
             if (false) {
             } else if (opt.startsWith("-bachet"  )) {
-                sandBox.processBachet(args);
+                sandBox.processBachet       (args);
             } else if (opt.startsWith("-eec422"  )) {
                 String fileName = args[iarg ++];
-                sandBox.process422(fileName);
+                sandBox.process422          (fileName);
             } else if (opt.startsWith("-pdiff"   )) {
-                sandBox.printDifferences(args);
+                sandBox.printDifferences    (args);
+            } else if (opt.startsWith("-repres"  )) {
+                sandBox.printRepresentations(args);
+            } else if (opt.startsWith("-sqsprim" )) {
+                sandBox.printSquareSumPrimes(args);
             } else {
                 System.err.println("invalid option " + opt);
             } // some option
