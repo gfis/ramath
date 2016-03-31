@@ -152,11 +152,62 @@ public class SandBox {
      *  representations of the form p^2 + f*q^2.
      *  @param args commandline arguments: polynomial [high [f]]
      */
+    private void printCompositions(String[] args) {
+        int startValue =    2; // start with this value of the (single) variable
+        int highValue  =   10; // end one before this value
+        int factor     =    1; // default: representation by a sum of 2 squares
+        int iarg = 1; // skip over "-compose"
+        if (iarg < args.length) {
+            try {
+                highValue  = Integer.parseInt(args[iarg ++]);
+            } catch (Exception exc) {
+            }
+        }
+        if (iarg < args.length) {
+            try {
+                factor     = Integer.parseInt(args[iarg ++]);
+            } catch (Exception exc) {
+            }
+        }
+        BigInteger bfact = BigInteger.valueOf(factor);
+
+        Polynomial u    = Polynomial.parse("u");
+        Polynomial v    = Polynomial.parse("v");
+        Polynomial a    = u;
+        Polynomial b    = v;
+        if (true) { 
+            int num = startValue;
+            while (num < highValue) {
+                Polynomial[] sums = Polynomial.brahmagupta(new Polynomial[] { a, b, u, v } );
+                if (false) {
+                    int isum = 0;
+                    while (isum < sums.length) {
+                        System.out.print(sums[isum].toString() + "; ");
+                        isum ++;
+                    } // while isum
+                } // false
+                a = sums[0];
+                b = sums[1];
+                System.out.println(String.format("%4d: ", num)
+                        + "(u^2 + v^2)^" + String.valueOf(num) + " = ("
+                        + a.toString() + ")^2 + (" 
+                        + b.toString() + ")^2");
+                num ++;
+            } // while num
+        } // true
+    } // printCompositions
+
+    /** Evaluates a univariate {@link Polynomial} for a
+     *  sequence of variable values and, for the resulting values, print the 
+     *  representations of the form p^2 + f*q^2.
+     *  @param args commandline arguments: polynomial [high [f]]
+     */
     private void printRepresentations(String[] args) {
         int startValue =    0; // start with this value of the (single) variable
         int highValue  = 4096; // end one before this value
-        int factor     =    1; // default: respresentation by a sum of 2 squares
+        int factor     =    1; // default: representation by a sum of 2 squares
         int iarg = 1; // skip over "-reprs"
+        System.out.print("# " + args[iarg]);
         Polynomial poly1 = Polynomial.parse(args[iarg ++]);
         if (iarg < args.length) {
             try {
@@ -170,6 +221,7 @@ public class SandBox {
             } catch (Exception exc) {
             }
         }
+        System.out.println(" = " + (factor == 1 ? "" : String.valueOf(factor) + " * ") + "m^2 + n^2 ?");
         BigInteger bfact = BigInteger.valueOf(factor);
         VariableMap vmap = poly1.getVariableMap();
         if (vmap.size() > 1) { // not uniVariate
@@ -209,14 +261,23 @@ public class SandBox {
                                 System.out.println();
                                 System.out.print(spaces.substring(0, 5 + 20));
                             }
-                            System.out.print(" = (" + (new PrimeFactorization(spe)).toString() + ")^2" 
-                                    + (factor == 1 ? "" : " * " + String.valueOf(factor))
-                                    + " + (" + (new PrimeFactorization(squ)).toString() + ")^2");
+                            System.out.print(" = "
+                                    + (factor == 1 ? "" : String.valueOf(factor) + " * ")
+                                    +    "(" + (new PrimeFactorization(spe)).toString() + ")^2" 
+                                    + " + (" + (new PrimeFactorization(squ)).toString() + ")^2"
+                                    );
+                            if (spe.gcd(squ).equals(BigInteger.ONE)) {
+                                System.out.print("\tproper representation by " 
+                                        + spe.toString() + "^2 + " + squ.toString() + "^2");
+                            }
                             ipair ++;
                         }
                     } // if busy
                     spe = spe.add(BigInteger.ONE);
                 } // while busy
+                if (ipair > 1) {
+                    System.out.print("\t\t[" + ipair + "]");
+                }
                 System.out.println();
                 num ++;
             } // while num
@@ -389,6 +450,7 @@ public class SandBox {
      *  @param args command line arguments:
      *  <ul>
      *  <li>-bachet x y c [n]: evaluate Bachet's duplication formula</li>
+     *  <li>-brahma  [end [f]]: print successive compositions of (u^2 + v^2)
      *  <li>-eec422  filename: evaluate tuples of the form a^4 + b^4 = c^4 + d^4</li>
      *  <li>-pdiff   polynomial [start [end]]: print successive differences</li>
      *  <li>-repres  polynomial [end [f]]: print representations of values by p^2 + f*q^2</lI>
@@ -407,6 +469,8 @@ public class SandBox {
             if (false) {
             } else if (opt.startsWith("-bachet"  )) {
                 sandBox.processBachet       (args);
+            } else if (opt.startsWith("-compose" )) {
+                sandBox.printCompositions   (args);
             } else if (opt.startsWith("-eec422"  )) {
                 String fileName = args[iarg ++];
                 sandBox.process422          (fileName);

@@ -118,7 +118,7 @@ public class Ideal implements Cloneable, Serializable {
         return (new Polynomial(monof)).multiply(f).subtract((new Polynomial(monog)).multiply(g));
     } // s_Polynomial
 
-    /** Divide a multivariate Polynomial by a set of other multivariate {@link Polynomial}s,
+    /** Divide a multivariate {@link Polynomial} by a set of other multivariate {@link Polynomial}s,
      *  and return the rest.
      *  @param polyf the Polynomial f to be divided by the Polynomials F.
      *  See http://de.wikipedia.org/wiki/Benutzer:Ap86/Artikelwerkstatt
@@ -185,7 +185,7 @@ public class Ideal implements Cloneable, Serializable {
             System.err.println("infinite loop in (" + polyf.toString() + ").multiDivide(...)");
         } // loopCheck
         if (store) {
-            if (debug >= 0 && store) {
+            if (debug >= 0) {
                 System.out.print("multipleDivide: " + polyf.toString() + " = ");
                 for (ipoly = 0; ipoly < polyA.length; ipoly ++) {
                     if (! polyA[ipoly].isZero()) {

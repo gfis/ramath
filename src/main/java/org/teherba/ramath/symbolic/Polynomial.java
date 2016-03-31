@@ -1,6 +1,7 @@
 /*  Polynomial: a symbolic, multivariate Polynomial with addition, multiplication,
  *  exponentiation, comparision and other operations
  *  @(#) $Id: Polynomial.java 744 2011-07-26 06:29:20Z gfis $
+ *  2016-03-31: Brahmagupta identity
  *  2016-02-03: derivative(varx, order)
  *  2015-12-06: toString(boolean) -> toString(1)
  *  2015-11-16: Groebner bases moved to Ideal.java
@@ -685,6 +686,35 @@ public class Polynomial implements Cloneable, Serializable {
         } // >= 2
         return result;
     } // pow
+
+    /** Take four {@link Polynomial}s a, b, c, d, and an optional n,
+     +  and return the possible 2 sets of 2 summands in brackets (unsquared)
+     *  on the right side of the Brahmagupta identity:
+     *  <pre>
+     *  [0]   [4] [1]   [2]   [4] [3]
+     *  (a^2 + n * b^2)*(c^2 + n * d^2) = (ac - nbd)^2 + n(ad + bc)^2
+     *                                    [   0    ]      [   1   ]
+     *  (a^2 + n * b^2)*(c^2 + n * d^2) = (ac + nbd)^2 + n(ad - bc)^2 
+     *                                    [   2    ]      [   3   ]
+     *  </pre>
+     *  @param input Polynomials for the formula
+     *  @return resulting Polynomials for the +- and the -+ variant
+     */
+    public static Polynomial[] brahmagupta(Polynomial[] poly) {
+        Polynomial ac = poly[0].multiply(poly[2]);
+        Polynomial bd = poly[1].multiply(poly[3]);
+        Polynomial ad = poly[0].multiply(poly[3]);
+        Polynomial bc = poly[1].multiply(poly[2]);
+        if (poly.length > 4) {
+        	bd = bd.multiply(poly[4]); // * n
+        }
+        return new Polynomial[]
+                { ac.subtract(bd)
+                , ad.add     (bc)
+                , ac.add     (bd)
+                , ad.subtract(bc)
+                } ;
+    } // brahmagupta
 
     /** Divides all monomials of this Polynomial by a {@link Monomial}.
      *  The caller should ensure that all monomials are in fact divisible
