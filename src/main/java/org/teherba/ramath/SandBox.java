@@ -1,5 +1,6 @@
 /*  Collection of several experimental methods
  *  @(#) $Id: SandBox.java 808 2011-09-20 16:56:14Z gfis $
+ *  2016-03-31: -compose
  *  2016-03-11: -reprs
  *  2016-01-03: -pdiff printDifferences
  *  2015-10-05: -bachet
@@ -64,6 +65,56 @@ public class SandBox {
     //===========================
 
     private static final String spaces = "                                "; // 32 blanks for formatting of BigIntegers
+
+    /** Evaluates a univariate {@link Polynomial} for a
+     *  sequence of variable values and, for the resulting values, print the 
+     *  representations of the form p^2 + f*q^2.
+     *  @param args commandline arguments: polynomial [high [f]]
+     */
+    private void printCompositions(String[] args) {
+        int startValue =    2; // start with this value of the (single) variable
+        int highValue  =   10; // end one before this value
+        int factor     =    1; // default: representation by a sum of 2 squares
+        int iarg = 1; // skip over "-compose"
+        if (iarg < args.length) {
+            try {
+                highValue  = Integer.parseInt(args[iarg ++]);
+            } catch (Exception exc) {
+            }
+        }
+        if (iarg < args.length) {
+            try {
+                factor     = Integer.parseInt(args[iarg ++]);
+            } catch (Exception exc) {
+            }
+        }
+        BigInteger bfact = BigInteger.valueOf(factor);
+
+        Polynomial u    = Polynomial.parse("u");
+        Polynomial v    = Polynomial.parse("v");
+        Polynomial a    = u;
+        Polynomial b    = v;
+        if (true) { 
+            int num = startValue;
+            while (num < highValue) {
+                Polynomial[] sums = Polynomial.brahmagupta(new Polynomial[] { a, b, u, v } );
+                if (false) {
+                    int isum = 0;
+                    while (isum < sums.length) {
+                        System.out.print(sums[isum].toString() + "; ");
+                        isum ++;
+                    } // while isum
+                } // false
+                a = sums[0];
+                b = sums[1];
+                System.out.println(String.format("%4d: ", num)
+                        + "(u^2 + v^2)^" + String.valueOf(num) + " = ("
+                        + a.toString() + ")^2 + (" 
+                        + b.toString() + ")^2");
+                num ++;
+            } // while num
+        } // true
+    } // printCompositions
 
     /** Evaluates a univariate {@link Polynomial} for a
      *  sequence of values and print the 1st, 2nd and higher
@@ -146,56 +197,6 @@ public class SandBox {
             } // while num
         } // uniVariate
     } // printDifferences
-
-    /** Evaluates a univariate {@link Polynomial} for a
-     *  sequence of variable values and, for the resulting values, print the 
-     *  representations of the form p^2 + f*q^2.
-     *  @param args commandline arguments: polynomial [high [f]]
-     */
-    private void printCompositions(String[] args) {
-        int startValue =    2; // start with this value of the (single) variable
-        int highValue  =   10; // end one before this value
-        int factor     =    1; // default: representation by a sum of 2 squares
-        int iarg = 1; // skip over "-compose"
-        if (iarg < args.length) {
-            try {
-                highValue  = Integer.parseInt(args[iarg ++]);
-            } catch (Exception exc) {
-            }
-        }
-        if (iarg < args.length) {
-            try {
-                factor     = Integer.parseInt(args[iarg ++]);
-            } catch (Exception exc) {
-            }
-        }
-        BigInteger bfact = BigInteger.valueOf(factor);
-
-        Polynomial u    = Polynomial.parse("u");
-        Polynomial v    = Polynomial.parse("v");
-        Polynomial a    = u;
-        Polynomial b    = v;
-        if (true) { 
-            int num = startValue;
-            while (num < highValue) {
-                Polynomial[] sums = Polynomial.brahmagupta(new Polynomial[] { a, b, u, v } );
-                if (false) {
-                    int isum = 0;
-                    while (isum < sums.length) {
-                        System.out.print(sums[isum].toString() + "; ");
-                        isum ++;
-                    } // while isum
-                } // false
-                a = sums[0];
-                b = sums[1];
-                System.out.println(String.format("%4d: ", num)
-                        + "(u^2 + v^2)^" + String.valueOf(num) + " = ("
-                        + a.toString() + ")^2 + (" 
-                        + b.toString() + ")^2");
-                num ++;
-            } // while num
-        } // true
-    } // printCompositions
 
     /** Evaluates a univariate {@link Polynomial} for a
      *  sequence of variable values and, for the resulting values, print the 
@@ -333,6 +334,47 @@ public class SandBox {
         } // uniVariate
     } // printSquareSumPrimes
 
+    /** Takes one output line of {@link #printCompositions} and
+     *  evaluates it for an increasing sequence of coprime values of u and v.
+     *  @param args commandline arguments: polynomial [high [f]]
+     */
+    private void printTriples(String[] args) {
+        int iarg = 1; // skip over "-triple"
+        Polynomial poly1 = Polynomial.parse(args[iarg ++]);
+        Polynomial poly2 = Polynomial.parse(args[iarg ++]);
+        Polynomial poly3 = Polynomial.parse(args[iarg ++]);
+        int startValue =    2; // start with this value of the (single) variable
+        int highValue  =   32; // end one before this value
+        if (iarg < args.length) {
+            try {
+                highValue  = Integer.parseInt(args[iarg ++]);
+            } catch (Exception exc) {
+            }
+        }
+        VariableMap vmap = poly1.getVariableMap();
+
+        int num = startValue;
+        while (num < highValue) {
+            int v = num / 2;
+            int u = num - v; // always; u >= v
+            while (v >= 1) {
+                if ((u + v) % 2 != 0 &&  Vector.gcd(u, v) == 1) { // u+v odd and u,v coprime
+                    System.out.print(u + "," + v + ":");
+                    vmap.put("u", String.valueOf(u));
+                    vmap.put("v", String.valueOf(v));   
+                    System.out.print(" " + poly1.substitute(vmap).toString()); // the biggest triple element
+                    System.out.print(" " + poly2.substitute(vmap).toString().replaceAll(" ", ""));             
+                    System.out.print(" " + poly3.substitute(vmap).toString());             
+                    System.out.println();           
+                } // if u,v coprime
+                v --;
+                u = num - v;
+            } // while u <= v
+            // System.out.println("#--------");
+            num ++;
+        } // while num
+    } // printTriples
+
     /** Reads lines with numbers a, b, c, d such that a^4 + b^4 = c^4 + d^4.
      *  Checks these tuples whether they are primitive,
      *  whether they fulfill the powersum property,
@@ -455,6 +497,7 @@ public class SandBox {
      *  <li>-pdiff   polynomial [start [end]]: print successive differences</li>
      *  <li>-repres  polynomial [end [f]]: print representations of values by p^2 + f*q^2</lI>
      *  <li>-sqsprim polynomial [end [m]]: print prime factorizations of values and the modulus m of the primes</lI>
+     *  <li>-triple  poly1 poly2 poly3 [end]: evaluate and generate triples for coprime u, v
      *  </ul>
      */
     /*-------------------- Test Driver --------------------*/
@@ -480,6 +523,8 @@ public class SandBox {
                 sandBox.printRepresentations(args);
             } else if (opt.startsWith("-sqsprim" )) {
                 sandBox.printSquareSumPrimes(args);
+            } else if (opt.startsWith("-triple"  )) {
+                sandBox.printTriples        (args);
             } else {
                 System.err.println("invalid option " + opt);
             } // some option

@@ -131,6 +131,12 @@ CALL SandBox -sqsprim "x^2 + 2"
 TEST SQS2 SquareSumPrimes 
 CALL SandBox -sqsprim "(54x + 5)^2 + 2" 32768
 
+TEST TRI2 Triples
+CALL SandBox -triple "(u^2 + v^2)" "(u^2 - v^2)" "(2*u*v)" 16
+
+TEST TRI3 Triples
+CALL SandBox -triple "(u^2 + v^2)" "(u^3 - 3*u*v^2)" "(3*u^2*v - v^3)" 16
+
 PACKAGE=org.teherba.ramath.symbolic
 
 TEST PD1 degree(constant)
