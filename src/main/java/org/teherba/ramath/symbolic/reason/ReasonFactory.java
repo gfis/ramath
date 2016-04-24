@@ -1,5 +1,6 @@
 /*  ReasonFactory: list of reasons to decide that the tree expansion can be truncated
  *  @(#) $Id: ReasonFactory.java 970 2012-10-25 16:49:32Z gfis $
+ *  2016-04-24: features were HashMap
  *  2015-08-30: DownsizedMapReason
  *  2015-08-25: EvenExponentReason, isConsiderable
  *  2015-07-23: *Grow* removed
@@ -32,8 +33,8 @@ import  org.teherba.ramath.symbolic.solver.BaseSolver;
 import  org.teherba.ramath.linear.Vector;
 import  java.io.PrintWriter;
 import  java.util.ArrayList;
-import  java.util.HashMap;
 import  java.util.Iterator;
+import  java.util.TreeMap;
 
 /** Factory and store for a list of reason classes
  *  which decide whether to cut the tree expansion at some point.
@@ -61,8 +62,10 @@ public class ReasonFactory extends ArrayList<BaseReason> {
     /** List of branch class instances, similiar to <em>this</em> ArrayList of reasons */
     protected ArrayList<BaseBranch>   branches;
 
-    /** List of various minor solver features */
-    protected HashMap<String, String> features;
+    /** List of various minor solver features.
+     *  This could have been a HashMap, but we want reproducible test output for ferature lists.
+     */
+    protected TreeMap<String, String> features;
 
     /** Feature: show FAILUREs */
     private boolean showFail = false;
@@ -75,7 +78,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
      */
     public ReasonFactory() {
         super(16);
-        features = new HashMap<String, String>(8);
+        features = new TreeMap<String, String>();
         branches = new ArrayList<BaseBranch>  (8);
     } // no-args Constructor
 
@@ -186,7 +189,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
      *  and add an instance thereof to the list.
      *  This is the factory method which appends the applicable reasons or branches
      *  to <em>this</em> list respectively to {@link #branches}.
-     *  Additional codes are stored in HashMap {@link #features}.
+     *  Additional codes are stored in TreeMap {@link #features}.
      *  @param code external code for the reason or branch class
      *  @return instance of the class, or null if not found
      */

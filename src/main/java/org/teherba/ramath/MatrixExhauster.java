@@ -1,5 +1,6 @@
 /*  Exhaustive generator for power identities
  *  @(#) $Id: MatrixExhauster.java 808 2011-09-20 16:56:14Z gfis $
+ *  2016-04-14: m2comp
  *  2015-03-23: v2
  *  2013-07-28: with linear.Matrix
  *  2013-07-06, Georg Fischer: copied from ParameterGenerator
@@ -29,6 +30,7 @@ import  org.teherba.ramath.linear.Vector;
 import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.PolyMatrix;
 import  org.teherba.ramath.symbolic.PolyVector;
+import  org.teherba.ramath.symbolic.VariableMap;
 import  org.teherba.ramath.util.ModoMeter;
 import  java.lang.Math; // abs(int)
 import  java.util.ArrayList;
@@ -297,6 +299,71 @@ public class MatrixExhauster {
         }}} // for m1i
     } // m2
 
+    //==========================================================
+    /** Generate 3x3 matrixes for composition triples
+     *  @param poly1 1st term in an output line of Sandbox.printCompositions()
+     */
+    public void m2comp(Polynomial poly1) {
+        VariableMap vmap1 = new VariableMap();
+        int m11, m12, m13
+          , m21, m22, m23
+          , m31, m32, m33; // desired matrix, exhausted for all values minDigit <= v < maxDigit
+        int alen = 3;
+        for (m11 = minDigit; m11 < maxDigit; m11 ++) {
+        for (m12 = minDigit; m12 < maxDigit; m12 ++) {
+        for (m13 = minDigit; m13 < maxDigit; m13 ++) {
+        if (m11 != 0 && m12 != 0 && m13 != 0) {
+
+        for (m21 = minDigit; m21 < maxDigit; m21 ++) {
+        for (m22 = minDigit; m22 < maxDigit; m22 ++) {
+        for (m23 = minDigit; m23 < maxDigit; m23 ++) {
+        if (m21 != 0 && m22 != 0 && m23 != 0) {
+		if (! (m11 == m21 && m12 == m22 && m13 == m23)) { // rows 1, 2 differ
+        	
+        for (m31 = minDigit; m31 < maxDigit; m31 ++) {
+        for (m32 = minDigit; m32 < maxDigit; m32 ++) {
+        for (m33 = minDigit; m33 < maxDigit; m33 ++) {
+        if (m31 != 0 && m32 != 0 && m33 != 0) {
+		if (! (m11 == m31 && m12 == m32 && m13 == m33)) { // rows 1, 3 differ
+		if (! (m21 == m31 && m22 == m32 && m23 == m33)) { // rows 2, 3 differ
+
+		if (! (m11 == m12 && m21 == m22 && m31 == m32)) { // cols 1, 2 differ
+		if (! (m11 == m13 && m21 == m23 && m31 == m33)) { // cols 1, 3 differ
+		if (! (m12 == m13 && m22 == m23 && m32 == m33)) { // cols 2, 3 differ
+
+        vmap1.put("a11", String.valueOf(m11));
+        vmap1.put("a12", String.valueOf(m12));
+        vmap1.put("a13", String.valueOf(m13));       
+        vmap1.put("a21", String.valueOf(m21));
+        vmap1.put("a22", String.valueOf(m22));
+        vmap1.put("a23", String.valueOf(m23));
+        vmap1.put("a31", String.valueOf(m31));
+        vmap1.put("a32", String.valueOf(m32));
+        vmap1.put("a33", String.valueOf(m33));
+
+                    if (poly1.substitute(vmap1).isZero()) {
+                        Matrix amat = new Matrix(alen, new int[]
+                                { m11, m12, m13
+                                , m21, m22, m23
+                                , m31, m32, m33
+                                } );
+                        System.out.println(amat.toString() + "\t\tpreserves");
+                        System.out.println();
+                    }
+        } // cols 2, 3 differ
+        } // cols 1, 3 differ
+        } // cols 1, 2 differ
+        } // rows 2, 3 differ
+        } // rows 1, 3 differ
+        } // m3i != 0
+        }}} // for m3i
+        } // rows 1, 2 differ
+        } // m2i != 0
+        }}} // for m2i
+        } // m1i != 0
+        }}} // for m1i
+    } // m2comp
+
     /** v2: Pythagorean triples - like m2,
      *  but ensure power sums -+ factor^2 in columns
      */
@@ -395,7 +462,7 @@ public class MatrixExhauster {
         int powers[] = new int[MAXPOW];
         int ipow = 0;
         while (ipow < MAXPOW) {
-        powers[ipow] = ipow*ipow;
+            powers[ipow] = ipow*ipow;
             ipow ++;
         } // while 1
         int alen = vect0.size();
@@ -1081,7 +1148,7 @@ gain: 54
             if (ru4a < su4a) {
             su4p = su3p + s4*s4*s4;
             if (su4p == 0) { // s preserves twice
-        /*    	
+        /*      
             t1 = m11*s1 + m12*s2 + m13*s3 + m14*s4;
             if (t1 > 0) { //  && t1 < MAXLIST && vlist[t1] != null ) {
             t1a  =        Math.abs(t1);
@@ -1105,7 +1172,7 @@ gain: 54
             if (su4a < tu4a) {
             tu4p = tu3p + t4*t4*t4;
             if (tu4p == 0) { // t preserves 3 times
-		*/
+        */
             Matrix amat = new Matrix(alen, new int[]
                     { m11, m12, m13, m14
                     , m21, m22, m23, m24
@@ -1121,7 +1188,7 @@ gain: 54
             } // t3a
             } // t2a
             } // s1 < t1
-		*/
+        */
 
             } // s preserves twice
             } // ru4a < su4a
@@ -1801,6 +1868,7 @@ They yield a sum of zero if raised to the 3rd power.
      *  <li>-l maxDigit</li>
      *  <li>-v startVector</li>
      *  <li>-w width</li>
+     *  <li>-p poly1</li>
      *  </ul>
      */
     public static void main(String[] args) {
@@ -1810,6 +1878,7 @@ They yield a sum of zero if raised to the 3rd power.
         int limit = 6;
         int width = 6;
         Vector vect0 = null;
+        Polynomial poly1 = null;
         int iarg  = 0;
         while (iarg < args.length) { // get the arguments
             if (args[iarg].startsWith("-")) {
@@ -1825,6 +1894,8 @@ They yield a sum of zero if raised to the 3rd power.
                         limit = Integer.parseInt(args[iarg ++]);
                     } catch (Exception exc) {
                     }
+                } else if (op.equals("p")) {
+                    poly1 = Polynomial.parse(args[iarg ++]);
                 } else if (op.equals("v")) {
                     vect0 = new Vector(args[iarg ++]);
                 } else if (op.equals("w")) {
@@ -1849,6 +1920,8 @@ They yield a sum of zero if raised to the 3rd power.
             exhauster.elem2(exp, width);
         } else if (oper.equals("m2" )) {
             exhauster.m2();
+        } else if (oper.equals("m2comp" )) {
+            exhauster.m2comp(poly1);
         } else if (oper.equals("v2" )) {
             exhauster.v2();
         } else if (oper.equals("ec221" )) {

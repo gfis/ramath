@@ -1,5 +1,5 @@
 ExponentGCDs=[1,1]
-Expanding for base=2, reasons+features=base,same,similiar norm,invall
+Expanding for base=2, reasons+features=base,same,similiar invall,norm
 Refined variables=u,v
 [0+1u,0+1v]:	unknown -> [1] 20u+4u²-130v+8u*v-56v²-8v³-98
 ----------------

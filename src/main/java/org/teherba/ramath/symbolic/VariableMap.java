@@ -33,6 +33,7 @@ package org.teherba.ramath.symbolic;
 import  org.teherba.ramath.symbolic.PolyVector;
 import  org.teherba.ramath.symbolic.RefiningMap;
 import  org.teherba.ramath.util.Dispenser;
+import  org.teherba.ramath.linear.Matrix;
 import  org.teherba.ramath.linear.Vector;
 import  java.io.Serializable;
 import  java.lang.IllegalArgumentException;
@@ -74,6 +75,18 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
             this.put(name, map.get(name));
         } // while iter
     } // Constructor(TreeMap)
+
+    /** Constructor from an array of variable names
+     *  @param map map containing the keys for the new map
+     */
+    public VariableMap(String[] names, String value) {
+        super();
+        int iname = 0;
+        while (iname < names.length) {
+        	this.put(names[iname], value);
+        	iname ++;
+        } // while iname
+    } // Constructor(String[])
 
     /** Constructor with map and single value
      *  @param map map containing the keys for the new map;
@@ -309,6 +322,37 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
         return this;
     } // negativeOf
 
+    /** Multiplies the variable vector of <em>this</em> {@link VariableMap}
+     *  with a {@link Matrix}.
+     *  @param amat a matrix of integers with the same dimension 
+     *  @return reference to <em>this</em> VariableMap with the 
+     *  values replaced by the innerproduct of some matrix row times the variable vector.
+     */
+    public VariableMap multiplyBy(Matrix amat) {
+        int len = this.size();
+        if (amat.size() != len) { 
+            throw new IllegalArgumentException("VariableMap of size " + len 
+                    +  " cannot be multiplied by Matrix of size " + amat.size());
+        } else {
+            String[] names = this.getNameArray();
+            int irow = 0;
+            while (irow < len) {
+                StringBuffer value = new StringBuffer("0");
+                int icol = 0;
+                while (icol < len) {
+                    value.append("+(");
+                    value.append(String.valueOf(amat.get(irow, icol)));
+                    value.append(")*");
+                    value.append(names[icol]);
+                    icol ++;
+                } // while icol
+                this.put(names[irow], value.toString());
+                irow ++;
+            } // while irow
+        } // != 1
+        return this;
+    } // multiplyBy(Matrix)
+
     /*----------------
         Dispensing and Permutation
     */
@@ -459,6 +503,8 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
             System.out.println("vmap = " + vmap.toString());
             vmap.put("b" , "5");
             System.out.println("vmap = " + vmap.toString());
+            vmap.multiplyBy(new Matrix("[[1, -2, 2], [2, -1, 2], [2, -2, 3]]")); // Barning A
+            System.out.println("multiplied: " + vmap.toString());
             vmap.put("d2", "0");
             System.out.println("vmap = " + vmap.toString());
         } else if (iarg + 1 == args.length){

@@ -1,1 +1,1 @@
-pairMap = {b/c=>copr,a/b=>copr}
+pairMap = {a/b=>copr,b/c=>copr}

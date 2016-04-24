@@ -8,6 +8,10 @@ URL=http://localhost:8080/ramath/servlet
 # (2) Adjust the following line: default commandline arguments
 ARGS=
 #======================================================================
+# ProgramGenerator
+
+TEST PG01 m2comp
+MAKE pg
 
 # MatrixExhauster
 PACKAGE=org.teherba.ramath
@@ -31,6 +35,18 @@ CALL MatrixExhauster v2 -l 6
 
 TEST MX06 v2 9
 CALL MatrixExhauster v2 -l 9
+
+TEST MX07 m2comp 2
+# from AM02
+CALL MatrixExhauster m2comp -l 3 -p "(a11*u^2+a13*u^2+2*a12*u*v-a11*v^2+a13*v^2)^2 + (a21*u^2+a23*u^2+2*a22*u*v-a21*v^2+a23*v^2)^2 = (a31*u^2+a33*u^2+2*a32*u*v-a31*v^2+a33*v^2)^2"
+
+TEST MX08 m2comp 3
+# from AM03
+CALL MatrixExhauster m2comp -l 8 -p "(a13*u^2+a11*u^3+3*a12*u^2*v+a13*v^2-3*a11*u*v^2-a12*v^3)^2 + (a23*u^2+a21*u^3+3*a22*u^2*v+a23*v^2-3*a21*u*v^2-a22*v^3)^2 = (a33*u^2+a31*u^3+3*a32*u^2*v+a33*v^2-3*a31*u*v^2-a32*v^3)^3"
+
+TEST MX09 m2comp 4
+# from AM04
+CALL MatrixExhauster m2comp -l 8 -p "(a13*u^2+a11*u^4+4*a12*u^3*v+a13*v^2-6*a11*u^2*v^2-4*a12*u*v^3+a11*v^4)^2 + (a23*u^2+a21*u^4+4*a22*u^3*v+a23*v^2-6*a21*u^2*v^2-4*a22*u*v^3+a21*v^4)^2 = (a33*u^2+a31*u^4+4*a32*u^3*v+a33*v^2-6*a31*u^2*v^2-4*a32*u*v^3+a31*v^4)^4"
 
 TEST EC20 
 CALL MatrixExhauster ec221 -l 4 -v [1,0,1]
@@ -85,10 +101,15 @@ CALL linear.MatrixTester  -chain [[9,7,4,1],[-8,-6,-4,-1],[5,4,3,1],[-5,-4,-2,0]
 
 TEST AM01 multiply abstract
 CALL symbolic.PolyMatrix -mult [[-6,-8,-4,-1],[7,9,4,1],[4,5,3,1],[-4,-5,-2,0]] [a,b,c,d]
-TEST AM02 multiply abstract block-shuffled
-CALL symbolic.PolyMatrix -mult [[9,7,1,4],[-8,-6,-1,-4],[-5,-4,0,-2],[5,4,1,3]] [a,b,c,d]
-# CALL symbolic.PolyMatrix -mult [[9,7,1,4],[-8,-6,-1,-4],[-5,-4,0,-2],[5,4,1,3]] [b,a,d,c]
 
+TEST AM02 multiply abstract Pythagoras
+CALL symbolic.PolyMatrix -mult [[m11,m12,m13],[m21,m22,m23],[m31,m32,m33]] [a^2-b^2],[2*a*b],[a^2+b^2]
+
+TEST AM03 multiply abstract Composition^3
+CALL symbolic.PolyMatrix -mult [[a11,a12,a13],[a21,a22,a23],[a31,a32,a33]] [u^3-3*u*v^2],[3*u^2*v-v^3],[u^2+v^2]
+
+TEST AM04 multiply abstract Composition^4
+CALL symbolic.PolyMatrix -mult [[a11,a12,a13],[a21,a22,a23],[a31,a32,a33]] [u^4-6*u^2*v^2+v^4],[4*u^3*v-4*u*v^3],[u^2+v^2]
 
 TEST EC33M 
 CALL MatrixExhauster ec340 -l 2 -v [6,-5,-3,-4]

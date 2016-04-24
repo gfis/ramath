@@ -109,8 +109,12 @@ public class SandBox {
                 b = sums[1];
                 System.out.println(String.format("%4d: ", num)
                         + "(u^2 + v^2)^" + String.valueOf(num) + " = ("
-                        + a.toString() + ")^2 + (" 
-                        + b.toString() + ")^2");
+                        + sums[0].toString() + ")^2 + (" 
+                        + sums[1].toString() + ")^2");
+                System.out.println("      "
+                        + "(u^2 + v^2)^" + String.valueOf(num) + " = ("
+                        + sums[2].toString() + ")^2 + (" 
+                        + sums[3].toString() + ")^2");
                 num ++;
             } // while num
         } // true

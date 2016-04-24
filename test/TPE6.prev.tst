@@ -1,5 +1,5 @@
 ExponentGCDs=[2,2]
-Expanding for base=5, reasons+features=base,same,similiar,evenexp norm,invall,showfail
+Expanding for base=5, reasons+features=base,same,similiar,evenexp invall,norm,showfail
 Refined variables=x,y
 [0+1x,0+1y]:	unknown -> [1] 15x²-7y²-9
 ----------------

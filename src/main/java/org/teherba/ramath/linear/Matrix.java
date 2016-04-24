@@ -832,29 +832,33 @@ public class Matrix implements Cloneable, Serializable {
         return rmat;
     } // inverse
 
-    /** Test whether <em>this</em> Matrix preserves the power sum property
-     *  of the parameter {@link Vector}.
+    /** Successively multiplies <em>this</em> {@link Matrix} with
+     *  a {@link Vector} <em>vect0</em> and checks whether the power sum property
+     *  is maintained, or whether an iteration limit is reached.
      *  @param exp exponent
      *  @param left  number of leading  elements which represent the left  side
      *  @param right number of trailing elements which represent the right side
      *  @param vect0 the {@link Vector} to start with
-     *  @return number of times that <em>this</em> Matrix can be multiplied
-     *  by <em>base</em> while maintaining the power sum property.
+     *  @return an array of Vectors as result of the multiplication;
+     *  the size determines the number of times that <em>this</em> Matrix could be multiplied
+     *  by <em>vect0</em> while maintaining the power sum property.
      *  A default of 8 iterations is tried
      */
     public ArrayList<Vector> preservedPowerSums(int exp, int left, int right, Vector vect0) {
         return preservedPowerSums(exp, left, right, vect0, 8);
     } // preservedPowerSums(4)
 
-    /** Test whether <em>this</em> Matrix preserves the power sum property
-     *  of the parameter {@link Vector}.
+    /** Successively multiplies <em>this</em> {@link Matrix} with
+     *  a {@link Vector} <em>vect0</em> and checks whether the power sum property
+     *  is maintained, or whether an iteration limit is reached.
      *  @param exp exponent
      *  @param left  number of leading  elements which represent the left  side
      *  @param right number of trailing elements which represent the right side
      *  @param vect0 the {@link Vector} to start with
      *  @param maxIter number of iterations to be tried
-     *  @return number of times that <em>this</em> Matrix can be multiplied
-     *  by <em>vect0</em> while maintaining the power sum property
+     *  @return an array of Vectors as result of the multiplication;
+     *  the size determines the number of times that <em>this</em> Matrix could be multiplied
+     *  by <em>vect0</em> while maintaining the power sum property.
      */
     public ArrayList<Vector> preservedPowerSums(int exp, int left, int right, Vector vect0, int maxIter) {
         ArrayList<Vector> result = new ArrayList<Vector>(maxIter);

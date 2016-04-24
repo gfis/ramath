@@ -57,6 +57,12 @@ diffy:
 ret:
 	rm test/T*.tst
 	make solver
+#-------------------------
+pg:
+	java -cp dist/ramath.jar org.teherba.ramath.ProgramGenerator -w 3 -l 3 -n m2comp | tee test/pg.c
+	gcc -o test/pg.exe test/pg.c
+	test/pg.exe
+#-------------------------
 gitadd:
 	git add -v $(SRC)/symbolic/*.java
 	git add -v $(SRC)/symbolic/reason/*.java

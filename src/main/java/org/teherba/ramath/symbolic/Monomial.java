@@ -897,19 +897,18 @@ public class Monomial implements Cloneable, Serializable {
     } // toFactoredString()
 
     //----------------
-    /** Takes the variables from <em>mono2</em> and
-     *  creates a monomial with the powers of these variables
-     *  occurring in <em>this</em> monomial, with constant +1.
+    /** Takes the variables from the parameter {@link Monomial} <em>mono2</em>, and
+     *  selects these variables and their powers from <em>this</em> Monomial.
      *  @param mono2 a multiplication of all desired variables (names with exponent 1 and constant +1)
-     *  @return monomial with constant &gt;= +1, and which consists of
-     *  the powers of the variables in <em>monomial</em>, (without ^0),
-     *  or 0 if not any of the variables of <em>mono2</em> was contained in <em>this</em> monomial.
+     *  @return a new Monomial with coefficient 1 and the selected variables with
+     *  their powers, 
+     *  or 0 if not any of the variables of <em>mono2</em> was contained in <em>this</em> Monomial.
      */
     public Monomial getVariablePowers(Monomial mono2) {
         Monomial result = new Monomial();
         Iterator<String> iter2 = mono2.keySet().iterator();
-        int exp1;
-        String name2;
+        int    exp1  = 0;
+        String name2 = null;
         boolean found = false;
         while (iter2.hasNext()) {
             name2 = iter2.next();
@@ -925,7 +924,7 @@ public class Monomial implements Cloneable, Serializable {
         return result;
     } // getVariablePowers
 
-    /** Tests whether <em>this</em> monomial contains the exact variable power combination
+    /** Tests whether <em>this</em> Monomial contains the exact variable power combination
      *  of <em>mono2</em>; if not, 0 is returned, otherwise, the factor monomial/mono2.
      *  @param mono2 a combination of powers of the desired variables, with coefficient 1
      *  @return 0 or a mono3 such that monomial = mono2 * mono3
@@ -938,8 +937,8 @@ public class Monomial implements Cloneable, Serializable {
         boolean busy = true;
         while (busy && iter2.hasNext()) {
             name2 = iter2.next();
-            exp1 = result   .getExponent(name2);
-            exp2 = mono2.getExponent(name2);
+            exp1 = result.getExponent(name2);
+            exp2 = mono2 .getExponent(name2);
             if (exp1 == 0 || exp1 != exp2) {
                 busy = false;
                 result.setCoefficient(0); // no factor

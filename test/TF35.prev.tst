@@ -1,6 +1,6 @@
 isHomogeneous
 ExponentGCDs=[3,3,3]
-Expanding for base=2, reasons+features=base,primitive,same,similiar norm,invall,showfail
+Expanding for base=2, reasons+features=base,primitive,same,similiar invall,norm,showfail
 Refined variables=a,b,c
 [0+1a,0+1b,0+1c]:	unknown -> [1] a³+2b³-4c³
 -> solution [0,0,0],trivial(3)

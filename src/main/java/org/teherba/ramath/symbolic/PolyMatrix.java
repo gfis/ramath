@@ -626,9 +626,8 @@ public class PolyMatrix implements Cloneable, Serializable {
                 } else if (opt.startsWith("-mult")) {
                     amat  = new PolyMatrix(args[iarg ++]); // may not contain spaces
                     vect1 = new PolyVector(args[iarg ++]); // may not contain spaces
-                    System.out.println(amat.toString("(,)") + " * " 
-                            + vect1.toString("(,)") + " = "
-                            + amat.multiply(vect1).toString("(,)"));
+                    System.out.println(amat.toString("(,)") + " * " + vect1.toString("(,)") + " = ");
+                    System.out.println(amat.multiply(vect1).toString("(,)"));
                     // -mult
                 } else {
                     System.err.println("invalid option " + opt);

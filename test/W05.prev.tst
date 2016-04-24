@@ -21,7 +21,7 @@
     <!--
     view= "upper", area="rset", opt=""
     form1="(a%2Bb%2Bc)^6"
-    form2="a⁶ + 23a⁵*b + 35a⁴*b² + 2²5a³*b³ + 35a²*b⁴ + 23a*b⁵ + b⁶ + 23a⁵*c + 235a⁴*b*c + 2²35a³*b²*c + 2²35a²*b³*c + 235a*b⁴*c + 23b⁵*c + 35a⁴*c² + 2²35a³*b*c² + 23²5a²*b²*c² + 2²35a*b³*c² + 35b⁴*c² + 2²5a³*c³ + 2²35a²*b*c³ + 2²35a*b²*c³ + 2²5b³*c³ + 35a²*c⁴ + 235a*b*c⁴ + 35b²*c⁴ + 23a*c⁵ + 23b*c⁵ + c⁶"
+    form2="a⁶ + 2¹3a⁵*b + 3¹5a⁴*b² + 2²5a³*b³ + 3¹5a²*b⁴ + 2¹3a*b⁵ + b⁶ + 2¹3a⁵*c + 2¹3¹5a⁴*b*c + 2²3¹5a³*b²*c + 2²3¹5a²*b³*c + 2¹3¹5a*b⁴*c + 2¹3b⁵*c + 3¹5a⁴*c² + 2²3¹5a³*b*c² + 2¹3²5a²*b²*c² + 2²3¹5a*b³*c² + 3¹5b⁴*c² + 2²5a³*c³ + 2²3¹5a²*b*c³ + 2²3¹5a*b²*c³ + 2²5b³*c³ + 3¹5a²*c⁴ + 2¹3¹5a*b*c⁴ + 3¹5b²*c⁴ + 2¹3a*c⁵ + 2¹3b*c⁵ + c⁶"
     valmap="{a=>a,b=>b,c=>c}"
     -->
 
@@ -40,7 +40,7 @@
                     <br />
                     <br />
                     Options<br />
-                    <input name="opt" maxsize="60" size="25" value="" /> (norm)
+                    <input name="opt" maxsize="60" size="20" value="" /> (norm)
                 </td>
                 <td>
                 Variable Substitutions<br />
@@ -53,7 +53,7 @@
         <table cellpadding="0" border="0">
            <tr>
                 <td colspan="2">
-                    <textarea name="form1" cols="100" rows="4">(a%2Bb%2Bc)^6
+                    <textarea name="form1" wrap="virtual" cols="80" rows="4">(a%2Bb%2Bc)^6
                     </textarea>
                 </td>
             </tr>
@@ -61,30 +61,24 @@
                 <td align="left">
                     <input type="submit" value="Compute" /> with substitutions
                 </td>
-                <td align="right">
-                    <img src="img/up.svg" alt="up arrow" width="80" />
-                </td>
             </tr>
          </table>
     </form><!-- upper -->
 
     <form action="servlet" method="get">
-        <input type = "hidden" name="view" value="lower" />
-        <input type = "hidden" name="area" value="rset" />
-        <input type = "hidden" name="opt"  value="" />
-        <table cellpadding="0" border="0">
+        <input type = "hidden" name="view"   value="lower" />
+        <input type = "hidden" name="area"   value="rset" />
+        <input type = "hidden" name="opt"    value="" />
+        <input type = "hidden" name="form2"  value="a⁶ + 2¹3a⁵*b + 3¹5a⁴*b² + 2²5a³*b³ + 3¹5a²*b⁴ + 2¹3a*b⁵ + b⁶ + 2¹3a⁵*c + 2¹3¹5a⁴*b*c + 2²3¹5a³*b²*c + 2²3¹5a²*b³*c + 2¹3¹5a*b⁴*c + 2¹3b⁵*c + 3¹5a⁴*c² + 2²3¹5a³*b*c² + 2¹3²5a²*b²*c² + 2²3¹5a*b³*c² + 3¹5b⁴*c² + 2²5a³*c³ + 2²3¹5a²*b*c³ + 2²3¹5a*b²*c³ + 2²5b³*c³ + 3¹5a²*c⁴ + 2¹3¹5a*b*c⁴ + 3¹5b²*c⁴ + 2¹3a*c⁵ + 2¹3b*c⁵ + c⁶" />
+        <table cellpadding="0" border="0" width="640px">
             <tr valign="top">
-                <td align="left">
-                    <img src="img/down.svg" alt="down arrow"  width="80" />
-                </td>
-                <td align="right">
-                    <input type="submit" value="Compute" />
+                <td colspan="2">
+                    <span class="p1">1</span>a⁶ + <span class="p2">2</span>¹<span class="p3">3</span>a⁵*b + <span class="p3">3</span>¹<span class="p5">5</span>a⁴*b² + <span class="p2">2²</span><span class="p5">5</span>a³*b³ + <span class="p3">3</span>¹<span class="p5">5</span>a²*b⁴ + <span class="p2">2</span>¹<span class="p3">3</span>a*b⁵ + <span class="p1">1</span>b⁶ + <span class="p2">2</span>¹<span class="p3">3</span>a⁵*c + <span class="p2">2</span>¹<span class="p3">3</span>¹<span class="p5">5</span>a⁴*b*c + <span class="p2">2²</span><span class="p3">3</span>¹<span class="p5">5</span>a³*b²*c + <span class="p2">2²</span><span class="p3">3</span>¹<span class="p5">5</span>a²*b³*c + <span class="p2">2</span>¹<span class="p3">3</span>¹<span class="p5">5</span>a*b⁴*c + <span class="p2">2</span>¹<span class="p3">3</span>b⁵*c + <span class="p3">3</span>¹<span class="p5">5</span>a⁴*c² + <span class="p2">2²</span><span class="p3">3</span>¹<span class="p5">5</span>a³*b*c² + <span class="p2">2</span>¹<span class="p3">3²</span><span class="p5">5</span>a²*b²*c² + <span class="p2">2²</span><span class="p3">3</span>¹<span class="p5">5</span>a*b³*c² + <span class="p3">3</span>¹<span class="p5">5</span>b⁴*c² + <span class="p2">2²</span><span class="p5">5</span>a³*c³ + <span class="p2">2²</span><span class="p3">3</span>¹<span class="p5">5</span>a²*b*c³ + <span class="p2">2²</span><span class="p3">3</span>¹<span class="p5">5</span>a*b²*c³ + <span class="p2">2²</span><span class="p5">5</span>b³*c³ + <span class="p3">3</span>¹<span class="p5">5</span>a²*c⁴ + <span class="p2">2</span>¹<span class="p3">3</span>¹<span class="p5">5</span>a*b*c⁴ + <span class="p3">3</span>¹<span class="p5">5</span>b²*c⁴ + <span class="p2">2</span>¹<span class="p3">3</span>a*c⁵ + <span class="p2">2</span>¹<span class="p3">3</span>b*c⁵ + <span class="p1">1</span>c⁶
                 </td>
             </tr>
             <tr valign="top">
-                <td colspan="2">
-                    <textarea name="form2" cols="100" rows="4">a⁶ + 23a⁵*b + 35a⁴*b² + 2²5a³*b³ + 35a²*b⁴ + 23a*b⁵ + b⁶ + 23a⁵*c + 235a⁴*b*c + 2²35a³*b²*c + 2²35a²*b³*c + 235a*b⁴*c + 23b⁵*c + 35a⁴*c² + 2²35a³*b*c² + 23²5a²*b²*c² + 2²35a*b³*c² + 35b⁴*c² + 2²5a³*c³ + 2²35a²*b*c³ + 2²35a*b²*c³ + 2²5b³*c³ + 35a²*c⁴ + 235a*b*c⁴ + 35b²*c⁴ + 23a*c⁵ + 23b*c⁵ + c⁶
-                    </textarea>
+                <td align="left">
+                    <input type="submit" value="Replace" /> input field
                 </td>
             </tr>
             <tr>

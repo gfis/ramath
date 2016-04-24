@@ -1,6 +1,7 @@
 /*  Polynomial: a symbolic, multivariate Polynomial with addition, multiplication,
  *  exponentiation, comparision and other operations
  *  @(#) $Id: Polynomial.java 744 2011-07-26 06:29:20Z gfis $
+ *  2016-04-14: isPreservedBy(Matrix)
  *  2016-03-31: Brahmagupta identity
  *  2016-02-03: derivative(varx, order)
  *  2015-12-06: toString(boolean) -> toString(1)
@@ -45,6 +46,7 @@ import  org.teherba.ramath.BigIntegerUtil;
 import  org.teherba.ramath.BigRational;
 import  org.teherba.ramath.Coefficient;
 import  org.teherba.ramath.PrimeFactorization;
+import  org.teherba.ramath.linear.Matrix;
 import  org.teherba.ramath.linear.Vector;
 import  org.teherba.ramath.util.ExpressionReader;
 import  org.teherba.ramath.util.ModoMeter;
@@ -486,8 +488,8 @@ public class Polynomial implements Cloneable, Serializable {
     } // polarity
 
     //----------------
-    /** Determines whether the Polynomial is a sum of like powers
-     *  of different variables, without a constant, for example 4*a^2 + 4*b^2 -4*c^2 = 0
+    /** Determines whether <em>this</em> {@link Polynomial} is a sum of like powers
+     *  of different variables, without a constant, for example 4*a^2 + 4*b^2 - 4*c^2 = 0
      *  @return 0 if the Polynomial is no sum of like powers,
      *  or the common factor &gt;= 1 of all variables with the same exponent (4 in the example)
      */
@@ -518,6 +520,17 @@ public class Polynomial implements Cloneable, Serializable {
         } // while iter1
         return result;
     } // isPowerSum
+
+    //----------------
+    /** Determines whether <em>this</em> {@link Polynomial} is preserved when 
+     *  its variable vector is multiplied by the parameter {@link Matrix}.
+     *  @param amat Matrix to be multiplied on the variable Vector
+     *  @return true if the Polynomial still evaluates to zero, or false otherwise
+     */
+    public boolean isPreservedBy(Matrix amat) {
+        VariableMap vmap = this.getVariableMap().multiplyBy(amat);
+        return this.substitute(vmap).isZero();
+    } // isPreservedBy
 
     /*-------------- arithmetic operations -------------------------*/
 
@@ -706,7 +719,7 @@ public class Polynomial implements Cloneable, Serializable {
         Polynomial ad = poly[0].multiply(poly[3]);
         Polynomial bc = poly[1].multiply(poly[2]);
         if (poly.length > 4) {
-        	bd = bd.multiply(poly[4]); // * n
+            bd = bd.multiply(poly[4]); // * n
         }
         return new Polynomial[]
                 { ac.subtract(bd)
@@ -1088,20 +1101,20 @@ public class Polynomial implements Cloneable, Serializable {
     // Generate subsets
     //------------------
 
-    /** Takes all variables from <em>mono2</em> and
-     *  creates a sum of {@link Monomial}s for all different powers of these variables
+    /** Takes all variables from the parameter {@link Monomial} <em>mono2</em> and
+     *  creates a sum of Monomials for all different powers of these variables
      *  occurring in <em>this</em> Polynomial.
      *  @param mono2 a multiplication of all desired variables (names with exponent 1 and constant +1)
-     *  @return Polynomial whose monomials have constant &gt;= +1, and which consists of
+     *  @return {@link Polynomial} whose Monomials have coefficient 1, and which consists of
      *  all different powers of the variables in <em>mono2</em>
      */
     private Polynomial getVariablePowers(Monomial mono2) {
         Polynomial result = new Polynomial();
-        Monomial monomial = null;
+        Monomial mono3 = null;
         Iterator <String> titer = this.monomials.keySet().iterator();
         while (titer.hasNext()) { // over all monomials
-            monomial = this.monomials.get(titer.next());
-            result.addTo(monomial.getVariablePowers(mono2));
+            mono3 = this.monomials.get(titer.next());
+            result.addTo(mono3.getVariablePowers(mono2));
         } // while titer
         Iterator <String> riter = result.monomials.keySet().iterator();
         while (riter.hasNext()) { // over all monomials
@@ -1110,11 +1123,11 @@ public class Polynomial implements Cloneable, Serializable {
         return result;
     } // getVariablePowers
 
-    /** Takes the variable names from <em>mono2</em>,
-     *  creates an empty {@link RelationSet} and, for all {@link Monomial}s that
+    /** Takes the variable names from the parameter {@link Monomial} <em>mono2</em>,
+     *  creates an empty {@link RelationSet} and, for all Monomials that
      *  occur as combinations of powers of the selected variables in <em>this</em>
      *  Polynomial, adds a new {@link Polynomial} to the set which has the
-     *  monomial as key and the factors of the monomial as terms.
+     *  Monomial as key and the factors of the Monomial as terms.
      *  @param mono2 a multiplication of all desired variables (names with exponent 1 and constant +1)
      *  @return a RelationSet with one Polynomial for each variable combination
      */
@@ -1123,15 +1136,20 @@ public class Polynomial implements Cloneable, Serializable {
         Polynomial poly3 = this.getVariablePowers(mono2);
         Iterator <String> piter3 = poly3.monomials.keySet().iterator();
         while (piter3.hasNext()) { // over all combinations of powers of variables
-            Monomial mono3 = poly3.monomials.get(piter3.next()); // specific combination
+            Monomial mono3 = poly3.monomials.get(piter3.next()); // specific combination - where can it be extracted?
             Polynomial poly4 = new Polynomial();
             Iterator <String> piter1 = this.monomials.keySet().iterator();
             while (piter1.hasNext()) { // over all monomials of <em>this</em> Polynomial
-                Monomial mono5 = this.monomials.get(piter1.next());
-                if (mono5.getVariablePowers(mono2).equals(mono3)) {
-                    poly4.addTo(mono5.getFactorOf(mono3));
-                }
+                Monomial mono5 = this.monomials.get(piter1.next()); // current in this Polynomial
+                if (mono5.getVariablePowers(mono2).equals(mono3)) { // mono3 can be extracted
+                    poly4.addTo(mono5.getFactorOf(mono3)); // poly4 assembles the remaining factors
+                } // can be extracted
             } // while titer
+            BigInteger divisor = poly4.gcdCoefficients();
+            if (divisor.compareTo(BigInteger.ONE) > 0) {
+            	mono3.multiplyBy(divisor);
+                poly4.divideBy  (divisor);
+            }
             poly4.setFactor(mono3);
             result.insert(poly4);
         } // while titer
@@ -1601,10 +1619,10 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
      *  in <em>this</em> Polynomial which have
      *  (returned in [0]) the maximum exponent - 1 of that variable, and
      *  (returned in [1]) the maximum exponent of the variable,
-     *  or the constant 0 if such monomial(s) do not exist.
-     *  Caution, currently the monomials must be univariate.
+     *  or the constant 0 if such Monomial(s) do not exist.
+     *  Caution, currently the Monomials must be univariate.
      *  @param vname variable name
-     *  @return monomials: [0] = max-1 exponent, [1] = max exponent,
+     *  @return Monomials: [0] = max-1 exponent, [1] = max exponent,
      *  or null if there was a non-univariate Monomial
      */
     public Monomial[] getHighTerms(String vname) {
@@ -2201,8 +2219,8 @@ solution [0,0,0,0],trivial(3)
                     poly1 = Polynomial.parse(ereader.read(args[iarg ++]));
                     System.out.println(poly1.toString());
                     Monomial mono4 = new Monomial(vars);
-                    System.out.println("getVariablePowers(" + varName + ")="   + poly1.getVariablePowers(mono4));
-                    System.out.println(          "groupBy(" + varName + ")=\n" + poly1.groupBy          (mono4).toList(false));
+                    System.out.println("getVariablePowers(" + varName + ")=" + poly1.getVariablePowers(mono4));
+                    System.out.println(          "groupBy(" + varName + ")=" + poly1.groupBy          (mono4).toList(false));
                     // -var
 
                 } else {
