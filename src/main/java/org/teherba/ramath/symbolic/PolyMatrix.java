@@ -1,5 +1,6 @@
 /*  PolyMatrix: a square matrix with Polynomial elements
  *  @(#) $Id: PolyMatrix.java 744 2011-07-26 06:29:20Z gfis $
+ *  2016-04-24: construct systematically with prefix; getVariableMap()
  *  2015-04-14: explicit determinant for case 3
  *  2015-03-26: construct from expression
  *  2015-03-24: new PolyMatrix(Matrix amat)
@@ -25,6 +26,7 @@
 package org.teherba.ramath.symbolic;
 import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.PolyVector;
+import  org.teherba.ramath.symbolic.VariableMap;
 import  org.teherba.ramath.linear.Matrix;
 import  org.teherba.ramath.linear.Vector;
 import  java.io.BufferedReader;
@@ -103,6 +105,23 @@ public class PolyMatrix implements Cloneable, Serializable {
             } // for icol
         } // for irow
     } // Constructor(int, String[])
+
+    /** Constructor for an abstract PolyMatrix which initializes it with
+     *  systematic variable names.
+     *  For example, PolyMatrix(2, "m") yields [[m11,m12],[m21,m22]].
+     *  @param rlen number of rows/columns (better <= 9)
+     *  @param prefix String (letter) for the start of the variable names
+     */
+    public PolyMatrix(int rlen, String prefix) {
+        this(rlen);
+        int width = String.format("%d", rlen).length(); // number of digits
+        for (int irow = 0; irow < this.rowLen; irow ++) {
+            for (int icol = 0; icol < this.colLen; icol ++) {
+                this.matrix[irow][icol] = Polynomial.parse(
+                		(String.format(prefix + "%0" + width + "d%0" + width + "d", irow + 1, icol + 1)));
+            } // for icol
+        } // for irow
+    } // Constructor(int, String)
 
     /** Constructor for a PolyMatrix which initializes it from an array of values.
      *  If the number of elements is no square number, the next lower square
@@ -428,6 +447,19 @@ public class PolyMatrix implements Cloneable, Serializable {
         return result;
     } // multiply(PolyVector)
 
+    /** Gets a {@link VariableMap} from all variable names (key) to <em>null</em> (value).
+     *  @return map of variable names mapped to <em>null</em>
+     */
+    public VariableMap getVariableMap() {
+    	VariableMap result = new VariableMap();
+        for (int irow = 0; irow < this.rowLen; irow ++) {
+            for (int kvec = 0; kvec < this.rowLen; kvec ++) {
+               result.addTo(this.matrix[irow][kvec].getVariableMap());
+            } // for kvec
+        } // for irow
+        return result;
+    } // getVariableMap()
+
     /*-------------- heavyweight methods -----------------------------*/
 
     /** Compute the characteristic polynomial of <em>this</em> matrix,
@@ -545,19 +577,10 @@ public class PolyMatrix implements Cloneable, Serializable {
                 System.out.println("new PolyMatrix(\"[[x^2, y^2, - z^2],[x,y,z], [4,3,5]]\") = " 
                         + amat.toString(","));
                 
-                amat = new PolyMatrix(3, new String[]
-                        { "a11", "a12", "a13"
-                        , "a21", "a22", "a23"
-                        , "a31", "a32", "a33"
-                        } );
+                amat = new PolyMatrix(3, "a");
                 System.out.println("PolyMatrix " + amat.toString(",")
                         + newline + "determinant = " + amat.determinant().toString());
-                amat = new PolyMatrix(4, new String[]
-                        { "a11", "a12", "a13", "a14"
-                        , "a21", "a22", "a23", "a24"
-                        , "a31", "a32", "a33", "a34"
-                        , "a41", "a42", "a43", "a44"
-                        } );
+                amat = new PolyMatrix(4, "a");
                 System.out.println("PolyMatrix " + amat.toString(",")
                         + newline + "determinant = " + amat.determinant().toString());
             } else if (args.length == 1) {

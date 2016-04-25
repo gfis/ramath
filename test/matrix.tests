@@ -8,13 +8,19 @@ URL=http://localhost:8080/ramath/servlet
 # (2) Adjust the following line: default commandline arguments
 ARGS=
 #======================================================================
+PACKAGE=org.teherba.ramath
+
 # ProgramGenerator
 
-TEST PG01 m2comp
-MAKE pg
+TEST PG01 m2pyth
+CALL ProgramGenerator -w 3 -l 3 -n m2pyth
+MAKE progen
+
+TEST PG02 m2comp
+CALL ProgramGenerator -w 3 -l 3 -n -v "[a^2-b^2,2*a*b,a^2+b^2]" -v "[3,4,5]" -p "p^2 + q^2 = r^2" m2comp 
+MAKE progen
 
 # MatrixExhauster
-PACKAGE=org.teherba.ramath
 #-----------
 # Pythagoras
 

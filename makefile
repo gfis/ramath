@@ -14,7 +14,7 @@ TEST=
 TESTDIR=test
 WROB=../../mater/ramath/eec/wroblewski
 
-all: solver
+all: matrix
 regression: simple symbolic ideal linear matrix solver sandbox
 ideal:
 	$(REGR) test/ideal.tests 	$(TEST) 2>&1 | tee regression.log.tmp
@@ -58,10 +58,21 @@ ret:
 	rm test/T*.tst
 	make solver
 #-------------------------
-pg:
-	java -cp dist/ramath.jar org.teherba.ramath.ProgramGenerator -w 3 -l 3 -n m2comp | tee test/pg.c
+progen:
+	cat test/progen.c
+	gcc -o test/progen.exe test/progen.c
+	test/progen.exe
+pg3:
+	java -cp dist/ramath.jar org.teherba.ramath.ProgramGenerator -w 3 -l 3 -n m2pyth | tee test/pg.c
 	gcc -o test/pg.exe test/pg.c
 	test/pg.exe
+pg5:
+	java -cp dist/ramath.jar org.teherba.ramath.ProgramGenerator\
+	 -w 3 -l 3 -n -v "[a^2-b^2,2*a*b,a^2+b^2]" -v "[3,4,5]" -p "p^2 + q^2 = r^2" m2comp \
+	| tee test/pg.c
+	gcc -o test/pg.exe test/pg.c
+	test/pg.exe
+
 #-------------------------
 gitadd:
 	git add -v $(SRC)/symbolic/*.java

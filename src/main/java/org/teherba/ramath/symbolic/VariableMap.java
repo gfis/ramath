@@ -1,5 +1,6 @@
 /*  VariableMap: maps a set of variables to their values or substitution formulas
  *  @(#) $Id: VariableMap.java 538 2010-09-08 15:08:36Z gfis $
+ *  2016-04-25: addTo
  *  2016-01-04: getFirstName
  *  2015-09-08: substitute with divisor b = constant 
  *  2015-08-30: deflateIt
@@ -77,7 +78,8 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
     } // Constructor(TreeMap)
 
     /** Constructor from an array of variable names
-     *  @param map map containing the keys for the new map
+     *  @param names array of variable names
+     *  @param value value to be assigned to all variables
      */
     public VariableMap(String[] names, String value) {
         super();
@@ -134,6 +136,19 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
             this.put(name, value);
         } // while viter
     } // setValues
+
+    /** Add the variables from another Map to <em>this</em> VariableMap.
+     *  @param map map containing the keys and values to be added
+     *  @return <em>this</em> VariableMap
+     */
+    public VariableMap addTo(Map<String, String> map) {
+        Iterator<String> iter = map.keySet().iterator();
+        while (iter.hasNext()) {
+            String name  = iter.next();
+            this.put(name, map.get(name));
+        } // while iter
+        return this;
+    } // addTo
 
     /** Returns a {@link VariableMap} constructed from a String representation,
      *  @param input the input String, with whitespace, maybe Vector or set brackets,

@@ -136,8 +136,15 @@ public class SmallScript {
     
     /** Append a the representation of an exponent, possibly as superscript
      *  @param result append to this StringBuffer
-     *  @param mode 0 = normal, 1 = full (for substitution), 2 = nice / human legible,
-     *  3 = with prime factors
+     *  @param mode 
+     *  <ul>
+     *  <li>0 = normal</li>
+     *  <li>1 = full (for substitution), with coefficients 1 and relation " = 0"</li>
+     *  <li>2 = nice / human legible, with superscripts for exponents</li>
+     *  <li>3 = with prime factors</li>
+     *  <li>4 = with colored prime factors</li>
+     *  <li>5 = exponentiation as products</li>
+     *  </ul>
      *  @param exp integer exponent to be represented
      */
     public static void appendExponent(StringBuffer result, int mode, int exp) {

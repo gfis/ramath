@@ -214,7 +214,7 @@ public class PolyVector implements Cloneable, Serializable {
         return result;
     } // equals
 
-    /** Returns a string representation of the vector
+    /** Returns a String representation of the PolyVector
      *  @return a 1-dimensional array of {@link Polynomial}s.
      */
     public String toString() {
@@ -280,7 +280,7 @@ public class PolyVector implements Cloneable, Serializable {
 
     /*-------------- heavyweight operations -------------------------*/
 
-    /** Gets the innerproduct of two Vectors
+    /** Gets the innerproduct of two PolyVectors
      *  @param vect2 multiply by this PolyVector
      *  @return this * vect2,
      *  that is the sum of the products of corresponding elements
@@ -303,6 +303,17 @@ public class PolyVector implements Cloneable, Serializable {
         }
         return result;
     } // multiply
+
+    /** Gets a {@link VariableMap} from all variable names (key) to <em>null</em> (value).
+     *  @return map of variable names mapped to <em>null</em>
+     */
+    public VariableMap getVariableMap() {
+    	VariableMap result = new VariableMap();
+        for (int kvec = 0; kvec < this.vecLen; kvec ++) {
+            result.addTo(this.vector[kvec].getVariableMap());
+        } // for kvec
+        return result;
+    } // getVariableMap()
 
     /** Replaces the variables in the parameter {@link Polynomial}
      *  by the elements of <em>this</em> PolyVector.

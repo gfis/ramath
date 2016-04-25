@@ -135,7 +135,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         return startNode;
     } // getStartNode
     /** Sets the start node
-     *  @param rset0 a {@link RelationSet}
+     *  @param startNode a {@link RelationSet}
      */
     public void setStartNode(RelationSet startNode) {
         this.startNode = startNode;
@@ -191,7 +191,6 @@ public class ReasonFactory extends ArrayList<BaseReason> {
      *  to <em>this</em> list respectively to {@link #branches}.
      *  Additional codes are stored in TreeMap {@link #features}.
      *  @param code external code for the reason or branch class
-     *  @return instance of the class, or null if not found
      */
     public void addInstance(String code) {
         if (false) {

@@ -809,12 +809,24 @@ public class Monomial implements Cloneable, Serializable {
     } // equals
 
     //----------------
-    /** Returns a string representation of the monomial, either compressed or full
-     *  @param mode 0 = normal, 1 = full (for substitution), 2 = nice / human legible,
-     *  3 = with prime factors
-     *  @return "x*y^3", for example if mode = 0, "+ 1*x^1*y^3" if mode = 1
+    /** Returns a String representation of the Monomial, either compressed or full
+     *  @param mode 
+     *  <ul>
+     *  <li>0 = normal</li>
+     *  <li>1 = full (for substitution), with coefficients 1 and relation " = 0"</li>
+     *  <li>2 = nice / human legible, with superscripts for exponents</li>
+     *  <li>3 = with prime factors</li>
+     *  <li>4 = with colored prime factors</li>
+     *  <li>5 = exponentiation as products</li>
+     *  </ul>
+      *  @return "x*y^3", for example if mode = 0, "+ 1*x^1*y^3" if mode = 1
      */
     public String toString(int mode) {
+        boolean noPower = false; // power operator "^" is allowed
+        if (mode == 5) {
+            noPower = true; // replace "^" by repeated multiplication
+            mode = 2;
+        }
         StringBuffer result = new StringBuffer(32);
         String number = null;
         if (mode <= 2) { // normal 
@@ -864,7 +876,15 @@ public class Monomial implements Cloneable, Serializable {
                 String name = iter.next();
                 result.append(name);
                 int exp = this.getExponent(name);
-                SmallScript.appendExponent(result, mode, exp);
+                if (noPower) {
+                    while (exp > 1) {
+                        result.append('*');
+                        result.append(name);
+                        exp --;
+                    } // while multiplying
+                } else { 
+                    SmallScript.appendExponent(result, mode, exp);
+                }
             } // while iter
         } // with variable(s)
         return mode != 2 ? result.toString() : result.toString().replaceAll(" ", "");

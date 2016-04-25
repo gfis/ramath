@@ -19,11 +19,16 @@
  */
 package org.teherba.ramath;
 import  org.teherba.ramath.linear.Vector;
+import  org.teherba.ramath.symbolic.Monomial;
 import  org.teherba.ramath.symbolic.PolyMatrix;
+import  org.teherba.ramath.symbolic.PolyVector;
 import  org.teherba.ramath.symbolic.Polynomial;
+import  org.teherba.ramath.symbolic.RelationSet;
+import  org.teherba.ramath.symbolic.VariableMap;
 import  java.io.PrintStream;
 import  java.text.SimpleDateFormat;
 import  java.util.Date;
+import  java.util.Iterator;
 
 /** Generates program code for exhaustion of matrices and formulas.
  *  The generated programs have minimal indenting or commenting 
@@ -43,12 +48,20 @@ public class ProgramGenerator {
     public boolean nonZero;
     /** code for programming language to be generated: C, Java, Perl */
     public String lang; 
-    /** Copy of <em>System.out</em> */
-    private static PrintStream o = System.out;
+    /** Generated program is written to this file */
+    private PrintStream o;
     /** closing brackets for all opened <em>for</em> and <em>if</em> statements */
     private String brackets;
     /** size of the generated matrix */
     private int width;
+    /** maximum exponent in formulae */
+    private int exp;
+    /** up to 3 {@link PolyVector}s */
+    private PolyVector[] vects;
+    /** up to 3 {@link Polynomial}s */
+    private Polynomial[] polys;
+    /** name of the method to be activated */
+    private String method;
 
     //===========================
     // Construction
@@ -56,14 +69,36 @@ public class ProgramGenerator {
     /** No-args Constructor
      */
     public ProgramGenerator() {
-        lang     = "C";
-        nonZero  = false;
-        brackets = "";
+    	this("test/progen.c");
+    } // Constructor()
+    
+    /** Constructor with output file name
+     *  @param outfile name of output file
+     */
+    public ProgramGenerator(String outfile) {
+    	try {
+    		o        = new PrintStream(outfile, "UTF-8");
+        	lang     = "C";
+        	nonZero  = false;
+        	brackets = "";
+        	width    = 3;
+        	exp      = 2;
+        	method   = "m2comp";
+        	polys    = new Polynomial[3];
+        	vects    = new PolyVector[3];
+    	} catch (Exception exc) {
+    	}
     } // Constructor()
     
     /** Initializes common variables 
      */
     private void initialize() {
+    } // initialize     
+
+    /** Closes the output file
+     */
+    private void close() {
+    	o.close();
     } // initialize     
 
     //===========================
@@ -146,8 +181,8 @@ public class ProgramGenerator {
     } // checkSameRow
     
     /** Print conditions which check whether 2 matrix columns are identical
-     *  @param irow 1st row number
-     *  @param jrow 2nd row number
+     *  @param icol 1st column number
+     *  @param jcol 2nd column number
      */
     private void checkSameCol(int icol, int jcol) {
         o.print("if ");
@@ -195,12 +230,95 @@ public class ProgramGenerator {
     // Generating Methods
     //===========================
 
-    //==========================================================
+    /** Generate n x n matrixes which preserve generated tuples
+     *  @param vectg generating vector of {@link Polynomial}s,
+     *  for example [[a^2-b^2],[2*a*b],[a^2+b^2]] for Pythagoras
+     *  @param vectc vector of constants fulfilling the equality of <em>poly0</em>,
+     *  for example [3,4,5]
+     *  The element order must correspond to that of <em>vectg</em>
+     *  @param poly0 Polynomial which represents the generator,
+     *  for example p0^2 + q0^2 = r0^2. 
+     *  The variable names in <em>poly0</em> must not overlap
+     *  with those in <em>vectg</em>, and the lexicographical 
+     *  order of the variable names in <em>poly0</em> should correspond 
+     *  to the element order of <em>vectg</em>. 
+     */
+    public void m2comp(PolyVector vectg, PolyVector vectc, Polynomial poly0) {
+        width = vectg.size();
+        programHeader(width);
+        PolyMatrix  pmat1 = new PolyMatrix(width, "m");
+        PolyVector  vectm = pmat1.multiply(vectg);
+        VariableMap vmap0 = poly0.getVariableMap();
+        VariableMap vmap1 = new VariableMap(); // p1->0,q1->0,r1->0
+        VariableMap vmap3 = new VariableMap(); // p->p1,q->q1,r->r1
+        int 
+        ivect = 0;  
+        Iterator<String> viter = vmap0.keySet().iterator();
+        while (viter.hasNext()) {
+            String name  = viter.next();
+            String value = vectm.get(ivect).toString();
+            String name1 = name + "1";
+            vmap0.put(name, value); 
+            vmap1.put(name1, "0");
+            vmap3.put(name, name1);
+            o.print("int " + name + " = " + vectc.get(ivect).toString() + "; ");
+            ivect ++;
+        } // while viter
+        o.println();
+        Polynomial poly2  = poly0.substitute(vmap0);
+        Monomial mono2    = new Monomial(vectg.getVariableMap().getNameArray());
+        RelationSet rset1 = poly2.groupBy(mono2);       
+        o.println("/* mono2=" + mono2.toString() + ", rset1="+ rset1.toList(true) + " */");
+        /* mono2= + a*b, rset1=
+        [0]  + a^4*(m11^2 + 2*m11*m13 + m13^2 + m21^2 + 2*m21*m23 + m23^2 - m31^2 - 2*m31*m33 - m33^2)
+        [1]  + 4*a^3*b*(m11*m12 + m12*m13 + m21*m22 + m22*m23 - m31*m32 - m32*m33)
+        [2]  + 2*a^2*b^2*( - m11^2 + 2*m12^2 + m13^2 - m21^2 + 2*m22^2 + m23^2 + m31^2 - 2*m32^2 - m33^2)
+        [3]  + 4*a*b^3*( - m11*m12 + m12*m13 - m21*m22 + m22*m23 + m31*m32 - m32*m33)
+        [4]  + b^4*(m11^2 - 2*m11*m13 + m13^2 + m21^2 - 2*m21*m23 + m23^2 - m31^2 + 2*m31*m33 - m33^2) */
+
+        String[] names0  = vmap0.getNameArray();
+        PolyVector vect0 = new PolyVector(width, 0, names0);
+        String[] names1  = vmap1.getNameArray();
+        PolyVector vect1 = new PolyVector(width, 0, names1);
+        for (int irow = 1; irow <= width; irow ++) {
+            forRow(irow);
+            for (int jrow = irow - 1; jrow >= 1; jrow --) { // avoid identical rows
+                checkSameRow(irow, jrow);
+            } // for jrow
+            String v1 = names1[irow - 1];
+            o.println("int " + v1 + " = " + pmat1.getRow(irow - 1).multiply(vect0).toString() + "; ");
+            o.print("if (" + v1 + " > 0)"); oc();
+        } // irow
+        for (int icol = 1; icol <= width; icol ++) { // avoid identical colums
+            for (int jcol = icol + 1; jcol <= width; jcol ++) {
+                checkSameCol(icol, jcol);
+            } // for jcol
+        } // icol    
+        int irset = 0;
+        while (irset < rset1.size()) {
+            Polynomial polyr = rset1.get(irset);
+            o.print("if (" + polyr.toString() + " == 0) /* " + polyr.getFactor().toString() + " */"); oc();
+            irset ++;
+        } // while irset
+        Polynomial poly3 = poly0.substitute(vmap3);
+        o.print("if (" + poly3.toString(5) + " == 0)"); oc(); // check preservation for vectc 
+            //                          5: with noPower)
+        printMatrix();
+        o.print("printf(\"\tpreserves ");
+        ivect = 0;
+        String sep = "[";
+        while (ivect < vmap1.size()) {
+            o.print(sep + "%d");
+            ivect ++;
+            sep = ",";
+        } // while ivect
+        o.println("]\\n\"," + vmap1.getNameString() + ");");
+        programTrailer();
+    } // m2comp      
 
     /** Generate 3x3 matrixes for composition triples
-     *  @param poly1 1st term in an output line of Sandbox.printCompositions()
      */
-    public void m2comp(Polynomial poly1) {
+    public void m2pyth() {
         programHeader(width);
         o.println("int a=3; int b=4; int c=5;");
         for (int irow = 1; irow <= width; irow ++) {
@@ -227,12 +345,11 @@ public class ProgramGenerator {
         printMatrix();
         o.println("printf(\"\tpreserves %d,%d,%d\\n\",v1,v2,v3);");
         programTrailer();
-    } // m2comp      
+    } // m2pyth   
 
-    //==========================
-    // Main
-    //==========================
-    /** Test method.
+    //==========================================================
+
+    /* Get the commandline parameters
      *  @param args command line arguments:
      *  <ul>
      *  <li>operation: m1, ...</li>
@@ -244,15 +361,10 @@ public class ProgramGenerator {
      *  <li>-w width, matrix size</li>
      *  </ul>
      */
-    public static void main(String[] args) {
-        ProgramGenerator gen = new ProgramGenerator();
-        String oper      = "m2"; // Tree of primitive Pythagorean triples
-        String op        = "";
-        int exp          = 2;
-        gen.width        = 6;
-        Vector vect0     = null;
-        Polynomial poly[] = new Polynomial[3];
-        int ipoly        = -1;
+    private void getArguments(String[] args) {
+        String op = "";
+        int ipoly = -1;
+        int ivect = -1;
         int iarg  = 0;
         while (iarg < args.length) { // get the arguments
             if (args[iarg].startsWith("-")) {
@@ -269,34 +381,48 @@ public class ProgramGenerator {
                         limit = Integer.parseInt(args[iarg ++]);
                     } catch (Exception exc) {
                     }
-                    gen.minDigit = - limit;                   
-                    gen.maxDigit = limit + 1;
+                    minDigit = - limit;                   
+                    maxDigit = limit + 1;
                 } else if (op.equals("n")) {
-                    gen.nonZero = true;
+                    nonZero = true;
                 } else if (op.equals("p")) {
                     ipoly ++;
-                    poly[ipoly] = Polynomial.parse(args[iarg ++]);
+                    polys[ipoly] = Polynomial.parse(args[iarg ++]);
                 } else if (op.equals("v")) {
-                    vect0 = new Vector(args[iarg ++]);
+                    ivect ++; 
+                    vects[ivect] = new PolyVector(args[iarg ++]);
                 } else if (op.equals("w")) {
                     try {
-                        gen.width = Integer.parseInt(args[iarg ++]);
+                        width = Integer.parseInt(args[iarg ++]);
                     } catch (Exception exc) {
                     }
                 } else {
                     System.err.println("unknown option \"-" + op + "\"");
                 }
             } else {
-                oper = args[iarg ++];
+                method = args[iarg ++];
             }
         } // while args
-
+    } // getArguments
+ 
+    //==========================
+    // Main
+    //==========================
+    /** Test method.
+     */
+    public static void main(String[] args) {
+        ProgramGenerator gen = new ProgramGenerator();
+        gen.getArguments(args);
+        //----------------------------------
         if (false) {
-        } else if (oper.equals("m2comp" )) {
-            gen.m2comp(poly[0]);
+        } else if (gen.method.equals("m2comp" )) {
+            gen.m2comp(gen.vects[0], gen.vects[1], gen.polys[0]);
+        } else if (gen.method.equals("m2pyth" )) {
+            gen.m2pyth();
         } else {
-            System.err.println("unknown operation \"" + oper + "\"");
+            System.err.println("unknown operation \"" + gen.method + "\"");
         }
+        gen.close();
     } // main
 
 } // ProgramGenerator

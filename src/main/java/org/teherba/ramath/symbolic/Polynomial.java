@@ -320,8 +320,15 @@ public class Polynomial implements Cloneable, Serializable {
     } // listVariables
 
     /** Returns a String representation of <em>this</em> {@link Polynomial}, either compressed or full
-     *  @param mode 0 = normal, 1 = full (for substitution), 2 = nice / human legible,
-     *  3 = with prime factors
+     *  @param mode 
+     *  <ul>
+     *  <li>0 = normal</li>
+     *  <li>1 = full (for substitution), with coefficients 1 and relation " = 0"</li>
+     *  <li>2 = nice / human legible, with superscripts for exponents</li>
+     *  <li>3 = with prime factors</li>
+     *  <li>4 = with colored prime factors</li>
+     *  <li>5 = exponentiation as products</li>
+     *  </ul>
      *  @return "17*a0^2*a1 + a2^2*a3^3 - 4*b4", for example for mode = 0
      */
     public String toString(int mode) {
@@ -710,7 +717,7 @@ public class Polynomial implements Cloneable, Serializable {
      *  (a^2 + n * b^2)*(c^2 + n * d^2) = (ac + nbd)^2 + n(ad - bc)^2 
      *                                    [   2    ]      [   3   ]
      *  </pre>
-     *  @param input Polynomials for the formula
+     *  @param poly input Polynomials for the formula
      *  @return resulting Polynomials for the +- and the -+ variant
      */
     public static Polynomial[] brahmagupta(Polynomial[] poly) {
@@ -1131,7 +1138,7 @@ public class Polynomial implements Cloneable, Serializable {
      *  @param mono2 a multiplication of all desired variables (names with exponent 1 and constant +1)
      *  @return a RelationSet with one Polynomial for each variable combination
      */
-    private RelationSet groupBy(Monomial mono2) {
+    public RelationSet groupBy(Monomial mono2) {
         RelationSet result = new RelationSet();
         Polynomial poly3 = this.getVariablePowers(mono2);
         Iterator <String> piter3 = poly3.monomials.keySet().iterator();
