@@ -130,8 +130,8 @@ CALL SandBox -repres "2*(2r)^2 + (10r+1)^2"      64 2
 TEST RP41 Representations x^2 + 4 = y^3
 CALL SandBox -repres "x^2 + 4"                   64 1
 
-TEST RP42 Representations y^3
-CALL SandBox -repres "y^3"                       64 1
+TEST RP42 Representations y^2
+CALL SandBox -repres "y^2"                       64 1
 
 TEST RP43 Representations y^3
 CALL SandBox -repres "y^3"                       64 1

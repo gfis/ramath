@@ -89,15 +89,14 @@ public class SandBox {
             }
         }
         BigInteger bfact = BigInteger.valueOf(factor);
-
-        Polynomial u    = Polynomial.parse("u");
-        Polynomial v    = Polynomial.parse("v");
-        Polynomial a    = u;
-        Polynomial b    = v;
+        Polynomial u    = Polynomial.parse("a");
+        Polynomial v    = Polynomial.parse("b");
+        Polynomial s    = u;
+        Polynomial t    = v;
         if (true) { 
             int num = startValue;
             while (num < highValue) {
-                Polynomial[] sums = Polynomial.brahmagupta(new Polynomial[] { a, b, u, v } );
+                Polynomial[] sums = Polynomial.brahmagupta(new Polynomial[] { s, t, u, v } );
                 if (false) {
                     int isum = 0;
                     while (isum < sums.length) {
@@ -105,14 +104,14 @@ public class SandBox {
                         isum ++;
                     } // while isum
                 } // false
-                a = sums[0];
-                b = sums[1];
+                s = sums[0];
+                t = sums[1];
                 System.out.println(String.format("%4d: ", num)
-                        + "(u^2 + v^2)^" + String.valueOf(num) + " = ("
+                        + "(a^2 + b^2)^" + String.valueOf(num) + " = ("
                         + sums[0].toString() + ")^2 + (" 
                         + sums[1].toString() + ")^2");
                 System.out.println("      "
-                        + "(u^2 + v^2)^" + String.valueOf(num) + " = ("
+                        + "(a^2 + b^2)^" + String.valueOf(num) + " = ("
                         + sums[2].toString() + ")^2 + (" 
                         + sums[3].toString() + ")^2");
                 num ++;

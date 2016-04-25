@@ -58,21 +58,21 @@ ret:
 	rm test/T*.tst
 	make solver
 #-------------------------
-progen:
+# Target 'progen' is needed for RegressionTester's MAKE in symbolic.tests/PG*
+progen: pg1 pg2
+pg1:
 	cat test/progen.c
 	gcc -o test/progen.exe test/progen.c
 	test/progen.exe
-pg3:
-	java -cp dist/ramath.jar org.teherba.ramath.ProgramGenerator -w 3 -l 3 -n m2pyth | tee test/pg.c
-	gcc -o test/pg.exe test/pg.c
-	test/pg.exe
-pg5:
-	java -cp dist/ramath.jar org.teherba.ramath.ProgramGenerator\
-	 -w 3 -l 3 -n -v "[a^2-b^2,2*a*b,a^2+b^2]" -v "[3,4,5]" -p "p^2 + q^2 = r^2" m2comp \
-	| tee test/pg.c
-	gcc -o test/pg.exe test/pg.c
-	test/pg.exe
-
+pg2:
+	ls -tclr test/*.this.tst | tail -n 1 | sed -e "s/  */ /g" | cut -d" " -f 9 | xargs -l wc
+#
+#-------------------------
+# Evaluation of PG?3
+eval3:
+	cut -f1 test/PG03.this.tst | sort > pg03.tmp
+	cut -f1 test/PG13.this.tst | sort > pg13.tmp
+	diff -y pg03.tmp pg13.tmp
 #-------------------------
 gitadd:
 	git add -v $(SRC)/symbolic/*.java
