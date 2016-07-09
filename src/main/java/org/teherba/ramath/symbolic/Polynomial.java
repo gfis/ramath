@@ -307,20 +307,6 @@ public class Polynomial implements Cloneable, Serializable {
         return monomials.size();
     } // size
 
-    /** Returns a slash prepended list of the variables, in increasing exponent order
-     *  @return "/a1,a0/a2,a3/b4;" for "+ 17*a0^2*a1 + a2^2*a3^3 - 4*b4", for example
-     */
-    public String listVariables() {
-        StringBuffer result = new StringBuffer(2048);
-        Iterator<Signature> iter = monomials.keySet().iterator();
-        while (iter.hasNext()) {
-            Signature sig = iter.next();
-            result.append(sig.toString().substring(sig.toString().indexOf('/')));
-        } // while iter
-        result.append(';');
-        return result.toString();
-    } // listVariables
-
     /** Returns a String representation of <em>this</em> {@link Polynomial}, either compressed or full
      *  @param mode 
      *  <ul>
@@ -465,36 +451,37 @@ public class Polynomial implements Cloneable, Serializable {
         return result;
     } // isBiased
 
-    /** Gets the <em>polarity</em> of <em>this</em> {@link Polynomial},
-     *  that is the sign of the constant monomial, if present,
-     *  or the sum of the signums of all monomials otherwise.
-     *  @return
-     *  <ul>
-     *  <li>the signum of the constant monomial, if present, or otherwise:</li>
-     *  <li>s &gt; 0 if there were more positive monomials</li>
-     *  <li>s &lt; 0 if there were more negative monomials</li>
-     *  <li>s = 0 if the number of positive and negative monomials is the same,
-     *  or the Polynomial itself is zero</li>
-     *  </ul>
+    /** Gets the {@link Signature} of a {@link Monomial} with a variable
+     *  having exponent 1, and which does not occur otherwise in <em>this</em>
+     *  {@link Polynomial}, or <em>null</em> if no such variable exists.
+     *  @return a Signature of an isolated variable, or <em>null</em>
      */
-    public int polarity_99() {
-        int result = this.getConstant().signum();
-        if (result == 0) {
-            Iterator<Signature> iter1 = this.keySet().iterator();
-            while (iter1.hasNext()) {
-                result += this.get(iter1.next()).signum();
-            } // while iter1
-        } // no constant
-    /*
-        if (result == 0) {
-        } else if (result > 0) {
-            result = 1;
-        } else {
-            result = -1;
-        }
-    */
+    public Signature getIsolatedSignature() {
+        Signature result = null;
+        Iterator<Signature> titer = this.keySet().iterator();
+        boolean busy = true;
+        while (busy && titer.hasNext()) {
+            Signature tsig = titer.next();
+            Monomial monot = this.get(tsig);
+            if (monot.isUniVariate() && monot.getCoefficient().abs().equals(Coefficient.ONE)) { // this is a candidate variable
+                String vname = monot.firstName();
+                int vcount = 0; // vname should occur exactly once in this Polynomial
+                Iterator<Signature> viter = this.keySet().iterator();
+                while (vcount < 2 && viter.hasNext()) { // check all Monomials whether they contain vname
+                    Monomial monov = this.get(viter.next());
+                    int exp = monov.getExponent(vname);
+                    if (exp > 0) { // occurs
+                        vcount += exp; // will be > 1 if it occurs elsewhere
+                    } // occurs
+                } // while vcount, viter
+                if (vcount == 1) { // exactly once
+                    busy = false; // break outer loop
+                    result = tsig;
+                }
+            } // univariate
+        } // while titer
         return result;
-    } // polarity
+    } // getIsolatedSignature
 
     //----------------
     /** Determines whether <em>this</em> {@link Polynomial} is a sum of like powers
@@ -1156,7 +1143,7 @@ public class Polynomial implements Cloneable, Serializable {
             } // while titer
             BigInteger divisor = poly4.gcdCoefficients();
             if (divisor.compareTo(BigInteger.ONE) > 0) {
-            	mono3.multiplyBy(divisor);
+                mono3.multiplyBy(divisor);
                 poly4.divideBy  (divisor);
             }
             poly4.setFactor(mono3);
@@ -2162,6 +2149,13 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
                         iloop ++;
                     } // while iloop
                     // -incr
+
+                } else if (opt.startsWith("-isosig")) {
+                    // input is: poly 
+                    poly1 = Polynomial.parse(args[iarg ++]);
+                    System.out.println("(" + poly1.toString() + ").getIsolatedSignature() = " 
+                    			+ poly1.getIsolatedSignature());
+                    // -isosig
 
                 } else if (opt.startsWith("-mappable")) {
                     poly1 = Polynomial.parse(args[iarg ++]);

@@ -39,6 +39,7 @@ import  org.teherba.ramath.symbolic.reason.BaseReason;
 import  org.teherba.ramath.symbolic.reason.TranspositionReason;
 import  org.teherba.ramath.symbolic.reason.ReasonFactory;
 import  org.teherba.ramath.BigIntegerUtil;
+import  org.teherba.ramath.Coefficient;
 import  org.teherba.ramath.PrimeFactorization;
 import  org.teherba.ramath.linear.Vector;
 import  org.teherba.ramath.linear.Matrix;
@@ -787,6 +788,54 @@ public class RelationSet
         return RelationSet.parse(vmap.substitute(this.toString(1), upperSubst));
     } // substitute(VariableMap)
 
+    /** Simplifies <em>this</em> {@link RelationSet} by substituting 
+     *  all variables which occur isolated in a constituent {@link Polynomial}.
+     *  Such Polynomials are removed.
+     *  THe original RelationSet is modified.
+     */
+    public void simplify() {
+        boolean busy = true;
+        while (busy) { // there may be still another isolated variable
+            Signature isolSig = null;
+            int ipoly = this.size();
+            Polynomial polyi = null;
+            while (isolSig == null && ipoly > 0) { // search for any isolated variable
+                ipoly --;
+                polyi = this.get(ipoly);
+                isolSig = polyi.getIsolatedSignature(); // == null if there is none
+            } // while ipoly 1
+            
+            if (isolSig != null) { // an isolated variable was found
+                Monomial monoi = polyi.get(isolSig);
+                String vname = monoi.firstName();
+                Coefficient coefi = monoi.getCoefficient();
+                polyi.subtractFrom(monoi);
+                if (! coefi.equals(Coefficient.ONE)) { // -1
+                    polyi.negativeOf();
+                }
+                polynomials.remove(ipoly);
+                if (debug >= 1) {
+                    System.out.println("isolated Signature: " + isolSig);
+                    System.out.println("isolated variable: " + vname 
+                            + " with Coefficient " + coefi.toString());
+                    System.out.println("remaining RelationSet: " + this.toString());
+                    System.out.println("substitute by Polynomial: " + polyi.toString());
+                } // debug
+                VariableMap vmap = new VariableMap();
+                vmap.put(vname, "(" + polyi.toString() + ")");
+                ipoly = this.size();
+                while (ipoly > 0) {
+                    ipoly --;
+                    polynomials.set(ipoly, this.get(ipoly).substitute(vmap));
+                } // while ipoly 2
+                // isolated variable was found
+            } else { // no isolated variable found
+                busy = false;
+            }
+        } // while busy
+    } // simplify
+    /* ------------ Solver evaluation --------------- */
+    
     /** Evaluates a {@link RelationSet} without any proof history by evaluating
      *  all its member {@link Polynomial}s, and returning the cummulative results, whether
      *  <ul>
@@ -934,6 +983,14 @@ evaluate: unknown
                     System.out.println(rset1.toString());
                     System.out.println("rest: " + rset1.getRest(new BigInteger(factor)));
                     // -rest
+
+                } else if (opt.startsWith("-simplify") ) { // expr1, expr2, ... 
+                    exprs = ereader.getArguments(iarg, args);
+                    rset1 = new RelationSet(exprs);
+                    System.out.println(rset1.toString());
+                    rset1.simplify();                    
+                    System.out.println("simplified: " + rset1.toString());
+                    // -simplify
 
                 } else if (opt.startsWith("-subst") ) { // expr1, expr2, ... rset
                     exprs = ereader.getArguments(iarg, args);

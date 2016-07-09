@@ -170,7 +170,7 @@ public class Monomial implements Cloneable, Serializable {
     // Bean and lightweight methods
     //=============================
 
-    /** Determines whether a string is a variable or an integer constant
+    /** Determines whether a String is a variable or an integer constant
      *  @param name string to be examined
      *  @return true if the string starts with a "-" or a digit,
      *  which means that it contains an integer constant,

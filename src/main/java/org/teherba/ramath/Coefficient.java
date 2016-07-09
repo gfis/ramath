@@ -94,6 +94,13 @@ public class Coefficient
         return new Coefficient(String.valueOf(number));
     } // valueOf(long)
 
+    /** Returns the absolute value of <em>this</em> {@link Coefficient}
+     *  @return positive BigInteger
+     */
+    public BigInteger abs() {
+        return super.abs();
+    } // abs
+
     /** Returns the integral part of <em>this</em> {@link Coefficient},
      *  or +1 if the Coefficient is fractional.
      *  @return BigInteger or 1
