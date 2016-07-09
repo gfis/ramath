@@ -623,7 +623,7 @@ public class RelationSet
         return getDependantMap(true);
     } // getDependantMap()
 
-    /** Gets a map from dependant - child - variables to their- independant - parents.
+    /** Gets a map from dependant - child - variables to their - independant - parents.
      *  This implementation may be rather inefficient, but it is used only once per proof.
      *  @param upperSubst whether uppercase variables should be investigated
      *  @return child variable names mapped to their parent variable names

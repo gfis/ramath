@@ -162,8 +162,8 @@ public class RefiningMap extends VariableMap implements Cloneable , Serializable
         return result;
     } // getRefinedMap
 
-    /** Gets a sorted array of the values of refined expressions 
-     *  without variables names
+    /** Gets an array of the values of refined expressions 
+     *  sorted by, but without variables names
      *  @return ["1+8", "1+8", "5+8"], for example
      */
     public String[] getBareRefinedArray() {

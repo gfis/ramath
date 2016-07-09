@@ -1,6 +1,8 @@
 /*  Reader for text file, returns a string without any whitespace
  *  @(#) $Id: 749d72563123a83ce64563e9259c2345ab169614 $
- *  2016-04-22: MAKE command
+ *  2016-05-14: HTTPZ and CALLZ
+ *  2016-05-10: optionally set Http request properties
+ *  2016-04-22: MAKE command; log stderr
  *  2016-04-16: macro PWD = System.getProperty("user.dir")
  *  2015-09-08: continue lines with "\\" at the end
  *  2015-03-26: cat after cp (if *.prev.tst did not exist)
@@ -32,13 +34,15 @@
  */
 package org.teherba.common;
 import  org.teherba.common.CommandTokenizer;
-import  org.teherba.common.TimestampFilterStream;
+import  org.teherba.common.ReplacingPrintStream;
 import  org.teherba.common.URIReader;
 import  java.io.BufferedReader;
 import  java.io.File;
 import  java.io.FileInputStream;
 import  java.io.InputStreamReader;
 import  java.io.PrintStream;
+import  java.io.PrintWriter;
+import  java.io.StringWriter;
 import  java.lang.Process;
 import  java.lang.Runtime;
 import  java.lang.reflect.Method;
@@ -87,8 +91,9 @@ Dbat Vx.hhhh/yyyy-mm-dd - DataBase Application Tool
  *  The following macro definitions are recognized:
  *  <table>
  *  <tr><td>ARGS=   </td><td>commandline arguments which are appended to the CALL command</td></tr>
- *  <tr><td>PACKAGE=</td><td>define the class name prefix for all following CALL commands (default: <em>org.teherba</em>) </td></tr>
  *  <tr><td>MAKE=   </td><td>define the make command and its options (default: <em>make -f makefile</em></td></tr>
+ *  <tr><td>PACKAGE=</td><td>define the class name prefix for all following CALL commands (default: <em>org.teherba</em>)</td></tr>
+ *  <tr><td>REQUEST=</td><td>define a list of pairs <em>key:value</em> (separated by spaces) for Http request properties</td></tr>
  *  <tr><td>PWD     </td><td>built-in macro which returns the current working directory</td></tr>
  *  <tr><td>SORT=   </td><td>define the sort command and its options (default: <em>sort</em></td></tr>
  *  <tr><td>URL=    </td><td>define the URL prefix for all following HTTP commands (default: <em>http://localhost:8080/dbat/servlet</em>) </td></tr>
@@ -124,6 +129,8 @@ public class RegressionTester {
     /** maps macro names to replacement text */
     private HashMap<String, String> macros;
 
+    /** maps names of request properties to values */
+    private HashMap<String, String> requestProps;
 
     /** System-specific line separator (CR, LF for Unix or CR/LF for Windows)*/
     private static final String nl      = System.getProperty("line.separator");
@@ -133,10 +140,11 @@ public class RegressionTester {
     /** No-args Constructor
      */
     public RegressionTester() {
-        log = Logger.getLogger(RegressionTester.class.getName());
-        timestamp = (new SimpleDateFormat("yyyy-MM-dd' 'HH:mm:ss")).format(new java.util.Date());
-        macros = new HashMap<String, String>(16);
-        String pwd = System.getProperty("user.dir");
+        log          = Logger.getLogger(RegressionTester.class.getName());
+        timestamp    = (new SimpleDateFormat("yyyy-MM-dd' 'HH:mm:ss")).format(new java.util.Date());
+        macros       = new HashMap<String, String>(16);
+        requestProps = new HashMap<String, String>(16);
+        String pwd   = System.getProperty("user.dir");
         if (pwd.substring(1, 3).equals(":\\")) { // Windows
             pwd = "/" + pwd;
         }
@@ -227,7 +235,7 @@ public class RegressionTester {
     /** Where to write standard error */
     private PrintStream realStdErr = System.err; // System.err is redirected (with setErr)
     /** Intermediate stream for test output to be filtered for inevitable differences */
-    private TimestampFilterStream thisStream = null;
+    private ReplacingPrintStream thisStream = null;
 
     /** Runs a shell command
      *  @param cmd command line to be executed
@@ -237,13 +245,15 @@ public class RegressionTester {
             String logText = cmd;
             realStdOut.println(logText);
             Process process = runtime.exec(cmd);
-            BufferedReader 
+
+            BufferedReader
             reader = new BufferedReader(new InputStreamReader(process.getInputStream(), logEncoding));
             String line = null;
             while ((line = reader.readLine()) != null) {
                 thisStream.println(line);
             } // while readLine
             reader.close();
+
             reader = new BufferedReader(new InputStreamReader(process.getErrorStream(), logEncoding));
             while ((line = reader.readLine()) != null) {
                 thisStream.println(line);
@@ -259,6 +269,48 @@ public class RegressionTester {
             }
         } // try
     } // runShellCommand
+
+    /** Unzips a file in place
+     *  @param thisName name of file to be unzipped
+     *  @param enc target encoding
+     */
+    public void unzipFile(String thisName, String enc) {
+        try {
+            String cmd = "unzip -p " + thisName;
+            String logText = cmd;
+            realStdOut.println(logText);
+            Process process = runtime.exec(cmd);
+            StringWriter bufferWriter = new StringWriter(4096);
+
+            BufferedReader
+            reader = new BufferedReader(new InputStreamReader(process.getInputStream(), logEncoding));
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                bufferWriter.write(line);
+                bufferWriter.write(nl);
+            } // while readLine
+            reader.close();
+
+            reader = new BufferedReader(new InputStreamReader(process.getErrorStream(), logEncoding));
+            while ((line = reader.readLine()) != null) {
+                bufferWriter.write(line);
+                bufferWriter.write(nl);
+            } // while readLine
+            reader.close();
+
+            PrintWriter thisFile = new PrintWriter(new File(thisName), enc);
+            thisFile.print(bufferWriter.toString());
+            thisFile.close();
+        } catch (Exception exc) {
+            try {
+                log.error(exc.getMessage(), exc);
+            } catch (Exception exc2) {
+                System.setOut(realStdOut);
+                System.setErr(realStdErr);
+                log.error(exc.getMessage(), exc2);
+            }
+        } // try
+    } // unzipFile
 
     //************************
     // Workhorse method
@@ -357,13 +409,13 @@ public class RegressionTester {
                     testLine = "TEST END";
                     busy = false;
                 }
-                if (testLine.trim().endsWith("\\")) { 
+                if (testLine.trim().endsWith("\\")) {
                     // followed by continuation line(s) - read and append them to testLine
                     testLine = testLine.replaceAll("\\\\\\s*\\Z", " ").trim(); // a single space
                     String testLine2 = null;
                     boolean continued = true;
                     while (continued && (testLine2 = tcaReader.readLine()) != null) { // read and process lines
-                        if (testLine2.trim().endsWith("\\")) { // followed by continuation line(s) 
+                        if (testLine2.trim().endsWith("\\")) { // followed by continuation line(s)
                             testLine2 = testLine2.replaceAll("\\\\\\s*\\Z", " ") ; // a single space
                         } else {
                             continued = false;
@@ -371,12 +423,12 @@ public class RegressionTester {
                         testLine += " " + testLine2.trim();
                     } // while testLine2
                 } // followed by continuatin lines
-                
+
                 if (false) {
                 } else if (testLine.matches("\\s*#.*") || testLine.matches("\\s*")) { // comment line or empty line
                     // ignore
                 } else if (testLine.matches("[^A-Za-z].*")) { // starts with non-letter => continuation of DATA
-                    dataBuffer.append(testLine);
+                    dataBuffer.append(testLine.replaceAll("^ +", "")); // remove leadings spaces, but no tabs
                     dataBuffer.append(nl);
                 } else { // verb starting in column 1
                     testLine = replaceMacros(testLine);
@@ -413,6 +465,18 @@ public class RegressionTester {
                             } else if (verb.equals("PACKAGE")) {
                                 classPrefix = rest + (rest.endsWith(".") ? "" : ".");
                                 macros.put(verb, classPrefix);
+                            } else if (verb.equals("REQUEST")) {
+                                requestProps.clear();
+                                int colonPos = rest.indexOf(':');
+                                if (colonPos >= 1) {
+                                    String key   = rest.substring(0, colonPos ).trim();
+                                    String value = rest.substring(colonPos + 1).trim();
+                                    if (value.length() > 0) { // new or modified value
+                                        requestProps.put(key, value);
+                                    } else { // delete value
+                                        requestProps.remove(key);
+                                    }
+                                } // ':' present
                             } else if (verb.equals("SORT")) {
                                 sortPrefix  = rest;
                                 macros.put(verb, sortPrefix);
@@ -484,14 +548,14 @@ public class RegressionTester {
                             skipping = false;
                             if (! testName.matches(testNamePattern)) {
                                 skipping = true;
-                            } else if (! testName.equals("END")) {
+                            } else if (! testName.equals("END")) { // this a test case which should be run
                                 realStdOut.print  ("Test " + testName + " " + testDesc);
                                 realStdOut.println();
                                 thisName = directory + slash + testName + ".this" + ext;
                                 if (replacements == null) {
-                                    thisStream = new TimestampFilterStream(thisName, logEncoding);
+                                    thisStream = new ReplacingPrintStream(thisName, logEncoding); // with default replacements
                                 } else {
-                                    thisStream = new TimestampFilterStream(thisName, logEncoding, replacements);
+                                    thisStream = new ReplacingPrintStream(thisName, logEncoding, replacements);
                                 }
                                 System.setOut(thisStream);
                                 System.setErr(System.out);
@@ -502,7 +566,7 @@ public class RegressionTester {
                         } else if (skipping) {
                             // ignore all verbs except "TEST"
 
-                        } else if (verb.equals("CALL")) {
+                        } else if (verb.startsWith("CALL")) { // ro "CALLZ"
                             Matcher callMatcher = callPattern.matcher(rest);
                             if (callMatcher.matches()) {
                                 String className = classPrefix + callMatcher.group(1);
@@ -519,8 +583,10 @@ public class RegressionTester {
 
                         } else if (verb.equals("DATA")) {
                             dataBuffer.setLength(0);
-                            dataBuffer.append(rest); // just behind "DATA"
-                            dataBuffer.append(nl);
+                            if (rest.length() > 0 && ! rest.startsWith("#") && ! rest.startsWith("--")) { // append rest only if it is not a comment or empty
+                                dataBuffer.append(rest); // just behind "DATA"
+                                dataBuffer.append(nl);
+                            }
                             dataName = directory + "/" + testName + ".data.tmp";
                             macros.put("DATA", dataName);
 
@@ -537,7 +603,7 @@ public class RegressionTester {
                                 } // while ignoring
                             } // only if no specific tests selected
 
-                        } else if (verb.equals("HTTP")) {
+                        } else if (verb.startsWith("HTTP")) { // or "HTTPZ"
                             String requestURL = baseURL +
                                     // unPercent
                                     (rest.trim()
@@ -546,7 +612,9 @@ public class RegressionTester {
                                     );
                             logText = "http \"" + requestURL + "\"";
                             realStdOut.println(logText);
-                            URIReader urlReader = new URIReader(requestURL);
+                            URIReader urlReader = new URIReader(requestURL
+                                    , (verb.endsWith("Z") ? "zip" : "UTF-8")
+                                    , requestProps);
                             String urlLine = null;
                             while ((urlLine = urlReader.readLine()) != null) {
                                 thisStream.println(urlLine);
@@ -557,6 +625,9 @@ public class RegressionTester {
 
                         } else if (verb.equals("SORT")) {
                             runShellCommand(sortPrefix + " " + rest.trim());
+
+                        } else if (verb.equals("UNZIP")) {
+                            unzipFile(thisName, logEncoding); // unzip in place
 
                         } else if (verb.equals("XSLT")) {
                             runShellCommand(xsltPrefix + " " + rest.trim());
@@ -573,7 +644,7 @@ public class RegressionTester {
                     }
                 } // verb starting in column 1
             } // while ! eof
-            
+
             // Print trailer
             realStdOut.printf("%4d tests recreated," , recreatedCount);
             realStdOut.println();

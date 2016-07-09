@@ -277,7 +277,14 @@ TEST P03 polynomial equivalence
 CALL Polynomial -equiv "3*(a^2+b^2)-c^2-d^2" "a^2+b^2-3*(d^2+c^2)"
 
 TEST P04 Korneck polynomial
-CALL Polynomial "(6*t^3*m*f  + m*(t+m)*(m^4 + m^2*t^2 + t^4) + 3*m*(m-t)*f^2)^3 - (6*m^3*t*f  + t*(t+m)*(m^4 + m^2*t^2 + t^4) + 3*t*(t-m)*f^2)^3 - (6*m^3*t*f  - t*(t+m)*(m^4 + m^2*t^2 + t^4) - 3*t*(t-m)*f^2)^3 - (-6*t^3*m*f + m*(t+m)*(m^4 + m^2*t^2 + t^4) + 3*m*(m-t)*f^2)^3"
+# degree 5                 6                        4
+# 
+DATA
+  (6*t^3*m*f  + m*(t+m)*(m^4 + m^2*t^2 + t^4) + 3*m*(m-t)*f^2)^3 
+- (6*m^3*t*f  + t*(t+m)*(m^4 + m^2*t^2 + t^4) + 3*t*(t-m)*f^2)^3
+- (6*m^3*t*f  - t*(t+m)*(m^4 + m^2*t^2 + t^4) - 3*t*(t-m)*f^2)^3 
+- (-6*t^3*m*f + m*(t+m)*(m^4 + m^2*t^2 + t^4) + 3*m*(m-t)*f^2)^3
+CALL Polynomial -f $(DATA)
 
 TEST P05 binomial: 5th power with 5 variables
 CALL Polynomial "(a+b+c+d+e)^5"
@@ -384,7 +391,10 @@ CALL Polynomial -incr "(2*v+5 + 2*u)^2 + 2 = (2*v + 5)^3" u 511
 
 TEST PI2 increment for Fermat/Carcavi6
 CALL Polynomial -incr "(2*v+3 + 2*u)^2 + 2 = (2*v + 3)^3" u 511
-
+#----------------
+TEST SI1 Signature
+CALL Signature "(a+b)^4"
+#----------------
 TEST SL1 rational solution 
 CALL Polynomial -solution "(2*v+3 + 2)^2 + 2 = (2*v + 3)^3" 0
 

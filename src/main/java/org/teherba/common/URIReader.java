@@ -1,5 +1,7 @@
 /*  Reader for a URL or data URI source
     @(#) $Id: 662096ff3e2d74af4f150ad456ad013960a4ae70 $
+    2016-05-10: with URLConnection, make User-Agent header settable
+    2016-04-28: allow for Windows drive letter "protocol" (-> file:)
     2013-08-14: URL encoding by URI(3 parameter) constructor
     2013-01-04: gopher repaired
     2011-08-06: extended to InputStream interface
@@ -23,6 +25,7 @@
 package org.teherba.common;
 import  java.io.BufferedReader;
 import  java.io.ByteArrayInputStream;
+import  java.io.ByteArrayOutputStream;
 import  java.io.FileInputStream;
 import  java.io.InputStream;
 import  java.io.InputStreamReader;
@@ -31,8 +34,14 @@ import  java.io.StringReader;
 import  java.lang.IllegalArgumentException;
 import  java.net.URI;
 import  java.net.URL;
+import  java.net.URLConnection;
 import  java.nio.channels.Channels;
 import  java.nio.channels.ReadableByteChannel;
+import  java.util.Date;
+import  java.util.Iterator;
+import  java.util.Map;
+import  java.util.zip.ZipEntry;
+import  java.util.zip.ZipInputStream;
 import  org.apache.log4j.Logger;
 
 /** This reader reads from the following sources:
@@ -48,6 +57,7 @@ import  org.apache.log4j.Logger;
  *      <li>(mailto: - send email from an URI, does not seem to work)</li>
  *      <li>(netdoc: - rarely used special Java protocol for documentation)</li>
  *      <li>URLs not starting with <em>word:</em> are assumed to be local filenames, too<li>
+ *      <li>even Windows' C:/path is mapped to the file: protocol</li>
  *      </ul>
  *  </li>
  *  <li>data: - data content within an Uniform Resource Identfier (URI) itself</li>
@@ -115,6 +125,20 @@ public class URIReader {
     /** whether the reader is character oriented (in contrast to byte streams) */
     private boolean isEncoded;
 
+    /** Tells whether the reader returns a stream of binary bytes
+     *  (otherwise it is character oriented)
+     *  @return true for binary stream, false for character string
+     */
+    public boolean isBinary() {
+        return ! isEncoded;
+    } // isBinary
+
+    /** whether the writer should pipe the output through <em>unzip</em> */
+    private boolean doUnzip;
+
+    /** underlying URLConnection */
+    private URLConnection urlConn;
+
     /** generalized local input stream */
     private InputStream byteStream;
     /** Gets the byte input stream for this URI
@@ -146,8 +170,8 @@ public class URIReader {
      *  @param unresid the Uniform Resource Identifier to be used: URL or <em>data:</em> URI
      */
     public URIReader(String unresid) {
-        this(unresid, "UTF-8");
-    } // Constructor
+        this(unresid, "UTF-8", null);
+    } // Constructor(1)
 
     /** Construct from a URI and specifiy character set encoding (if character oriented),
      *  or <code>null</code> (if byte oriented reading should be performed).
@@ -156,67 +180,147 @@ public class URIReader {
      *  or <code>null</code> (byte oriented)
      */
     public URIReader(String unresid, String enc) {
+        this(unresid, enc, null);
+    } // Constructor(2)
+
+    /** Construct from a URI and specifiy character set encoding (if character oriented),
+     *  or <code>null</code> (if byte oriented reading should be performed).
+     *  A pseudo encoding of "zip" pipes the binary input through an unzip operation.
+     *  @param unresid the Uniform Resource Identifier to be used: URL or <em>data:</em> URI
+     *  @param enc character set to be used to read from bytes (character oriented),
+     *  or <code>null</code> (byte oriented)
+     *  @param propMap optional map for request properties,
+     *  or null if no properties should be associated
+     */
+    public URIReader(String unresid, String enc, Map<String,String> propMap) {
         log = Logger.getLogger(URIReader.class.getName());
         this.encoding = enc;
-        isEncoded   = enc != null;
+        doUnzip = false;
+        isEncoded = enc != null;
+        if (isEncoded && enc.equals("zip")) {
+            isEncoded = false;
+            this.encoding = "UTF-8"; // for output of unzip -p
+            doUnzip = true;
+        }
         charReader  = null; // the protocol is unreadable so far
         byteStream  = null; // the protocol is unreadable so far
+        urlConn     = null;
         try {
-            if (isEncoded) {
-                ReadableByteChannel channel = null;
-                if (false) {
-                } else if (unresid == null || unresid.equals("-")) { // read from STDIN
-                    channel = Channels.newChannel(System.in);
+            ReadableByteChannel channel = null;
+            if (false) {
+            } else if (unresid == null || unresid.equals("-")) { // read from STDIN
+                channel = Channels.newChannel(System.in);
+                if (isEncoded) {
                     charReader = new BufferedReader(Channels.newReader(channel, this.encoding));
-                } else if (unresid.startsWith("data:")) {
-                    inputURI = new URI(unresid);
-                    String content = inputURI.getSchemeSpecificPart().replaceAll("\\+", " "); // rather primitive, no BASE64
+                } else {
+                    byteStream = System.in;
+                }
+            } else if (unresid.startsWith("data:"))            { // data:
+                inputURI = new URI(unresid);
+                String content = inputURI.getSchemeSpecificPart().replaceAll("\\+", " "); // rather primitive, no BASE64
+                if (isEncoded) {
                     charReader = new BufferedReader(new StringReader(content));
-                } else if (unresid.matches("\\w+\\:.*")) {
-                    // the JVM has handlers in rt.jar!/sun/net/www/protocol/* for
-                    //   file: ftp: gopher: http: https: jar: mailto: netdoc:
-                    int colonPos = unresid.indexOf(':');
-                    int sharpPos = unresid.indexOf('#');
-                    if (sharpPos < 0) {
-                        sharpPos = unresid.length(); // behind the end
-                    }
-                    inputURI = new URI(unresid.substring(0, colonPos)
-                            , unresid.substring(colonPos + 1, sharpPos)
-                            , (sharpPos >= unresid.length() ? null : unresid.substring(sharpPos + 1))
-                            );
-                    // URL url = inputURI.toURL();
-                    URL url = new URL(inputURI.toASCIIString());
-                    if (! unresid.startsWith("mailto:")) {
-                        charReader = new BufferedReader(new InputStreamReader(url.openStream(), this.encoding));
-                    } // else still unreadable
-                } else { // this will (probably) be an absolute or relative file URL
+                } else {
+                    byteStream = new ByteArrayInputStream(content.getBytes(this.encoding)); // or US_ASCII ?
+                }
+            } else if (unresid.startsWith("mailto:")) {
+                // ??? - ignore, read empty file
+            } else if (unresid.matches("\\w+\\:.*"))           { // http: file: ftp: etc.
+                if (unresid.matches("\\w\\:.*")) { // Windows drive letter
+                    unresid = "file:///" + unresid.substring(0, 1) + "|" + unresid.substring(2);
+                } // Windows
+                // the JVM has handlers in rt.jar!/sun/net/www/protocol/* for
+                //   file: ftp: gopher: http: https: jar: mailto: netdoc:
+                int colonPos = unresid.indexOf(':');
+                int sharpPos = unresid.indexOf('#');
+                if (sharpPos < 0) {
+                    sharpPos = unresid.length(); // behind the end
+                }
+                inputURI = new URI(unresid.substring(0, colonPos)
+                        , unresid.substring(colonPos + 1, sharpPos)
+                        , (sharpPos >= unresid.length() ? null : unresid.substring(sharpPos + 1))
+                        );
+                URL url = new URL(inputURI.toASCIIString());
+                urlConn = url.openConnection();
+
+                if (propMap != null) { // set connection properties
+                    Iterator<String> piter = propMap.keySet().iterator();
+                    while (piter.hasNext()) {
+                        String key = piter.next();
+                        String value = propMap.get(key);
+                        urlConn.setRequestProperty(key, value);
+                    } // while piter
+                } // propMap was set
+
+                if (isEncoded) {
+                    charReader = new BufferedReader(new InputStreamReader(urlConn.getInputStream(), this.encoding));
+                } else {
+                    byteStream = urlConn.getInputStream();
+                }
+            } else { // this will (probably) be an absolute or relative file URL
+                if (isEncoded) {
                     channel = (new FileInputStream (unresid)).getChannel();
                     charReader = new BufferedReader(Channels.newReader(channel, this.encoding));
-                }
-                // encoded, characters
-
-            } else { // byte oriented
-                if (false) {
-                } else if (unresid == null || unresid.equals("-")) { // read from STDIN
-                    byteStream = System.in;
-                } else if (unresid.startsWith("data:")) {
-                    inputURI = new URI(unresid);
-                    String content = inputURI.getSchemeSpecificPart().replaceAll("\\+", " "); // rather primitive, no BASE64
-                    byteStream = new ByteArrayInputStream(content.getBytes(this.encoding)); // or US_ASCII ?
-                } else if (unresid.matches("\\w+\\:.*")) {
-                    inputURI = new URI(unresid);
-                    URL url = inputURI.toURL();
-                    if (! unresid.startsWith("mailto:")) {
-                        byteStream = url.openStream();
-                    } // else still unreadable
-                } else { // this will (probably) be an absolute or relative file URL
+                } else {
                     byteStream = new FileInputStream(unresid);
                 }
-            } // byte orientend
+            }
+
+            if (doUnzip) {
+                // slurp the whole zip file into zbuffer
+                ByteArrayOutputStream
+                baos = new ByteArrayOutputStream(16384);
+                int len = 16384;
+                byte[] zbuffer = new byte[16384];
+                while ((len = byteStream.read(zbuffer)) > 0) {
+                    baos.write(zbuffer, 0, len);
+                } // while byteStream
+                baos.close(); // no effect
+                zbuffer = baos.toByteArray();
+                byteStream.close();
+
+                // Unzip zbuffer and write contents to ubuffer
+                ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(zbuffer));
+                baos = new ByteArrayOutputStream(16384);
+                ZipEntry zentry = null;
+                byte[] ubuffer = new byte[16384];
+                while ((zentry = zis.getNextEntry()) != null) {
+                    baos.write(("<!-- " + zentry.getName() + " -->\n").getBytes("UTF-8"));
+                    len = ubuffer.length;
+                    while ((len = zis.read(ubuffer)) > 0) {
+                        baos.write(ubuffer, 0, len);
+                    } // while
+                } // while zentry
+                zis.close();
+                baos.close(); // no effect
+
+                // cause charReader to read from ubuffer
+                ubuffer = baos.toByteArray();
+                charReader = new BufferedReader(new StringReader(
+                        (new String(ubuffer, 0, ubuffer.length, this.encoding))
+                        .replaceAll("\\\"><", "\">\n<") // break long XML lines
+                        ));
+                isEncoded = true;
+            } // doUnzip
+        } catch (Exception exc) {
+            log.error(exc.getMessage() + ", unresid=\"" + unresid + "\"", exc);
+        }
+    } // Constructor(3)
+
+    /** Sets a property of the URLConnection.
+     *  If the conneciton is not set, the call is silently ignored.
+     *  @param key   the name of the property to be set, for example "User-Agent"
+     *  @param value the value to be set for the property
+     */
+    public void setRequestProperty(String key, String value) {
+        try {
+            if (urlConn != null) {
+                urlConn.setRequestProperty(key, value);
+            }
         } catch (Exception exc) {
             log.error(exc.getMessage(), exc);
         }
-    } // Constructor
+    } // setRequestProperty
 
     //==========================
     // BufferedReader Interface
@@ -225,12 +329,11 @@ public class URIReader {
      */
     public void close() throws IOException {
         try {
-            if (false) {
-            } else if (this.charReader != null && isEncoded) {
+            if (this.charReader != null) {
                 this.charReader.close();
-            } else if (this.byteStream != null) {
+            }
+            if (this.byteStream != null) {
                 this.byteStream.close();
-            } else {
             }
         } catch (IOException exc) {
             throw exc;
@@ -472,7 +575,7 @@ public class URIReader {
         Logger log = Logger.getLogger(URIReader.class.getName());
         int iarg = 0;
         try {
-            if (iarg == args.length) { // without an argument, several protocols are checked
+            if (args.length == 0) { // without an argument, several protocols are checked
                 new URIReader("http://www.teherba.org");
                 String protocols[] =
                         { "http://www.teherba.org/index.html"
@@ -497,13 +600,26 @@ public class URIReader {
                     }
                     iprot ++;
                 } // while iprot
-            } else { // argument is a single URI which is read and printed to STDOUT
-                URIReader in = new URIReader(args[iarg ++]);
-                String line = "";
-                while ((line = in.readLine()) != null) {
-                    System.out.println(line);
-                } // while reading
-                in.close();
+            } else { // argument is a URI (with an optional encoding) which is read and printed to STDOUT
+                String uri = args[iarg ++];
+                String enc = null;
+                if (iarg < args.length) {
+                    enc = args[iarg ++];
+                }
+                URIReader ureader = new URIReader(uri, enc);
+                if (ureader.isBinary()) { // binary
+                    byte[] bbuf = new byte[4096];
+                    int len = bbuf.length;
+                    while ((len = ureader.read(bbuf, 0, len)) > 0) {
+                        System.out.write(bbuf, 0, len);
+                    } // while binary reading
+                } else { // character
+                    String line = null;
+                    while ((line = ureader.readLine()) != null) {
+                        System.out.println(line);
+                    } // while reading
+                }
+                ureader.close();
             }
         } catch (Exception exc) {
             log.error(exc.getMessage(), exc);

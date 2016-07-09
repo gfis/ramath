@@ -1,6 +1,7 @@
 /*  Polynomial: a symbolic, multivariate Polynomial with addition, multiplication,
  *  exponentiation, comparision and other operations
  *  @(#) $Id: Polynomial.java 744 2011-07-26 06:29:20Z gfis $
+ *  2016-07-09: getIsolation()
  *  2016-04-14: isPreservedBy(Matrix)
  *  2016-03-31: Brahmagupta identity
  *  2016-02-03: derivative(varx, order)

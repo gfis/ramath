@@ -409,7 +409,7 @@ a^2 +
         return list;
     } // evalDutch1
 
-    /** Evaluates Dutch's 1st formula for cubic diophantine equations
+    /** Evaluates Dutch's 2nd formula for cubic diophantine equations
      *  up to some limit of the parameter values.
      *  <pre>
 DATA ((2*m - 1)*(2*m^3 -  6*m^2 + 0*m - 1))^3
