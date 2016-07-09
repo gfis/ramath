@@ -11,14 +11,6 @@ ARGS=
 #======================================================================
 ECHO 000
 #-------------------------
-# some Dbat tests
-TEST DB1
-URL=http://localhost:8080/dbat/servlet
-HTTPZ spec=test.color08 mode=xlsx
-
-URL=http://localhost:8080/ramath/servlet
-
-#-------------------------
 # BigIntegerUtil
 PACKAGE=org.teherba.ramath
 

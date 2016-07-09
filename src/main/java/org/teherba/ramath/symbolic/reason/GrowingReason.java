@@ -1,5 +1,6 @@
 /*  GrowingReason: checks whether the RelationSet was growing from a parent
  *  @(#) $Id: GrowingReason.java 970 2012-10-25 16:49:32Z gfis $
+ *  2016-07-09: Signature
  *  2015-09-05: initialize
  *  2015-07-23: no longer in use
  *  2015-02-27, Georg Fischer
@@ -25,6 +26,7 @@ import  org.teherba.ramath.symbolic.solver.BaseSolver;
 import  org.teherba.ramath.symbolic.Monomial;
 import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.RelationSet;
+import  org.teherba.ramath.symbolic.Signature;
 import  org.teherba.ramath.symbolic.VariableMap;
 import  org.teherba.ramath.Coefficient;
 import  java.util.Iterator;
@@ -66,12 +68,12 @@ public class GrowingReason extends BaseReason {
         String result = null;
         int psize1 =  poly1.size();
         if (psize1 == poly2.size()) {
-            Iterator <String> iter1 = poly1.keySet().iterator();
-            Iterator <String> iter2 = poly2.keySet().iterator();
+            Iterator <Signature> iter1 = poly1.keySet().iterator();
+            Iterator <Signature> iter2 = poly2.keySet().iterator();
             boolean busy = true;
             while (busy && iter1.hasNext()) {
-                String sig1 = iter1.next();
-                String sig2 = iter2.next();
+                Signature sig1 = iter1.next();
+                Signature sig2 = iter2.next();
                 if (sig1.equals(sig2)) {
                     Monomial mono1 = poly1.get(sig1);
                     Monomial mono2 = poly2.get(sig2);

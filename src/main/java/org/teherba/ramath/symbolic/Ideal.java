@@ -1,5 +1,6 @@
 /*  Ideal over a Polynomial ring - Gröbner basis methods
  *  @(#) $Id: Polynomial.java 744 2011-07-26 06:29:20Z gfis $
+ *  2016-07-09: Signature
  *  2015-11-16, Georg Fischer: extracted from Polynomial.java
  */
 /*
@@ -97,7 +98,7 @@ public class Ideal implements Cloneable, Serializable {
      */
     public static Monomial getLeadTerm(Polynomial poly1) {
         Monomial result = null;
-        String lastKey = poly1.getMonomials().lastKey();
+        Signature lastKey = poly1.getMonomials().lastKey();
         if (lastKey != null) {
             result =  poly1.getMonomials().get(lastKey);
         }

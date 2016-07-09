@@ -1,5 +1,6 @@
 /*  Collection of several experimental methods
  *  @(#) $Id: SandBox.java 808 2011-09-20 16:56:14Z gfis $
+ *  2016-07-09: Signature
  *  2016-03-31: -compose
  *  2016-03-11: -reprs
  *  2016-01-03: -pdiff printDifferences
@@ -29,6 +30,7 @@ import  org.teherba.ramath.PrimeFactorization;
 import  org.teherba.ramath.linear.Vector;
 import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.PolyVector;
+import  org.teherba.ramath.symbolic.Signature;
 import  org.teherba.ramath.symbolic.VariableMap;
 import  java.io.BufferedReader;
 import  java.io.FileReader;
@@ -176,7 +178,7 @@ public class SandBox {
                 if (poly2.isZero()) {
                     news[ind]   = BigInteger.ZERO;
                 } else {
-                    String sig2 = poly2.getMonomials().firstKey();
+                    Signature sig2 = poly2.getMonomials().firstKey();
                     news[ind]   = poly2.getMonomials().get(sig2).getCoefficient();
                 }
                 while (ind < maxDeg - 1 && ind < num) { // compute differences
@@ -238,7 +240,7 @@ public class SandBox {
                 Polynomial poly2 = poly1.substitute(vmap);
                 BigInteger value = BigInteger.ZERO;
                 if (! poly2.isZero()) {
-                    String sig2 = poly2.getMonomials().firstKey();
+                    Signature sig2 = poly2.getMonomials().firstKey();
                     value = poly2.getMonomials().get(sig2).getCoefficient();
                 }
                 PrimeFactorization pfact = new PrimeFactorization(value);
@@ -321,7 +323,7 @@ public class SandBox {
             while (num < highValue) {
                 vmap.put(vnam1, String.valueOf(num));
                 Polynomial poly2 = poly1.substitute(vmap);
-                String sig2 = poly2.getMonomials().firstKey();
+                Signature sig2 = poly2.getMonomials().firstKey();
                 BigInteger coef = poly2.getMonomials().get(sig2).getCoefficient();
                 PrimeFactorization pfact = new PrimeFactorization(coef);
                 System.out.print(String.format("%5d", num));

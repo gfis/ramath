@@ -1,5 +1,6 @@
 /*  ModAccelerator: replace variables by fractions as long as foreign GCD is > 0
  *  @(#) $Id: ModAccelerator.java 970 2012-10-25 16:49:32Z gfis $
+ *  2016-07-09: Signature
  *  2015-09-13: renamed fromPythagorasReason
  *  2015-09-11, Georg Fischer: copied from EvenExponentReason.java
  */
@@ -26,6 +27,7 @@ import  org.teherba.ramath.symbolic.Monomial;
 import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.RefiningMap;
 import  org.teherba.ramath.symbolic.RelationSet;
+import  org.teherba.ramath.symbolic.Signature;
 import  org.teherba.ramath.symbolic.VariableMap;
 import  org.teherba.ramath.linear.Vector;
 import  org.teherba.ramath.BigIntegerUtil;
@@ -92,9 +94,9 @@ public class ModAccelerator extends BaseReason {
         BigInteger[] coeffs = new BigInteger[plen]; // corresponding array of Coefficients
         int
         imono = 0;
-        Iterator<String> miter = poly2.keySet().iterator(); 
+        Iterator<Signature> miter = poly2.keySet().iterator(); 
         while (miter.hasNext()) { // over ALL Monomials: get both arrays 
-            String sig2 = miter.next();
+            Signature sig2 = miter.next();
             Monomial mono2 = poly2.get(sig2);
             monoms[imono] = mono2;
             coeffs[imono] = mono2.getCoefficient().bigIntegerValue().abs();

@@ -1,5 +1,6 @@
 /*  PolyVector: a vector Polynomials
  *  @(#) $Id: PolyVector.java 744 2011-07-26 06:29:20Z gfis $
+ *  2016-07-09: Signature
  *  2015-07-14: read expression allows for RelationSets with semicolons and "=0"
  *  2015-04-27: triviality(), describe()
  *  2015-03-26: construct from expression
@@ -24,6 +25,7 @@
  */
 package org.teherba.ramath.symbolic;
 import  org.teherba.ramath.symbolic.Polynomial;
+import  org.teherba.ramath.symbolic.Signature;
 import  org.teherba.ramath.symbolic.VariableMap;
 import  org.teherba.ramath.linear.Matrix;
 import  org.teherba.ramath.linear.Vector;
@@ -291,9 +293,9 @@ public class PolyVector implements Cloneable, Serializable {
             int ielem = 0;
             while (ielem < this.vecLen) {
                 Polynomial poly2 = this.vector[ielem].multiply(vect2.vector[ielem]);
-                Iterator/*<1.5*/<String>/*1.5>*/ iter2 = poly2.keySet().iterator();
+                Iterator<Signature> iter2 = poly2.keySet().iterator();
                 while (iter2.hasNext()) {
-                    String sig2 = iter2.next();
+                    Signature sig2 = iter2.next();
                     result.addTo(poly2.getMonomial(sig2));
                 } // while iter2
                 ielem ++;

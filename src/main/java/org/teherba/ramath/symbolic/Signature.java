@@ -28,7 +28,7 @@ import  java.util.Iterator;
  *  {@link Monomial#characteristic}.
  *  @author Dr. Georg Fischer
  */
-public class Signature implements Cloneable, Serializable {
+public class Signature implements Cloneable, Comparable<Signature>, Serializable {
     private static final long serialVersionUID = 2L;
     public final static String CVSID = "@(#) $Id: VariableMap.java 538 2010-09-08 15:08:36Z gfis $";
 
@@ -37,6 +37,12 @@ public class Signature implements Cloneable, Serializable {
 
     /** The (one and only) internal property */
     private String signat;
+
+    /** Special signature for constant {@link Monomial}s
+     *  (coefficient without variables, the empty String).
+     */
+    public static final Signature CONSTANT = (new Monomial("1")).signature(); // the empty string: ""
+
     /*----------------- construction ----- -----------------*/
 
     /** No-args Constructor
@@ -90,10 +96,10 @@ public class Signature implements Cloneable, Serializable {
     public static void main(String[] args) {
         int iarg = 0;
         Polynomial poly1 = Polynomial.parse(args[iarg ++]);
-        Iterator<String> iter = poly1.keySet().iterator();
+        Iterator<Signature> iter = poly1.keySet().iterator();
         while (iter.hasNext()) {
-            Signature sigi = new Signature(iter.next());
-            System.out.println(sigi.toString() + ": " + poly1.get(sigi.toString()).toString());
+            Signature sigi = iter.next();
+            System.out.println(sigi.toString() + ": " + poly1.get(sigi).toString());
         } // while iter
     } // main
 

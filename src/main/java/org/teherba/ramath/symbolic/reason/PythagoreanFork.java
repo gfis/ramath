@@ -26,6 +26,7 @@ import  org.teherba.ramath.symbolic.Monomial;
 import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.RefiningMap;
 import  org.teherba.ramath.symbolic.RelationSet;
+import  org.teherba.ramath.symbolic.Signature;
 import  org.teherba.ramath.symbolic.VariableMap;
 import  org.teherba.ramath.linear.Vector;
 import  org.teherba.ramath.BigIntegerUtil;
@@ -122,16 +123,16 @@ public class PythagoreanFork extends BaseReason {
     private VariableMap mayBePythagorean(Polynomial poly1) {
         VariableMap result = poly1.getVariableMap();
         if (result.size() == 3) { // x,y,z
-            String sig1    = null;
+            Signature sig1    = null;
             Monomial mono1 = null;
             String vname   = null;
             int    vexp    = 0;
             int signSum    = 0; // sum of signums +++- or +--
-            Iterator <String> 
+            Iterator<Signature> 
             titer = poly1.getMonomials().keySet().iterator();
             while (result != null && titer.hasNext()) { // over all monomials: determine signSum
                 sig1 = titer.next();
-                if (sig1 != Monomial.CONSTANT_SIGNATURE) { // not the constant term
+                if (sig1 != Signature.CONSTANT) { // not the constant term
                     mono1 = poly1.getMonomials().get(sig1);
                     if (mono1.size() == 1) { // only 1 variable in the term
                         vname = mono1.firstName();

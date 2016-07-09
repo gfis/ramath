@@ -1,5 +1,6 @@
 /*  SameReason: checks whether the RelationSet is the same as the root
  *  @(#) $Id: SameReason.java 970 2012-10-25 16:49:32Z gfis $
+ *  2016-07-09: Signature
  *  2015-09-05: initialize
  *  2015-07-23: used only on explicit request
  *  2015-02-24, Georg Fischer
@@ -25,6 +26,7 @@ import  org.teherba.ramath.symbolic.solver.BaseSolver;
 import  org.teherba.ramath.symbolic.Monomial;
 import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.RelationSet;
+import  org.teherba.ramath.symbolic.Signature;
 import  org.teherba.ramath.symbolic.VariableMap;
 import  org.teherba.ramath.Coefficient;
 import  java.math.BigInteger;
@@ -68,7 +70,7 @@ public class SameReason extends BaseReason {
      *  @param poly2 the Polynomial with the additional powers
      */
     private void joinMaxBasePowers(TreeMap<String, Integer> maxBasePowers, Polynomial poly2) {
-        Iterator <String> miter = poly2.keySet().iterator();
+        Iterator <Signature> miter = poly2.keySet().iterator();
         Integer ZERO = new Integer(1);
         while (miter.hasNext()) { // over all signatures of monomials
             Monomial mono1 = poly2.get(miter.next());

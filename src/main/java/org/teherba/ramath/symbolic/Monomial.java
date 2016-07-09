@@ -1,5 +1,6 @@
 /*  Monomial: a product with a signed numeric coefficient and optional exponentiated variable(s)
  *  @(#) $Id: Monomial.java 522 2010-07-26 07:14:48Z gfis $
+ *  2016-07-09: Signature
  *  2015-12-06: toString(boolean) -> toString(1)
  *  2015-11-04: with SmallScript.toSuperscript
  *  2015-09-03: isNegative
@@ -28,6 +29,7 @@
  */
 package org.teherba.ramath.symbolic;
 import  org.teherba.ramath.symbolic.Factor;
+import  org.teherba.ramath.symbolic.Signature;
 import  org.teherba.ramath.BigIntegerUtil;
 import  org.teherba.ramath.BigRational;
 import  org.teherba.ramath.Coefficient;
@@ -348,14 +350,9 @@ public class Monomial implements Cloneable, Serializable {
      *  This signature defines the monomial order in a {@link Polynomial}.
      *  @return for example "/x4.08/b.02/a.04" for the monomial "16384*a^4*b^2*x4^8"
      */
-    public String signature() {
+    public Signature signature() {
         return characteristic(false, true);
     } // signature
-
-    /** Special signature for constant {@link Monomial}s
-     *  (coefficient without variables, the empty String).
-     */
-    public static final String CONSTANT_SIGNATURE = (new Monomial("1")).signature(); // the empty string: ""
 
     /** Gets some characteristic value which is independant of the variable names,
      *  and which characterizes exponents and the absolute value of the coefficient (but not the sign),
@@ -370,7 +367,7 @@ public class Monomial implements Cloneable, Serializable {
      *  @param withVars  whether to append the variable names (otherwise their exponents only)
      *  @return for example (true, false): "/08/02/04;16384" for the Monomial "16384*a^4*b^2*x4^8"
      */
-    public String characteristic(boolean withCoeff, boolean withVars) {
+    public Signature characteristic(boolean withCoeff, boolean withVars) {
         StringBuffer result = new StringBuffer(32); // resulting list of exponents
         Factor[] factors = new Factor[vars.size()];
         Iterator <String> viter = vars.keySet().iterator();
@@ -406,7 +403,7 @@ public class Monomial implements Cloneable, Serializable {
         if (result.length() == 0) {
             result.append("~~~~"); // higher than all normal signatures
         }
-        return result.toString();
+        return new Signature(result.toString());
     } // characteristic(2)
 
     //========================
@@ -1046,7 +1043,7 @@ lcm( + 24*a^6*b^6*c*x4^8, + 100*a^5*b^4) =  + 600*a^6*b^6*c*x4^8
             System.out.println("characteristic(false,true )=" + mono1.characteristic(false, true ));
             System.out.println("characteristic(true ,false)=" + mono1.characteristic(true , false));
             System.out.println("characteristic(true, true )=" + mono1.characteristic(true , true ));
-            System.out.println("CONSTANT_SIGNATURE=" + Monomial.CONSTANT_SIGNATURE);
+            System.out.println("SIGNATURE=" + Signature.CONSTANT);
 
             Monomial mono4 = new Monomial(new String[] { "a", "b" });
             Monomial mono5 = (new Monomial("a", 4))

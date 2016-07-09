@@ -1,5 +1,6 @@
 /*  EvenExponentReason: checks -x-1 mapping when x has even exponents only
  *  @(#) $Id: EvenExponentReason.java 970 2012-10-25 16:49:32Z gfis $
+ *  2016-07-09: Signature
  *  2015-09-05: initialize
  *  2015-08-25, Georg Fischer
  */
@@ -25,6 +26,7 @@ import  org.teherba.ramath.symbolic.Monomial;
 import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.RefiningMap;
 import  org.teherba.ramath.symbolic.RelationSet;
+import  org.teherba.ramath.symbolic.Signature;
 import  org.teherba.ramath.symbolic.VariableMap;
 import  org.teherba.ramath.linear.Vector;
 import  java.util.Iterator;
@@ -97,7 +99,7 @@ public class EvenExponentReason extends BaseReason {
      *  @param poly1 the Polynomial with the additional variable exponents
      */
     private static void joinExponentGCDs(TreeMap<String, Integer> expGCDs, Polynomial poly1) {
-        Iterator <String> miter = poly1.keySet().iterator();
+        Iterator <Signature> miter = poly1.keySet().iterator();
         while (miter.hasNext()) { // over all signatures of monomials
             Monomial mono1 = poly1.get(miter.next());
             TreeMap<String, Integer>  mvars = mono1.getMap();

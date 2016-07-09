@@ -1,7 +1,7 @@
 /*  Polynomial: a symbolic, multivariate Polynomial with addition, multiplication,
  *  exponentiation, comparision and other operations
  *  @(#) $Id: Polynomial.java 744 2011-07-26 06:29:20Z gfis $
- *  2016-07-09: getIsolation()
+ *  2016-07-09: Signature
  *  2016-04-14: isPreservedBy(Matrix)
  *  2016-03-31: Brahmagupta identity
  *  2016-02-03: derivative(varx, order)
@@ -42,6 +42,7 @@ package org.teherba.ramath.symbolic;
 import  org.teherba.ramath.symbolic.Monomial;
 import  org.teherba.ramath.symbolic.PolynomialParser;
 import  org.teherba.ramath.symbolic.RelationSet;
+import  org.teherba.ramath.symbolic.Signature;
 import  org.teherba.ramath.symbolic.VariableMap;
 import  org.teherba.ramath.BigIntegerUtil;
 import  org.teherba.ramath.BigRational;
@@ -92,7 +93,7 @@ public class Polynomial implements Cloneable, Serializable {
      *  the {@link Monomial#signature signatures} of all monomials in the Polynomial
      *  are mapped to the monomials.
      */
-    private TreeMap<String, Monomial> monomials;
+    private TreeMap<Signature, Monomial> monomials;
 
     /** A pseudo property which marks all places where future
      * additional properties must be inserted or cloned
@@ -119,7 +120,7 @@ public class Polynomial implements Cloneable, Serializable {
     /** No-args Constructor
      */
     public Polynomial() {
-        monomials = new TreeMap<String, Monomial>(); // an empty map indicates value 0
+        monomials = new TreeMap<Signature, Monomial>(); // an empty map indicates value 0
         initialize();
     } // no-args Constructor
 
@@ -164,10 +165,10 @@ public class Polynomial implements Cloneable, Serializable {
      */
     public Polynomial clone() {
         Polynomial result = new Polynomial();
-        TreeMap<String, Monomial> resultMonomials = new TreeMap<String, Monomial>();
-        Iterator<String> titer = monomials.keySet().iterator();
+        TreeMap<Signature, Monomial> resultMonomials = new TreeMap<Signature, Monomial>();
+        Iterator<Signature> titer = monomials.keySet().iterator();
         while (titer.hasNext()) {
-            String tsig = titer.next();
+            Signature tsig = titer.next();
             resultMonomials.put(tsig, this.monomials.get(tsig).clone());
         } // while titer
         result.setFactor    (this.getFactor());
@@ -192,7 +193,7 @@ public class Polynomial implements Cloneable, Serializable {
      *  @param sig signature (variable names and their exponents) of the desired monomial
      *  @return monomial
      */
-    public Monomial get(String sig) {
+    public Monomial get(Signature sig) {
         return this.monomials.get(sig);
     } // get
 
@@ -201,28 +202,28 @@ public class Polynomial implements Cloneable, Serializable {
      *  @param sig signature (variable names and their exponents) of the desired monomial
      *  @param mono2 monomial to be inserted or overwritten.
      */
-    public void put(String sig, Monomial mono2) {
+    public void put(Signature sig, Monomial mono2) {
         this.monomials.put(sig, mono2);
     } // put
 
     /** Gets the key set of the internal mapping from signatures to {@link Monomial}s.
      *  @return set of signatures
      */
-    public Set<String> keySet() {
+    public Set<Signature> keySet() {
         return this.monomials.keySet();
     } // keySet
 
     /** Gets the internal map of {@link Monomial}s.
      *  @return map from signatures (variable names and their exponents) to monomials
      */
-    public TreeMap<String, Monomial> getMonomials() {
+    public TreeMap<Signature, Monomial> getMonomials() {
         return this.monomials;
     } // getMonomials
 
     /** Sets the internal map of {@link Monomial}s.
      *  @param map map from signatures (variable names and their exponents) to monomials
      */
-    public void setMonomials(TreeMap<String, Monomial> map) {
+    public void setMonomials(TreeMap<Signature, Monomial> map) {
         this.monomials = map;
     } // setMonomials
 
@@ -230,7 +231,7 @@ public class Polynomial implements Cloneable, Serializable {
      *  @param sig signature (variable names and their exponents) of the desired monomial
      *  @return monomial
      */
-    public Monomial getMonomial(String sig) {
+    public Monomial getMonomial(Signature sig) {
         return this.monomials.get(sig);
     } // getMonomial(sig)
 
@@ -241,11 +242,11 @@ public class Polynomial implements Cloneable, Serializable {
      */
     public Monomial getMonomial(String varName, int exponent) {
         Monomial result = null;
-        String sig1 = (new Monomial(varName, exponent)).signature();
-        Iterator<String> iter = this.keySet().iterator();
+        Signature sig1 = (new Monomial(varName, exponent)).signature();
+        Iterator<Signature> iter = this.keySet().iterator();
         boolean busy = true;
         while (busy && iter.hasNext()) {
-            String sig2 = iter.next();
+            Signature sig2 = iter.next();
             if (sig1.equals(sig2)) {
                 busy = false;
                 result = this.get(sig2);
@@ -311,10 +312,10 @@ public class Polynomial implements Cloneable, Serializable {
      */
     public String listVariables() {
         StringBuffer result = new StringBuffer(2048);
-        Iterator<String> iter = monomials.keySet().iterator();
+        Iterator<Signature> iter = monomials.keySet().iterator();
         while (iter.hasNext()) {
-            String sig = iter.next();
-            result.append(sig.substring(sig.indexOf('/')));
+            Signature sig = iter.next();
+            result.append(sig.toString().substring(sig.toString().indexOf('/')));
         } // while iter
         result.append(';');
         return result.toString();
@@ -334,9 +335,9 @@ public class Polynomial implements Cloneable, Serializable {
      */
     public String toString(int mode) {
         StringBuffer buffer = new StringBuffer(2048);
-        Iterator<String> iter = monomials.keySet().iterator();
+        Iterator<Signature> iter = monomials.keySet().iterator();
         while (iter.hasNext()) {
-            String sig = iter.next();
+            Signature sig = iter.next();
             buffer.append(monomials.get(sig).toString(mode));
         } // while iter
         if (buffer.length() == 0) {
@@ -384,9 +385,9 @@ public class Polynomial implements Cloneable, Serializable {
      */
     public String toFactoredString() {
         StringBuffer buffer = new StringBuffer(2048);
-        Iterator<String> iter = monomials.keySet().iterator();
+        Iterator<Signature> iter = monomials.keySet().iterator();
         while (iter.hasNext()) {
-            String sig = iter.next();
+            Signature sig = iter.next();
             buffer.append(monomials.get(sig).toFactoredString());
         } // while iter
         if (buffer.length() == 0) {
@@ -403,7 +404,7 @@ public class Polynomial implements Cloneable, Serializable {
      */
     public Coefficient getConstant() {
         Coefficient result = Coefficient.ZERO;
-        Monomial monomial = monomials.get(Monomial.CONSTANT_SIGNATURE);
+        Monomial monomial = monomials.get(Signature.CONSTANT);
         if (monomial != null) {
             result = monomial.getCoefficient();
         }
@@ -414,7 +415,7 @@ public class Polynomial implements Cloneable, Serializable {
      *  @return true if there is a constant monomial, or false otherwise
      */
     public boolean hasConstant() {
-        return monomials.get(Monomial.CONSTANT_SIGNATURE) != null;
+        return monomials.get(Signature.CONSTANT) != null;
     } // hasConstant
 
     /** Determines whether <em>this</em> {@link Polynomial} contains no variables
@@ -451,9 +452,9 @@ public class Polynomial implements Cloneable, Serializable {
         boolean result = true; // assume success
         boolean first = true;
         int sign = 0;
-        Iterator<String> iter1 = this.keySet().iterator();
+        Iterator<Signature> iter1 = this.keySet().iterator();
         while (result && iter1.hasNext()) {
-            String sig1 = iter1.next();
+            Signature sig1 = iter1.next();
             if (first) {
                 first = false;
                 sign = monomials.get(sig1).signum();
@@ -479,7 +480,7 @@ public class Polynomial implements Cloneable, Serializable {
     public int polarity_99() {
         int result = this.getConstant().signum();
         if (result == 0) {
-            Iterator<String> iter1 = this.keySet().iterator();
+            Iterator<Signature> iter1 = this.keySet().iterator();
             while (iter1.hasNext()) {
                 result += this.get(iter1.next()).signum();
             } // while iter1
@@ -506,7 +507,7 @@ public class Polynomial implements Cloneable, Serializable {
         int exp           = 0;
         boolean first     = true;
         boolean busy      = true;
-        Iterator<String> iter1 = this.keySet().iterator();
+        Iterator<Signature> iter1 = this.keySet().iterator();
         while (busy && iter1.hasNext()) {
             Monomial mono = this.get(iter1.next());
             if (mono.size() != 1) { // =0 : hasConstant, >1: more than 1 variable
@@ -547,7 +548,7 @@ public class Polynomial implements Cloneable, Serializable {
      *  @return reference to <em>this</em> Polynomial that was modified
      */
     protected Polynomial addTo(Monomial mono2) {
-        String sig2 = mono2.signature();
+        Signature sig2 = mono2.signature();
         Monomial mono1 = this.monomials.get(sig2);
         if (mono2.isZero()) { // ignore "+ 0"
             if (debug >= 2) {
@@ -580,9 +581,9 @@ public class Polynomial implements Cloneable, Serializable {
      */
     public Polynomial add(Polynomial poly2) {
         Polynomial result = this.clone();
-        Iterator<String> iter2 = poly2.keySet().iterator();
+        Iterator<Signature> iter2 = poly2.keySet().iterator();
         while (iter2.hasNext()) {
-            String sig2 = iter2.next();
+            Signature sig2 = iter2.next();
             result.addTo(poly2.get(sig2));
         } // while iter2
         return result;
@@ -593,7 +594,7 @@ public class Polynomial implements Cloneable, Serializable {
      *  @return reference to <em>this</em> Polynomial that was modified
      */
     protected Polynomial subtractFrom(Monomial mono2) {
-        String sig2 = mono2.signature();
+        Signature sig2 = mono2.signature();
         Monomial mono1 = monomials.get(sig2);
         if (mono2.isZero()) { // ignore "- 0"
         } else if (mono1 == null) {
@@ -611,7 +612,7 @@ public class Polynomial implements Cloneable, Serializable {
      *  @return reference to <em>this</em> modified object.
      */
     public Polynomial negativeOf() {
-        Iterator <String> titer = monomials.keySet().iterator();
+        Iterator <Signature> titer = monomials.keySet().iterator();
         while (titer.hasNext()) {
             Monomial mono1 = monomials.get(titer.next());
             mono1.setCoefficient(Coefficient.valueOf(mono1.getCoefficient().negate()));
@@ -625,9 +626,9 @@ public class Polynomial implements Cloneable, Serializable {
      */
     public Polynomial subtract(Polynomial poly2) {
         Polynomial result = this.clone();
-        Iterator<String> iter2 = poly2.keySet().iterator();
+        Iterator<Signature> iter2 = poly2.keySet().iterator();
         while (iter2.hasNext()) {
-            String sig2 = iter2.next();
+            Signature sig2 = iter2.next();
             result.subtractFrom(poly2.get(sig2));
         } // while iter2
         return result;
@@ -638,12 +639,12 @@ public class Polynomial implements Cloneable, Serializable {
      *  @return reference to <em>this</em> Polynomial which was modified
      */
     protected Polynomial multiplyBy(Monomial mono2) {
-        Iterator<String> iter = monomials.keySet().iterator();
+        Iterator<Signature> iter = monomials.keySet().iterator();
         if (mono2.isZero()) {
             monomials.clear(); // an empty map indicates constant 0
         } else {
             while (iter.hasNext()) {
-                String sig1 = iter.next();
+                Signature sig1 = iter.next();
                 monomials.put(sig1, monomials.get(sig1).multiply(mono2));
             } // while iter
         }
@@ -658,9 +659,9 @@ public class Polynomial implements Cloneable, Serializable {
      */
     public Polynomial multiplyBy(BigInteger number) {
         if (! number.equals(BigInteger.ONE)) {
-            Iterator<String> iter = monomials.keySet().iterator();
+            Iterator<Signature> iter = monomials.keySet().iterator();
             while (iter.hasNext()) {
-                String sig1 = iter.next();
+                Signature sig1 = iter.next();
                 monomials.get(sig1).multiplyBy(number);
             } // while iter
         } // != 1
@@ -673,12 +674,12 @@ public class Polynomial implements Cloneable, Serializable {
      */
     public Polynomial multiply(Polynomial poly2) {
         Polynomial result = new Polynomial(); // empty = 0
-        Iterator<String> iter1 = this .keySet().iterator();
+        Iterator<Signature> iter1 = this .keySet().iterator();
         while (iter1.hasNext()) {
-            String sig1 = iter1.next();
-            Iterator<String> iter2 = poly2.keySet().iterator();
+            Signature sig1 = iter1.next();
+            Iterator<Signature> iter2 = poly2.keySet().iterator();
             while (iter2.hasNext()) {
-                String sig2 = iter2.next();
+                Signature sig2 = iter2.next();
                 result.addTo(this.get(sig1).multiply(poly2.get(sig2)));
             } // while iter2
         } // while iter1
@@ -747,9 +748,9 @@ public class Polynomial implements Cloneable, Serializable {
         if (mono2.isZero()) {
             throw new ArithmeticException();
         } else {
-            Iterator<String> iter = monomials.keySet().iterator();
+            Iterator<Signature> iter = monomials.keySet().iterator();
             while (iter.hasNext()) {
-                String sig1 = iter.next();
+                Signature sig1 = iter.next();
                 if (debug > 0) {
                     System.out.println("Polynomial (" + this.toString() + ").divideBy(" + mono2.toString()
                             + ", sig1=" + sig1 + ", get(sig1)=" + monomials.get(sig1));
@@ -768,9 +769,9 @@ public class Polynomial implements Cloneable, Serializable {
      */
     protected Polynomial divideBy(BigInteger number) {
         if (! number.equals(BigInteger.ONE)) {
-            Iterator<String> iter = monomials.keySet().iterator();
+            Iterator<Signature> iter = monomials.keySet().iterator();
             while (iter.hasNext()) {
-                String sig1 = iter.next();
+                Signature sig1 = iter.next();
                 monomials.get(sig1).divideBy(number);
             } // while iter
         } // != 1
@@ -807,10 +808,10 @@ public class Polynomial implements Cloneable, Serializable {
             System.out.println("not isUniVariate: " + vmap1.toString() + ", size=" + vmap1.size());
             throw new ArithmeticException();
         } else { // univariate
-            Iterator<String> iter = monomials.keySet().iterator();
+            Iterator<Signature> iter = monomials.keySet().iterator();
             BigRational sum = BigRational.ZERO;
             while (iter.hasNext()) {
-                String sig1 = iter.next();
+                Signature sig1 = iter.next();
                 Monomial mono1 = this.get(sig1);
                 BigRational term = new BigRational(mono1.getCoefficient().toString());
                 String vname = mono1.firstName();
@@ -870,11 +871,11 @@ public class Polynomial implements Cloneable, Serializable {
      */
     public VariableMap getVariableMap(String value, boolean upperSubst) {
         VariableMap result = new VariableMap();
-        Iterator <String> titer = monomials.keySet().iterator();
+        Iterator<Signature> titer = monomials.keySet().iterator();
         while (titer.hasNext()) { // over all signatures of these monomials
-            String tsig = titer.next();
-            Monomial monomial = monomials.get(tsig);
-            Iterator <String> viter = monomial.keySet().iterator();
+            Signature tsig = titer.next();
+            Monomial monot = monomials.get(tsig);
+            Iterator<String> viter = monot.keySet().iterator();
             while (viter.hasNext()) { // over all variables in a monomial
                 String varName = viter.next();
                 if (upperSubst || varName.compareTo("a") >= 0) {
@@ -920,11 +921,11 @@ public class Polynomial implements Cloneable, Serializable {
      */
     public RefiningMap getRefiningMap(String value, boolean upperSubst) {
         RefiningMap result = new RefiningMap();
-        Iterator <String> titer = monomials.keySet().iterator();
+        Iterator <Signature> titer = monomials.keySet().iterator();
         while (titer.hasNext()) { // over all signatures of these monomials
-            String tsig = titer.next();
-            Monomial monomial = monomials.get(tsig);
-            Iterator <String> viter = monomial.keySet().iterator();
+            Signature tsig = titer.next();
+            Monomial monot = monomials.get(tsig);
+            Iterator <String> viter = monot.keySet().iterator();
             while (viter.hasNext()) { // over all variables in a monomial
                 String varName = viter.next();
                 if (upperSubst || varName.compareTo("a") >= 0) {
@@ -968,7 +969,7 @@ public class Polynomial implements Cloneable, Serializable {
      */
     public boolean isMonoVariate() {
         boolean result = true;
-        Iterator <String> titer = monomials.keySet().iterator();
+        Iterator <Signature> titer = monomials.keySet().iterator();
         while (result && titer.hasNext()) {
             Monomial mono1 = monomials.get(titer.next());
             result = mono1.size() <= 1;
@@ -991,7 +992,7 @@ public class Polynomial implements Cloneable, Serializable {
      */
     public int degree(boolean upperSubst) {
         int result = 0;
-        Iterator <String> titer = monomials.keySet().iterator();
+        Iterator <Signature> titer = monomials.keySet().iterator();
         if (! isConstant()) {
             result = monomials.get(titer.next()).degree(upperSubst);
         }
@@ -1035,7 +1036,7 @@ public class Polynomial implements Cloneable, Serializable {
      */
     public int maxDegree(String varName) {
         int result = 0;
-        Iterator <String> titer = monomials.keySet().iterator();
+        Iterator <Signature> titer = monomials.keySet().iterator();
         while (titer.hasNext()) {
             int deg1 = monomials.get(titer.next()).getExponent(varName);
             if (deg1 > result) {
@@ -1052,7 +1053,7 @@ public class Polynomial implements Cloneable, Serializable {
      */
     public int maxDegree(boolean upperSubst) {
         int result = 0;
-        Iterator <String> titer = monomials.keySet().iterator();
+        Iterator <Signature> titer = monomials.keySet().iterator();
         while (titer.hasNext()) {
             int degm = monomials.get(titer.next()).degree(upperSubst);
             if (degm > result) {
@@ -1079,7 +1080,7 @@ public class Polynomial implements Cloneable, Serializable {
      */
     public BigInteger gcdCoefficients(boolean all) {
         BigInteger result = BigInteger.ONE;
-        Iterator <String> titer = monomials.keySet().iterator();
+        Iterator <Signature> titer = monomials.keySet().iterator();
         int index = 0;
         while (titer.hasNext()) {
             Monomial monomial = monomials.get(titer.next());
@@ -1119,12 +1120,12 @@ public class Polynomial implements Cloneable, Serializable {
     private Polynomial getVariablePowers(Monomial mono2) {
         Polynomial result = new Polynomial();
         Monomial mono3 = null;
-        Iterator <String> titer = this.monomials.keySet().iterator();
+        Iterator <Signature> titer = this.monomials.keySet().iterator();
         while (titer.hasNext()) { // over all monomials
             mono3 = this.monomials.get(titer.next());
             result.addTo(mono3.getVariablePowers(mono2));
         } // while titer
-        Iterator <String> riter = result.monomials.keySet().iterator();
+        Iterator <Signature> riter = result.monomials.keySet().iterator();
         while (riter.hasNext()) { // over all monomials
             result.monomials.get(riter.next()).setCoefficient(1);
         } // while riter
@@ -1142,11 +1143,11 @@ public class Polynomial implements Cloneable, Serializable {
     public RelationSet groupBy(Monomial mono2) {
         RelationSet result = new RelationSet();
         Polynomial poly3 = this.getVariablePowers(mono2);
-        Iterator <String> piter3 = poly3.monomials.keySet().iterator();
+        Iterator <Signature> piter3 = poly3.monomials.keySet().iterator();
         while (piter3.hasNext()) { // over all combinations of powers of variables
             Monomial mono3 = poly3.monomials.get(piter3.next()); // specific combination - where can it be extracted?
             Polynomial poly4 = new Polynomial();
-            Iterator <String> piter1 = this.monomials.keySet().iterator();
+            Iterator <Signature> piter1 = this.monomials.keySet().iterator();
             while (piter1.hasNext()) { // over all monomials of <em>this</em> Polynomial
                 Monomial mono5 = this.monomials.get(piter1.next()); // current in this Polynomial
                 if (mono5.getVariablePowers(mono2).equals(mono3)) { // mono3 can be extracted
@@ -1171,7 +1172,7 @@ public class Polynomial implements Cloneable, Serializable {
      */
     public Polynomial getRest(BigInteger factor) {
         Polynomial result = new Polynomial();
-        Iterator <String> titer = this.monomials.keySet().iterator();
+        Iterator <Signature> titer = this.monomials.keySet().iterator();
         while (titer.hasNext()) { // over all monomials
             Monomial mono = this.monomials.get(titer.next());
             if (! mono.getCoefficient().mod(factor).equals(BigInteger.ZERO)) { // indivisible
@@ -1191,7 +1192,7 @@ public class Polynomial implements Cloneable, Serializable {
      */
     public RelationSet getPowerFactors(String varName) {
         RelationSet result = new RelationSet();
-        Iterator <String> titer = this.monomials.keySet().iterator();
+        Iterator <Signature> titer = this.monomials.keySet().iterator();
         while (titer.hasNext()) { // over all monomials
             Monomial mono1 = this.monomials.get(titer.next());
             int exp1 = mono1.getExponent(varName);
@@ -1210,9 +1211,9 @@ public class Polynomial implements Cloneable, Serializable {
      */
     public Polynomial getSubPolynomial(String varName) {
         Polynomial result = new Polynomial();
-        Iterator <String> titer = this.monomials.keySet().iterator(); // signatures of Monomials
+        Iterator <Signature> titer = this.monomials.keySet().iterator(); // signatures of Monomials
         while (titer.hasNext()) { // over all monomials
-            String tsig = titer.next();
+            Signature tsig = titer.next();
             Monomial mono = this.monomials.get(tsig);
             if (mono.getExponent(varName) > 0) { // involved
                 result.put(tsig, mono.clone());
@@ -1236,7 +1237,7 @@ public class Polynomial implements Cloneable, Serializable {
      *  side effect: modifies <em>vmap</em>
      */
     public Polynomial reducePowerCoefficients(VariableMap vmap) {
-        Iterator <String> titer = this.monomials.keySet().iterator();
+        Iterator <Signature> titer = this.monomials.keySet().iterator();
         while (titer.hasNext()) { // over all monomials
             Monomial mono1 = this.monomials.get(titer.next());
             if (mono1.isUniVariate()) { // implies not isConstant
@@ -1498,13 +1499,13 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
      *  @return a sorted map whose keys are the {@link Monomial#characteristic} values of the monomials,
      *  and the values are the sub-Polynomials consisting of all monomials with that characteristic value
      */
-    public TreeMap<String, Polynomial> characterize() {
-        TreeMap <String, Polynomial> resultMap = new TreeMap<String, Polynomial>();
-        Iterator <String> titer = this.monomials.keySet().iterator();
+    public TreeMap<Signature, Polynomial> characterize() {
+        TreeMap <Signature, Polynomial> resultMap = new TreeMap<Signature, Polynomial>();
+        Iterator <Signature> titer = this.monomials.keySet().iterator();
         int count = 0;
         while (titer.hasNext()) { // over all monomials
             Monomial mono = this.monomials.get(titer.next());
-            String tchic = mono.characteristic(true, false);
+            Signature tchic = mono.characteristic(true, false);
             Polynomial subPoly = resultMap.get(tchic);
             if (subPoly == null) {
                 subPoly = new Polynomial(mono);
@@ -1553,7 +1554,7 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
         if (divisor.compareTo(BigInteger.ONE) != 0) { // divide by GCD if != 1
             this.divideBy(divisor);
         }
-        Iterator <String> titer = getMonomials().keySet().iterator();
+        Iterator <Signature> titer = getMonomials().keySet().iterator();
         boolean first = true;
         boolean busy  = true;
         while (busy && titer.hasNext()) {
@@ -1635,7 +1636,7 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
      */
     public Monomial[] getHighTerms(String vname) {
         Monomial[] result = new Monomial[]{ null, null }; // [0] = max-1, [1] = max exponent
-        Iterator <String> titer = monomials.keySet().iterator();
+        Iterator <Signature> titer = monomials.keySet().iterator();
         int maxExp = 0; // lowest possible exponent
         boolean univariate = true;
         while (univariate && titer.hasNext()) {
@@ -1655,8 +1656,8 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
         } // while titer
         if (maxExp > 0) {
             String prefix = "/" + vname + ".";
-            result[1] = this.get(prefix + String.format("%02x", maxExp    ));
-            result[0] = this.get(prefix + String.format("%02x", maxExp - 1));
+            result[1] = this.get(new Signature(prefix + String.format("%02x", maxExp    )));
+            result[0] = this.get(new Signature(prefix + String.format("%02x", maxExp - 1)));
         } // not "00"
         if (result[1] == null) {
             result[1] =  new Monomial("0");
@@ -1859,7 +1860,7 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
     public Polynomial derivative(String varx, int order) {
         Polynomial result = new Polynomial(); // 0 = 0
         if (varx != null) {
-            Iterator <String> titer = this.getMonomials().keySet().iterator();
+            Iterator <Signature> titer = this.getMonomials().keySet().iterator();
             while (titer.hasNext()) {
                 Monomial mono1 = monomials.get(titer.next());
                 int exp = mono1.getExponent(varx);
@@ -2035,10 +2036,10 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
                 + "\n"
                 + "; evaluate="         + this.evaluate        (null)
                 );
-        TreeMap<String, Polynomial> characterization = this.characterize();
-        Iterator <String> citer = characterization.keySet().iterator();
+        TreeMap<Signature, Polynomial> characterization = this.characterize();
+        Iterator <Signature> citer = characterization.keySet().iterator();
         while (citer.hasNext()) {
-            String tchic = citer.next();
+            Signature tchic = citer.next();
             System.out.println(tchic + " -> " + characterization.get(tchic));
         } // while citer
     } // printProperties
