@@ -1122,7 +1122,7 @@ public class Polynomial implements Cloneable, Serializable {
     /** Takes the variable names from the parameter {@link Monomial} <em>mono2</em>,
      *  creates an empty {@link RelationSet} and, for all Monomials that
      *  occur as combinations of powers of the selected variables in <em>this</em>
-     *  Polynomial, adds a new {@link Polynomial} to the set which has the
+     *  {@link Polynomial}, adds a new {@link Polynomial} to the set which has the
      *  Monomial as key and the factors of the Monomial as terms.
      *  @param mono2 a multiplication of all desired variables (names with exponent 1 and constant +1)
      *  @return a RelationSet with one Polynomial for each variable combination

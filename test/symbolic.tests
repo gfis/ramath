@@ -408,7 +408,20 @@ TEST SI5 getIsolatedSignature 2*x
 CALL Polynomial -isosig "2*x = (a+b)^2"
 
 TEST SI7 simplify
-CALL RelationSet -simplify "a^2 + b^2 = c^2" "a = m^2 - n^2" "b = 2*m*n" "c = m^2 + n^2"
+DATA
+ a^2 + b^2 = c^2;
+ a = m^2        - n^2;
+ b =     2*m*n;
+ c = m^2        + n^2
+CALL RelationSet -d 1 -f $(DATA) -simplify 
+
+TEST SI8 simplify
+DATA
+ a^2 + b^2 = c^2;
+ a = A11*m^2 + A12*m*n + A13*n^2;
+ b = A21*m^2 + A22*m*n + A23*n^2;
+ c = A31*m^2 + A32*m*n + A33*n^2
+CALL RelationSet -d 1 -f $(DATA) -simplify 
 #----------------
 TEST SL1 rational solution 
 CALL Polynomial -solution "(2*v+3 + 2)^2 + 2 = (2*v + 3)^3" 0

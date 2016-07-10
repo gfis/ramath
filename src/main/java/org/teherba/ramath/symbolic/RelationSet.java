@@ -68,7 +68,7 @@ public class RelationSet
     public final static String CVSID = "@(#) $Id: RelationSet.java 970 2012-10-25 16:49:32Z  $";
 
     /** Debugging switch */
-    private int debug = 0;
+    public int debug = 0;
 
     //==================
     // Construction
@@ -907,28 +907,37 @@ evaluate: unknown
         Iterator<String> viter = null;
         ExpressionReader ereader = new ExpressionReader();
         String[] exprs = null;
+        int debug = 0;
 
-        if (true) { // for same indentation as in Polynomial
-            if (false) {
-            } else if (args.length == 0) {
-                rset1 = RelationSet.parse("a²+b^2=c^2, a<b, b<c");
-                System.out.println(rset1.toString());
-                System.out.println("evaluate: " + rset1.evaluate(null));
-                VariableMap varMap = rset1.getVariableMap();
-                varMap.put("a", "3*a_2");
-                varMap.put("b", "4*b_2");
-                varMap.put("c", "5*c_2");
-                rset2 = rset1.substitute(varMap);
-                System.out.println(rset2.toString(1));
+        if (false) {
+        } else if (args.length == 0) {
+            rset1 = RelationSet.parse("a²+b^2=c^2, a<b, b<c");
+            System.out.println(rset1.toString());
+            System.out.println("evaluate: " + rset1.evaluate(null));
+            VariableMap varMap = rset1.getVariableMap();
+            varMap.put("a", "3*a_2");
+            varMap.put("b", "4*b_2");
+            varMap.put("c", "5*c_2");
+            rset2 = rset1.substitute(varMap);
+            System.out.println(rset2.toString(1));
 
-            } else if (args.length == 1 && ! args[0].startsWith("-")) {
-                rset1 = RelationSet.parse(args[iarg ++]);
-                System.out.println(rset1.toString(1));
-                System.out.println("evaluate: " + rset1.evaluate(null));
+        } else if (args.length == 1 && ! args[0].startsWith("-")) {
+            rset1 = RelationSet.parse(args[iarg ++]);
+            System.out.println(rset1.toString(1));
+            System.out.println("evaluate: " + rset1.evaluate(null));
 
-            } else if (args.length >= 2) {
+        } else if (args.length >= 2) {
+            while (iarg < args.length) { // consume all arguments
                 String opt = args[iarg ++];
                 if (false) {
+
+                } else if (opt.equals    ("-d")     ) {
+                    debug = 1;
+                    try {
+                        debug = Integer.parseInt(args[iarg ++]);
+                    } catch (Exception exc) {
+                    }
+                    // -d
 
                 } else if (opt.startsWith("-depend")) {
                     rset1 = RelationSet.parse(args[iarg ++]);
@@ -958,13 +967,6 @@ evaluate: unknown
                     }
                     // -derive
 
-                } else if (opt.equals    ("-f")     ) {
-                    String fileName = args[1];
-                    rset1 = RelationSet.parse((new ExpressionReader()).read(fileName));
-                    System.out.println(rset1.toString(1));
-                    System.out.println("evaluate: " + rset1.evaluate(null));
-                    // -f
-
                 } else if (opt.equals    ("-equals")     ) {
                     rset1 = RelationSet.parse(args[iarg ++]);
                     rset2 = RelationSet.parse(args[iarg ++]);
@@ -977,6 +979,16 @@ evaluate: unknown
                             );
                     // -equals
 
+                } else if (opt.equals    ("-evaluate")   ) {
+                    System.out.println(rset1.toString(1));
+                    System.out.println("evaluate: " + rset1.evaluate(null));
+                    // -evaluate
+
+                } else if (opt.equals    ("-f")     ) {
+                    String fileName = args[iarg ++];
+                    rset1 = RelationSet.parse((new ExpressionReader()).read(fileName));
+                    // -f
+
                 } else if (opt.startsWith("-rest")  ) {
                     String factor = args[iarg ++];
                     rset1 = RelationSet.parse(args[iarg ++]);
@@ -985,11 +997,23 @@ evaluate: unknown
                     // -rest
 
                 } else if (opt.startsWith("-simplify") ) { // expr1, expr2, ... 
-                    exprs = ereader.getArguments(iarg, args);
-                    rset1 = new RelationSet(exprs);
+                    if (rset1.size() == 0) {
+                        exprs = ereader.getArguments(iarg, args);
+                        rset1 = new RelationSet(exprs);
+                    }
                     System.out.println(rset1.toString());
-                    rset1.simplify();                    
-                    System.out.println("simplified: " + rset1.toString());
+                    rset1.debug = debug;
+                    rset1.simplify();  
+                    if (rset1.size() > 1) {                  
+                        System.out.println("simplified: " + rset1.toString());
+                    } else {
+                        System.out.print  ("simplified and grouped: ");
+                        Polynomial poly1  = rset1.get(0);
+                        vmap1             = poly1.getVariableMap("1", false);
+                        Monomial monog    = new Monomial(vmap1.getNameArray());
+                        System.out.println(poly1.groupBy(monog).toList(false));
+                        
+                    }
                     // -simplify
 
                 } else if (opt.startsWith("-subst") ) { // expr1, expr2, ... rset
@@ -1010,8 +1034,8 @@ evaluate: unknown
                 } else {
                     System.err.println("??? invalid option: \"" + opt + "\"");
                 }
-            } // if (true) - indentation
-        } // with args
+            } // while args
+        } // with >= 2 args
     } // main
 
 } // RelationSet

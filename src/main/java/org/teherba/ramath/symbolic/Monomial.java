@@ -116,7 +116,7 @@ public class Monomial implements Cloneable, Serializable {
     } // Constructor(bint, name, exponent)
 
     /** Constructor with a single name only.
-     *  @param name variable name or integer constant
+     *  @param name variable name with exponent 1 or an integer constant
      */
     public Monomial(String name) {
         this(name, 1);
@@ -124,7 +124,7 @@ public class Monomial implements Cloneable, Serializable {
 
     /** Constructor with variable names
      *  @param names variable names; the monomial is the product of
-     *  these variables with coeeficient +1
+     *  these variables with coefficient +1 and exponents 1
      */
     public Monomial(String[] names) {
         setCoefficient(1);
