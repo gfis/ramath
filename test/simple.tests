@@ -423,6 +423,11 @@ DATA
  - (40 + 2*m^2        )^3
 CALL ParameterEquation -shift -f $(DATA) 			-l  -8 -w 1 -e 3 -t Dutch.X11.back
 
+TEST X20 - Pythagoras
+DATA
+  a^2 + b^2 - c^2
+CALL ParameterEquation -expand -f $(DATA) 			-l  -4 -w 3 -e 2 -t Pythagoras.X20
+
 #-----------------------------------------
 TEST Y01 - different Pythagoras formulas
 DATA

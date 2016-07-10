@@ -30,10 +30,16 @@ import  java.text.SimpleDateFormat;
 import  java.util.Date;
 import  java.util.Iterator;
 
-/** Generates program code for exhaustion of matrices and formulas.
+/** Generates program code for exhaustion of matrices and formulas
+ *  at a high speed.
  *  The generated programs have minimal indenting or commenting 
  *  and they are meant to be compiled and executed 
  *  at once without further editing or parametrization.
+ *  Currently code for the following programming languages can
+ *  be generated:
+ *  <ul>
+ *  <li>C - as developed by Dennis Ritchie between 1969 and 1973 at Bell Labs<li>
+ +  </ul>
  *  
  *  @author Dr. Georg Fischer
  */
@@ -107,8 +113,15 @@ public class ProgramGenerator {
     
     /** Generate a program header with the declartion of matrix elements
      *  @param width size of the matrix to be declared
+     *  @param features list of code words for various features in the header:
+     *  <ul>
+     *  <li>gcd    - with <em>gcdi</em> functions</li>
+     *  <li>square - with <em>squares</em> constant array</li>
+     *  <li>cube   - with <em>cubes</em>   constant array</li>
+     *  </ul>
      */
-    private void programHeader(int width) {
+    private void programHeader(int width, String features) {
+        String sep = "";
         if (false) {
         } else if (lang.equals("C"   )) {
             o.println("/* Do   N O T   edit here! */");
@@ -117,30 +130,52 @@ public class ProgramGenerator {
             o.println("#include <stdio.h>");
             o.println("#include <stdlib.h>");
             o.println("int main(int argc, char *argv[]) {");
-            o.println("int gcd2(int a, int b) {                              ");
-            o.println("        int result = abs(a);                          ");
-            o.println("        if (result > 1) {                             ");
-            o.println("            int p = result; int q = abs(b);           ");
-            o.println("            while (q != 0) {                          ");
-            o.println("                int temp = q; q = p % q; p = temp;    ");
-            o.println("            } /* while */                             ");
-            o.println("            result = p;                               ");
-            o.println("        } /* > 1 */                                   ");
-            o.println("        if (result == 0) result = 1;                  ");
-            o.println("        return abs(result);                           ");
-            o.println("    } /* gcd2 */                                      ");
-            o.println("int gcd3(int a, int b, int c) {                       ");
-            o.println("        return gcd2(a, gcd2(b, c));                   ");
-            o.println("    } /* gcd3 */                                      ");
-            o.println("int gcd4(int a, int b, int c, int d) {                ");
-            o.println("        return gcd2(a, gcd3(b, c, d));                ");
-            o.println("    } /* gcd4 */                                      ");
-            o.println("int gcd5(int a, int b, int c, int d, int e) {         ");
-            o.println("        return gcd2(a, gcd4(b, c, d, e));             ");
-            o.println("    } /* gcd5 */                                      ");
+            
+            if (features.indexOf("gcd") >= 0) {
+                o.println("int gcd2(int a, int b) {                              ");
+                o.println("        int result = abs(a);                          ");
+                o.println("        if (result > 1) {                             ");
+                o.println("            int p = result; int q = abs(b);           ");
+                o.println("            while (q != 0) {                          ");
+                o.println("                int temp = q; q = p % q; p = temp;    ");
+                o.println("            } /* while */                             ");
+                o.println("            result = p;                               ");
+                o.println("        } /* > 1 */                                   ");
+                o.println("        if (result == 0) result = 1;                  ");
+                o.println("        return abs(result);                           ");
+                o.println("    } /* gcd2 */                                      ");
+                o.println("int gcd3(int a, int b, int c) {                       ");
+                o.println("        return gcd2(a, gcd2(b, c));                   ");
+                o.println("    } /* gcd3 */                                      ");
+                o.println("int gcd4(int a, int b, int c, int d) {                ");
+                o.println("        return gcd2(a, gcd3(b, c, d));                ");
+                o.println("    } /* gcd4 */                                      ");
+                o.println("int gcd5(int a, int b, int c, int d, int e) {         ");
+                o.println("        return gcd2(a, gcd4(b, c, d, e));             ");
+                o.println("    } /* gcd5 */                                      ");
+            } // feature gcd
+            
+            if (features.indexOf("square") >= 0) {
+                int maxRoot   = 8;
+                int maxSquare = maxRoot * maxRoot + 1;
+                o.println("#define MAX_SQUARE = " + String.valueOf(maxSquare));
+                sep = " = { ";
+                o.print  ("int squares[]");
+                for (int isq = 0; isq <  maxSquare; isq ++) {
+                    o.print(sep + "0");
+                    sep = ",";
+                    if (isq % maxRoot == 0) {
+                        o.println(" /* " + String.valueOf(isq) + " */");
+                    }
+                } // for isq 1
+                o.println("};");
+                for (int isq = 0; isq <= maxRoot; isq ++) {
+                    o.println("squares[" + String.valueOf(isq * isq) + "] = " + String.valueOf(isq) + ";");
+                } // for isq 2
+            } // feature square
 
             // now print the variable declarations for the matrix elements
-            String sep = "int ";
+            sep = "int ";
             for (int irow = 1; irow <= width; irow ++) {
                 for (int icol = 1; icol <= width; icol ++) {
                     o.print(sep + "m" + String.valueOf(irow) + String.valueOf(icol));
@@ -267,7 +302,7 @@ public class ProgramGenerator {
      */
     public void m2opts(PolyVector vectg, PolyVector vectc, Polynomial poly0) {
         width = vectg.size();
-        programHeader(width);
+        programHeader(width, "gcd");
         PolyMatrix  pmat1 = new PolyMatrix(width, "m");
         PolyVector  vectm = pmat1.multiply(vectg);
         VariableMap vmap0 = poly0.getVariableMap();
@@ -374,7 +409,7 @@ public class ProgramGenerator {
     /** Generate 3x3 matrixes for composition triples
      */
     public void m2pyth() {
-        programHeader(width);
+        programHeader(width, "square");
         o.println("int a=3; int b=4; int c=5;");
         for (int irow = 1; irow <= width; irow ++) {
             forRow(irow);

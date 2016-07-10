@@ -36,9 +36,11 @@ package org.teherba.common;
 import  org.teherba.common.CommandTokenizer;
 import  org.teherba.common.ReplacingPrintStream;
 import  org.teherba.common.URIReader;
+import  java.io.BufferedOutputStream;
 import  java.io.BufferedReader;
 import  java.io.File;
 import  java.io.FileInputStream;
+import  java.io.FileOutputStream;
 import  java.io.InputStreamReader;
 import  java.io.PrintStream;
 import  java.io.PrintWriter;
@@ -274,7 +276,7 @@ public class RegressionTester {
      *  @param thisName name of file to be unzipped
      *  @param enc target encoding
      */
-    public void unzipFile(String thisName, String enc) {
+    public void unzipFile(String thisName,  String enc) {
         try {
             String cmd = "unzip -p " + thisName;
             String logText = cmd;
@@ -310,7 +312,25 @@ public class RegressionTester {
                 log.error(exc.getMessage(), exc2);
             }
         } // try
-    } // unzipFile
+    } // unzipFile(2)
+
+    /** Unzips a file in place
+     *  @param thisName name of file to be unzipped
+     *  @param thisStream replacing PrintStream which writes to File <em>thisName</em>
+     *  @param enc target encoding
+     */
+    public void unzipFile(String thisName, PrintStream thisStream, String enc) {
+        try {
+            BufferedReader reader = (new URIReader()).unzipStream(new FileInputStream(thisName));
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                thisStream.println(line);
+            } // while readLine
+            reader.close();
+        } catch (Exception exc) {
+            log.error(exc.getMessage(), exc);
+        } // try
+    } // unzipFile(3)
 
     //************************
     // Workhorse method
@@ -566,17 +586,27 @@ public class RegressionTester {
                         } else if (skipping) {
                             // ignore all verbs except "TEST"
 
-                        } else if (verb.startsWith("CALL")) { // ro "CALLZ"
+                        } else if (verb.startsWith("CALL")) { // or "CALLZ"
                             Matcher callMatcher = callPattern.matcher(rest);
                             if (callMatcher.matches()) {
                                 String className = classPrefix + callMatcher.group(1);
                                 String argsStr   = argsPrefix  + callMatcher.group(2);
                                 String[] parts   = CommandTokenizer.split(argsStr);
-                                logText = "java -cp " + System.getProperty("java.class.path") + " " + className + " " + argsStr;
+                                logText = "java -cp " + System.getProperty("java.class.path") 
+                                        + " " + className + " " + argsStr
+                                        + (verb.endsWith("Z") ? " | unzip -p" : "");
                                 realStdOut.println(logText);
                                 targetClass = Class.forName(className); //, true, RegressionTester.class.getClassLoader());
                                 mainMethod = targetClass.getMethod("main", String[].class);
-                                mainMethod.invoke(null, (Object) parts);
+                                if (verb.endsWith("Z")) {
+                                    PrintStream pfos = new PrintStream(new FileOutputStream(thisName));
+                                    System.setOut(pfos);
+                                    mainMethod.invoke(null, (Object) parts);
+                                    pfos.close();
+                                    unzipFile(thisName, thisStream, logEncoding);
+                                } else {
+                                    mainMethod.invoke(null, (Object) parts);
+                                }
                             } else {
                                 System.err.println("CALL verb syntax error: " + testLine);
                             }
@@ -610,7 +640,8 @@ public class RegressionTester {
                                     .replaceAll("\\s+", "&")
                                     .replaceAll("\\+", " ")
                                     );
-                            logText = "http \"" + requestURL + "\"";
+                            logText = "wget \"" + requestURL + "\""
+                                        + (verb.endsWith("Z") ? " | unzip -p" : "");
                             realStdOut.println(logText);
                             URIReader urlReader = new URIReader(requestURL
                                     , (verb.endsWith("Z") ? "zip" : "UTF-8")

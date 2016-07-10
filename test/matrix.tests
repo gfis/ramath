@@ -1,5 +1,6 @@
-# Collection of Testcases for Ramath
+# Collection of Testcases for ramath
 # @(#) $Id: matrix.tests 955 2012-06-05 07:22:59Z gfis $
+# 2016-07-10: MatrixExhauster tests take too long
 # 2015-03-23, Dr. Georg Fischer: extracted from siomple.tests
 #-----------------------------------
 # Caution:
@@ -9,101 +10,6 @@ URL=http://localhost:8080/ramath/servlet
 ARGS=
 #======================================================================
 PACKAGE=org.teherba.ramath
-
-# ProgramGenerator
-
-TEST PG01 m2pyth
-CALL ProgramGenerator -w 3 -l 3 -n m2pyth
-MAKE progen
-
-TEST PG02 m2comp
-CALL ProgramGenerator -w 3 -l 3 -v "[a^2+b^2,2*a*b,a^2-b^2]"                       -v "[5,3,4]"      -n \
-                                -p "p^2 = q^2 + r^2" m2opts 
-MAKE progen
-
-# (a^2 + b^2)^3 = (a^3 - 3*a*b^2)^2 + (3*a^2*b - b^3)^2
-TEST PG03 m2opts
-CALL ProgramGenerator -w 3 -l 5 -v "[a^2 + b^2, (a^3 - 3*a*b^2), (3*a^2*b - b^3)]" -v "[5, 2, 11]"   \
-                                -p "p^3 = q^2 + r^2" m2opts
-MAKE progen
-
-TEST PG13 m2opts
-CALL ProgramGenerator -w 3 -l 5 -v "[a^2 + b^2, (a^3 - 3*a*b^2), (3*a^2*b - b^3)]" -v "[13,9,46]"    -n \
-                                -p "p^3 = q^2 + r^2" m2opts
-MAKE progen
-
-# (a^2 + b^2)^4 = (a^4 - 6*a^2*b^2 + b^4)^2 + (4*a^3*b - 4*a*b^3)^2
-TEST PG04 m2opts
-CALL ProgramGenerator -w 3 -l 4 -v "[a^2+b^2,a^4-6*a^2*b^2+b^4,4*a^3*b-4*a*b^3]"   -v "[5,7,24]"     -n \
-                                -p "p^4 = q^2 + r^2" m2opts 
-MAKE progen
-
-TEST PG14 m2opts
-CALL ProgramGenerator -w 3 -l 6 -v "[a^2+b^2,a^4-6*a^2*b^2+b^4,4*a^3*b-4*a*b^3]"   -v "[5,7,24]"     -n \
-                                -p "p^4 = q^2 + r^2" m2opts 
-MAKE progen
-
-TEST PG24 m2opts
-CALL ProgramGenerator -w 3 -l 4 -v "[a^2+b^2,a^4-6*a^2*b^2+b^4,4*a^3*b-4*a*b^3]"   -v "[13,119,120]" -n \
-                                -p "p^4 = q^2 + r^2" m2opts 
-MAKE progen
-
-# MatrixExhauster
-#-----------
-# Pythagoras
-
-TEST MX01 m2 Barning's, Price's and Barning's flipped
-CALL MatrixExhauster m2 -l 4
-
-TEST MX02 m2 6
-CALL MatrixExhauster m2 -l 6
-
-# TEST MX03 m2 10
-# CALL MatrixExhauster m2 -l 10
-
-TEST MX04 m3 4
-CALL MatrixExhauster m3 -l 3
-
-TEST MX05 v2 6
-CALL MatrixExhauster v2 -l 6
-
-TEST MX06 v2 9
-CALL MatrixExhauster v2 -l 9
-
-TEST MX07 m2comp 2
-# from AM02
-CALL MatrixExhauster m2comp -l 3 -p "(a11*u^2+a13*u^2+2*a12*u*v-a11*v^2+a13*v^2)^2 + (a21*u^2+a23*u^2+2*a22*u*v-a21*v^2+a23*v^2)^2 = (a31*u^2+a33*u^2+2*a32*u*v-a31*v^2+a33*v^2)^2"
-
-TEST MX08 m2comp 3
-# from AM03
-CALL MatrixExhauster m2comp -l 8 -p "(a13*u^2+a11*u^3+3*a12*u^2*v+a13*v^2-3*a11*u*v^2-a12*v^3)^2 + (a23*u^2+a21*u^3+3*a22*u^2*v+a23*v^2-3*a21*u*v^2-a22*v^3)^2 = (a33*u^2+a31*u^3+3*a32*u^2*v+a33*v^2-3*a31*u*v^2-a32*v^3)^3"
-
-TEST MX09 m2comp 4
-# from AM04
-CALL MatrixExhauster m2comp -l 8 -p "(a13*u^2+a11*u^4+4*a12*u^3*v+a13*v^2-6*a11*u^2*v^2-4*a12*u*v^3+a11*v^4)^2 + (a23*u^2+a21*u^4+4*a22*u^3*v+a23*v^2-6*a21*u^2*v^2-4*a22*u*v^3+a21*v^4)^2 = (a33*u^2+a31*u^4+4*a32*u^3*v+a33*v^2-6*a31*u^2*v^2-4*a32*u*v^3+a31*v^4)^4"
-
-TEST EC20 
-CALL MatrixExhauster ec221 -l 4 -v [1,0,1]
-TEST EC21 
-CALL MatrixExhauster ec221 -l 4 -v [3,4,5]
-TEST EC22 
-CALL MatrixExhauster ec221 -l 8 -v [3,4,5]
-TEST EC22P perms
-CALL linear.MatrixTester -perms test/EC22.this.tst
-
-
-TEST EC30 
-CALL MatrixExhauster ec331 -l 3 -v [1,0,0,1]
-TEST EC31 
-CALL MatrixExhauster ec331 -l 3 -v [3,4,5,6]
-TEST EC32 
-CALL MatrixExhauster ec331 -l 4 -v [3,4,5,6]
-TEST EC33            ec340 -l 2
-CALL MatrixExhauster ec340 -l 2 -v [6,-3,-4,-5]
-TEST EC33P perms
-CALL linear.MatrixTester -perms test/EC33.this.tst
-TEST EC34P perms
-CALL linear.MatrixTester -perms test/EC34.this.tst
 
 TEST CH01 
 CALL linear.MatrixTester -chain [[0,-2,1,-2],[-2,0,-2,1],[2,1,2,0],[-2,-1,-1,1]] [6,-3,-4,-5] 4 0
@@ -144,6 +50,112 @@ CALL symbolic.PolyMatrix -mult [[a11,a12,a13],[a21,a22,a23],[a31,a32,a33]] [u^3-
 
 TEST AM04 multiply abstract Composition^4
 CALL symbolic.PolyMatrix -mult [[a11,a12,a13],[a21,a22,a23],[a31,a32,a33]] [u^4-6*u^2*v^2+v^4],[4*u^3*v-4*u*v^3],[u^2+v^2]
+
+TEST EC34S symmetrical
+DATA
+[[3,1,-1,2],[-2,0,1,-2],[-2,-1,1,-1],[2,1,0,2]],det=1 [6,-3,-4,-5], chain 8 => [9,-6,-8,-1] => [27,-24,-19,10] => [96,-93,-59,50] => [354,-351,-208,199] => [1317,-1314,-764,755] => [4911,-4908,-2839,2830] => [18324,-18321,-10583,10574] => [68382,-68379,-39484,39475]
+[[3,1,-1,2],[-2,0,1,-2],[1,2,2,0],[-1,-2,-1,1]],det=1 [6,-3,-4,-5], chain 8 => [9,-6,-8,-1] => [27,-24,-19,10] => [96,-93,-59,50] => [354,-351,-208,199] => [1317,-1314,-764,755] => [4911,-4908,-2839,2830] => [18324,-18321,-10583,10574] => [68382,-68379,-39484,39475]
+CALL linear.MatrixTester -perms $(DATA)
+#--------
+TEST FL01 -follow
+CALL linear.MatrixTester -follow -mf find_seq.man -vf data/prewrob3.sub
+
+TEST FL02 -follow inverse matrix
+CALL linear.MatrixTester -follow -mf data/inverse.man -vf data/prewrob3.sub
+
+TEST FL03 prepare determinants +/-1 and their inverses
+CALL linear.MatrixTester -inv -mf data/det1.grep
+
+TEST FL04 -follow with determinants +/-1 
+CALL linear.MatrixTester -follow -mf test/FL03.this.tst -vf data/prewrob3.sub
+
+TEST FL05 -follow =FL01+FL04
+CALL linear.MatrixTester -follow -mf find_seq.man -mf test/FL03.this.tst -vf data/prewrob3.sub
+#--------
+TEST FS01 generate find_seq.man
+CALL linear.MatrixTester -gen -mf find_seq.man [6,-3,-4,-5] 
+# many
+
+TEST FS02 generate find_seq.man
+CALL linear.MatrixTester -gen -mf find_seq.man [16,2,-9,-15] 
+# few
+
+TEST FS03 generate find_seq.man
+CALL linear.MatrixTester -gen -mf find_seq.man [19,-3,-10,-18] 
+# none
+
+TEST FS04 generate find_seq.man
+CALL linear.MatrixTester -gen -mf find_seq.man [34,2,-15,-33] 
+# none
+#--------
+
+PACKAGE=org.teherba.ramath.symbolic
+
+TEST EC34D det=0
+CALL PolyMatrix -abst [[0,-2,-2,1],[1,3,2,-1],[-2,-1,1,-1],[-1,-2,-1,1]]
+
+TEST EC34E det=1
+CALL PolyMatrix -abst [[3,1,-1,2],[-2,0,1,-2],[-2,-1,1,-1],[2,1,0,2]]
+
+#=================================
+EXIT
+
+# MatrixExhauster
+#-----------
+# Pythagoras
+
+TEST MX01 m2 Barning's, Price's and Barning's flipped
+CALL MatrixExhauster m2 -l 4
+
+TEST MX02 m2 6
+CALL MatrixExhauster m2 -l 6
+
+# TEST MX03 m2 10
+# CALL MatrixExhauster m2 -l 10
+
+TEST MX04 m3 4
+CALL MatrixExhauster m3 -l 3
+
+TEST MX05 v2 6
+CALL MatrixExhauster v2 -l 6
+
+TEST MX06 v2 9
+CALL MatrixExhauster v2 -l 9
+
+# TEST MX07 m2comp 2
+# # from AM02
+# CALL MatrixExhauster m2comp -l 3 -p "(a11*u^2+a13*u^2+2*a12*u*v-a11*v^2+a13*v^2)^2 + (a21*u^2+a23*u^2+2*a22*u*v-a21*v^2+a23*v^2)^2 = (a31*u^2+a33*u^2+2*a32*u*v-a31*v^2+a33*v^2)^2"
+# 
+# TEST MX08 m2comp 3
+# # from AM03
+# CALL MatrixExhauster m2comp -l 8 -p "(a13*u^2+a11*u^3+3*a12*u^2*v+a13*v^2-3*a11*u*v^2-a12*v^3)^2 + (a23*u^2+a21*u^3+3*a22*u^2*v+a23*v^2-3*a21*u*v^2-a22*v^3)^2 = (a33*u^2+a31*u^3+3*a32*u^2*v+a33*v^2-3*a31*u*v^2-a32*v^3)^3"
+# 
+# TEST MX09 m2comp 4
+# # from AM04
+# CALL MatrixExhauster m2comp -l 8 -p "(a13*u^2+a11*u^4+4*a12*u^3*v+a13*v^2-6*a11*u^2*v^2-4*a12*u*v^3+a11*v^4)^2 + (a23*u^2+a21*u^4+4*a22*u^3*v+a23*v^2-6*a21*u^2*v^2-4*a22*u*v^3+a21*v^4)^2 = (a33*u^2+a31*u^4+4*a32*u^3*v+a33*v^2-6*a31*u^2*v^2-4*a32*u*v^3+a31*v^4)^4"
+
+TEST EC20 
+CALL MatrixExhauster ec221 -l 4 -v [1,0,1]
+TEST EC21 
+CALL MatrixExhauster ec221 -l 4 -v [3,4,5]
+TEST EC22 
+CALL MatrixExhauster ec221 -l 8 -v [3,4,5]
+TEST EC22P perms
+CALL linear.MatrixTester -perms test/EC22.this.tst
+
+TEST EC30 
+CALL MatrixExhauster ec331 -l 2 -v [1,0,0,1]
+TEST EC31 
+CALL MatrixExhauster ec331 -l 3 -v [3,4,5,6]
+TEST EC32 
+CALL MatrixExhauster ec331 -l 4 -v [3,4,5,6]
+
+TEST EC33            ec340 -l 2
+CALL MatrixExhauster ec340 -l 2 -v [6,-3,-4,-5]
+TEST EC33P perms
+CALL linear.MatrixTester -perms test/EC33.this.tst
+TEST EC34P perms
+CALL linear.MatrixTester -perms test/EC34.this.tst
 
 TEST EC33M 
 CALL MatrixExhauster ec340 -l 2 -v [6,-5,-3,-4]
@@ -231,51 +243,7 @@ CALL MatrixExhauster ec340 -l 3 -v [6,-3,-4,-5]
 # [[3,1,2,-1],[1,3,-1,2],[2,1,2,0],[-2,-1,-1,1]],det=4 [6,-3,-4,-5], chain 8 => [12,-9,1,-10] => [39,-36,17,-26] => [141,-138,76,-85] => [522,-519,296,-305] => [1944,-1941,1117,-1126] => [7251,-7248,4181,-4190] => [27057,-27054,15616,-15625] => [100974,-100971,58292,-58301]
 # [[3,1,2,-1],[1,3,-1,2],[2,1,2,0],[1,2,0,2]],det=5 [6,-3,-4,-5], chain 8 => [12,-9,1,-10] => [39,-36,17,-26] => [141,-138,76,-85] => [522,-519,296,-305] => [1944,-1941,1117,-1126] => [7251,-7248,4181,-4190] => [27057,-27054,15616,-15625] => [100974,-100971,58292,-58301]
 # elapsed time: 73 s
-# 
-TEST EC34S symmetrical
-DATA
-[[3,1,-1,2],[-2,0,1,-2],[-2,-1,1,-1],[2,1,0,2]],det=1 [6,-3,-4,-5], chain 8 => [9,-6,-8,-1] => [27,-24,-19,10] => [96,-93,-59,50] => [354,-351,-208,199] => [1317,-1314,-764,755] => [4911,-4908,-2839,2830] => [18324,-18321,-10583,10574] => [68382,-68379,-39484,39475]
-[[3,1,-1,2],[-2,0,1,-2],[1,2,2,0],[-1,-2,-1,1]],det=1 [6,-3,-4,-5], chain 8 => [9,-6,-8,-1] => [27,-24,-19,10] => [96,-93,-59,50] => [354,-351,-208,199] => [1317,-1314,-764,755] => [4911,-4908,-2839,2830] => [18324,-18321,-10583,10574] => [68382,-68379,-39484,39475]
-CALL linear.MatrixTester -perms $(DATA)
-#--------
-TEST FL01 -follow
-CALL linear.MatrixTester -follow -mf find_seq.man -vf data/prewrob3.sub
-
-TEST FL02 -follow inverse matrix
-CALL linear.MatrixTester -follow -mf data/inverse.man -vf data/prewrob3.sub
-
-TEST FL03 prepare determinants +/-1 and their inverses
-CALL linear.MatrixTester -inv -mf data/det1.grep
-
-TEST FL04 -follow with determinants +/-1 
-CALL linear.MatrixTester -follow -mf test/FL03.this.tst -vf data/prewrob3.sub
-
-TEST FL05 -follow =FL01+FL04
-CALL linear.MatrixTester -follow -mf find_seq.man -mf test/FL03.this.tst -vf data/prewrob3.sub
-#--------
-TEST FS01 generate find_seq.man
-CALL linear.MatrixTester -gen -mf find_seq.man [6,-3,-4,-5] 
-# many
-
-TEST FS02 generate find_seq.man
-CALL linear.MatrixTester -gen -mf find_seq.man [16,2,-9,-15] 
-# few
-
-TEST FS03 generate find_seq.man
-CALL linear.MatrixTester -gen -mf find_seq.man [19,-3,-10,-18] 
-# none
-
-TEST FS04 generate find_seq.man
-CALL linear.MatrixTester -gen -mf find_seq.man [34,2,-15,-33] 
-# none
-#--------
-
-PACKAGE=org.teherba.ramath.symbolic
-TEST EC34D det=0
-CALL PolyMatrix -abst [[0,-2,-2,1],[1,3,2,-1],[-2,-1,1,-1],[-1,-2,-1,1]]
-TEST EC34E det=1
-CALL PolyMatrix -abst [[3,1,-1,2],[-2,0,1,-2],[-2,-1,1,-1],[2,1,0,2]]
-
+# ----------------------
 PACKAGE=org.teherba.ramath
 
 TEST EC35            ec340 -l 4

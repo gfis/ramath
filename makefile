@@ -2,6 +2,7 @@
 
 # test Ramath functions
 # @(#) $Id: makefile 741 2011-07-23 12:30:09Z  $
+# 2016-07-10: jfind also in $(SRC)/../common
 # 2015-06-01: all -> symbolic
 # 2015-04-06: java -X... 
 # 2013-02-27: RegressionTester
@@ -89,7 +90,7 @@ push:
 	find $(SRC)/../common -iname "*.java" -mtime -1 -type f \
 	| xargs -l -i{} cp -v {} ../dbat/src/main/java/org/teherba/common
 jfind:
-	find $(SRC) -iname "*.java" | xargs -l grep -iH $(JF)
+	find $(SRC)/.. -iname "*.java" | xargs -l grep -iH $(JF)
 #----------
 	
 # 1234567890123456789

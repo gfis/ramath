@@ -111,11 +111,10 @@ if (q1 < r1) /* ascending */ {
 if (m11 != m12 || m21 != m22 || m31 != m32) /* col 1 != col 2 */  {
 if (m11 != m13 || m21 != m23 || m31 != m33) /* col 1 != col 3 */  {
 if (m12 != m13 || m22 != m23 || m32 != m33) /* col 2 != col 3 */  {
-if (p1*p1*p1-q1*q1-r1*r1 == 0) /* main condition */ {
+if (p1 != p || q1 != q || r1 != r) /* not same tuple */ {
+if (p1*p1*p1-q1*q1-r1*r1 == 0) /* chain 1 condition */ {
 int gcdnp = gcd3(p1,q1,r1);
-if (gcdnp == 1)
- {
-    /* printf("	non-primitive/%d", gcdnp); */
+if (gcdnp == 1) {
 printf("[");
 printf("[%d,%d,%d]",m11,m12,m13);
 printf(",");
@@ -124,8 +123,14 @@ printf(",");
 printf("[%d,%d,%d]",m31,m32,m33);
 printf("]");
 printf("\tpreserves\t[%d,%d,%d]",p1,q1,r1);
+int p2 = m11*p1 + m12*q1 + m13*r1;
+int q2 = m21*p1 + m22*q1 + m23*r1;
+int r2 = m31*p1 + m32*q1 + m33*r1;
+if (p2*p2*p2 == q2*q2 + r2*r2) {
+    printf("\tchain2");
+}
 printf("\n");
-}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
 } /* main */
 gcc -o test/progen.exe test/progen.c
 test/progen.exe
@@ -137,10 +142,6 @@ test/progen.exe
 [[-5,4,1],[-2,3,1],[-1,-3,2]]	preserves	[17,47,52]
 [[-4,-5,3],[-1,4,2],[-3,5,5]]	preserves	[41,115,236]
 [[-4,-5,3],[1,-4,3],[-3,5,5]]	preserves	[41,115,236]
-[[-4,-3,2],[-5,-2,2],[-5,-3,3]]	preserves	[13,9,46]
-[[-4,-3,2],[-5,-2,2],[5,3,-1]]	preserves	[13,9,46]
-[[-4,-3,2],[5,4,-2],[-5,-3,3]]	preserves	[13,9,46]
-[[-4,-3,2],[5,4,-2],[5,3,-1]]	preserves	[13,9,46]
 [[-3,-4,2],[-2,3,1],[-3,5,1]]	preserves	[17,47,52]
 [[-3,-4,2],[-2,3,1],[-1,-3,2]]	preserves	[17,47,52]
 [[-3,2,1],[-3,-1,2],[-3,2,3]]	preserves	[25,44,117]
@@ -166,5 +167,5 @@ test/progen.exe
 [[5,2,-1],[4,1,1],[-1,3,4]]	preserves	[37,107,198]
 [[5,2,-1],[4,1,1],[1,-5,5]]	preserves	[37,107,198]
 ls -tclr test/*.this.tst | tail -n 1 | sed -e "s/  */ /g" | cut -d" " -f 9 | xargs -l wc
- 168  931 6910 test/PG13.this.tst
+ 169  966 6886 test/PG13.this.tst
 make[1]: Leaving directory '/cygdrive/c/Users/gfis/work/gits/ramath'

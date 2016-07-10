@@ -5,27 +5,26 @@ cat test/progen.c
 #include <stdio.h>
 #include <stdlib.h>
 int main(int argc, char *argv[]) {
-int gcd2(int a, int b) {                              
-        int result = abs(a);                          
-        if (result > 1) {                             
-            int p = result; int q = abs(b);           
-            while (q != 0) {                          
-                int temp = q; q = p % q; p = temp;    
-            } /* while */                             
-            result = p;                               
-        } /* > 1 */                                   
-        if (result == 0) result = 1;                  
-        return abs(result);                           
-    } /* gcd2 */                                      
-int gcd3(int a, int b, int c) {                       
-        return gcd2(a, gcd2(b, c));                   
-    } /* gcd3 */                                      
-int gcd4(int a, int b, int c, int d) {                
-        return gcd2(a, gcd3(b, c, d));                
-    } /* gcd4 */                                      
-int gcd5(int a, int b, int c, int d, int e) {         
-        return gcd2(a, gcd4(b, c, d, e));             
-    } /* gcd5 */                                      
+#define MAX_SQUARE = 65
+int squares[] = { 0 /* 0 */
+,0,0,0,0,0,0,0,0 /* 8 */
+,0,0,0,0,0,0,0,0 /* 16 */
+,0,0,0,0,0,0,0,0 /* 24 */
+,0,0,0,0,0,0,0,0 /* 32 */
+,0,0,0,0,0,0,0,0 /* 40 */
+,0,0,0,0,0,0,0,0 /* 48 */
+,0,0,0,0,0,0,0,0 /* 56 */
+,0,0,0,0,0,0,0,0 /* 64 */
+};
+squares[0] = 0;
+squares[1] = 1;
+squares[4] = 2;
+squares[9] = 3;
+squares[16] = 4;
+squares[25] = 5;
+squares[36] = 6;
+squares[49] = 7;
+squares[64] = 8;
 int m11,m12,m13
 ,m21,m22,m23
 ,m31,m32,m33
@@ -87,5 +86,5 @@ test/progen.exe
 [[2,1,-1],[-2,2,2],[-2,1,3]]	preserves 5,12,13
 [[2,1,2],[1,2,2],[2,2,3]]	preserves 20,21,29
 ls -tclr test/*.this.tst | tail -n 1 | sed -e "s/  */ /g" | cut -d" " -f 9 | xargs -l wc
-  89  640 4022 test/PG01.this.tst
+  88  590 3277 test/PG01.this.tst
 make[1]: Leaving directory '/cygdrive/c/Users/gfis/work/gits/ramath'

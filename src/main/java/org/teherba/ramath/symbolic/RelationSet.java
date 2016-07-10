@@ -999,6 +999,7 @@ evaluate: unknown
                 } else if (opt.startsWith("-simplify") ) { // expr1, expr2, ... 
                     if (rset1.size() == 0) {
                         exprs = ereader.getArguments(iarg, args);
+                        iarg  = args.length; // ereader consumed them all
                         rset1 = new RelationSet(exprs);
                     }
                     System.out.println(rset1.toString());
@@ -1018,6 +1019,7 @@ evaluate: unknown
 
                 } else if (opt.startsWith("-subst") ) { // expr1, expr2, ... rset
                     exprs = ereader.getArguments(iarg, args);
+                    iarg  = args.length; // ereader consumed them all
                     rset1 = RelationSet.parse(exprs[exprs.length - 1]); // the last
                     vmap1 = rset1.getVariableMap();
                     viter = vmap1.keySet().iterator();

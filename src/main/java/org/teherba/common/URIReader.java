@@ -163,7 +163,8 @@ public class URIReader {
     /** No-args Constructor
      */
     public URIReader() {
-        this("-"); // read from STDIN (character oriented)
+        log = Logger.getLogger(URIReader.class.getName());
+        this.encoding = "UTF-8";
     } // Constructor
 
     /** Construct from an URI (character oriented)
@@ -267,6 +268,24 @@ public class URIReader {
             }
 
             if (doUnzip) {
+                charReader = unzipStream(byteStream);
+                isEncoded = true;
+            } // doUnzip
+        } catch (Exception exc) {
+            log.error(exc.getMessage() + ", unresid=\"" + unresid + "\"", exc);
+        }
+    } // Constructor(3)
+
+    /** Unzips a stream of bytes and returns
+     *  a character reader for the concatenated contents of all entry files.
+     *  Long XML lines are broken up in addition, and filenames are interspersed.
+     *  @param byteStream some input stream
+     *  @return a character reader for the unzipped, concatenated contents
+     */
+    public BufferedReader unzipStream(InputStream byteStream) {
+        BufferedReader result = null;
+        try {
+            if (true) {
                 // slurp the whole zip file into zbuffer
                 ByteArrayOutputStream
                 baos = new ByteArrayOutputStream(16384);
@@ -285,7 +304,7 @@ public class URIReader {
                 ZipEntry zentry = null;
                 byte[] ubuffer = new byte[16384];
                 while ((zentry = zis.getNextEntry()) != null) {
-                    baos.write(("<!-- " + zentry.getName() + " -->\n").getBytes("UTF-8"));
+                    baos.write(("<!-- " + zentry.getName() + " -->\n").getBytes("UTF-8")); // intersperse filename
                     len = ubuffer.length;
                     while ((len = zis.read(ubuffer)) > 0) {
                         baos.write(ubuffer, 0, len);
@@ -296,17 +315,17 @@ public class URIReader {
 
                 // cause charReader to read from ubuffer
                 ubuffer = baos.toByteArray();
-                charReader = new BufferedReader(new StringReader(
+                result = new BufferedReader(new StringReader(
                         (new String(ubuffer, 0, ubuffer.length, this.encoding))
                         .replaceAll("\\\"><", "\">\n<") // break long XML lines
                         ));
-                isEncoded = true;
             } // doUnzip
         } catch (Exception exc) {
-            log.error(exc.getMessage() + ", unresid=\"" + unresid + "\"", exc);
+            log.error(exc.getMessage(), exc);
         }
-    } // Constructor(3)
-
+        return result;
+    } // unzipStream
+    
     /** Sets a property of the URLConnection.
      *  If the conneciton is not set, the call is silently ignored.
      *  @param key   the name of the property to be set, for example "User-Agent"
