@@ -1,0 +1,174 @@
+# Collection of Testcases for Ramath
+# @(#) $Id: all.tests 955 2012-06-05 07:22:59Z gfis $
+# 2015-11-16, Dr. Georg Fischer: extracted from symbolic.tests
+#-----------------------------------
+# Caution:
+# (1) Adjust the following line: URL where Ramath was deployed
+URL=http://localhost:8080/ramath/servlet
+# (2) Adjust the following line: default commandline arguments
+ARGS=
+#======================================================================
+ECHO 000
+#--------------------------------
+# Gröbner bases
+
+PACKAGE=org.teherba.ramath.symbolic
+
+TEST G01 Buchberger's S-Polynomial
+CALL Ideal -spoly "a^2+2*a*b+b^2" "a+b"
+
+TEST G02 Buchberger's S-Polynomial
+CALL Ideal -spoly "x^2+1" "x"
+
+TEST G03 multivariate division: rest = 0
+CALL Ideal -mdiv "(a+b)^5" "(a+b)^2"
+
+TEST G04 multivariate division: rest != 0
+CALL Ideal -mdiv "(a+b)^5" "(a-b)^2"
+
+TEST G05 multivariate division: rest != 0
+CALL Ideal -mdiv "x^2 + 1" "x"
+
+TEST G06 multivariate division (Mencinger)
+CALL Ideal -mdiv "x^2 + x*y + 2*x^3" "x*y - x^3" "x + y^2"
+
+TEST G07 multivariate division: rest != 0
+CALL Ideal -mdiv "x^2 + x*y + 2*x^3" "x*y - x^3" "x + y^2"
+
+TEST G08 S-Polynomial of G11
+DATA
+ x * y -  2*y
+ 2 * y^2 - x^2
+CALL Ideal -spoly -f $(DATA)
+
+# Singular:
+# ring r1=0, (a,b,c), lp;
+# poly f1=1 + 2*a + 2*b + 2*a^2 + 2*b^2 - 2*c^2 ;
+# poly f2=a - c + a^2 + b^2 - c^2 ;
+# poly f3=b - c + a^2 + b^2 - c^2 ;
+# ideal I=f1,f2,f3;
+# groebner(I);
+
+TEST G10 Groebner Basis (+1)
+CALL Ideal -groebner "x^2 + 1" "x"
+
+# TEST G11 Groebner Basis (Buchberger)
+# CALL Ideal -groebner "x*y - 2*y" "2*y^2 - x^2"
+#
+# TEST G12 Groebner Basis (Gauss: x=1, y=2, z=3)
+# DATA
+#  2*x + 1*y - 1*z - 1 = 0
+#  6*x - 1*y - 1*z - 1 = 0
+#  3*z - 4*y - 1       = 0
+# CALL Ideal -groebner -f $(DATA)
+#
+# TEST G13 Groebner Basis (Mencinger Fig. 4b)
+# DATA
+#  5*x*y^3 - x^2*y - 3
+#  2*x^4*y + x*y + 7
+# CALL Ideal -groebner -f $(DATA)
+#
+# TEST G14 Groebner Basis (Mencinger)
+# DATA
+#  - x^3 + y
+#  x^2*y - y^2
+# CALL Ideal -groebner -f $(DATA)
+#
+# TEST G15 Groebner Basis (Mencinger Fig. 8)
+# DATA
+#  x^2 + y*z + x
+#  z^2 + x*y + z
+#  y^2 + x*z + y
+# CALL Ideal -groebner -f $(DATA)
+
+# TEST G16 Groebner Basis (http://de.wikipedia.org/wiki/Gr%C3%B6bnerbasis)
+# DATA
+#  x^2 + y^2 + z^2 - 1 = 0
+#  x^2 - y + z^2 = 0
+#  x - z = 0
+# CALL Ideal -groebner -f $(DATA)
+# 
+# TEST G17 Groebner Basis (de.wikipedia.org, x <-> z)
+# DATA
+#  z^2 + y^2 + x^2 - 1 = 0
+#  z^2 - y + x^2 = 0
+#  z - x = 0
+# CALL Ideal -groebner -f $(DATA)
+# 
+# TEST G19 Groebner Basis monomes of Euklid / specialization
+# DATA
+#  (m^2 - n^2)^2 - (m^2 - 1^2)^2 = 0
+#  (2*m*n)^2     - (2*m*1)^2     = 0
+#  (m^2 + n^2)^2 - (m^2 + 1^2)^2 = 0
+# CALL Ideal -groebner -f $(DATA)
+
+# gfis@nunki:~/work/gits/ramath$ Singular
+# > ring r1=0, (m,n), lp;
+# > poly f0=(m^2-n^2)^2 - (m^2 - 1)^2;
+# > poly f1=(m^2+n^2)^2 - (m^2 + 1)^2;
+# > poly f2=(2*m*n)^2 - (2*m)^2;
+# > ideal I=f0,f1,f2;
+# > ideal G=groebner(I);
+# > G;
+# G[1]=n4-1
+# G[2]=m2n2-m2
+#
+
+## TEST G20 Groebner for ParameterExhauster quadratic univariate
+## DATA
+##  a2^2 + b2^2 - c2^2
+##                       2*(a2*a1 + b2*b1 - c2*c1)
+##  a1^2 + b1^2 - c1^2 + 2*(a2*a0 + b2*b0 - c2*c0)
+##                       2*(a1*a0 + b1*b0 - c1*c0)
+##  a0^2 + b0^2 - c0^2
+## CALL Ideal -groebner -f $(DATA)
+
+## TEST G21 Groebner for Barning's B: 6 equations with 9 variables
+## DATA
+##  2*a11*a12 + 2*a21*a22 - 2*a31*a32
+##  2*a11*a12 + 2*a21*a23 - 2*a31*a33
+##  2*a12*a13 + 2*a22*a23 - 2*a32*a33
+## -1 + a11^2 + a21^2 - a31^2
+## -1 + a12^2 + a22^2 - a32^2
+##  1 + a13^2 + a23^2 - a33^2
+## CALL Ideal -groebner -f $(DATA)
+
+## TEST G22 Groebner for Pythagoras generator - simple linear
+## DATA
+##  a1^2 + b1^2 - c1^2
+##                       2*(a1*a0 + b1*b0 - c1*c0)
+##  a0^2 + b0^2 - c0^2
+##  (a1*1 + a0)^2 + (b1*1 + b0)^2 - (c1*1 + c0)^2
+##  (a1*2 + a0)^2 + (b1*2 + b0)^2 - (c1*2 + c0)^2
+##  (a1*3 + a0)^2 + (b1*3 + b0)^2 - (c1*3 + c0)^2
+##  (a1*5 + a0)^2 + (b1*5 + b0)^2 - (c1*5 + c0)^2
+## CALL Ideal -groebner -f $(DATA)
+##
+## TEST G23 Groebner for Pythagoras generator - univariate pow 2
+## DATA
+##  a2^2 + b2^2 - c2^2
+##                       2*(a2*a1 + b2*b1 - c2*c1)
+##  a1^2 + b1^2 - c1^2 + 2*(a2*a0 + b2*b0 - c2*c0)
+##                       2*(a1*a0 + b1*b0 - c1*c0)
+##  a0^2 + b0^2 - c0^2
+##  (a2*2^2 + a1*2 + a0)^2 + (b2*2^2 + b1*2 + b0)^2 - (c2*2^2 + c1*2 + c0)^2
+##  (a2*3^2 + a1*3 + a0)^2 + (b2*3^2 + b1*3 + b0)^2 - (c2*3^2 + c1*3 + c0)^2
+##  (a2*5^2 + a1*5 + a0)^2 + (b2*5^2 + b1*5 + b0)^2 - (c2*5^2 + c1*5 + c0)^2
+##  (a2*7^2 + a1*7 + a0)^2 + (b2*7^2 + b1*7 + b0)^2 - (c2*7^2 + c1*7 + c0)^2
+## CALL Ideal -groebner -f $(DATA)
+##
+## TEST G24 Dutch 1
+## DATA ( 1*m^2 + 16*m - 21)^3
+##    + (-1*m^2 + 16*m + 21)^3
+##    + ( 2*m^2 -  4*m + 42)^3
+##    - ( 2*m^2 +  4*m + 42)^3
+## CALL Ideal -groebner -f $(DATA)
+##
+## TEST G25 Vieta
+## DATA
+## + (m^4 - 2*n^3*m)^3
+## + (2*n*m^3 - n^4)^3
+## + (  n*m^3 + n^4)^3
+## - (m^4 +   n^3*m)^3
+## CALL Ideal -groebner -f $(DATA)
+##

@@ -1,5 +1,6 @@
 /*  PairMap: maps ordered pairs of variable names to some attribute: coprime, smaller ...
  *  @(#) $Id: PairMap.java 538 2010-09-08 15:08:36Z gfis $
+ *  2016-07-10: had extended HashMap - now TreeMap for reproducible tests
  *  2016-01-04, Georg Fischer: copied from VariableMap.java
  */
 /*
@@ -20,7 +21,7 @@
 package org.teherba.ramath.symbolic;
 import  java.io.Serializable;
 import  java.util.Iterator;
-import  java.util.HashMap;
+import  java.util.TreeMap;
 import  java.util.Map;
 
 /** Maps a set of ordered pairs of variable names to:
@@ -32,7 +33,7 @@ import  java.util.Map;
  *  Internally, the variable names are ordered and concatenated, separated by "/".
  *  @author Dr. Georg Fischer
  */
-public class PairMap extends HashMap<String, String> implements Cloneable, Serializable {
+public class PairMap extends TreeMap<String, String> implements Cloneable, Serializable {
     private static final long serialVersionUID = 2L;
     public final static String CVSID = "@(#) $Id: PairMap.java 538 2016-01-04 15:08:36Z gfis $";
 

@@ -1,5 +1,6 @@
 /*  Reader for text file, returns a string without any whitespace
  *  @(#) $Id: 749d72563123a83ce64563e9259c2345ab169614 $
+ *  2016-07-10: make -s
  *  2016-05-14: HTTPZ and CALLZ
  *  2016-05-10: optionally set Http request properties
  *  2016-04-22: MAKE command; log stderr
@@ -363,7 +364,7 @@ public class RegressionTester {
         String argsPrefix       = ""; // default for ARGS macro
         String diffPrefix       = "diff -Z "; // -Z = ignore line ends
         String baseURL          = "http://localhost:8080/dbat/servlet"; // default for URL macro
-        String makePrefix       = "make -f makefile";
+        String makePrefix       = "make -s -f makefile";
         String sortPrefix       = "sort ";
         String xsltPrefix       = "xsltproc ";
         String cmd              = null; // system command to be executed

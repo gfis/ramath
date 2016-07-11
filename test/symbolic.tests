@@ -1,5 +1,6 @@
 # Collection of Testcases for Ramath
 # @(#) $Id: all.tests 955 2012-06-05 07:22:59Z gfis $
+* 2016-07-10: SI% = simplify tests
 # 2013-07-28: linear algebra
 # 2013-07-05: Dxx = DispenserFactory for all dispensers; tests shortened and reordered
 # 2013-02-01: web/spec/test/fragment01.xml
@@ -421,6 +422,14 @@ DATA
  a = A11*m^2 + A12*m*n + A13*n^2;
  b = A21*m^2 + A22*m*n + A23*n^2;
  c = A31*m^2 + A32*m*n + A33*n^2
+CALL RelationSet -d 1 -f $(DATA) -simplify 
+
+TEST SI9 simplify delta m->m+n, n->m
+DATA
+ a^2 + b^2 = c^2;
+ a = A11*(m+n)^2 + A12*(m+n)*m + A13*m^2;
+ b = A21*(m+n)^2 + A22*(m+n)*m + A23*m^2;
+ c = A31*(m+n)^2 + A32*(m+n)*m + A33*m^2
 CALL RelationSet -d 1 -f $(DATA) -simplify 
 #----------------
 TEST SL1 rational solution 

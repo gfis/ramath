@@ -65,6 +65,7 @@ pg1:
 	cat test/progen.c
 	gcc -o test/progen.exe test/progen.c
 	test/progen.exe
+	rm test/progen.exe
 pg2:
 	ls -tclr test/*.this.tst | tail -n 1 | sed -e "s/  */ /g" | cut -d" " -f 9 | xargs -l wc
 #
