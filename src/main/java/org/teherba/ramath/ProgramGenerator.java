@@ -416,7 +416,7 @@ public class ProgramGenerator {
     // Generating Methods
     //===========================
 
-    /** Generate 3 x 3 matrixes for coefficients of Euklids identity
+    /** Generate 3 x 3 matrixes for coefficients of euclids identity
      *  <pre>
          a^2 + b^2 = c^2;
          a = A11*m^2 + A12*m*n + A13*n^2;
@@ -424,7 +424,7 @@ public class ProgramGenerator {
          c = A31*m^2 + A32*m*n + A33*n^2
      *  </pre>
      */
-    public void m2euklid() {
+    public void m2euclid() {
         String letter = "m";
         width = 3;
         programHeader(width, "square");
@@ -492,7 +492,7 @@ public class ProgramGenerator {
         o.println("printf(countneg > 0 ? \" ????\" : \" !!!!\");");
         o.println("printf(\"\\n\");");
         programTrailer();
-    } // m2euklid
+    } // m2euclid
 
     /** Generate n x n matrixes which preserve generated tuples
      *  @param vectg generating vector of {@link Polynomial}s,
@@ -730,8 +730,8 @@ public class ProgramGenerator {
         gen.getArguments(args);
         //----------------------------------
         if (false) {
-        } else if (gen.method.equals("m2euklid" )) {
-            gen.m2euklid();
+        } else if (gen.method.equals("m2euclid" )) {
+            gen.m2euclid();
         } else if (gen.method.equals("m2opts"   )) {
             gen.m2opts(gen.vects[0], gen.vects[1], gen.polys[0]);
         } else if (gen.method.equals("m2pyth"   )) {

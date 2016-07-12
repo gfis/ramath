@@ -1,10 +1,10 @@
 /*  Reader for text file, returns a string without any whitespace
  *  @(#) $Id: 749d72563123a83ce64563e9259c2345ab169614 $
- *  2016-07-10: make -s
+ *  2016-07-11: make -s; implicit macro CASE
  *  2016-05-14: HTTPZ and CALLZ
  *  2016-05-10: optionally set Http request properties
  *  2016-04-22: MAKE command; log stderr
- *  2016-04-16: macro PWD = System.getProperty("user.dir")
+ *  2016-04-16: implicit macro PWD = System.getProperty("user.dir")
  *  2015-09-08: continue lines with "\\" at the end
  *  2015-03-26: cat after cp (if *.prev.tst did not exist)
  *  2014-11-10: SORT=; more Javadoc
@@ -94,6 +94,8 @@ Dbat Vx.hhhh/yyyy-mm-dd - DataBase Application Tool
  *  The following macro definitions are recognized:
  *  <table>
  *  <tr><td>ARGS=   </td><td>commandline arguments which are appended to the CALL command</td></tr>
+ *  <tr><td>CASE    </td><td>built-in macro which returns the name of the current testcase</td></tr>
+ *  <tr><td>DATA    </td><td>built-in macro which returns the name of the current data file</td></tr>
  *  <tr><td>MAKE=   </td><td>define the make command and its options (default: <em>make -f makefile</em></td></tr>
  *  <tr><td>PACKAGE=</td><td>define the class name prefix for all following CALL commands (default: <em>org.teherba</em>)</td></tr>
  *  <tr><td>REQUEST=</td><td>define a list of pairs <em>key:value</em> (separated by spaces) for Http request properties</td></tr>
@@ -581,6 +583,7 @@ public class RegressionTester {
                                 System.setOut(thisStream);
                                 System.setErr(System.out);
                                 dataBuffer.setLength(0);
+                                macros.put("CASE", testName);
                             } // not END
                             // TEST
 

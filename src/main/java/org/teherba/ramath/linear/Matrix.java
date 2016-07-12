@@ -705,7 +705,7 @@ public class Matrix implements Cloneable, Serializable {
      *  @return a new Matrix, or null if the inverse cannot be computed
      */
     public Matrix inverse() {
-    	int debugInverse = 2906;
+        int debugInverse = 2906;
         int result = 0;
         Matrix lmat = this.clone();
         Matrix rmat = new Matrix(this.rowLen);

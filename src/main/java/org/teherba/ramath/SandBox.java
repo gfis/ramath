@@ -27,6 +27,7 @@ import  org.teherba.ramath.BigRational;
 import  org.teherba.ramath.BigIntegerUtil;
 import  org.teherba.ramath.ContinuedFraction;
 import  org.teherba.ramath.PrimeFactorization;
+import  org.teherba.ramath.linear.Matrix;
 import  org.teherba.ramath.linear.Vector;
 import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.PolyVector;
@@ -202,6 +203,48 @@ public class SandBox {
             } // while num
         } // uniVariate
     } // printDifferences
+
+    /** Takes one output line of testcase PG05 and
+     *  evaluates it for an increasing sequence of coprime values of u and v.
+     *  @param args commandline arguments: matrix [high [f]]
+     */
+    private void printEuclid(String[] args) {
+        int iarg = 1; // skip over "-triple"
+        Matrix amat = new Matrix(args[iarg ++]);
+        int startValue =    2; // start with this value of the (single) variable
+        int highValue  =   32; // end one before this value
+        if (iarg < args.length) {
+            try {
+                highValue  = Integer.parseInt(args[iarg ++]);
+            } catch (Exception exc) {
+            }
+        }
+        int num = startValue;
+        int primCount = 0;
+        while (num <= highValue) {
+            int v = num / 2;
+            int u = num - v; // always; u >= v
+            while (v >= 1) {
+                Vector vect = amat.multiply(new Vector(new int[] { u * u, u * v, v * v }));
+                System.out.print(vect.sort().toString(" %5d") + "\t" + vect.toString(","));
+                if (vect.hasZero()) {
+                    System.out.print(" zero");
+                } else if (vect.gcd() == 1) {
+                    System.out.print(" primitive");
+                    primCount ++;
+                }
+                System.out.println(" u,v=" + u + "," + v
+                        + (Vector.gcd(u, v) == 1 ? " coprime"  : "")
+                        + ((u + v) % 2 != 0      ? " opposite" : "")
+                        );
+                v --;
+                u = num - v;
+            } // while u <= v
+            // System.out.println("#--------");
+            num ++;
+        } // while num
+        System.out.println("lim=" + highValue + ", " + primCount + " primit.");
+    } // printEuclid
 
     /** Evaluates a univariate {@link Polynomial} for a
      *  sequence of variable values and, for the resulting values, print the 
@@ -499,6 +542,7 @@ public class SandBox {
      *  <li>-bachet x y c [n]: evaluate Bachet's duplication formula</li>
      *  <li>-brahma  [end [f]]: print successive compositions of (u^2 + v^2)
      *  <li>-eec422  filename: evaluate tuples of the form a^4 + b^4 = c^4 + d^4</li>
+     *  <li>-euclid  matrix [lim]: generate Pythagorean triples for coprime u, v
      *  <li>-pdiff   polynomial [start [end]]: print successive differences</li>
      *  <li>-repres  polynomial [end [f]]: print representations of values by p^2 + f*q^2</lI>
      *  <li>-sqsprim polynomial [end [m]]: print prime factorizations of values and the modulus m of the primes</lI>
@@ -522,6 +566,8 @@ public class SandBox {
             } else if (opt.startsWith("-eec422"  )) {
                 String fileName = args[iarg ++];
                 sandBox.process422          (fileName);
+            } else if (opt.startsWith("-euclid"  )) {
+                sandBox.printEuclid         (args);
             } else if (opt.startsWith("-pdiff"   )) {
                 sandBox.printDifferences    (args);
             } else if (opt.startsWith("-repres"  )) {

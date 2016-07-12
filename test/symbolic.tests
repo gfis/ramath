@@ -427,9 +427,9 @@ CALL RelationSet -d 1 -f $(DATA) -simplify
 TEST SI9 simplify delta m->m+n, n->m
 DATA
  a^2 + b^2 = c^2;
- a = A11*(m+n)^2 + A12*(m+n)*m + A13*m^2;
- b = A21*(m+n)^2 + A22*(m+n)*m + A23*m^2;
- c = A31*(m+n)^2 + A32*(m+n)*m + A33*m^2
+ a = A11*(m+1)^2 + A12*(m+1)*n + A13*n^2;
+ b = A21*(m+1)^2 + A22*(m+1)*n + A23*n^2;
+ c = A31*(m+1)^2 + A32*(m+1)*n + A33*n^2
 CALL RelationSet -d 1 -f $(DATA) -simplify 
 #----------------
 TEST SL1 rational solution 

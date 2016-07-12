@@ -1,5 +1,6 @@
 /*  Vector: a simple, short vector of small numbers
  *  @(#) $Id: Vector.java 744 2011-07-26 06:29:20Z gfis $
+ *  2016-07-11: hasZero
  *  2015-04-05: gcd, isPowerSum repaired
  *  2015-02-24: isMonotone, isConstant
  *  2013-08-23: Serializable
@@ -395,6 +396,19 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
         return result;
     } // isMonotone
 
+    /** Whether there is any zero element in the Vector
+     *  @return false if all elements are non-zero
+     */
+    public boolean hasZero() {
+        boolean result = false;
+        int ielem = 0;
+        while (! result && ielem < this.vecLen) {
+            result = this.vector[ielem] == 0;
+            ielem ++;
+        } // while ielem
+        return result;
+    } // hasZero
+
     /** Whether all elements of the Vector have the same value
      *  @param value tests for this value
      *  @return whether the Vector is of the form [value, value, ...]
@@ -753,22 +767,27 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
      *  @return a 1-dimensional array of small numbers
      */
     public String toString() {
-        StringBuffer result = new StringBuffer(256);
-        for (int ielem = 0; ielem < this.vecLen; ielem ++) {
-            result.append(String.format(" %3d", vector[ielem]));
-        } // for ielem
-        return result.toString();
+    	return toString(null);
     } // toString()
 
     /** Returns a string representation of the vector
-     *  @param format specification of the layout: null = printf(%3d), ",", " "
+     *  @param formatSpec specification of the layout: null = printf(%3d), ",", " ", " %4d"
      *  @return a one-dimensional array of small numbers
      */
-    public String toString(String format) {
+    public String toString(String formatSpec) {
         String sep = ",";
         StringBuffer result = new StringBuffer(256);
-        if (format != null && format.length() > 0) {
-            if (format.indexOf(sep) >= 0) {
+        if (false) {
+        } else if (formatSpec == null || formatSpec.length() == 0) {
+            for (int icol = 0; icol < this.vecLen; icol ++) {
+                result.append(String.format(" %3d", this.vector[icol]));
+            } // for icol
+        } else if (formatSpec.indexOf('%') >= 0) { // printf spec
+            for (int icol = 0; icol < this.vecLen; icol ++) {
+                result.append(String.format(formatSpec, this.vector[icol]));
+            } // for icol
+        } else { 
+            if (formatSpec.indexOf(sep) >= 0) {
                 result.append('[');
             }
             for (int icol = 0; icol < this.vecLen; icol ++) {
@@ -777,15 +796,9 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
                 }
                 result.append(String.valueOf(this.vector[icol]));
             } // for icol
-            if (format.indexOf(sep) >= 0) {
+            if (formatSpec.indexOf(sep) >= 0) {
                 result.append(']');
             }
-        } else {
-            for (int icol = 0; icol < this.vecLen; icol ++) {
-                // result.append(' ');
-                result.append(String.format(" %3d", this.vector[icol]));
-            } // for icol
-            result.append(newline);
         }
         return result.toString();
     } // toString()

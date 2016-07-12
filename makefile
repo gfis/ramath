@@ -69,6 +69,9 @@ pg1:
 pg2:
 	ls -tclr test/*.this.tst | tail -n 1 | sed -e "s/  */ /g" | cut -d" " -f 9 | xargs -l wc
 #
+# Target 'primit' is used in sandbox.tests/EU*
+primit:
+	grep primitive test/$(CASE).this.tst | sort | cut -d "	" -f 1 | head -$(HEAD) > test/$(CASE).sort.tmp
 #-------------------------
 # Evaluation of PG?3
 eval3:
