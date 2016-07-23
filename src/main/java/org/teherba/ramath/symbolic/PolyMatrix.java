@@ -55,131 +55,148 @@ public class PolyMatrix implements Cloneable, Serializable {
     /*-------------- class properties -----------------------------*/
 
     /** a 2-dimensional array of small numbers */
-    private /*Type*/Polynomial[][] matrix;
+    protected /*Type*/Polynomial[][] matrix;
     /** the length of a row  */
-    private int rowLen;
-    /** the length of a column, currently always the same as <em>rowLen</em>, that means the matrices are square */
-    private int colLen;
+    protected int rowLen;
+    /** the length of a column, normally the same as <em>rowLen</em> */
+    protected int colLen;
 
     /*-------------- construction -----------------------------*/
 
-    /** No-args Constructor.
-     *  A PolyMatrix is always square: rowLen == colLen.
+    /** No-args Constructor: a square PolyMatrix of size 3
      */
     public PolyMatrix() {
-        this.rowLen = 0;
-        this.colLen = this.rowLen;
+        this(3, 3);
     } // no-args Constructor
 
-    /** Constructor for an empty square PolyMatrix of some size
-     *  @param rlen number of rows/columns
+    /** Constructor for an empty, square PolyMatrix
+     *  @param rowLen number of rows/columns
      */
-    public PolyMatrix(int rlen) {
-        this.rowLen = rlen;
-        this.colLen = this.rowLen;
-        this.matrix = new /*Type*/Polynomial[this.rowLen][this.colLen];
+    public PolyMatrix(int rowLen) {
+        this (rowLen, rowLen);
     } // Constructor(int)
 
-    /** Constructor for a PolyMatrix from a {@link Matrix}
+    /** Constructor for an empty, rectangular PolyMatrix
+     *  @param rowLen number of rows
+     *  @param colLen number of columns
+     */
+    public PolyMatrix(int rowLen, int colLen) {
+        this.rowLen = rowLen;
+        this.colLen = colLen;
+        this.matrix = new /*Type*/Polynomial[this.rowLen][this.colLen];
+    } // Constructor(int, int)
+
+    /** Constructor for a rectangular PolyMatrix from a rectangular {@link Matrix}
      *  @param matr a {@link Matrix} of small integers
      */
     public PolyMatrix(Matrix matr) {
-        this(matr.size());
+        this(matr.getRowLen(), matr.getColLen());
         for (int irow = 0; irow < this.rowLen; irow ++) {
-            for (int icol = 0; icol < this.colLen; icol ++) {
-                this.matrix[irow][icol] = new /*Type*/Polynomial(String.valueOf(matr.get(irow, icol)));
-            } // for icol
+            for (int jcol = 0; jcol < this.colLen; jcol ++) {
+                this.matrix[irow][jcol] = new /*Type*/Polynomial(String.valueOf(matr.get(irow, jcol)));
+            } // for jcol
         } // for irow
     } // Constructor(Matrix)
 
-    /** Constructor for a PolyMatrix which initializes it from an array of values
-     *  @param rlen number of rows/columns
+    /** Constructor for a rectangular PolyMatrix which initializes it from an array of values
+     *  @param rowLen number of rows
      *  @param values linearized array of row values
      */
-    public PolyMatrix(int rlen, String[] values) {
-        this(rlen);
+    public PolyMatrix(int rowLen, String[] values) {
+        this(rowLen, values.length / rowLen);
         int ival = 0;
         for (int irow = 0; irow < this.rowLen; irow ++) {
-            for (int icol = 0; icol < this.colLen; icol ++) {
-                this.matrix[irow][icol] = new /*Type*/Polynomial(values[ival ++]);
-            } // for icol
+            for (int jcol = 0; jcol < this.colLen; jcol ++) {
+                this.matrix[irow][jcol] = new /*Type*/Polynomial(values[ival ++]);
+            } // for jcol
         } // for irow
     } // Constructor(int, String[])
 
-    /** Constructor for an abstract PolyMatrix which initializes it with
+    /** Constructor for an abstract, square PolyMatrix which initializes it with
      *  systematic variable names.
      *  For example, PolyMatrix(2, "m") yields [[m11,m12],[m21,m22]].
-     *  @param rlen number of rows/columns (better <= 9)
+     *  @param rowLen number of rows/columns (better <= 9)
      *  @param prefix String (letter) for the start of the variable names
      */
-    public PolyMatrix(int rlen, String prefix) {
-        this(rlen);
-        int width = String.format("%d", rlen).length(); // number of digits
-        for (int irow = 0; irow < this.rowLen; irow ++) {
-            for (int icol = 0; icol < this.colLen; icol ++) {
-                this.matrix[irow][icol] = Polynomial.parse(
-                		(String.format(prefix + "%0" + width + "d%0" + width + "d", irow + 1, icol + 1)));
-            } // for icol
-        } // for irow
+    public PolyMatrix(int rowLen, String prefix) {
+        this(rowLen, rowLen, prefix);
     } // Constructor(int, String)
 
-    /** Constructor for a PolyMatrix which initializes it from an array of values.
+    /** Constructor for an abstract, rectangular PolyMatrix which initializes it with
+     *  systematic variable names.
+     *  For example, PolyMatrix(2, "m") yields [[m11,m12],[m21,m22]].
+     *  @param rowLen number of rows    (better <= 9)
+     *  @param colLen number of columns (better <= 9)
+     *  @param prefix String (letter) for the start of the variable names
+     */
+    public PolyMatrix(int rowLen, int colLen, String prefix) {
+        this(rowLen, colLen);
+        int numDig = String.format("%d", rowLen).length(); // number of digits
+        for (int irow = 0; irow < this.rowLen; irow ++) {
+            for (int jcol = 0; jcol < this.colLen; jcol ++) {
+                this.matrix[irow][jcol] = Polynomial.parse(
+                        (String.format(prefix + "%0" + numDig + "d%0" + numDig + "d", irow + 1, jcol + 1)));
+            } // for jcol
+        } // for irow
+    } // Constructor(int, int, String)
+
+    /** Fills a rectangular PolyMatrix from an array of values
+     *  @param values array of values
+     */
+    private void fill(String[] values) {
+        this.matrix = new /*Type*/Polynomial[this.rowLen][this.colLen];
+        int ival = 0;
+        for (int irow = 0; irow < this.rowLen; irow ++) {
+            for (int jcol = 0; jcol < this.colLen; jcol ++) {
+                this.matrix[irow][jcol] = new /*Type*/Polynomial(values[ival ++]);
+            } // for jcol
+        } // for irow
+    } // fill
+
+    /** Constructor for a square PolyMatrix which initializes it from an array of values.
      *  If the number of elements is no square number, the next lower square
      *  number is taken, and some elements at the end are ignored.
      *  @param values linearized array of rows of arrays of column values
      */
     public PolyMatrix(String[] values) {
         int numElem = values.length;
-        int rlen = 0;
-        while (rlen * rlen < numElem) {
-            rlen ++;
+        this.rowLen = 0;
+        while (this.rowLen * this.rowLen < numElem) {
+            this.rowLen ++;
         } // while squaring
-        if (rlen * rlen > numElem) {
-            rlen --;
+        if (this.rowLen * this.rowLen > numElem) {
+            this.rowLen --;
         }
-        this.rowLen = rlen;
-        this.colLen = rlen;
-        this.matrix = new /*Type*/Polynomial[rowLen][colLen];
-        int ival = 0;
-        for (int irow = 0; irow < this.rowLen; irow ++) {
-            for (int icol = 0; icol < this.colLen; icol ++) {
-                this.matrix[irow][icol] = new /*Type*/Polynomial(values[ival ++]);
-            } // for icol
-        } // for irow
+        this.colLen = this.rowLen;
+        this.fill(values);
     } // Constructor(String[])
 
-    /** Constructor for a PolyMatrix which initializes it from a matrix expression.
+    /** Constructor for a rectangular PolyMatrix which initializes it from a matrix expression.
      *  If the number of elements is no square number, the next lower square
      *  number is taken, and some elements at the end are ignored.
      *  @param matExpr comma-separated array of {@link PolyVector}s in square brackets
-     *  (which are ignored), 
+     *  (which are ignored),
      *  for example "[[a,b,c],[f,g,h],[k,l,m]]"
      */
     public PolyMatrix(String matExpr) {
         String vectExpr = matExpr.substring(0, matExpr.indexOf("]"));
-        String[] values = vectExpr.replaceAll("[\\[\\]\\s]+","").split("\\,");
-        int rlen = values.length;
-        values          = matExpr .replaceAll("[\\[\\]\\s]+","").split("\\,");
-        this.rowLen = rlen;
+        String[] values = vectExpr.replaceAll("[\\[\\]\\s]+","").split("\\,"); // first row
+        int rowLen  = values.length;
+        values      = matExpr .replaceAll("[\\[\\]\\s]+","").split("\\,"); // all
+        this.rowLen = rowLen;
         this.colLen = this.rowLen;
-        this.matrix = new /*Type*/Polynomial[rowLen][colLen];
-        int ival = 0;
-        for (int irow = 0; irow < this.rowLen; irow ++) {
-            for (int icol = 0; icol < this.colLen; icol ++) {
-                this.matrix[irow][icol] = new /*Type*/Polynomial(values[ival ++]);
-            } // for icol
-        } // for irow
+        this.fill(values);
     } // Constructor(String)
 
     /** Deep copy of the PolyMatrix and its properties.
      *  @return independant copy of the PolyMatrix
      */
     public PolyMatrix clone() {
-        PolyMatrix result = new PolyMatrix(rowLen);
+        PolyMatrix result = new PolyMatrix(this.rowLen, this.colLen);
         for (int irow = 0; irow < this.rowLen; irow ++) {
-            for (int icol = 0; icol < this.colLen; icol ++) {
-                result.matrix[irow][icol] = this.matrix[irow][icol];
-            } // for icol
+            for (int jcol = 0; jcol < this.colLen; jcol ++) {
+                result.matrix[irow][jcol] = this.matrix[irow][jcol];
+            } // for jcol
         } // for irow
         return result;
     } // clone
@@ -190,9 +207,9 @@ public class PolyMatrix implements Cloneable, Serializable {
      */
     public void setIdentity(String unit) {
         for (int irow = 0; irow < this.rowLen; irow ++) {
-            for (int icol = 0; icol < this.colLen; icol ++) {
-                this.matrix[irow][icol] = new /*Type*/Polynomial(irow == icol ? unit : "0");
-             } // for icol
+            for (int jcol = 0; jcol < this.colLen; jcol ++) {
+                this.matrix[irow][jcol] = new /*Type*/Polynomial(irow == jcol ? unit : "0");
+             } // for jcol
         } // for irow
     } // setIdentity
 
@@ -205,22 +222,36 @@ public class PolyMatrix implements Cloneable, Serializable {
         return this.rowLen;
     } // size
 
-    /** Returns an element of the PolyMatrix
-     *  @param irow row    number of the element (zero based)
-     *  @param icol column number of the element (zero based)
+    /** Returns the number of rows
      *  @return a small number
      */
-    public /*Type*/Polynomial get(int irow, int icol) {
-        return this.matrix[irow][icol];
+    public int getRowLen() {
+        return this.rowLen;
+    } // getRowLen
+
+    /** Returns the number of columns
+     *  @return a small number
+     */
+    public int getColLen() {
+        return this.colLen;
+    } // getColLen
+
+    /** Returns an element of the PolyMatrix
+     *  @param irow row    number of the element (zero based)
+     *  @param jcol column number of the element (zero based)
+     *  @return a small number
+     */
+    public /*Type*/Polynomial get(int irow, int jcol) {
+        return this.matrix[irow][jcol];
     } // get
 
     /** Sets an element of the PolyMatrix
      *  @param irow row    number of the element (zero based)
-     *  @param icol column number of the element (zero based)
+     *  @param jcol column number of the element (zero based)
      *  @param value the desired value of the element
      */
-    public void set(int irow, int icol, Polynomial value) {
-        this.matrix[irow][icol] = value;
+    public void set(int irow, int jcol, Polynomial value) {
+        this.matrix[irow][jcol] = value;
     } // set
 
     /*-------------- lightweight derived methods -----------------------------*/
@@ -231,9 +262,9 @@ public class PolyMatrix implements Cloneable, Serializable {
      */
     public PolyVector getRow(int rowNo) {
         PolyVector result = new PolyVector(colLen);
-        for (int icol = 0; icol < this.colLen; icol ++) {
-            result.vector[icol] = this.matrix[rowNo][icol];
-        } // for icol
+        for (int jcol = 0; jcol < this.colLen; jcol ++) {
+            result.vector[jcol] = this.matrix[rowNo][jcol];
+        } // for jcol
         return result;
     } // getRow
 
@@ -242,9 +273,9 @@ public class PolyMatrix implements Cloneable, Serializable {
      *  @param vect1 PolyVector containing the elements of the matrix' row
      */
     public void setRow(int rowNo, PolyVector vect1) {
-        for (int icol = 0; icol < rowNo; icol ++) {
-            this.matrix[rowNo][icol] = vect1.vector[icol];
-        } // for icol
+        for (int jcol = 0; jcol < rowNo; jcol ++) {
+            this.matrix[rowNo][jcol] = vect1.vector[jcol];
+        } // for jcol
     } // setRow
 
     /** Returns a column as a {@link PolyVector}.
@@ -292,20 +323,20 @@ public class PolyMatrix implements Cloneable, Serializable {
                 if (format.indexOf(sep) >= 0) {
                     result.append('[');
                 }
-                for (int icol = 0; icol < this.colLen; icol ++) {
-                    if (icol > 0) {
+                for (int jcol = 0; jcol < this.colLen; jcol ++) {
+                    if (jcol > 0) {
                         result.append(sep);
                     }
-                    result.append(this.matrix[irow][icol].toString().replaceAll("\\s" ,""));
-                } // for icol
+                    result.append(this.matrix[irow][jcol].toString().replaceAll("\\s" ,""));
+                } // for jcol
                 if (format.indexOf(sep) >= 0) {
                     result.append(']');
                 }
             } else {
-                for (int icol = 0; icol < this.colLen; icol ++) {
+                for (int jcol = 0; jcol < this.colLen; jcol ++) {
                     // result.append(' ');
-                    result.append(this.matrix[irow][icol].toString().replaceAll("\\s" ,""));
-                } // for icol
+                    result.append(this.matrix[irow][jcol].toString().replaceAll("\\s" ,""));
+                } // for jcol
                 result.append(newline);
             }
         } // for irow
@@ -320,11 +351,11 @@ public class PolyMatrix implements Cloneable, Serializable {
             boolean result = true;
             int irow = 0;
             while (result && irow < this.rowLen) {
-                int icol = 0;
-                while (result && icol < this.colLen) {
-                    result = this.matrix[irow][icol].isZero();
-                    icol ++;
-                } // for icol
+                int jcol = 0;
+                while (result && jcol < this.colLen) {
+                    result = this.matrix[irow][jcol].isZero();
+                    jcol ++;
+                } // for jcol
                 irow ++;
             } // for irow
             return result;
@@ -336,38 +367,41 @@ public class PolyMatrix implements Cloneable, Serializable {
      */
     public boolean equals(PolyMatrix matr2) {
         boolean result = true;
-        if (matr2.size() == this.rowLen) {
+        if (matr2.getRowLen() == this.rowLen && matr2.getColLen() == this.colLen) {
             int irow = 0;
             while (result && irow < this.rowLen) {
-                int icol = 0;
-                while (result && icol < this.colLen) {
-                    result = this.matrix[irow][icol].equals(matr2.matrix[irow][icol]);
-                    icol ++;
-                } // for icol
+                int jcol = 0;
+                while (result && jcol < this.colLen) {
+                    result = this.matrix[irow][jcol].equals(matr2.matrix[irow][jcol]);
+                    jcol ++;
+                } // for jcol
                 irow ++;
             } // for irow
         } else {
-            throw new IllegalArgumentException("cannot compare matrices of different size " + this.rowLen);
+            throw new IllegalArgumentException("cannot compare matrices of different size "
+                    + this.rowLen + "," + this.colLen);
         }
         return result;
     } // equals
 
     /*-------------- arithmetic operations -------------------------*/
 
-    /** Clone and adds all elements of another matrix to <em>this</em> matrix.
+    /** Clone and adds all elements of another rectangular PolyMatrix
+     *  to <em>this</em> rectangular PolyMatrix.
      *  @param matr2 add this matrix
      *  @return reference to a new object, the sum
      */
     public PolyMatrix add(PolyMatrix matr2) {
         PolyMatrix result = new PolyMatrix(rowLen);
-        if (matr2.size() == this.rowLen) {
+        if (matr2.getRowLen() == this.rowLen && matr2.getColLen() == this.colLen) {
             for (int irow = 0; irow < this.rowLen; irow ++) {
-                for (int icol = 0; icol < this.colLen; icol ++) {
-                    result.matrix[irow][icol] = this.matrix[irow][icol].add(matr2.matrix[irow][icol]);
-                } // for icol
+                for (int jcol = 0; jcol < this.colLen; jcol ++) {
+                    result.matrix[irow][jcol] = this.matrix[irow][jcol].add(matr2.get(irow, jcol));
+                } // for jcol
             } // for irow
         } else {
-            throw new IllegalArgumentException("cannot add matrices of different size " + this.rowLen);
+            throw new IllegalArgumentException("cannot add matrices of different size "
+                    + this.rowLen + "," + this.colLen);
         }
         return result;
     } // add(PolyMatrix)
@@ -378,14 +412,15 @@ public class PolyMatrix implements Cloneable, Serializable {
      */
     public PolyMatrix subtract(PolyMatrix matr2) {
         PolyMatrix result = new PolyMatrix(rowLen);
-        if (matr2.size() == this.rowLen) {
+        if (matr2.getRowLen() == this.rowLen && matr2.getColLen() == this.colLen) {
             for (int irow = 0; irow < this.rowLen; irow ++) {
-                for (int icol = 0; icol < this.colLen; icol ++) {
-                    result.matrix[irow][icol] = this.matrix[irow][icol].subtract(matr2.matrix[irow][icol]);
-                } // for icol
+                for (int jcol = 0; jcol < this.colLen; jcol ++) {
+                    result.matrix[irow][jcol] = this.matrix[irow][jcol].subtract(matr2.get(irow, jcol));
+                } // for jcol
             } // for irow
         } else {
-            throw new IllegalArgumentException("cannot add matrices of different size " + this.rowLen);
+            throw new IllegalArgumentException("cannot subtract matrices of different size "
+                    + this.rowLen + "," + this.colLen);
         }
         return result;
     } // subtract(PolyMatrix)
@@ -397,9 +432,9 @@ public class PolyMatrix implements Cloneable, Serializable {
     public PolyMatrix multiply(Polynomial poly2) {
         PolyMatrix result = new PolyMatrix(rowLen);
             for (int irow = 0; irow < this.rowLen; irow ++) {
-                for (int icol = 0; icol < this.colLen; icol ++) {
-                    result.matrix[irow][icol] = this.matrix[irow][icol].multiply(poly2);
-                } // for icol
+                for (int jcol = 0; jcol < this.colLen; jcol ++) {
+                    result.matrix[irow][jcol] = this.matrix[irow][jcol].multiply(poly2);
+                } // for jcol
             } // for irow
         return result;
     } // multiply(Polynomial)
@@ -410,15 +445,15 @@ public class PolyMatrix implements Cloneable, Serializable {
      */
     public PolyMatrix multiply(PolyMatrix matr2) {
         PolyMatrix result = new PolyMatrix(rowLen);
-        if (matr2.size() == this.rowLen) {
+        if (matr2.getColLen() == this.rowLen && matr2.getRowLen() == this.colLen ) {
             for (int irow = 0; irow < this.rowLen; irow ++) {
-                for (int icol = 0; icol < this.colLen; icol ++) {
+                for (int jcol = 0; jcol < this.colLen; jcol ++) {
                     Polynomial sum = new Polynomial();
                     for (int kvec = 0; kvec < this.rowLen; kvec ++) {
-                        sum = sum.add(this.matrix[irow][kvec].multiply(matr2.matrix[kvec][icol]));
+                        sum = sum.add(this.matrix[irow][kvec].multiply(matr2.get(kvec, jcol)));
                     } // for kvec
-                    result.matrix[irow][icol] = sum;
-                } // for icol
+                    result.matrix[irow][jcol] = sum;
+                } // for jcol
             } // for irow
         } else {
             throw new IllegalArgumentException("cannot multiply matrices of different size " + this.rowLen);
@@ -426,23 +461,23 @@ public class PolyMatrix implements Cloneable, Serializable {
         return result;
     } // multiply(PolyMatrix)
 
-    /** Multiply <em>this</em> matrix with some {@link PolyVector} (on the right).
-     *  @param vect2 multiply with this PolyVector
-     *  @return reference to new PolyVector, the right product
+    /** Multiply <em>this</em> matrix by some {@link PolyVector} (on the right).
+     *  @param vect2 multiply with this {@link PolyVector}
+     *  @return reference to new {@link PolyVector}, the right product
      */
     public PolyVector multiply(PolyVector vect2) {
         PolyVector result = new PolyVector(rowLen);
-        if (vect2.size() == this.rowLen) {
+        if (vect2.size() == this.colLen) {
             for (int irow = 0; irow < this.rowLen; irow ++) {
                     Polynomial sum = new Polynomial();
-                    for (int kvec = 0; kvec < this.rowLen; kvec ++) {
-                        sum = sum.add(this.matrix[irow][kvec].multiply(vect2.vector[kvec]));
-                    } // for kvec
+                    for (int jcol = 0; jcol < this.colLen; jcol ++) {
+                        sum = sum.add(this.matrix[irow][jcol].multiply(vect2.vector[jcol]));
+                    } // for jcol
                     result.vector[irow] = sum;
             } // for irow
         } else {
-            throw new IllegalArgumentException("cannot multiply a matrix and a vector of different size: " 
-            	+ this.toString(",") + " * " + vect2.toString(","));
+            throw new IllegalArgumentException("cannot multiply a matrix and a vector of different size: "
+                + this.toString(",") + " * " + vect2.toString(","));
         }
         return result;
     } // multiply(PolyVector)
@@ -451,11 +486,11 @@ public class PolyMatrix implements Cloneable, Serializable {
      *  @return map of variable names mapped to <em>null</em>
      */
     public VariableMap getVariableMap() {
-    	VariableMap result = new VariableMap();
+        VariableMap result = new VariableMap();
         for (int irow = 0; irow < this.rowLen; irow ++) {
-            for (int kvec = 0; kvec < this.rowLen; kvec ++) {
-               result.addTo(this.matrix[irow][kvec].getVariableMap());
-            } // for kvec
+            for (int jcol = 0; jcol < this.colLen; jcol ++) {
+               result.addTo(this.matrix[irow][jcol].getVariableMap());
+            } // for jcol
         } // for irow
         return result;
     } // getVariableMap()
@@ -499,26 +534,26 @@ public class PolyMatrix implements Cloneable, Serializable {
                 break;
             default: // recursive Laplace expansion over minors of the first row
                 PolyMatrix minor = new PolyMatrix(rowLen - 1);
-                int irow, icol;
+                int irow, jcol;
                 // populate minor for 1st column
                 for (irow = 1; irow < this.rowLen; irow ++) { // omit row 0
-                    for (icol = 1; icol < this.colLen; icol ++) { // omit column 0
-                        minor.matrix[irow - 1][icol - 1] = this.matrix[irow][icol];
-                    } // for icol
+                    for (jcol = 1; jcol < this.colLen; jcol ++) { // omit column 0
+                        minor.matrix[irow - 1][jcol - 1] = this.matrix[irow][jcol];
+                    } // for jcol
                 } // for irow
                 // now expand minors over row 0
-                for (icol = 0; icol < this.colLen; icol ++) {
-                    if (icol > 0) { // repair 1st column of minor
+                for (jcol = 0; jcol < this.colLen; jcol ++) {
+                    if (jcol > 0) { // repair 1st column of minor
                         for (int irow2 = 1; irow2 < this.rowLen; irow2 ++) {
-                            minor.matrix[irow2 - 1][icol - 1] = this.matrix[irow2][icol - 1];
+                            minor.matrix[irow2 - 1][jcol - 1] = this.matrix[irow2][jcol - 1];
                         } // for irow2
                     }
-                    if ((icol & 1) == 0) {
-                        result  = result.add     (minor.determinant().multiply(this.matrix[0][icol]));
+                    if ((jcol & 1) == 0) {
+                        result  = result.add     (minor.determinant().multiply(this.matrix[0][jcol]));
                     } else {
-                        result  = result.subtract(minor.determinant().multiply(this.matrix[0][icol]));
+                        result  = result.subtract(minor.determinant().multiply(this.matrix[0][jcol]));
                     }
-                } // for icol
+                } // for jcol
                 break;
         } // switch rowLen
         return result;
@@ -554,7 +589,7 @@ public class PolyMatrix implements Cloneable, Serializable {
         PolyVector vect1 = new PolyVector(alen, "a"); // the abstract vector
         System.out.println("abstract powersum: "
                 + amat.multiply(vect1).powerSum(alen - 1, alen - 1, 1)
-                .toString().replaceAll("\\s", "")                   
+                .toString().replaceAll("\\s", "")
                 );
         System.out.println("--------");
     } // printPythagoreanTest
@@ -574,9 +609,9 @@ public class PolyMatrix implements Cloneable, Serializable {
             if (false) {
             } else if (args.length == 0) {
                 amat = new              PolyMatrix ("[[x^2, y^2, - z^2],[x,y,z], [4,3,5]]");
-                System.out.println("new PolyMatrix(\"[[x^2, y^2, - z^2],[x,y,z], [4,3,5]]\") = " 
+                System.out.println("new PolyMatrix(\"[[x^2, y^2, - z^2],[x,y,z], [4,3,5]]\") = "
                         + amat.toString(","));
-                
+
                 amat = new PolyMatrix(3, "a");
                 System.out.println("PolyMatrix " + amat.toString(",")
                         + newline + "determinant = " + amat.determinant().toString());
@@ -601,10 +636,10 @@ public class PolyMatrix implements Cloneable, Serializable {
                     amat  = new PolyMatrix(args[iarg ++]); // may not contain spaces
                     alen = amat.size();
                     vect1 = new PolyVector(alen, "a"); // the abstract vector
-                    System.out.println(amat.toString("(,)") + " * " 
+                    System.out.println(amat.toString("(,)") + " * "
                             + vect1.toString("(,)") + " = "
                             + amat.multiply(vect1).powerSum(alen - 1, alen, 0)
-                            .toString().replaceAll("\\s", "")                   
+                            .toString().replaceAll("\\s", "")
                             );
                     // -abst
                 } else if (opt.startsWith("-char")) {

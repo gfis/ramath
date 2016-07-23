@@ -409,6 +409,19 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
         return result;
     } // hasZero
 
+    /** Whether there is any negative element in the Vector
+     *  @return false if all elements are &gt;= 0
+     */
+    public boolean hasNegative() {
+        boolean result = false;
+        int ielem = 0;
+        while (! result && ielem < this.vecLen) {
+            result = this.vector[ielem] < 0;
+            ielem ++;
+        } // while ielem
+        return result;
+    } // hasNegative
+
     /** Whether all elements of the Vector have the same value
      *  @param value tests for this value
      *  @return whether the Vector is of the form [value, value, ...]
@@ -771,23 +784,23 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
     } // toString()
 
     /** Returns a string representation of the vector
-     *  @param formatSpec specification of the layout: null = printf(%3d), ",", " ", " %4d"
+     *  @param formatSpecSpec specification of the layout: null = printf(%3d), ",", " ", " %4d"
      *  @return a one-dimensional array of small numbers
      */
-    public String toString(String formatSpec) {
+    public String toString(String formatSpecSpec) {
         String sep = ",";
         StringBuffer result = new StringBuffer(256);
         if (false) {
-        } else if (formatSpec == null || formatSpec.length() == 0) {
+        } else if (formatSpecSpec == null || formatSpecSpec.length() == 0) {
             for (int icol = 0; icol < this.vecLen; icol ++) {
                 result.append(String.format(" %3d", this.vector[icol]));
             } // for icol
-        } else if (formatSpec.indexOf('%') >= 0) { // printf spec
+        } else if (formatSpecSpec.indexOf('%') >= 0) { // printf spec
             for (int icol = 0; icol < this.vecLen; icol ++) {
-                result.append(String.format(formatSpec, this.vector[icol]));
+                result.append(String.format(formatSpecSpec, this.vector[icol]));
             } // for icol
         } else { 
-            if (formatSpec.indexOf(sep) >= 0) {
+            if (formatSpecSpec.indexOf(sep) >= 0) {
                 result.append('[');
             }
             for (int icol = 0; icol < this.vecLen; icol ++) {
@@ -796,7 +809,7 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
                 }
                 result.append(String.valueOf(this.vector[icol]));
             } // for icol
-            if (formatSpec.indexOf(sep) >= 0) {
+            if (formatSpecSpec.indexOf(sep) >= 0) {
                 result.append(']');
             }
         }

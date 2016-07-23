@@ -452,11 +452,22 @@ public class Polynomial implements Cloneable, Serializable {
     } // isBiased
 
     /** Gets the {@link Signature} of a {@link Monomial} with a variable
+     *  (with upper or lower case first letter)
      *  having exponent 1, and which does not occur otherwise in <em>this</em>
      *  {@link Polynomial}, or <em>null</em> if no such variable exists.
      *  @return a Signature of an isolated variable, or <em>null</em>
      */
     public Signature getIsolatedSignature() {
+        return getIsolatedSignature(true); // get with upper or lower case first letter
+    } // getIsolatedSignature()
+    
+    /** Gets the {@link Signature} of a {@link Monomial} with a variable
+     *  having exponent 1, and which does not occur otherwise in <em>this</em>
+     *  {@link Polynomial}, or <em>null</em> if no such variable exists.
+     *  @param upperSubst whether variables with uppercase first letter should be returned
+     *  @return a Signature of an isolated variable, or <em>null</em>
+     */
+    public Signature getIsolatedSignature(boolean upperSubst) {
         Signature result = null;
         Iterator<Signature> titer = this.keySet().iterator();
         boolean busy = true;
@@ -465,19 +476,21 @@ public class Polynomial implements Cloneable, Serializable {
             Monomial monot = this.get(tsig);
             if (monot.isUniVariate() && monot.getCoefficient().abs().equals(Coefficient.ONE)) { // this is a candidate variable
                 String vname = monot.firstName();
-                int vcount = 0; // vname should occur exactly once in this Polynomial
-                Iterator<Signature> viter = this.keySet().iterator();
-                while (vcount < 2 && viter.hasNext()) { // check all Monomials whether they contain vname
-                    Monomial monov = this.get(viter.next());
-                    int exp = monov.getExponent(vname);
-                    if (exp > 0) { // occurs
-                        vcount += exp; // will be > 1 if it occurs elsewhere
-                    } // occurs
-                } // while vcount, viter
-                if (vcount == 1) { // exactly once
-                    busy = false; // break outer loop
-                    result = tsig;
-                }
+                if (upperSubst || vname.substring(0, 1).equals(vname.substring(0, 1).toLowerCase())) {
+                    int vcount = 0; // vname should occur exactly once in this Polynomial
+                    Iterator<Signature> viter = this.keySet().iterator();
+                    while (vcount < 2 && viter.hasNext()) { // check all Monomials whether they contain vname
+                        Monomial monov = this.get(viter.next());
+                        int exp = monov.getExponent(vname);
+                        if (exp > 0) { // occurs
+                            vcount += exp; // will be > 1 if it occurs elsewhere
+                        } // occurs
+                    } // while vcount, viter
+                    if (vcount == 1) { // exactly once
+                        busy = false; // break outer loop
+                        result = tsig;
+                    }
+                } // upperSubst
             } // univariate
         } // while titer
         return result;
@@ -1128,6 +1141,7 @@ public class Polynomial implements Cloneable, Serializable {
      *  @return a RelationSet with one Polynomial for each variable combination
      */
     public RelationSet groupBy(Monomial mono2) {
+    	Polynomial prest = this.clone();
         RelationSet result = new RelationSet();
         Polynomial poly3 = this.getVariablePowers(mono2);
         Iterator <Signature> piter3 = poly3.monomials.keySet().iterator();
@@ -1148,7 +1162,11 @@ public class Polynomial implements Cloneable, Serializable {
             }
             poly4.setFactor(mono3);
             result.insert(poly4);
+            prest = prest.subtract(poly4.multiply(new Polynomial(mono3)));
         } // while titer
+        if (! prest.isZero() || result.size() == 0) {
+	        result.insert(prest);
+	    }
         return result;
     } // groupBy
 
@@ -2154,7 +2172,7 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
                     // input is: poly 
                     poly1 = Polynomial.parse(args[iarg ++]);
                     System.out.println("(" + poly1.toString() + ").getIsolatedSignature() = " 
-                    			+ poly1.getIsolatedSignature());
+                                + poly1.getIsolatedSignature());
                     // -isosig
 
                 } else if (opt.startsWith("-mappable")) {

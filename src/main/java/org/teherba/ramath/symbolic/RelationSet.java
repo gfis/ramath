@@ -789,11 +789,22 @@ public class RelationSet
     } // substitute(VariableMap)
 
     /** Simplifies <em>this</em> {@link RelationSet} by substituting 
-     *  all variables which occur isolated in a constituent {@link Polynomial}.
+     *  all variables (regardless of their first letter)
+     *  which occur isolated in a constituent {@link Polynomial}.
      *  Such Polynomials are removed.
-     *  THe original RelationSet is modified.
+     *  The original RelationSet is modified.
      */
     public void simplify() {
+        simplify(true); // upper and lower case first letter
+    } // simplify()
+
+    /** Simplifies <em>this</em> {@link RelationSet} by substituting 
+     *  variables which occur isolated in a constituent {@link Polynomial}.
+     *  Such Polynomials are removed.
+     *  The original RelationSet is modified.
+     *  @param upperSubst whether variables with uppercase first letter are concerned
+     */
+    public void simplify(boolean upperSubst) {
         boolean busy = true;
         while (busy) { // there may be still another isolated variable
             Signature isolSig = null;
@@ -802,7 +813,7 @@ public class RelationSet
             while (isolSig == null && ipoly > 0) { // search for any isolated variable
                 ipoly --;
                 polyi = this.get(ipoly);
-                isolSig = polyi.getIsolatedSignature(); // == null if there is none
+                isolSig = polyi.getIsolatedSignature(upperSubst); // == null if there is none
             } // while ipoly 1
             
             if (isolSig != null) { // an isolated variable was found
@@ -1004,7 +1015,7 @@ evaluate: unknown
                     }
                     System.out.println(rset1.toString());
                     rset1.debug = debug;
-                    rset1.simplify();  
+                    rset1.simplify(false); // simplify only lowercase variables
                     if (rset1.size() > 1) {                  
                         System.out.println("simplified: " + rset1.toString());
                     } else {

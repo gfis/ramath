@@ -33,18 +33,14 @@ import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.PolyVector;
 import  org.teherba.ramath.symbolic.Signature;
 import  org.teherba.ramath.symbolic.VariableMap;
+import  org.teherba.ramath.util.IntegerExpander;
 import  java.io.BufferedReader;
 import  java.io.FileReader;
 import  java.io.InputStreamReader;
 import  java.math.BigInteger;
 import  org.apache.log4j.Logger;
 
-/** Collection of several experimental methods:
- *  <ul>
- *  <li>{@link #printDifferences} - n-th order differences of a univariate {@link Polynomial}'s values</li>
- *  <li>{@link #process422} - {@link PrimeFactorization} of EEC(4,2,2) data</li>
- *  <li>{@link #processBachet} - evaluate Bachet's duplication formula for Mordell equations</li>
- *  </ul>
+/** Collection of several experimental methods, see {@link #main}.
  *  @author Dr. Georg Fischer
  */
 public class SandBox {
@@ -58,10 +54,6 @@ public class SandBox {
     public SandBox() {
         log = Logger.getLogger(SandBox.class.getName());
     } // no-args Constructor
-
-    //===========================
-    // Utility Methods
-    //===========================
 
     //===========================
     // Experimental methods
@@ -219,17 +211,21 @@ public class SandBox {
             } catch (Exception exc) {
             }
         }
-        int num = startValue;
         int primCount = 0;
-        while (num <= highValue) {
-            int v = num / 2;
-            int u = num - v; // always; u >= v
-            while (v >= 1) {
+        IntegerExpander dispenser = new IntegerExpander(2, highValue);
+        while (dispenser.hasNext()) {
+            int[] values = dispenser.next();
+            int v = values[0];
+            int u = values[1];
+            if (u > v && v > 0) { // u,v convenient
                 Vector vect = amat.multiply(new Vector(new int[] { u * u, u * v, v * v }));
                 System.out.print(vect.sort().toString(" %5d") + "\t" + vect.toString(","));
-                if (vect.hasZero()) {
-                    System.out.print(" zero");
-                } else if (vect.gcd() == 1) {
+                if (false) {
+                } else if (vect.hasZero()        ) {
+                    System.out.print(" zero"     );
+                } else if (vect.hasNegative()    ) {
+                    System.out.print(" negative" );
+                } else if (vect.gcd() == 1       ) {
                     System.out.print(" primitive");
                     primCount ++;
                 }
@@ -237,13 +233,9 @@ public class SandBox {
                         + (Vector.gcd(u, v) == 1 ? " coprime"  : "")
                         + ((u + v) % 2 != 0      ? " opposite" : "")
                         );
-                v --;
-                u = num - v;
-            } // while u <= v
-            // System.out.println("#--------");
-            num ++;
-        } // while num
-        System.out.println("lim=" + highValue + ", " + primCount + " primit.");
+            } // if u,v convenient
+        } // while dispenser
+        System.out.println("# lim=" + highValue + ", " + primCount + " primit.");
     } // printEuclid
 
     /** Evaluates a univariate {@link Polynomial} for a

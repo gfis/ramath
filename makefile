@@ -15,7 +15,7 @@ TEST=
 TESTDIR=test
 WROB=../../mater/ramath/eec/wroblewski
 
-all: matrix
+all: symbolic
 regression: simple symbolic ideal linear matrix solver sandbox
 ideal:
 	$(REGR) test/ideal.tests 	$(TEST) 2>&1 | tee regression.log.tmp
@@ -71,7 +71,8 @@ pg2:
 #
 # Target 'primit' is used in sandbox.tests/EU*
 primit:
-	grep primitive test/$(CASE).this.tst | sort | cut -d "	" -f 1 | head -$(HEAD) > test/$(CASE).sort.tmp
+	grep primitive test/$(CASE).this.tst | sort | head -$(HEAD) > test/$(CASE).sort.tmp
+#	grep primitive test/$(CASE).this.tst | sort | cut -d "	" -f 1 | head -$(HEAD) > test/$(CASE).sort.tmp
 #-------------------------
 # Evaluation of PG?3
 eval3:
