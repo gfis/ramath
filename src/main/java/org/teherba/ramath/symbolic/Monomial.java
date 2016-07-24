@@ -822,7 +822,7 @@ public class Monomial implements Cloneable, Serializable {
         boolean noPower = false; // power operator "^" is allowed
         if (mode == 5) {
             noPower = true; // replace "^" by repeated multiplication
-            mode = 2;
+            mode = 0;
         }
         StringBuffer result = new StringBuffer(32);
         String number = null;

@@ -60,7 +60,7 @@ ret:
 	make solver
 #-------------------------
 # Target 'progen' is needed for RegressionTester's MAKE in symbolic.tests/PG*
-progen: pg1 pg2
+progen: pg1 
 pg1:
 	cat test/progen.c
 	gcc -o test/progen.exe test/progen.c

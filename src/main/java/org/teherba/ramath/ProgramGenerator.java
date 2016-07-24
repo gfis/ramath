@@ -25,6 +25,7 @@ import  org.teherba.ramath.symbolic.PolyVector;
 import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.RelationSet;
 import  org.teherba.ramath.symbolic.VariableMap;
+import  org.teherba.ramath.util.ExpressionReader;
 import  java.io.PrintStream;
 import  java.text.SimpleDateFormat;
 import  java.util.Date;
@@ -75,6 +76,8 @@ public class ProgramGenerator {
     private PolyVector[] vects;
     /** up to 3 {@link Polynomial}s */
     private Polynomial[] polys;
+    /** some {@link RelationSet} */
+    private RelationSet rset1;
     /** name of the method to be activated */
     private String method;
     /** leading letter for variables to be generated */
@@ -217,21 +220,26 @@ public class ProgramGenerator {
                     o.println("pow3[" + String.valueOf(range3) + "-" + String.valueOf(isq3) + "] = " + String.valueOf(- isq) + ";");
                 } // for isq 2
             } // feature cube
-
-            // now print the variable declarations for the matrix elements
-            sep = "int ";
-            for (int irow = 1; irow <= nrows; irow ++) {
-                for (int icol = 1; icol <= ncols; icol ++) {
-                    o.print(sep + "m" + String.valueOf(irow) + String.valueOf(icol));
-                    sep = ",";
-                } // for icol
-                o.println();
-            } // for irow 
-            o.println(";");
+            o.println("int reslines = 0;");
             o.println("printf(\"#---- start of results ----\\n\");");
             // C
         }
     } // programHeader
+    
+    /** Print the declarations for the matrix elements
+     */
+    private void declareMatrix() {
+        // now print the variable declarations for the matrix elements
+        String sep = "int ";
+        for (int irow = 1; irow <= nrows; irow ++) {
+            for (int icol = 1; icol <= ncols; icol ++) {
+                o.print(sep + "m" + String.valueOf(irow) + String.valueOf(icol));
+                sep = ",";
+            } // for icol
+            o.println();
+        } // for irow 
+        o.println(";");
+    } // declareMatrix
     
     /** Generate a program trailer
      */
@@ -239,6 +247,7 @@ public class ProgramGenerator {
         if (false) {
         } else if (lang.equals("C"   )) {
             o.println(brackets); // all closing brackets opened by oc()
+            o.println("printf(\"# %d result lines\\n\", reslines);");
             o.println("} /* main */");
             // C
         }
@@ -281,18 +290,6 @@ public class ProgramGenerator {
         } // for irow
     } // forCol
     
-    /** Check Pythagoras for 1 column 
-     *  @param jcol column number
-     */
-    private void checkPythCol(int jcol) {
-        o.print("if (0");
-        for (int irow = 1; irow <= nrows; irow ++) {
-            String mij = letter1 + String.valueOf(irow) + String.valueOf(jcol);
-            o.print((irow < nrows ? " + " : " - ") + mij + "*" + mij);
-        } // for irow
-        o.print(" == 0)"); oc();
-    } // checkPythCol
-
     /** Check InnerProduct of 2 columns  
      *  @param jcol column number 1
      *  @param kcol column number 2
@@ -388,8 +385,9 @@ public class ProgramGenerator {
     
     /** Print a row of the matrix in Vector form [m11,m12,m13]
      *  @param irow row number
+     *  @param ncols number of columns (1-ncols)
      */
-    private void printRow(int irow) {
+    private void printRow(int irow, int ncols) {
         o.print("printf(\"");
         String sep = "[";
         for (int kcol = 1; kcol <= ncols; kcol ++) {
@@ -405,20 +403,60 @@ public class ProgramGenerator {
     } // printRow
  
     /** Print a matrix in vectorized form [[m11,m12],[m21,m22]]
+     *  @param nrows number of rows    (1-nrows)
+     *  @param ncols number of columns (1-ncols)
      */
-    private void printMatrix() {
+    private void printMatrix(int nrows, int ncols) {
         String sep = "[";
         for (int irow = 1; irow <= nrows; irow ++) {
             o.println("printf(\"" + sep + "\");");
-            printRow(irow);
+            printRow(irow, ncols);
             sep = ",";
         } // for kcol
         o.println("printf(\"]\");");
+        o.println("reslines ++;");
     } // printMatrix
        
     //===========================
     // Generating Methods
     //===========================
+
+    /** Generate 3x3 matrixes for composition triples
+     */
+    public void barning() {
+        letter1 = "m";
+        int width = 3;
+        nrows = width;
+        ncols = width;
+        programHeader("");
+        declareMatrix();
+        o.println("int a=3; int b=4; int c=5;");
+        for (int irow = 1; irow <= nrows; irow ++) {
+            o.println(getRowLoop(irow));
+            for (int jrow = irow - 1; jrow >= 1; jrow --) {
+                checkSameRow(irow, jrow);
+            } // for jrow
+        } // irow
+        for (int icol = 1; icol <= ncols; icol ++) {
+            for (int jcol = icol + 1; jcol <= ncols; jcol ++) {
+                checkSameCol(icol, jcol);
+            } // for jcol
+        } // icol
+
+        // from PO1.this.tst:
+        o.print("if (   m11^2 + 2*m11*m13 + m13^2 + m21^2 + 2*m21*m23 + m23^2 - m31^2 - 2*m31*m33 - m33^2 == 0)"); oc();
+        o.print("if ( - m11^2 + 2*m12^2 + m13^2 - m21^2 + 2*m22^2 + m23^2 + m31^2 - 2*m32^2 - m33^2       == 0)"); oc();
+        o.print("if (   m11*m12 + m12*m13 + m21*m22 + m22*m23 - m31*m32 - m32*m33                         == 0)"); oc();
+        o.print("if ( - m11*m12 + m12*m13 - m21*m22 + m22*m23 + m31*m32 - m32*m33                         == 0)"); oc();
+        o.print("int v1=m11*a+m12*b+m13*c; "); o.print("if (v1 > a           )"); oc();
+        o.print("int v2=m21*a+m22*b+m23*c; "); o.print("if (v2 > b && v2 > v1)"); oc();
+        o.print("int v3=m31*a+m32*b+m33*c; "); o.print("if (v3 > c && v3 > v2)"); oc();
+        o.print("if (v1*v1 + v2*v2 - v3*v3 == 0)"); oc();
+        printMatrix(nrows, ncols);
+        o.println("printf(\"\\t\\tpreserves: [%d,%d,%d] -> [%d,%d,%d]\\n\",a,b,c, v1,v2,v3);");
+        programTrailer();
+    } // barning   
+
 /*
  + m^4*(A11^2 + A21^2 - A31^2)                                          c1^2
  + n^4*(A13^2 + A23^2 - A33^2)                                          c3^2 
@@ -449,79 +487,11 @@ public class ProgramGenerator {
      *  </pre>
      */
     public void m2SIA() {
-        letter1 = "m";
-        nrows = 3;
-        ncols = 6;
-        programHeader("");
-        o.println("m12 = 77; m22 = 77; m32 = 77;");
-        forCol      (1); // m^4
-        checkPythCol(1);
-        forCol      (3); // n^4
-        checkPythCol(3);
-        forCol      (2);  
-        checkPlusRow(1);
-        checkPlusRow(2);
-        checkPlusRow(3);
-        checkSameRow(1, 2);
-        checkSameRow(1, 3);
-        checkSameRow(2, 3);
-        checkProdCol(1, 2); // 2*m^3*n
-        checkProdCol(2, 3); // 2*m*n^3
-        checkNestCol(1, 2, 3); // m^2*n^2
-        /* SI8.prev.tst:
-            simplified and grouped: 
-             + m^4*(A11^2 + A21^2 - A31^2)
-             + 2*m^3*n*(A11*A12 + A21*A22 - A31*A32)
-             + m^2*n^2*(A12^2 + 2*A11*A13 + A22^2 + 2*A21*A23 - A32^2 - 2*A31*A33)
-             + 2*m*n^3*(A12*A13 + A22*A23 - A32*A33)
-             + n^4*(A13^2 + A23^2 - A33^2)
-        */
-        o.println("int m, n, cr1, cr2, cr3;");
-        o.println("n = 1; m = 2;");
-    /*
-        o.println("for (m = 1; m <= 1; m ++)"); oc();
-        o.println("cr1 = m*m; cr2 = m*n; cr3 = n*n;");
-        for (int irow = 1; irow <= width; irow ++) {
-            o.print("if (0");
-            for (int jcol = 1; jcol <= width; jcol ++) {
-                String mij = letter1 + String.valueOf(irow) + String.valueOf(jcol);
-                String crj = "cr"                          + String.valueOf(jcol);
-                o.print(" + " + mij + "*" + crj);
-            } // for jcol
-            o.print(" >= 0)"); oc();
-        } // for irow
-    */
-        printMatrix();
-        o.println("printf(\"\\t\");");
-        o.println("int countneg = 0;");
-        o.println("for (m = 1; m <= 8 && countneg < 7; m ++) {");
-        o.println("    cr1 = m*m; cr2 = m*n; cr3 = n*n;");
-        String sep = " [";
-        for (int irow = 1; irow <= nrows; irow ++) {
-            String vai = "va" + String.valueOf(irow);
-            String sep2 = " = ";
-            o.print("    int " + vai);
-            for (int jcol = 1; jcol <= ncols; jcol ++) {
-                String mij = letter1 + String.valueOf(irow) + String.valueOf(jcol);
-                String crj = "cr"                           + String.valueOf(jcol);
-                o.print(sep2 + mij + "*" + crj);
-                sep2 = " + ";
-            } // for jcol
-            o.println(";");
-            o.println("    printf(\"" + sep + "%d\", " + vai + ");");
-            o.println("    if (m >= 1 && " + vai + " < 0) { countneg ++; }");
-            sep = ",";
-        } // for irow
-        o.println("    printf(\"]\");");
-        o.println("} /* for m */");
-        o.println("printf(countneg > 0 ? \" ????\" : \" !!!!\");");
-        o.println("printf(\"\\n\");");
-        programTrailer();
     } // m2SIA
  
     /** Generate 3 x 3 matrixes for coefficients of Euclids identity
      *  <pre>
-         a^2 + b^2 = c^2;
+         a^2 + b^2 - c^2 = 0;
          a = A11*m^2 + A12*m*n + A13*n^2;
          b = A21*m^2 + A22*m*n + A23*n^2;
          c = A31*m^2 + A32*m*n + A33*n^2
@@ -532,12 +502,13 @@ public class ProgramGenerator {
         nrows   = 3;
         ncols   = 3;
         programHeader("");
+        declareMatrix();
         o.println("m12 = 77; m22 = 77; m32 = 77;");
-        forCol      (1); // m^4
-        checkPythCol(1);
-        forCol      (3); // n^4
-        checkPythCol(3);
-        forCol      (2);  
+        forCol      (1); 
+        checkProdCol(1, 1); // m^4
+        forCol      (3); 
+        checkProdCol(3, 3); // n^4
+        forCol      (2); 
         checkPlusRow(1);
         checkPlusRow(2);
         checkPlusRow(3);
@@ -557,20 +528,7 @@ public class ProgramGenerator {
         */
         o.println("int m, n, cr1, cr2, cr3;");
         o.println("n = 1; m = 2;");
-    /*
-        o.println("for (m = 1; m <= 1; m ++)"); oc();
-        o.println("cr1 = m*m; cr2 = m*n; cr3 = n*n;");
-        for (int irow = 1; irow <= width; irow ++) {
-            o.print("if (0");
-            for (int jcol = 1; jcol <= width; jcol ++) {
-                String mij = letter1 + String.valueOf(irow) + String.valueOf(jcol);
-                String crj = "cr"                          + String.valueOf(jcol);
-                o.print(" + " + mij + "*" + crj);
-            } // for jcol
-            o.print(" >= 0)"); oc();
-        } // for irow
-    */
-        printMatrix();
+        printMatrix(nrows, ncols);
         o.println("printf(\"\\t\");");
         o.println("int countneg = 0;");
         o.println("for (m = 1; m <= 8 && countneg < 7; m ++) {");
@@ -617,7 +575,8 @@ public class ProgramGenerator {
         nrows = width;
         ncols = width;
         programHeader("gcd");
-        PolyMatrix  pmat1 = new PolyMatrix(width, letter1);
+        declareMatrix();
+        PolyMatrix  pmat1 = new PolyMatrix(nrows, ncols, letter1);
         PolyVector  vectm = pmat1.multiply(vectg);
         VariableMap vmap0 = poly0.getVariableMap();
         VariableMap vmap1 = new VariableMap(); // p1->0,q1->0,r1->0
@@ -643,7 +602,7 @@ public class ProgramGenerator {
         o.println("    vectc = " + vectc.toString());
         o.println("    poly0 = " + poly0.toString());
         o.println("    mono2 = " + mono2.toString());
-        o.println("    rset1 = " + rset1.toList(true)); 
+        o.println("    rset1 = " + rset1.toList()); 
         o.println("*/");
         /* mono2= + a*b, rset1=
         [0]  + a^4*(m11^2 + 2*m11*m13 + m13^2 + m21^2 + 2*m21*m23 + m23^2 - m31^2 - 2*m31*m33 - m33^2)
@@ -656,7 +615,7 @@ public class ProgramGenerator {
         PolyVector vect0 = new PolyVector(width, 0, names0);
         String[] names1  = vmap1.getNameArray();
         PolyVector vect1 = new PolyVector(width, 0, names1);
-        for (int irow = 1; irow <= width; irow ++) {
+        for (int irow = 1; irow <= nrows; irow ++) {
             forRow(irow);
             for (int jrow = irow - 1; jrow >= 1; jrow --) { // avoid identical rows
                 checkSameRow(irow, jrow);
@@ -665,12 +624,12 @@ public class ProgramGenerator {
             o.println("int " + v1 + " = " + pmat1.getRow(irow - 1).multiply(vect0).toString() + "; ");
             o.print("if (" + v1 + " > 0)"); oc();
         } // irow
-        for (int icol = 1; icol <= width; icol ++) { // 1..3
+        for (int icol = 1; icol <= nrows; icol ++) { // 1..3
             int jcol = 0;
-            for (jcol = icol + 2; jcol <= width; jcol ++) { // 3..3; all except 1st must be ascending
+            for (jcol = icol + 2; jcol <= ncols; jcol ++) { // 3..3; all except 1st must be ascending
                 o.print("if (" + names1[jcol - 2] + " < " + names1[jcol - 1] + ") /* ascending */"); oc();
             } // for jcol
-            for (jcol = icol + 1; jcol <= width; jcol ++) { // avoid identical colums
+            for (jcol = icol + 1; jcol <= ncols; jcol ++) { // avoid identical colums
                 checkSameCol(icol, jcol);
             } // for jcol
         } // icol    
@@ -699,7 +658,7 @@ public class ProgramGenerator {
         o.println("int gcdnp = gcd" + width + "(" + nstr1 + ");");
         o.print  ("if (gcdnp == 1)"); oc();
         // o.println("    /* printf(\"\tnon-primitive/%d\", gcdnp); */");
-        printMatrix();
+        printMatrix(nrows, ncols);
         o.print("printf(\"\\tpreserves");
         ivect = 0;
         sep = "\\t[";
@@ -720,40 +679,6 @@ public class ProgramGenerator {
         programTrailer();
     } // m2opts
 
-    /** Generate 3x3 matrixes for composition triples
-     */
-    public void m2pyth() {
-        letter1 = "m";
-        int width = 3;
-        nrows = width;
-        ncols = width;
-        programHeader("square,cube");
-        o.println("int a=3; int b=4; int c=5;");
-        for (int irow = 1; irow <= width; irow ++) {
-            forRow(irow);
-            for (int jrow = irow - 1; jrow >= 1; jrow --) {
-                checkSameRow(irow, jrow);
-            } // for jrow
-        } // irow
-        for (int icol = 1; icol <= width; icol ++) {
-            for (int jcol = icol + 1; jcol <= width; jcol ++) {
-                checkSameCol(icol, jcol);
-            } // for jcol
-        } // icol
-
-        // from PO1.this.tst:
-        o.print("if (   m11^2 + 2*m11*m13 + m13^2 + m21^2 + 2*m21*m23 + m23^2 - m31^2 - 2*m31*m33 - m33^2 == 0)"); oc();
-        o.print("if ( - m11^2 + 2*m12^2 + m13^2 - m21^2 + 2*m22^2 + m23^2 + m31^2 - 2*m32^2 - m33^2       == 0)"); oc();
-        o.print("if (   m11*m12 + m12*m13 + m21*m22 + m22*m23 - m31*m32 - m32*m33                         == 0)"); oc();
-        o.print("if ( - m11*m12 + m12*m13 - m21*m22 + m22*m23 + m31*m32 - m32*m33                         == 0)"); oc();
-        o.print("int v1=m11*a+m12*b+m13*c; "); o.print("if (v1 > a           )"); oc();
-        o.print("int v2=m21*a+m22*b+m23*c; "); o.print("if (v2 > b && v2 > v1)"); oc();
-        o.print("int v3=m31*a+m32*b+m33*c; "); o.print("if (v3 > c && v3 > v2)"); oc();
-        o.print("if (v1*v1 + v2*v2 - v3*v3 == 0)"); oc();
-        printMatrix();
-        o.println("printf(\"\tpreserves %d,%d,%d\\n\",v1,v2,v3);");
-        programTrailer();
-    } // m2pyth   
     //==========================================================
 
     /** String for open and push 1 closing bracket
@@ -805,7 +730,7 @@ public class ProgramGenerator {
         return result.toString();
     } // getRowLoop
     
-    /** Get a String for an innerproduct of 2 columns  
+    /** Get a String for the innerproduct of 2 columns  
      *  @param jcol column number 1
      *  @param kcol column number 2
      *  @parms negs number of negative terms at the end of the expression
@@ -825,6 +750,100 @@ public class ProgramGenerator {
         return result.toString();
     } // getColProd
 
+    /** Generate identities for power sums
+     *  Parameters: 
+     *  <ul>
+     *  <li>rset1 RelationSet</li>
+     *  </ul>
+     */
+    public void pident() {
+        rset1.simplify(false); // only the lowercase variables
+        if (rset1.size() > 1) {                  
+            System.out.println("Still more than 1 Polynomial after simplification: " + rset1.toString());
+        } else { // simplification returned a single Polynomial
+            programHeader("");
+            Polynomial poly1  = rset1.get(0);
+            VariableMap vmap1 = poly1.getVariableMap("1", false);
+            Monomial monog    = new Monomial(vmap1.getNameArray());
+            RelationSet rset2 = poly1.groupBy(monog);
+            int npoly = rset2.size();
+            VariableMap[] vmaps = new VariableMap[npoly];
+            int[]         nvars = new int[npoly];
+            
+            o.println("/* simplified and grouped: ");
+            int minSize = 2906; // very high
+            int maxSize =    0; // very low
+            int ipoly = 0;
+            Polynomial polyi = null;
+            while (ipoly < npoly) {
+                polyi = rset2.get(ipoly);
+                vmaps[ipoly] = polyi.getVariableMap();
+                nvars[ipoly] = vmaps[ipoly].size();
+                if (nvars[ipoly] < minSize) {
+                    minSize = nvars[ipoly];
+                }
+                if (nvars[ipoly] > maxSize) {
+                    maxSize = nvars[ipoly];
+                }
+                o.println("    [" + ipoly + "] " + polyi.getFactor().toString() 
+                        + "\t(" + polyi.toString(5) + ")" 
+                        + "\t"  + nvars[ipoly]
+                        + "{"  + vmaps[ipoly].getNameString() + "}"
+                        );
+                ipoly ++;
+            } // while ipoly
+            o.println("    minSize=" + minSize + ", maxSize=" + maxSize); // minimal/maximal number of variables in a partial Polynomial
+            vmap1             = rset1.getVariableMap(true);  // with uppercase variables
+            VariableMap vlow  = rset1.getVariableMap(false); // without uppercase
+            vmap1.remove(vlow); // now only the uppercase 
+            String[] names = vmap1.getNameArray(); // ascending order because of TreeMap
+            ncols = 0;
+            String subs = names[ncols ++].substring(0, 2); // "A11" -> "A1"
+            while (ncols < names.length && names[ncols].substring(0, 2).equals(subs)) {
+                ncols ++;
+            } // while ncols
+            nrows = names.length / ncols;
+            letter1 = subs.substring(0, 1);
+            o.println("    nrows = " + nrows + ", ncols = " + ncols);
+            o.println("*/");
+            o.println("int " + vmap1.getNameString() + ";"); // instead of declareMatrix()
+    
+            while (minSize <= maxSize) { // expand all partial Polynomials
+                ipoly = 0;
+                while (ipoly < npoly) {
+                    polyi = rset2.get(ipoly);
+                    if (nvars[ipoly] == minSize) { // next bigger, expand for this
+                        nvars[ipoly] = 0; // do not investigate anymore
+                        names = vmaps[ipoly].getNameArray();
+                        int inam = 0;
+                        while (inam < names.length) {
+                            String name  = names[inam];
+                            String found = vmap1.remove(name);
+                            if (found != null) {
+                                o.print("for (" + name + " = " + String.valueOf(minDigit) + "; " 
+                                        + name + " < " + String.valueOf(maxDigit) + "; " 
+                                        + name + "++) " + br()); 
+                            } // found
+                            inam ++;
+                        } // while inam
+                        o.print("if (" + polyi.toString(5) + " == 0) /* [" + ipoly + "], minSize = " + minSize + " */ " + br());
+                    } // == minSize
+                    ipoly ++;
+                } // while ipoly
+                minSize ++; // try higher in next loop
+            } // while expanding all partial Polynomials
+            for (int irow = 1; irow <= nrows; irow ++) {
+                checkZeroRow(irow);
+                for (int jrow = irow + 1; jrow <= nrows; jrow ++) {
+                    checkSameRow(irow, jrow);
+                } // for jrow
+            } // for irow
+            printMatrix(nrows, ncols);
+            o.println("printf(\"\\n\");");
+            programTrailer();
+        } // if size 1 after simplification
+    } // pident
+
     //==========================================================
 
     /* Get the commandline parameters
@@ -835,6 +854,7 @@ public class ProgramGenerator {
      *  <li>-l maxDigit</li>
      *  <li>-n generate non-zero entries only</li>
      *  <li>-p poly: 1st, 2nd, 3rd Polynomial</li>
+     *  <li>-r rset: RelationSet</li>
      *  <li>-v startVector</li>
      *  <li>-w width, matrix size</li>
      *  </ul>
@@ -857,6 +877,11 @@ public class ProgramGenerator {
                         exp   = Integer.parseInt(args[iarg ++]);
                     } catch (Exception exc) {
                     }
+                } else if (op.equals("f")     ) {
+                    argsLog.append(' ');
+                    argsLog.append(args[iarg]);
+                    String fileName = args[iarg ++];
+                    rset1 = RelationSet.parse((new ExpressionReader()).read(fileName));
                 } else if (op.equals("l")) {
                     argsLog.append(' ');
                     argsLog.append(args[iarg]);
@@ -875,6 +900,11 @@ public class ProgramGenerator {
                     argsLog.append("\"");
                     ipoly ++;
                     polys[ipoly] = Polynomial.parse(args[iarg ++]);
+                } else if (op.equals("r")) {
+                    argsLog.append(" \"");
+                    argsLog.append(args[iarg]);
+                    argsLog.append("\"");
+                    rset1 = RelationSet.parse(args[iarg ++]);
                 } else if (op.equals("v")) {
                     argsLog.append(" \"");
                     argsLog.append(args[iarg]);
@@ -911,12 +941,14 @@ public class ProgramGenerator {
         gen.getArguments(args);
         //----------------------------------
         if (false) {
+        } else if (gen.method.equals("barning"  )) {
+            gen.barning();
         } else if (gen.method.equals("m2euclid" )) {
             gen.m2euclid();
         } else if (gen.method.equals("m2opts"   )) {
             gen.m2opts(gen.vects[0], gen.vects[1], gen.polys[0]);
-        } else if (gen.method.equals("m2pyth"   )) {
-            gen.m2pyth();
+        } else if (gen.method.equals("pident"   )) {
+            gen.pident();
         } else {
             System.err.println("unknown operation \"" + gen.method + "\"");
         }

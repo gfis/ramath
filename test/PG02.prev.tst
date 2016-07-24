@@ -26,22 +26,23 @@ int gcd4(int a, int b, int c, int d) {
 int gcd5(int a, int b, int c, int d, int e) {         
         return gcd2(a, gcd4(b, c, d, e));             
     } /* gcd5 */                                      
+int reslines = 0;
+printf("#---- start of results ----\n");
 int m11,m12,m13
 ,m21,m22,m23
 ,m31,m32,m33
 ;
-printf("#---- start of results ----\n");
 int p = 5; int q = 3; int r = 4; 
 /*  vectg = [a^2+b^2,2*a*b,a^2-b^2]
     vectc = [5,3,4]
     poly0 = p^2 - q^2 - r^2
     mono2 =  + a*b
     rset1 = 
-[0]  + a^4*(m11^2 + 2*m11*m13 + m13^2 - m21^2 - 2*m21*m23 - m23^2 - m31^2 - 2*m31*m33 - m33^2)
-[1]  + 4*a^3*b*(m11*m12 + m12*m13 - m21*m22 - m22*m23 - m31*m32 - m32*m33)
-[2]  + 2*a^2*b^2*(m11^2 + 2*m12^2 - m13^2 - m21^2 - 2*m22^2 + m23^2 - m31^2 - 2*m32^2 + m33^2)
-[3]  + 4*a*b^3*(m11*m12 - m12*m13 - m21*m22 + m22*m23 - m31*m32 + m32*m33)
-[4]  + b^4*(m11^2 - 2*m11*m13 + m13^2 - m21^2 + 2*m21*m23 - m23^2 - m31^2 + 2*m31*m33 - m33^2)
+ + a^4*(m11^2 + 2*m11*m13 + m13^2 - m21^2 - 2*m21*m23 - m23^2 - m31^2 - 2*m31*m33 - m33^2)
+ + 4*a^3*b*(m11*m12 + m12*m13 - m21*m22 - m22*m23 - m31*m32 - m32*m33)
+ + 2*a^2*b^2*(m11^2 + 2*m12^2 - m13^2 - m21^2 - 2*m22^2 + m23^2 - m31^2 - 2*m32^2 + m33^2)
+ + 4*a*b^3*(m11*m12 - m12*m13 - m21*m22 + m22*m23 - m31*m32 + m32*m33)
+ + b^4*(m11^2 - 2*m11*m13 + m13^2 - m21^2 + 2*m21*m23 - m23^2 - m31^2 + 2*m31*m33 - m33^2)
 */
 for (m11 = -3; m11 < 4; m11++) /* row 1 */  {
 if (m11 != 0) {
@@ -75,7 +76,7 @@ if (m11 != m12 || m21 != m22 || m31 != m32) /* col 1 != col 2 */  {
 if (m11 != m13 || m21 != m23 || m31 != m33) /* col 1 != col 3 */  {
 if (m12 != m13 || m22 != m23 || m32 != m33) /* col 2 != col 3 */  {
 if (p1 != p || q1 != q || r1 != r) /* not same tuple */ {
-if (p1*p1-q1*q1-r1*r1 == 0) /* chain 1 condition */ {
+if (p1*p1 - q1*q1 - r1*r1 == 0) /* chain 1 condition */ {
 int gcdnp = gcd3(p1,q1,r1);
 if (gcdnp == 1) {
 printf("[");
@@ -85,6 +86,7 @@ printf("[%d,%d,%d]",m21,m22,m23);
 printf(",");
 printf("[%d,%d,%d]",m31,m32,m33);
 printf("]");
+reslines ++;
 printf("\tpreserves\t[%d,%d,%d]",p1,q1,r1);
 int p2 = m11*p1 + m12*q1 + m13*r1;
 int q2 = m21*p1 + m22*q1 + m23*r1;
@@ -94,6 +96,7 @@ if (p2*p2*p2 == q2*q2 + r2*r2) {
 }
 printf("\n");
 }}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+printf("# %d result lines\n", reslines);
 } /* main */
 #---- start of results ----
 [[-1,2,3],[-2,1,3],[-1,3,2]]	preserves	[13,5,12]
@@ -274,4 +277,4 @@ printf("\n");
 [[3,2,2],[3,-1,2],[3,-2,3]]	preserves	[29,20,21]
 [[3,2,2],[3,3,-1],[2,1,2]]	preserves	[29,20,21]
 [[3,2,2],[3,3,-1],[3,-2,3]]	preserves	[29,20,21]
-  276  1247 12843 test/PG02.this.tst
+# 178 result lines

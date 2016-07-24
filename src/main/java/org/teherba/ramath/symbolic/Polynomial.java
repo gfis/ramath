@@ -2241,7 +2241,7 @@ solution [0,0,0,0],trivial(3)
                     System.out.println(poly1.toString());
                     Monomial mono4 = new Monomial(vars);
                     System.out.println("getVariablePowers(" + varName + ")=" + poly1.getVariablePowers(mono4));
-                    System.out.println(          "groupBy(" + varName + ")=" + poly1.groupBy          (mono4).toList(false));
+                    System.out.println(          "groupBy(" + varName + ")=" + poly1.groupBy          (mono4).toList());
                     // -var
 
                 } else {

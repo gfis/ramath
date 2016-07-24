@@ -1,5 +1,6 @@
 /*  RelationSet: a set of polynomials which relate to zero
  *  @(#) $Id: RelationSet.java 970 2012-10-25 16:49:32Z  $
+ *  2016-07-24: toList(5) 
  *  2016-01-04: PairMap
  *  2015-12-06: toString(boolean) -> toString(1)
  *  2015-09-10: message -> siblingIndex; s|getRelationSet
@@ -367,21 +368,27 @@ public class RelationSet
         return buffer.toString();
     } // toFactoredString
 
-    /** Returns lines with String representations of the {@link Polynomial}s in <em>this</em> {@link RelationSet},
-     *  either compressed or full
-     *  @param full whether to return a complete representation suitable for substitution
-     *  or a compressed representation which suppresses positive unary sign and
-     *  coefficients and exponents of 1
+    /** Returns lines with String representations of the {@link Polynomial}s 
+     *  in <em>this</em> {@link RelationSet}, either compressed or full
+     *  @param mode 
+     *  <ul>
+     *  <li>0 = normal</li>
+     *  <li>1 = full (for substitution), with coefficients 1 and relation " = 0"</li>
+     *  <li>2 = nice / human legible, with superscripts for exponents</li>
+     *  <li>3 = with prime factors</li>
+     *  <li>4 = with colored prime factors</li>
+     *  <li>5 = exponentiation as products</li>
+     *  </ul>
      *  @return a list of lines separated by newline
      */
-    public String toList(boolean full) {
+    public String toList(int mode) {
         StringBuffer buffer = new StringBuffer(2048);
         int ipoly = 0;
         while (ipoly < this.size()) {
             if (ipoly >= 0) {
                 buffer.append("\n");
             }
-            if (full) {
+            if (mode == 1) {
                 buffer.append('[');
                 buffer.append(String.valueOf(ipoly));
                 buffer.append("] ");
@@ -389,19 +396,19 @@ public class RelationSet
             Polynomial rset1 = this.get(ipoly);
             buffer.append(rset1.getFactor().toString());
             buffer.append("*(");
-            buffer.append(rset1.toString());
+            buffer.append(rset1.toString(mode));
             buffer.append(')');
             ipoly ++;
         } // while ipoly
         return buffer.toString();
-    } // toList(full)
+    } // toList(mode)
 
-    /** Returns lines with String representations of the {@link Polynomial}s in <em>this</em> {@link RelationSet},
-     *  in compressed form
+    /** Returns lines with String representations of the {@link Polynomial}s 
+     *  in <em>this</em> {@link RelationSet}, in compressed form
      *  @return a list of lines separated by newline
      */
     public String toList() {
-        return this.toList(false);
+        return this.toList(0);
     } // toList()
 
     //----------------
@@ -1023,7 +1030,8 @@ evaluate: unknown
                         Polynomial poly1  = rset1.get(0);
                         vmap1             = poly1.getVariableMap("1", false);
                         Monomial monog    = new Monomial(vmap1.getNameArray());
-                        System.out.println(poly1.groupBy(monog).toList(false));
+                        rset2             = poly1.groupBy(monog);
+                        System.out.println(rset2.toList(5));
                         
                     }
                     // -simplify

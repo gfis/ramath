@@ -85,8 +85,8 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
         super();
         int iname = 0;
         while (iname < names.length) {
-        	this.put(names[iname], value);
-        	iname ++;
+            this.put(names[iname], value);
+            iname ++;
         } // while iname
     } // Constructor(String[])
 
@@ -299,6 +299,22 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
     } // getValueArray
 
     /*----------------
+        Set Operations
+    */
+    /** Removes from <em>this</em> VariableMap all variables 
+     *  occurring in a 2nd map, and returns <em>this</em> modified map
+     *  @param map2 defines the keys tp be removed
+     */
+    public VariableMap remove(Map<String, String> map2) {
+        Iterator<String> miter = map2.keySet().iterator();
+        while (miter.hasNext()) {
+            String name2 = miter.next();
+            this.remove(name2);
+        } // while miter
+        return this;
+    } // remove
+    
+    /*----------------
         Arithmetics
     */
     /** Multiplies all values of <em>this</em> {@link VariableMap}
@@ -339,7 +355,7 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
 
     /** Multiplies the variable vector of <em>this</em> {@link VariableMap}
      *  with a {@link Matrix}.
-     *  @param amat a matrix of integers with the same dimension 
+     *  @param amat a Matrix of integers with the same dimension 
      *  @return reference to <em>this</em> VariableMap with the 
      *  values replaced by the innerproduct of some matrix row times the variable vector.
      */
