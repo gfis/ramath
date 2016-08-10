@@ -34,6 +34,7 @@
 package org.teherba.ramath.symbolic;
 import  org.teherba.ramath.symbolic.PairMap;
 import  org.teherba.ramath.symbolic.Polynomial;
+import  org.teherba.ramath.symbolic.PolyVector;
 import  org.teherba.ramath.symbolic.RefiningMap;
 import  org.teherba.ramath.symbolic.VariableMap;
 import  org.teherba.ramath.symbolic.reason.BaseReason;
@@ -852,6 +853,90 @@ public class RelationSet
             }
         } // while busy
     } // simplify
+
+    /** Gets a {@link PolyVector} of values for isolated variables.
+     *  <em>this</em> {@link RelationSet} should consist of
+     *  a set of equations for isolated variables, and a 
+     *  single equation which is an expression of powers of these variables 
+     *  which sums to zero.
+     *  @return a {@link PolyVector} with the isolated variables 
+     *  replaced by their constant values, and - hopefully - 0 
+     *  for the powersum.
+     */ 
+    public PolyVector getIsolatedVector() {
+        PolyVector result = new PolyVector(this.size());
+        VariableMap vmap = new VariableMap();
+        Polynomial polyi = null;
+        int ipsum = -1; // index of powersum Polynomial
+        int ipoly = 0;
+        while (ipoly < this.size()) { // over all equations
+            polyi = this.get(ipoly);
+            if (polyi.size() <= 2) { // isolatedVariable +- constant
+                String expr = polyi.toString().replaceAll("\\s","");
+                String[] parts = expr.split("[\\+\\-]");
+                if (expr.indexOf('+') >= 0) {
+                    parts[1] = "-" + parts[1];
+                }
+                if (parts.length < 2) {
+                    vmap.put(parts[0], "0");
+	                result.set(ipoly, new Polynomial("0"));
+                } else {
+                    vmap.put(parts[0], parts[1]);
+	                result.set(ipoly, new Polynomial(parts[1]));
+                }
+            } else {
+                ipsum = ipoly;
+            }
+            ipoly ++;
+        } // while ipoly
+        polyi = this.get(ipsum).substitute(vmap);
+        result.set(ipsum, polyi);
+        return result;
+    } // getIsolatedVector
+    
+    /** Gets a {@link Vector} of values for isolated variables.
+     *  <em>this</em> {@link RelationSet} should consist of
+     *  a set of equations for isolated variables, and a 
+     *  single equation which is an expression of powers of these variables 
+     *  which sums to zero.
+     *  @return a {@link Vector} similiar to the result of {@link #getIsolatedVector}, 
+     *  but the powersum element is omitted since it is required to be zero
+     */ 
+    public Vector getPowerSumVector() {
+        Vector result = new Vector(this.size() - 1);
+        VariableMap vmap = new VariableMap();
+        Polynomial polyi = null;
+        int ipsum = -1; // index of powersum Polynomial
+        int ipoly = 0;
+        int ivect = 0;
+        while (ipoly < this.size()) { // over all equations
+            polyi = this.get(ipoly);
+            if (polyi.size() <= 2) { // isolatedVariable +- constant
+                String expr = polyi.toString().replaceAll("\\s","");
+                String[] parts = expr.split("[\\+\\-]");
+                if (expr.indexOf('+') >= 0) {
+                    parts[1] = "-" + parts[1];
+                }
+                if (parts.length < 2) {
+                    vmap.put(parts[0], "0");
+	                result.set(ivect, 0);
+                } else {
+                    vmap.put(parts[0], parts[1]);
+	                result.set(ivect, Integer.parseInt(parts[1]));
+                }
+                ivect ++;
+            } else {
+                ipsum = ipoly;
+            }
+            ipoly ++;
+        } // while ipoly
+        polyi = this.get(ipsum).substitute(vmap);
+        if (! polyi.isZero()) {
+        	throw new IllegalArgumentException("powersum element is not zero: " + polyi.toString());
+        }
+        return result;
+    } // getPowerSumVector
+    
     /* ------------ Solver evaluation --------------- */
     
     /** Evaluates a {@link RelationSet} without any proof history by evaluating

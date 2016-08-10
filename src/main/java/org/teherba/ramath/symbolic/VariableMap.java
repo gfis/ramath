@@ -123,16 +123,16 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
     } // clone
 
     /** Sets the values of <em>this</em> VariableMap.
-     *  @param meter a {@link Dispenser} whose current values are put into the map.
+     *  @param dispenser a {@link Dispenser} whose current values are put into the map.
      *  The width and the elements of the Dispenser must correspond
      *  to the ordered list of variable names in <em>this</em> VariableMap.
      */
-    public void setValues(Dispenser meter) {
+    public void setValues(Dispenser dispenser) {
         Iterator<String> viter = this.keySet().iterator();
         int imet = 0;
         while (viter.hasNext()) {
             String name  = viter.next();
-            String value = String.valueOf(meter.get(imet ++));
+            String value = String.valueOf(dispenser.get(imet ++));
             this.put(name, value);
         } // while viter
     } // setValues

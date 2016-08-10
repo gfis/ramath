@@ -1,5 +1,6 @@
 /*  Dispenser: creates an "increasing" sequence of different number tuples in a systematic way
  *  @(#) $Id: Dispenser.java 744 2011-07-26 06:29:20Z  $
+ *  2016-07-26: hasNoZero
  *  2015-02-13: getVector, nextVector; post-op +10
  *  2015-02-08: Dispenser instead of ModoMeter in VariableMap
  *  2014-04-06: get(im)
@@ -217,6 +218,19 @@ public abstract class Dispenser implements Iterator<int[]>, Serializable {
         } // while im
         rollOver = false;
     } // reset
+
+    /** Determines whether all digits are non-zero
+     *  @return true if all digits are not 0, false otherwise
+     */
+    public boolean hasNoZero() {
+        boolean result = true;
+        int im = 0;
+        while (result && im < width) {
+            result = meter[im] != 0; // turns false and breaks loop at first == 0
+            im ++;
+        } // while result
+        return result;
+    } // hasZero
 
     /** Determines whether all digits are zero (initial state)
      *  @return true if all digits are 0, false otherwise

@@ -15,7 +15,7 @@ TEST=
 TESTDIR=test
 WROB=../../mater/ramath/eec/wroblewski
 
-all: symbolic
+all: sandbox
 regression: simple symbolic ideal linear matrix solver sandbox
 ideal:
 	$(REGR) test/ideal.tests 	$(TEST) 2>&1 | tee regression.log.tmp
@@ -63,7 +63,7 @@ ret:
 progen: pg1 
 pg1:
 	cat test/progen.c
-	gcc -o test/progen.exe test/progen.c
+	gcc -O2 -o test/progen.exe test/progen.c
 	test/progen.exe
 	rm test/progen.exe
 pg2:

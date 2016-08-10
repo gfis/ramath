@@ -6,7 +6,7 @@
 #include <stdlib.h>
 int main(int argc, char *argv[]) {
 int reslines = 0;
-printf("#---- start of results ----\n");
+printf("#---> start of results ----\n");
 int m11,m12,m13
 ,m21,m22,m23
 ,m31,m32,m33
@@ -57,9 +57,9 @@ printf("]");
 reslines ++;
 printf("\t\tpreserves: [%d,%d,%d] -> [%d,%d,%d]\n",a,b,c, v1,v2,v3);
 }}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
-printf("# %d result lines\n", reslines);
+printf("#---> reslines=%d\n", reslines);
 } /* main */
-#---- start of results ----
+#---> start of results ----
 [[-3,1,2],[1,1,1],[-2,1,3]]		preserves: [3,4,5] -> [5,12,13]
 [[-2,1,2],[-1,2,2],[-2,2,3]]		preserves: [3,4,5] -> [8,15,17]
 [[-2,2,2],[1,2,1],[-1,2,3]]		preserves: [3,4,5] -> [12,16,20]
@@ -71,4 +71,4 @@ printf("# %d result lines\n", reslines);
 [[2,-1,1],[2,2,2],[2,1,3]]		preserves: [3,4,5] -> [7,24,25]
 [[2,1,-1],[-2,2,2],[-2,1,3]]		preserves: [3,4,5] -> [5,12,13]
 [[2,1,2],[1,2,2],[2,2,3]]		preserves: [3,4,5] -> [20,21,29]
-# 11 result lines
+#---> reslines=11

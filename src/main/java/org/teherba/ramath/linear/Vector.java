@@ -383,10 +383,25 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
         return result;
     } // compareTo
 
-    /** Whether the Vector consists of increasing natural numbers starting at 0
+    /** Whether the Vector consists of increasing numbers
      *  @return whether the Vector is of the form [0, 1, 2, 3, ...]
      */
     public boolean isMonotone() {
+        boolean result = true;
+        int ielem = 0;
+        int lower = this.vector[ielem ++];
+        while (result && ielem < this.vecLen) {
+            result = lower < this.vector[ielem];
+            lower  = this.vector[ielem];
+            ielem ++;
+        } // while ielem
+        return result;
+    } // isMonotone
+
+    /** Whether the elements of the {@link Vector} are equal to their index
+     *  @return whether the Vector is of the form [0, 1, 2, 3, ...]
+     */
+    public boolean isNatural() {
         boolean result = true;
         int ielem = 0;
         while (result && ielem < this.vecLen) {
@@ -394,7 +409,7 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
             ielem ++;
         } // while ielem
         return result;
-    } // isMonotone
+    } // isNatural
 
     /** Whether there is any zero element in the Vector
      *  @return false if all elements are non-zero

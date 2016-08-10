@@ -181,10 +181,10 @@ public class PolyMatrix implements Cloneable, Serializable {
     public PolyMatrix(String matExpr) {
         String vectExpr = matExpr.substring(0, matExpr.indexOf("]"));
         String[] values = vectExpr.replaceAll("[\\[\\]\\s]+","").split("\\,"); // first row
-        int rowLen  = values.length;
+        int colLen  = values.length;
         values      = matExpr .replaceAll("[\\[\\]\\s]+","").split("\\,"); // all
-        this.rowLen = rowLen;
-        this.colLen = this.rowLen;
+        this.colLen = colLen;
+        this.rowLen = values.length / this.colLen;
         this.fill(values);
     } // Constructor(String)
 
@@ -490,6 +490,21 @@ public class PolyMatrix implements Cloneable, Serializable {
         for (int irow = 0; irow < this.rowLen; irow ++) {
             for (int jcol = 0; jcol < this.colLen; jcol ++) {
                result.addTo(this.matrix[irow][jcol].getVariableMap());
+            } // for jcol
+        } // for irow
+        return result;
+    } // getVariableMap()
+    
+    /** Gets a {@link VariableMap} from all elements in <em>this</em> {@link PolyMatrix} to
+     *  the corresponding elements in a second {@link PolyMatrix}
+     *  @param pmat2 2nd PolyMatrix for values
+     *  @return mapping from keys (from <em>this</em>) to values (from <em>pmat2</em>)
+     */
+    public VariableMap getVariableMap(PolyMatrix pmat2) {
+        VariableMap result = new VariableMap();
+        for (int irow = 0; irow < this.rowLen; irow ++) {
+            for (int jcol = 0; jcol < this.colLen; jcol ++) {
+               result.put(this.get(irow, jcol).toString(), pmat2.get(irow, jcol).toString());
             } // for jcol
         } // for irow
         return result;

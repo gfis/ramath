@@ -1,5 +1,6 @@
 /*  Exhaustive generator for power identities
  *  @(#) $Id: ProgramGenerator.java 808 2011-09-20 16:56:14Z gfis $
+ *  2016-06-24: pident
  *  2016-04-22: Georg Fischer: copied from MatrixExhauster
  */
 /*
@@ -68,8 +69,6 @@ public class ProgramGenerator {
     private int nrows;
     /** number of columns of the generated matrix */
     private int ncols;
-    /** size of the generated matrix */
-    private int width_99;
     /** maximum exponent in formulae */
     private int exp;
     /** up to 3 {@link PolyVector}s */
@@ -84,6 +83,8 @@ public class ProgramGenerator {
     private String letter1;
     /** System-dependant newline string */
     protected static String newline = System.getProperty("line.separator");
+    /** String which identifies the start of a result line which contains significant information */
+    public static final String LEADER = "#---> ";
 
     //===========================
     // Construction
@@ -221,7 +222,7 @@ public class ProgramGenerator {
                 } // for isq 2
             } // feature cube
             o.println("int reslines = 0;");
-            o.println("printf(\"#---- start of results ----\\n\");");
+            o.println("printf(\"" + LEADER + "start of results ----\\n\");");
             // C
         }
     } // programHeader
@@ -247,7 +248,7 @@ public class ProgramGenerator {
         if (false) {
         } else if (lang.equals("C"   )) {
             o.println(brackets); // all closing brackets opened by oc()
-            o.println("printf(\"# %d result lines\\n\", reslines);");
+            o.println("printf(\"" + LEADER + "reslines=%d\\n\", reslines);");
             o.println("} /* main */");
             // C
         }
@@ -757,16 +758,20 @@ public class ProgramGenerator {
      *  </ul>
      */
     public void pident() {
-        rset1.simplify(false); // only the lowercase variables
+        RelationSet rset0 = rset1.clone(); // original RS
+        rset1.simplify(false); // simplify only the lowercase variables
         if (rset1.size() > 1) {                  
             System.out.println("Still more than 1 Polynomial after simplification: " + rset1.toString());
         } else { // simplification returned a single Polynomial
             programHeader("");
-            Polynomial poly1  = rset1.get(0);
-            VariableMap vmap1 = poly1.getVariableMap("1", false);
-            Monomial monog    = new Monomial(vmap1.getNameArray());
-            RelationSet rset2 = poly1.groupBy(monog);
-            int npoly = rset2.size();
+            VariableMap vmiso   = rset0.getVariableMap("1", false); // all lowercase
+            VariableMap vmpar   = rset1.getVariableMap("1", false); // remaining lowercase => parameters
+            vmiso.remove(vmpar); // those which vanished by simplification
+            Polynomial poly1    = rset1.get(0);
+            VariableMap vmap1   = poly1.getVariableMap("1", false);
+            Monomial monog      = new Monomial(vmap1.getNameArray());
+            RelationSet rset2   = poly1.groupBy(monog);
+            int npoly           = rset2.size();
             VariableMap[] vmaps = new VariableMap[npoly];
             int[]         nvars = new int[npoly];
             
@@ -798,13 +803,21 @@ public class ProgramGenerator {
             vmap1.remove(vlow); // now only the uppercase 
             String[] names = vmap1.getNameArray(); // ascending order because of TreeMap
             ncols = 0;
-            String subs = names[ncols ++].substring(0, 2); // "A11" -> "A1"
-            while (ncols < names.length && names[ncols].substring(0, 2).equals(subs)) {
+            int nsub = (names[0].length() >= 5) ? 3 : 2; // will handle indexing A11, A101 or A0101
+            String subs = names[ncols ++].substring(0, nsub); // "A11" -> "A1"
+            while (ncols < names.length && names[ncols].substring(0, nsub).equals(subs)) {
                 ncols ++;
             } // while ncols
             nrows = names.length / ncols;
-            letter1 = subs.substring(0, 1);
-            o.println("    nrows = " + nrows + ", ncols = " + ncols);
+            letter1 = subs.substring(0, 1); // always a single letter
+            PolyMatrix pmat = new PolyMatrix(nrows, names);
+            o.println(LEADER + "nrows="     + nrows);
+            o.println(LEADER + "ncols="     + ncols);
+            o.println(LEADER + "isolated="  + vmiso.getNameString());
+            o.println(LEADER + "parameter=" + vmpar.getNameString());
+            o.println(LEADER + "rset0="     + rset0.toString()); // original
+            o.println(LEADER + "poly1="     + poly1.toString()); // with isolated variables removed
+            o.println(LEADER + "pmat="      + pmat .toString());
             o.println("*/");
             o.println("int " + vmap1.getNameString() + ";"); // instead of declareMatrix()
     

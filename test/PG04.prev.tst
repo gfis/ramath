@@ -27,7 +27,7 @@ int gcd5(int a, int b, int c, int d, int e) {
         return gcd2(a, gcd4(b, c, d, e));             
     } /* gcd5 */                                      
 int reslines = 0;
-printf("#---- start of results ----\n");
+printf("#---> start of results ----\n");
 int m11,m12,m13
 ,m21,m22,m23
 ,m31,m32,m33
@@ -163,9 +163,9 @@ if (p2*p2*p2 == q2*q2 + r2*r2) {
 }
 printf("\n");
 }}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
-printf("# %d result lines\n", reslines);
+printf("#---> reslines=%d\n", reslines);
 } /* main */
-#---- start of results ----
+#---> start of results ----
 [[2,-3,1],[-1,4,4],[2,2,4]]	preserves	[13,119,120]
 [[2,-3,1],[-1,4,4],[4,4,3]]	preserves	[13,119,120]
-# 2 result lines
+#---> reslines=2
