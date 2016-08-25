@@ -354,7 +354,6 @@ public class ProgramGenerator {
     } // checkZeroRow
     
     /** Print conditions which check whether a matrix row is all zero
-     *  @param letter1 letter which starts the variable names
      *  @param irow 1st row number
      */
     private void checkZeroRow(int irow) {
@@ -690,7 +689,7 @@ public class ProgramGenerator {
     } // br()
 
     /** Get a String for a <em>for</em> loop over one column
-     *  @param irow row number
+     *  @param jcol column number
      *  @return a <em>for</em> statement iterating over all rows of one column 
      */
     private String getColLoop(int jcol) {
@@ -734,7 +733,7 @@ public class ProgramGenerator {
     /** Get a String for the innerproduct of 2 columns  
      *  @param jcol column number 1
      *  @param kcol column number 2
-     *  @parms negs number of negative terms at the end of the expression
+     *  @param negs number of negative terms at the end of the expression
      *  @return an expression consisting of the sum of products 
      */
     private String getColProd(int jcol, int kcol, int negs) {

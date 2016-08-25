@@ -1,5 +1,6 @@
 /*  Reader for text file, returns a string without any whitespace
  *  @(#) $Id: ExpressionReader.java 744 2011-07-26 06:29:20Z gfis $
+ *  2016-08-25: inline comments; Porto Valtravaglia
  *  2014-03-31: encoding, channels
  *  2013-08-25: trimLine, getArguments
  *  2011-07-24: no lowerCasing, and optional newline separators
@@ -83,17 +84,20 @@ public class ExpressionReader {
 
     /** Processes one line with a polynomial expression:
      *  <ul>
+     *  <li>"#" and all following characters on a line are ignored    </li>
      *  <li>Whitespace is removed.                                    </li>
-     *  <li>Empty lines and lines starting with "\s*#" are suppressed.</li>
+     *  <li>Empty lines are suppressed.                               </li>
      *  <li>&lt;sup&gt; is replaced by "^".                           </li>
      *  <li>All other HTML tags are removed.                          </li>
      *  </ul>
+     *  Caution: The exponentiation is not exact and works for single digits and variables only.
      *  @param line the input string
      *  @return the output string, or null if the input was empty or a comment
      */
     public String trimLine(String line) {
         String result = null;
-        if (! line.matches("\\s*#.*") && ! line.matches("\\s*")) { // no comment line, no empty line
+        line = line.replaceAll("#.*", ""); // remove comments
+        if (! line.matches("\\s*")) { // line not empty or whitespace only
             result = line
                     .replaceAll("\\s","") // remove whitespace
                     .replaceAll("<sup>", "^") // exponentiation
@@ -105,14 +109,13 @@ public class ExpressionReader {
 
     /** Reads a text file, and returns all lines concatenated into
      *  one long string, with whitespace removed.
-     *  Lines starting with "#" (possibly preceeded by whitespace)
-     *  are treated as comments and are ignored.
+     *  "#" starts a comment - the rest of the line is ignored.
      *  HTML tags are removed, except for &lt;sup&gt; which is
      *  converted to the exponentiation operator "^".
      *  If {@link #withLineEnd} was set on construction, the lines in
      *  the resulting string are separated by single newline characters.
-     *  @param fileName name of the file to be parsed,
-     *  or read from STDIN if <em>fileName</em> is <em>null</em>, empty or "-"
+     *  @param fileName name of the file to be parsed.
+     *  The method reads from STDIN if <em>fileName</em> is <em>null</em>, empty or "-"
      *  @return one line with the concatenated string for the resulting expression
      */
     public String read(String fileName) {
@@ -146,8 +149,7 @@ public class ExpressionReader {
      *  or, if such a string is "-f", the following string is interpreted as a filename.
      *  This file is opened, all lines are returned as single strings, and
      *  the processing of arguments is continued at the end of the file.
-     *  Lines starting with "#" (possibly preceeded by whitespace)
-     *  are treated as comments and are ignored, as are empty lines.
+     *  "#" starts a comment - the rest of the line is ignored.
      *  HTML tags are removed, except for &lt;sup&gt; which is
      *  converted to the exponentiation operator "^".
      *  @param iarg index of first element in <em>args</em> to be processed

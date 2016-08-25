@@ -67,6 +67,9 @@ CALL TreeSolver -b 2 -l 3 -e "x^2 + y^2 - u^2 - v^2; x*y=2*u*v" -r norm
 #----
 TEST TF21 FLT(2), Pythagoras
 CALL TreeSolver -b 2 -l 3 -e "a^2 + b^2 - c^2" -r norm,igtriv,no-pytha
+
+TEST TF22 Quadr. Form
+CALL TreeSolver -b 2 -l 5 -e "a^2 - 4*a*b + b^2 = 0" -r norm,showfail
 #--
 TEST TF31 FLT(3) mod 2
 CALL TreeSolver -b 2 -l 3 -e "a^3 + b^3 - c^3" -r norm,invall
@@ -87,6 +90,9 @@ CALL TreeSolver -b 2 -l 4 -e "a^3 + 2*b^3 - 4*c^3" -r "norm,invall,showfail"
 
 TEST TF36 FLT(3)=Fermat/Carcavi(6) mod 3
 CALL TreeSolver -b 2 -l 4 -e "a^3 + b^3 - c^3" -r igtriv,norm
+
+TEST TF37 FLT(3) mult 2 
+CALL TreeSolver -b 2 -l 4 -e "2*a^3 + b^3 - c^3" -r igtriv,norm
 #--
 TEST TF41 FLT(4), biquadratic minus
 CALL TreeSolver -l 4 -e "x^4 - y^4 - z^2" -r norm,igtriv

@@ -1,7 +1,7 @@
 /*  RelationSet: a set of polynomials which relate to zero
  *  @(#) $Id: RelationSet.java 970 2012-10-25 16:49:32Z  $
  *  2016-07-24: toList(5) 
- *  2016-01-04: PairMap
+ *  2016-01-04: PairAttributes
  *  2015-12-06: toString(boolean) -> toString(1)
  *  2015-09-10: message -> siblingIndex; s|getRelationSet
  *  2015-08-25: getExponentGCDs
@@ -32,7 +32,7 @@
  * limitations under the License.
  */
 package org.teherba.ramath.symbolic;
-import  org.teherba.ramath.symbolic.PairMap;
+import  org.teherba.ramath.symbolic.PairAttributes;
 import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.PolyVector;
 import  org.teherba.ramath.symbolic.RefiningMap;
@@ -88,10 +88,10 @@ public class RelationSet
      */
     public RelationSet() {
         polynomials     = new ArrayList<Polynomial>(4);
-        setPairMap      (new PairMap());
-        setNestingLevel (0);
-        setParentIndex  (-1); // no parent - [0] is the first real queue element
-        setMapping      (new RefiningMap());
+        setPairAttributes(new PairAttributes());
+        setNestingLevel  (0);
+        setParentIndex   (-1); // no parent - [0] is the first real queue element
+        setMapping       (new RefiningMap());
     } // Constructor()
 
     /** Construct from a single polynomial.
@@ -150,7 +150,7 @@ public class RelationSet
             result.insert(this.get(ipoly).clone());
             ipoly ++;
         } // while ipoly
-        result.setPairMap       (this.getPairMap        ().clone());
+        result.setPairAttributes       (this.getPairAttributes        ().clone());
         result.setIndex         (this.getIndex          ()); // should be adapted
         result.setMapping       (this.getMapping        ());
         result.setNestingLevel  (this.getNestingLevel   ());
@@ -213,19 +213,19 @@ public class RelationSet
     } // setIndex
     //----------------
     /** Attributes for pairs of variables */
-    private PairMap pairMap;
-    /** Gets the {@link PairMap}.
+    private PairAttributes pairAttributes;
+    /** Gets the {@link PairAttributes}.
      *  @return a map of ordered pairs of variable names to some property code
      */
-    public PairMap getPairMap() {
-        return pairMap;
-    } // getPairMap
-    /** Sets the {@link PairMap}.
-     *  @param pairMap map of ordered pairs of variable names to some property code
+    public PairAttributes getPairAttributes() {
+        return pairAttributes;
+    } // getPairAttributes
+    /** Sets the {@link PairAttributes}.
+     *  @param pairAttributes map of ordered pairs of variable names to some property code
      */
-    public void setPairMap(PairMap pairMap) {
-        this.pairMap = pairMap;
-    } // setPairMap
+    public void setPairAttributes(PairAttributes pairAttributes) {
+        this.pairAttributes = pairAttributes;
+    } // setPairAttributes
     //----------------
     /** Maps variable names to the accumulated digits assigned during the expansion */
     private RefiningMap mapping;

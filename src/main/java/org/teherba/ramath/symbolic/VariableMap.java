@@ -151,8 +151,10 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
     } // addTo
 
     /** Returns a {@link VariableMap} constructed from a String representation,
-     *  @param input the input String, with whitespace, maybe Vector or set brackets,
+     *  @param input the input String, with whitespace, maybe 
+     *  enclosed in square or curly brackets,
      *  for example "{a=>-a-1,b=>-b-1,c=>-c-1,d=>-d-1}"
+     *  The left sides are mapped to the right side by "=>" or "->". 
      *  @return a reference to a new {@link VariableMap}
      */
     public static VariableMap parse(String input) {
@@ -193,7 +195,9 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
 
     /*-------------- lightweight methods -----------------------------*/
 
-    /** Returns a string representation of the variable map
+    /** Returns a string representation of the variable map,
+     *  enclosed in curly brackets, separated by ",", 
+     *  and with "=>" for the mapping operator.
      *  @return "{a=>3,b=>4,c=>5}", for example
      */
     public String toString() {
@@ -219,6 +223,7 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
     } // toString
 
     /** Returns a short string representation of the values in the variable map
+     *  as the string representatin of a [@link PolyVector}
      *  @return "[3,4,5]", for example
      */
     public String toVector() {

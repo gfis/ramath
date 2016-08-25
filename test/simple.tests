@@ -120,6 +120,15 @@ DATA
  x<sup>2</sup> + y^5<br>
 CALL ExpressionReader " a + b " -f $(DATA)
 
+TEST U20 read expressions with comments - same result as U19
+DATA
+ # comment
+ x<sup>3</sup> + y^4
+ 
+ x<sup>2</sup> + y^5<br> # empty line before
+CALL ExpressionReader " a + b " -f $(DATA)
+DIFF test/U19.prev.tst test/U20.this.tst
+
 TEST D01 ModoMeter
 CALL DispenserFactory modo   3 3 64
 

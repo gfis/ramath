@@ -44,7 +44,7 @@ import  org.apache.log4j.Logger;
  *  <pre>
  java -cp dist/ramath.jar org.teherba.ramath.ProgramGenerator  -l 2 -f test/PG23.data.tmp pident
  *  </pre>
- *  Lines starting with {@link ProgramGeneraator#LEADER} contain information
+ *  Lines starting with {@link ProgramGenerator#LEADER} contain information
  *  about the {@link RelationSet} which defines the parametrization of
  *  th powersum, and the corresponding identity.
  *  @author Dr. Georg Fischer

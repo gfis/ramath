@@ -1,5 +1,6 @@
 /*  PolynomialParser: parser for the recognition of arithmetic expressions
  *  @(#) $Id: PolynomialParser.java 522 2010-07-26 07:14:48Z gfis $
+ *  2016-08-25: ignore comments after '#'
  *  2015-12-06: prime factorizations were messed up
  *  2015-11-17: handle superscript digits with getNumericValue
  *  2015-07-17: relaxed rules for '*': may be omitted after a number or ')'
@@ -45,6 +46,7 @@ import  java.util.Stack;
  *  <li>variable names consisting of letters and digits, starting with a letter;
  *  names starting with an uppercase letter can be excluded from modulo substitution (option -u)</li>
  *  <li>^n for exponentiation with a (small) integer exponent</li>
+ *  <li>'#' starts a comment - all characters up to '\n' are ignored</li>
  *  </ul>
  *  The parser knows precedence rules for the operators and expands the expression
  *  into a multivariate polynomial by using the "railroad shunting yard"
@@ -71,6 +73,7 @@ public class PolynomialParser extends Polynomial {
             , IN_EXPONENT   // after the first superscripted digit
             , IN_OPERATOR   // after first character of a relational or boolean operator, or after '%'
             , IN_CLOSE      // after ')' - eventually insert '*'
+            , IN_COMMENT    // after '#' - ignore all up to "\n" or end of string
             };
 
     /** pushdown stack for operators and parentheses */
@@ -220,6 +223,9 @@ public class PolynomialParser extends Polynomial {
                                 } // while
                                 state = State.IN_CLOSE;
                                 break;
+                            case '#':
+                                state = State.IN_COMMENT;
+                                break;
                             default:
                                 if (false) {
                                 } else if (Character.isJavaIdentifierStart(ch)) {
@@ -266,7 +272,7 @@ public class PolynomialParser extends Polynomial {
                                 readOff = false;
                                 state = State.IN_START;
                                 break;
-                            case '¹': // '\u00b9', super 1, right-associative ??? 
+                            case '¹': // '\u00b9', super 1, right-associative ???
                             case '²': // '\u00b2', super 2, right-associative ???
                             case '³': // '\u00b3', super 3, right-associative ???
                                 postfix.add(buffer.toString());
@@ -303,7 +309,7 @@ public class PolynomialParser extends Polynomial {
                                 readOff = false;
                                 state = State.IN_START;
                                 break;
-                            case '¹': // '\u00b9', super 1, right-associative ??? 
+                            case '¹': // '\u00b9', super 1, right-associative ???
                                 buffer.append('1');
                                 break;
                             case '²': // '\u00b2', super 2, right-associative ???
@@ -400,7 +406,7 @@ public class PolynomialParser extends Polynomial {
                         } // switch 1st ch
                         state = State.IN_START;
                         break; // IN_OPERATOR
-                    
+
                     case IN_CLOSE: // after ')' - eventually insert a '*'
                         if (false) {
                         } else if (Character.isJavaIdentifierPart(ch)) { // following identifier
@@ -410,7 +416,14 @@ public class PolynomialParser extends Polynomial {
                         }
                         readOff = false;
                         state = State.IN_START;
-                        break; // IN_CLOSE                      
+                        break; // IN_CLOSE
+
+                    case IN_COMMENT: // after '#' - skip until "\n" or EOS
+                        if (false) {
+                        } else if (ch == '\n') {
+                            state = State.IN_START;
+                        }
+                        break; // IN_COMMENT
 
                     default: // should never be reached
                         System.err.println("invalid state " + state + " in PolynomialParser.shuntingYardAlgorithm");
