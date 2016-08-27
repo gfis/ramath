@@ -212,7 +212,7 @@ TEST RR4 Rest - all polynomials
 CALL RelationSet -rest 2 "x^4 - y^4 - z^2 = 0"
 
 #-------------------------------
-# DialogTree
+# DialogStep and DialogTree
 
 TEST DS1 default step
 CALL DialogStep
