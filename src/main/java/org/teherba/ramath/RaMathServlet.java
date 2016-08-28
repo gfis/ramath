@@ -1,5 +1,6 @@
 /*  RaMathServlet.java - Rational and Symbolic Mathematics
  *  @(#) $Id: RaMathServlet.java 199 2009-07-13 20:16:23Z gfis $
+ *  2016-08-28: remove JSPs
  *  2015-09-10: no "(...)" around substitution values
  *  2013-09-21: RefiningMap
  *  2015-07-17: opt=norm; Polynomial -> RelationSet
@@ -27,6 +28,10 @@ package org.teherba.ramath;
 import  org.teherba.ramath.symbolic.RelationSet;
 import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.RefiningMap;
+import  org.teherba.ramath.web.IndexPage;
+import  org.teherba.ramath.web.Messages;
+import  org.teherba.common.web.BasePage;
+import  org.teherba.common.web.MetaInfPage;
 import  java.io.IOException;
 import  javax.servlet.RequestDispatcher;
 import  javax.servlet.ServletConfig;
@@ -54,6 +59,10 @@ public class RaMathServlet extends HttpServlet {
     private String applPath;
     /** log4j logger (category) */
     private Logger log;
+    /** common code and messages for auxiliary web pages */
+    private BasePage basePage;
+    /** name of this application */
+    private static final String APP_NAME = "RaMath";
 
     /** Called by the servlet container to indicate to a servlet
      *  that the servlet is being placed into service.
@@ -63,7 +72,8 @@ public class RaMathServlet extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
         super.init(config); // ???
         log = Logger.getLogger(RaMathServlet.class.getName());
-        applPath = config.getServletContext().getRealPath("/");
+        basePage = new BasePage(APP_NAME);
+        Messages.addErrorMessageTexts(basePage);
     } // init
 
     /** Processes an http GET request
@@ -86,40 +96,27 @@ public class RaMathServlet extends HttpServlet {
         generateResponse(request, response);
     } // doPost
 
-    /** Gets the value of an HTML input field, maybe as empty string
-     *  @param request request for the HTML form
-     *  @param name name of the input field
-     *  @param initValue initial value if the parameter was not set
-     *  @return non-null (but possibly empty) string value of the input field
-     */
-    private String getInputField(HttpServletRequest request, String name, String initValue) {
-        String value = request.getParameter(name);
-        if (value == null) {
-            value = "";
-        } else {
-            value = value.trim();
-        }
-        return value;
-    } // getInputField
-
     /** Generates the response (HTML page) for an http request
      *  @param request request with header fields
      *  @param response response with writer
-     *  @throws IOException
      */
-    public void generateResponse(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void generateResponse(HttpServletRequest request, HttpServletResponse response) {
+        String view     = BasePage.getInputField(request, "view"  , "");
+        String area     = BasePage.getInputField(request, "area"  , "rset");
+        String opt      = BasePage.getInputField(request, "opt"   , "norm");
+        String form1    = BasePage.getInputField(request, "form1" , "(a-b)^3");
+        String form2    = BasePage.getInputField(request, "form2" , "");
+        String form2c   = BasePage.getInputField(request, "form2c", ""); // HTML colored
+        String language = "en";
+        RelationSet rset = null;
+        RefiningMap rmap = null;
+        int index = 0;
+        boolean found = false;
+        int mode = 3; // with PrimeFactorization and HTML coloring
+        String newPage = null;
+
         try {
-            RelationSet rset = null;
-            RefiningMap rmap = null;
-            int index = 0;
-            boolean found = false;
             HttpSession session = request.getSession();
-            String view     = getInputField(request, "view"  , "");
-            String area     = getInputField(request, "area"  , "rset");
-            String opt      = getInputField(request, "opt"   , "norm");
-            String form1    = getInputField(request, "form1" , "(a-b)^3");
-            String form2    = getInputField(request, "form2" , "");
-            String form2c   = getInputField(request, "form2c", ""); // HTML colored
             session.setAttribute("view"  , view);
             session.setAttribute("area"  , area);
             session.setAttribute("opt"   , opt);
@@ -127,10 +124,10 @@ public class RaMathServlet extends HttpServlet {
             session.setAttribute("form2" , form2);
             session.setAttribute("form2c", form2c);
             
-            int mode = 3; // with PrimeFactorization and HTML coloring
-            String newPage = "index";
             if (false) {
-            } else if (view.equals("upper")) {
+            } else if (view.equals("upper")
+                    || view.equals("index")
+                    ) {
                 if (false) {
                 } else if (area.equals("rset")) {
                     rset = RelationSet.parse(form1);
@@ -163,12 +160,12 @@ public class RaMathServlet extends HttpServlet {
                     session.setAttribute("form2" , form2);
                     form2c = rset.toString(mode + 1);
                     session.setAttribute("form2c", form2c);
-                } else if (area.equals("cfra")) {
-                } else if (area.equals("eecj")) {
+
+                    (new IndexPage    ()).dialog(request, response, basePage, language, new String[] { "401" });
                 } else { // invalid area
-                    newPage = "message";
-                    session.setAttribute("messno"  , "001");
+                    basePage.writeMessage(request, response, language, new String[] { "401", "area", area });
                 }
+                
             } else if (view.equals("lower")) {
                 if (false) {
                 } else if (area.equals("rset")) {
@@ -200,23 +197,25 @@ public class RaMathServlet extends HttpServlet {
                     }
                     form1 = rset.toString(mode);
                     session.setAttribute("form1", form1);
-                } else if (area.equals("cfra")) {
-                } else if (area.equals("eecj")) {
-                } else { // invalid area
-                    newPage = "message";
-                    session.setAttribute("messno"  , "001");
+
+                    (new IndexPage    ()).dialog(request, response, basePage, language, new String[] { "401" });
+                } else { 
+                    basePage.writeMessage(request, response, language, new String[] { "401", "area", area });
                 }
+                
+            } else if (view.equals("license")
+                    || view.equals("manifest")
+                    || view.equals("notice")
+                    ) {
+                (new MetaInfPage    ()).showMetaInf (request, response, basePage, language, view);
+            } else if (view.equals("more")) {
+
             } else {
-                    newPage = "message";
-                    session.setAttribute("messno"  , "002");
+                basePage.writeMessage(request, response, language, new String[] { "401", "view", view });
             }
-            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/" + newPage + ".jsp");
-            dispatcher.forward(request, response);
         } catch (Exception exc) {
             System.out.println(exc.getMessage());
             exc.printStackTrace();
-            response.getWriter().write(exc.getMessage());
-            throw new IOException(exc.getMessage());
         }
     } // generateResponse
 
