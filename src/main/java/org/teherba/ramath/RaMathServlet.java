@@ -73,7 +73,7 @@ public class RaMathServlet extends HttpServlet {
         super.init(config); // ???
         log = Logger.getLogger(RaMathServlet.class.getName());
         basePage = new BasePage(APP_NAME);
-        Messages.addErrorMessageTexts(basePage);
+        Messages.addMessageTexts(basePage);
     } // init
 
     /** Processes an http GET request
