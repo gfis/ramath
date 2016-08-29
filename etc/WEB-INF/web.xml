@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
+    @(#) $Id: web.xml 193 2009-07-07 16:06:20Z gfis $
+    2016-08-29: <welcome-file-list>
+    2009-07-07: copied from dbat
+-->
+<!--
  * Copyright 2009 Dr. Georg Fischer <punctum at punctum dot kom>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,10 +21,6 @@
 -->
 <!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" 
     "http://java.sun.com/dtd/web-app_2_3.dtd">
-<!--
-    @(#) $Id: web.xml 193 2009-07-07 16:06:20Z gfis $
-    2009-07-07: copied from dbat
--->
 <web-app>
     
     <display-name>RaMath</display-name>
@@ -38,4 +39,9 @@
         <url-pattern>/servlet</url-pattern>
     </servlet-mapping>
     
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+        <welcome-file>index.htm</welcome-file>
+    </welcome-file-list>
+
 </web-app>
