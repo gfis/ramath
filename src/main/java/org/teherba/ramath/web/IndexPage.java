@@ -51,23 +51,25 @@ public class IndexPage implements Serializable {
      *  @param response response with writer
      *  @param basePage refrence to common methods and error messages
      *  @param language 2-letter code en, de etc.
-     *  @param parms parameters for the message:
-     *  <ul>
-     *  <li>[0] = messNo, 3 digits message number</li>
-     *  <li>[1] = replacement for {parm}</li>
-     *  <li>[2] = replacement for {par2}</li>
-     *  <li>[3] = replacement for {par3}</li>
-     +  </ul>
+     *  @param area application area: rset
+     *  @param opt options 
+     *  @param form1 upper input textarea for RelationSet
+     *  @param form2 resulting RelationSet
+     *  @param form2c like <em>form2</em> with colored prime factors
+     *  @param rmap a {@link VariableMap} defining substitutions
      */
     public void dialog(HttpServletRequest request, HttpServletResponse response
             , BasePage basePage
             , String language
-            , String[] parms
+            , String area
+            , String opt
+            , String form1
+            , String form2
+            , String form2c
+            , VariableMap rmap
             ) {
         try {
             PrintWriter out = basePage.writeHeader(request, response, language);
-            HttpSession session = request.getSession();
-
             out.write("<title>" + basePage.getAppName() + " Main Page</title>\n");
             out.write("</head>\n<body>\n");
 
@@ -79,28 +81,18 @@ public class IndexPage implements Serializable {
                     , "eecj"    // 2
                     } ;
             String[] enArea     = new String []
-                    { "Symbolic Polynomial"         // 0
+                    { "Symbolic RelationSet"        // 0
                     , "Continued Fraction"          // 1
                     , "Euler's Extended Conjecture" // 2
                     } ;
-            Object
-            field = session.getAttribute("view"     );  String view  = (field != null) ? (String) field : "upper";
-            field = session.getAttribute("area"     );  String area  = (field != null) ? (String) field : "rset";
-            field = session.getAttribute("opt"      );  String opt   = (field != null) ? (String) field : "norm";
-            field = session.getAttribute("form1"    );  String form1 = (field != null) ? (String) field : "(a-b)^4";
-            field = session.getAttribute("form2"    );  String form2 = (field != null) ? (String) field : "";
-            field = session.getAttribute("form2c"    ); String form2c= (field != null) ? (String) field : "";
-            field = session.getAttribute("varmap"   );
-            VariableMap varMap = (field != null) ? (VariableMap) field : new VariableMap();
             int index = 0;
             String border = "0";
-
-            out.write("<!-- view= \"" + view + "\", area=\"" + area + "\", opt=\"" + opt + "\"\n");
+            out.write("<!-- area=\""  + area + "\", opt=\"" + opt + "\"\n");
             out.write("    form1=\""  + form1 + "\"\n");
             out.write("    form2=\""  + form2 + "\"\n");
-            out.write("    valmap=\"" + varMap.toString() + "\"\n");
+            out.write("    rmap=\""   + rmap.toString() + "\"\n");
             out.write("-->\n");
-            out.write("<h3>ramath - Rational and Symbolic Mathematics</h3>\n");
+            out.write("<h2>ramath - Rational and Symbolic Mathematics</h2>\n");
             out.write("<form action=\"servlet\" method=\"get\">\n");
             out.write("    <input type = \"hidden\" name=\"view\" value=\"upper\" />\n");
             out.write("    <table cellpadding=\"0\" border=\"" + border + "\">\n");
@@ -130,11 +122,11 @@ public class IndexPage implements Serializable {
             out.write("        <tr valign=\"top\">\n");
             out.write("            <td colspan=\"2\">Variable Substitutions<br />\n");
             out.write("                <table cellpadding=\"0\" border=\"" + border + "\">\n");
-            Iterator<String> viter = varMap.keySet().iterator();
+            Iterator<String> viter = rmap.keySet().iterator();
             index = 0;
-            while (index < varMap.size()) {
+            while (index < rmap.size()) {
                 String key   = viter.next();
-                String value = varMap.get(key);
+                String value = rmap.get(key);
                 out.write("<tr><td><input name=\"key" + String.valueOf(index) + "\"");
                 out.write(    " type=\"hidden\" value=\"" + key   + "\" />" + key + "-&gt;</td>");
                 out.write("<td><input name=\"val" + String.valueOf(index) + "\"");

@@ -2,42 +2,81 @@
 
 # test Ramath functions
 # @(#) $Id: makefile 741 2011-07-23 12:30:09Z  $
+# 2016-08-31: unified with $(APPL)
 # 2016-07-10: jfind also in $(SRC)/../common
 # 2015-06-01: all -> symbolic
 # 2015-04-06: java -X... 
 # 2013-02-27: RegressionTester
 # 2011-07-06, Dr. Georg Fischer
 #--------------------------------
-# REGR=java -Xss512m -Xms1024m -Xmx2048m -cp dist/ramath.jar org.teherba.common.RegressionTester
-REGR=java -cp dist/ramath.jar org.teherba.common.RegressionTester
-SRC=src/main/java/org/teherba/ramath
-TEST=
-TESTDIR=test
+
+APPL=ramath
 WROB=../../mater/ramath/eec/wroblewski
+JAVA=java -cp dist/$(APPL).jar
+REGR=$(JAVA) org.teherba.common.RegressionTester
+# REGR=java -Xss512m -Xms1024m -Xmx2048m -cp dist/$(APPL).jar org.teherba.common.RegressionTester
+DIFF=diff -y --suppress-common-lines --width=160
+DIFF=diff -w -rs -C0
+SRC=src/main/java/org/teherba/$(APPL)
+TOM=c:/var/lib/tomcat/
+TOMC=$(TOM)/webapps/$(APPL)
+TESTDIR=test
+# the following can be overriden outside for single or subset tests,
+# for example make regression TEST=U%
+TEST="%"
+# for Windows, SUDO should be empty
+SUDO=
 
 all: sandbox
-regression: simple symbolic ideal linear matrix solver sandbox
+#-------------------------------------------------------------------
+# Perform a regression test 
+regression: simple symbolic ideal linear matrix sandbox solver regeval
+regeval:
+	grep -iHE "tests (FAILED|passed|recreated)" $(TESTDIR)/*.log
+#---------------------------------------------------
 ideal:
-	$(REGR) test/ideal.tests 	$(TEST) 2>&1 | tee regression.log.tmp
-	grep FAILED regression.log.tmp
+	$(REGR) test/ideal.tests 	$(TEST) 2>&1 | tee $(TESTDIR)/$@.log
+	grep FAILED $(TESTDIR)/$@.log
 linear:
-	$(REGR) test/linear.tests 	$(TEST) 2>&1 | tee regression.log.tmp
-	grep FAILED regression.log.tmp
+	$(REGR) test/linear.tests 	$(TEST) 2>&1 | tee $(TESTDIR)/$@.log
+	grep FAILED $(TESTDIR)/$@.log
 matrix:
-	$(REGR) test/matrix.tests 	$(TEST) 2>&1 | tee regression.log.tmp
-	grep FAILED regression.log.tmp
+	$(REGR) test/matrix.tests 	$(TEST) 2>&1 | tee $(TESTDIR)/$@.log
+	grep FAILED $(TESTDIR)/$@.log
 sandbox:
-	$(REGR) test/sandbox.tests 	$(TEST) 2>&1 | tee regression.log.tmp
-	grep FAILED regression.log.tmp
+	$(REGR) test/sandbox.tests 	$(TEST) 2>&1 | tee $(TESTDIR)/$@.log
+	grep FAILED $(TESTDIR)/$@.log
 simple:
-	$(REGR) test/simple.tests 	$(TEST) 2>&1 | tee regression.log.tmp
-	grep FAILED regression.log.tmp
+	$(REGR) test/simple.tests 	$(TEST) 2>&1 | tee $(TESTDIR)/$@.log
+	grep FAILED $(TESTDIR)/$@.log
 solver:
-	$(REGR) test/solver.tests 	$(TEST) 2>&1 | tee regression.log.tmp
-	grep FAILED regression.log.tmp
+	$(REGR) test/solver.tests 	$(TEST) 2>&1 | tee $(TESTDIR)/$@.log
+	grep FAILED $(TESTDIR)/$@.log
 symbolic:
-	$(REGR) test/symbolic.tests $(TEST) 2>&1 | tee regression.log.tmp
-	grep FAILED regression.log.tmp
+	$(REGR) test/symbolic.tests $(TEST) 2>&1 | tee $(TESTDIR)/$@.log
+	grep FAILED $(TESTDIR)/$@.log
+#---------------------------------------------------
+# Recreate all testcases which failed (i.e. remove xxx.prev.tst)
+# Handle with care!
+# Failing testcases are turned into "passed" and are manifested by this target!
+recreate: recr1 regr2
+recr0:
+	grep -E '> FAILED' $(TESTDIR)/regression*.log | cut -f 3 -d ' ' | xargs -l -ißß echo rm -v test/ßß.prev.tst
+recr1:
+	grep -E '> FAILED' $(TESTDIR)/regression*.log | cut -f 3 -d ' ' | xargs -l -ißß rm -v test/ßß.prev.tst
+regr2:
+	make regression TEST=$(TEST) > x.tmp
+# test whether all defined tests in common.tests have *.prev.tst results and vice versa
+check_tests:
+	grep -E "^TEST" $(TESTDIR)/all.tests   | cut -b 6-8 | sort | uniq -c > $(TESTDIR)/tests_formal.tmp
+	ls -1 $(TESTDIR)/*.prev.tst            | cut -b 6-8 | sort | uniq -c > $(TESTDIR)/tests_actual.tmp
+	diff -y --suppress-common-lines --width=32 $(TESTDIR)/tests_formal.tmp $(TESTDIR)/tests_actual.tmp
+#---------------------------------------------------
+jfind:
+	find src -iname "*.java" | xargs -l grep -H $(JF)
+rmbak:
+	find src -iname "*.bak"  | xargs -l rm -v
+#---------------------------------------------------
 lr:
 	make symbolic TEST=LR%
 lrh:
@@ -94,8 +133,6 @@ gitch:
 push:
 	find $(SRC)/../common -iname "*.java" -mtime -1 -type f \
 	| xargs -l -i{} cp -v {} ../dbat/src/main/java/org/teherba/common
-jfind:
-	find $(SRC)/.. -iname "*.java" | xargs -l grep -iH $(JF)
 #----------
 	
 # 1234567890123456789
@@ -108,17 +145,6 @@ fc2:
 	perl -w data/fermcau7.pl test/$(TEST).this.tst > x.tmp 
 	less x.tmp
 	# diff -y x.tmp y.tmp | less
-#
-# Recreate all testcases which failed (i.e. remove xxx.prev.tst)
-# Handle with care!
-# Failing testcases are turned into "passed" and are manifested by this target!
-recreate: recr1 regr2 regression
-recr0:
-	grep -E '> FAILED' regression*.log.tmp | cut -f 3 -d ' ' | xargs -l -ißß echo rm -v test/ßß.prev.tst
-recr1:
-	grep -E '> FAILED' regression*.log.tmp | cut -f 3 -d ' ' | xargs -l -ißß rm -v test/ßß.prev.tst
-regr2:
-	make regression TEST=$(TEST)
 #---------------------------------------------------
 ec221:
 	perl data/genpEC.pl 2 2 1 > ec221.txt
@@ -346,21 +372,3 @@ pi:
 	head -2 test/constants/pi.txt > y.tmp
 	java -cp dist/ramath.jar org.teherba.ramath.ContinuedFraction -const y.tmp
 #----------------------------
-fill:
-	cd test ; perl batch_test.pl -fill
-new_regression: comp eval
-comp:
-	cd test ; perl batch_test.pl -comp  | tee regression.log
-eval:
-	rm -f [pF]*[dD].tests
-	grep -E "FAILED" test/regression.log
-	grep -E "passed" test/regression.log > passed.tests
-	grep -E "FAILED" test/regression.log > FAILED.tests
-	wc -l *.tests | head -2
-show:
-	make -i show1 TEST=$(TEST) | less
-shok:
-	cp test/$(TEST).this.tst test/$(TEST).prev.tst
-show1:
-	diff -C0 test/$(TEST).prev.tst test/$(TEST).this.tst
-	head -2000 test/$(TEST).*.tst

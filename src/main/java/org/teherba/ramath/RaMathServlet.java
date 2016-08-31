@@ -26,26 +26,23 @@
  */
 package org.teherba.ramath;
 import  org.teherba.ramath.symbolic.RelationSet;
-import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.RefiningMap;
 import  org.teherba.ramath.web.IndexPage;
 import  org.teherba.ramath.web.Messages;
 import  org.teherba.common.web.BasePage;
 import  org.teherba.common.web.MetaInfPage;
 import  java.io.IOException;
-import  javax.servlet.RequestDispatcher;
 import  javax.servlet.ServletConfig;
 import  javax.servlet.ServletContext;
 import  javax.servlet.ServletException;
 import  javax.servlet.http.HttpServlet;
 import  javax.servlet.http.HttpServletRequest;
 import  javax.servlet.http.HttpServletResponse;
-import  javax.servlet.http.HttpSession;
 import  org.apache.log4j.Logger;
 
 /** Rational and Symbolic Mathematics
  *  <ul>
- *  <li>Symbolic evaluation of polynomials</li>
+ *  <li>Symbolic evaluation of {@link RelationSet}s</li>
  *  <li>Continued Fractions</li>
  *  <li>Euler's Extended Conjecture: search for solution tuples and parametric equations</li>
  *  </ul>
@@ -116,14 +113,6 @@ public class RaMathServlet extends HttpServlet {
         String newPage = null;
 
         try {
-            HttpSession session = request.getSession();
-            session.setAttribute("view"  , view);
-            session.setAttribute("area"  , area);
-            session.setAttribute("opt"   , opt);
-            session.setAttribute("form1" , form1);
-            session.setAttribute("form2" , form2);
-            session.setAttribute("form2c", form2c);
-            
             if (false) {
             } else if (view.equals("upper")
                     || view.equals("index")
@@ -140,28 +129,19 @@ public class RaMathServlet extends HttpServlet {
                         if (key == null || value == null) {
                             found = false;
                         } else {
-                        /* because of "/"
-                            if (! value.startsWith("(") || ! value.endsWith(")")) {
-                                value = "(" + value + ")";
-                            }
-                        */
                             if (rmap.get(key) != null) { // only those which occur in form1
                                 rmap.put(key, value);
                             }
                         }
                         index ++;
                     } // while found
-                    session.setAttribute("varmap", rmap);
                     rset = rset.substitute(rmap);
                     if (opt.indexOf("norm") >= 0) {
                         rset.deflateIt();
                     }
                     form2  = rset.toString(mode);
-                    session.setAttribute("form2" , form2);
                     form2c = rset.toString(mode + 1);
-                    session.setAttribute("form2c", form2c);
-
-                    (new IndexPage    ()).dialog(request, response, basePage, language, new String[] { "401" });
+                    (new IndexPage    ()).dialog(request, response, basePage, language, area, opt, form1, form2, form2c, rmap);
                 } else { // invalid area
                     basePage.writeMessage(request, response, language, new String[] { "401", "area", area });
                 }
@@ -179,26 +159,18 @@ public class RaMathServlet extends HttpServlet {
                         if (key == null || value == null) {
                             found = false;
                         } else {
-                        /* because of "/"
-                            if (! value.startsWith("(") || ! value.endsWith(")")) {
-                                value = "(" + value + ")";
-                            }
-                        */
                             if (rmap.get(key) != null) { // only those which occur in form1
                                 rmap.put(key, value);
                             }
                         }
                         index ++;
                     } // while found
-                    session.setAttribute("varmap", rmap);
                     rset = rset.substitute(rmap);
                     if (opt.indexOf("norm") >= 0) {
                         rset.deflateIt();
                     }
                     form1 = rset.toString(mode);
-                    session.setAttribute("form1", form1);
-
-                    (new IndexPage    ()).dialog(request, response, basePage, language, new String[] { "401" });
+                    (new IndexPage    ()).dialog(request, response, basePage, language, area, opt, form1, form2, form2c, rmap);
                 } else { 
                     basePage.writeMessage(request, response, language, new String[] { "401", "area", area });
                 }
@@ -214,8 +186,7 @@ public class RaMathServlet extends HttpServlet {
                 basePage.writeMessage(request, response, language, new String[] { "401", "view", view });
             }
         } catch (Exception exc) {
-            System.out.println(exc.getMessage());
-            exc.printStackTrace();
+            log.error(exc.getMessage(), exc);
         }
     } // generateResponse
 
