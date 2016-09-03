@@ -179,8 +179,7 @@ public class RaMathServlet extends HttpServlet {
                     || view.equals("manifest")
                     || view.equals("notice")
                     ) {
-                (new MetaInfPage    ()).showMetaInf (request, response, basePage, language, view);
-            } else if (view.equals("more")) {
+                (new MetaInfPage    ()).showMetaInf (request, response, basePage, language, view, this);
 
             } else {
                 basePage.writeMessage(request, response, language, new String[] { "401", "view", view });

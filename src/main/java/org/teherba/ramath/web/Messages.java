@@ -1,5 +1,6 @@
 /*  Messages.java - Static help texts and other language specific messages for Ramath.
  *  @(#) $Id: 57d01d0860aef0c2f2783647be70c3c381710c86 $
+ *  2016-09-02: "Manifest, "
  *  2016-08-28: Dr. Georg Fischer: copied from Dbat
  */
 /*
@@ -59,7 +60,7 @@ public class Messages implements Serializable {
         basePage.add("en", smess, "{parm}RaMath</a> Main Page");
         basePage.add("de", smess, "{parm}RaMath</a>-Startseite");
         smess = String.format("%03d", imess ++);
-        basePage.add(laux, smess, "<a title=\"wiki\"        href=\"http://www.teherba.org/ramath\" target=\"_new\">");
+        basePage.add(laux, smess, "<a title=\"wiki\"        href=\"http://www.teherba.org/index.php/RaMath\" target=\"_new\">");
         basePage.add("en", smess, "{parm}Wiki</a> Documentation");
         basePage.add("de", smess, "{parm}Wiki</a>-Dokumentation");
         smess = String.format("%03d", imess ++);
@@ -72,12 +73,12 @@ public class Messages implements Serializable {
         basePage.add("de", smess, "{parm}Java API</a>-Dokumentation");
         smess = String.format("%03d", imess ++);
         basePage.add(laux, smess, "<a title=\"manifest\"    href=\"servlet?view=manifest\">");
-        basePage.add("en", smess, "{parm}Manifest</a>");
-        basePage.add("de", smess, "{parm}Manifest</a>");
+        basePage.add("en", smess, "{parm}Manifest</a>, ");
+        basePage.add("de", smess, "{parm}Manifest</a>, ");
         smess = String.format("%03d", imess ++);
         basePage.add(laux, smess, "<a title=\"license\"     href=\"servlet?view=license\">");
-        basePage.add("en", smess, "{parm}License</a>");
-        basePage.add("de", smess, "{parm}Lizenz</a>");
+        basePage.add("en", smess, "{parm}License</a>, ");
+        basePage.add("de", smess, "{parm}Lizenz</a>, ");
         smess = String.format("%03d", imess ++);
         basePage.add(laux, smess, "<a title=\"notice\"      href=\"servlet?view=notice\">");
         basePage.add("en", smess, "{parm}References</a>");

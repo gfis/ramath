@@ -258,13 +258,17 @@
 
     <!-- ============= dist ==============================================
         create the binary distributions: jar and war
+        target core.jar must be defined somehow (maybe empty) in build.xml
     -->
-    <target name="dist"     depends="prepare,compile,manifest">
-        <jar    jarfile="${dist.home}/${ant.project.name}.jar"
+    <target name="dist"     depends="prepare,compile,manifest,core.jar">
+        <!-- with libraries, with web files -->
+        <jar jarfile="${dist.home}/${ant.project.name}.jar"
                 basedir="${build.classes}"
-                manifest="${build.classes}/META-INF/MANIFEST.MF">
+                manifest="${build.classes}/META-INF/MANIFEST.MF"
+                >
             <fileset dir="${build.expand}" />
         </jar>
+        <!-- without libraries, with web files -->
         <war destfile="${dist.home}/${ant.project.name}.war"
                 basedir="${build.home}"
                 manifest="${build.classes}/META-INF/MANIFEST.MF"

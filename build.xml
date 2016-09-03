@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--
+    ant-buildfile for commandline, web application and web service
+    @(#) $Id: build.xml 970 2012-10-25 16:49:32Z gfis $
+    2016-09-02: properties ${tomcat.*}, core.jar
+    2015-02-03: new build-import.xml, Pforzheim
+    2012-10-25: MonadicSolver replaced by TreeSolver
+    2008-10-07: copied from dbat
+-->
+<!--
  * Copyright 2008 Dr. Georg Fischer <punctum at punctum dot kom>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,13 +22,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
 -->
-<!--
-    ant-buildfile for commandline, web application and web service
-    @(#) $Id: build.xml 970 2012-10-25 16:49:32Z gfis $
-    2015-02-03: new build-import.xml, Pforzheim
-    2012-10-25: MonadicSolver replaced by TreeSolver
-    2008-10-07: copied from dbat
--->
 
 <project name="ramath" default="dist" basedir=".">
     <property name="app.name"           value="ramath"/>
@@ -33,6 +34,17 @@
     
     <target name="generate">
     </target>                                               
+
+    <target name="core.jar">
+        <!-- without libraries, without web files 
+        <jar jarfile="${dist.home}/${ant.project.name}-core.jar"
+                basedir="${build.classes}"
+                manifest="${build.classes}/META-INF/MANIFEST.MF"
+                excludes="web/** **/web/*.class **/*Servlet.class"
+                >
+        </jar>
+        -->
+    </target>
 
     <target name="test" depends="deploy,test.command,test.servlet,test.service" />
     <target name="test.command"><!-- run the program from the commandline -->
