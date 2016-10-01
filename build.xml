@@ -2,6 +2,7 @@
 <!--
     ant-buildfile for commandline, web application and web service
     @(#) $Id: build.xml 970 2012-10-25 16:49:32Z gfis $
+    2016-09-11: fill.lib
     2016-09-02: properties ${tomcat.*}, core.jar
     2015-02-03: new build-import.xml, Pforzheim
     2012-10-25: MonadicSolver replaced by TreeSolver
@@ -31,12 +32,12 @@
     <property name="tomcat.home"        value="/usr/share/tomcat" />
     <property name="test"               value="%" />
     <import file="build-import.xml" />
-    
+
     <target name="generate">
-    </target>                                               
+    </target>
 
     <target name="core.jar">
-        <!-- without libraries, without web files 
+        <!-- without libraries, without web files
         <jar jarfile="${dist.home}/${ant.project.name}-core.jar"
                 basedir="${build.classes}"
                 manifest="${build.classes}/META-INF/MANIFEST.MF"
@@ -46,6 +47,17 @@
         -->
     </target>
 
+    <target name="fill.lib">
+        <copy todir="${lib.home}">
+            <fileset dir="${tomcat.base}/openlib">
+                <include name="common-core.jar" />
+                <include name="commons-fileupload-1.3.2.jar" />
+                <include name="commons-io-2.5.jar" />
+                <include name="log4j-1.2.17.jar" />
+            </fileset>
+        </copy>
+    </target>
+
     <target name="test" depends="deploy,test.command,test.servlet,test.service" />
     <target name="test.command"><!-- run the program from the commandline -->
         <antcall target="run">
@@ -53,7 +65,7 @@
             <param name="args"  value="(a-b)^5" />
         </antcall>
     </target>
-    
+
     <target name="regression">
         <java classname="org.teherba.common.RegressionTester" classpathref="compile.classpath" fork="true">
             <arg value="test/all.tests" />
@@ -66,7 +78,7 @@
             <param name="class" value="org.teherba.ramath.ContinuedFraction" />
         </antcall>
     </target>
-    
+
     <target name="test.poly1"><!-- some polynomials -->
         <antcall target="run">
             <param name="class" value="org.teherba.ramath.symbolic.Polynomial" />
@@ -83,7 +95,7 @@
             <param name="args"  value="3*(a^2+b^2)-c^2-d^2 a^2+b^2-3*(d^2+c^2)" />
         </antcall>
     </target>
-    
+
     <target name="test.infinite"><!-- infinite descent "a^2+b^2-3*(c^2+d^2)" -->
         <antcall target="run">
             <param name="class" value="org.teherba.ramath.symbolic.InfiniteDescent" />
@@ -124,14 +136,14 @@
             <param name="args"  value="-e a^3+b^3-c^3-d^3" />
         </antcall>
     </target>
-    
+
     <target name="test.mona2"><!-- monadic solver -->
         <antcall target="run">
             <param name="class" value="org.teherba.ramath.symbolic.TreeSolver" />
             <param name="args"  value="-e 2*q^2-p^2" />
         </antcall>
     </target>
-    
+
     <target name="test.mona3"><!-- monadic solver -->
         <antcall target="run">
             <param name="class" value="org.teherba.ramath.symbolic.TreeSolver" />
@@ -247,7 +259,7 @@
             <param name="args"  value="-e a^2-(a-1)^2-(a-2)^2 -l 8" />
         </antcall>
     </target>
-    
+
     <target name="test.mona4"><!-- monadic solver -->
         <antcall target="run">
             <!-- c.f. http://planetmath.org/encyclopedia/InfiniteDescent.html -->
@@ -255,7 +267,7 @@
             <param name="args"  value="-e x^4-y^4-z^2" />
         </antcall>
     </target>
-    
+
     <target name="test.mona6"><!-- monadic solver -->
         <antcall target="run">
             <!-- c.f. http://planetmath.org/encyclopedia/InfiniteDescent.html -->
@@ -263,7 +275,7 @@
             <param name="args"  value="-b 5 -e x^4-y^4-z^2" />
         </antcall>
     </target>
-    
+
     <target name="test.servlet"><!-- call the web page -->
         <exec executable="lynx">
             <arg line="-dump http://localhost/webapps/ramath/" />
