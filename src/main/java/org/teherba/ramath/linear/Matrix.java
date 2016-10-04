@@ -142,7 +142,7 @@ public class Matrix implements Cloneable, Serializable {
         this.colLen = this.rowLen;
         this.fill(values);
     } // Constructor(String[])
-    
+
     /** Constructor for a rectangular Matrix which initializes it from a matrix expression.
      *  If the number of elements is no square number, the next lower square
      *  number is taken, and some elements at the end are ignored.
@@ -409,6 +409,21 @@ public class Matrix implements Cloneable, Serializable {
         setRow(rowNo1, row2);
     } // exchangeRows
 
+    /** Negates a set of rows as indicated by a bit mask.
+     *  @param mask row <em>i</em> is negated iff the bit <em>2**i</em> is set
+     */
+    public void negateRows(int mask) {
+        int bitValue = 1;
+        int bitNo    = 0;
+        while (bitValue <= mask) {
+            if ((bitValue & mask) > 0) { // bit is set
+                setRow(bitNo, getRow(bitNo).negate());
+            } // bit is set
+            bitValue = bitValue << 1;
+            bitNo ++;
+        } // while bitValue
+    } // negateRows
+
     /** Exchanges two columns in <em>this</em> Matrix.
      *  @param colNo1 number of the 1st column
      *  @param colNo2 number of the 2nd column
@@ -494,6 +509,31 @@ public class Matrix implements Cloneable, Serializable {
         } // for irow
         return result;
     } // isZero
+
+    /** Determines how the matrix is biased: more positive (non-zero) elements, more negative, 
+     *  or the same number of positive and negative elements
+     *  @return &gt; 0 if there are more positive, &lt; 0 if there are more negative, = 0 otherwise
+     */
+    public int bias() {
+        int cpos = 0;
+        int cneg = 0;
+        int irow = 0;
+        while (irow < this.rowLen) {
+            int jcol = 0;
+            while (jcol < this.colLen) {
+            	int elem = this.matrix[irow][jcol];
+            	if (false) {
+            	} else if (elem > 0) {
+            		cpos ++;
+            	} else if (elem < 0) {
+            		cneg ++;
+            	}
+                jcol ++;
+            } // for jcol
+            irow ++;
+        } // for irow
+        return cpos - cneg;
+    } // bias
 
     /** Determines whether <em>this</em> Matrix is the identity matrix,
      *  that is, the diagonal is +1 and all other elements are zero
@@ -844,7 +884,6 @@ public class Matrix implements Cloneable, Serializable {
 
         return rmat;
     } // inverse
-
 
     /** Successively multiplies <em>this</em> {@link Matrix} with
      *  a {@link Vector} <em>vect0</em> and checks whether the power sum property

@@ -37,6 +37,7 @@ import  java.io.InputStreamReader;
 import  java.io.PrintStream;
 import  java.text.SimpleDateFormat;
 import  java.util.Date;
+import  java.util.LinkedHashMap;
 import  java.util.Iterator;
 import  org.apache.log4j.Logger;
 
@@ -76,6 +77,12 @@ public class IdentityEvaluator {
     public VariableMap vmpar;
     /** Generated program is written to this file */
     private PrintStream o;
+    /** Stores the generated matrixes (as String keys).
+     *  The values are TRUE if that matrix should be kept,
+     *  or FALSE if the matrix was mappable to another by negating or exchanging rows.
+     *  The inserting order should be maintained for reproducible test results.
+     */
+    public LinkedHashMap<String, String> matrices;
 
     //===========================
     // Construction
@@ -87,61 +94,278 @@ public class IdentityEvaluator {
         nrows    = 3;
         ncols    = 3;
         limit    = 3;
+        matrices = new LinkedHashMap<String, String>(256);
     } // Constructor()
-    
-    /** Initializes common variables 
+
+    /** Initializes common variables
      */
     private void initialize() {
-    } // initialize     
+    } // initialize
 
     /** Closes the output file
      */
     private void close() {
         o.close();
-    } // initialize     
+    } // initialize
 
     //===========================
-    // Evaluate a result
+    // Action methods
     //===========================
-    /** Evaluates one result line in the output of <em>progen.c</em>
-     *  @param amat {@link Matrix} with coefficient values
+
+    /** Compresses the set of {@link #matrices}
+     *  by marking those which are mappable to another matrix
+     *  by negating or exchanging rows.
      */
-    public void evaluate(PolyMatrix amat) {
+    public void compress() {
+        switch (nrows) {
+            case 3:
+                compress2();
+                break;
+            case 4:
+                compress3();
+                break;
+            default:
+                // do nothing
+                break;
+        } // switch nrows
+    } // compress
+
+    /** Removes the marker for a negated or permuted matrix
+     *  @param key original matrix as String
+     *  @param amat modified matrix
+     */
+    private void unmark(String key, Matrix amat) {
+        String key2 = amat.toString(",");
+        if (! key2.equals(key) && matrices.get(key2) != null) {
+            matrices.put(key2, "");
+        }
+    } // unmark
+         
+    /** Compresses the set of {@link #matrices} for Euclid/Pythagoras powersum a^2 + b^2 = c^2
+     *  by marking those which are mappable to another matrix
+     *  by negated or exchanged rows.
+     *  The first 2 rows can be exchanged, and all rows can be negated in any combination.
+     */
+    private void compress2() {
+        Matrix amat = null;
+        String key2 = null;
+        Iterator<String> miter = matrices.keySet().iterator();
+        while (miter.hasNext()) { // negating
+            String key = miter.next();
+            if (matrices.get(key).length() > 0) { // marked TRUE
+                int mask = 0;
+                while (mask < 8) {
+                    amat = new Matrix(key);
+                    amat.negateRows(mask);
+                    unmark(key, amat);
+                    amat.exchangeRows(0, 1); // b^2 + a^2 = c^2
+                    unmark(key, amat);
+                    mask ++;
+                } // while mask
+            } // if TRUE
+        } // while negating
+    } // compress2
+
+    /** Compresses the set of {@link #matrices} for cubic powersum a^3 + b^3 + c^3 = d^3
+     *  by marking those which are mappable to another matrix
+     *  by negated or exchanged rows.
+     *  The first 3 rows can be permuted, and all 4 rows can be negated simultanously.
+     */
+    private void compress3() {
+        Matrix amat = null;
+        String key2 = null;
+        int mask = 0xf; // negate all 4 rows
+        Iterator<String> 
+        miter = matrices.keySet().iterator();
+        while (miter.hasNext()) { // negating
+            String key = miter.next();
+            if (matrices.get(key).length() > 0) { // marked TRUE
+                amat = new Matrix(key);  // a b c 
+                amat.negateRows(mask);
+                unmark(key, amat);
+                amat.exchangeRows(0, 1); // b a c
+                unmark(key, amat);
+                amat.negateRows(mask);
+                unmark(key, amat);
+                amat.exchangeRows(1, 2); // b c a
+                unmark(key, amat);
+                amat.negateRows(mask);
+                unmark(key, amat);
+                amat.exchangeRows(2, 0); // a c b
+                unmark(key, amat);
+                amat.negateRows(mask);
+                unmark(key, amat);
+                amat.exchangeRows(0, 1); // c a b
+                unmark(key, amat);
+                amat.negateRows(mask);
+                unmark(key, amat);
+                amat.exchangeRows(1, 2); // c b a
+                unmark(key, amat);
+                amat.negateRows(mask);
+                unmark(key, amat);
+            } // if TRUE
+        } // while negating
+
+        miter = matrices.keySet().iterator();
+        while (miter.hasNext()) { // negate and exchange c, d
+            String key = miter.next();
+            if (matrices.get(key).length() > 0) { // marked TRUE
+                mask = 0xc; // negate rows 2,3
+                amat = new Matrix(key);  // a b c d
+                amat.exchangeRows(2, 3); // a b d c
+                amat.negateRows(mask);   // a b -d -c
+                unmark(key, amat);
+            } // if TRUE
+        } // while negate and exchange c,d
+
+        miter = matrices.keySet().iterator();
+        while (miter.hasNext()) { // exch a, d; exch b, c; neg b, c
+            String key = miter.next();
+            if (matrices.get(key).length() > 0) { // marked TRUE
+                mask = 0x6; // negate rows 1, 2
+                amat = new Matrix(key);  // a b c d
+                amat.exchangeRows(0, 3); // d b d a
+                amat.exchangeRows(1, 2); // d c b a
+                amat.negateRows(mask);   // d -c -b a
+                unmark(key, amat);
+            } // if TRUE
+        } // while exch a, d; exch b, c; neg b, c
+
+    } // compress3
+
+    /** Stores one generated matrix as String
+     *  @param key String representation of the matrix
+     *  @param value "1" for entry to be kept, "0" for transformations, duplicates
+     */
+    public void store(String key) {
+        matrices.put(key, "TRUE");
+    } // store
+
+    /** Evaluates one result line in the output of <em>progen.c</em>.
+     *  Tries to build a chain, and print it if possible.
+     *  @param key {@link Matrix} in #String representation, with coefficient values
+     */
+    public void evaluate(String key) {
+        Matrix amat = new Matrix(key);
         StringBuffer tuples = new StringBuffer(256);
         RelationSet rset1 = rset0.substitute(pmat.getVariableMap(amat)); // replace coefficients
         MonotoneExpander dispenser = new MonotoneExpander(vmpar.size(), limit);
         while (dispenser.hasNext()) {
             Vector vdisp = dispenser.getVector();
-            if (vdisp.isMonotone() && vdisp.isCoprime()) {
+            if (vdisp.isMonotone() &&
+                    vdisp.isCoprime()) {
                 vmpar.setValues(dispenser);
                 RelationSet rset2 = rset1.substitute(vmpar);
                 Vector vpsum = rset2.getPowerSumVector();
-                if (vpsum.get(0) > 0 && vpsum.isMonotone()) {
+                if (true || vpsum.get(0) > 0 && vpsum.isMonotone()) {
                     tuples.append(/* dispenser.toString() + */ vpsum.toString(",") + " ");
                 }
             } // hasNoZero
             dispenser.next();
         } // while dispenser
         if (tuples.length() > 0) {
-	        System.out.println(amat.toString() + "\t" + tuples.toString());
-	    }
+            matrices.put(key, tuples.toString());
+        }
     } // evaluate
-        
+
+    /** Evaluates all remaining matrices and
+     *  tries to build a chain, and print it if possible.
+     *  @param amat {@link Matrix} with coefficient values
+     */
+    public void evaluateChains() {
+        Iterator<String> miter = matrices.keySet().iterator();
+        while (miter.hasNext()) {
+            String key = miter.next();
+            if (matrices.get(key).length() > 0) { // is marked TRUE
+                evaluate(key);
+            }
+        } // while miter
+    } // evaluateChains
+
+    /** Removes the unmarked matrices, and normalizes the remaining ones, 
+     */
+    public void normalize() {
+        LinkedHashMap<String, String> temp = new LinkedHashMap<String, String>(64);
+        Iterator<String> miter = matrices.keySet().iterator();
+        while (miter.hasNext()) {
+            String key   = miter.next();
+            String value = matrices.get(key);
+            if (value.length() > 0) { // is marked TRUE
+                if (key.indexOf('-') >= 0) { // any negative sign
+                    Matrix amat = new Matrix(key);
+                    switch (nrows) {
+                        case 3: // power 2 - negate individually
+                            int irow = 0;
+                            while (irow < nrows) {
+                                Vector vecti = amat.getRow(irow);
+                                if (vecti.isNegative()) { // all <= 0
+                                    amat.setRow(irow, vecti.negate());
+                                } // <= 0
+                                irow ++;
+                            } // while irow
+                            break;
+                        case 4:
+                            if (amat.bias() < 0) { // more negative elements
+                                amat.negateRows(0xf); // all 4
+                            } // more negative
+                            break;
+                        default:
+                            // do nothing
+                            break;
+                    } // switch nrows
+                    key = amat.toString(",");
+                } // any negative
+                temp.put(key, value);
+            } // marked TRUE
+        } // while miter
+        matrices = temp;
+    } // normalize
+
+    /** Shows all remaining matrices
+     */
+    public void show() {
+        Iterator<String> miter = matrices.keySet().iterator();
+        while (miter.hasNext()) {
+            String key   = miter.next();
+            String value = matrices.get(key);
+            if (value.length() > 0) { // is marked TRUE
+                o.println(key + "\t" + value);
+            }
+        } // while miter
+    } // show
+
     //==========================
     // Main
     //==========================
     /** Test method.
+     *  @param args commandline arguments:
+     *  <ul>
+     *  <li>-l limit for {@link MonotoneExpander}</li>
+     *  <li>-f name of file with output from <em>progen.c</em></li>
+     *  <li>-compr compress by removing negated and exchanged rows</li>
+     *  <li>-chain try to expand a chain of result tuples</li>
+     *  </ul>
+     *  Tries a series of tuples with the generated matrixes.
      */
     public static void main(String[] args) {
         int iarg = 0;
         IdentityEvaluator ideval = new IdentityEvaluator();
+        String action = "-chain";
         try {
             while (iarg < args.length) {
                 String opt = args[iarg ++];
                 if (false) {
-                } else if (opt.equals("-l")) {
+                } else if (opt.equals    ("-l")) {
                     ideval.limit = Integer.parseInt(args[iarg ++]);
-                } else if (opt.equals("-f")) {
+
+                } else if (opt.startsWith("-chain")) {
+                    ideval.evaluateChains();
+
+                } else if (opt.startsWith("-compr")) {
+                    ideval.compress();
+                    ideval.normalize();
+
+                } else if (opt.equals    ("-f")) {
                     // read parameters and a list of generated matrices
                     String fileName = args[iarg ++];
                     BufferedReader testReader = null;
@@ -179,17 +403,16 @@ public class IdentityEvaluator {
                         } else if (line.startsWith("[[")) {
                             // System.out.println("evaluate " + line);
                             int ccPos = line.indexOf("]]");
-                            PolyMatrix amat = new PolyMatrix(line.substring(0, ccPos + 2));
-                            ideval.evaluate(amat);
+                            ideval.store(line.substring(0, ccPos + 2));
                         } // [[
                     } // while line
-                    // opt -f
-                } // if options
+                } // opt -f
+
             } // while iarg
         } catch (Exception exc) {
             log.error(exc.getMessage(), exc);
         }
-
+        ideval.show();
         ideval.close();
     } // main
 

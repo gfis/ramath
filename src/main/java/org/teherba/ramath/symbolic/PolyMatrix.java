@@ -1,5 +1,6 @@
 /*  PolyMatrix: a square matrix with Polynomial elements
  *  @(#) $Id: PolyMatrix.java 744 2011-07-26 06:29:20Z gfis $
+ *  2016-10-04: getVariableMap(Matrix)
  *  2016-04-24: construct systematically with prefix; getVariableMap()
  *  2015-04-14: explicit determinant for case 3
  *  2015-03-26: construct from expression
@@ -508,7 +509,22 @@ public class PolyMatrix implements Cloneable, Serializable {
             } // for jcol
         } // for irow
         return result;
-    } // getVariableMap()
+    } // getVariableMap(pmat2)
+
+    /** Gets a {@link VariableMap} from all elements in <em>this</em> {@link PolyMatrix} to
+     *  the corresponding elements in a second {@link Matrix}
+     *  @param amat2 2nd Matrix for values
+     *  @return mapping from keys (from <em>this</em>) to values (from <em>amat2</em>)
+     */
+    public VariableMap getVariableMap(Matrix amat2) {
+        VariableMap result = new VariableMap();
+        for (int irow = 0; irow < this.rowLen; irow ++) {
+            for (int jcol = 0; jcol < this.colLen; jcol ++) {
+               result.put(this.get(irow, jcol).toString(), String.valueOf(amat2.get(irow, jcol)));
+            } // for jcol
+        } // for irow
+        return result;
+    } // getVariableMap(amat2)
 
     /*-------------- heavyweight methods -----------------------------*/
 

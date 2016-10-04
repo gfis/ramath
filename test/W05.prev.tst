@@ -6,23 +6,23 @@
 <head>
 <meta http-equiv="Content-Type" content="application/xhtml+xml;charset=UTF-8" />
 <meta name="robots" content="noindex, nofollow" />
-<link rel="stylesheet" type="text/css" href="stylesheet.css" />
+<link rel="stylesheet" title="common" type="text/css" href="stylesheet.css" />
 <title>RaMath Main Page</title>
 </head>
 <body>
-<!-- view= "upper", area="rset", opt=""
+<!-- area="rset", opt=""
     form1="(a%2Bb%2Bc)^6"
     form2="a⁶ + 2¹3a⁵*b + 3¹5a⁴*b² + 2²5a³*b³ + 3¹5a²*b⁴ + 2¹3a*b⁵ + b⁶ + 2¹3a⁵*c + 2¹3¹5a⁴*b*c + 2²3¹5a³*b²*c + 2²3¹5a²*b³*c + 2¹3¹5a*b⁴*c + 2¹3b⁵*c + 3¹5a⁴*c² + 2²3¹5a³*b*c² + 2¹3²5a²*b²*c² + 2²3¹5a*b³*c² + 3¹5b⁴*c² + 2²5a³*c³ + 2²3¹5a²*b*c³ + 2²3¹5a*b²*c³ + 2²5b³*c³ + 3¹5a²*c⁴ + 2¹3¹5a*b*c⁴ + 3¹5b²*c⁴ + 2¹3a*c⁵ + 2¹3b*c⁵ + c⁶"
-    valmap="{a=>a,b=>b,c=>c}"
+    rmap="{a=>a,b=>b,c=>c}"
 -->
-<h3>ramath - Rational and Symbolic Mathematics</h3>
+<h2>ramath - Rational and Symbolic Mathematics</h2>
 <form action="servlet" method="get">
     <input type = "hidden" name="view" value="upper" />
     <table cellpadding="0" border="0">
         <tr valign="top">
             <td>Area<br />
                 <select name="area" size="3">
-<option value="rset" selected>Symbolic Polynomial</option>
+<option value="rset" selected>Symbolic RelationSet</option>
 <option value="cfra">Continued Fraction</option>
 <option value="eecj">Euler's Extended Conjecture</option>
                 </select>
@@ -33,12 +33,10 @@
             </td>
             <td>
 See also:<br />
-<a title="wiki"        href="http://www.teherba.org/ramath" target="_new">Wiki</a> Documentation<br />
+<a title="wiki"        href="http://www.teherba.org/index.php/RaMath" target="_new">Wiki</a> Documentation<br />
 <a title="github"      href="https://github.com/gfis/ramath" target="_new">Git Repository</a><br />
 <a title="api"         href="docs/api/index.html">Java API</a> Documentation<br />
-<a title="manifest"    href="servlet?view=manifest">Manifest</a><br />
-<a title="license"     href="servlet?view=license">License</a><br />
-<a title="notice"      href="servlet?view=notice">References</a><br />
+<a title="manifest"    href="servlet?view=manifest">Manifest</a>, <a title="license"     href="servlet?view=license">License</a>, <a title="notice"      href="servlet?view=notice">References</a><br />
             </td>
         </tr>
         <tr valign="top">
@@ -78,6 +76,7 @@ See also:<br />
         </tr>
     </table>
 </form><!-- lower -->
+<!-- language="en", features="quest" -->
 <p><span style="font-size:small">
 Questions, remarks: email to  <a href="mailto:punctum@punctum.com?&subject=RaMath">Dr. Georg Fischer</a></span></p>
 </body></html>

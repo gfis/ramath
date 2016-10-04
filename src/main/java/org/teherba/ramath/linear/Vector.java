@@ -1,5 +1,6 @@
 /*  Vector: a simple, short vector of small numbers
  *  @(#) $Id: Vector.java 744 2011-07-26 06:29:20Z gfis $
+ *  2016-10-04: negate(), isNegative()
  *  2016-07-11: hasZero
  *  2015-04-05: gcd, isPowerSum repaired
  *  2015-02-24: isMonotone, isConstant
@@ -436,6 +437,19 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
         } // while ielem
         return result;
     } // hasNegative
+
+    /** Whether all elements of the vector are &lt;= 0
+     *  @return false if there is any &gt; 0
+     */
+    public boolean isNegative() {
+        boolean result = true;
+        int ielem = 0;
+        while (result && ielem < this.vecLen) {
+            result = this.vector[ielem] <= 0;
+            ielem ++;
+        } // while ielem
+        return result;
+    } // isNegative
 
     /** Whether all elements of the Vector have the same value
      *  @param value tests for this value
@@ -910,6 +924,19 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
         } // while ielem
         return result;
     } // multiply(int)
+
+    /** Gets a new Vector which is the negative <em>this</em> Vector.
+     *  @return a Vector where each original element is multiplied by <em>-1</em>
+     */
+    public Vector negate() {
+        Vector result = new Vector(this.vecLen);
+        int ielem = 0;
+        while (ielem < this.vecLen) {
+            result.vector[ielem] = - this.vector[ielem];
+            ielem ++;
+        } // while ielem
+        return result;
+    } // negate()
 
     /** Gets the innerproduct of two Vectors
      *  @param vect2 multiply by this Vector

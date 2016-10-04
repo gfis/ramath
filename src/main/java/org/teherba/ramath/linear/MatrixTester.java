@@ -1,5 +1,6 @@
 /*  MatrixTester: commandline interface to various Matrix methods
  *  @(#) $Id: Matrix.java 744 2011-07-26 06:29:20Z gfis $
+ *  2016-10-04: -negate
  *  2015-04-17, Georg Fischer: extracted from Matrix
  */
 /*
@@ -673,7 +674,7 @@ public class MatrixTester implements Serializable {
                     int failed = 0;
                     int ivect  = 0;
                     while (ivect < vectArray.length) {
-                    	count ++;
+                        count ++;
                         vect1 = vectArray[ivect];
                         alen = vect1.size();
                         System.out.print(vect1.toString(","));
@@ -706,7 +707,7 @@ public class MatrixTester implements Serializable {
                         ivect ++;
                     } // while ivect
                     System.out.println(failed + " of " + count + " failed, " 
-                    		+ String.format("%4.2f", failed * 100.0 / count) + "%"); 
+                            + String.format("%4.2f", failed * 100.0 / count) + "%"); 
                     // opt -follow
 
                 } else if (opt.equals("-gen" )) { // copied from -perms
@@ -747,8 +748,8 @@ public class MatrixTester implements Serializable {
                                         hash.put(key, vect3);
                                         queue.add(vect3);
                                         System.out.println(key 
-                                        		+ " <= " + vecta.toString(",")
-                                        		+ " by " + amat.toString(",") + ",det=" + amat.determinant());
+                                                + " <= " + vecta.toString(",")
+                                                + " by " + amat.toString(",") + ",det=" + amat.determinant());
                                     } // if new tuple
                                 } // if isPowerSum
                             } // while permutator
@@ -889,6 +890,26 @@ public class MatrixTester implements Serializable {
                             + vect1.toString("(,)") + " = "
                             + amat.multiply(vect1).toString("(,)"));
                     // -mult
+
+                } else if (opt.startsWith("-negate")) {
+                    amat = new Matrix(4, new int[]
+                            { 2, 2, 1, 0
+                            , 1, 1, 1, 1
+                            , 1, 2, 2, 0
+                            , 2, 3, 2, 0
+                            });
+                    System.out.println(amat.toString("(,)"));
+                    amat.exchangeRows(1, 2);
+                    System.out.println(amat.toString("(,)"));
+                    amat.exchangeRows(0, 3);
+                    System.out.println(amat.toString("(,)"));
+                    amat.negateRows(0x3);
+                    System.out.println(amat.toString("(,)"));
+                    amat.negateRows(0xc);
+                    System.out.println(amat.toString("(,)"));
+                    amat.negateRows(0xf);
+                    System.out.println(amat.toString("(,)"));
+                    // -negate
 
                 } else if (opt.equals("-permul")) {
                     amat  = new Matrix(args[iarg ++]); // may not contain spaces

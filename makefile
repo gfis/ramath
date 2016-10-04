@@ -35,26 +35,26 @@ regeval:
 	grep -iHE "tests (FAILED|passed|recreated)" $(TESTDIR)/*.log
 #---------------------------------------------------
 ideal:
-	$(REGR) test/ideal.tests 	$(TEST) 2>&1 | tee $(TESTDIR)/$@.log
-	grep FAILED $(TESTDIR)/$@.log
+	$(REGR) test/ideal.tests 	$(TEST) 2>&1 | tee $(TESTDIR)/regression_$@.log
+	grep FAILED $(TESTDIR)/regression_$@.log
 linear:
-	$(REGR) test/linear.tests 	$(TEST) 2>&1 | tee $(TESTDIR)/$@.log
-	grep FAILED $(TESTDIR)/$@.log
+	$(REGR) test/linear.tests 	$(TEST) 2>&1 | tee $(TESTDIR)/regression_$@.log
+	grep FAILED $(TESTDIR)/regression_$@.log
 matrix:
-	$(REGR) test/matrix.tests 	$(TEST) 2>&1 | tee $(TESTDIR)/$@.log
-	grep FAILED $(TESTDIR)/$@.log
+	$(REGR) test/matrix.tests 	$(TEST) 2>&1 | tee $(TESTDIR)/regression_$@.log
+	grep FAILED $(TESTDIR)/regression_$@.log
 sandbox:
-	$(REGR) test/sandbox.tests 	$(TEST) 2>&1 | tee $(TESTDIR)/$@.log
-	grep FAILED $(TESTDIR)/$@.log
+	$(REGR) test/sandbox.tests 	$(TEST) 2>&1 | tee $(TESTDIR)/regression_$@.log
+	grep FAILED $(TESTDIR)/regression_$@.log
 simple:
-	$(REGR) test/simple.tests 	$(TEST) 2>&1 | tee $(TESTDIR)/$@.log
-	grep FAILED $(TESTDIR)/$@.log
+	$(REGR) test/simple.tests 	$(TEST) 2>&1 | tee $(TESTDIR)/regression_$@.log
+	grep FAILED $(TESTDIR)/regression_$@.log
 solver:
-	$(REGR) test/solver.tests 	$(TEST) 2>&1 | tee $(TESTDIR)/$@.log
-	grep FAILED $(TESTDIR)/$@.log
+	$(REGR) test/solver.tests 	$(TEST) 2>&1 | tee $(TESTDIR)/regression_$@.log
+	grep FAILED $(TESTDIR)/regression_$@.log
 symbolic:
-	$(REGR) test/symbolic.tests $(TEST) 2>&1 | tee $(TESTDIR)/$@.log
-	grep FAILED $(TESTDIR)/$@.log
+	$(REGR) test/symbolic.tests $(TEST) 2>&1 | tee $(TESTDIR)/regression_$@.log
+	grep FAILED $(TESTDIR)/regression_$@.log
 #---------------------------------------------------
 # Recreate all testcases which failed (i.e. remove xxx.prev.tst)
 # Handle with care!
