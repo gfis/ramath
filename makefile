@@ -102,7 +102,7 @@ ret:
 progen: pg1 
 pg1:
 	cat test/progen.c
-	gcc -O2 -o test/progen.exe test/progen.c
+	gcc -Ofast -o test/progen.exe test/progen.c
 	test/progen.exe
 	rm test/progen.exe
 pg2:

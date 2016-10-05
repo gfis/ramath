@@ -231,6 +231,19 @@ public class IdentityEvaluator {
             } // if TRUE
         } // while exch a, d; exch b, c; neg b, c
 
+        miter = matrices.keySet().iterator();
+        while (miter.hasNext()) { // a b c d -> -b -a d c
+            String key = miter.next();
+            if (matrices.get(key).length() > 0) { // marked TRUE
+                mask = 0x3; // negate rows 0, 1
+                amat = new Matrix(key);  // a b c d
+                amat.exchangeRows(2, 3); // a b d c
+                amat.exchangeRows(0, 1); // b a d c
+                amat.negateRows(mask);   // -b -a d c
+                unmark(key, amat);
+            } // if TRUE
+        } // while exch a, d; exch b, c; neg b, c
+
     } // compress3
 
     /** Stores one generated matrix as String
@@ -258,7 +271,7 @@ public class IdentityEvaluator {
                 RelationSet rset2 = rset1.substitute(vmpar);
                 Vector vpsum = rset2.getPowerSumVector();
                 if (true || vpsum.get(0) > 0 && vpsum.isMonotone()) {
-                    tuples.append(/* dispenser.toString() + */ vpsum.toString(",") + " ");
+                    tuples.append(/* dispenser.toString() + */ vpsum.toFactoredString() + " ");
                 }
             } // hasNoZero
             dispenser.next();

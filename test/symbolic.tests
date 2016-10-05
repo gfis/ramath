@@ -338,6 +338,9 @@ CALL Polynomial -f $(DATA)
 # TEST P11 
 # CALL Polynomial -reduce "3x1^4 - 3*x1*x2 + 7*x1*x3"  
 # 
+TEST P12
+CALL Polynomial "w = -(a^2 + b^2)"
+
 # TEST P13 widening for completion
 # CALL Polynomial -reduce "2x^3 + 3x^2 + x + y"
 # 

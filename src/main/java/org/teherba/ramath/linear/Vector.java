@@ -804,15 +804,30 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
         return leftSum - rightSum;
     } // powerSum
 
-    /** Returns a string representation of the vector
+    /** Returns a String representation of the Vector
      *  with 4 places per element in one line
      *  @return a 1-dimensional array of small numbers
      */
     public String toString() {
-    	return toString(null);
+        return toString(null);
     } // toString()
 
-    /** Returns a string representation of the vector
+    /** Returns a String representation of the Vector
+     *  with comma separators and enclosed in square brackets,
+     *  and with the GCD extracted and multiplied behind.
+     *  @return "[1,6,8,9]*2" instead of "[2,12,16,18]"
+     */
+    public String toFactoredString() {
+        Vector copy = this.clone();
+        int gcd = extractGcd(copy.getValues());
+        String result = copy.toString(",");
+        if (gcd > 1) {
+            result += "*" + String.valueOf(gcd);
+        }
+        return result;
+    } // toFactoredString()
+
+    /** Returns a String representation of the Vector
      *  @param formatSpecSpec specification of the layout: null = printf(%3d), ",", " ", " %4d"
      *  @return a one-dimensional array of small numbers
      */

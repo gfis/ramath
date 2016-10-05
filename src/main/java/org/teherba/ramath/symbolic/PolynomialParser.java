@@ -1,5 +1,6 @@
 /*  PolynomialParser: parser for the recognition of arithmetic expressions
  *  @(#) $Id: PolynomialParser.java 522 2010-07-26 07:14:48Z gfis $
+ *  2016-10-04: insert 0 before unary minus after ( = < >
  *  2016-08-25: ignore comments after '#'
  *  2015-12-06: prime factorizations were messed up
  *  2015-11-17: handle superscript digits with getNumericValue
@@ -176,7 +177,11 @@ public class PolynomialParser extends Polynomial {
                                 } // else ignore unary +
                                 break;
                             case '-':
-                                if (prev == '(') {
+                                if (   prev == '(' 
+                                    || prev == '=' 
+                                    || prev == '<' 
+                                    || prev == '>' 
+                                        ) {
                                     postfix.add("0"); // a zero is inserted before a unary "m-"
                                 }
                                 replaceLower("m-");

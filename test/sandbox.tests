@@ -1,5 +1,5 @@
 #!java -cp ../dist/ramath.jar org.teherba.common.RegressionTester
-#
+# must be UTF-8: äöüÄÖÜß
 # $Id sandbox.tests $
 # Test of some experimental methods
 # 2016-07-10: ProgramGenerator moved here from matrix.tests
@@ -94,7 +94,7 @@ DATA
  a^2 + b^2 - c^2 = 0
 CALL ProgramGenerator -l 2 -f $(DATA) pident
 MAKE progen
-TEST IE20
+TEST PG20IE
 CALL IdentityEvaluator -l 8 -f test/PG20.this.tst -compr -chain
 
 TEST PG21 pident - 2 variables - Euclid
@@ -105,19 +105,8 @@ DATA
  a^2 + b^2 - c^2 = 0
 CALL ProgramGenerator -l 2 -f $(DATA) pident
 MAKE progen
-TEST IE21
+TEST PG21IE
 CALL IdentityEvaluator -l 8 -f test/PG21.this.tst -compr -chain
-
-#? TEST PG213 pident - 2 vars - up to 5
-#? DATA
-#?  a = A11*m^2 + A12*m*n + A13*n^2;
-#?  b = A21*m^2 + A22*m*n + A23*n^2;
-#?  c = A31*m^2 + A32*m*n + A33*n^2;
-#?  a^2 + b^2 - c^2 = 0
-#? CALL ProgramGenerator -l 5 -f $(DATA) pident
-#? TEST IE213
-#? MAKE progen
-#? CALL IdentityEvaluator -l 8 -f test/PG213.this.tst -compr -chain
 
 TEST PG22 pident - with exp 1
 DATA
@@ -127,7 +116,7 @@ DATA
  a^2 + b^2 - c^2 = 0
 CALL ProgramGenerator -l 2 -f $(DATA) pident
 MAKE progen
-TEST IE22
+TEST PG22IE
 CALL IdentityEvaluator -l 8 -f test/PG22.this.tst -compr -chain
 
 TEST PG23 pident with exp 1 and 0
@@ -138,7 +127,7 @@ DATA
  a^2 + b^2 - c^2 = 0
 CALL ProgramGenerator -l 2 -f $(DATA) pident
 MAKE progen
-TEST IE23
+TEST PG23IE
 CALL IdentityEvaluator -l 8 -f test/PG23.this.tst -compr -chain
 
 TEST PG24 pident - 1 var with exps 0-3
@@ -149,7 +138,7 @@ DATA
  a^2 + b^2 - c^2 = 0
 CALL ProgramGenerator -l 2 -f $(DATA) pident
 MAKE progen
-TEST IE24
+TEST PG24IE
 CALL IdentityEvaluator -l 8 -f test/PG24.this.tst -compr -chain
 
 TEST PG25 pident - 1 var with exps 0-4
@@ -160,11 +149,11 @@ DATA
  a^2 + b^2 - c^2 = 0
 CALL ProgramGenerator -l 2 -f $(DATA) pident
 MAKE progen
-TEST IE25
+TEST PG25IE
 CALL IdentityEvaluator -l 8 -f test/PG25.this.tst -compr -chain
 #-----------------------------------------
 # cubic powersum
-
+#--------
 TEST PG31 pident Vieta
 # Tito Piezas <https://sites.google.com/site/tpiezas/010>
 # Vieta (m^4-2m*n^3)^3 + (m^3*n+n^4)^3 + (2m^3*n-n^4)^3 = (m^4+m*n^3)^3
@@ -174,7 +163,6 @@ TEST PG31 pident Vieta
 #  0    2      0  -1
 #  1    0      1   0
 #  [[1,0,-2,0],[0,1,0,1],[0,2,0,-1],[1,0,1,0]]
-
 DATA
  a = A11*m^4 + A12*m^3*n + A13*m*n^3 + A14*n^4;
  b = A21*m^4 + A22*m^3*n + A23*m*n^3 + A24*n^4;
@@ -183,27 +171,28 @@ DATA
  a^3 + b^3 + c^3 = d^3
 CALL ProgramGenerator -l 2 -f $(DATA) pident
 MAKE progen
-TEST IE31
+TEST PG31IE
 CALL IdentityEvaluator -l 8 -f test/PG31.this.tst -compr -chain
-
-#? TEST PG32 pident Vieta + m^2*n^2
-#? # m^4 m^3*n m^2*n^2 m*n^3 n^4
-#? #  1    0      0      -2   0
-#? #  0    1      0       0   1
-#? #  0    2      0       0  -1
-#? #  1    0      0       1   0
-#? # 172 s
-#? DATA
-#?  a = A11*m^4 + A12*m^3*n + A13*m^2*n^2 + A14*m*n^3 + A15*n^4;
-#?  b = A21*m^4 + A22*m^3*n + A23*m^2*n^2 + A24*m*n^3 + A25*n^4;
-#?  c = A31*m^4 + A32*m^3*n + A33*m^2*n^2 + A34*m*n^3 + A35*n^4;
-#?  d = A41*m^4 + A42*m^3*n + A43*m^2*n^2 + A44*m*n^3 + A45*n^4;
-#?  a^3 + b^3 + c^3 = d^3
-#? CALL ProgramGenerator -l 2 -f $(DATA) pident
-#? MAKE progen
-TEST IE32
+#--------
+TEST PG32 pident Vieta + m^2*n^2
+# m^4 m^3*n m^2*n^2 m*n^3 n^4
+#  1    0      0      -2   0
+#  0    1      0       0   1
+#  0    2      0       0  -1
+#  1    0      0       1   0
+# 172 s
+DATA
+ a = A11*m^4 + A12*m^3*n + A13*m^2*n^2 + A14*m*n^3 + A15*n^4;
+ b = A21*m^4 + A22*m^3*n + A23*m^2*n^2 + A24*m*n^3 + A25*n^4;
+ c = A31*m^4 + A32*m^3*n + A33*m^2*n^2 + A34*m*n^3 + A35*n^4;
+ d = A41*m^4 + A42*m^3*n + A43*m^2*n^2 + A44*m*n^3 + A45*n^4;
+ a^3 + b^3 + c^3 = d^3
+CALL ProgramGenerator -l 2 -f $(DATA) pident
+MAKE progen
+TEST PG32IE
 CALL IdentityEvaluator -l 8 -f test/PG32.this.tst -compr -chain
-
+#--------
+TEST PG33 pident Dutch 1
 # Dutch 1
 #          m^2      m^1   m^0
 # a =      m*m + 16 * m - 21;
@@ -211,8 +200,6 @@ CALL IdentityEvaluator -l 8 -f test/PG32.this.tst -compr -chain
 # c =  2 * m*m -  4 * m + 42;
 # d =  2 * m*m +  4 * m + 42;
 # a^3 + b^3 + c^3 = d^3
-# 17 s
-TEST PG33 pident Dutch 1
 DATA
  a = A11*m^2 + A12*m + A13;
  b = A21*m^2 + A22*m + A23;
@@ -221,9 +208,101 @@ DATA
  a^3 + b^3 + c^3 = d^3
 CALL ProgramGenerator -l 6 -f $(DATA) pident
 MAKE progen
-TEST IE33
+TEST PG33IE
 CALL IdentityEvaluator -l 8 -f test/PG33.this.tst -compr -chain
-
+# found ... -> Ramanujan (all other chains are multiples of [3,4,5,6])
+# [[-5,-5,3],[-3,5,5],[6,4,4],[4,4,6]]		[-1,1,2,2]*7 [-9,1,12,10]*3 [-57,-7,70,54] [-97,-23,116,86] [-49,-15,58,42]*3 [-207,-73,244,174] [-277,-107,326,230] 
+# [[-3,-5,5],[-5,5,3],[6,-4,4],[4,-4,6]]	[-1,1,2,2]*3 [-17,-7,20,14] [-37,-27,46,30] [-21,-19,28,18]*3 [-95,-97,134,86] [-19,-21,28,18]*7 [-59,-69,90,58]*3 
+# 23 s
+#--------
+# https://sites.google.com/site/tpiezas/010
+# Choudhry (complete in the integers, 1998 paper)
+# 
+# x13 + x23 + x33 + x43 = 0 
+# 
+# dx1 =  (a^2+a*b+b^2)^2 + (2*a+b)*c^3
+# dx2 = -(a^2+a*b+b^2)^2 + (a-b)*c^3 
+# dx3 = c*(-a^3+b^3+c^3)
+# dx4 = -(a^2+a*b+b^2)*(2*a+b)*c - c^4
+#
+#  - a^4 - 2*a^3*b - 3*a^2*b^2 - 2*a*b^3 - b^4 - 2*a*c^3 - b*c^3 + w; 
+#    a^4 + 2*a^3*b + 3*a^2*b^2 + 2*a*b^3 + b^4 -   a*c^3 + b*c^3 + x; 
+#            a^3*c                         - b^3*c - c^4 + y; 
+#          2*a^3*c + 3*a^2*b*c + 3*a*b^2*c + b^3*c + c^4 + z; 
+#          w^3 + x^3 + y^3 + z^3 = 0
+#
+# c = 1 => 
+# - 2a - a4 - b - 2a³*b - 3a²*b² - 2a*b³ - b4 + w;  
+# - a + a4 + b + 2a³*b + 3a²*b² + 2a*b³ + b4 + x; 
+# a³ - b³ + y - 1; 
+# 2a³ + 3a²*b + 3a*b² + b³ + z + 1; 
+# w³ + x³ + y³ + z³ 
+TEST PG34 pident Choudry
+DATA
+ w = (a^2+a*b+b^2)^2 + (2*a+b)*c^3   ;   
+ x = - (a^2+a*b+b^2)^2 + (a-b)*c^3   ;   
+ y = c*(-a^3+b^3+c^3)                ;
+ z = -(a^2+a*b+b^2)*(2*a+b)*c - c^4  ;
+ 0 = w^3 + x^3 + y^3 + z^3
+CALL symbolic.RelationSet -d 1 -f $(DATA) -simplify
+#--------
+# b = 1; c = 1 => 
+# - 4*a - 3a² - 2a³ - a^4 + w - 2; 
+# a + 3a² + 2a³ + a^4 + x + 2; 
+# a³ + y - 2; 
+# 3a + 3a² + 2a³ + z + 2; 
+# w³ + x³ + y³ + z³
+TEST PG35 RelationSet Choudry b=1 c=1
+DATA
+ - 4a - 3a² - 2a³ - a^4 + w - 2; 
+    a + 3a² + 2a³ + a^4 + x + 2; 
+               a³       + y - 2; 
+   3a + 3a² + 2a³       + z + 2; 
+ w³ + x³ + y³ + z³ = 0
+CALL symbolic.RelationSet -d 1 -f $(DATA) -simplify
+#--------
+TEST PG36 RelationSet Choudry b=1 c=1
+DATA
+ w =  4a + 3a² + 2a³ + a^4 + 2; 
+ x =  -a - 3a² - 2a³ - a^4 - 2; 
+ y =           -  a³       + 2; 
+ z = -3a - 3a² - 2a³       - 2; 
+ w³ + x³ + y³ + z³ = 0
+CALL symbolic.RelationSet -d 1 -f $(DATA) -simplify
+#--------
+TEST PG37 pident Choudry b=1 c=1
+DATA
+ a = A11*m^4 + A12*m^3 + A13*m^2 + A14*m + A15;
+ b = A21*m^4 + A22*m^3 + A23*m^2 + A24*m + A25;
+ c = A31*m^4 + A32*m^3 + A33*m^2 + A34*m + A35;
+ d = A41*m^4 + A42*m^3 + A43*m^2 + A44*m + A45;
+ a^3 + b^3 + c^3 = d^3 
+CALL ProgramGenerator -l 2 -f $(DATA) pident
+MAKE progen
+TEST PG37IE
+CALL IdentityEvaluator -l 8 -f test/PG37.this.tst -compr -chain
+#--------
+TEST PG38 pident Choudry a=1, b=0
+# - 2c³ + w - 1;  - c³ + x + 1; c - c^4 + y; 2c + c^4 + z; w³ + x³ + y³ + z³
+# w =         2*c^3      + 1;  0  2  0  1
+# x =           c^3      - 1;  0  1  0 -1
+# y =   c^4         - c     ;  1  0 -1  0
+# z =   c^4       + 2*c     ;  1  0  2  0
+# w^3 + x^3 + y^3 = z^3
+DATA
+ a = A11*m^4 + A12*m^3  + A13*m + A14;
+ b = A21*m^4 + A22*m^3  + A23*m + A24;
+ c = A31*m^4 + A32*m^3  + A33*m + A34;
+ d = A41*m^4 + A42*m^3  + A43*m + A44;
+ a^3 + b^3 + c^3 = d^3 
+CALL ProgramGenerator -l 2 -f $(DATA) pident
+MAKE progen
+TEST PG38IE
+CALL IdentityEvaluator -l 8 -f test/PG38.this.tst -compr -chain
+# found
+# [[-1,0,1,0],[0,-1,0,1],[1,0,2,0],[0,2,0,1]]	[0,0,3,3] [-14,-7,20,17] [-78,-26,87,55] [-84,-21,88,43]*3 [-620,-124,635,251] [-1290,-215,1308,433] [-798,-114,805,229]*3 
+# [[0,-2,0,1],[-1,0,2,0],[1,0,1,0],[0,1,0,1]]	[-1,1,2,2] [-5,-4,6,3]*3 [-53,-75,84,28] [-127,-248,260,65] [-83,-205,210,42]*3 [-431,-1284,1302,217] [-685,-2387,2408,344] 
+# 2.5 s
 #---------------------------------------
 LIM=64
 HEAD=6000

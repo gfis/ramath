@@ -34,8 +34,8 @@ import  java.util.Iterator;
 
 /** Generates program code for exhaustion of matrices and formulas
  *  at a high speed.
- *  The generated programs have minimal indenting or commenting 
- *  and they are meant to be compiled and executed 
+ *  The generated programs have minimal indenting or commenting
+ *  and they are meant to be compiled and executed
  *  at once without further editing or parametrization.
  *  The generator itself may be complicated and inefficient.
  *  Currently code for the following programming languages can
@@ -43,7 +43,7 @@ import  java.util.Iterator;
  *  <ul>
  *  <li>C - as developed by Dennis Ritchie between 1969 and 1973 at Bell Labs<li>
  +  </ul>
- *  
+ *
  *  @author Dr. Georg Fischer
  */
 public class ProgramGenerator {
@@ -56,7 +56,7 @@ public class ProgramGenerator {
     /** whether to generate non-zero entries only*/
     public boolean nonZero;
     /** code for programming language to be generated: C, Java, Perl */
-    public String lang; 
+    public String lang;
     /** Generated program is written to this file */
     private PrintStream o;
     /** closing brackets for all opened <em>for</em> and <em>if</em> statements */
@@ -94,7 +94,7 @@ public class ProgramGenerator {
     public ProgramGenerator() {
         this("test/progen.c");
     } // Constructor()
-    
+
     /** Constructor with output file name
      *  @param outfile name of output file
      */
@@ -115,22 +115,22 @@ public class ProgramGenerator {
         } catch (Exception exc) {
         }
     } // Constructor()
-    
-    /** Initializes common variables 
+
+    /** Initializes common variables
      */
     private void initialize() {
-    } // initialize     
+    } // initialize
 
     /** Closes the output file
      */
     private void close() {
         o.close();
-    } // initialize     
+    } // initialize
 
     //===========================
     // Common Utility Methods
     //===========================
-    
+
     /** Generate a program header with the declartion of matrix elements
      *  @param features list of code words for various features in the header:
      *  <ul>
@@ -151,7 +151,7 @@ public class ProgramGenerator {
             o.println("#include <stdio.h>");
             o.println("#include <stdlib.h>");
             o.println("int main(int argc, char *argv[]) {");
-            
+
             if (features.indexOf("gcd") >= 0) {
                 o.println("int gcd2(int a, int b) {                              ");
                 o.println("        int result = abs(a);                          ");
@@ -175,7 +175,7 @@ public class ProgramGenerator {
                 o.println("        return gcd2(a, gcd4(b, c, d, e));             ");
                 o.println("    } /* gcd5 */                                      ");
             } // feature gcd
-            
+
             if (features.indexOf("square") >= 0) {
                 int maxRoot2  = 8;
                 int range2    = maxRoot2 * maxRoot2; // 64
@@ -226,7 +226,7 @@ public class ProgramGenerator {
             // C
         }
     } // programHeader
-    
+
     /** Print the declarations for the matrix elements
      */
     private void declareMatrix() {
@@ -238,10 +238,10 @@ public class ProgramGenerator {
                 sep = ",";
             } // for icol
             o.println();
-        } // for irow 
+        } // for irow
         o.println(";");
     } // declareMatrix
-    
+
     /** Generate a program trailer
      */
     private void programTrailer() {
@@ -253,7 +253,7 @@ public class ProgramGenerator {
             // C
         }
     } // programTrailer
-    
+
     /** Open and push 1 closing bracket
      */
     private void oc() {
@@ -267,31 +267,31 @@ public class ProgramGenerator {
     private void forRow(int irow) {
         for (int jcol = 1; jcol <= ncols; jcol ++) {
             String mij = letter1 + String.valueOf(irow) + String.valueOf(jcol);
-            o.print("for (" + mij + " = " + String.valueOf(minDigit) + "; " 
-                    + mij + " < " + String.valueOf(maxDigit) + "; " 
+            o.print("for (" + mij + " = " + String.valueOf(minDigit) + "; "
+                    + mij + " < " + String.valueOf(maxDigit) + "; "
                     + mij + "++) /* row " + String.valueOf(irow) + " */ "); oc();
             if (nonZero) {
                 o.print("if (" + mij + " != 0)"); oc();
             } // nonZero
         } // for jcol
     } // forRow
-    
-    /** Print <em>for</em> loops for 1 column 
+
+    /** Print <em>for</em> loops for 1 column
      *  @param jcol column number
      */
     private void forCol(int jcol) {
         for (int irow = 1; irow <= nrows; irow ++) {
             String mij = letter1 + String.valueOf(irow) + String.valueOf(jcol);
-            o.print("for (" + mij + " = " + String.valueOf(minDigit) + "; " 
-                    + mij + " < " + String.valueOf(maxDigit) + "; " 
+            o.print("for (" + mij + " = " + String.valueOf(minDigit) + "; "
+                    + mij + " < " + String.valueOf(maxDigit) + "; "
                     + mij + "++) /* col " + String.valueOf(jcol) + " */ "); oc();
             if (nonZero) {
                 o.print("if (" + mij + " != 0)"); oc();
             } // nonZero
         } // for irow
     } // forCol
-    
-    /** Check InnerProduct of 2 columns  
+
+    /** Check InnerProduct of 2 columns
      *  @param jcol column number 1
      *  @param kcol column number 2
      */
@@ -305,7 +305,7 @@ public class ProgramGenerator {
         o.print(" == 0)"); oc();
     } // checkProdCol
 
-    /** Check the innermosted nested sum: A12^2 + 2*A11*A13 + A22^2 + 2*A21*A23 - A32^2 - 2*A31*A33  
+    /** Check the innermosted nested sum: A12^2 + 2*A11*A13 + A22^2 + 2*A21*A23 - A32^2 - 2*A31*A33
      *  @param jcol column number 1
      *  @param kcol column number 2
      *  @param lcol column number 3
@@ -352,7 +352,7 @@ public class ProgramGenerator {
         } // for kcol
         o.print(") /* row " + String.valueOf(irow) + " != 0 */ "); oc();
     } // checkZeroRow
-    
+
     /** Print conditions which check whether a matrix row is all zero
      *  @param irow 1st row number
      */
@@ -366,7 +366,7 @@ public class ProgramGenerator {
         } // for kcol
         o.print(") /* row " + String.valueOf(irow) + " != 0 */ "); oc();
     } // checkZeroRow
-    
+
     /** Print conditions which check whether 2 matrix columns are identical
      *  @param icol 1st column number
      *  @param jcol 2nd column number
@@ -382,7 +382,7 @@ public class ProgramGenerator {
         } // for krow
         o.print(") /* col " + String.valueOf(icol) + " != col " + String.valueOf(jcol) + " */ "); oc();
     } // checkSameCol
-    
+
     /** Print a row of the matrix in Vector form [m11,m12,m13]
      *  @param irow row number
      *  @param ncols number of columns (1-ncols)
@@ -401,7 +401,7 @@ public class ProgramGenerator {
         } // for kcol
         o.println(");");
     } // printRow
- 
+
     /** Print a matrix in vectorized form [[m11,m12],[m21,m22]]
      *  @param nrows number of rows    (1-nrows)
      *  @param ncols number of columns (1-ncols)
@@ -416,7 +416,7 @@ public class ProgramGenerator {
         o.println("printf(\"]\");");
         o.println("reslines ++;");
     } // printMatrix
-       
+
     //===========================
     // Generating Methods
     //===========================
@@ -455,15 +455,15 @@ public class ProgramGenerator {
         printMatrix(nrows, ncols);
         o.println("printf(\"\\t\\tpreserves: [%d,%d,%d] -> [%d,%d,%d]\\n\",a,b,c, v1,v2,v3);");
         programTrailer();
-    } // barning   
+    } // barning
 
 /*
  + m^4*(A11^2 + A21^2 - A31^2)                                          c1^2
- + n^4*(A13^2 + A23^2 - A33^2)                                          c3^2 
+ + n^4*(A13^2 + A23^2 - A33^2)                                          c3^2
  + 1*(A16^2 + A26^2 - A36^2)                                            c6^2
  + 2*m^3*n*(A11*A12 + A21*A22 - A31*A32)                                c1.c2
  + 2*m*n^3*(A12*A13 + A22*A23 - A32*A33)                                c2.c3
-                                                                        
+
  + 2*m^3*(A11*A14 + A21*A24 - A31*A34)                                  c1.c4
  + 2*n^3*(A13*A15 + A23*A25 - A33*A35)                                  c3.c5
 
@@ -474,10 +474,10 @@ public class ProgramGenerator {
 
  + m^2*(A14^2 + A24^2 - A34^2 + 2*A11*A16 + 2*A21*A26 - 2*A31*A36)      c4^2  + 2*c1.c6
  + 2*m*n*(A14*A15 + A12*A16 + A24*A25 + A22*A26 - A34*A35 - A32*A36)    c4.c5 + c2.c6
- 
+
  + n^2*(A15^2 + 2*A13*A16 + A25^2 + 2*A23*A26 - A35^2 - 2*A33*A36)      c5^2  + 2*c3.c6
  + 2*m*n^2*(A13*A14 + A12*A15 + A23*A24 + A22*A25 - A33*A34 - A32*A35)  c3.c4 + c2.c5
-*/ 
+*/
     /** Test case SIA: Generate 3 x 6 matrixes for sum of 3 squares with Polynomials of degree 2
      *  <pre>
  a^2 + b^2 = c^2;
@@ -488,7 +488,7 @@ public class ProgramGenerator {
      */
     public void m2SIA() {
     } // m2SIA
- 
+
     /** Generate 3 x 3 matrixes for coefficients of Euclids identity
      *  <pre>
          a^2 + b^2 - c^2 = 0;
@@ -504,11 +504,11 @@ public class ProgramGenerator {
         programHeader("");
         declareMatrix();
         o.println("m12 = 77; m22 = 77; m32 = 77;");
-        forCol      (1); 
+        forCol      (1);
         checkProdCol(1, 1); // m^4
-        forCol      (3); 
+        forCol      (3);
         checkProdCol(3, 3); // n^4
-        forCol      (2); 
+        forCol      (2);
         checkPlusRow(1);
         checkPlusRow(2);
         checkPlusRow(3);
@@ -519,7 +519,7 @@ public class ProgramGenerator {
         checkProdCol(2, 3); // 2*m*n^3
         checkNestCol(1, 2, 3); // m^2*n^2
         /* SI8.prev.tst:
-            simplified and grouped: 
+            simplified and grouped:
              + m^4*(A11^2 + A21^2 - A31^2)
              + 2*m^3*n*(A11*A12 + A21*A22 - A31*A32)
              + m^2*n^2*(A12^2 + 2*A11*A13 + A22^2 + 2*A21*A23 - A32^2 - 2*A31*A33)
@@ -563,11 +563,11 @@ public class ProgramGenerator {
      *  for example [3,4,5]
      *  The element order must correspond to that of <em>vectg</em>
      *  @param poly0 Polynomial which represents the generator,
-     *  for example p0^2 + q0^2 = r0^2. 
+     *  for example p0^2 + q0^2 = r0^2.
      *  The variable names in <em>poly0</em> must not overlap
-     *  with those in <em>vectg</em>, and the lexicographical 
-     *  order of the variable names in <em>poly0</em> should correspond 
-     *  to the element order of <em>vectg</em>. 
+     *  with those in <em>vectg</em>, and the lexicographical
+     *  order of the variable names in <em>poly0</em> should correspond
+     *  to the element order of <em>vectg</em>.
      */
     public void m2opts(PolyVector vectg, PolyVector vectc, Polynomial poly0) {
         letter1 = "m";
@@ -581,14 +581,14 @@ public class ProgramGenerator {
         VariableMap vmap0 = poly0.getVariableMap();
         VariableMap vmap1 = new VariableMap(); // p1->0,q1->0,r1->0
         VariableMap vmap3 = new VariableMap(); // p->p1,q->q1,r->r1
-        int 
-        ivect = 0;  
+        int
+        ivect = 0;
         Iterator<String> viter = vmap0.keySet().iterator();
         while (viter.hasNext()) {
             String name  = viter.next();
             String value = vectm.get(ivect).toString();
             String name1 = name + "1";
-            vmap0.put(name, value); 
+            vmap0.put(name, value);
             vmap1.put(name1, "0");
             vmap3.put(name, name1);
             o.print("int " + name + " = " + vectc.get(ivect).toString() + "; ");
@@ -597,12 +597,12 @@ public class ProgramGenerator {
         o.println();
         Polynomial poly2  = poly0.substitute(vmap0);
         Monomial mono2    = new Monomial(vectg.getVariableMap().getNameArray());
-        RelationSet rset1 = poly2.groupBy(mono2);       
+        RelationSet rset1 = poly2.groupBy(mono2);
         o.println("/*  vectg = " + vectg.toString());
         o.println("    vectc = " + vectc.toString());
         o.println("    poly0 = " + poly0.toString());
         o.println("    mono2 = " + mono2.toString());
-        o.println("    rset1 = " + rset1.toList()); 
+        o.println("    rset1 = " + rset1.toList());
         o.println("*/");
         /* mono2= + a*b, rset1=
         [0]  + a^4*(m11^2 + 2*m11*m13 + m13^2 + m21^2 + 2*m21*m23 + m23^2 - m31^2 - 2*m31*m33 - m33^2)
@@ -632,7 +632,7 @@ public class ProgramGenerator {
             for (jcol = icol + 1; jcol <= ncols; jcol ++) { // avoid identical colums
                 checkSameCol(icol, jcol);
             } // for jcol
-        } // icol    
+        } // icol
 
         int irset = 0;
         while (irset < rset1.size()) {
@@ -641,8 +641,8 @@ public class ProgramGenerator {
             irset ++;
         } // while irset
 
-        o.print("if ("); // skip if resulting tuple is the same 
-        String 
+        o.print("if ("); // skip if resulting tuple is the same
+        String
         sep = "";
         ivect = 0;
         while (ivect < vmap1.size()) {
@@ -669,9 +669,9 @@ public class ProgramGenerator {
         } // while ivect
         o.println("]\"," + nstr1 + ");");
 
-        o.println("int p2 = m11*p1 + m12*q1 + m13*r1;"); 
-        o.println("int q2 = m21*p1 + m22*q1 + m23*r1;"); 
-        o.println("int r2 = m31*p1 + m32*q1 + m33*r1;"); 
+        o.println("int p2 = m11*p1 + m12*q1 + m13*r1;");
+        o.println("int q2 = m21*p1 + m22*q1 + m23*r1;");
+        o.println("int r2 = m31*p1 + m32*q1 + m33*r1;");
         o.println("if (p2*p2*p2 == q2*q2 + r2*r2) {");
         o.println("    printf(\"\\tchain2\");");
         o.println("}");
@@ -690,56 +690,56 @@ public class ProgramGenerator {
 
     /** Get a String for a <em>for</em> loop over one column
      *  @param jcol column number
-     *  @return a <em>for</em> statement iterating over all rows of one column 
+     *  @return a <em>for</em> statement iterating over all rows of one column
      */
     private String getColLoop(int jcol) {
         StringBuffer result = new StringBuffer(256);
-        int irow = 1; 
+        int irow = 1;
         while (irow <= nrows) {
             String mij = letter1 + String.valueOf(irow) + String.valueOf(jcol);
-            result.append("for (" + mij + " = " + String.valueOf(minDigit) + "; " 
-                    + mij + " < " + String.valueOf(maxDigit) + "; " 
-                    + mij + "++) /* col " + String.valueOf(jcol) + " */ "); 
+            result.append("for (" + mij + " = " + String.valueOf(minDigit) + "; "
+                    + mij + " < " + String.valueOf(maxDigit) + "; "
+                    + mij + "++) /* col " + String.valueOf(jcol) + " */ ");
             result.append(br());
             if (nonZero) {
-                result.append("if (" + mij + " != 0)" + br()); 
+                result.append("if (" + mij + " != 0)" + br());
             } // nonZero
             irow ++;
         } // while irow
         return result.toString();
     } // getColLoop
-    
+
     /** Get a String for a <em>for</em> loop over one row
      *  @param irow row number
      *  @return a <em>for</em> statement iterating over all columns of one row
      */
     private String getRowLoop(int irow) {
         StringBuffer result = new StringBuffer(256);
-        int jcol = 1; 
+        int jcol = 1;
         while (jcol <= ncols) {
             String mij = letter1 + String.valueOf(irow) + String.valueOf(jcol);
-            result.append("for (" + mij + " = " + String.valueOf(minDigit) + "; " 
-                    + mij + " < " + String.valueOf(maxDigit) + "; " 
-                    + mij + "++) /* row " + String.valueOf(irow) + " */ "); 
+            result.append("for (" + mij + " = " + String.valueOf(minDigit) + "; "
+                    + mij + " < " + String.valueOf(maxDigit) + "; "
+                    + mij + "++) /* row " + String.valueOf(irow) + " */ ");
             result.append(br());
             if (nonZero) {
-                result.append("if (" + mij + " != 0)" + br()); 
+                result.append("if (" + mij + " != 0)" + br());
             } // nonZero
             jcol ++;
         } // while jcol
         return result.toString();
     } // getRowLoop
-    
-    /** Get a String for the innerproduct of 2 columns  
+
+    /** Get a String for the innerproduct of 2 columns
      *  @param jcol column number 1
      *  @param kcol column number 2
      *  @param negs number of negative terms at the end of the expression
-     *  @return an expression consisting of the sum of products 
+     *  @return an expression consisting of the sum of products
      */
     private String getColProd(int jcol, int kcol, int negs) {
         StringBuffer result = new StringBuffer(256);
         int isig = 0;
-        int irow = 1; 
+        int irow = 1;
         while (irow <= nrows)  {
             String mij = letter1 + String.valueOf(irow) + String.valueOf(jcol);
             String mik = letter1 + String.valueOf(irow) + String.valueOf(kcol);
@@ -750,16 +750,21 @@ public class ProgramGenerator {
         return result.toString();
     } // getColProd
 
+    /** constant for short or int declarations, plus a space */
+    public final static String SHORT_INT = "int ";
+
     /** Generate identities for power sums
-     *  Parameters: 
+     *  Parameters:
      *  <ul>
      *  <li>rset1 RelationSet</li>
      *  </ul>
      */
     public void pident() {
-        RelationSet rset0 = rset1.clone(); // original RS
+        RelationSet rset0   = rset1.clone(); // original RS
+        Polynomial powerSum = rset1.get(rset1.size() - 1); // the last is the powersum formula
+        int exponent        = powerSum.degree();
         rset1.simplify(false); // simplify only the lowercase variables
-        if (rset1.size() > 1) {                  
+        if (rset1.size() > 1) {
             System.out.println("Still more than 1 Polynomial after simplification: " + rset1.toString());
         } else { // simplification returned a single Polynomial
             programHeader("");
@@ -773,7 +778,7 @@ public class ProgramGenerator {
             int npoly           = rset2.size();
             VariableMap[] vmaps = new VariableMap[npoly];
             int[]         nvars = new int[npoly];
-            
+
             o.println("/* simplified and grouped: ");
             int minSize = 2906; // very high
             int maxSize =    0; // very low
@@ -789,8 +794,8 @@ public class ProgramGenerator {
                 if (nvars[ipoly] > maxSize) {
                     maxSize = nvars[ipoly];
                 }
-                o.println("    [" + ipoly + "] " + polyi.getFactor().toString() 
-                        + "\t(" + polyi.toString(5) + ")" 
+                o.println("    [" + ipoly + "] " + polyi.getFactor().toString()
+                        + "\t(" + polyi.toString(5) + ")"
                         + "\t"  + nvars[ipoly]
                         + "{"  + vmaps[ipoly].getNameString() + "}"
                         );
@@ -799,7 +804,7 @@ public class ProgramGenerator {
             o.println("    minSize=" + minSize + ", maxSize=" + maxSize); // minimal/maximal number of variables in a partial Polynomial
             vmap1             = rset1.getVariableMap(true);  // with uppercase variables
             VariableMap vlow  = rset1.getVariableMap(false); // without uppercase
-            vmap1.remove(vlow); // now only the uppercase 
+            vmap1.remove(vlow); // now only the uppercase
             String[] names = vmap1.getNameArray(); // ascending order because of TreeMap
             ncols = 0;
             int nsub = (names[0].length() >= 5) ? 3 : 2; // will handle indexing A11, A101 or A0101
@@ -816,10 +821,13 @@ public class ProgramGenerator {
             o.println(LEADER + "parameter=" + vmpar.getNameString());
             o.println(LEADER + "rset0="     + rset0.toString()); // original
             o.println(LEADER + "poly1="     + poly1.toString()); // with isolated variables removed
+            o.println(LEADER + "powerSum="  + powerSum.toString()); // powersum polynomial
+            o.println(LEADER + "exponent="  + String.valueOf(exponent));
             o.println(LEADER + "pmat="      + pmat .toString());
             o.println("*/");
-            o.println("int " + vmap1.getNameString() + ";"); // instead of declareMatrix()
-    
+            o.println(SHORT_INT + vmap1.getNameString() + ";"); // instead of declareMatrix()
+
+            boolean hasInserted = false;
             while (minSize <= maxSize) { // expand all partial Polynomials
                 ipoly = 0;
                 while (ipoly < npoly) {
@@ -828,22 +836,56 @@ public class ProgramGenerator {
                         nvars[ipoly] = 0; // do not investigate anymore
                         names = vmaps[ipoly].getNameArray();
                         int inam = 0;
+                        boolean mustInsert = true;
                         while (inam < names.length) {
                             String name  = names[inam];
                             String found = vmap1.remove(name);
                             if (found != null) {
-                                o.print("for (" + name + " = " + String.valueOf(minDigit) + "; " 
-                                        + name + " < " + String.valueOf(maxDigit) + "; " 
-                                        + name + "++) " + br()); 
+                                mustInsert = false;
+                                o.print("for (" + name + " = " + String.valueOf(minDigit) + "; "
+                                        + name + " < " + String.valueOf(maxDigit) + "; "
+                                        + name + "++) " + br());
                             } // found
                             inam ++;
                         } // while inam
+
+                        if (! hasInserted && vmap1.size() == 0) { // faster without that!
+                            hasInserted = true;
+                            // o.println("int sum0 = 0;");
+                            int irow = 0;
+                            while (irow < nrows) {
+                                String pvi = pmat.getRow(irow).toString()
+                                        .replaceAll("\\,", "+")
+                                        .replaceAll("\\[", " = ")
+                                        .replaceAll("\\]", "; ");
+                                String sumi = "sum" + String.valueOf(irow + 1);
+                                o.print(SHORT_INT + sumi + pvi);
+                            /*
+                                int iexp = 0;
+                                String sep = "sum0 " + (irow < nrows - 1 ? "+" : "-") + "= ";
+                                while (iexp < exponent) {
+                                    o.print(sep + sumi);
+                                    sep = "*";
+                                    iexp ++;
+                                } // while iexp
+                                o.println(";");
+                            */
+                                if (irow > 0) {
+	                            	o.print("if (sum" + String.valueOf(irow) + " <= " + sumi + ")" + br()); 
+	                            } else {
+	                            	o.println();
+	                            }
+                                irow ++;
+                            } // while irow
+                        } // insert if 
+
                         o.print("if (" + polyi.toString(5) + " == 0) /* [" + ipoly + "], minSize = " + minSize + " */ " + br());
                     } // == minSize
                     ipoly ++;
                 } // while ipoly
                 minSize ++; // try higher in next loop
             } // while expanding all partial Polynomials
+
             for (int irow = 1; irow <= nrows; irow ++) {
                 checkZeroRow(irow);
                 for (int jrow = irow + 1; jrow <= nrows; jrow ++) {
@@ -885,7 +927,7 @@ public class ProgramGenerator {
                 } else if (op.equals("e")) {
                     argsLog.append(' ');
                     argsLog.append(args[iarg]);
-                    try {                   
+                    try {
                         exp   = Integer.parseInt(args[iarg ++]);
                     } catch (Exception exc) {
                     }
@@ -902,7 +944,7 @@ public class ProgramGenerator {
                         limit = Integer.parseInt(args[iarg ++]);
                     } catch (Exception exc) {
                     }
-                    minDigit = - limit;                   
+                    minDigit = - limit;
                     maxDigit = limit + 1;
                 } else if (op.equals("n")) {
                     nonZero = true;
@@ -921,7 +963,7 @@ public class ProgramGenerator {
                     argsLog.append(" \"");
                     argsLog.append(args[iarg]);
                     argsLog.append("\"");
-                    ivect ++; 
+                    ivect ++;
                     vects[ivect] = new PolyVector(args[iarg ++]);
                 } else if (op.equals("w")) {
                     argsLog.append(' ');
@@ -942,7 +984,7 @@ public class ProgramGenerator {
             }
         } // while args
     } // getArguments
- 
+
     //==========================
     // Main
     //==========================
