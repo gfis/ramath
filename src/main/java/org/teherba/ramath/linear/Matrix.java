@@ -1,5 +1,6 @@
 /*  Matrix: a simple, small, square matrix of small numbers
  *  @(#) $Id: Matrix.java 744 2011-07-26 06:29:20Z gfis $
+ *  2016-10-06: gcd()
  *  2015-09-04: Constructor(int) presets elements to 0
  *  2015-04-17: test methods exported to MatrixTester
  *  2015-04-15: inverse
@@ -521,13 +522,13 @@ public class Matrix implements Cloneable, Serializable {
         while (irow < this.rowLen) {
             int jcol = 0;
             while (jcol < this.colLen) {
-            	int elem = this.matrix[irow][jcol];
-            	if (false) {
-            	} else if (elem > 0) {
-            		cpos ++;
-            	} else if (elem < 0) {
-            		cneg ++;
-            	}
+                int elem = this.matrix[irow][jcol];
+                if (false) {
+                } else if (elem > 0) {
+                    cpos ++;
+                } else if (elem < 0) {
+                    cneg ++;
+                }
                 jcol ++;
             } // for jcol
             irow ++;
@@ -685,6 +686,19 @@ public class Matrix implements Cloneable, Serializable {
     } // multiply(Vector)
 
     /*-------------- heavyweight methods -----------------------------*/
+
+    /** Greatest common divisor of the elements of <em>this</em> {@link Matrix}
+     *  @return an integer >= 1
+     */
+    public int gcd() {
+        Vector rowGCDs = new Vector(rowLen);
+        int irow = 0;
+        while (irow < rowLen) {
+            rowGCDs.set(irow, getRow(irow).gcd());
+            irow ++;
+        } // while irow
+        return rowGCDs.gcd();
+    } // gcd()
 
     /** Compute the determinant of <em>this</em> matrix.
      *  For row lengths >= 4, this method is called recursively.

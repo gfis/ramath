@@ -85,7 +85,7 @@ CALL ProgramGenerator -w 3 -l 4 m2euclid
 MAKE progen
 #-------------------------------
 # square powersum (Pythagoras/Euclid)
-
+#--------
 TEST PG20 pident 1 variable
 DATA
  a = A11*m^2 + A12*m + A13;
@@ -96,7 +96,7 @@ CALL ProgramGenerator -l 2 -f $(DATA) pident
 MAKE progen
 TEST PG20IE
 CALL IdentityEvaluator -l 8 -f test/PG20.this.tst -compr -chain
-
+#--------
 TEST PG21 pident - 2 variables - Euclid
 DATA
  a = A11*m^2 + A12*m*n + A13*n^2;
@@ -107,7 +107,7 @@ CALL ProgramGenerator -l 2 -f $(DATA) pident
 MAKE progen
 TEST PG21IE
 CALL IdentityEvaluator -l 8 -f test/PG21.this.tst -compr -chain
-
+#--------
 TEST PG22 pident - with exp 1
 DATA
  a = A11*m^2 + A12*m*n + A13*n^2 + A14*m + A15*n;
@@ -118,7 +118,7 @@ CALL ProgramGenerator -l 2 -f $(DATA) pident
 MAKE progen
 TEST PG22IE
 CALL IdentityEvaluator -l 8 -f test/PG22.this.tst -compr -chain
-
+#--------
 TEST PG23 pident with exp 1 and 0
 DATA
  a = A11*m^2 + A12*m*n + A13*n^2 + A14*m + A15*n + A16;
@@ -129,7 +129,7 @@ CALL ProgramGenerator -l 2 -f $(DATA) pident
 MAKE progen
 TEST PG23IE
 CALL IdentityEvaluator -l 8 -f test/PG23.this.tst -compr -chain
-
+#--------
 TEST PG24 pident - 1 var with exps 0-3
 DATA
  a = A11*m^3 + A12*m^2 + A13*m + A14;
@@ -140,7 +140,7 @@ CALL ProgramGenerator -l 2 -f $(DATA) pident
 MAKE progen
 TEST PG24IE
 CALL IdentityEvaluator -l 8 -f test/PG24.this.tst -compr -chain
-
+#--------
 TEST PG25 pident - 1 var with exps 0-4
 DATA
  a = A11*m^4 + A12*m^3 + A13*m^2 + A14*m + A15;
@@ -151,6 +151,17 @@ CALL ProgramGenerator -l 2 -f $(DATA) pident
 MAKE progen
 TEST PG25IE
 CALL IdentityEvaluator -l 8 -f test/PG25.this.tst -compr -chain
+#--------
+TEST PG26 pident 1 variable
+DATA
+ a = A11*m^2 + A12*m + A13;
+ b = A21*m^2 + A22*m + A23;
+ c = A31*m^2 + A32*m + A33;
+ a^2 + b^2 - c^2 = 0
+CALL ProgramGenerator -l 16 -f $(DATA) pident
+MAKE progen
+TEST PG26IE
+CALL IdentityEvaluator -l 16 -f test/PG26.this.tst -compr -chain
 #-----------------------------------------
 # cubic powersum
 #--------
@@ -302,6 +313,26 @@ CALL IdentityEvaluator -l 8 -f test/PG38.this.tst -compr -chain
 # found
 # [[-1,0,1,0],[0,-1,0,1],[1,0,2,0],[0,2,0,1]]	[0,0,3,3] [-14,-7,20,17] [-78,-26,87,55] [-84,-21,88,43]*3 [-620,-124,635,251] [-1290,-215,1308,433] [-798,-114,805,229]*3 
 # [[0,-2,0,1],[-1,0,2,0],[1,0,1,0],[0,1,0,1]]	[-1,1,2,2] [-5,-4,6,3]*3 [-53,-75,84,28] [-127,-248,260,65] [-83,-205,210,42]*3 [-431,-1284,1302,217] [-685,-2387,2408,344] 
+# 2.5 s
+#--------
+TEST PG41 pident 
+#a = A11*m^5 + A12*m^4  + A13*m^3 + A14*m^2 + A15*m^1 + A16*m^0;
+#b = A21*m^5 + A22*m^4  + A23*m^3 + A24*m^2 + A25*m^1 + A26*m^0;
+#c = A31*m^5 + A32*m^4  + A33*m^3 + A34*m^2 + A35*m^1 + A36*m^0;
+#d = A41*m^5 + A42*m^4  + A43*m^3 + A44*m^2 + A45*m^1 + A46*m^0;
+#e = A51*m^5 + A52*m^4  + A53*m^3 + A54*m^2 + A55*m^1 + A56*m^0;
+DATA
+ a = A11*m^5 + A12*m^4  + A13*m^3 + A14*m^2;
+ b = A21*m^5 + A22*m^4  + A23*m^3 + A24*m^2;
+ c = A31*m^5 + A32*m^4  + A33*m^3 + A34*m^2;
+ d = A41*m^5 + A42*m^4  + A43*m^3 + A44*m^2;
+ e = A51*m^5 + A52*m^4  + A53*m^3 + A54*m^2;
+ a^4 + b^4 + c^4 + d^3 = e^4
+CALL ProgramGenerator -l 2 -f $(DATA) pident
+MAKE progen
+TEST PG41IE
+CALL IdentityEvaluator -l 8 -f test/PG41.this.tst -compr -chain
+# found
 # 2.5 s
 #---------------------------------------
 LIM=64

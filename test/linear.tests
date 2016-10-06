@@ -222,8 +222,11 @@ CALL Vector -gcd [32,44,55,66]
 TEST L33 gcd of a vector = 11
 CALL Vector -gcd [-33,44,55,66]
 
-TEST L34 gcd of a vector = 1
+TEST L34 gcd of a vector = 11
 CALL Vector -gcd [0,44,55,66]
+
+TEST L35 gcd of a vector = 0
+CALL Vector -gcd [0,0,0]
 
 TEST L36 lcm of a vector
 CALL Vector -lcm [3,4,5]

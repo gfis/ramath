@@ -1,6 +1,6 @@
 /*  Vector: a simple, short vector of small numbers
  *  @(#) $Id: Vector.java 744 2011-07-26 06:29:20Z gfis $
- *  2016-10-04: negate(), isNegative()
+ *  2016-10-06: negate(), isNegative(); gcd, lcm corrected for 0
  *  2016-07-11: hasZero
  *  2015-04-05: gcd, isPowerSum repaired
  *  2015-02-24: isMonotone, isConstant
@@ -494,7 +494,7 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
      */
     public static int gcd(int a, int b) {
         int result = Math.abs(a);
-        if (result > 1) {
+        if (result != 1) {
             int p = result;
             int q = Math.abs(b);
             while (q != 0) {
@@ -504,9 +504,6 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
             }
             result = p;
         } // if > 1
-        if (result == 0) {
-            result = 1;
-        }
         return Math.abs(result);
     } // gcd(a, b)
 
@@ -525,7 +522,7 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
         int result = Math.abs(vect[0]);
         int vlen = vect.length;
         int ielem = 1;
-        while (result > 1 && ielem < vlen) {
+        while (result != 1 && ielem < vlen) {
             int p = result;
             int q = Math.abs(vect[ielem]);
             while (q != 0) {
@@ -536,9 +533,6 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
             result = p;
             ielem ++;
         } // while ielem
-        if (result == 0) {
-            result = 1;
-        }
         return Math.abs(result);
     } // gcd(array)
 
@@ -548,7 +542,11 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
      *  @return lcm(a,b)
      */
     public static int lcm(int a, int b) {
-        int result = Math.abs(a * b) / gcd(a, b);
+        int divisor = gcd(a, b);
+        int result = 0;
+        if (divisor != 0) {
+            result = Math.abs(a * b) / divisor;
+        }
         return result;
     } // lcm(a, b)
 
