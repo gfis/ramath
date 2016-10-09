@@ -347,9 +347,36 @@ public class RelationSet
      *  with leading signs, in compressed form.
      *  @return "17*a0^2*a1 + a2^2*a3^3; - 4*b4", for example
      */
-    public String toString() {
+    public String toString() { // isoVar found
         return toString(0);
     } // toString()
+      
+    /** Returns a C-style assignment to an isolated variable 
+     *  for one of the member {@link Polynomial}. 
+     *  Powers are expanded to multiplications.
+     *  @param isoVar the isolated variable
+     *  @return for example "a =  A13 + A12*m + A11*m^2;" 
+     *           instead of " - A13 + a - A12*m - A11*m^2;"
+     */
+    public String toAssignment(String isoVar) {
+        String result = "/* to Assignment: variable " + isoVar + " not found */";
+        int ipoly = 0;
+        while (ipoly < this.size()) {
+            Polynomial polyi = this.get(ipoly);
+            Monomial   monoi = polyi.get(new Monomial(isoVar).signature());
+            if (monoi != null) { // isoVar found
+                if (monoi.isNegative()) {
+                    polyi.addTo(monoi);
+                } else { // >= 0
+                    polyi.subtractFrom(monoi);
+                    polyi.negativeOf();
+                }
+                result = isoVar + " = " + polyi.toString(5); // exp -> mult
+            } 
+            ipoly ++;
+        } // while ipoly
+        return result;
+    } // toAssignment
 
     /** Returns a String representation of <em>this</em> {@link RelationSet},
      *  in compressed representation, without the relations,
@@ -879,10 +906,10 @@ public class RelationSet
                 }
                 if (parts.length < 2) {
                     vmap.put(parts[0], "0");
-	                result.set(ipoly, new Polynomial("0"));
+                    result.set(ipoly, new Polynomial("0"));
                 } else {
                     vmap.put(parts[0], parts[1]);
-	                result.set(ipoly, new Polynomial(parts[1]));
+                    result.set(ipoly, new Polynomial(parts[1]));
                 }
             } else {
                 ipsum = ipoly;
@@ -919,10 +946,10 @@ public class RelationSet
                 }
                 if (parts.length < 2) {
                     vmap.put(parts[0], "0");
-	                result.set(ivect, 0);
+                    result.set(ivect, 0);
                 } else {
                     vmap.put(parts[0], parts[1]);
-	                result.set(ivect, Integer.parseInt(parts[1]));
+                    result.set(ivect, Integer.parseInt(parts[1]));
                 }
                 ivect ++;
             } else {
@@ -932,7 +959,7 @@ public class RelationSet
         } // while ipoly
         polyi = this.get(ipsum).substitute(vmap);
         if (! polyi.isZero()) {
-        	throw new IllegalArgumentException("powersum element is not zero: " + polyi.toString());
+            throw new IllegalArgumentException("powersum element is not zero: " + polyi.toString());
         }
         return result;
     } // getPowerSumVector

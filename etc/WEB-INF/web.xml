@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
     @(#) $Id: web.xml 193 2009-07-07 16:06:20Z gfis $
+    2016-10-08: Servlet 3.0 + ErrorServlet
     2016-08-29: <welcome-file-list>
     2009-07-07: copied from dbat
 -->
@@ -19,26 +20,54 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
 -->
-<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" 
-    "http://java.sun.com/dtd/web-app_2_3.dtd">
-<web-app>
-    
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+        version="3.0">
     <display-name>RaMath</display-name>
     <description>
         Rational and Symbolic Mathematics
     </description>
-    
+
     <!-- Servlets -->
-    <servlet> 
+    <servlet>
         <servlet-name>RaMathServlet</servlet-name>
         <servlet-class>org.teherba.ramath.RaMathServlet</servlet-class>
     </servlet>
 
-    <servlet-mapping> 
+    <servlet-mapping>
         <servlet-name>RaMathServlet</servlet-name>
         <url-pattern>/servlet</url-pattern>
     </servlet-mapping>
-    
+
+    <servlet>
+        <servlet-name>ErrorServlet</servlet-name>
+        <servlet-class>org.teherba.common.web.ErrorServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ErrorServlet</servlet-name>
+        <url-pattern>/ErrorServlet</url-pattern>
+    </servlet-mapping>
+
+    <error-page>
+        <location>/ErrorServlet</location>
+    </error-page>
+<!--
+    <error-page>
+        <error-code>404</error-code>
+        <location>/error.jsp</location>
+    </error-page>
+
+    <error-page>
+        <exception-type>java.lang.Throwable</exception-type>
+        <location>/error.jsp</location>
+    </error-page>
+
+    <error-page>
+        <location>/error.jsp</location>
+    </error-page>
+-->
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
         <welcome-file>index.htm</welcome-file>

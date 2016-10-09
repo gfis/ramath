@@ -76,6 +76,10 @@ public class IdentityEvaluator {
     public VariableMap vmiso;
     /** {@link VariableMap} for parameter variables in {@link #rset0} */
     public VariableMap vmpar;
+    /** number of resulting /interesting output lines */
+    public int reslines;
+    /** String which identifies the start of a result line which contains significant information */
+    public static final String LEADER = "#---> ";
     /** Generated program is written to this file */
     private PrintStream o;
     /** Stores the generated matrixes (as String keys).
@@ -96,6 +100,7 @@ public class IdentityEvaluator {
         ncols    = 3;
         limit    = 3;
         matrices = new LinkedHashMap<String, String>(256);
+        reslines = 0;
     } // Constructor()
 
     /** Initializes common variables
@@ -106,6 +111,7 @@ public class IdentityEvaluator {
     /** Closes the output file
      */
     private void close() {
+    	o.println(LEADER + "reslines=" + String.valueOf(reslines));
         o.close();
     } // initialize
 
@@ -288,10 +294,11 @@ public class IdentityEvaluator {
                 String result = tuples.toString().replaceAll(Pattern.quote(lastTuple), mark);
                 int markPos  = result.indexOf(mark);
                 int markPos2 = result.lastIndexOf(mark);
-                if (markPos2 > markPos) { // there were 2 dots
+                if (markPos2 > markPos) { // there were at least 2 marks
                     result += "same=" + lastTuple;
                 } else {
                 	result = tuples.toString();
+                	reslines ++;
                 }
                 matrices.put(key, result);
             }

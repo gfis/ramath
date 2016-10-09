@@ -86,6 +86,17 @@ MAKE progen
 #-------------------------------
 # square powersum (Pythagoras/Euclid)
 #--------
+TEST PG19 pident 1 variable
+DATA
+ a = A11*m^1 + A12*m^0;
+ b = A21*m^1 + A22*m^0;
+ c = A31*m^1 + A32*m^0;
+ a^2 + b^2 - c^2 = 0
+CALL ProgramGenerator -l 32 -f $(DATA) pident
+MAKE progen
+TEST PG19IE
+CALL IdentityEvaluator -l 8 -f test/PG19.this.tst -compr -chain
+#--------
 TEST PG20 pident 1 variable
 DATA
  a = A11*m^2 + A12*m + A13;
@@ -165,6 +176,24 @@ CALL IdentityEvaluator -l 16 -f test/PG26.this.tst -compr -chain
 #-----------------------------------------
 # cubic powersum
 #--------
+TEST PG30 pident Vieta + m^2*n^2, m only
+# m^4 m^3*n m^2*n^2 m*n^3 n^4
+#  1    0      0      -2   0
+#  0    1      0       0   1
+#  0    2      0       0  -1
+#  1    0      0       1   0
+# 172 s
+DATA
+ a = A11*m^4 + A12*m^3 + A13*m^2 + A14*m + A15;
+ b = A21*m^4 + A22*m^3 + A23*m^2 + A24*m + A25;
+ c = A31*m^4 + A32*m^3 + A33*m^2 + A34*m + A35;
+ d = A41*m^4 + A42*m^3 + A43*m^2 + A44*m + A45;
+ a^3 + b^3 + c^3 = d^3
+CALL ProgramGenerator -l 2 -f $(DATA) pident
+MAKE progen
+TEST PG30IE
+CALL IdentityEvaluator -l 8 -f test/PG30.this.tst -compr -chain
+#--------
 TEST PG31 pident Vieta
 # Tito Piezas <https://sites.google.com/site/tpiezas/010>
 # Vieta (m^4-2m*n^3)^3 + (m^3*n+n^4)^3 + (2m^3*n-n^4)^3 = (m^4+m*n^3)^3
@@ -191,7 +220,7 @@ TEST PG32 pident Vieta + m^2*n^2
 #  0    1      0       0   1
 #  0    2      0       0  -1
 #  1    0      0       1   0
-# 172 s
+# 57 s
 DATA
  a = A11*m^4 + A12*m^3*n + A13*m^2*n^2 + A14*m*n^3 + A15*n^4;
  b = A21*m^4 + A22*m^3*n + A23*m^2*n^2 + A24*m*n^3 + A25*n^4;
@@ -243,19 +272,19 @@ CALL IdentityEvaluator -l 8 -f test/PG33.this.tst -compr -chain
 #          w^3 + x^3 + y^3 + z^3 = 0
 #
 # c = 1 => 
-# - 2a - a4 - b - 2a³*b - 3a²*b² - 2a*b³ - b4 + w;  
-# - a + a4 + b + 2a³*b + 3a²*b² + 2a*b³ + b4 + x; 
+# - 2a - a4 - b - 2a³*b - 3a²*b² - 2a*b³ - b^4 + w;  
+# - a + a4 + b + 2a³*b + 3a²*b² + 2a*b³ + b^4 + x; 
 # a³ - b³ + y - 1; 
 # 2a³ + 3a²*b + 3a*b² + b³ + z + 1; 
 # w³ + x³ + y³ + z³ 
-TEST PG34 pident Choudry
-DATA
- w = (a^2+a*b+b^2)^2 + (2*a+b)*c^3   ;   
- x = - (a^2+a*b+b^2)^2 + (a-b)*c^3   ;   
- y = c*(-a^3+b^3+c^3)                ;
- z = -(a^2+a*b+b^2)*(2*a+b)*c - c^4  ;
- 0 = w^3 + x^3 + y^3 + z^3
-CALL symbolic.RelationSet -d 1 -f $(DATA) -simplify
+# TEST PG34 pident Choudry
+# DATA
+#  w = (a^2+a*b+b^2)^2 + (2*a+b)*c^3   ;   
+#  x = - (a^2+a*b+b^2)^2 + (a-b)*c^3   ;   
+#  y = c*(-a^3+b^3+c^3)                ;
+#  z = -(a^2+a*b+b^2)*(2*a+b)*c - c^4  ;
+#  0 = w^3 + x^3 + y^3 + z^3
+# CALL symbolic.RelationSet -d 1 -f $(DATA) -simplify
 #--------
 # b = 1; c = 1 => 
 # - 4*a - 3a² - 2a³ - a^4 + w - 2; 
@@ -315,25 +344,29 @@ CALL IdentityEvaluator -l 8 -f test/PG38.this.tst -compr -chain
 # [[0,-2,0,1],[-1,0,2,0],[1,0,1,0],[0,1,0,1]]	[-1,1,2,2] [-5,-4,6,3]*3 [-53,-75,84,28] [-127,-248,260,65] [-83,-205,210,42]*3 [-431,-1284,1302,217] [-685,-2387,2408,344] 
 # 2.5 s
 #--------
-TEST PG41 pident 
-#a = A11*m^5 + A12*m^4  + A13*m^3 + A14*m^2 + A15*m^1 + A16*m^0;
-#b = A21*m^5 + A22*m^4  + A23*m^3 + A24*m^2 + A25*m^1 + A26*m^0;
-#c = A31*m^5 + A32*m^4  + A33*m^3 + A34*m^2 + A35*m^1 + A36*m^0;
-#d = A41*m^5 + A42*m^4  + A43*m^3 + A44*m^2 + A45*m^1 + A46*m^0;
-#e = A51*m^5 + A52*m^4  + A53*m^3 + A54*m^2 + A55*m^1 + A56*m^0;
+TEST PG39 pident Vieta -n^4 + m^2*n^2
 DATA
- a = A11*m^5 + A12*m^4  + A13*m^3 + A14*m^2;
- b = A21*m^5 + A22*m^4  + A23*m^3 + A24*m^2;
- c = A31*m^5 + A32*m^4  + A33*m^3 + A34*m^2;
- d = A41*m^5 + A42*m^4  + A43*m^3 + A44*m^2;
- e = A51*m^5 + A52*m^4  + A53*m^3 + A54*m^2;
- a^4 + b^4 + c^4 + d^3 = e^4
-CALL ProgramGenerator -l 2 -f $(DATA) pident
+ b = A11*m^4 + A12*m^3*n + A13*m^2*n^2 + A14*m*n^3;
+ c = A21*m^4 + A22*m^3*n + A23*m^2*n^2 + A24*m*n^3;
+ d = A31*m^4 + A32*m^3*n + A33*m^2*n^2 + A34*m*n^3;
+ -1 + b^3 + c^3 = d^3
+CALL ProgramGenerator -l 3 -f $(DATA) pident
 MAKE progen
-TEST PG41IE
-CALL IdentityEvaluator -l 8 -f test/PG41.this.tst -compr -chain
-# found
-# 2.5 s
+TEST PG39IE
+CALL IdentityEvaluator -l 8 -f test/PG39.this.tst -compr -chain
+#--------
+#??TEST PG41 pident 
+#??DATA
+#?? a = A11*m^5 + A12*m^4 + A13*m^3 + A14*m^2 + A15*m^1 + A16*m^0;
+#?? b = A21*m^5 + A22*m^4 + A23*m^3 + A24*m^2 + A25*m^1 + A26*m^0;
+#?? c = A31*m^5 + A32*m^4 + A33*m^3 + A34*m^2 + A35*m^1 + A36*m^0;
+#?? d = A41*m^5 + A42*m^4 + A43*m^3 + A44*m^2 + A45*m^1 + A46*m^0;
+#?? e = A51*m^5 + A52*m^4 + A53*m^3 + A54*m^2 + A55*m^1 + A56*m^0;
+#?? a^4 + b^4 + c^4 + d^3 = e^4
+#??CALL ProgramGenerator -l 2 -f $(DATA) pident
+#??MAKE progen
+#??TEST PG41IE
+#??CALL IdentityEvaluator -l 8 -f test/PG41.this.tst -compr -chain
 #---------------------------------------
 LIM=64
 HEAD=6000

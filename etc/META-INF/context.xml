@@ -23,7 +23,7 @@
 -->
 <Context
         path="/ramath" docBase="ramath" 
-        debug="5"
+        debug="1"
         mapperContextRootRedirectEnabled="true"
         >
 </Context>

@@ -752,6 +752,8 @@ public class ProgramGenerator {
 
     /** constant for short or int declarations, plus a space */
     public final static String SHORT_INT = "int ";
+    /** 64 open parentheses */
+    public final static String PARENS = "((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((";
 
     /** Generate identities for power sums
      *  Parameters:
@@ -826,6 +828,7 @@ public class ProgramGenerator {
             o.println(LEADER + "pmat="      + pmat .toString());
             o.println("*/");
             o.println(SHORT_INT + vmap1.getNameString() + ";"); // instead of declareMatrix()
+            o.println("int sum0 = 0;");
 
             boolean hasInserted = false;
             while (minSize <= maxSize) { // expand all partial Polynomials
@@ -836,61 +839,47 @@ public class ProgramGenerator {
                         nvars[ipoly] = 0; // do not investigate anymore
                         names = vmaps[ipoly].getNameArray();
                         int inam = 0;
-                        boolean mustInsert = true;
                         while (inam < names.length) {
                             String name  = names[inam];
                             String found = vmap1.remove(name);
                             if (found != null) {
-                                mustInsert = false;
                                 o.print("for (" + name + " = " + String.valueOf(minDigit) + "; "
                                         + name + " < " + String.valueOf(maxDigit) + "; "
                                         + name + "++) " + br());
+                            /*
+                                int irow = nrows - vmap1.size();
+                                if (irow >= 1 && irow <= nrows) {
+                                    String pvi = PARENS.substring(0, ncols - 1)
+                                    		+ pmat.getRow(irow - 1).toString()
+                                            .replaceAll("\\,", ")*8+")
+                                            .replaceAll("\\[", "(")
+                                            .replaceAll("\\]", "); ")
+                                            ;
+                                    String sumi = "sum" + String.valueOf(irow);
+                                    o.print(SHORT_INT + sumi + " = " + pvi);
+                                    if (irow - 1 > 0) { // >= would involve sum0
+                                        o.print("if (sum" + String.valueOf(irow - 1) + " < " + sumi + ")" + br()); 
+                                    } else {
+                                        o.println();
+                                    }
+                                } // vsize1 < nrows
+                            */
                             } // found
                             inam ++;
                         } // while inam
-
-                        if (! hasInserted && vmap1.size() == 0) { // faster without that!
-                            hasInserted = true;
-                            // o.println("int sum0 = 0;");
-                            int irow = 0;
-                            while (irow < nrows) {
-                                String pvi = pmat.getRow(irow).toString()
-                                        .replaceAll("\\,", "+")
-                                        .replaceAll("\\[", " = ")
-                                        .replaceAll("\\]", "; ");
-                                String sumi = "sum" + String.valueOf(irow + 1);
-                                o.print(SHORT_INT + sumi + pvi);
-                            /*
-                                int iexp = 0;
-                                String sep = "sum0 " + (irow < nrows - 1 ? "+" : "-") + "= ";
-                                while (iexp < exponent) {
-                                    o.print(sep + sumi);
-                                    sep = "*";
-                                    iexp ++;
-                                } // while iexp
-                                o.println(";");
-                            */
-                                if (irow > 0) {
-	                            	o.print("if (sum" + String.valueOf(irow) + " <= " + sumi + ")" + br()); 
-	                            } else {
-	                            	o.println();
-	                            }
-                                irow ++;
-                            } // while irow
-                        } // insert if 
-
                         o.print("if (" + polyi.toString(5) + " == 0) /* [" + ipoly + "], minSize = " + minSize + " */ " + br());
                     } // == minSize
                     ipoly ++;
                 } // while ipoly
                 minSize ++; // try higher in next loop
             } // while expanding all partial Polynomials
-
             for (int irow = 1; irow <= nrows; irow ++) {
                 checkZeroRow(irow);
+            /*  superfluous because weighted rows must be increasing (above) 
                 for (int jrow = irow + 1; jrow <= nrows; jrow ++) {
                     checkSameRow(irow, jrow);
                 } // for jrow
+            */
             } // for irow
             printMatrix(nrows, ncols);
             o.println("printf(\"\\n\");");
