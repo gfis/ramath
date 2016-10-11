@@ -22,6 +22,7 @@ import  org.teherba.ramath.ContinuedFraction;
 import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.VariableMap;
 import  org.teherba.common.web.BasePage;
+import  java.io.IOException;
 import  java.io.PrintWriter;
 import  java.io.Serializable;
 import  java.util.Iterator;
@@ -67,8 +68,10 @@ public class IndexPage implements Serializable {
             , String form2
             , String form2c
             , VariableMap rmap
-            ) {
-        try {
+            ) throws IOException {
+	/*
+		try {
+	*/
             PrintWriter out = basePage.writeHeader(request, response, language);
             out.write("<title>" + basePage.getAppName() + " Main Page</title>\n");
             out.write("</head>\n<body>\n");
@@ -169,9 +172,11 @@ public class IndexPage implements Serializable {
             out.write("</form><!-- lower -->\n");
 
             basePage.writeTrailer(language, "quest");
+	/*
         } catch (Exception exc) {
             log.error(exc.getMessage(), exc);
         }
+    */
     } // dialog
 
     //================

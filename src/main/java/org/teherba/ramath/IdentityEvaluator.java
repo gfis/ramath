@@ -255,7 +255,6 @@ public class IdentityEvaluator {
 
     /** Stores one generated matrix as String
      *  @param key String representation of the matrix
-     *  @param value "1" for entry to be kept, "0" for transformations, duplicates
      */
     public void store(String key) {
         matrices.put(key, "TRUE");
@@ -307,7 +306,6 @@ public class IdentityEvaluator {
 
     /** Evaluates all remaining matrices and
      *  tries to build a chain, and print it if possible.
-     *  @param amat {@link Matrix} with coefficient values
      */
     public void evaluateChains() {
         Iterator<String> miter = matrices.keySet().iterator();

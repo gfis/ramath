@@ -97,7 +97,7 @@ public class RaMathServlet extends HttpServlet {
      *  @param request request with header fields
      *  @param response response with writer
      */
-    public void generateResponse(HttpServletRequest request, HttpServletResponse response) {
+    public void generateResponse(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String view     = BasePage.getInputField(request, "view"  , "");
         String area     = BasePage.getInputField(request, "area"  , "rset");
         String opt      = BasePage.getInputField(request, "opt"   , "norm");
@@ -111,9 +111,7 @@ public class RaMathServlet extends HttpServlet {
         boolean found = false;
         int mode = 3; // with PrimeFactorization and HTML coloring
         String newPage = null;
-/*
         try {
-*/
             if (false) {
             } else if (view.equals("upper")
                     || view.equals("index")
@@ -185,12 +183,10 @@ public class RaMathServlet extends HttpServlet {
             } else {
                 basePage.writeMessage(request, response, language, new String[] { "401", "view", view });
             }
-    /*
-        } catch (Exception exc) {
-        	throw new IOException(exc.getMessage());
-            // log.error(exc.getMessage(), exc);
+        } catch (IOException exc) {
+            log.error(exc.getMessage(), exc);
+        	throw exc;
         }
-    */
     } // generateResponse
 
 } // RaMathServlet
