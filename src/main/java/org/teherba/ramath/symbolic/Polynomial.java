@@ -1981,7 +1981,7 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
 
     /* unsure whether biasedness should be tested
     */
-        } else if (this.isBiased()) { // > 0 or < 0
+        } else if (true && this.isBiased()) { // > 0 or < 0
                 switch (this.getRelation()) {
                     default:
                     case EQ_0:

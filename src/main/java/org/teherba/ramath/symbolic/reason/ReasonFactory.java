@@ -1,5 +1,6 @@
 /*  ReasonFactory: list of reasons to decide that the tree expansion can be truncated
  *  @(#) $Id: ReasonFactory.java 970 2012-10-25 16:49:32Z gfis $
+ *  2016-12-20: feature upsubst
  *  2016-04-24: features were HashMap
  *  2015-08-30: DownsizedMapReason
  *  2015-08-25: EvenExponentReason, isConsiderable
@@ -210,9 +211,10 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         /*  Unknown reasons are silently ignored.
             Assume a feature instead. Feature codes are also not checked.
             BaseSolver currently understands the following features:
-            igtriv = reasons.hasFeature("igtriv");
-            invall = reasons.hasFeature("invall");
-            norm   = reasons.hasFeature("norm"  );
+            igtriv     = reasons.hasFeature("igtriv" );
+            invall     = reasons.hasFeature("invall" );
+            norm       = reasons.hasFeature("norm"   );
+        //  upperSubst = reasons.hasFeature("upsubst");
         */
             features.put(code, code);
         }

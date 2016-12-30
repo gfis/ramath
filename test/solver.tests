@@ -195,7 +195,7 @@ CALL TreeSolver -l 3 -b 5 -e "15*x^2 - 7*y^2 - 9" -r norm,showfail,invall
 # Markoff chains
 
 TEST TM21 Markoff(2, unsolvable, power)
-CALL TreeSolver      -l 8 -e "x^2 + y^2 + z^2 - 2*x*y*z" -r norm,invall
+CALL TreeSolver      -l 6 -e "x^2 + y^2 + z^2 - 2*x*y*z" -r norm,invall,showfail
 
 TEST TM22 Markov(2, unsolvable, power, proof)
 CALL TreeSolver -l 6 -e "(x + 1)^2 + (y + 1)^2 + (z + 1)^2 - 2*(x + 1) * (y + 1) * (z + 1)" 
@@ -203,14 +203,26 @@ CALL TreeSolver -l 6 -e "(x + 1)^2 + (y + 1)^2 + (z + 1)^2 - 2*(x + 1) * (y + 1)
 TEST TM23 Markov(2, unsolvable, power, proof)
 CALL TreeSolver -l 6 -e "(x + 2)^2 + (y + 2)^2 + (z + 2)^2 - 2*(x + 2) * (y + 2) * (z + 2)"
 
+TEST TM24 Markoff(2, unsolvable, power, N)
+CALL TreeSolver  -u  -l 6 -e "x^2 + y^2 + z^2 - 2*N*x*y*z" -r norm,invall,showfail
+
 TEST TM31 Markov(3, solvable)
 CALL TreeSolver -l 3 -e "x^2 + y^2 + z^2 - 3*x*y*z" -r norm,invall,igtriv
+
+TEST TM32 Markov(3, solvable)
+CALL TreeSolver -b 3 -l 3 -e "x^2 + y^2 + z^2 - 3*x*y*z" -r norm,invall,igtriv
 
 TEST TM41 Markoff(4, unsolvable, power)
 CALL TreeSolver      -l 8 -e "x^2 + y^2 + z^2 - 4*x*y*z" -r showfail
 
 TEST TM51 Markoff(5, unsolvable)
 CALL TreeSolver -b 2 -l 3 -e "x^2 + y^2 + z^2 - 5*x*y*z" -r norm
+
+TEST TM61 Markoff(5, unsolvable)
+CALL TreeSolver -b 2 -l 8 -e "x^2 + y^2 + z^2 - 6*x*y*z" -r norm
+
+TEST TM81 Markoff(5, unsolvable)
+CALL TreeSolver -b 2 -l 8 -e "x^2 + y^2 + z^2 - 8*x*y*z" -r norm,showfail
 
 #--------
 # Elliptic curves
@@ -311,6 +323,12 @@ CALL TreeSolver -l 1 -e "p^3 - q^5 - (p + q)^2" -r norm
 
 TEST TX52 Legendre 2^m
 CALL TreeSolver -b 2 -l 3 -e "x^3 + y^3 - 2*z^3"   -r norm
+#---------
+TEST TX53 Sierpinski -x
+CALL TreeSolver -b 2 -l 4 -e "(-x + y + z)^3 = -x*y*z"   -r norm
+
+TEST TX54 Sierpinski -x -y
+CALL TreeSolver -b 2 -l 4 -e "(-x - y + z)^3 =  x*y*z"   -r norm
 
 EXIT
 #----

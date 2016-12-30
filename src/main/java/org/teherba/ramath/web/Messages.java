@@ -1,4 +1,4 @@
-/*  Messages.java - Static help texts and other language specific messages for Ramath.
+/*  Messages.java - Static help texts and other language specific messages for Ramath. äöüÄÖÜß
  *  @(#) $Id: 57d01d0860aef0c2f2783647be70c3c381710c86 $
  *  2016-09-02: "Manifest, "
  *  2016-08-28: Dr. Georg Fischer: copied from Dbat
@@ -50,42 +50,16 @@ public class Messages implements Serializable {
         String appLink = "<a href=\"servlet?view=index\">" + basePage.getAppName() + "</a>";
         //--------
         basePage.add("en", "001", appLink);
-        //--------
+        basePage.add("en", "002"
+                , " <a href=\"mailto:punctum@punctum.com"
+                + "?&subject=" + basePage.getAppName()
+                + "\">Dr. Georg Fischer</a>"
+                );
         //--------
         String laux = basePage.LANG_AUX;  // pseudo language code for links to auxiliary information
         int imess   = basePage.START_AUX; // start of messages    for links to auxiliary information
-        String
-        smess = String.format("%03d", imess ++);
-        basePage.add(laux, smess, "<a title=\"main\"        href=\"servlet?view=index\">");
-        basePage.add("en", smess, "{parm}RaMath</a> Main Page");
-        basePage.add("de", smess, "{parm}RaMath</a>-Startseite");
-        smess = String.format("%03d", imess ++);
-        basePage.add(laux, smess, "<a title=\"wiki\"        href=\"http://www.teherba.org/index.php/RaMath\" target=\"_new\">");
-        basePage.add("en", smess, "{parm}Wiki</a> Documentation");
-        basePage.add("de", smess, "{parm}Wiki</a>-Dokumentation");
-        smess = String.format("%03d", imess ++);
-        basePage.add(laux, smess, "<a title=\"github\"      href=\"https://github.com/gfis/ramath\" target=\"_new\">");
-        basePage.add("en", smess, "{parm}Git Repository</a>");
-        basePage.add("de", smess, "{parm}Git Repository</a>");
-        smess = String.format("%03d", imess ++);
-        basePage.add(laux, smess, "<a title=\"api\"         href=\"docs/api/index.html\">");
-        basePage.add("en", smess, "{parm}Java API</a> Documentation");
-        basePage.add("de", smess, "{parm}Java API</a>-Dokumentation");
-        smess = String.format("%03d", imess ++);
-        basePage.add(laux, smess, "<a title=\"manifest\"    href=\"servlet?view=manifest\">");
-        basePage.add("en", smess, "{parm}Manifest</a>, ");
-        basePage.add("de", smess, "{parm}Manifest</a>, ");
-        smess = String.format("%03d", imess ++);
-        basePage.add(laux, smess, "<a title=\"license\"     href=\"servlet?view=license\">");
-        basePage.add("en", smess, "{parm}License</a>, ");
-        basePage.add("de", smess, "{parm}Lizenz</a>, ");
-        smess = String.format("%03d", imess ++);
-        basePage.add(laux, smess, "<a title=\"notice\"      href=\"servlet?view=notice\">");
-        basePage.add("en", smess, "{parm}References</a>");
-        basePage.add("de", smess, "{parm}Referenzen</a>");
         //--------
-        basePage.add("en", "401", "Invalid {parm} <em>{par2}</em>.");
-        //--------
+        imess = basePage.addStandardLinks(imess);
     } // addMessageTexts
 
     //================

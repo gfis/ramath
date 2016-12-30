@@ -1,5 +1,6 @@
 /*  Solver: base class for solvers of Diophantine relation sets, with bean properties
  *  @(#) $Id: BaseSolver.java 970 2012-10-25 16:49:32Z gfis $
+ *  2016-12-20: obey upperSubst in setRootNode
  *  2015-08-25: EvenExponentReason
  *  2015-07-23: printSolutions
  *  2015-07-09: feature igtriv
@@ -194,7 +195,7 @@ public class BaseSolver extends Stack<RelationSet> {
 
     //----------------
     /** Whether to substitute uppercase variables */
-    private boolean upperSubst;
+    protected boolean upperSubst;
     /** Gets the modus of variable replacement
      *  @return upperSubst whether to substitute uppercase variables
      */
@@ -285,7 +286,7 @@ public class BaseSolver extends Stack<RelationSet> {
     //-----------------------------------------------
     // Pseudo-abstract methods common to all Solvers.
     // 'print...' and 'expandReasons'  are used by TreeSolver,
-    // 'show...'  and 'explainReasons' are used QueuingSolver
+    // 'show...'  and 'explainReasons' are used by QueuingSolver
     //-----------------------------------------------
 
     /** Prints the decision of a child node in the tree.
@@ -621,16 +622,17 @@ public class BaseSolver extends Stack<RelationSet> {
      */
     public ReasonFactory setRootNode(RelationSet rset0, String codeList) {
         rset0.setIndex         (0);
-        rset0.setMapping       (rset0.getRefiningMap());
+        rset0.setMapping       (rset0.getRefiningMap("0+1*x", getUpperSubst()));
         ReasonFactory factory0 = new ReasonFactory(this, codeList, rset0);
         rset0.setReasonFactory (factory0);
         rset0.setParentIndex   (ROOT_PARENT);
         rset0.setSiblingIndex  (ROOT_PARENT);
         add(rset0); // queueHead is still 0
         // determine all features - they are constant for all subtrees
-        igtriv = factory0.hasFeature("igtriv");
-        invall = factory0.hasFeature("invall");
-        norm   = factory0.hasFeature("norm"  );
+        igtriv     = factory0.hasFeature("igtriv" );
+        invall     = factory0.hasFeature("invall" );
+        norm       = factory0.hasFeature("norm"   );
+    //  upperSubst = factory0.hasFeature("upsubst");
         printHeader(rset0);
         return factory0;
     } // setRootNode

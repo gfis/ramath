@@ -33,10 +33,11 @@
             </td>
             <td>
 See also:<br />
+<a href="servlet?view=index">RaMath</a> Home<br />
 <a title="wiki"        href="http://www.teherba.org/index.php/RaMath" target="_new">Wiki</a> Documentation<br />
 <a title="github"      href="https://github.com/gfis/ramath" target="_new">Git Repository</a><br />
 <a title="api"         href="docs/api/index.html">Java API</a> Documentation<br />
-<a title="manifest"    href="servlet?view=manifest">Manifest</a>, <a title="license"     href="servlet?view=license">License</a>, <a title="notice"      href="servlet?view=notice">References</a><br />
+<a title="manifest"    href="servlet?view=manifest&lang=en">Manifest</a>, <a title="license"     href="servlet?view=license&lang=en">License</a>, <a title="notice"      href="servlet?view=notice&lang=en">References</a><br />
             </td>
         </tr>
         <tr valign="top">

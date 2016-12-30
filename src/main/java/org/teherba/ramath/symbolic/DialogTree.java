@@ -1,6 +1,6 @@
-/*  DialogTree: a tree of DialogSteps
+/*  DialogTree: a tree (ímplemented by an array) of DialogSteps; äöüäÄÖÜß
  *  @(#) $Id: DialogTree.java 970 2012-10-25 16:49:32Z  $
- *  2016-08-25, Georg Fischer: copied from DialogTree.java
+ *  2016-08-25, Georg Fischer: copied from DialogStep.java
  */
 /*
  * Copyright 2016 Dr. Georg Fischer <punctum at punctum dot kom>
@@ -25,7 +25,7 @@ import  java.util.Iterator;
 import  java.util.ArrayList;
 
 /** A DialogTree is a tree of {@link DialogStep}s
- *  which is built by the web interface.
+ *  which is read in or built by the web interface.
  *  @author Dr. Georg Fischer
  */
 public class DialogTree
@@ -44,8 +44,7 @@ public class DialogTree
     /** The array for {@link DialogStep}s,
      *  Elements are indexed by 0, 1, 2 and so on.
      *  In files, the line for the root step is first,
-     *  while in the web interface the root is presented at the
-     *  bottom of the screen.
+     *  as it is in the web interface.
      */
     private ArrayList<DialogStep> steps;
 
@@ -161,7 +160,7 @@ public class DialogTree
 
     /** Test method, shows some fixed {@link DialogStep}s with no arguments,
      *  or the {@link DialogTree} resulting from the input file.
-     *  @param args command line arguments: [-f filename]
+     *  @param args command line arguments: [-d n] [-f filename]
      */
     public static void main(String[] args) {
         int iarg = 0;

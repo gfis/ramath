@@ -1,5 +1,6 @@
-/*  DialogStep: a single element in a DialogTree
+/*  DialogStep: a single element in a DialogTree; äöüÄÖÜß
  *  @(#) $Id: DialogStep.java 970 2012-10-25 16:49:32Z  $
+ *  2016-12-29: comments
  *  2016-08-25, Georg Fischer: copied from RelationSet.java
  */
 /*
@@ -67,11 +68,11 @@ public class DialogStep
     /** Construct from a line with String representations of the member properties.
      *  @param line String of the form
      *  <ul>
-     *  <li>index (starting at 0)</li>
-     *  <li>parent index</li>
-     *  <li>{@link VariableMap}</li>
+     *  <li>index (starting at 0) - plain integer</li>
+     *  <li>parent index - plain integer</li>
+     *  <li>{@link VariableMap} - enclosed in curly brackets</li>
      *  <li>{@link RelationSet}</li>
-     *  <li># message or comment (optional)</li>
+     *  <li>message or comment (optional, starting with "#")</li>
      *   </ul>
      */
     public DialogStep(String line) {
@@ -208,9 +209,9 @@ public class DialogStep
 
     /** Returns a String representation of all {@link DialogStep}s
      *  @param mode see {@link RelationSet#toString}
-     *  @return one line of the form: 
+     *  @return one line of the form:
      *  <pre>
-     *  index parentIndex VariableMap RelationSet comment
+     *  index parentIndex { VariableMap } RelationSet # comment
      *  </pre>
      */
     public String toString(int mode) {
@@ -228,7 +229,7 @@ public class DialogStep
     } // toString(int)
 
     /** Returns a String representation of all {@link DialogStep}s.
-     *  @return one line of the form: 
+     *  @return one line of the form:
      *  <pre>
      *  index parentIndex VariableMap RelationSet comment
      *  </pre>
@@ -239,7 +240,7 @@ public class DialogStep
 
     /*--------------- Test driver --------------------*/
 
-    /** Test method, shows some fixed DialogStep with no arguments, or the
+    /** Test method, shows some fixed {@link DialogStep} with no arguments, or the
      *  DialogSteps resulting from the commandline argument strings.
      *  @param args command line arguments
      */

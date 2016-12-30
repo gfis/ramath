@@ -1,5 +1,6 @@
 /*  SameReason: checks whether the RelationSet is the same as the root
  *  @(#) $Id: SameReason.java 970 2012-10-25 16:49:32Z gfis $
+ *  2016-12-30: obey upperSubst
  *  2016-07-09: Signature
  *  2015-09-05: initialize
  *  2015-07-23: used only on explicit request
@@ -47,6 +48,8 @@ public class SameReason extends BaseReason {
     
     /** the solver's {@link BaseSolver#modBase} */
     private BigInteger base = null;
+    /** the solver's {@link BaseSolver#upperSubst} */
+    private boolean upperSubst = true;
     
     /** Initializes any data structures for <em>this</em> reason.
      *  This method is called by {@link ReasonFactory};
@@ -58,7 +61,8 @@ public class SameReason extends BaseReason {
     public void initialize(BaseSolver solver, RelationSet startNode) {
         super.initialize(solver, startNode);
         setWalkMode(WALK_ANCHESTORS); // some more side branches with WALK_ALL in T33, T51, T54, T55
-        base = BigInteger.valueOf(solver.getModBase());
+        base       = BigInteger.valueOf(solver.getModBase());
+        upperSubst = solver.getUpperSubst();
     } // initialize
 
     // inherited: SameReason always isConsiderable()
@@ -79,22 +83,24 @@ public class SameReason extends BaseReason {
             Iterator <String> viter = mvars.keySet().iterator();
             while (viter.hasNext()) { // over all variables
                 String vname = viter.next();
-                int vexp = mono1.getExponent(vname);
-                BigInteger slipFactor = base.pow(vexp); // this may "slip into" the variable's power
-                int root = 0; // base^0 always "slips into"
-                while (coef1.mod(slipFactor).equals(BigInteger.ZERO)) { // base fits, maybe higher powers, too?
-                    root ++;
-                    vexp *= 2;
-                    slipFactor = slipFactor.multiply(slipFactor); // square it
-                } // while vexp
-                        
-                Integer oldValue = maxBasePowers.get(vname);
-                if (oldValue == null) { // did not occur so far
-                    maxBasePowers.put(vname, new Integer(root));
-                } else { // previous value
-                    int old = oldValue.intValue();
-                    maxBasePowers.put(vname, new Integer(root < old ? root : old)); // the minimum
-                }
+                if (upperSubst || vname.compareTo("a") >= 0) {
+                    int vexp = mono1.getExponent(vname);
+                    BigInteger slipFactor = base.pow(vexp); // this may "slip into" the variable's power
+                    int root = 0; // base^0 always "slips into"
+                    while (coef1.mod(slipFactor).equals(BigInteger.ZERO)) { // base fits, maybe higher powers, too?
+                        root ++;
+                        vexp *= 2;
+                        slipFactor = slipFactor.multiply(slipFactor); // square it
+                    } // while vexp
+                            
+                    Integer oldValue = maxBasePowers.get(vname);
+                    if (oldValue == null) { // did not occur so far
+                        maxBasePowers.put(vname, new Integer(root));
+                    } else { // previous value
+                        int old = oldValue.intValue();
+                        maxBasePowers.put(vname, new Integer(root < old ? root : old)); // the minimum
+                    }
+                } // if upperSubst
             } // while viter
         } // while miter    
     } // joinMaxBasePowers
