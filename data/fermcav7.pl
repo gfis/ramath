@@ -24,6 +24,8 @@ while (<>) {
 		$factor = $1;
 	} elsif ($line =~ m{\A\[}) { # [0+2*u,0+2*v]: unknown -276+30*u+4*u^2-333*v+8*u*v-128*v^2-16*v^3=0 -> [1]
 		@x = m{[\[\,](\d+)\+}g;
+		$line =~ m{\+(\d+)};
+		$factor = $1;
 		print join("\t", @x), "\t$factor\t", join("\t", map { $_ = &revbits(&log2($factor), $_); $_ } @x), "\n";
 		# &output();
 	} else {

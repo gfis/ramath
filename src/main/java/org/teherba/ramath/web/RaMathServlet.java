@@ -1,5 +1,6 @@
 /*  RaMathServlet.java - Rational and Symbolic Mathematics
  *  @(#) $Id: RaMathServlet.java 199 2009-07-13 20:16:23Z gfis $
+ *  2017-01-03: moved to subpackage web
  *  2016-08-28: remove JSPs
  *  2015-09-10: no "(...)" around substitution values
  *  2013-09-21: RefiningMap
@@ -24,7 +25,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.teherba.ramath;
+package org.teherba.ramath.web;
 import  org.teherba.ramath.symbolic.RelationSet;
 import  org.teherba.ramath.symbolic.RefiningMap;
 import  org.teherba.ramath.web.IndexPage;
@@ -138,8 +139,8 @@ public class RaMathServlet extends HttpServlet {
                     if (opt.indexOf("norm") >= 0) {
                         rset.deflateIt();
                     }
-                    form2  = rset.toString(mode);
-                    form2c = rset.toString(mode + 1);
+                    form2  =  rset.toString(mode);
+                    form2c =  rset.toString(mode + 1) + "<br />" + rset.toString(mode - 1);
                     (new IndexPage    ()).dialog(request, response, basePage, language, area, opt, form1, form2, form2c, rmap);
                 } else { // invalid area
                     basePage.writeMessage(request, response, language, new String[] { "401", "area", area });

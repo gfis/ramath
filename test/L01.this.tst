@@ -1,0 +1,125 @@
+Elementary Matrix # 24
+   1   0   0   0
+   0   1   0   0
+   0   0   1   0
+   0   0   0   1
+Elementary Matrix # 23
+   1   0   0   0
+   0   1   0   0
+   0   0   1   0
+   0   0  -1   1
+Elementary Matrix # 22
+   1   0   0   0
+   0   1   0   0
+   0   0   1   0
+   0  -1   0   1
+Elementary Matrix # 21
+   1   0   0   0
+   0   1   0   0
+   0   0   1   0
+  -1   0   0   1
+Elementary Matrix # 20
+   1   0   0   0
+   0   1   0   0
+   0   0   1  -1
+   0   0   0   1
+Elementary Matrix # 19
+   1   0   0   0
+   0   1   0   0
+   0  -1   1   0
+   0   0   0   1
+Elementary Matrix # 18
+   1   0   0   0
+   0   1   0   0
+  -1   0   1   0
+   0   0   0   1
+Elementary Matrix # 17
+   1   0   0   0
+   0   1   0  -1
+   0   0   1   0
+   0   0   0   1
+Elementary Matrix # 16
+   1   0   0   0
+   0   1  -1   0
+   0   0   1   0
+   0   0   0   1
+Elementary Matrix # 15
+   1   0   0   0
+  -1   1   0   0
+   0   0   1   0
+   0   0   0   1
+Elementary Matrix # 14
+   1   0   0  -1
+   0   1   0   0
+   0   0   1   0
+   0   0   0   1
+Elementary Matrix # 13
+   1   0  -1   0
+   0   1   0   0
+   0   0   1   0
+   0   0   0   1
+Elementary Matrix # 12
+   1  -1   0   0
+   0   1   0   0
+   0   0   1   0
+   0   0   0   1
+Elementary Matrix # 11
+   1   0   0   0
+   0   1   0   0
+   0   0   1   0
+   0   0   1   1
+Elementary Matrix # 10
+   1   0   0   0
+   0   1   0   0
+   0   0   1   0
+   0   1   0   1
+Elementary Matrix # 9
+   1   0   0   0
+   0   1   0   0
+   0   0   1   0
+   1   0   0   1
+Elementary Matrix # 8
+   1   0   0   0
+   0   1   0   0
+   0   0   1   1
+   0   0   0   1
+Elementary Matrix # 7
+   1   0   0   0
+   0   1   0   0
+   0   1   1   0
+   0   0   0   1
+Elementary Matrix # 6
+   1   0   0   0
+   0   1   0   0
+   1   0   1   0
+   0   0   0   1
+Elementary Matrix # 5
+   1   0   0   0
+   0   1   0   1
+   0   0   1   0
+   0   0   0   1
+Elementary Matrix # 4
+   1   0   0   0
+   0   1   1   0
+   0   0   1   0
+   0   0   0   1
+Elementary Matrix # 3
+   1   0   0   0
+   1   1   0   0
+   0   0   1   0
+   0   0   0   1
+Elementary Matrix # 2
+   1   0   0   1
+   0   1   0   0
+   0   0   1   0
+   0   0   0   1
+Elementary Matrix # 1
+   1   0   1   0
+   0   1   0   0
+   0   0   1   0
+   0   0   0   1
+Elementary Matrix # 0
+   1   1   0   0
+   0   1   0   0
+   0   0   1   0
+   0   0   0   1

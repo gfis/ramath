@@ -1,5 +1,6 @@
 /*  Solver: base class for solvers of Diophantine relation sets, with bean properties
  *  @(#) $Id: BaseSolver.java 970 2012-10-25 16:49:32Z gfis $
+ *  2017-01-01: getRefiningMap - setMeter, meter shown in printDecision
  *  2016-12-20: obey upperSubst in setRootNode
  *  2015-08-25: EvenExponentReason
  *  2015-07-23: printSolutions
@@ -285,8 +286,8 @@ public class BaseSolver extends Stack<RelationSet> {
 
     //-----------------------------------------------
     // Pseudo-abstract methods common to all Solvers.
-    // 'print...' and 'expandReasons'  are used by TreeSolver,
-    // 'show...'  and 'explainReasons' are used by QueuingSolver
+    // 'print...' and 'exvaluateReasons'  are used by TreeSolver,
+    // 'show...'  and 'explainReasons'    are used by QueuingSolver
     //-----------------------------------------------
 
     /** Prints the decision of a child node in the tree.
@@ -302,8 +303,12 @@ public class BaseSolver extends Stack<RelationSet> {
             } else if ( decision.startsWith(VariableMap.UNKNOWN) ||
                         decision.startsWith(VariableMap.SUCCESS)) { // UNKNOWN || SUCCESS
                 trace.print(" -> [" + this.size() + "]");
+                trace.print(" " + rmap2.getMeter().toString(","));
                 trace.print(" " + rset2.niceString());
-            } // UNKNOWN || SUCCESS
+            } else if ( decision.startsWith(VariableMap.FAILURE)) {
+                trace.print(" " + rmap2.getMeter().toString(","));
+                trace.print(" " + rset2.niceString());
+            } 
             trace.println();
         } // debug
     } // printDecision

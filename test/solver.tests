@@ -16,7 +16,7 @@
 #   x^3 + 2*y^3 = 4*z^3 has 1! solution (0,0,0)
 #
 # http://www.math.uconn.edu/~kconrad/blurbs/ugradnumthy/descent.pdf
-#   The Marko equation, introduced by Markoff in 1880, is
+#   The Markoff equation, introduced by Markoff in 1880, is
 #   x^2 + y^2 + z^2 = 3*x*y*z
 #   Solutions: (3*y*z-x,y,z) and (x,3*x*z-y,z)
 #   From (1,1,1) we can successively generate, for instance, (2,1,1),
@@ -174,10 +174,10 @@ CALL TreeSolver -b 2 -l 3 -e "a^4 + b^4 + c^4 - d^4" -r norm,invall
 # Pell's equations
 
 TEST TPE1 Pell 15 7 9 http://db.math.ust.hk/notes_download/elementary/number/ne_N3.pdf
-CALL TreeSolver -l 5 -b 2 -e "15*x^2 - 7*y^2 - 9" -r norm,showfail,accel
+CALL TreeSolver -l 6 -b 2 -e "15*x^2 - 7*y^2 - 9" -r norm,showfail,invall,no-evenexp
 
 TEST TPE2 15 7 9
-CALL TreeSolver -l 2 -b 2 -e "15*(x+1)^2 - 7*(y+1)^2 - 9"
+CALL TreeSolver -l 6 -b 2 -e "15*(x+1)^2 - 7*(y+1)^2 - 9" -r norm,showfail,invall,no-evenexp
 
 TEST TPE3 15 7 9 Proof
 CALL TreeSolver -l 2 -b 3 -e "15*x^2 - 7*y^2 - 9" -r showfail
@@ -221,30 +221,36 @@ CALL TreeSolver -b 2 -l 3 -e "x^2 + y^2 + z^2 - 5*x*y*z" -r norm
 TEST TM61 Markoff(5, unsolvable)
 CALL TreeSolver -b 2 -l 8 -e "x^2 + y^2 + z^2 - 6*x*y*z" -r norm
 
+TEST TM71 like Markoff, proof
+CALL TreeSolver -b 2 -l 4 -e "a^3 + 2*b^3 + 4*c^3 = 6*a*b*c" -r norm,invall,showfail
+
 TEST TM81 Markoff(5, unsolvable)
 CALL TreeSolver -b 2 -l 8 -e "x^2 + y^2 + z^2 - 8*x*y*z" -r norm,showfail
 
 #--------
 # Elliptic curves
 
+TEST TEC0 full tree in 2 variables
+CALL TreeSolver -b 2 -l 7 -e "x^2 + 3 = y^2" -r norm,invall,no-evenexp,no-same
+
 # Smart p. 11 Elliptic Curve; Solutions: x=5,y=+-11; x=2,y=+-2
 TEST TEC1 Smart p. 11 Elliptic Curve
-CALL TreeSolver -b 2 -l 5 -e "y^2 - x^3 + 4 = 0" 
+CALL TreeSolver -b 2 -l 6 -e "x^2 + 4 - y^3" -r norm,invall,no-same,no-evenexp 
 
 TEST TEC2 Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3]; http://math.stackexchange.com/questions/677422/solve-x22-y3-using-infinite-descent; growing !
-CALL TreeSolver -b 2 -l 7 -e "x^2 + 2 - y^3" -r norm
+CALL TreeSolver -b 2 -l 9 -e "x^2 + 2 - y^3" -r norm,no-same,invall
 
 TEST TEC3 Fermat/Carcavi(7) mod. (x+1)^2 + 2 = (y+1)^3; solution [4,2]
-CALL TreeSolver -b 2 -l 5 -e "(x+1)^2 + 2 - (y+1)^3" -r showfail
+CALL TreeSolver -b 2 -l 5 -e "(x+1)^2 + 2 - (y+1)^3" -r norm,showfail,no-same
 
 TEST TEC4 Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3]; http://math.stackexchange.com/questions/677422/solve-x22-y3-using-infinite-descent; growing !
 CALL TreeSolver -b 3 -l 7 -e "x^2 + 2 - y^3" -r norm
 
 TEST TEC5 Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3]
-CALL TreeSolver -b 6 -l 3 -e "x^2 + 2 - y^3" -r norm 
+CALL TreeSolver -b 2 -l 7 -e "x^2 + 2 - y^3" -r norm,invall,no-same,no-evenexp
 
 TEST TEC6 Fermat/Carcavi(8) x^2 + 4 = y^3; solutions [2,2],[11,5]
-CALL TreeSolver -b 2 -l 4 -e "x^2 + 4 - y^3" -r norm,invall
+CALL TreeSolver -b 2 -l 7 -e "x^2 + 4 - y^3" -r norm,invall,no-same,no-evenexp
 
 TEST TEC7 Fermat/Carcavi(10); solutions [1,1],[2,5]; http://www.jstor.org/stable/2974148?seq=1#page_scan_tab_contents
 CALL TreeSolver -b 2 -l 4 -e "(2*x^2 - 1)^2 - (2*y^2 - 1)" 
@@ -256,16 +262,22 @@ TEST TEC9 FC7, behind solution
 CALL TreeSolver -b 2 -l 4 -e "(5 + 2*v + 2*u)^2 + 2 - (5 + 2*v)^3" -r norm,invall
 
 TEST TECA Keith Conrad Descent: Cor. 3.7
-CALL TreeSolver -b 2 -l 3 -e "y^2 = x^3 - 4*x" -r norm,invall
+CALL TreeSolver -b 2 -l 6 -e "y^2 = x^3 - 4*x" -r norm,invall,no-evenexp
 
-TEST TECB Keith Mordell's Eqn PPT
-CALL TreeSolver -b 2 -l 6 -e "y^2 = x^3 + 7"   -r norm
+TEST TECB Keith Mordell's Eqn PPT - no solution
+CALL TreeSolver -b 2 -l 6 -e "x^2 - 7 = y^3" -r norm,invall,no-evenexp
 
-TEST TECC Keith Mordell's Eqn PPT
-CALL TreeSolver -b 2 -l 3 -e "y^2 = x^3 - 6"   -r norm
+TEST TECC Keith Mordell's Eqn PPT - no solution for +-6
+CALL TreeSolver -b 2 -l 5 -e "x^2 + 6 = y^3" -r norm,invall,no-evenexp
 
-TEST TECD Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3]
-CALL TreeSolver -b 9 -l 2 -e "x^2 + 2 - y^3" -r norm
+TEST TEMP6 Keith Mordell's Eqn PPT - no solution for +-6
+CALL TreeSolver -b 3 -l 4 -e "x^2 - 6 = y^3" -r norm
+
+TEST TEM24 Keith Mordell's Eqn PPT - no solution for k=-24
+CALL TreeSolver -b 3 -l 4 -e "x^2 + 24 = y^3" -r norm,invall,no-evenexp
+
+TEST TECD Mordell 3 - no solution
+CALL TreeSolver -b 2 -l 6 -e "x^2 + 3 - y^3" -r norm,invall,no-evenexp
 
 TEST TECE Fermat/Carcavi(10) (2*x^2 - 1)^2 = 2y^2 - 1; solutions [1,1] and [2,5]
 CALL TreeSolver -b 2 -l 4 -e "(2*x^2 - 1)^2 = 2y^2 - 1" -r norm
@@ -287,6 +299,27 @@ CALL TreeSolver -b 3 -l 2 -e "(54*r + 5)^2 + 2 = (24 * t + 3) ^3"
 
 TEST TECK Fermat/Carcavi(8) x^2 + 4 = y^3; solutions [2,2],[11,5]
 CALL TreeSolver -b 6 -l 2 -e "x^2 + 4 - y^3" -r norm,invall
+
+TEST TECL x^2 = y^3, solutions: (8,4), (27,9), ...
+CALL TreeSolver -b 2 -l 6 -e "x^2 - y^3" -r norm,invall,no-evenexp,no-same
+
+TEST TEM22 Mordell 2 squared
+CALL TreeSolver -b 2 -l 4 -e "(x^2 + 2)^2 = y^6" -r norm,invall,no-evenexp,no-same
+
+TEST TEMM1 Mordell -1: solution [0,1]
+CALL TreeSolver -b 2 -l 6 -e "x^2 + 1 - y^3" -r norm,invall,no-same,no-evenexp 
+
+TEST TEMP1 Mordell +1: solutions [0,-1], [+-1, 0], [+-3,2]
+CALL TreeSolver -b 2 -l 4 -e "x^2 - 1 - y^3" -r norm,invall,no-same,no-evenexp 
+
+TEST TEM16 Mordell -16, solutions [+-4,0]
+CALL TreeSolver -b 2 -l 6 -e "x^2 - 16 = y^3" -r norm,invall,no-evenexp,no-same
+
+TEST TEM26 Mordell -26, solutions [+-1,3], [+-207,35]
+CALL TreeSolver -b 2 -l 6 -e "x^2 + 26 = y^3" -r norm,invall,no-evenexp,no-same
+
+TEST TEM45 Mordell 45, no solution
+CALL TreeSolver -b 2 -l 6 -e "x^2 - 45 = y^3" -r norm,invall,no-evenexp,no-same
 
 #--------
 # new - QueuingSolver
@@ -313,11 +346,18 @@ TEST QEC5 Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3]
 CALL QueuingSolver -b 6 -l 3 -e "x^2 + 2 - y^3" -r norm 
 
 #--------
-# Squeeze ?
-TEST TSQ1 Squeeze; https://hcmop.wordpress.com/2012/04/09/techniques-in-solving-diophantine-equations-part-2/
-CALL TreeSolver -b 2 -l 6 -e "x * (x + 1) * (x + 7) * (x + 8) - y^2"
-# solutions in http://www.mathsolympiad.org.nz/wp-content/uploads/2009/01/diophantine-equations.pdf
+# Squeeze
+TEST TSQ1 Squeeze
+CALL TreeSolver -b 2 -l 6 -e "x * (x + 1) * (x + 7) * (x + 8) - y^2" -r norm,invall,no-evenexp
+# http://www.mathsolympiad.org.nz/wp-content/uploads/2009/01/diophantine-equations.pdf
+# solutions: (-9, +-12), (-8,0), (-7,0), (-4,+-12), (-1,0), (0,0), (1,+-12); we only find positives (0,0), (1,12)
 
+TEST TSQ2 Squeeze - no solutions
+CALL TreeSolver -b 2 -l 7 -e "x^2 = y^4 + y^2 + 1" -r norm,invall,no-evenexp
+
+TEST TSQ3 Quadratic residues - no solutions, proof in 1 step
+CALL TreeSolver -b 2 -l 7 -e "a^2 - 3*b^2 = 8" -r norm,invall,no-evenexp,showfail
+#---------
 TEST TX51 p^3 - q^5 - (p + q)^2; p,q prime; http://db.math.ust.hk/notes_download/elementary/number/ne_N3.pdf
 CALL TreeSolver -l 1 -e "p^3 - q^5 - (p + q)^2" -r norm
 

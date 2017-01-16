@@ -1,5 +1,6 @@
 /*  RelationSet: a set of polynomials which relate to zero
  *  @(#) $Id: RelationSet.java 970 2012-10-25 16:49:32Z  $
+ *  2017-01-01: getRefiningMap - setMeter
  *  2016-07-24: toList(5) 
  *  2016-01-04: PairAttributes
  *  2015-12-06: toString(boolean) -> toString(1)
@@ -648,6 +649,7 @@ public class RelationSet
             result.putAll(rset1.getRefiningMap(value, upperSubst));
             ipoly ++;
         } // while ipoly
+        result.setMeter(new Vector(result.size()));
         return result;
     } // getRefiningMap(String, boolean)
 
