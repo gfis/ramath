@@ -173,7 +173,8 @@ CALL TreeSolver -b 2 -l 3 -e "a^4 + b^4 + c^4 - d^4" -r norm,invall
 #----
 # Pell's equations
 
-TEST TPE1 Pell 15 7 9 http://db.math.ust.hk/notes_download/elementary/number/ne_N3.pdf
+TEST TPE1 Pell 15 7 9 http://db.math.ust.hk/notes_download/elementary/number/ne_N3.pdf - no solution
+# http://web.archive.org/web/20051119010745/http://mathdb.org/notes_download/elementary/number/ne_N3/all.htm
 CALL TreeSolver -l 5 -b 2 -e "15*x^2 - 7*y^2 - 9" -r norm,showfail,accel
 
 TEST TPE2 15 7 9
@@ -244,7 +245,7 @@ TEST TEC5 Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3]
 CALL TreeSolver -b 6 -l 3 -e "x^2 + 2 - y^3" -r norm 
 
 TEST TEC6 Fermat/Carcavi(8) x^2 + 4 = y^3; solutions [2,2],[11,5]
-CALL TreeSolver -b 2 -l 4 -e "x^2 + 4 - y^3" -r norm,invall
+CALL TreeSolver -b 2 -l 7 -e "x^2 + 4 - y^3" -r norm,invall,no-evenexp
 
 TEST TEC7 Fermat/Carcavi(10); solutions [1,1],[2,5]; http://www.jstor.org/stable/2974148?seq=1#page_scan_tab_contents
 CALL TreeSolver -b 2 -l 4 -e "(2*x^2 - 1)^2 - (2*y^2 - 1)" 
