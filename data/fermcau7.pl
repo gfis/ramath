@@ -3,6 +3,7 @@
 # Extracts relations from the output of test/T25.this.tst (Fermat/Carcavi(7), x^2+1=y^3)
 # @(#) $Id$
 # Copyright (c) 2015 Dr. Georg Fischer
+# 2017-01-01: "*" optional
 # 2015-06-13
 
 use strict;
@@ -19,7 +20,7 @@ while (<>) {
 	} elsif ($line =~ m{\A--}) {
 		print "$line\n";
 	} elsif ($line =~ m{\Aexpand}) {
-	} elsif ($line =~ m{\A\[(\d+)\+(\d+)\*\w+\,(\d+)\+(\d+)\*\w+\]}) { # [0+2*u,0+2*v]: unknown -276+30*u+4*u^2-333*v+8*u*v-128*v^2-16*v^3=0 -> [1]
+	} elsif ($line =~ m{\A\[(\d+)\+(\d+)\*?\w+\,(\d+)\+(\d+)\*?\w+\]}) { # [0+2*u,0+2*v]: unknown -276+30*u+4*u^2-333*v+8*u*v-128*v^2-16*v^3=0 -> [1]
 		($xf, $xs, $yf, $ys) = ($1, $2, $3, $4);
 		&output();
 	} else {

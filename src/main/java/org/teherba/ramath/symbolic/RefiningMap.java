@@ -1,5 +1,6 @@
 /*  RefiningMap: maps a set of variables to refined expressions
  *  @(#) $Id: RefiningMap.java 538 2010-09-08 15:08:36Z gfis $
+ *  2017-01-01: set/getMeter
  *  2015-09-04, Georg Fischer
  */
 /*
@@ -43,6 +44,23 @@ public class RefiningMap extends VariableMap implements Cloneable , Serializable
     public RefiningMap() {
         super();
     } // no-args Constructor
+    
+    /** current value of the {@link Dispenser} 
+     *  which was used to create <em>this</em> {@link RefiningMap}
+     */
+    private Vector meter;
+    /** Gets the underlying {@link Dispenser} values
+     *  @return the {@link Vector} used to define the map
+     */
+    public Vector getMeter() {
+        return this.meter;
+    } // getMeter
+    /** Sets the underlying {@link Dispenser} values
+     *  @param meter the {@link Vector} used to define the map
+     */
+    public void setMeter(Vector meter) {
+        this.meter = meter;
+    } // setMeter
 
     /** Clone <em>this</em> map
      */
@@ -53,6 +71,7 @@ public class RefiningMap extends VariableMap implements Cloneable , Serializable
             String key = (String) iter.next();
             result.put(key, this.get(key));
         } // while iter
+        result.setMeter(this.getMeter().clone());
         return result;
     } // clone
 
@@ -143,6 +162,7 @@ public class RefiningMap extends VariableMap implements Cloneable , Serializable
      */
     public RefiningMap getRefinedMap(Dispenser dispenser) {
         RefiningMap result = new RefiningMap();
+        result.setMeter(dispenser.getVector());
         Iterator<String> iter = this.keySet().iterator();
         int idisp = 0;
         while (iter.hasNext()) {

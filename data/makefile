@@ -6,7 +6,10 @@
 #--------------------------------
 MOD=16
 
-all: bricks
+all: caw7
+
+caw7:
+	perl ~/work/gits/ramath/data/fermcaw7.pl ~/work/gits/ramath/test/TEC5.this.tst
 
 # join OEIS b-files from A031173,74,75
 bricks: join_bricks prepare_bricks
@@ -35,3 +38,8 @@ eval_bricks:
 eec422:
 	perl mod422.pl $(MOD) two4.1000000.txt
 	perl mod422.pl $(MOD) ../test/T52.this.tst
+	
+fermcaw5:
+	perl fermcaw7.pl ../test/TEC5.this.tst | tee fermcaw5.txt
+fermcawA:
+	perl fermcaw7.pl ../test/TECA.this.tst | tee fermcawA.txt

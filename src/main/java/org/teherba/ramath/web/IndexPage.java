@@ -1,5 +1,6 @@
 /*  IndexPage.java - main web page for Ramath
  *  @(#) $Id: 57d01d0860aef0c2f2783647be70c3c381710c86 $
+ *  2017-01-03: table cells rearranged
  *  2016-08-28: Dr. Georg Fischer: copied from Dbat
  */
 /*
@@ -69,15 +70,16 @@ public class IndexPage implements Serializable {
             , String form2c
             , VariableMap rmap
             ) throws IOException {
-	/*
-		try {
-	*/
+    /*
+        try {
+    */
             PrintWriter out = basePage.writeHeader(request, response, language);
             out.write("<title>" + basePage.getAppName() + " Main Page</title>\n");
             out.write("</head>\n<body>\n");
 
-            int width  = 80;
-            int height = 4;
+            String border = "0";
+            int width  = 100;
+            int height = 2;
             String[] optArea    = new String []
                     { "rset"    // 0
                     , "cfra"    // 1
@@ -89,7 +91,6 @@ public class IndexPage implements Serializable {
                     , "Euler's Extended Conjecture" // 2
                     } ;
             int index = 0;
-            String border = "0";
             out.write("<!-- area=\""  + area + "\", opt=\"" + opt + "\"\n");
             out.write("    form1=\""  + form1 + "\"\n");
             out.write("    form2=\""  + form2 + "\"\n");
@@ -100,7 +101,7 @@ public class IndexPage implements Serializable {
             out.write("    <input type = \"hidden\" name=\"view\" value=\"upper\" />\n");
             out.write("    <table cellpadding=\"0\" border=\"" + border + "\">\n");
             out.write("        <tr valign=\"top\">\n");
-            out.write("            <td>Area<br />\n");
+            out.write("            <td><strong>Area:</strong><br />\n");
             out.write("                <select name=\"area\" size=\"3\">\n");
             index = 0;
             while (index < optArea.length) {
@@ -112,18 +113,12 @@ public class IndexPage implements Serializable {
             out.write("                </select>\n");
             out.write("                <br />\n");
             out.write("                <br />\n");
-            out.write("                Options<br />\n");
-            out.write("                <input name=\"opt\" maxsize=\"60\" size=\"" + width / 4 + "\" value=\"" + opt + "\" /> (norm)\n");
+            out.write("                <strong>Options:</strong> ");
+            out.write("                <input name=\"opt\" maxsize=\"100\" size=\"12\" value=\"" + opt + "\" />\n");
+            out.write("                <br /><br />\n");
             out.write("            </td>\n");
             
-            out.write("            <td>\n");
-            out.write("See also:<br />\n");
-            basePage.writeAuxiliaryLinks(language, "main");
-            out.write("            </td>\n");
-            out.write("        </tr>\n");
-            
-            out.write("        <tr valign=\"top\">\n");
-            out.write("            <td colspan=\"2\">Variable Substitutions<br />\n");
+            out.write("            <td><strong>Variable Substitutions:</strong><br />\n");
             out.write("                <table cellpadding=\"0\" border=\"" + border + "\">\n");
             Iterator<String> viter = rmap.keySet().iterator();
             index = 0;
@@ -138,10 +133,10 @@ public class IndexPage implements Serializable {
             } // while index
             out.write("                </table>\n");
             out.write("            </td>\n");
+            
             out.write("        </tr>\n");
-
             out.write("        <tr valign=\"top\">\n");
-            out.write("            <td align=\"left\" colspan=\"2\">RelationSet:<br />\n");
+            out.write("            <td align=\"left\" colspan=\"2\"><strong>RelationSet:</strong><br />\n");
             out.write("                <textarea name=\"form1\" wrap=\"virtual\" cols=\"" + width + "\" rows=\"" + height + "\">"
                                        + form1 + "</textarea>\n");
             out.write("            </td>\n");
@@ -159,7 +154,7 @@ public class IndexPage implements Serializable {
             out.write("    <input type = \"hidden\" name=\"area\"  value=\"" + area  + "\" />\n");
             out.write("    <input type = \"hidden\" name=\"opt\"   value=\"" + opt   + "\" />\n");
             out.write("    <input type = \"hidden\" name=\"form2\" value=\"" + form2 + "\" />\n");
-            out.write("    <table cellpadding=\"0\" border=\"" + border + "\" width=\"640px\">\n");
+            out.write("    <table cellpadding=\"0\" border=\"" + border + "\">\n");
             out.write("        <tr valign=\"top\">\n");
             out.write("            <td>" + form2c + "</td>\n");
             out.write("        </tr>\n");
@@ -170,9 +165,12 @@ public class IndexPage implements Serializable {
             out.write("        </tr>\n");
             out.write("    </table>\n");
             out.write("</form><!-- lower -->\n");
+            out.write("                <br />\n");
+            out.write("See also: ");
+            basePage.writeAuxiliaryLinks(language, "main");
 
             basePage.writeTrailer(language, "quest");
-	/*
+    /*
         } catch (Exception exc) {
             log.error(exc.getMessage(), exc);
         }

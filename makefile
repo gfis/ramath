@@ -27,7 +27,7 @@ TEST="%"
 # for Windows, SUDO should be empty
 SUDO=
 
-all: sandbox
+all: solver
 #-------------------------------------------------------------------
 # Perform a regression test 
 regression: simple symbolic ideal linear matrix sandbox solver regeval

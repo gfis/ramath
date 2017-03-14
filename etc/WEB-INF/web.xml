@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
     @(#) $Id: web.xml 193 2009-07-07 16:06:20Z gfis $
+    2017-01-03: RamathServlet moved to subpackage web
     2016-10-08: Servlet 3.0 + ErrorServlet
     2016-08-29: <welcome-file-list>
     2009-07-07: copied from dbat
@@ -32,7 +33,7 @@
     <!-- Servlets -->
     <servlet>
         <servlet-name>RaMathServlet</servlet-name>
-        <servlet-class>org.teherba.ramath.RaMathServlet</servlet-class>
+        <servlet-class>org.teherba.ramath.web.RaMathServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
