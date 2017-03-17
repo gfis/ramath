@@ -47,7 +47,7 @@ while (<>) {
                 , "$target>-"
                 , "\t\t$factor\t$meter\t$x[0],$x[1]";
         my $diff = $x[0]*$x[0] + 4 - $x[1]*$x[1]*$x[1];
-        print "\tmod=" . $diff % ($factor * 2) . "\td=$diff # ";
+        print "\td=$diff\tmod=" . $diff % ($factor * 8) . " # ";
         &check($line);
     } elsif (($line =~ m{\A\[}) and ($line =~ m{failure})) { # [1+8x,3+8y]: unknown [0,0] -> [3] 2x+8x²-27y-72y²-64y³-3
         print "# ";

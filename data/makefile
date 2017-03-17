@@ -41,5 +41,7 @@ eec422:
 	
 fermcaw5:
 	perl fermcaw7.pl ../test/TEC5.this.tst | tee fermcaw5.txt
+fermcaw6:
+	perl fermcaw7.pl ../test/TEC6.this.tst | tee fermcaw6.txt
 fermcawA:
 	perl fermcaw7.pl ../test/TECA.this.tst | tee fermcawA.txt

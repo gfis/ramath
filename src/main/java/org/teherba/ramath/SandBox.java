@@ -64,7 +64,7 @@ public class SandBox {
     /** Evaluates a univariate {@link Polynomial} for a
      *  sequence of variable values and, for the resulting values, print the 
      *  representations of the form p^2 + f*q^2.
-     *  @param args commandline arguments: polynomial [high [f]]
+     *  @param args commandline arguments: -compose [high [f]]
      */
     private void printCompositions(String[] args) {
         int startValue =    2; // start with this value of the (single) variable
@@ -532,7 +532,7 @@ public class SandBox {
      *  @param args command line arguments:
      *  <ul>
      *  <li>-bachet x y c [n]: evaluate Bachet's duplication formula</li>
-     *  <li>-brahma  [end [f]]: print successive compositions of (u^2 + v^2)
+     *  <li>-compose [end [f]]: print successive compositions of (u^2 + v^2)
      *  <li>-eec422  filename: evaluate tuples of the form a^4 + b^4 = c^4 + d^4</li>
      *  <li>-euclid  matrix [lim]: generate Pythagorean triples for coprime u, v
      *  <li>-pdiff   polynomial [start [end]]: print successive differences</li>
