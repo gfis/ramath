@@ -1,5 +1,6 @@
 /*  Fermat's last theorem: compute the number ranges limiting any solution
  *  @(#) $Id: Corridor.java 194 2009-07-07 21:10:32Z gfis $
+ *  2017-05-28: javadoc 1.8
  *  2014-04-08: use BigInteger.valueOf(long)
  *  2009-06-01, Georg Fischer
  */
@@ -24,13 +25,13 @@ import  java.util.ArrayList;
 import  java.util.Date;
 
 /** Fermat's last theorem: compute the number ranges limiting any solution.
- *  <br />Assume (p+r)^k = p^k + (p-q)^k; r > 0, q > 0, p > q.
- *  <br />For r=1 and p compute q1, q2 such that
- *  <br />(p+1)^k >= p^k + (p-q1)^k
- *  <br />(p+1)^k <= p^k + (p-q2)^k
- *  <br />For q=1 and p compute r1, r2 such that
- *  <br />(p+r1)^k >= p^k + (p-1)^k
- *  <br />(p+r2)^k <= p^k + (p-1)^k
+ *  <br>Assume (p+r)^k = p^k + (p-q)^k; r &gt; 0, q &gt; 0, p &gt; q.
+ *  <br>For r=1 and p compute q1, q2 such that
+ *  <br>(p+1)^k &gt;= p^k + (p-q1)^k
+ *  <br>(p+1)^k &lt;= p^k + (p-q2)^k
+ *  <br>For q=1 and p compute r1, r2 such that
+ *  <br>(p+r1)^k &gt;= p^k + (p-1)^k
+ *  <br>(p+r2)^k &lt;= p^k + (p-1)^k
  *  @author Dr. Georg Fischer
  */
 public class Corridor {
@@ -71,6 +72,7 @@ public class Corridor {
     /** Gets the element with the kth power of it's index,
      *  eventually computing this element and the ones before it.
      *  @param i index of the element to be returned
+     *  @return element
      */
     public BigInteger get(int i)  {
         BigInteger result;

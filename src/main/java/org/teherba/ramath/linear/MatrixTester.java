@@ -1,5 +1,6 @@
 /*  MatrixTester: commandline interface to various Matrix methods
  *  @(#) $Id: Matrix.java 744 2011-07-26 06:29:20Z gfis $
+ *  2017-05-28: javadoc 1.8
  *  2016-10-04: -negate
  *  2015-04-17, Georg Fischer: extracted from Matrix
  */
@@ -88,6 +89,7 @@ public class MatrixTester implements Serializable {
      *  as a {@link Vector}.
      *  The innerproduct of the resulting
      *  Vector with row 0 is the determinant of the whole matrix.
+     *  @param amat source Matrix
      *  @return Vector of determinant values of the minors with alternating signs
      */
     public static Vector getSubDeterminants(Matrix amat) {
@@ -139,7 +141,7 @@ public class MatrixTester implements Serializable {
         return result;
     } // getSubDeterminants
 
-    /** Appends to the ArrayList all matrices A with elements >= 0 such that
+    /** Appends to the ArrayList all matrices A with elements &gt;= 0 such that
      *  for positive {@link Vector}s <em>vect1, vect2: A * vect1 = vect2</em>
      *  @param result append to this list of matrices
      *  @param vect1 multiply this vector with the resulting matrices
@@ -706,8 +708,8 @@ public class MatrixTester implements Serializable {
                         }
                         ivect ++;
                     } // while ivect
-                    System.out.println(failed + " of " + count + " failed, " 
-                            + String.format("%4.2f", failed * 100.0 / count) + "%"); 
+                    System.out.println(failed + " of " + count + " failed, "
+                            + String.format("%4.2f", failed * 100.0 / count) + "%");
                     // opt -follow
 
                 } else if (opt.equals("-gen" )) { // copied from -perms
@@ -747,7 +749,7 @@ public class MatrixTester implements Serializable {
                                     if (hash.get(key) == null) { // new tuple
                                         hash.put(key, vect3);
                                         queue.add(vect3);
-                                        System.out.println(key 
+                                        System.out.println(key
                                                 + " <= " + vecta.toString(",")
                                                 + " by " + amat.toString(",") + ",det=" + amat.determinant());
                                     } // if new tuple

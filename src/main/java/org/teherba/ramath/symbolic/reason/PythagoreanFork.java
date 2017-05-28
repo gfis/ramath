@@ -88,7 +88,7 @@ public class PythagoreanFork extends BaseReason {
      *  <em>x^2 + y^2 = z^2</em>, maybe with inverted signs or 
      *  higher even exponents.
      *  @param rset1 the {@link RelationSet} to be tested
-     *  @return the number of Polynomials which have the Pythagorean form, >= 0
+     *  @return the number of Polynomials which have the Pythagorean form, &gt;= 0
      *  Caution, side effect: if any Polynomial has the form and two {@link Monomial}s are negative,
      *  the Polynomial is negated.
      */

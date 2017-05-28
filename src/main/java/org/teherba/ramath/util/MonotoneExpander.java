@@ -1,5 +1,6 @@
 /*  MonotoneExpander: similiar to Expander, but val[i+1] < val[i] for all i
  *  @(#) $Id: MonotoneExpander.java 744 2011-07-26 06:29:20Z  $
+ *  2017-05-28: javadoc 1.8
  *  2013-07-05: renamed from BinomialExpander
  *  2011-07-23, Georg Fischer: copied from ModoMeter
  */
@@ -24,7 +25,7 @@ import  org.teherba.ramath.util.Expander;
 
 /** Like the {@link Expander}, this {@link Dispenser} delivers tuples of digits
  *  up to some (limiting) base, but the values in the tuples are strictly increasing, with the
- *  general assertion that <code>meter[im + 1] > meter[im], im = 0 to width-2</code>
+ *  general assertion that <code>meter[im + 1] &gt; meter[im], im = 0 to width-2</code>
  *  <p>
  *  This dispenser yields ({@link #base} over {@link #width}) different tuples until
  *  {@link #hasNext} becomes false.

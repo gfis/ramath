@@ -1,5 +1,6 @@
 /*  Selects the applicable dispenser
     @(#) $Id: DispenserFactory.java 657 2011-03-17 07:56:38Z gfis $
+ *  2017-05-28: javadoc 1.8
     2013-09-10: TreeMap -> LinkedHashMap
     2013-07-04: copied from org.teherba.numword.SpellerFactory
 */
@@ -81,6 +82,7 @@ public class DispenserFactory {
     /** Determines whether the code denotes this dispenser class.
      *  @param dispenser the dispenser to be tested
      *  @param code code for the desired dispenser
+     *  @return whether the desired dispenser was found
      */
     public boolean isApplicable(Dispenser dispenser, String code) {
         boolean result = false; // dispenser instanceof dispensers.get(code).getClass();

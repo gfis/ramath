@@ -77,6 +77,9 @@ jfind:
 rmbak:
 	find src -iname "*.bak"  | xargs -l rm -v
 #---------------------------------------------------
+ltgt:
+	find src -iname "*.java" | xargs -l -iqqq perl -i.bak ../numword/etc/ltgt.pl qqq
+#---------------------------------------------------
 lr:
 	make symbolic TEST=LR%
 lrh:

@@ -1,14 +1,15 @@
 /*  PolynomialParser: parser for the recognition of arithmetic expressions
  *  @(#) $Id: PolynomialParser.java 522 2010-07-26 07:14:48Z gfis $
+ *  2017-05-28: javadoc 1.8
  *  2016-10-04: insert 0 before unary minus after ( = < >
  *  2016-08-25: ignore comments after '#'
  *  2015-12-06: prime factorizations were messed up
  *  2015-11-17: handle superscript digits with getNumericValue
  *  2015-07-17: relaxed rules for '*': may be omitted after a number or ')'
- *  2013-09-20: BigRational -> BigIntegerUtil
+ *  2013-09-20: BigRational -&gt; BigIntegerUtil
  *  2013-08-14: decode %-escaped sequence and reprocess the corresponding character
  *  2013-07-03: less strict syntax "number variable" expanded to "number * variable"
- *  2009-09-24: relational operators > >= = <= < !=
+ *  2009-09-24: relational operators > &gt;= = &lt;= < !=
  *  2009-09-03: with super 2 = ^2 and super 3 = ^3
  *  2009-07-29: Java identifiers for variables
  *  2009-07-01, Georg Fischer: copied from Polynomial
@@ -39,7 +40,7 @@ import  java.util.Stack;
 /** This parser recognizes elementary arithmetic expressions and relations
  *  built from the following components:
  *  <ul>
- *  <li>< <= = >= > !=</li>
+ *  <li>&lt; &lt;= = &gt;= &gt; !=</li>
  *  <li>+ - * /</li>
  *  <li>unary + -</li>
  *  <li>( )</li>
@@ -121,7 +122,7 @@ public class PolynomialParser extends Polynomial {
      *  <p>
      *  The precedence of operators (in <em>precOper, operStack</em>) is indicated
      *  by the ASCII order of lowercase letters according to the following table:
-     *  <table>
+     *  <table><caption>Operator Precedence and corresponding Codes</caption>
      *  <tr><td>|                   </td><td>j</td></tr>
      *  <tr><td>&amp;               </td><td>k</td></tr>
      *  <tr><td>&lt;= &gt;= == !=   </td><td>l</td></tr>
@@ -177,10 +178,10 @@ public class PolynomialParser extends Polynomial {
                                 } // else ignore unary +
                                 break;
                             case '-':
-                                if (   prev == '(' 
-                                    || prev == '=' 
-                                    || prev == '<' 
-                                    || prev == '>' 
+                                if (   prev == '('
+                                    || prev == '='
+                                    || prev == '<'
+                                    || prev == '>'
                                         ) {
                                     postfix.add("0"); // a zero is inserted before a unary "m-"
                                 }

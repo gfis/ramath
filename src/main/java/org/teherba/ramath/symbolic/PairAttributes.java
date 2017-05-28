@@ -1,5 +1,6 @@
 /*  PairAttributes: maps ordered pairs of variable names to some attribute: coprime, smaller ...
  *  @(#) $Id: PairAttributes.java 538 2010-09-08 15:08:36Z gfis $
+ *  2017-05-28: javadoc 1.8
  *  2016-08-25: isolated variables can have attributes, too
  *  2016-07-10: had extended HashMap - now TreeMap for reproducible tests
  *  2016-01-04, Georg Fischer: copied from VariableMap.java
@@ -82,6 +83,7 @@ public class PairAttributes extends TreeMap<String, String> implements Cloneable
      *  @param var1 first  variable name
      *  @param var2 second variable name
      *  @param attr attribute to be set
+     *  @return new pair
      */
     public String put(String var1, String var2, String attr) {
         String key = null;
@@ -129,7 +131,7 @@ public class PairAttributes extends TreeMap<String, String> implements Cloneable
     /*-------------- lightweight methods -----------------------------*/
 
     /** Return s String representation of <em>this</em> {@link PairAttributes}.
-     *  @return "{a/b=>1,b/c=>4}", for example
+     *  @return "{a/b=&gt;1,b/c=&gt;4}", for example
      */
     public String toString() {
         StringBuffer result = new StringBuffer(256);

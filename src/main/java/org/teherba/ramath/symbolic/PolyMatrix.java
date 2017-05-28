@@ -116,7 +116,7 @@ public class PolyMatrix implements Cloneable, Serializable {
     /** Constructor for an abstract, square PolyMatrix which initializes it with
      *  systematic variable names.
      *  For example, PolyMatrix(2, "m") yields [[m11,m12],[m21,m22]].
-     *  @param rowLen number of rows/columns (better <= 9)
+     *  @param rowLen number of rows/columns (better &lt;= 9)
      *  @param prefix String (letter) for the start of the variable names
      */
     public PolyMatrix(int rowLen, String prefix) {
@@ -126,8 +126,8 @@ public class PolyMatrix implements Cloneable, Serializable {
     /** Constructor for an abstract, rectangular PolyMatrix which initializes it with
      *  systematic variable names.
      *  For example, PolyMatrix(2, "m") yields [[m11,m12],[m21,m22]].
-     *  @param rowLen number of rows    (better <= 9)
-     *  @param colLen number of columns (better <= 9)
+     *  @param rowLen number of rows    (better &lt;= 9)
+     *  @param colLen number of columns (better &lt;= 9)
      *  @param prefix String (letter) for the start of the variable names
      */
     public PolyMatrix(int rowLen, int colLen, String prefix) {

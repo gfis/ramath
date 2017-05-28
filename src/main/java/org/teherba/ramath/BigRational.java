@@ -1,11 +1,12 @@
 /*  BigRational: a fraction as a pair of BigIntegers
  *  @(#) $Id: BigRational.java 231 2009-08-25 08:47:16Z gfis $
- *  2015-11-14: numerator -> num, denominator -> den (again)
+ *  2017-05-28: javadoc 1.8
+ *  2015-11-14: numerator -&gt; num, denominator -&gt; den (again)
  *  2015-06-17: extends BigInteger
  *  2014-04-08: use BigInteger.valueOf(long)
  *  2013-09-13: simplify
  *  2013-08-23: Serializable, lcm, gcd
- *  2013-08-21: denom -> numerator, nomin -> denominator
+ *  2013-08-21: denom -&gt; numerator, nomin -&gt; denominator
  *  2012-08-20: pow with special handling of exp=1
  *  2009-07-23: signum
  *  2008-10-24, Georg Fischer: copied from Series
@@ -338,7 +339,7 @@ public class BigRational
                 if (exp >= 0) {
                     result = BigRational.valueOf(this.num.pow(exp), this.den.pow(exp));
                 } else {
-                	throw new IllegalArgumentException("negative exponent in 'pow': " + exp);
+                    throw new IllegalArgumentException("negative exponent in 'pow': " + exp);
                 /*
                     exp = - exp;
                     result = BigRational.valueOf(this.den.pow(exp), this.num.pow(exp)).simplify();
@@ -377,7 +378,7 @@ public class BigRational
 
     /** Returns the BigRational with simplified numerator and denominator, that is:
      *  <ul>
-     *  <li>numerator and denominator have no common divisor > 1</li>
+     *  <li>numerator and denominator have no common divisor &gt; 1</li>
      *  <li>the denominator is positive</li>
      *  </ul>
      *  @return reduced fraction with positive denominator
@@ -425,9 +426,9 @@ public class BigRational
 
     /** Compares this BigRational with the specified BigRational.
      *  This method is provided in preference to individual methods
-     *  for each of the six boolean comparison operators (<, ==, >, >=, !=, <=).
+     *  for each of the six boolean comparison operators (&lt;, ==, &gt;, &gt;=, !=, &lt;=).
      *  The suggested idiom for performing these comparisons is:
-     *  (x.compareTo(y) <op> 0), where <op> is one of the six comparison operators.
+     *  (x.compareTo(y) &lt;op&gt; 0), where &lt;op&gt; is one of the six comparison operators.
      *  Returns the signum of the difference of <em>this</em> BigRational minus the parameter.
      *  @param num2 number to which this BigRational is to be compared.
      *  @return -1, 0 or 1 as this BigRational is numerically
@@ -439,9 +440,9 @@ public class BigRational
 
     /** Compares this BigRational with the specified BigInteger.
      *  This method is provided in preference to individual methods
-     *  for each of the six boolean comparison operators (<, ==, >, >=, !=, <=).
+     *  for each of the six boolean comparison operators (&lt;, ==, &gt;, &gt;=, !=, &lt;=).
      *  The suggested idiom for performing these comparisons is:
-     *  (x.compareTo(y) <op> 0), where <op> is one of the six comparison operators.
+     *  (x.compareTo(y) &lt;op&gt; 0), where &lt;op&gt; is one of the six comparison operators.
      *  Returns the signum of the difference of <em>this</em> BigRational minus the parameter.
      *  @param num2 number to which this BigRational is to be compared.
      *  @return -1, 0 or 1 as this BigRational is numerically
@@ -515,6 +516,7 @@ public class BigRational
     } // toString
 
     /** Returns a string representation of the fraction in the given radix
+     *  @param radix base for numer representation
      *  @return "a/b"
      */
     public String toString(int radix) {

@@ -67,7 +67,7 @@ public class Signature implements Cloneable, Comparable<Signature>, Serializable
     /*-------------- lightweight methods -----------------------------*/
 
     /** Returns a string representation of the variable map
-     *  @return "{a=>3,b=>4,c=>5}", for example
+     *  @return "{a=&gt;3,b=&gt;4,c=&gt;5}", for example
      */
     public String toString() {
         return this.signat;

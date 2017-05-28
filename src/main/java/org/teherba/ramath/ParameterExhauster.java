@@ -1,5 +1,6 @@
 /*  Exhaustive generator for power identities
  *  @(#) $Id: ParameterExhauster.java 808 2011-09-20 16:56:14Z gfis $
+ *  2017-05-28: javadoc 1.8
  *  2015-06-15: Polynomial.parse was not static
  *  2013-07-06, Georg Fischer: copied from ParameterGenerator
  */
@@ -547,10 +548,10 @@ G;
         + 3*a0*a1^2*x^2 + 3*a0^2*a2*x^2 ...
         + 3*a0^2*a1*x   ...
         + 1*a0^3        ...
-    f9: var a3,b3,c3 => h3
-    f0: var a0,b0,c0 => h0
-    f8: var a2,b2,c2 => h2
-    f1: var a1,b1,c1 => h1
+    f9: var a3,b3,c3 =&gt; h3
+    f0: var a0,b0,c0 =&gt; h0
+    f8: var a2,b2,c2 =&gt; h2
+    f1: var a1,b1,c1 =&gt; h1
  </pre>
      */
     public void x3() {
@@ -754,10 +755,10 @@ G;
         + a0^4
         = 0)
 
-    f9: var a3,b3,c3 => h3
-    f0: var a0,b0,c0 => h0
-    f8: var a2,b2,c2 => h2
-    f1: var a1,b1,c1 => h1
+    f9: var a3,b3,c3 =&gt; h3
+    f0: var a0,b0,c0 =&gt; h0
+    f8: var a2,b2,c2 =&gt; h2
+    f1: var a1,b1,c1 =&gt; h1
  </pre>
      */
     public void x4() {

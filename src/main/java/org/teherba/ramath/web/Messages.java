@@ -1,5 +1,6 @@
 /*  Messages.java - Static help texts and other language specific messages for Ramath. äöüÄÖÜß
  *  @(#) $Id: 57d01d0860aef0c2f2783647be70c3c381710c86 $
+ *  2017-05-28: javadoc 1.8
  *  2016-09-02: "Manifest, "
  *  2016-08-28: Dr. Georg Fischer: copied from Dbat
  */
@@ -30,7 +31,6 @@ import  java.io.Serializable;
  *  <li>en - English</li>
  *  <li>de - German</li>
  *  </ul>
- *  <p />
  *  All methods in this class are not stateful, and therefore are
  *  <em>static</em> for easier activation.
  *  @author Dr. Georg Fischer

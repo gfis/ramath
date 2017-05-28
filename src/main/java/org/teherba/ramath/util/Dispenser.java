@@ -1,5 +1,6 @@
 /*  Dispenser: creates an "increasing" sequence of different number tuples in a systematic way
  *  @(#) $Id: Dispenser.java 744 2011-07-26 06:29:20Z  $
+ *  2017-05-28: javadoc 1.8
  *  2016-07-26: hasNoZero
  *  2015-02-13: getVector, nextVector; post-op +10
  *  2015-02-08: Dispenser instead of ModoMeter in VariableMap
@@ -62,7 +63,7 @@ public abstract class Dispenser implements Iterator<int[]>, Serializable {
     protected int     base;
     /** Array which contains the tuple */
     protected int[]   meter;
-    /** Array which contains the signs for all elements of the tuple: positive >= 0, negative < 0 */
+    /** Array which contains the signs for all elements of the tuple: positive &gt;= 0, negative &lt; 0 */
     protected int[]   signs;
     /** tells whether the Dispenser yields signed (negative) values */
     protected boolean signed;
@@ -251,9 +252,9 @@ public abstract class Dispenser implements Iterator<int[]>, Serializable {
      *  The <em>meter</em> tuple is steady during sign toggling.
      *  A typical usage is:
      <pre>
-        boolean iterating = signed && toggleSigns();
+        boolean iterating = signed &amp;&amp; toggleSigns();
      </pre>
-     *  which relies strongly on the fact that Java lazily evaluates the "&&" operator.
+     *  which relies strongly on the fact that Java lazily evaluates the "&amp;&amp;" operator.
      *  @return <em>false</em> if there was another sign combination, or <em>true</em>
      *  another meter tuple should be generated
      */

@@ -1,5 +1,6 @@
 /*  PrimitiveReason: checks whether the RelationSet is the same as the root
  *  @(#) $Id: PrimitiveReason.java 970 2012-10-25 16:49:32Z gfis $
+ *  2017-05-28: javadoc 1.8
  *  2015-09-10, Georg Fischer: copied from SameReason
  */
 /*
@@ -30,27 +31,27 @@ import  java.math.BigInteger;
 import  java.util.Iterator;
 import  java.util.TreeMap;
 
-/** Checks whether the tree expansion root {@link RelationSet} 
- *  is the same as the RelationSet in question 
+/** Checks whether the tree expansion root {@link RelationSet}
+ *  is the same as the RelationSet in question
  *  @author Dr. Georg Fischer
  */
 public class PrimitiveReason extends BaseReason {
     public final static String CVSID = "@(#) $Id: PrimitiveReason.java 970 2012-10-25 16:49:32Z gfis $";
 
-     /** No-args Constructor
+    /** No-args Constructor
      */
     public PrimitiveReason() {
     } // no-args Constructor
-    
+
     /** the solver's {@link BaseSolver#modBase} */
     private BigInteger base = null;
-    
+
     /** copy of the ReasonFactory's startNode */
     private RelationSet startNode = null;
 
     /** Initializes any data structures for <em>this</em> reason.
      *  This method is called by {@link ReasonFactory};
-     *  it may be  used to gather and store data which are 
+     *  it may be  used to gather and store data which are
      *  needed for the specific check.
      *  @param solver the {@link BaseSolver solver} which uses <em>this</em> reason for iteration control
      *  @param startNode the root node of the expansion (sub-)tree
@@ -64,9 +65,9 @@ public class PrimitiveReason extends BaseReason {
 
     // inherited: BaseReason always isConsiderable()
 
-    /** Whether <em>this</em> reason should be considered for 
+    /** Whether <em>this</em> reason should be considered for
      *  the starting {@link RelationSet}.
-     *  @return <em>true</em> if the <em>this</em> should be considered (default), 
+     *  @return <em>true</em> if the <em>this</em> should be considered (default),
      *  <em>false</em> otherwise.
      */
     public boolean isConsiderable() {
@@ -76,10 +77,10 @@ public class PrimitiveReason extends BaseReason {
         }
         return result;
     } // isConsiderable
-    
-    /** Determines whether all additive factors in a {@link RefiningMap} are 0, 
-     *  and all multiplicative factors are the same and > 1.
-     *  @param rmap2 investigat this {@link RefiningMap}
+
+    /** Determines whether all additive factors in a {@link RefiningMap} are 0,
+     *  and all multiplicative factors are the same and &gt; 1.
+     *  @param  rmap2 investigat this {@link RefiningMap}
      *  @return true for the initial metered values when invall = true
      */
     public boolean isNonPrimitive(RefiningMap rmap2) {
@@ -108,14 +109,14 @@ public class PrimitiveReason extends BaseReason {
                 && ! constant.startsWith("0+1");
     } // isNonPrimitive
 
-    /** Consider the source {@link RelationSet} <em>rset2</em> to be queued together with 
+    /** Consider the source {@link RelationSet} <em>rset2</em> to be queued together with
      *  another {@link RelationSet} <em>rset1</em> already queued.
      *  If the test is successful, a message is printed and returned,
-     *  and <em>rset2</em> is not stored in the following; 
+     *  and <em>rset2</em> is not stored in the following;
      *  otherwise the checking process continues.
      *  @param iqueue index of the target RelationSet <em>rset1</em>
      *  @param rset1 the old target {@link RelationSet} already queued
-     *  @param rset2 the new source {@link RelationSet} to be added to the queue 
+     *  @param rset2 the new source {@link RelationSet} to be added to the queue
      *  @return a message String denoting the reasoning details,
      *  or {@link VariableMap#UNKNOWN} if the comparision is not conclusive.
      */

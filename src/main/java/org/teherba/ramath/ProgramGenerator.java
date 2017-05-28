@@ -1,5 +1,6 @@
 /*  Exhaustive generator for power identities
  *  @(#) $Id: ProgramGenerator.java 808 2011-09-20 16:56:14Z gfis $
+ *  2017-05-28: javadoc 1.8
  *  2016-06-24: pident
  *  2016-04-22: Georg Fischer: copied from MatrixExhauster
  */
@@ -682,6 +683,7 @@ public class ProgramGenerator {
     //==========================================================
 
     /** String for open and push 1 closing bracket
+     *  @return " {\n"
      */
     private String br() {
         brackets += "}";
@@ -850,7 +852,7 @@ public class ProgramGenerator {
                                 int irow = nrows - vmap1.size();
                                 if (irow >= 1 && irow <= nrows) {
                                     String pvi = PARENS.substring(0, ncols - 1)
-                                    		+ pmat.getRow(irow - 1).toString()
+                                            + pmat.getRow(irow - 1).toString()
                                             .replaceAll("\\,", ")*8+")
                                             .replaceAll("\\[", "(")
                                             .replaceAll("\\]", "); ")
@@ -858,7 +860,7 @@ public class ProgramGenerator {
                                     String sumi = "sum" + String.valueOf(irow);
                                     o.print(SHORT_INT + sumi + " = " + pvi);
                                     if (irow - 1 > 0) { // >= would involve sum0
-                                        o.print("if (sum" + String.valueOf(irow - 1) + " < " + sumi + ")" + br()); 
+                                        o.print("if (sum" + String.valueOf(irow - 1) + " < " + sumi + ")" + br());
                                     } else {
                                         o.println();
                                     }
@@ -875,7 +877,7 @@ public class ProgramGenerator {
             } // while expanding all partial Polynomials
             for (int irow = 1; irow <= nrows; irow ++) {
                 checkZeroRow(irow);
-            /*  superfluous because weighted rows must be increasing (above) 
+            /*  superfluous because weighted rows must be increasing (above)
                 for (int jrow = irow + 1; jrow <= nrows; jrow ++) {
                     checkSameRow(irow, jrow);
                 } // for jrow
@@ -978,6 +980,7 @@ public class ProgramGenerator {
     // Main
     //==========================
     /** Test method.
+     *  @param args commandline arguments
      */
     public static void main(String[] args) {
         ProgramGenerator gen = new ProgramGenerator();

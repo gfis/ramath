@@ -1,10 +1,11 @@
 /*  RaMathServlet.java - Rational and Symbolic Mathematics
  *  @(#) $Id: RaMathServlet.java 199 2009-07-13 20:16:23Z gfis $
+ *  2017-05-28: javadoc 1.8
  *  2017-01-03: moved to subpackage web
  *  2016-08-28: remove JSPs
  *  2015-09-10: no "(...)" around substitution values
  *  2013-09-21: RefiningMap
- *  2015-07-17: opt=norm; Polynomial -> RelationSet
+ *  2015-07-17: opt=norm; Polynomial -&gt; RelationSet
  *  2015-06-15: Polynomial.parse was not static
  *  2013-10-30: symmetrical form1 and form2
  *  2013-09-21: VariableMap
@@ -65,7 +66,7 @@ public class RaMathServlet extends HttpServlet {
     /** Called by the servlet container to indicate to a servlet
      *  that the servlet is being placed into service.
      *  @param config object containing the servlet's configuration and initialization parameters
-     *  @throws ServletException
+     *  @throws ServletException for servlet errors
      */
     public void init(ServletConfig config) throws ServletException {
         super.init(config); // ???
@@ -77,7 +78,7 @@ public class RaMathServlet extends HttpServlet {
     /** Processes an http GET request
      *  @param request request with header fields
      *  @param response response with writer
-     *  @throws IOException
+     *  @throws IOException for IO errors
      */
     public void doGet (HttpServletRequest request, HttpServletResponse response) throws IOException {
         // log.debug("doGet");
@@ -87,7 +88,7 @@ public class RaMathServlet extends HttpServlet {
     /** Processes an http POST request
      *  @param request request with header fields
      *  @param response response with writer
-     *  @throws IOException
+     *  @throws IOException for IO errors
      */
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         // log.debug("doPost");
@@ -97,6 +98,7 @@ public class RaMathServlet extends HttpServlet {
     /** Generates the response (HTML page) for an http request
      *  @param request request with header fields
      *  @param response response with writer
+     *  @throws IOException for IO errors
      */
     public void generateResponse(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String view     = BasePage.getInputField(request, "view"  , "");
@@ -145,7 +147,7 @@ public class RaMathServlet extends HttpServlet {
                 } else { // invalid area
                     basePage.writeMessage(request, response, language, new String[] { "401", "area", area });
                 }
-                
+
             } else if (view.equals("lower")) {
                 if (false) {
                 } else if (area.equals("rset")) {
@@ -171,10 +173,10 @@ public class RaMathServlet extends HttpServlet {
                     }
                     form1 = rset.toString(mode);
                     (new IndexPage    ()).dialog(request, response, basePage, language, area, opt, form1, form2, form2c, rmap);
-                } else { 
+                } else {
                     basePage.writeMessage(request, response, language, new String[] { "401", "area", area });
                 }
-                
+
             } else if (view.equals("license")
                     || view.equals("manifest")
                     || view.equals("notice")

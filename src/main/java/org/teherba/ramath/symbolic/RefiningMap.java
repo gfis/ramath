@@ -1,5 +1,6 @@
 /*  RefiningMap: maps a set of variables to refined expressions
  *  @(#) $Id: RefiningMap.java 538 2010-09-08 15:08:36Z gfis $
+ *  2017-05-28: javadoc 1.8
  *  2017-01-01: set/getMeter
  *  2015-09-04, Georg Fischer
  */
@@ -77,7 +78,7 @@ public class RefiningMap extends VariableMap implements Cloneable , Serializable
 
     /** Returns a {@link RefiningMap} constructed from a String representation,
      *  @param input the input String, with whitespace, maybe Vector or set brackets,
-     *  for example "{a=>-a-1,b=>-b-1,c=>-c-1,d=>-d-1}"
+     *  for example "{a=&gt;-a-1,b=&gt;-b-1,c=&gt;-c-1,d=&gt;-d-1}"
      *  @return a reference to a new {@link VariableMap}
      */
     public static RefiningMap parse(String input) {
@@ -129,7 +130,8 @@ public class RefiningMap extends VariableMap implements Cloneable , Serializable
     /** Gets a {@link PolyVector}
      *  of the constant expressions when refined variables are substituted from a
      *  binary {@link Dispenser}.
-     *  @return for example: [3,4] for this={x->3+2*x, y->0+4*y} and meter=[0,1]
+     *  @param meter underlaying Dispenser
+     *  @return for example: [3,4] for this={x-&gt;3+2*x, y-&gt;0+4*y} and meter=[0,1]
      */
     public PolyVector getMeteredValues(Dispenser meter) {
         PolyVector result = new PolyVector(this.size());
@@ -156,7 +158,7 @@ public class RefiningMap extends VariableMap implements Cloneable , Serializable
      *  of the mapped expressions.
      *  If dispenser.base = 1 then factor = 1, constant = 0, i.e. the variable is unchanged.
      *  The underlying integer array is parallel to the sorted list of variable names.
-     *  For a mapping x -> c+f*x and corresponding dispenser value m mod b,
+     *  For a mapping x -&gt; c+f*x and corresponding dispenser value m mod b,
      *  the new expression is c + f*(m+b*x) = (c+f*m) + (f*b)*x.
      *  @return a new {@link RefiningMap} with the variables mapped to the refined expressions
      */

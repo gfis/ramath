@@ -1,5 +1,6 @@
 /*  Vector: a simple, short vector of small numbers
  *  @(#) $Id: Vector.java 744 2011-07-26 06:29:20Z gfis $
+ *  2017-05-28: javadoc 1.8
  *  2016-10-06: negate(), isNegative(); gcd, lcm corrected for 0
  *  2016-07-11: hasZero
  *  2015-04-05: gcd, isPowerSum repaired
@@ -199,6 +200,7 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
      *  Only sequences of digits (optionally preceeded by a sign)
      *  are recognized, all other characters are ignored.
      *  @param line String to be splitted
+     *  @return extracted Vector
      */
     public static Vector read(String line) {
         ArrayList<Integer> alist = new ArrayList<Integer>();
@@ -299,7 +301,7 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
 
     /** Gets the (first) position of an element in <em>this</em> Vector.
      *  @param elem search for this element
-     *  @return index >= 0 of <em>elem</em> in <em>this</em> Vector, or -1 if not found
+     *  @return index &gt;= 0 of <em>elem</em> in <em>this</em> Vector, or -1 if not found
      */
     public int indexOf(int elem) {
         int result = -1;
@@ -466,7 +468,7 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
     } // isConstant
 
     /** Determines whether the Vector has a single non-zero element
-     *  @return the index of that element >= 0, if it exists, or < otherwise
+     *  @return the index of that element &gt;= 0, if it exists, or &lt; otherwise
      */
     public int getSingleIndex() {
         int result = -1;
@@ -508,7 +510,7 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
     } // gcd(a, b)
 
     /** Greatest common divisor of <em>this</em> Vector's elements
-     *  @return an integer >= 1
+     *  @return an integer &gt;= 1
      */
     public int gcd() {
         return gcd(this.vector);
@@ -516,7 +518,7 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
 
     /** Greatest common divisor of some array's elements
      *  @param vect the array
-     *  @return an integer >= 1
+     *  @return an integer &gt;= 1
      */
     public static int gcd(int[] vect) {
         int result = Math.abs(vect[0]);
@@ -573,17 +575,17 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
     } // lcm(array)
 
     /** Determine the greatest common divisor of this Vector's elements,
-     *  and divide all elements by this gcd if it is > 1
-     *  @return an integer >= 1
+     *  and divide all elements by this gcd if it is &gt; 1
+     *  @return an integer &gt;= 1
      */
     public int extractGcd() {
         return this.extractGcd(this.vector);
     } // extractGcd()
 
     /** Determine the greatest common divisor of some array's elements,
-     *  and divide all elements by this GCD if it is > 1
+     *  and divide all elements by this GCD if it is &gt; 1
      *  @param vect extract the GCD from this array
-     *  @return an integer >= 1
+     *  @return an integer &gt;= 1
      */
     public static int extractGcd(int[] vect) {
         int result = Vector.gcd(vect);
@@ -909,7 +911,7 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
     } // absSum
 
     /** Determines the sum of the last bits of all elements
-     *  @return 0 if all elements are even, 1 if exactly one element is odd, > 1 otherwise
+     *  @return 0 if all elements are even, 1 if exactly one element is odd, &gt; 1 otherwise
      */
     public int lastBitSum() {
         int result = 0;

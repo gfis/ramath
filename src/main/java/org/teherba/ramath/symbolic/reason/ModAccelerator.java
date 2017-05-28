@@ -1,5 +1,6 @@
 /*  ModAccelerator: replace variables by fractions as long as foreign GCD is > 0
  *  @(#) $Id: ModAccelerator.java 970 2012-10-25 16:49:32Z gfis $
+ *  2017-05-28: javadoc 1.8
  *  2016-07-09: Signature
  *  2015-09-13: renamed fromPythagorasReason
  *  2015-09-11, Georg Fischer: copied from EvenExponentReason.java
@@ -38,7 +39,7 @@ import  java.math.BigInteger;
  *  all {@link Polynomial}s are investigated as follows.
  *  For all {@link Monomial}s except one (the "missing" Monomial) the GCD of
  *  the coefficients is computed.
- *  For all such GCDs > 1, the variable in the missing Monomial must be divisible by that
+ *  For all such GCDs &gt; 1, the variable in the missing Monomial must be divisible by that
  *  GCD, and the variable is therefore replaced by a multiple of the GCD.
  *  The process is repeated until no such variable can be found anymore.
  *  If the missing Monomial was the constant, the RelationSet fails.
@@ -74,15 +75,15 @@ public class ModAccelerator extends BaseReason {
     /** Determines whether a {@link Polynomial} can be "accelerated".
      *  For all {@link Monomial}s except one (the "missing" Monomial) the GCD of
      *  the coefficients is computed.
-     *  For all such GCDs > 1, the variable in the missing Monomial 
-     *  must be divisible by that GCD, and the variable is therefore 
+     *  For all such GCDs &gt; 1, the variable in the missing Monomial
+     *  must be divisible by that GCD, and the variable is therefore
      *  replaced by a multiple of the GCD.
      *  The process is repeated until no such variable can be found anymore.
      *  If the missing Monomial was the constant, the RelationSet fails.
      *  @param poly2 Polynomial to be investigated
      *  @param upperSubst whether to substitute uppercase variables (default: true)
      *  @param rmap2 current {@link RefiningMap} defining the state of the expansion
-     *  @return "factor*vname" if a variable could be accelerated, 
+     *  @return "factor*vname" if a variable could be accelerated,
      *  or the empty String if no more acceleratable variables were found.
      *  <p>
      *  Caution, side effect: rmap2 is modified
@@ -94,8 +95,8 @@ public class ModAccelerator extends BaseReason {
         BigInteger[] coeffs = new BigInteger[plen]; // corresponding array of Coefficients
         int
         imono = 0;
-        Iterator<Signature> miter = poly2.keySet().iterator(); 
-        while (miter.hasNext()) { // over ALL Monomials: get both arrays 
+        Iterator<Signature> miter = poly2.keySet().iterator();
+        while (miter.hasNext()) { // over ALL Monomials: get both arrays
             Signature sig2 = miter.next();
             Monomial mono2 = poly2.get(sig2);
             monoms[imono] = mono2;

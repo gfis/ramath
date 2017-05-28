@@ -1,5 +1,6 @@
 /*  Exhaustive generator for power identities
  *  @(#) $Id: MatrixExhauster.java 808 2011-09-20 16:56:14Z gfis $
+ *  2017-05-28: javadoc 1.8
  *  2016-04-14: m2comp
  *  2015-03-23: v2
  *  2013-07-28: with linear.Matrix
@@ -318,22 +319,22 @@ public class MatrixExhauster {
         for (m22 = minDigit; m22 < maxDigit; m22 ++) {
         for (m23 = minDigit; m23 < maxDigit; m23 ++) {
         if (m21 != 0 && m22 != 0 && m23 != 0) {
-		if (! (m11 == m21 && m12 == m22 && m13 == m23)) { // rows 1, 2 differ
-        	
+        if (! (m11 == m21 && m12 == m22 && m13 == m23)) { // rows 1, 2 differ
+
         for (m31 = minDigit; m31 < maxDigit; m31 ++) {
         for (m32 = minDigit; m32 < maxDigit; m32 ++) {
         for (m33 = minDigit; m33 < maxDigit; m33 ++) {
         if (m31 != 0 && m32 != 0 && m33 != 0) {
-		if (! (m11 == m31 && m12 == m32 && m13 == m33)) { // rows 1, 3 differ
-		if (! (m21 == m31 && m22 == m32 && m23 == m33)) { // rows 2, 3 differ
+        if (! (m11 == m31 && m12 == m32 && m13 == m33)) { // rows 1, 3 differ
+        if (! (m21 == m31 && m22 == m32 && m23 == m33)) { // rows 2, 3 differ
 
-		if (! (m11 == m12 && m21 == m22 && m31 == m32)) { // cols 1, 2 differ
-		if (! (m11 == m13 && m21 == m23 && m31 == m33)) { // cols 1, 3 differ
-		if (! (m12 == m13 && m22 == m23 && m32 == m33)) { // cols 2, 3 differ
+        if (! (m11 == m12 && m21 == m22 && m31 == m32)) { // cols 1, 2 differ
+        if (! (m11 == m13 && m21 == m23 && m31 == m33)) { // cols 1, 3 differ
+        if (! (m12 == m13 && m22 == m23 && m32 == m33)) { // cols 2, 3 differ
 
         vmap1.put("a11", String.valueOf(m11));
         vmap1.put("a12", String.valueOf(m12));
-        vmap1.put("a13", String.valueOf(m13));       
+        vmap1.put("a13", String.valueOf(m13));
         vmap1.put("a21", String.valueOf(m21));
         vmap1.put("a22", String.valueOf(m22));
         vmap1.put("a23", String.valueOf(m23));
@@ -534,6 +535,7 @@ public class MatrixExhauster {
 
     /** pEC221: Pythagorean triples - like v2,
      *  but ensure *[0,1,1] = 0, *[1,0,1] = 0, and later [3,4,5] = 0
+     *  @param vect0 start Vector
      */
     public void pEC221(Vector vect0) {
         int powers[] = new int[MAXPOW];
@@ -735,7 +737,7 @@ public class MatrixExhauster {
     /** Gets the (first) position of an element in an <em>int</em> array
      *  @param arr search in this array
      *  @param elem search for this element
-     *  @return index >= 0 of <em>elem</em> in <em>arr</em>, or -1 if not found
+     *  @return index &gt;= 0 of <em>elem</em> in <em>arr</em>, or -1 if not found
      */
     public static int indexOf(int[] arr, int elem) {
         int result = -1;
@@ -805,13 +807,13 @@ gain: 54
         tmodset[36] = true;
         tmodset[55] = true;
         tmodset[62] = true;
-        
+
         int MAXLIST = 256;
         Object[] vlist = new Object[MAXLIST];
         for (int ilist = 0; ilist < MAXLIST; ilist ++) {
             vlist[ilist] = null;
         } // for ilist
-        
+
         vlist[  0] = new int[] { };
         vlist[  6] = new int[] { -3,-4,-5 };
         vlist[  9] = new int[] { -1,-6,-8 };
@@ -1148,7 +1150,7 @@ gain: 54
             if (ru4a < su4a) {
             su4p = su3p + s4*s4*s4;
             if (su4p == 0) { // s preserves twice
-        /*      
+        /*
             t1 = m11*s1 + m12*s2 + m13*s3 + m14*s4;
             if (t1 > 0) { //  && t1 < MAXLIST && vlist[t1] != null ) {
             t1a  =        Math.abs(t1);

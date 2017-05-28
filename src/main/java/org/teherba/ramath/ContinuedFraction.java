@@ -1,8 +1,9 @@
 /*  ContinuedFraction: a continued fraction in an array list of BigIntegers
  *  @(#) $Id: ContinuedFraction.java 738 2011-07-12 15:14:44Z gfis $
+ *  2017-05-28: javadoc 1.8
  *  2015-06-17: BigRational extends BigInteger
  *  2014-04-08: use BigInteger.valueOf(long)
- *  2013-08-21: denom -> numerator, nomin -> denominator
+ *  2013-08-21: denom -&gt; numerator, nomin -&gt; denominator
  *  2009-09-01: solvePellEquation
  *  2008-10-30, Georg Fischer: copied from BigRational
  */
@@ -545,7 +546,7 @@ public class ContinuedFraction extends ArrayList/*1.5*/<BigRational>/*1.5*/  {
     } // sqrtOf(n)
 
     /** Solves a Pell equation of the form <em>n * x<sup>2</sup> + y<sup>2</sup> = +- 1</em> by searching
-     *  for fitting partial fractions </em>y/x</em> in the continued fraction expansion of sqrt(n).
+     *  for fitting partial fractions <em>y/x</em> in the continued fraction expansion of sqrt(n).
      *  Example (from http://en.wikipedia.org/wiki/Pell%27s_equation)
      *  <blockquote>
      *  ... for n = 7 ... the fundamental solution is formed by the pair (8, 3).

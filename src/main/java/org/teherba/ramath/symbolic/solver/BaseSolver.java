@@ -533,7 +533,7 @@ public class BaseSolver extends Stack<RelationSet> {
      *  Binary expansion (for example) replaces all variables x_i by 0+2*x_j and 1+2*x_j (j=i+1).
      *  The constants which are added run from (0,0,0 ... 0), (1,0,0 ... 0) ... through to (1,1,1 ... 1);
      *  they are obtained from a {@link ModoMeter}.
-     *  @param queueIndex position in the queue of the element ({@link RelationSet}) to be expanded, >= 0
+     *  @param queueIndex position in the queue of the element ({@link RelationSet}) to be expanded, &gt;= 0
      */
     public void expand(int queueIndex) {
         RelationSet rset1 = this.get(queueIndex); // expand this element (the "parent")

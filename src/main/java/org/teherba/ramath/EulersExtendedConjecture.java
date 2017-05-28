@@ -1,6 +1,7 @@
 /*  Test Euler's Extended Conjecture by brute force;
  *  compute tuples of the form a^3 + b^3 + c^3 = d^3
  *  @(#) $Id: EulersExtendedConjecture.java 182 2009-07-02 04:29:14Z gfis $
+ *  2017-05-28: javadoc 1.8
  *  2015-09-27: Choudhry
  *  2014-04-08: use BigInteger.valueOf(long)
  *  2013-08-08: methods renamed and parameters aligned, Vector.gcd
@@ -142,6 +143,7 @@ public class EulersExtendedConjecture {
     } // evaluateTuple
 
     /** Evaluate (1,2) tuples up to some maximum index of the kth base number
+     *  @return array of Vectors
      */
     public ArrayList<Vector> run_2_2_1() {
         int        i1, i2, i3;
@@ -188,6 +190,7 @@ a^2 + b^2 = c^2
 a^2 +
 */
     /** Evaluate (3,1) cubic tuples
+     *  @return array of Vectors
      */
     public ArrayList<Vector> run_3_3_1() {
         int        i1, i2, i3, i4;
@@ -220,6 +223,7 @@ a^2 +
 
     /** Evaluate (2,2) cubic tuples
      *  (not yet called)
+     *  @return array of Vectors
      */
     public ArrayList<Vector> run_3_2_2() {
         BigInteger a1, a2, a3, a4, sum, a4_3, a3_2;
@@ -255,6 +259,7 @@ a^2 +
     } // run_3_2_2
 
     /** Evaluate (4,1) biquadratic tuples
+     *  @return array of Vectors
      */
 /*
 # elapsed 3044 ms
@@ -340,6 +345,7 @@ a^2 +
     } // run_4_4_1
 
     /** Evaluate (5,1) quintic tuples
+     *  @return array of Vectors
      */
     public ArrayList<Vector> run_5_5_1() {
         int        i1, i2, i3, i4, i5, i6;
@@ -392,7 +398,9 @@ a^2 +
      *  up to some limit of the parameter values.
      *  <pre>
      *  a^3 + b^3 + c^3 = d^3
+     *  </pre>
      *  @param limit abs(max(m, n))
+     *  @return array of Vectors
      */
     public ArrayList<Vector> evalDutch1  (int limit) {
         int m, t, f, a, b, c, d;
@@ -417,7 +425,9 @@ DATA ((2*m - 1)*(2*m^3 -  6*m^2 + 0*m - 1))^3
    + ((1*m + 1)*(3*m^3 -  3*m^2 + 3*m    ))^3
    - ((2*m - 1)*(3*m^3 -  3*m^2 + 3*m    ))^3
      *  a^3 + b^3 + c^3 = d^3
+     *  </pre>
      *  @param limit abs(max(m, n))
+     *  @return array of Vectors
      */
     public ArrayList<Vector> evalDutch2  (int limit) {
         int m, t, f, a, b, c, d;
@@ -438,7 +448,9 @@ DATA ((2*m - 1)*(2*m^3 -  6*m^2 + 0*m - 1))^3
      *  up to some limit of the parameter values.
      *  <pre>
      *  a^3 + b^3 = c^3 + d^3
+     *  </pre>
      *  @param limit abs(max(m, n))
+     *  @return array of Vectors
      */
     public ArrayList<Vector> evalKorneck3(int limit) {
         int m, t, f, a, b, c, d;
@@ -459,12 +471,13 @@ DATA ((2*m - 1)*(2*m^3 -  6*m^2 + 0*m - 1))^3
         return list;
     } // evalKorneck3
 
-
     /** Evaluates Choudhry's formula (1997) for cubic diophantine equations
      *  up to some limit of the parameter values.
      *  <pre>
      *  a^3 + b^3 = c^3 + d^3
+     *  </pre>
      *  @param limit abs(max(m, n))
+     *  @return array of Vectors
      */
     public ArrayList<Vector> evalChoudry3(int limit) {
         int u, v, w, x, y, z, a, b, c, d;
@@ -497,7 +510,8 @@ DATA ((2*m - 1)*(2*m^3 -  6*m^2 + 0*m - 1))^3
      *  y =   n*m^3 + n^4
      *  z = m^4 +   n^3*m
      *  </pre>
-     @param limit limit for absolute value of parameters w, x, y, z
+     *  @param limit limit for absolute value of parameters w, x, y, z
+     *  @return array of Vectors
      */
     public ArrayList<Vector> evalVieta3(int limit) {
         int n, m, w, x, y, z;

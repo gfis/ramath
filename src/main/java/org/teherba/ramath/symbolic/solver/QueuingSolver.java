@@ -113,7 +113,7 @@ public class QueuingSolver extends BaseSolver {
      *  The constants which are added run from (0,0,0 ... 0), (1,0,0 ... 0) ... through to (1,1,1 ... 1);
      *  they are obtained from a {@link ModoMeter}.
      *  @param curIndex position in the queue of the node
-     *  ({@link RelationSet}) to be expanded, >= 0
+     *  ({@link RelationSet}) to be expanded, &gt;= 0
      */
     public void expand(int curIndex) {
         RelationSet rset1 = this.get(curIndex); // expand this element (the "parent")

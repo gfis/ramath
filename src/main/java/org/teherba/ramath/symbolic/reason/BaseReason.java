@@ -48,7 +48,7 @@ public class BaseReason {
      */
     protected static int debug = 0;
 
-    /** Additonal parameter for testing, only affective if <em>debug >= 1</em>.
+    /** Additonal parameter for testing, only affective if <em>debug &gt;= 1</em>.
      */
     protected static String testParm = "";
 
@@ -247,7 +247,7 @@ public class BaseReason {
             BaseReason reason = factory.getReason(code);
             debug = localDebug;
             if (reason != null) {
-            	String message = reason.consider(0, rset1, rset2);
+                String message = reason.consider(0, rset1, rset2);
                 solver.getWriter().println(reason.getClass().getSimpleName() + ".consider(\n\t\""
                         + rset1.niceString() + "\", \n\t\""
                         + rset2.niceString() + "\") = \n\t"

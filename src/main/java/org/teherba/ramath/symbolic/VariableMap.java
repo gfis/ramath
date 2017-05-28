@@ -1,8 +1,9 @@
 /*  VariableMap: maps a set of variables to their values or substitution formulas
  *  @(#) $Id: VariableMap.java 538 2010-09-08 15:08:36Z gfis $
+ *  2017-05-28: javadoc 1.8
  *  2016-04-25: addTo
  *  2016-01-04: getFirstName
- *  2015-09-08: substitute with divisor b = constant 
+ *  2015-09-08: substitute with divisor b = constant
  *  2015-08-30: deflateIt
  *  2015-08-19: multiplyBy, substitute
  *  2015-04-26: old_triviality returns String
@@ -151,10 +152,10 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
     } // addTo
 
     /** Returns a {@link VariableMap} constructed from a String representation,
-     *  @param input the input String, with whitespace, maybe 
+     *  @param input the input String, with whitespace, maybe
      *  enclosed in square or curly brackets,
-     *  for example "{a=>-a-1,b=>-b-1,c=>-c-1,d=>-d-1}"
-     *  The left sides are mapped to the right side by "=>" or "->". 
+     *  for example "{a=&gt;-a-1,b=&gt;-b-1,c=&gt;-c-1,d=&gt;-d-1}"
+     *  The left sides are mapped to the right side by "=&gt;" or "-&gt;".
      *  @return a reference to a new {@link VariableMap}
      */
     public static VariableMap parse(String input) {
@@ -196,9 +197,9 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
     /*-------------- lightweight methods -----------------------------*/
 
     /** Returns a string representation of the variable map,
-     *  enclosed in curly brackets, separated by ",", 
-     *  and with "=>" for the mapping operator.
-     *  @return "{a=>3,b=>4,c=>5}", for example
+     *  enclosed in curly brackets, separated by ",",
+     *  and with "=&gt;" for the mapping operator.
+     *  @return "{a=&gt;3,b=&gt;4,c=&gt;5}", for example
      */
     public String toString() {
         StringBuffer result = new StringBuffer(256);
@@ -306,9 +307,10 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
     /*----------------
         Set Operations
     */
-    /** Removes from <em>this</em> VariableMap all variables 
+    /** Removes from <em>this</em> VariableMap all variables
      *  occurring in a 2nd map, and returns <em>this</em> modified map
      *  @param map2 defines the keys tp be removed
+     *  @return reference to <em>this</em> VariableMap which was modified
      */
     public VariableMap remove(Map<String, String> map2) {
         Iterator<String> miter = map2.keySet().iterator();
@@ -318,7 +320,7 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
         } // while miter
         return this;
     } // remove
-    
+
     /*----------------
         Arithmetics
     */
@@ -360,14 +362,14 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
 
     /** Multiplies the variable vector of <em>this</em> {@link VariableMap}
      *  with a {@link Matrix}.
-     *  @param amat a Matrix of integers with the same dimension 
-     *  @return reference to <em>this</em> VariableMap with the 
+     *  @param amat a Matrix of integers with the same dimension
+     *  @return reference to <em>this</em> VariableMap with the
      *  values replaced by the innerproduct of some matrix row times the variable vector.
      */
     public VariableMap multiplyBy(Matrix amat) {
         int len = this.size();
-        if (amat.size() != len) { 
-            throw new IllegalArgumentException("VariableMap of size " + len 
+        if (amat.size() != len) {
+            throw new IllegalArgumentException("VariableMap of size " + len
                     +  " cannot be multiplied by Matrix of size " + amat.size());
         } else {
             String[] names = this.getNameArray();
@@ -469,20 +471,20 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
 
     /** Substitutes variable names with the expressions from <em>this</em> Map (if they are not null),
      *  and returns the replaced String.
-     *  @param source replace variable names in this String, 
+     *  @param source replace variable names in this String,
      *  which must be derived from {@link RelationSet#toString toString(1)},
-     *  that is a full representation with "^1" 
+     *  that is a full representation with "^1"
      *  @return the new String with variable names replaced
      */
     public String substitute(String source) {
         return substitute(source, true);
     } // substitute(String)
-    
+
     /** Substitutes variable names with the expressions from <em>this</em> Map (if they are not null),
      *  and returns the replaced String.
-     *  @param source replace variable names in this String, 
+     *  @param source replace variable names in this String,
      *  which must be derived from {@link RelationSet#toString toString(1)},
-     *  that is a full representation with "^1" 
+     *  that is a full representation with "^1"
      *  @param upperSubst whether to substitute uppercase variables (default: true)
      *  @return the new String with variable names replaced
      */

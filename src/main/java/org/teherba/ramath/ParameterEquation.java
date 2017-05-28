@@ -1,8 +1,9 @@
 /*  Evaluate parameterized Diophantine equations
  *  @(#) $Id: ParameterEquation.java 808 2011-09-20 16:56:14Z gfis $
+ *  2017-05-28: javadoc 1.8
  *  2015-08-24: VariableMap instead of TreeMap
  *  2014-04-08: use BigInteger.valueOf(long)
- *  2013-05-26: negative limit => offset
+ *  2013-05-26: negative limit =&gt; offset
  *  2011-07-24: read some parameterized formula and evaluate it
  *  2009-06-01, Georg Fischer
  */
@@ -82,6 +83,7 @@ public class ParameterEquation {
     /** Gets the element with the kth power of it's index,
      *  eventually computing this element and the ones before it.
      *  @param i index of the element to be returned
+     *  @return kth power
      */
     public BigInteger get(int i)  {
         BigInteger result;
@@ -303,6 +305,7 @@ public class ParameterEquation {
      *  x = 2*n*m^3 - n^4
      *  y =   n*m^3 + n^4
      *  z = m^4 +   n^3*m
+     *  </pre>
      *  @param limit abs(max(m, n))
      */
     public void evalVieta3(int limit) {
@@ -325,6 +328,7 @@ public class ParameterEquation {
      *  and print (m, n, w, x, y, z) separated by tabs.
      *  <pre>
      *  a^3 + b^3 = c^3 + d^3
+     *  </pre>
      *  @param limit abs(max(m, n))
      */
     public void evalKorneck3(int limit) {

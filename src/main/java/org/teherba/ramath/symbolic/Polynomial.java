@@ -1,18 +1,19 @@
 /*  Polynomial: a symbolic, multivariate Polynomial with addition, multiplication,
  *  exponentiation, comparision and other operations
  *  @(#) $Id: Polynomial.java 744 2011-07-26 06:29:20Z gfis $
+ *  2017-05-28: javadoc 1.8
  *  2016-07-09: Signature
  *  2016-04-14: isPreservedBy(Matrix)
  *  2016-03-31: Brahmagupta identity
  *  2016-02-03: derivative(varx, order)
- *  2015-12-06: toString(boolean) -> toString(1)
+ *  2015-12-06: toString(boolean) -&gt; toString(1)
  *  2015-11-16: Groebner bases moved to Ideal.java
  *  2015-07-17: degree, isHomogeneous
  *  2015-06-17: modulus removed, coefficients are BigRatiaonal again
  *  2015-03-25: isPowerSum
  *  2015-02-13: getTransposition
  *  2014-04-04: getIndivisiblePart(2)
- *  2013-09-20: BigRational -> BigIntegerUtil
+ *  2013-09-20: BigRational -&gt; BigIntegerUtil
  *  2013-08-30: property modulus, serialVersionUID = 2L
  *  2013-08-26: Buchberger's algorithm
  *  2013-08-12: groupBy, getVariablePowers
@@ -278,7 +279,7 @@ public class Polynomial implements Cloneable, Serializable {
     } // getPseudo
 
     /** Inserts the pseudo property.
-     *  @param pseudo
+     *  @param pseudo property
      */
     protected void setPseudo(int pseudo) {
         this.pseudo = pseudo;
@@ -308,7 +309,7 @@ public class Polynomial implements Cloneable, Serializable {
     } // size
 
     /** Returns a String representation of <em>this</em> {@link Polynomial}, either compressed or full
-     *  @param mode 
+     *  @param mode
      *  <ul>
      *  <li>0 = normal</li>
      *  <li>1 = full (for substitution), with coefficients 1 and relation " = 0"</li>
@@ -430,7 +431,7 @@ public class Polynomial implements Cloneable, Serializable {
     } // isZero
 
     /** Determines whether all {@link Monomial}s in <em>this</em> {@link Polynomial}
-     *  have the same sign. When all variables are assumed to have values >= 0,
+     *  have the same sign. When all variables are assumed to have values &gt;= 0,
      *  a biased Polynomial has no non-trivial solutions.
      *  @return true if the Polynomial has one type of sign and a constant, or false otherwise
      */
@@ -460,7 +461,7 @@ public class Polynomial implements Cloneable, Serializable {
     public Signature getIsolatedSignature() {
         return getIsolatedSignature(true); // get with upper or lower case first letter
     } // getIsolatedSignature()
-    
+
     /** Gets the {@link Signature} of a {@link Monomial} with a variable
      *  having exponent 1, and which does not occur otherwise in <em>this</em>
      *  {@link Polynomial}, or <em>null</em> if no such variable exists.
@@ -531,7 +532,7 @@ public class Polynomial implements Cloneable, Serializable {
     } // isPowerSum
 
     //----------------
-    /** Determines whether <em>this</em> {@link Polynomial} is preserved when 
+    /** Determines whether <em>this</em> {@link Polynomial} is preserved when
      *  its variable vector is multiplied by the parameter {@link Matrix}.
      *  @param amat Matrix to be multiplied on the variable Vector
      *  @return true if the Polynomial still evaluates to zero, or false otherwise
@@ -716,7 +717,7 @@ public class Polynomial implements Cloneable, Serializable {
      *  [0]   [4] [1]   [2]   [4] [3]
      *  (a^2 + n * b^2)*(c^2 + n * d^2) = (ac - nbd)^2 + n(ad + bc)^2
      *                                    [   0    ]      [   1   ]
-     *  (a^2 + n * b^2)*(c^2 + n * d^2) = (ac + nbd)^2 + n(ad - bc)^2 
+     *  (a^2 + n * b^2)*(c^2 + n * d^2) = (ac + nbd)^2 + n(ad - bc)^2
      *                                    [   2    ]      [   3   ]
      *  </pre>
      *  @param poly input Polynomials for the formula
@@ -988,7 +989,7 @@ public class Polynomial implements Cloneable, Serializable {
     /** Determines the degree, that is the sum of exponents in all {@link Monomial}s
      *  if it is the same in all Monomials
      *  @param upperSubst whether the exponents of uppercase variables should be counted
-     *  @return degree >= 0, or -1 if the {@link Polynomial} has Monomials with different degrees
+     *  @return degree &gt;= 0, or -1 if the {@link Polynomial} has Monomials with different degrees
      */
     public int degree(boolean upperSubst) {
         int result = 0;
@@ -1007,7 +1008,7 @@ public class Polynomial implements Cloneable, Serializable {
 
     /** Determines the degree, that is the sum of exponents in all {@link Monomial}s
      *  if it is the same in all Monomials
-     *  @return degree >= 0, or -1 if the {@link Polynomial} has Monomials with different degrees
+     *  @return degree &gt;= 0, or -1 if the {@link Polynomial} has Monomials with different degrees
      */
     public int degree() {
         return degree(true);
@@ -1032,7 +1033,7 @@ public class Polynomial implements Cloneable, Serializable {
     /** Determines the maximum of the exponents for some variable in all {@link Monomial}s
      *  of <em>this</em> {@link Polynomial}
      *  @param varName determine the maximum degree of this variable
-     *  @return maxDegree >= 0
+     *  @return maxDegree &gt;= 0
      */
     public int maxDegree(String varName) {
         int result = 0;
@@ -1049,7 +1050,7 @@ public class Polynomial implements Cloneable, Serializable {
     /** Determines the maximum degree, that is the sum of exponents in all {@link Monomial}s
      *  irrespective of the variable names
      *  @param upperSubst whether the exponents of uppercase variables should be counted
-     *  @return maxDegree >= 0
+     *  @return maxDegree &gt;= 0
      */
     public int maxDegree(boolean upperSubst) {
         int result = 0;
@@ -1065,7 +1066,7 @@ public class Polynomial implements Cloneable, Serializable {
 
     /** Determines the maximum degree, that is the sum of exponents in all {@link Monomial}s
      *  irrespective of the variable names
-     *  @return maxDegree >= 0
+     *  @return maxDegree &gt;= 0
      */
     public int maxDegree() {
         return this.maxDegree(true);
@@ -1141,7 +1142,7 @@ public class Polynomial implements Cloneable, Serializable {
      *  @return a RelationSet with one Polynomial for each variable combination
      */
     public RelationSet groupBy(Monomial mono2) {
-    	Polynomial prest = this.clone();
+        Polynomial prest = this.clone();
         RelationSet result = new RelationSet();
         Polynomial poly3 = this.getVariablePowers(mono2);
         Iterator <Signature> piter3 = poly3.monomials.keySet().iterator();
@@ -1165,8 +1166,8 @@ public class Polynomial implements Cloneable, Serializable {
             prest = prest.subtract(poly4.multiply(new Polynomial(mono3)));
         } // while titer
         if (! prest.isZero() || result.size() == 0) {
-	        result.insert(prest);
-	    }
+            result.insert(prest);
+        }
         return result;
     } // groupBy
 
@@ -1187,7 +1188,7 @@ public class Polynomial implements Cloneable, Serializable {
         return result;
     } // getRest
 
-    /** Extracts, from <em>this<em> {@link Polynomial},
+    /** Extracts, from <em>this</em> {@link Polynomial},
      *  a new {@link RelationSet} with a Polynomial
      *  for each power of the parameter variable.
      *  These Polynomials gather the factors of the variable's power.
@@ -1229,7 +1230,7 @@ public class Polynomial implements Cloneable, Serializable {
 
     // Elimination of lower power terms
 
-    /** Modifies <em>this<em> {@link Polynomial} such that
+    /** Modifies <em>this</em> {@link Polynomial} such that
      *  all {@link Monomial}s consisting of a power of a variable
      *  "consumes" as much as possible of the {@link Coefficient} into
      *  the variable, and adjusts the {@link VariableMap} accordingly
@@ -1238,7 +1239,7 @@ public class Polynomial implements Cloneable, Serializable {
      *  are {@link Monomial#isUniVariate univariate},
      *  that is they contain only one variable.
      *  @param vmap map of variable names to expression strings
-     *  @return <em>this<em> modified {@link Polynomial};
+     *  @return <em>this</em> modified {@link Polynomial};
      *  side effect: modifies <em>vmap</em>
      */
     public Polynomial reducePowerCoefficients(VariableMap vmap) {
@@ -1428,7 +1429,7 @@ public class Polynomial implements Cloneable, Serializable {
      *  and the reduced Polynomial mapped from "" (the empty String)
      *  <p>Trace of testcase LR1:
      *  <pre>
-start0 x, phead=0, pbody=x^2 - 4*x*y + 8*x*z, ptail=2*y^2 - 7*z^2, vmapt={x=>x,y=>y,z=>z}
+start0 x, phead=0, pbody=x^2 - 4*x*y + 8*x*z, ptail=2*y^2 - 7*z^2, vmapt={x=&gt;x,y=&gt;y,z=&gt;z}
 start1 x, pbody= - 4*y + 8*z, fbody=1, mlead= + x^2
 start2 x, phead=0, pbody= - 4*y + 8*z, ptail=2*y^2 - 7*z^2, mlead= + x^2, fbody=1, gcdv1=4
 loop1 x, pflead=1, wide1=1, widev=1, flead=1, coef1=4, root2=1, divs1=2, qrest[0]=2, qrest[1]=0, pbody= - 4*y + 8*z
@@ -1436,9 +1437,9 @@ loop2 x, widev=1, flead=1, coef1=2, pbody= - 2*y + 4*z
 before x, phead=0, pbody= - 2*y + 4*z, ptail=2*y^2 - 7*z^2, mlead= + x^2, flead=1, root2=1, widev=1
 after2 x, pbody= - 2*y + 4*z, ptail= - 2*y^2 + 16*y*z - 23*z^2
 after3 x, phead=x^2, pbody= - 2*y + 4*z
-after  x, phead=x^2, pbody= - 2*y + 4*z, ptail= - 2*y^2 + 16*y*z - 23*z^2, vmapt={x=> - 2*y + 4*z+x,y=>y,z=>z}
+after  x, phead=x^2, pbody= - 2*y + 4*z, ptail= - 2*y^2 + 16*y*z - 23*z^2, vmapt={x=&gt; - 2*y + 4*z+x,y=&gt;y,z=&gt;z}
 
-start0 y, phead=x^2, pbody= - 2*y^2 + 16*y*z, ptail= - 23*z^2, vmapt={x=> - 2*y + 4*z+x,y=>y,z=>z}
+start0 y, phead=x^2, pbody= - 2*y^2 + 16*y*z, ptail= - 23*z^2, vmapt={x=&gt; - 2*y + 4*z+x,y=&gt;y,z=&gt;z}
 start1 y, pbody= - 8*z, fbody=-2, mlead= + y^2
 start2 y, phead=x^2, pbody= - 8*z, ptail= - 23*z^2, mlead= + y^2, fbody=-2, gcdv1=8
 loop1 y, pflead=1, wide1=1, widev=1, flead=1, coef1=8, root2=1, divs1=2, qrest[0]=4, qrest[1]=0, pbody= - 8*z
@@ -1446,14 +1447,14 @@ loop2 y, widev=1, flead=1, coef1=4, pbody= - 4*z
 before y, phead=x^2, pbody= - 4*z, ptail= - 23*z^2, mlead= + y^2, flead=1, root2=1, widev=1
 after2 y, pbody= - 4*z, ptail=9*z^2
 after3 y, phead=x^2 - 2*y^2, pbody= - 4*z
-after  y, phead=x^2 - 2*y^2, pbody= - 4*z, ptail=9*z^2, vmapt={x=> - 2*y + 4*z+x,y=> - 4*z+y,z=>z}
+after  y, phead=x^2 - 2*y^2, pbody= - 4*z, ptail=9*z^2, vmapt={x=&gt; - 2*y + 4*z+x,y=&gt; - 4*z+y,z=&gt;z}
 
-start0 z, phead=x^2 - 2*y^2, pbody=9*z^2, ptail=0, vmapt={x=> - 2*y + 4*z+x,y=> - 4*z+y,z=>z}
+start0 z, phead=x^2 - 2*y^2, pbody=9*z^2, ptail=0, vmapt={x=&gt; - 2*y + 4*z+x,y=&gt; - 4*z+y,z=&gt;z}
 zero   z, pbody == 0, fbody=9
 after3 z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0
-after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,y=> - 4*z+y,z=>z}
+after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=&gt; - 2*y + 4*z+x,y=&gt; - 4*z+y,z=&gt;z}
 
-("x^2 - 4*x*y + 2*y^2 + 8*x*z - 7*z^2").reduce() = x^2 - 2*y^2 + z^2, vmapt={x=> - 2*y + 4*z+x,y=> - 4*z+y,z=>(0+z)*3}
+("x^2 - 4*x*y + 2*y^2 + 8*x*z - 7*z^2").reduce() = x^2 - 2*y^2 + z^2, vmapt={x=&gt; - 2*y + 4*z+x,y=&gt; - 4*z+y,z=&gt;(0+z)*3}
 ("x^2 - 4*x*y + 2*y^2 + 8*x*z - 7*z^2").reduce() = x^2 - 2*y^2 + z^2
      *  </pre>
      */
@@ -1524,7 +1525,6 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
 
     /** Deflates the {@link Coefficient}s of the {@link Monomial}s in place
      *  (and also returns <em>this</em> - modified - Polynomial).
-     *  </ul>
      *  @return reference to <em>this</em> - modified - Polynomial
      */
     public Polynomial deflateIt() {
@@ -1689,8 +1689,8 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
      this  = x^4     - y^4    - z^2  = 0
      poly2 = 16*x^4  - 16*y^4 - z^2  = 0
      ------------------------------------------------
-      poly2   .isMappableTo(this ) = { x -> 2*x, y -> 2*y, z ->   z }  AND
-     (16*this).isMappableTo(poly2) = { x ->   x, y ->   y, z -> 4*z }
+      poly2   .isMappableTo(this ) = { x -&gt; 2*x, y -&gt; 2*y, z -&gt;   z }  AND
+     (16*this).isMappableTo(poly2) = { x -&gt;   x, y -&gt;   y, z -&gt; 4*z }
 
      ("4 + 32*x + 96*x^2 + 128*x^3 + 64*x^4 - 64*y^4 - 4*z^2").isMappableTo("4*x^4 - 4*y^4 - z^2") = {x=2*x+1,y=2*y+0,z=2*z+0}
      </pre>
@@ -1796,7 +1796,7 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
     /** Determines whether <em>this</em> Polynomial can be transformed into <em>poly2</em>
      *  by an affine map from the variables in <em>this</em> to the variables in <em>poly2</em>.
      *  @param poly2 target Polynomial
-     *  @return String representation of the mapping from <em>this</em> to <em>poly2<em>, or <em>null</em>
+     *  @return String representation of the mapping from <em>this</em> to <em>poly2</em>, or <em>null</em>
      *  if no mapping could be determined
      */
     public String similiarity(Polynomial poly2) {
@@ -2169,9 +2169,9 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
                     // -incr
 
                 } else if (opt.startsWith("-isosig")) {
-                    // input is: poly 
+                    // input is: poly
                     poly1 = Polynomial.parse(args[iarg ++]);
-                    System.out.println("(" + poly1.toString() + ").getIsolatedSignature() = " 
+                    System.out.println("(" + poly1.toString() + ").getIsolatedSignature() = "
                                 + poly1.getIsolatedSignature());
                     // -isosig
 
@@ -2196,7 +2196,7 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=> - 2*y + 4*z+x,
 expanding queue[0]^-1: a^4 + b^4 - c^4 - d^4 meter=[2,2,2,2] *2
 solution [0,0,0,0],trivial(3)
 [0+2*a,0+2*b,0+2*c,0+2*d]:  similiar to [0], same  a^4+b^4-c^4-d^4
-[1+2*a,0+2*b,1+2*c,0+2*d]:  unknown -> [1] a+3*a^2+4*a^3+2*a^4+2*b^4-c-3*c^2-4*c^3-2*c^4-2*d^4
+[1+2*a,0+2*b,1+2*c,0+2*d]:  unknown -&gt; [1] a+3*a^2+4*a^3+2*a^4+2*b^4-c-3*c^2-4*c^3-2*c^4-2*d^4
 [0+2*a,1+2*b,1+2*c,0+2*d]:  transposed [1] {0/0+2*b,0/1+2*a,2/0+2*d,2/1+2*c} by 0+2*b|0+2*a 1+2*a|1+2*b
 */
                         String line = exprs[ipoly];

@@ -1,5 +1,6 @@
 /*  Options: methods for the access to command line arguments
  *  @(#) $Id: Options.java 744 2011-07-26 06:29:20Z gfis $
+ *  2017-05-28: javadoc 1.8
  *  2015-04-05: Georg Fischer: copied from Matrix
  */
 /*
@@ -30,7 +31,7 @@ import  java.util.regex.Matcher;
 import  java.util.regex.Pattern;
 import  org.apache.log4j.Logger;
 
-/** Class Options stores the command line arguments, 
+/** Class Options stores the command line arguments,
  *  and implements utility method to access the arguments.
  *  @author Dr. Georg Fischer
  */
@@ -55,7 +56,7 @@ public class Options {
         this(null, 0); // will not be accessible
     } // no-args Constructor
 
-    /** Constructor with array 
+    /** Constructor with array
      *  @param args array of command line String arguments
      */
     public Options(String[] args) {
@@ -96,7 +97,7 @@ public class Options {
             } catch (Exception exc) {
                 // ignore any errors
             }
-        } 
+        }
         return result;
     } // getInt
 
@@ -107,7 +108,7 @@ public class Options {
     } // unshift
 
     //------------- specific access methods --------------------------
-    
+
     /** Start of a {@link Matrix} literal */
     private static final String MAT_OPEN  = "[[";
     /** End   of a {@link Matrix} literal */
@@ -128,7 +129,7 @@ public class Options {
     public Matrix[] getMatrices() {
         return getMatrices("");
     } // getMatrices
-    
+
     /** Gets matrices either from the command line arguments, or from file(s) specified therein.
      *  Any argument starting with "[[" is taken as a {@link Matrix} literal
      *  (it cannot contain spaces).
@@ -177,7 +178,7 @@ public class Options {
                                 start = line.length();
                             } else if (closePos > openPos) {
                                 Matrix amat  = new Matrix(line.substring(openPos, closePos + MAT_CLOSE.length()));
-                                result.add(amat); 
+                                result.add(amat);
                                 start = closePos + MAT_CLOSE.length();
                                 openPos = line.indexOf(MAT_OPEN, start);
                             } else {
@@ -207,7 +208,7 @@ public class Options {
     public Vector[] getVectors() {
         return getVectors("");
     } // getVectors
-    
+
     /** Gets matrices either from the command line arguments, or from file(s) specified therein.
      *  Any argument starting with "[[" is taken as a {@link Matrix} literal
      *  (it cannot contain spaces).
@@ -253,7 +254,7 @@ public class Options {
                         if (openPos < 0) { // no VECT_OPEN found
                             if (line.matches("\\-?\\d+([\\s\\,]+\\-?\\d+)*")) { // take the whole line
                                 result.add(new Vector(VECT_OPEN + line + VECT_CLOSE));
-                            }                           
+                            }
                         } else { // VECT_OPEN found
                             while (openPos >= start) {
                                 int closePos = line.indexOf(VECT_CLOSE, openPos);
@@ -286,6 +287,7 @@ public class Options {
      *  Only sequences of digits (optionally preceeded by a sign)
      *  are recognized, all other characters are ignored.
      *  @param line String to be splitted
+     *  @return extracted Vector
      */
     public Vector read(String line) {
         ArrayList<Integer> alist = new ArrayList<Integer>();

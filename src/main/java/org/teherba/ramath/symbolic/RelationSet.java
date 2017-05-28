@@ -1,10 +1,11 @@
 /*  RelationSet: a set of polynomials which relate to zero
  *  @(#) $Id: RelationSet.java 970 2012-10-25 16:49:32Z  $
+ *  2017-05-28: javadoc 1.8
  *  2017-01-01: getRefiningMap - setMeter
- *  2016-07-24: toList(5) 
+ *  2016-07-24: toList(5)
  *  2016-01-04: PairAttributes
- *  2015-12-06: toString(boolean) -> toString(1)
- *  2015-09-10: message -> siblingIndex; s|getRelationSet
+ *  2015-12-06: toString(boolean) -&gt; toString(1)
+ *  2015-09-10: message -&gt; siblingIndex; s|getRelationSet
  *  2015-08-25: getExponentGCDs
  *  2015-06-15: RelationSet.parse was not static
  *  2015-02-19: extends Polynomial; inherit a number of methods from there
@@ -174,6 +175,7 @@ public class RelationSet
 
     /** Gets one of the {@link Polynomial}s in the relation set
      *  @param index sequential index of the Polynomial: 0, 1, 2 and so on
+     *  @return a Polynomial
      */
     public Polynomial get(int index) {
         return polynomials.get(index);
@@ -351,12 +353,12 @@ public class RelationSet
     public String toString() { // isoVar found
         return toString(0);
     } // toString()
-      
-    /** Returns a C-style assignment to an isolated variable 
-     *  for one of the member {@link Polynomial}. 
+
+    /** Returns a C-style assignment to an isolated variable
+     *  for one of the member {@link Polynomial}.
      *  Powers are expanded to multiplications.
      *  @param isoVar the isolated variable
-     *  @return for example "a =  A13 + A12*m + A11*m^2;" 
+     *  @return for example "a =  A13 + A12*m + A11*m^2;"
      *           instead of " - A13 + a - A12*m - A11*m^2;"
      */
     public String toAssignment(String isoVar) {
@@ -373,7 +375,7 @@ public class RelationSet
                     polyi.negativeOf();
                 }
                 result = isoVar + " = " + polyi.toString(5); // exp -> mult
-            } 
+            }
             ipoly ++;
         } // while ipoly
         return result;
@@ -397,9 +399,9 @@ public class RelationSet
         return buffer.toString();
     } // toFactoredString
 
-    /** Returns lines with String representations of the {@link Polynomial}s 
+    /** Returns lines with String representations of the {@link Polynomial}s
      *  in <em>this</em> {@link RelationSet}, either compressed or full
-     *  @param mode 
+     *  @param mode
      *  <ul>
      *  <li>0 = normal</li>
      *  <li>1 = full (for substitution), with coefficients 1 and relation " = 0"</li>
@@ -432,7 +434,7 @@ public class RelationSet
         return buffer.toString();
     } // toList(mode)
 
-    /** Returns lines with String representations of the {@link Polynomial}s 
+    /** Returns lines with String representations of the {@link Polynomial}s
      *  in <em>this</em> {@link RelationSet}, in compressed form
      *  @return a list of lines separated by newline
      */
@@ -444,7 +446,7 @@ public class RelationSet
     /** Determines the degree, that is the sum of exponents in all {@link Monomial}s
      *  if it is the same in all Monomials
      *  @param upperSubst whether the exponents of uppercase variables should be counted
-     *  @return degree >= 0, or -1 if the {@link Polynomial}s have Monomials with different degrees
+     *  @return degree &gt;= 0, or -1 if the {@link Polynomial}s have Monomials with different degrees
      */
     public int degree(boolean upperSubst) {
         int result = -1;
@@ -825,7 +827,7 @@ public class RelationSet
         return RelationSet.parse(vmap.substitute(this.toString(1), upperSubst));
     } // substitute(VariableMap)
 
-    /** Simplifies <em>this</em> {@link RelationSet} by substituting 
+    /** Simplifies <em>this</em> {@link RelationSet} by substituting
      *  all variables (regardless of their first letter)
      *  which occur isolated in a constituent {@link Polynomial}.
      *  Such Polynomials are removed.
@@ -835,7 +837,7 @@ public class RelationSet
         simplify(true); // upper and lower case first letter
     } // simplify()
 
-    /** Simplifies <em>this</em> {@link RelationSet} by substituting 
+    /** Simplifies <em>this</em> {@link RelationSet} by substituting
      *  variables which occur isolated in a constituent {@link Polynomial}.
      *  Such Polynomials are removed.
      *  The original RelationSet is modified.
@@ -852,7 +854,7 @@ public class RelationSet
                 polyi = this.get(ipoly);
                 isolSig = polyi.getIsolatedSignature(upperSubst); // == null if there is none
             } // while ipoly 1
-            
+
             if (isolSig != null) { // an isolated variable was found
                 Monomial monoi = polyi.get(isolSig);
                 String vname = monoi.firstName();
@@ -864,7 +866,7 @@ public class RelationSet
                 polynomials.remove(ipoly);
                 if (debug >= 1) {
                     System.out.println("isolated Signature: " + isolSig);
-                    System.out.println("isolated variable: " + vname 
+                    System.out.println("isolated variable: " + vname
                             + " with Coefficient " + coefi.toString());
                     System.out.println("remaining RelationSet: " + this.toString());
                     System.out.println("substitute by Polynomial: " + polyi.toString());
@@ -885,13 +887,13 @@ public class RelationSet
 
     /** Gets a {@link PolyVector} of values for isolated variables.
      *  <em>this</em> {@link RelationSet} should consist of
-     *  a set of equations for isolated variables, and a 
-     *  single equation which is an expression of powers of these variables 
+     *  a set of equations for isolated variables, and a
+     *  single equation which is an expression of powers of these variables
      *  which sums to zero.
-     *  @return a {@link PolyVector} with the isolated variables 
-     *  replaced by their constant values, and - hopefully - 0 
+     *  @return a {@link PolyVector} with the isolated variables
+     *  replaced by their constant values, and - hopefully - 0
      *  for the powersum.
-     */ 
+     */
     public PolyVector getIsolatedVector() {
         PolyVector result = new PolyVector(this.size());
         VariableMap vmap = new VariableMap();
@@ -922,15 +924,15 @@ public class RelationSet
         result.set(ipsum, polyi);
         return result;
     } // getIsolatedVector
-    
+
     /** Gets a {@link Vector} of values for isolated variables.
      *  <em>this</em> {@link RelationSet} should consist of
-     *  a set of equations for isolated variables, and a 
-     *  single equation which is an expression of powers of these variables 
+     *  a set of equations for isolated variables, and a
+     *  single equation which is an expression of powers of these variables
      *  which sums to zero.
-     *  @return a {@link Vector} similiar to the result of {@link #getIsolatedVector}, 
+     *  @return a {@link Vector} similiar to the result of {@link #getIsolatedVector},
      *  but the powersum element is omitted since it is required to be zero
-     */ 
+     */
     public Vector getPowerSumVector() {
         Vector result = new Vector(this.size() - 1);
         VariableMap vmap = new VariableMap();
@@ -965,9 +967,9 @@ public class RelationSet
         }
         return result;
     } // getPowerSumVector
-    
+
     /* ------------ Solver evaluation --------------- */
-    
+
     /** Evaluates a {@link RelationSet} without any proof history by evaluating
      *  all its member {@link Polynomial}s, and returning the cummulative results, whether
      *  <ul>
@@ -1026,9 +1028,9 @@ public class RelationSet
      *  @param args command line arguments
      *  When called without arguments, the output is:
      *  <pre>
-a^2 + b^2 - c^2 = 0, - a + b > 0 ;  - b + c > 0
+a^2 + b^2 - c^2 = 0, - a + b &gt; 0 ;  - b + c &gt; 0
 evaluate: unknown
-9*a_2^2 + 16*b_2^2 - 25*c_2^2 = 0 ;  - 3*a_2 + 4*b_2 > 0 ;  - 4*b_2 + 5*c_2 > 0
+9*a_2^2 + 16*b_2^2 - 25*c_2^2 = 0 ;  - 3*a_2 + 4*b_2 &gt; 0 ;  - 4*b_2 + 5*c_2 &gt; 0
      *  </pre>
      */
     public static void main(String[] args) {
@@ -1128,7 +1130,7 @@ evaluate: unknown
                     System.out.println("rest: " + rset1.getRest(new BigInteger(factor)));
                     // -rest
 
-                } else if (opt.startsWith("-simplify") ) { // expr1, expr2, ... 
+                } else if (opt.startsWith("-simplify") ) { // expr1, expr2, ...
                     if (rset1.size() == 0) {
                         exprs = ereader.getArguments(iarg, args);
                         iarg  = args.length; // ereader consumed them all
@@ -1137,7 +1139,7 @@ evaluate: unknown
                     System.out.println(rset1.toString());
                     rset1.debug = debug;
                     rset1.simplify(false); // simplify only lowercase variables
-                    if (rset1.size() > 1) {                  
+                    if (rset1.size() > 1) {
                         System.out.println("simplified: " + rset1.toString());
                     } else {
                         System.out.print  ("simplified and grouped: ");
@@ -1146,7 +1148,7 @@ evaluate: unknown
                         Monomial monog    = new Monomial(vmap1.getNameArray());
                         rset2             = poly1.groupBy(monog);
                         System.out.println(rset2.toList(5));
-                        
+
                     }
                     // -simplify
 

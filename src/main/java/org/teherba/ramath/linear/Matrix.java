@@ -1,5 +1,6 @@
 /*  Matrix: a simple, small, square matrix of small numbers
  *  @(#) $Id: Matrix.java 744 2011-07-26 06:29:20Z gfis $
+ *  2017-05-28: javadoc 1.8
  *  2016-10-06: gcd()
  *  2015-09-04: Constructor(int) presets elements to 0
  *  2015-04-17: test methods exported to MatrixTester
@@ -183,6 +184,7 @@ public class Matrix implements Cloneable, Serializable {
      *  <dt>nelem &lt;= seqNo &lt; 2* nelem </dt><dd>set the element to -1</dd>
      *  <dt>2*nelem &lt;= seqNo             </dt><dd>(leave the 0, identity matrix)</dd>
      *  </dl>
+     *  @return new elementary Matrix
      */
     public static Matrix elementary(int elen, int seqNo) {
         Matrix result = new Matrix(elen);
@@ -272,6 +274,7 @@ public class Matrix implements Cloneable, Serializable {
     /** Toggles the signs of all elements if the corresponding element
      *  in the row ordered parameter array is not zero
      *  @param values with zeroes and ones for same and negate
+     *  @return new Matrix
      */
     public Matrix toggleSigns(int[] values) {
         int ival = 0;
@@ -511,7 +514,7 @@ public class Matrix implements Cloneable, Serializable {
         return result;
     } // isZero
 
-    /** Determines how the matrix is biased: more positive (non-zero) elements, more negative, 
+    /** Determines how the matrix is biased: more positive (non-zero) elements, more negative,
      *  or the same number of positive and negative elements
      *  @return &gt; 0 if there are more positive, &lt; 0 if there are more negative, = 0 otherwise
      */
@@ -688,7 +691,7 @@ public class Matrix implements Cloneable, Serializable {
     /*-------------- heavyweight methods -----------------------------*/
 
     /** Greatest common divisor of the elements of <em>this</em> {@link Matrix}
-     *  @return an integer >= 1
+     *  @return an integer &gt;= 1
      */
     public int gcd() {
         Vector rowGCDs = new Vector(rowLen);
@@ -701,7 +704,7 @@ public class Matrix implements Cloneable, Serializable {
     } // gcd()
 
     /** Compute the determinant of <em>this</em> matrix.
-     *  For row lengths >= 4, this method is called recursively.
+     *  For row lengths &gt;= 4, this method is called recursively.
      *  @return integer determinant value
      */
     public int determinant() {

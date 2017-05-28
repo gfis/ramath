@@ -1,5 +1,6 @@
 /*  IndexPage.java - main web page for Ramath
  *  @(#) $Id: 57d01d0860aef0c2f2783647be70c3c381710c86 $
+ *  2017-05-28: javadoc 1.8
  *  2017-01-03: table cells rearranged
  *  2016-08-28: Dr. Georg Fischer: copied from Dbat
  */
@@ -59,6 +60,7 @@ public class IndexPage implements Serializable {
      *  @param form2 resulting RelationSet
      *  @param form2c like <em>form2</em> with colored prime factors
      *  @param rmap a {@link VariableMap} defining substitutions
+     *  @throws IOException for IO errors
      */
     public void dialog(HttpServletRequest request, HttpServletResponse response
             , BasePage basePage

@@ -165,7 +165,7 @@ public class PythagoreanTreeGenerator extends BaseSolver implements Serializable
     /** Expands one triple in the queue,
      *  evaluates the expanded children,
      *  and requeues all children.
-     *  @param queueIndex position in the queue of the element ({@link RelationSet}) to be expanded, >= 0
+     *  @param queueIndex position in the queue of the element ({@link RelationSet}) to be expanded, &gt;= 0
      *  The triples are stored as constants in a {@link RelationSet}.
      *  Barning's (Price's) matrixes are taken for <em>base</em> = 0 (4).
      *  they are obtained from a {@link ModoMeter}.

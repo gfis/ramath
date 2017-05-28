@@ -1,5 +1,6 @@
 /*  BigIntegerUtil: helper methods for BigInteger
  *  @(#) $Id: BigIntegerUtil.java 231 2009-08-25 08:47:16Z gfis $
+ *  2017-05-28: javadoc 1.8
  *  2015-08-11: binomial(), HREE
  *  2015-07-20: lcm(BigRationals)
  *  2014-04-08: use BigInteger.valueOf(long)
@@ -68,10 +69,12 @@ public class BigIntegerUtil {
     // the following was taken from
     // http://i12www.ira.uka.de/~bubel/nightly/doc/api/src-html/de/uka/ilkd/key/strategy/termgenerator/RootsGenerator.html
 
-    /**
-      * @return a number <tt>res</tt> with the property
-      *         <tt>prod in [res^exp, (res+1)^exp)</tt>
-      */
+    /** Computes a root
+     *  @param prod product
+     *  @param exp exponent 
+     *  @return a number <tt>res</tt> with the property
+     *  <tt>prod in [res^exp, (res+1)^exp)</tt>
+     */
     public static BigInteger root2 (BigInteger prod, int exp) {
         assert exp > 0;
         BigInteger result = null;
@@ -126,7 +129,7 @@ public class BigIntegerUtil {
     } // power
 
     /** Computes the <em>n</em>th root of some BigInteger <em>a</em>.
-     *  If <em>a</a> is no exact <em>n</em>th power of the result, the result is 0.
+     *  If <em>a</em> is no exact <em>n</em>th power of the result, the result is 0.
      *  @param a take the root of this number
      *  @param n exponent
      *  @return the exact root, or 0
@@ -205,19 +208,19 @@ public class BigIntegerUtil {
 */
     /** Computes the binomial coefficient <em>num1 choose num2</em>, that is
      *  the <em>num2</em>th entry in row <em>num1</em> of Pascal's triangle.
-     *  Code adapted from {@link <a href="http://stackoverflow.com/questions/2201113/combinatoric-n-choose-r-in-java-math">stackoverflow.com</a>}
+     *  Code adapted from <a href="http://stackoverflow.com/questions/2201113/combinatoric-n-choose-r-in-java-math">stackoverflow.com</a>
      *  @param num1 the upper parameter
      *  @param num2 the lower parameter
-     *  @return num1! / (num1 - num2)! / num2!; 
-     *  for example binomial(4,2) = 6, 
+     *  @return num1! / (num1 - num2)! / num2!;
+     *  for example binomial(4,2) = 6,
      *  or binomial(133,71) = 555687036928510235891585199545206017600
-     */ 
+     */
     public static BigInteger binomial(int num1, int num2) {
         BigInteger result = BigInteger.ONE;
         if (num2 == 0 || num1 == num2) {
             // 1
         } else if (num2 == 1 || num1 - num2 == 1) {
-            result = BigInteger.valueOf(num1); // n 
+            result = BigInteger.valueOf(num1); // n
         } else {
             int k = 0;
             while (k < num2) {
@@ -230,6 +233,7 @@ public class BigIntegerUtil {
     } // binomial
 
     /** Test method.
+     *  @param args commandline arguments (ignored)
      *  Prints
      <pre>
     gcd(24,27) = 3

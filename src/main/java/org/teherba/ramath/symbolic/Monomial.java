@@ -1,13 +1,14 @@
 /*  Monomial: a product with a signed numeric coefficient and optional exponentiated variable(s)
  *  @(#) $Id: Monomial.java 522 2010-07-26 07:14:48Z gfis $
+ *  2017-05-28: javadoc 1.8
  *  2016-07-09: Signature
- *  2015-12-06: toString(boolean) -> toString(1)
+ *  2015-12-06: toString(boolean) -&gt; toString(1)
  *  2015-11-04: with SmallScript.toSuperscript
  *  2015-09-03: isNegative
  *  2015-08-16: toFactoredString() with powers of prime factors
  *  2015-07-17: degree
  *  2015-03-25: firstName
- *  2013-09-20: BigRational -> BigIntegerUtil
+ *  2013-09-20: BigRational -&gt; BigIntegerUtil
  *  2013-08-20: renamed from Term
  *  2013-08-12: getVariablePowers
  *  2009-07-01, Georg Fischer: copied from ContinuedFraction
@@ -316,7 +317,7 @@ public class Monomial implements Cloneable, Serializable {
 
     /** Determines the degree, that is the sum of exponents of the individual factors
      *  @param upperSubst whether the exponents of uppercase variables should be counted
-     *  @return degree >= 0
+     *  @return degree &gt;= 0
      */
     public int degree(boolean upperSubst) {
         int result = 0;
@@ -332,7 +333,7 @@ public class Monomial implements Cloneable, Serializable {
     } // degree(boolean)
 
     /** Determines the degree, that is the sum of exponents
-     *  @return degree >= 0
+     *  @return degree &gt;= 0
      */
     public int degree() {
         return this.degree(true);
@@ -593,12 +594,12 @@ public class Monomial implements Cloneable, Serializable {
         return result;
     } // pow
 
-    /** Modifies <em>this<em> {@link Monomial} such that the
+    /** Modifies <em>this</em> {@link Monomial} such that the
      *  specified variable "consumes" as big a power factor of the {@link Coefficient}
      *  as possible, and divides the Coefficient accordingly
      *  @param varName try to consume the power factor by this variable
      *  @return the root of the extracted factor;
-     *  side effect: divides the Coefficient of <em>this<em> Monomial by the power factor
+     *  side effect: divides the Coefficient of <em>this</em> Monomial by the power factor
      */
     public BigInteger reducePowerCoefficient(String varName) {
         int exp1 = this.getExponent(varName);
@@ -807,7 +808,7 @@ public class Monomial implements Cloneable, Serializable {
 
     //----------------
     /** Returns a String representation of the Monomial, either compressed or full
-     *  @param mode 
+     *  @param mode
      *  <ul>
      *  <li>0 = normal</li>
      *  <li>1 = full (for substitution), with coefficients 1 and relation " = 0"</li>
@@ -826,7 +827,7 @@ public class Monomial implements Cloneable, Serializable {
         }
         StringBuffer result = new StringBuffer(32);
         String number = null;
-        if (mode <= 2) { // normal 
+        if (mode <= 2) { // normal
             number = coefficient.toString();
         } else { // >= 3: with PrimeFactorization
             if (isNegative()) {
@@ -879,7 +880,7 @@ public class Monomial implements Cloneable, Serializable {
                         result.append(name);
                         exp --;
                     } // while multiplying
-                } else { 
+                } else {
                     SmallScript.appendExponent(result, mode, exp);
                 }
             } // while iter
@@ -918,7 +919,7 @@ public class Monomial implements Cloneable, Serializable {
      *  selects these variables and their powers from <em>this</em> Monomial.
      *  @param mono2 a multiplication of all desired variables (names with exponent 1 and constant +1)
      *  @return a new Monomial with coefficient 1 and the selected variables with
-     *  their powers, 
+     *  their powers,
      *  or 0 if not any of the variables of <em>mono2</em> was contained in <em>this</em> Monomial.
      */
     public Monomial getVariablePowers(Monomial mono2) {

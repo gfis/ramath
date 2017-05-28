@@ -1,5 +1,6 @@
 /*  Prime Factorization of BigIntegers
  *  @(#) $Id: PrimeFactorization.java 231 2009-08-25 08:47:16Z gfis $
+ *  2017-05-28: javadoc 1.8
  *  2015-08-11, Georg Fischer: copied from BigIntegerUtil
  */
 /*
@@ -44,7 +45,7 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
 
     /** Constructor for a positive BigInteger.
      *  This code was adapted from 
-     *  {@link <a href="http://stackoverflow.com/questions/16802233/faster-prime-factorization-for-huge-bigintegers-in-java">stackoverflow.com</a>}
+     *  <a href="http://stackoverflow.com/questions/16802233/faster-prime-factorization-for-huge-bigintegers-in-java">stackoverflow.com</a>
      *  @param number number to be factored
      */
     public PrimeFactorization(BigInteger number) {
@@ -163,7 +164,7 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
     /** Returns the least number which turns <em>this</em>
      *  {@link PrimeFactorization} into some power number, 
      *  or 1 if the PrimeFactorization represents already such a power
-     *  @param power widen the number to this power >= 2
+     *  @param power widen the number to this power &gt;= 2
      *  @return 3*5 for 2^2*3*5 = 60 and power 2, 1 for 64 and power 6
      */
     public BigInteger wideToPower(int power) {
@@ -312,7 +313,7 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
             int exp = this.get(prime);
             result.append(prime.toString());
             if (exp > 1) {
-            	result.append('^');
+                result.append('^');
                 result.append(String.valueOf(exp));
             }
             if (prime.compareTo(bmod) > 0) {
@@ -328,6 +329,7 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
 
     /** Test method.
      *  The first commandline argument is factorized.
+     *  @param args commandline arguments
      */
     public static void main(String[] args) {
         BigInteger number  = new BigInteger(args[0]);
