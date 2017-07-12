@@ -1,5 +1,6 @@
 /*  Collection of several experimental methods
  *  @(#) $Id: SandBox.java 808 2011-09-20 16:56:14Z gfis $
+ *  2017-07-12: -brahma
  *  2016-07-09: Signature
  *  2016-03-31: -compose
  *  2016-03-11: -reprs
@@ -59,10 +60,44 @@ public class SandBox {
     // Experimental methods
     //===========================
 
-    private static final String spaces = "                                "; // 32 blanks for formatting of BigIntegers
+    private static final String spaces  = "                                "; // 32 blanks for formatting of BigIntegers
+    private static final String letters = "abcdn"; // letters denoting Polynomials
+
+    /** Prints Brahmagupta's identities (-+ and +- form) with factor n
+     *  @param args commandline arguments: -brahma [a [b [c [d [n]]]]]
+     */
+    private void printBrahmagupta(String[] args) {
+        int iarg = 1; // skip over "-brahma"
+        Polynomial[] polys = new Polynomial[5];
+        String    [] ps    = new String    [5];
+        int ipoly = 0;
+        while (ipoly < polys.length) {
+            ps[ipoly] = iarg < args.length
+                    ? args[iarg ++]
+                    : letters.substring(ipoly, ipoly + 1)
+                    ;
+            polys[ipoly] = new Polynomial(ps[ipoly]);
+            if (ps[ipoly].length() > 1) {
+                ps[ipoly] = "(" + ps[ipoly] + ")";
+            }
+            ipoly ++;
+        } // while iarg
+        Polynomial[] sums = Polynomial.brahmagupta(polys);
+        System.out.println("(" + ps[0] + "^2 + " + ps[4] + "*" + ps[1] + "^2)"
+                +       " * (" + ps[2] + "^2 + " + ps[4] + "*" + ps[3] + "^2)"
+                );
+        System.out.println("= ("
+                + sums[0].toString()  + ")^2 + " + ps[4] + "*("
+                + sums[1].toString()  + ")^2"
+                );
+        System.out.println("= ("
+                + sums[2].toString()  + ")^2 + " + ps[4] + "*("
+                + sums[3].toString()  + ")^2"
+                );
+    } // printBrahmagupta
 
     /** Evaluates a univariate {@link Polynomial} for a
-     *  sequence of variable values and, for the resulting values, print the 
+     *  sequence of variable values and, for the resulting values, print the
      *  representations of the form p^2 + f*q^2.
      *  @param args commandline arguments: -compose [high [f]]
      */
@@ -88,10 +123,11 @@ public class SandBox {
         Polynomial v    = Polynomial.parse("b");
         Polynomial s    = u;
         Polynomial t    = v;
-        if (true) { 
+        if (true) {
             int num = startValue;
             while (num < highValue) {
-                Polynomial[] sums = Polynomial.brahmagupta(new Polynomial[] { s, t, u, v } );
+                Polynomial[] sums = Polynomial.brahmagupta(
+                		new Polynomial[] { s, t, u, v, Polynomial.parse(String.valueOf(factor)) } );
                 if (false) {
                     int isum = 0;
                     while (isum < sums.length) {
@@ -103,11 +139,11 @@ public class SandBox {
                 t = sums[1];
                 System.out.println(String.format("%4d: ", num)
                         + "(a^2 + b^2)^" + String.valueOf(num) + " = ("
-                        + sums[0].toString() + ")^2 + (" 
+                        + sums[0].toString() + ")^2 + ("
                         + sums[1].toString() + ")^2");
                 System.out.println("      "
                         + "(a^2 + b^2)^" + String.valueOf(num) + " = ("
-                        + sums[2].toString() + ")^2 + (" 
+                        + sums[2].toString() + ")^2 + ("
                         + sums[3].toString() + ")^2");
                 num ++;
             } // while num
@@ -239,7 +275,7 @@ public class SandBox {
     } // printEuclid
 
     /** Evaluates a univariate {@link Polynomial} for a
-     *  sequence of variable values and, for the resulting values, print the 
+     *  sequence of variable values and, for the resulting values, print the
      *  representations of the form p^2 + f*q^2.
      *  @param args commandline arguments: polynomial [high [f]]
      */
@@ -304,11 +340,11 @@ public class SandBox {
                             }
                             System.out.print(" = "
                                     + (factor == 1 ? "" : String.valueOf(factor) + " * ")
-                                    +    "(" + (new PrimeFactorization(spe)).toString() + ")^2" 
+                                    +    "(" + (new PrimeFactorization(spe)).toString() + ")^2"
                                     + " + (" + (new PrimeFactorization(squ)).toString() + ")^2"
                                     );
                             if (spe.gcd(squ).equals(BigInteger.ONE)) {
-                                System.out.print("\tproper representation by " 
+                                System.out.print("\tproper representation by "
                                         + spe.toString() + "^2 + " + squ.toString() + "^2");
                             }
                             ipair ++;
@@ -326,7 +362,7 @@ public class SandBox {
     } // printRepresentations
 
     /** Evaluates a univariate {@link Polynomial} for a
-     *  sequence of odd variable values and print the 
+     *  sequence of odd variable values and print the
      *  prime factorization of the resulting values
      *  together with the modulus with respect to m of the primes.
      *  @param args commandline arguments: polynomial [high [m]]
@@ -401,11 +437,11 @@ public class SandBox {
                 if ((u + v) % 2 != 0 &&  Vector.gcd(u, v) == 1) { // u+v odd and u,v coprime
                     System.out.print(u + "," + v + ":");
                     vmap.put("u", String.valueOf(u));
-                    vmap.put("v", String.valueOf(v));   
+                    vmap.put("v", String.valueOf(v));
                     System.out.print(" " + poly1.substitute(vmap).toString()); // the biggest triple element
-                    System.out.print(" " + poly2.substitute(vmap).toString().replaceAll(" ", ""));             
-                    System.out.print(" " + poly3.substitute(vmap).toString());             
-                    System.out.println();           
+                    System.out.print(" " + poly2.substitute(vmap).toString().replaceAll(" ", ""));
+                    System.out.print(" " + poly3.substitute(vmap).toString());
+                    System.out.println();
                 } // if u,v coprime
                 v --;
                 u = num - v;
@@ -532,6 +568,7 @@ public class SandBox {
      *  @param args command line arguments:
      *  <ul>
      *  <li>-bachet x y c [n]: evaluate Bachet's duplication formula</li>
+     *  <li>-brahma a b c d [n]: evaluate Brahmagupta's identity</li>
      *  <li>-compose [end [f]]: print successive compositions of (u^2 + v^2)
      *  <li>-eec422  filename: evaluate tuples of the form a^4 + b^4 = c^4 + d^4</li>
      *  <li>-euclid  matrix [lim]: generate Pythagorean triples for coprime u, v
@@ -553,6 +590,8 @@ public class SandBox {
             if (false) {
             } else if (opt.startsWith("-bachet"  )) {
                 sandBox.processBachet       (args);
+            } else if (opt.startsWith("-brahma")) { // a, b, c, d, optional n
+                sandBox.printBrahmagupta    (args);
             } else if (opt.startsWith("-compose" )) {
                 sandBox.printCompositions   (args);
             } else if (opt.startsWith("-eec422"  )) {

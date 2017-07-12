@@ -49,8 +49,14 @@ CALL SandBox -bachet 2 2 -4 6
 TEST PB9 Bachet for y^2 = x^3  - 2: [3,5] -> [129/100,383/1000] 
 CALL SandBox -bachet "24*w+3" "54v+5" "-2"
 #----
+TEST BR1 Brahmagupta
+CALL SandBox -brahma
+#----
 TEST CMP0 Compositions
 CALL SandBox -compose dummy
+
+TEST CMP1 Compositions with factor
+CALL SandBox -compose 6 17
 #----
 TEST RPS0 Representations
 CALL SandBox -repres "(8*t + 1)^3"               64 2
