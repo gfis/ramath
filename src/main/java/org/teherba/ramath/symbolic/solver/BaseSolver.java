@@ -1,5 +1,6 @@
 /*  Solver: base class for solvers of Diophantine relation sets, with bean properties
  *  @(#) $Id: BaseSolver.java 970 2012-10-25 16:49:32Z gfis $
+ *  2017-07-27: ascend for getRefinedMap(..., ascending)
  *  2017-01-01: getRefiningMap - setMeter, meter shown in printDecision
  *  2016-12-20: obey upperSubst in setRootNode
  *  2015-08-25: EvenExponentReason
@@ -62,6 +63,8 @@ public class BaseSolver extends Stack<RelationSet> {
     //--------------
     //  Features which can be set from outside
     //--------------
+    /** Whether to refine the variable map in ascending order */
+    public boolean ascend;
     /** Whether to ignore trivial solutions */
     public boolean igtriv;
     /** Whether to involve all variables in the expansion */
@@ -536,6 +539,7 @@ public class BaseSolver extends Stack<RelationSet> {
      *  @param queueIndex position in the queue of the element ({@link RelationSet}) to be expanded, &gt;= 0
      */
     public void expand(int queueIndex) {
+    	boolean ascDesc = ascend;
         RelationSet rset1 = this.get(queueIndex); // expand this element (the "parent")
         if (debug > 1) {
             trace     .println("trace: TreeSolver.expand(" + rset1.niceString() + ")");
@@ -550,7 +554,12 @@ public class BaseSolver extends Stack<RelationSet> {
             printNode(queueIndex, rset1, meter);
             int oldSiblingIndex = -1; // for the 1st child
             while (meter.hasNext()) { // over all constant combinations - generate all children
-                RefiningMap vmap2 = vmap1.getRefinedMap(meter);
+                RefiningMap vmap2 = vmap1.getRefinedMap(meter, ascDesc);
+            /*
+                if (! ascend) {
+                	ascDesc = ! ascDesc;
+                }
+            */
                 if (vmap2.size() > 0) {
                     RelationSet rset2 = factory1.getStartNode().substitute(vmap2, this.getUpperSubst());
                     if (norm) {
@@ -634,6 +643,7 @@ public class BaseSolver extends Stack<RelationSet> {
         rset0.setSiblingIndex  (ROOT_PARENT);
         add(rset0); // queueHead is still 0
         // determine all features - they are constant for all subtrees
+        ascend     = ! factory0.hasFeature("descend" );
         igtriv     = factory0.hasFeature("igtriv" );
         invall     = factory0.hasFeature("invall" );
         norm       = factory0.hasFeature("norm"   );

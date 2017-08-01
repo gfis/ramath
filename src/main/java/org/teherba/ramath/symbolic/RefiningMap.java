@@ -1,5 +1,6 @@
 /*  RefiningMap: maps a set of variables to refined expressions
  *  @(#) $Id: RefiningMap.java 538 2010-09-08 15:08:36Z gfis $
+ *  2017-07-27: getRefinedMap(..., ascending)
  *  2017-05-28: javadoc 1.8
  *  2017-01-01: set/getMeter
  *  2015-09-04, Georg Fischer
@@ -163,9 +164,27 @@ public class RefiningMap extends VariableMap implements Cloneable , Serializable
      *  @return a new {@link RefiningMap} with the variables mapped to the refined expressions
      */
     public RefiningMap getRefinedMap(Dispenser dispenser) {
+        return getRefinedMap(dispenser, true);
+    } // getRefinedMap
+
+    /** Refines the expressions in <em>this</em> VariableMap
+     *  by one level of modulus expansion.
+     *  @param dispenser current state of a {@link Dispenser} containing the
+     *  factors (the bases) and the constants (the values) for the modification
+     *  of the mapped expressions.
+     *  @param ascending whether the variables are refined in ascending order (true = default),
+     *  or in reverse order (false).
+     *  If dispenser.base = 1 then factor = 1, constant = 0, i.e. the variable is unchanged.
+     *  The underlying integer array is parallel to the sorted list of variable names,
+     *  or reversed in the case of <em>ascending = false</em>.
+     *  For a mapping x -&gt; c+f*x and corresponding dispenser value m mod b,
+     *  the new expression is c + f*(m+b*x) = (c+f*m) + (f*b)*x.
+     *  @return a new {@link RefiningMap} with the variables mapped to the refined expressions
+     */
+    public RefiningMap getRefinedMap(Dispenser dispenser, boolean ascending) {
         RefiningMap result = new RefiningMap();
         result.setMeter(dispenser.getVector());
-        Iterator<String> iter = this.keySet().iterator();
+        Iterator<String> iter = (ascending ? this.keySet() : this.descendingKeySet()).iterator();
         int idisp = 0;
         while (iter.hasNext()) {
             int b = dispenser.getBase(idisp);

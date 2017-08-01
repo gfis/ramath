@@ -225,7 +225,7 @@ TEST TM51 Markoff(5, unsolvable)
 CALL TreeSolver -b 2 -l 3 -e "x^2 + y^2 + z^2 - 5*x*y*z" -r norm
 
 TEST TM61 Markoff(5, unsolvable)
-CALL TreeSolver -b 2 -l 8 -e "x^2 + y^2 + z^2 - 6*x*y*z" -r norm
+CALL TreeSolver -b 5 -l 3 -e "x^2 + y^2 + z^2 - 5*x*y*z" -r norm
 
 TEST TM71 like Markoff, proof
 CALL TreeSolver -b 2 -l 4 -e "a^3 + 2*b^3 + 4*c^3 = 6*a*b*c" -r norm,invall,showfail
@@ -244,7 +244,7 @@ TEST TEC1 Smart p. 11 Elliptic Curve
 CALL TreeSolver -b 2 -l 6 -e "x^2 + 4 - y^3" -r norm,invall,no-same,no-evenexp 
 
 TEST TEC2 Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3]; http://math.stackexchange.com/questions/677422/solve-x22-y3-using-infinite-descent; growing !
-CALL TreeSolver -b 2 -l 9 -e "x^2 + 2 - y^3" -r norm,no-same,invall
+CALL TreeSolver -b 2 -l 9 -e "x^2 + 2 - y^3" -r no-norm,same,invall,descend
 
 TEST TEC3 Fermat/Carcavi(7) mod. (x+1)^2 + 2 = (y+1)^3; solution [4,2]
 CALL TreeSolver -b 2 -l 5 -e "(x+1)^2 + 2 - (y+1)^3" -r norm,showfail,no-same
@@ -253,7 +253,7 @@ TEST TEC4 Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3]; http://math.stackexch
 CALL TreeSolver -b 3 -l 7 -e "x^2 + 2 - y^3" -r norm
 
 TEST TEC5 Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3]
-CALL TreeSolver -b 2 -l 7 -e "x^2 + 2 - y^3" -r norm,invall,no-same,no-evenexp
+CALL TreeSolver -b 2 -l 7 -e "x^2 + 2 - y^3" -r norm,invall,no-same,similiar,no-evenexp
 
 TEST TEC6 Fermat/Carcavi(8) x^2 + 4 = y^3; solutions [2,2],[11,5]
 CALL TreeSolver -b 2 -l 7 -e "x^2 + 4 - y^3" -r norm,invall,no-same,no-evenexp
@@ -308,6 +308,9 @@ CALL TreeSolver -b 6 -l 2 -e "x^2 + 4 - y^3" -r norm,invall
 
 TEST TECL x^2 = y^3, solutions: (8,4), (27,9), ...
 CALL TreeSolver -b 2 -l 6 -e "x^2 - y^3" -r norm,invall,no-evenexp,no-same
+
+TEST TECM  Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3] - derived
+CALL TreeSolver -b 2 -l 6 -e "(y + x)^2 + 2 = y^3" -r norm,invall,no-evenexp,no-same
 
 TEST TEM22 Mordell 2 squared
 CALL TreeSolver -b 2 -l 4 -e "(x^2 + 2)^2 = y^6" -r norm,invall,no-evenexp,no-same

@@ -375,5 +375,5 @@ pi:
 	head -2 test/constants/pi.txt > y.tmp
 	java -cp dist/ramath.jar org.teherba.ramath.ContinuedFraction -const y.tmp
 #----------------------------
-ferm6:
-	perl data/fermcaw7.pl test/TEC6.this.tst > test/TEC6.tree.tmp
+ferm2:
+	perl data/fermcax7.pl test/TEC2.this.tst | tee data/TEC2.tree.tmp
