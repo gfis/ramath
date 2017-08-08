@@ -1,5 +1,4 @@
-ExponentGCDs=[4,4,2]
-Expanding for base=2, reasons+features=base,same,similiar,evenexp igtriv,norm
+Expanding for base=2, level=4, reasons+features=base,same,similiar,evenexp igtriv,norm
 Refined variables=x,y,z
 [0+1x,0+1y,0+1z]:	unknown -> [1] [0,0,0] x⁴-y⁴-z²
 ----------------

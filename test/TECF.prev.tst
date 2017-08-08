@@ -1,5 +1,4 @@
-ExponentGCDs=[2,2]
-Expanding for base=4, reasons+features=base,same,similiar,evenexp norm
+Expanding for base=4, level=3, reasons+features=base,same,similiar,evenexp norm
 Refined variables=x,y
 [0+1x,0+1y]:	unknown -> [1] [0,0] -4x²+4x⁴-2y²+2
 -> solution [0,1],trivial(1) [1,1],trivial(2)

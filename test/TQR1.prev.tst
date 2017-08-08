@@ -1,6 +1,5 @@
 isHomogeneous
-ExponentGCDs=[2,2]
-Expanding for base=2, reasons+features=base,primitive,same,similiar,evenexp 
+Expanding for base=2, level=4, reasons+features=base,primitive,same,similiar,evenexp 
 Refined variables=p,q
 [0+1p,0+1q]:	unknown -> [1] [0,0] -p²+2q²
 -> solution [0,0],trivial(3)

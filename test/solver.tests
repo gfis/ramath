@@ -173,14 +173,9 @@ CALL TreeSolver -b 2 -l 3 -e "a^4 + b^4 + c^4 - d^4" -r norm,invall
 #----
 # Pell's equations
 
-<<<<<<< HEAD
 TEST TPE1 Pell 15 7 9 http://db.math.ust.hk/notes_download/elementary/number/ne_N3.pdf - no solution
 # http://web.archive.org/web/20051119010745/http://mathdb.org/notes_download/elementary/number/ne_N3/all.htm
-CALL TreeSolver -l 5 -b 2 -e "15*x^2 - 7*y^2 - 9" -r norm,showfail,accel
-=======
-TEST TPE1 Pell 15 7 9 http://db.math.ust.hk/notes_download/elementary/number/ne_N3.pdf
-CALL TreeSolver -l 6 -b 2 -e "15*x^2 - 7*y^2 - 9" -r norm,showfail,invall,no-evenexp
->>>>>>> 022e81934c5b2184ead747785e523846945f6ef2
+CALL TreeSolver -l 5 -b 2 -e "15*x^2 - 7*y^2 - 9" -r norm,showfail,invall,no-evenexp
 
 TEST TPE2 15 7 9
 CALL TreeSolver -l 6 -b 2 -e "15*(x+1)^2 - 7*(y+1)^2 - 9" -r norm,showfail,invall,no-evenexp
@@ -225,7 +220,7 @@ TEST TM51 Markoff(5, unsolvable)
 CALL TreeSolver -b 2 -l 3 -e "x^2 + y^2 + z^2 - 5*x*y*z" -r norm
 
 TEST TM61 Markoff(5, unsolvable)
-CALL TreeSolver -b 5 -l 3 -e "x^2 + y^2 + z^2 - 5*x*y*z" -r norm
+CALL TreeSolver -b 5 -l 2 -e "x^2 + y^2 + z^2 - 5*x*y*z" -r norm
 
 TEST TM71 like Markoff, proof
 CALL TreeSolver -b 2 -l 4 -e "a^3 + 2*b^3 + 4*c^3 = 6*a*b*c" -r norm,invall,showfail
@@ -244,7 +239,7 @@ TEST TEC1 Smart p. 11 Elliptic Curve
 CALL TreeSolver -b 2 -l 6 -e "x^2 + 4 - y^3" -r norm,invall,no-same,no-evenexp 
 
 TEST TEC2 Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3]; http://math.stackexchange.com/questions/677422/solve-x22-y3-using-infinite-descent; growing !
-CALL TreeSolver -b 2 -l 9 -e "x^2 + 2 - y^3" -r no-norm,same,invall,descend
+CALL TreeSolver -b 2 -l 8 -e "x^2 + 2 - y^3" -r no-norm,same,invall,showfail
 
 TEST TEC3 Fermat/Carcavi(7) mod. (x+1)^2 + 2 = (y+1)^3; solution [4,2]
 CALL TreeSolver -b 2 -l 5 -e "(x+1)^2 + 2 - (y+1)^3" -r norm,showfail,no-same
@@ -307,10 +302,10 @@ TEST TECK Fermat/Carcavi(8) x^2 + 4 = y^3; solutions [2,2],[11,5]
 CALL TreeSolver -b 6 -l 2 -e "x^2 + 4 - y^3" -r norm,invall
 
 TEST TECL x^2 = y^3, solutions: (8,4), (27,9), ...
-CALL TreeSolver -b 2 -l 6 -e "x^2 - y^3" -r norm,invall,no-evenexp,no-same
+CALL TreeSolver -b 6 -l 3 -e "x^2 - y^3" -r norm,invall,no-evenexp,no-same
 
 TEST TECM  Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3] - derived
-CALL TreeSolver -b 2 -l 6 -e "(y + x)^2 + 2 = y^3" -r norm,invall,no-evenexp,no-same
+CALL TreeSolver -b 3 -l 5 -e "(x)^2 + 2 = y^3" -r norm,invall,no-evenexp,no-same
 
 TEST TEM22 Mordell 2 squared
 CALL TreeSolver -b 2 -l 4 -e "(x^2 + 2)^2 = y^6" -r norm,invall,no-evenexp,no-same
@@ -329,30 +324,6 @@ CALL TreeSolver -b 2 -l 6 -e "x^2 + 26 = y^3" -r norm,invall,no-evenexp,no-same
 
 TEST TEM45 Mordell 45, no solution
 CALL TreeSolver -b 2 -l 6 -e "x^2 - 45 = y^3" -r norm,invall,no-evenexp,no-same
-
-#--------
-# new - QueuingSolver
-
-TEST QF33 modified FLT(3) mod 3 proof
-CALL QueuingSolver -b 3 -l 4 -e "a^3 + 3*b^3 - 9*c^3" -r norm,igtriv
-
-TEST QF42 FLT(4), biquadratic plus
-CALL QueuingSolver -l 4 -e "x^4 + y^4 - z^2" -r norm,igtriv
-
-TEST QP13 Fermat (proof in 2 steps)
-CALL QueuingSolver -l 4 -e "a^2 + b^2 - 3*(c^2 + d^2)" -r norm,invall,igtriv,showfail
-
-TEST QPE3 15 7 9 Proof
-CALL QueuingSolver -l 3 -b 3 -e "15*x^2 - 7*y^2 - 9" -r showfail
-
-TEST QPE4 15 7 9 mod 4
-CALL QueuingSolver -l 4 -b 4 -e "15*x^2 - 7*y^2 - 9" -r norm
-
-TEST QEC2 Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3]
-CALL QueuingSolver -b 2 -l 8 -e "x^2 + 2 - y^3" -r norm
-
-TEST QEC5 Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3]
-CALL QueuingSolver -b 6 -l 3 -e "x^2 + 2 - y^3" -r norm 
 
 #--------
 # Squeeze

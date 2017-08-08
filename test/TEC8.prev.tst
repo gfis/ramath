@@ -1,5 +1,4 @@
-ExponentGCDs=[1,1]
-Expanding for base=2, reasons+features=base,same,similiar invall,norm
+Expanding for base=2, level=4, reasons+features=base,same,similiar invall,norm
 Refined variables=a,b
 [0+1a,0+1b]:	unknown -> [1] [0,0] a²-a³+2a*b+3a²*b+b²-3a*b²+b³+2
 ----------------

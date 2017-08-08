@@ -1,5 +1,6 @@
 /*  ReasonFactory: list of reasons to decide that the tree expansion can be truncated
  *  @(#) $Id: ReasonFactory.java 970 2012-10-25 16:49:32Z gfis $
+ *  2017-08-08: explainReasons for QueueSolver removed 
  *  2016-12-20: feature upsubst
  *  2016-04-24: features were HashMap
  *  2015-08-30: DownsizedMapReason
@@ -43,7 +44,7 @@ import  java.util.TreeMap;
  *  in the order in which they were added to
  *  the internal {@link ArrayList}.
  *  <p>
- *  The basic operation is to consider the various reason why a
+ *  The basic operation is to consider the various reasons why a
  *  new {@link RelationSet} can be decided and therefore needs not
  *  to be stored in the tree for further expansion.
  *  Often, a second RelationSet is examined in comparision to the
@@ -64,7 +65,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
     protected ArrayList<BaseBranch>   branches;
 
     /** List of various minor solver features.
-     *  This could have been a HashMap, but we want reproducible test output for ferature lists.
+     *  This could have been a HashMap, but we want reproducible test output for feature lists.
      */
     protected TreeMap<String, String> features;
 
@@ -254,7 +255,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
             }
             ilist ++;
         } // while ilist
-        return result; 
+        return result;
     } // getApplicableBranch
 
     /** Gets the applicable {@link BaseReason reason} for the specified code
@@ -491,40 +492,6 @@ public class ReasonFactory extends ArrayList<BaseReason> {
         } // detailed cut-off
         return queueAgain;
     } // evaluateReasons
-
-    /** Checks a {@link RelationSet}
-     *  with all stored reasons and shows the decision
-     *  @param rset2 the new {@link RelationSet} to be checked
-     *  @return whether to queue <em>rset2</em> again for further expansion
-     */
-    public boolean explainReasons(RelationSet rset2) {
-        RefiningMap rmap2 = rset2.getMapping();
-        boolean queueAgain = false;
-        String decision = this.considerNode(rset2);
-        if (false) {
-        } else if (decision.startsWith(VariableMap.UNKNOWN)) {
-            solver.showDecision (decision, rset2, rmap2);
-            solver.showSolutions(rset2, rmap2);
-            queueAgain = true;
-        } else if (decision.startsWith(VariableMap.SUCCESS)) { // will it ever occur?
-            solver.showDecision (decision, rset2, rmap2);
-            solver.showSolutions(rset2, rmap2);
-            queueAgain = true;
-        } else if (decision.startsWith(VariableMap.FAILURE)) {
-            if (showFail) {
-                solver.showDecision(decision, rset2, rmap2);
-            }
-        } else { // detailed cut-off: SAME, transpose, negative, non-primitive, similiar ...
-            solver.showDecision(decision, rset2, rmap2);
-            if (false) {
-            } else if (decision.startsWith("transp")) {
-                // original solution is already printed
-            } else {
-                solver.showSolutions(rset2, rmap2);
-            }
-        } // detailed cut-off
-        return queueAgain;
-    } // explainReasons
 
     /** Checks a {@link RelationSet}
      *  with all stored reasons and prints the decision

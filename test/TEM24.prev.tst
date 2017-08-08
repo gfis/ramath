@@ -1,4 +1,4 @@
-Expanding for base=3, reasons+features=base,same,similiar invall,norm
+Expanding for base=3, level=4, reasons+features=base,same,similiar invall,norm
 Refined variables=x,y
 [0+1x,0+1y]:	unknown -> [1] [0,0] x²-y³+24
 ----------------

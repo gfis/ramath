@@ -1,5 +1,4 @@
-ExponentGCDs=[1,1]
-Expanding for base=2, reasons+features=base,same,similiar norm
+Expanding for base=2, level=1, reasons+features=base,same,similiar norm
 Refined variables=p,q
 [0+1p,0+1q]:	unknown -> [1] [0,0] -p²+p³-2p*q-q²-q⁵
 -> solution [0,0],trivial(3) [1,0],trivial(1)

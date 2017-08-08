@@ -1,4 +1,4 @@
-Expanding for base=2, reasons+features=base,same,similiar invall,norm
+Expanding for base=2, level=5, reasons+features=base,same,similiar invall,norm
 Refined variables=x,y
 [0+1x,0+1y]:	unknown -> [1] [0,0] x²-y³+6
 ----------------

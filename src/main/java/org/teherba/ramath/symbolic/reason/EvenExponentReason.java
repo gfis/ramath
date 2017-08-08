@@ -86,7 +86,7 @@ public class EvenExponentReason extends BaseReason {
             ivect --;
         } // while
         result = ! odd; // at least one even = not all odd
-        solver.getWriter().println("ExponentGCDs=" + expGCDs.toString(","));
+        // solver.getWriter().println("ExponentGCDs=" + expGCDs.toString(","));
         if (debug >= 2) {
             solver.getWriter().println("isConsiderable, ExponentGCDs()=" + expGCDs.toString(",") + ", result=" + result);
         }

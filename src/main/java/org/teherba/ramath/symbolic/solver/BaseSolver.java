@@ -1,5 +1,6 @@
 /*  Solver: base class for solvers of Diophantine relation sets, with bean properties
  *  @(#) $Id: BaseSolver.java 970 2012-10-25 16:49:32Z gfis $
+ *  2017-08-08: show* methods for QueueSolver removed 
  *  2017-07-27: ascend for getRefinedMap(..., ascending)
  *  2017-01-01: getRefiningMap - setMeter, meter shown in printDecision
  *  2016-12-20: obey upperSubst in setRootNode
@@ -289,8 +290,7 @@ public class BaseSolver extends Stack<RelationSet> {
 
     //-----------------------------------------------
     // Pseudo-abstract methods common to all Solvers.
-    // 'print...' and 'exvaluateReasons'  are used by TreeSolver,
-    // 'show...'  and 'explainReasons'    are used by QueuingSolver
+    // 'print...' and 'evaluateReasons'  are used by TreeSolver,
     //-----------------------------------------------
 
     /** Prints the decision of a child node in the tree.
@@ -316,34 +316,13 @@ public class BaseSolver extends Stack<RelationSet> {
         } // debug
     } // printDecision
 
-    /** Prints the decision of a child node in the tree.
-     *  @param decision outcome of the various checks for {@link BaseReason reasons} to cut the tree,
-     *  @param rset2 {@link RelationSet} to be examined
-     *  @param rmap2 {@link VariableMap} of <em>rset2</em>
-     */
-    public void showDecision(String decision, RelationSet rset2, RefiningMap rmap2) {
-        if (debug >= 1) {
-            trace.print(rset2.getIndex() + "^"
-                    + rset2.getParentIndex()
-                    + ":\t");
-            trace.print(rmap2.niceString());
-            trace.print("\t" + decision);
-            if (false) {
-            } else if ( decision.startsWith(VariableMap.UNKNOWN) ||
-                        decision.startsWith(VariableMap.SUCCESS)) { // UNKNOWN || SUCCESS
-            //  trace.print(" -> [" + (this.size() + 1) + "]");
-                trace.print(" " + rset2.niceString());
-            } // UNKNOWN || SUCCESS
-            trace.println();
-        } // debug
-    } // showDecision
-
     /** Prints the header message
      *  @param rset0 initial {@link RelationSet}
      */
     protected void printHeader(RelationSet rset0) {
         if (debug >= 1) {
             trace.print  ("Expanding for base=" + getModBase());
+            trace.print  (", level="            + getMaxLevel());
             trace.println(", reasons+features=" + rset0.getReasonFactory().toString());
             trace.println("Refined variables="  + rset0.getMapping().getNameString());
         } // debug
@@ -396,24 +375,6 @@ public class BaseSolver extends Stack<RelationSet> {
         } // debug
     } // printSeparator
 
-    /** Prints the separator between different nesting levels
-     *  @param level current level from next queue element
-     *  @param parent index of current parent
-     */
-    protected void showSeparator(int level, int parent) {
-        if (debug >= 1) {
-            if (prevLevel < level) {
-                prevLevel = level;
-                trace.println("#----------------"); // 16 x "-"
-            } else {
-                if (prevParent < parent) {
-                    trace.println("#"); 
-                }
-            }
-            prevParent = parent;
-        } // debug
-    } // showSeparator
-
     /** Prints solutions, if there are any.
      *  Solutions are obtained by replacing the variables by 0 (not implemented: "or by 1").
      *  @param rset1 {@link RelationSet} to be examined
@@ -447,40 +408,6 @@ public class BaseSolver extends Stack<RelationSet> {
             }
         } // debug
     } // printSolutions
-
-    /** Prints solutions, if there are any.
-     *  Solutions are obtained by replacing the variables by 0 (not implemented: "or by 1").
-     *  @param rset1 {@link RelationSet} to be examined
-     *  @param rmap1 {@link VariableMap} of <em>rset1</em>
-     */
-    public void showSolutions(RelationSet rset1, RefiningMap rmap1) {
-        if (debug >= 0) {
-            boolean first = false;
-            RefiningMap rmap2 = rmap1 != null ? rmap1.clone() : new RefiningMap();
-            ModoMeter meter = new ModoMeter(rmap2.size(), 2); // run {0,1} through all variables
-            boolean busy = true;
-            while (busy && meter.hasNext()) {
-                rmap2.setValues(meter);
-                RelationSet rset2 = rset1.substitute(rmap2);
-                String decision = rset2.evaluate(rmap2);
-                if (decision.startsWith(VariableMap.SUCCESS + " =0")) {
-                    decision = rmap1.getMeteredValues(meter).describe();
-                    if (! igtriv || ! (decision.indexOf("trivial") >= 0)) {
-                        if (! first) {
-                            trace.print("#\t\t\t-> solution");
-                            first = true;
-                        }
-                        trace.print(" " + decision);
-                    }
-                } // SUCCESS =0
-                meter.next();
-                // busy = false; // evaluate only once for [0,0,...]
-            } // while meter
-            if (first) {
-                trace.println();
-            }
-        } // debug
-    } // showSolutions
 
     /** Prints the trailer message
      *  @param rset0 the starting {@link RelationSet}, which is shown again in the trailer message

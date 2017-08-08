@@ -26,6 +26,9 @@ TESTDIR=test
 TEST="%"
 # for Windows, SUDO should be empty
 SUDO=
+CONST=+2
+DEPTH=3
+BASE=2
 
 all: solver
 #-------------------------------------------------------------------
@@ -377,3 +380,26 @@ pi:
 #----------------------------
 ferm2:
 	perl data/fermcax7.pl test/TEC2.this.tst | tee data/TEC2.tree.tmp
+tree1:
+	java -cp dist/ramath.jar org.teherba.ramath.symbolic.solver.TreeSolver -b $(BASE) -l $(DEPTH) \
+	-e "(x)^2 + 2 = y^3" -r norm,invall,no-evenexp,no-same \
+	| perl data/fermcay7.pl
+tree2:
+	java -cp dist/ramath.jar org.teherba.ramath.symbolic.solver.TreeSolver -b $(BASE) -l $(DEPTH) \
+	-e "(x)^2 + 2 = y^3" -r norm,invall,no-evenexp,no-same \
+	| perl data/fermcay7.pl | cut  -f 2- | sort | uniq -c | grep -vE "^      1 " | tee x.tmp
+tree4:
+	java -cp dist/ramath.jar org.teherba.ramath.symbolic.solver.TreeSolver -b $(BASE) -l $(DEPTH) \
+	-e "(x)^2 + 4 = y^3" -r norm,invall,no-evenexp,no-same \
+	| perl data/fermcay7.pl | cut  -f 2- | sort | uniq -c | grep -vE "^      1 " | tee x.tmp
+tree:
+	java -cp dist/ramath.jar org.teherba.ramath.symbolic.solver.TreeSolver -b $(BASE) -l $(DEPTH) -e "(x)^2 $(CONST) = y^3" -r norm,invall,no-evenexp,no-same | perl data/fermcay7.pl | cut  -f 2- | sort | uniq -c | grep -vE "^      1 " | tee x.tmp
+treev1:
+	java -cp dist/ramath.jar org.teherba.ramath.symbolic.solver.TreeSolver -b $(BASE) -l $(DEPTH) -e "(y+x)^2 $(CONST) = y^3" -r norm,invall,no-evenexp,no-same | perl data/fermcay7.pl | cut  -f 2- | sort | uniq -c | grep -vE "^      1 " | tee x.tmp
+treev2:
+	java -cp dist/ramath.jar org.teherba.ramath.symbolic.solver.TreeSolver -b $(BASE) -l $(DEPTH) -e "(x)^2 $(CONST) = (x-y)^3" -r norm,invall,no-evenexp,no-same | perl data/fermcay7.pl | cut  -f 2- | sort | uniq -c | grep -vE "^      1 " | tee x.tmp
+tree7:
+	java -cp dist/ramath.jar org.teherba.ramath.symbolic.solver.TreeSolver -b $(BASE) -l $(DEPTH) \
+	-e "(x)^2 - 7 = y^3" -r norm,invall,no-evenexp,no-same \
+	| perl data/fermcay7.pl | cut  -f 2- | sort | uniq -c | grep -vE "^      1 " | tee x.tmp
+	

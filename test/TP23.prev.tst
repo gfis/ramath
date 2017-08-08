@@ -1,6 +1,5 @@
 TranspositionSet={[1,0,2]}
-ExponentGCDs=[2,2,1]
-Expanding for base=2, reasons+features=base,transpose,same,similiar,evenexp invall,norm,showfail
+Expanding for base=2, level=3, reasons+features=base,transpose,same,similiar,evenexp invall,norm,showfail
 Refined variables=x,y,z
 [0+1x,0+1y,0+1z]:	unknown -> [1] [0,0,0] x²+y²-4z-3
 ----------------

@@ -1,5 +1,4 @@
-ExponentGCDs=[1,1]
-Expanding for base=3, reasons+features=base,same,similiar 
+Expanding for base=3, level=2, reasons+features=base,same,similiar 
 Refined variables=r,t
 [0+1r,0+1t]:	unknown -> [1] [0,0] 540r+2916r²-648t-5184t²-13824t³
 -> solution [0,0],trivial(3)

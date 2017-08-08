@@ -1,5 +1,4 @@
-ExponentGCDs=[1,1]
-Expanding for base=6, reasons+features=base,same,similiar 
+Expanding for base=6, level=2, reasons+features=base,same,similiar 
 Refined variables=c,r
 [0+1c,0+1r]:	unknown -> [1] [0,0] -3c-12c²-16c³+5r+27r²
 -> solution [0,0],trivial(3)

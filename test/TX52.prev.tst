@@ -1,7 +1,6 @@
 TranspositionSet={[1,0,2]}
 isHomogeneous
-ExponentGCDs=[3,3,3]
-Expanding for base=2, reasons+features=base,transpose,primitive,same,similiar norm
+Expanding for base=2, level=3, reasons+features=base,transpose,primitive,same,similiar norm
 Refined variables=x,y,z
 [0+1x,0+1y,0+1z]:	unknown -> [1] [0,0,0] x³+y³-2z³
 -> solution [0,0,0],trivial(3) [1,1,1],trivial(2)

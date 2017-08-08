@@ -1,6 +1,5 @@
 TranspositionSet={[0,2,1]}
-ExponentGCDs=[2,2,2]
-Expanding for base=2, reasons+features=base,transpose,same,similiar,evenexp showfail
+Expanding for base=2, level=2, reasons+features=base,transpose,same,similiar,evenexp showfail
 Refined variables=a,b,c
 [0+1a,0+1b,0+1c]:	unknown -> [1] [0,0,0] a²+b²+c²-b²*c²
 -> solution [0,0,0],trivial(3)

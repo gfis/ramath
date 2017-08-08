@@ -1,7 +1,6 @@
 TranspositionSet={[1,0]}
 isHomogeneous
-ExponentGCDs=[1,1]
-Expanding for base=2, reasons+features=base,transpose,primitive,same,similiar norm,showfail
+Expanding for base=2, level=5, reasons+features=base,transpose,primitive,same,similiar norm,showfail
 Refined variables=a,b
 [0+1a,0+1b]:	unknown -> [1] [0,0] a²-4a*b+b²
 -> solution [0,0],trivial(3)

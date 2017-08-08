@@ -1,6 +1,5 @@
 isHomogeneous
-ExponentGCDs=[3,3,3]
-Expanding for base=2, reasons+features=base,primitive,same,similiar,accel igtriv,norm
+Expanding for base=2, level=3, reasons+features=base,primitive,same,similiar,accel igtriv,norm
 Refined variables=a,b,c
 ??? assertion: accelerate loopCheck
 [0+177147a,0+177147b,0+177147c]:	unknown accelerated by a*3 b*3 c*3 a*3 b*3 c*3 a*3 b*3 c*3 a*3 b*3 c*3 a*3 b*3 c*3 a*3 b*3 c*3 a*3 b*3 c*3 a*3 b*3 c*3 a*3 b*3 c*3 a*3 b*3 c*3 a*3 b*3 c*3 -> [1] [0,0,0] a³+3b³-9c³

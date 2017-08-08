@@ -1,4 +1,4 @@
-Expanding for base=2, reasons+features=base,same,similiar invall,norm,showfail
+Expanding for base=2, level=7, reasons+features=base,same,similiar invall,norm,showfail
 Refined variables=a,b
 [0+1a,0+1b]:	unknown -> [1] [0,0] a²-3b²-8
 ----------------

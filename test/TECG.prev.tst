@@ -1,5 +1,4 @@
-ExponentGCDs=[1,2,2]
-Expanding for base=3, reasons+features=base,same,similiar,evenexp norm,showfail
+Expanding for base=3, level=3, reasons+features=base,same,similiar,evenexp norm,showfail
 Refined variables=k,x,y
 [0+1k,0+1x,0+1y]:	unknown -> [1] [0,0,0] 3k-x²-3y²-1
 ----------------

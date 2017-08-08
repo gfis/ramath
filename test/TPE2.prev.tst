@@ -1,4 +1,4 @@
-Expanding for base=2, reasons+features=base,same,similiar invall,norm,showfail
+Expanding for base=2, level=6, reasons+features=base,same,similiar invall,norm,showfail
 Refined variables=x,y
 [0+1x,0+1y]:	unknown -> [1] [0,0] 30x+15x²-14y-7y²-1
 ----------------

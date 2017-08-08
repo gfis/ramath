@@ -1,6 +1,5 @@
 TranspositionSet={[0,3,2,1],[0,2,3,1],[0,3,1,2],[0,1,3,2],[0,2,1,3]}
-ExponentGCDs=[1,1,1,1]
-Expanding for base=2, reasons+features=base,transpose,same,similiar invall,norm,showfail
+Expanding for base=2, level=6, reasons+features=base,transpose,same,similiar invall,norm,showfail
 Refined variables=x,y,z
 [0+1x,0+1y,0+1z]:	unknown -> [1] [0,0,0] x²+y²-2N*x*y*z+z²
 -> solution [0,0,0],trivial(3)
