@@ -113,7 +113,7 @@ public class TreeSolver extends BaseSolver {
     public static void main(String[] args) {
         log = Logger.getLogger(TreeSolver.class.getName());
         try {
-            TreeSolver solver = new TreeSolver();
+            BaseSolver solver = new TreeSolver();
             String expr = solver.getArguments(0, args);
             RelationSet rset0 = new RelationSet("(3+a)^2+(4+b)^2=(5+c)^2"); // solution a=b=c=0
             if (expr != null) {
@@ -122,7 +122,6 @@ public class TreeSolver extends BaseSolver {
             solver.solve(rset0);
         } catch (Exception exc) {
             log.error(exc.getMessage(), exc);
-            exc.printStackTrace();
         }
     } // main
 

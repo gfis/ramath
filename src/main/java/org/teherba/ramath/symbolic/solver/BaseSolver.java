@@ -45,6 +45,7 @@ import  java.util.Iterator;
 import  java.util.Stack; // was java.util.Vector;  essentially a java.util.Queue (Java 1.6)
 import  java.util.regex.Matcher;
 import  java.util.regex.Pattern;
+import  org.apache.log4j.Logger;
 
 /** Superclass for solvers for Diophantine {@link RelationSet}s,
  *  with bean properties and commandline arguments processing.
@@ -328,21 +329,30 @@ public class BaseSolver extends Stack<RelationSet> {
         } // debug
     } // printHeader
 
-    /** Prints the message for a node to be expanded.
+    /** Prints the starting message for a node to be expanded.
      *  @param queueIndex expand this queue element
      *  @param rset1 {@link RelationSet} at position <em>queueIndex</em>
      *  @param meter which {@link ModoMeter} will be used for the expansion
      */
-    protected void printNode(int queueIndex, RelationSet rset1, ModoMeter meter) {
+    protected void printNodeStart(int queueIndex, RelationSet rset1, ModoMeter meter) {
         if (debug >= 1) {
             trace.println("expanding queue[" + queueIndex + "]^"
                     + rset1.getParentIndex()
                     + ",meter=" + meter.toBaseList()
-            //      + "*" + factor.toString()
                     + ": " + rset1.niceString()
                     );
         }
-    } // printNode
+    } // printNodeStart
+
+    /** Prints the ending message for a node just epxanded
+     *  @param queueIndex expand this queue element
+     */
+    protected void printNodeEnd(int queueIndex) {
+        if (debug >= 1) {
+            trace.println("endexp[" + queueIndex + "]"
+                    );
+        }
+    } // printNodeStart
 
     /** Prints the message for a pseudo node which is ignored.
      *  @param queueIndex index of this queue element
@@ -355,7 +365,7 @@ public class BaseSolver extends Stack<RelationSet> {
                     + ": " + rset1.niceString()
                     );
         }
-    } // printNode
+    } // printPseudoNode
 
     /** level of queue element which was previously expanded */
     protected int prevLevel;
@@ -370,7 +380,7 @@ public class BaseSolver extends Stack<RelationSet> {
         if (debug >= 1) {
             if (prevLevel < level) {
                 prevLevel = level;
-                trace.println("----------------"); // 16 x "-"
+                trace.println("---------------- level " + level); // 16 x "-"
             }
         } // debug
     } // printSeparator
@@ -415,6 +425,7 @@ public class BaseSolver extends Stack<RelationSet> {
      */
     protected void printTrailer(RelationSet rset0, boolean exhausted) {
         if (debug >= 1) {
+        	printSeparator(this.get(size() - 1).getNestingLevel());
             if (exhausted) {
                 trace.print("Proof");
             } else {
@@ -478,7 +489,7 @@ public class BaseSolver extends Stack<RelationSet> {
             BigInteger factor  = BigInteger.valueOf(this.getModBase()).pow(newLevel);
             ModoMeter meter    = this.getPreparedMeter(rset1, vmap1, factor);
             // meter now ready for n-adic expansion, e.g. x -> 2*x+0, 2*x+1
-            printNode(queueIndex, rset1, meter);
+            printNodeStart(queueIndex, rset1, meter);
             int oldSiblingIndex = -1; // for the 1st child
             while (meter.hasNext()) { // over all constant combinations - generate all children
                 RefiningMap vmap2 = vmap1.getRefinedMap(meter, ascDesc);
@@ -512,6 +523,7 @@ public class BaseSolver extends Stack<RelationSet> {
                 meter.next();
             } // while meter.hasNext() - generate all children
             // not behind the startNode of a subtree
+            printNodeEnd(queueIndex);
         } else { // pseudo node behind the startNode of a subtree
             printPseudoNode(queueIndex, rset1);
         } // pseudo
@@ -601,7 +613,7 @@ public class BaseSolver extends Stack<RelationSet> {
             } else {
                 RelationSet rset1 = this.get(queueHead);
                 int curLevel = rset1.getNestingLevel();
-                if (curLevel > getMaxLevel()) { // nesting too deep - give up
+                if (curLevel >= getMaxLevel()) { // nesting too deep - give up
                     busy   = false;
                 } else { // still expanding
                     printSeparator(curLevel);
@@ -619,12 +631,25 @@ public class BaseSolver extends Stack<RelationSet> {
     // Test driver
     //-------------
 
+    /** Local logger for exceptions */
+    private static Logger log;
+
     /** Test method.
-     *  @param args command line arguments, see {@link #getArguments}.
+     *  @param args command line arguments, see {@link BaseSolver#getArguments}.
      */
     public static void main(String[] args) {
+        log = Logger.getLogger(TreeSolver.class.getName());
         BaseSolver solver = new BaseSolver();
         String expr = solver.getArguments(0, args);
+        try {
+            RelationSet rset0 = new RelationSet("(3+a)^2+(4+b)^2=(5+c)^2"); // solution a=b=c=0
+            if (expr != null) {
+                rset0 = RelationSet.parse(expr);
+            }
+            solver.solve(rset0);
+        } catch (Exception exc) {
+            log.error(exc.getMessage(), exc);
+        }
     } // main
 
 } // BaseSolver

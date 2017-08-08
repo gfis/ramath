@@ -1,0 +1,5 @@
+-> solution [5,3],NONTRIVIAL
+-> solution [5,3],NONTRIVIAL
+-> solution [5,3],NONTRIVIAL
+-> solution [5,3],NONTRIVIAL
+-> solution [5,3],NONTRIVIAL
