@@ -120,16 +120,13 @@ while (<>) { # read output of TreeSolver, c.f. <DATA> below
             my $spl4   = ($split / 4);
             $w    = int($spl2);
             my $x = $dx + int($inode * $split - $spl2 - $spl4);
-            print <<"GFis";
-    <rect class="$key" y="$y" x="$x" width="$w" height="$h" />
-GFis
+            print "<rect class=\"$key\" y=\"$y\" x=\"$x\" width=\"$w\" height=\"$h\" />";
             if ($w >= 4) {
                 my $tx = $dx + int($inode * $split - $spl2 - $spl4 + 2);
                 my $ty = $y + $dy / 2;
-                print <<"GFis";
-                <text x="$tx" y="$ty">$node</text>
-GFis
+                print "<text x=\"$tx\" y=\"$ty\">$node</text>";
             }
+            print "\n";
         } else {
             print STDERR "invalid size: " . join("\t", $level, $node, $father, $char) . "\n";
         }

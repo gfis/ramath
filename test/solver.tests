@@ -312,7 +312,16 @@ TEST TECL x^2 = y^3, solutions: (8,4), (27,9), ...
 CALL TreeSolver -b 6 -l 3 -e "x^2 - y^3" -r norm,invall,no-evenexp,no-same
 
 TEST TECM  Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3]
-CALL TreeSolver -b 3 -l 7 -e "(x)^2 + 2 = y^3" -r norm,invall,no-evenexp,no-same
+CALL TreeSolver -b 3 -l 2 -e "2x+2x²-3y-6y²-4y³+1" -r norm,invall,no-evenexp,same
+
+TEST TECN  Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3]
+CALL TreeSolver -b 5 -l 2 -e "2x+6x²-27y-54y²-36y³-4" -r norm,invall,no-evenexp,same
+
+TEST TECO  Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3]
+CALL TreeSolver -b 7 -l 2 -e "14x+30x²-1323y-1890y²-900y³-307" -r norm,invall,no-evenexp,same
+
+TEST TECP  Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3] far behind
+CALL TreeSolver -b 3 -l 3 -e "(155 + 2*x)^2 + 2 = (29 + 2*y)^3" -r norm,invall,no-evenexp,same
 
 TEST TEM22 Mordell 2 squared
 CALL TreeSolver -b 2 -l 4 -e "(x^2 + 2)^2 = y^6" -r norm,invall,no-evenexp,no-same
@@ -331,7 +340,26 @@ CALL TreeSolver -b 2 -l 6 -e "x^2 + 26 = y^3" -r norm,invall,no-evenexp,no-same
 
 TEST TEM45 Mordell 45, no solution
 CALL TreeSolver -b 2 -l 6 -e "x^2 - 45 = y^3" -r norm,invall,no-evenexp,no-same
+#--------
 
+TEST TED1 from Caracavi, 2x-3, 2y+5
+CALL TreeSolver -b 3 -l 5 -e "2*x^2 = 4*y^3" -r norm,invall,no-evenexp,same
+
+TEST TED2 from Caracavi
+CALL TreeSolver -b 3 -l 3 -e "x^2 +3*z= 2*y^3" -r norm,invall,no-evenexp,same
+
+TEST TED3 c.f. TED1
+CALL TreeSolver -b 2 -l 8 -e "2*x^2 = 4*y^3" -r norm,invall,no-evenexp,same
+
+#--------
+TEST TEF1 Oeuvres I (Rashed) p. 30
+CALL TreeSolver -b 3 -l 4 -e "3*n - 1 = x^2 + 3*y^2" -r norm,invall,no-evenexp,same,showfail
+
+TEST TEF2 Oeuvres I (Rashed) p. 30 -u -b 2
+CALL TreeSolver -b 2 -l 5 -u -e "3*N - 1 = x^2 + 3*y^2" -r norm,invall,no-evenexp,same,showfail
+
+TEST TEF3 Oeuvres I (Rashed) p. 30 -u -b3
+CALL TreeSolver -b 3 -l 4 -u -e "3*N - 1 = x^2 + 3*y^2" -r norm,invall,no-evenexp,same,showfail
 #--------
 # Squeeze
 TEST TSQ1 Squeeze

@@ -55,8 +55,11 @@ CALL SandBox -brahma
 TEST CMP0 Compositions
 CALL SandBox -compose dummy
 
-TEST CMP1 Compositions with factor
+TEST CMP1 Compositions with factor 17
 CALL SandBox -compose 6 17
+
+TEST CMP2 Compositions with factor 5
+CALL SandBox -compose 6 5
 #----
 TEST RPS0 Representations
 CALL SandBox -repres "(8*t + 1)^3"               64 2
@@ -93,6 +96,9 @@ CALL SandBox -repres "y^4"                       64 1
 
 TEST RP45 Representations y^5
 CALL SandBox -repres "y^5"                       64 1
+
+TEST RPN1 Representations y
+CALL SandBox -repres "y"                      32768 1
 
 TEST SQS1 SquareSumPrimes 
 CALL SandBox -sqsprim "x^2 + 2"

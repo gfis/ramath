@@ -295,7 +295,7 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
     } // toString
 
     /** Returns a String representation of the {@link PrimeFactorization},
-     *  and, fo rall prime factors, compute the mod function with respect to a small integer
+     *  and, for all prime factors, compute the mod function with respect to a small integer
      *  @param modulus compute the mod function with a respect to this int
      *  @return "2^2*43(3mod8)*53(5mod8)" for 60 and mod 8
      */

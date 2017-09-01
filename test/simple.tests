@@ -254,6 +254,9 @@ CALL ContinuedFraction -eval $(DATA)
 
 TEST CF9 continued fraction: Pell equation
 CALL ContinuedFraction -pell 109
+
+TEST CFA continued fraction: sqrt(cube)
+CALL ContinuedFraction -cube 32
 #--------------------------------
 # PrimeFactorization
 PACKAGE=org.teherba.ramath

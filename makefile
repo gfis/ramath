@@ -393,7 +393,9 @@ tree4:
 	-e "(x)^2 + 4 = y^3" -r norm,invall,no-evenexp,no-same \
 	| perl data/fermcay7.pl | cut  -f 2- | sort | uniq -c | grep -vE "^      1 " | tee x.tmp
 tree:
-	java -cp dist/ramath.jar org.teherba.ramath.symbolic.solver.TreeSolver -b $(BASE) -l $(LEVEL) -e "(x)^2 $(CONST) = y^3" -r norm,invall,no-evenexp,no-same | perl data/fermcay7.pl | cut  -f 2- | sort | uniq -c | grep -vE "^      1 " | tee x.tmp
+	java -cp dist/ramath.jar org.teherba.ramath.symbolic.solver.TreeSolver \
+	-b $(BASE) -l $(LEVEL) -e "(x)^2 $(CONST) = y^3" -r norm,invall,no-evenexp,no-same \
+	| perl data/presvg1.pl | tee tree$(CONST).$(BASE).svg
 treev1:
 	java -cp dist/ramath.jar org.teherba.ramath.symbolic.solver.TreeSolver -b $(BASE) -l $(LEVEL) -e "(y+x)^2 $(CONST) = y^3" -r norm,invall,no-evenexp,no-same | perl data/fermcay7.pl | cut  -f 2- | sort | uniq -c | grep -vE "^      1 " | tee x.tmp
 treev2:

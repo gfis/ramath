@@ -1,5 +1,6 @@
 /*  ContinuedFraction: a continued fraction in an array list of BigIntegers
  *  @(#) $Id: ContinuedFraction.java 738 2011-07-12 15:14:44Z gfis $
+ *  2017-08-18: -cube
  *  2017-05-28: javadoc 1.8
  *  2015-06-17: BigRational extends BigInteger
  *  2014-04-08: use BigInteger.valueOf(long)
@@ -786,6 +787,16 @@ public class ContinuedFraction extends ArrayList/*1.5*/<BigRational>/*1.5*/  {
                 cf.set(brat);
                 System.out.println(cf.toString());
                 System.out.println(cf.getDecimal());
+            } else if (opt.equals("-cube")) {
+                cf = new ContinuedFraction();
+                cf.setDebuggingLevel(2);
+                int num = 2;
+                while (num <= max) {
+                    int num3 = num*num*num;
+                    System.out.print("sqrt(" + num + "^3): ");
+                    cf.sqrtOf(BigInteger.valueOf(num3));
+                    num ++;
+                } // while num 
             } else if (opt.equals("-e")) {
                 cf = new ContinuedFraction(e);
                 System.out.println(cf.toString());
