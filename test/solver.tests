@@ -312,7 +312,7 @@ TEST TECL x^2 = y^3, solutions: (8,4), (27,9), ...
 CALL TreeSolver -b 6 -l 3 -e "x^2 - y^3" -r norm,invall,no-evenexp,no-same
 
 TEST TECM  Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3]
-CALL TreeSolver -b 3 -l 2 -e "2x+2x²-3y-6y²-4y³+1" -r norm,invall,no-evenexp,same
+CALL TreeSolver -b 27 -l 3 -e "x^2 + 2 = y^3" -r norm
 
 TEST TECN  Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3]
 CALL TreeSolver -b 5 -l 2 -e "2x+6x²-27y-54y²-36y³-4" -r norm,invall,no-evenexp,same
