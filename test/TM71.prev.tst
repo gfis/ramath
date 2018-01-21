@@ -1,4 +1,4 @@
-isHomogeneous
+considerNonPrimitive
 Expanding for base=2, level=4, reasons+features=base,primitive,same,similiar invall,norm,showfail
 Refined variables=a,b,c
 [0+1a,0+1b,0+1c]:	unknown -> [1] [0,0,0] a³+2b³-6a*b*c+4c³

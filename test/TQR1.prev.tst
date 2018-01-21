@@ -1,4 +1,4 @@
-isHomogeneous
+considerNonPrimitive
 Expanding for base=2, level=4, reasons+features=base,primitive,same,similiar,evenexp 
 Refined variables=p,q
 [0+1p,0+1q]:	unknown -> [1] [0,0] -p²+2q²

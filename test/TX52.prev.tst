@@ -1,5 +1,5 @@
 TranspositionSet={[1,0,2]}
-isHomogeneous
+considerNonPrimitive
 Expanding for base=2, level=3, reasons+features=base,transpose,primitive,same,similiar norm
 Refined variables=x,y,z
 [0+1x,0+1y,0+1z]:	unknown -> [1] [0,0,0] x³+y³-2z³

@@ -72,10 +72,11 @@ public class PrimitiveReason extends BaseReason {
      *  @return <em>true</em> if the <em>this</em> has no constant,
      *  <em>false</em> otherwise.
      */
-    public boolean isConsiderable_11() {
-        boolean result = ! startNode.hasConstant();
+    @Override
+    public boolean isConsiderable() {
+        boolean result = ! startNode.hasConstant() && startNode.isHomogeneous();
         if (result) {
-            solver.getWriter().println("!hasConstant");
+            solver.getWriter().println("considerNonPrimitive");
         }
         return result;
     } // isConsiderable
@@ -85,8 +86,7 @@ public class PrimitiveReason extends BaseReason {
      *  @return <em>true</em> if the <em>this</em> is homogeneous,
      *  <em>false</em> otherwise.
      */
-    @Override
-    public boolean isConsiderable() {
+    public boolean isConsiderable_99() {
         boolean result = startNode.isHomogeneous();
         if (result) {
             solver.getWriter().println("isHomogeneous");
@@ -99,30 +99,24 @@ public class PrimitiveReason extends BaseReason {
      *  @param  rmap2 investigate this {@link RefiningMap}
      *  @return true for the initial metered values when invall = true
      */
-    public boolean isNonPrimitive_11(RefiningMap rmap2) {
-        boolean result  = false; // assume failure
-        String name     = null;
-        String value    = null;
-        String constant = null;
+    public boolean isNonPrimitive(RefiningMap rmap2) {
+        String[] barray = rmap2.getBareRefinedArray(); // e.g. ["1+8", "1+8", "5+8"]
+        BigInteger gcdAdd = base;
+        BigInteger gcdMul = base;
+        int imap = 0;
+        while (imap < barray.length) {
+            String expr = barray[imap];
+            int plusPos = expr.indexOf("+");
+            gcdAdd = gcdAdd.gcd(new BigInteger(expr.substring(0, plusPos)));
+            gcdMul = gcdMul.gcd(new BigInteger(expr.substring(plusPos + 1)));
+            // notabene gcd(a, 0) = abs(a), therefore no need to replace 0 by base
+            imap ++;
+        } // while imap
         if (debug >= 1) {
-            solver.getWriter().println("isNonPrimitive? rmap2=" + rmap2.toVector());
+            solver.getWriter().println("isNonPrimitive? rmap2=" + rmap2.toVector()
+                    + ", gcdAdd=" + gcdAdd.toString() + ", gcdMul=" + gcdMul.toString());
         }
-        Iterator<String> iter = rmap2.keySet().iterator();
-        if (iter.hasNext()) { // at least 1 element
-            name  = iter.next();
-            value = rmap2.get(name);
-            if (value.startsWith("0+")) {
-                constant = value.substring(0, value.indexOf("*"));
-                result   = true; // now assume success
-            }
-        } // at least 1 element
-        while (result && iter.hasNext()) {
-            name   = iter.next();
-            value  = rmap2.get(name);
-            result = value.startsWith(constant);
-        } // while iter
-        return result // all are equal and "0+a"
-                && ! constant.startsWith("0+1");
+        return gcdAdd.gcd(gcdMul).compareTo(BigInteger.ONE) > 0;
     } // isNonPrimitive
 
     /** Determines whether all additive factors in a {@link RefiningMap} are 0,
@@ -130,7 +124,7 @@ public class PrimitiveReason extends BaseReason {
      *  @param  rmap2 investigate this {@link RefiningMap}
      *  @return true for the initial metered values when invall = true
      */
-    public boolean isNonPrimitive(RefiningMap rmap2) {
+    public boolean isNonPrimitive_99(RefiningMap rmap2) {
         boolean result  = false; // assume failure
         String name     = null;
         String value    = null;

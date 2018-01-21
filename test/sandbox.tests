@@ -11,6 +11,9 @@ PACKAGE=org.teherba.ramath
 TEST BX1 eec422
 CALL SandBox -eec422 data/two4.1000000.txt
 
+TEST BX2 eec413
+CALL SandBox -eec413 data/euler413.man
+
 TEST BXP2 pdiff x^2
 CALL SandBox -pdiff "x^2"
 

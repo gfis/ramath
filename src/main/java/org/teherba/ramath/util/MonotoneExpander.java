@@ -75,6 +75,7 @@ public class MonotoneExpander extends Expander {
 
     /** Resets the dispenser and establishes the first ascending tuple
      */
+    @Override
     public void reset() {
         int im = 0;
         while (im < width - 1) { // build a ramp
@@ -90,6 +91,7 @@ public class MonotoneExpander extends Expander {
      *  {@link Expander} algorithm - rather unpleasant and inefficient.
      *  @return an array with the <em>original</em> digits tuple <em>before</em> rolling
      */
+    @Override
     public int[] next() {
         // first copy current tuple to the result
         int[] result = toArray();
@@ -139,7 +141,7 @@ public class MonotoneExpander extends Expander {
      *  @return true if there was yet another combination, false
      *  if the method was called the maximum number of times.
      */
-    public int[] next_ok() {
+    public int[] next_99() {
          // first copy current tuple to the result
         int[] result = toArray();
         int im = 0;
@@ -181,7 +183,7 @@ public class MonotoneExpander extends Expander {
             }
         } // while invalid
         return result;
-    } // next_ok
+    } // next_99
 
     /** Test method, rolls through all combinations and prints them.
      *  @param args command line arguments: base width

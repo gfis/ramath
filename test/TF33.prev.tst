@@ -1,4 +1,4 @@
-isHomogeneous
+considerNonPrimitive
 Expanding for base=3, level=3, reasons+features=base,primitive,same,similiar igtriv,norm
 Refined variables=a,b,c
 [0+1a,0+1b,0+1c]:	unknown -> [1] [0,0,0] a³+3b³-9c³

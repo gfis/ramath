@@ -1,5 +1,5 @@
 TranspositionSet={[1,0]}
-isHomogeneous
+considerNonPrimitive
 Expanding for base=2, level=5, reasons+features=base,transpose,primitive,same,similiar norm,showfail
 Refined variables=a,b
 [0+1a,0+1b]:	unknown -> [1] [0,0] a²-4a*b+b²

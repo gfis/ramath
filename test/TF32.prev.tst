@@ -1,4 +1,4 @@
-isHomogeneous
+considerNonPrimitive
 Expanding for base=2, level=3, reasons+features=base,primitive,same,similiar,accel igtriv,norm
 Refined variables=a,b,c
 ??? assertion: accelerate loopCheck
