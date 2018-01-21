@@ -1,10 +1,10 @@
 TranspositionSet={[2,1,0,3],[1,2,0,3],[2,0,1,3],[0,2,1,3],[1,0,2,3]}
 isHomogeneous
-Expanding for base=8, level=0, reasons+features=base,transpose,primitive,same,similiar 
+Expanding for base=8, level=1, reasons+features=base,transpose,primitive,same,similiar 
 Refined variables=a,b,c,d
 [0+1a,0+1b,0+1c,0+1d]:	unknown -> [1] [0,0,0,0] a³+b³+c³-d³
 -> solution [0,0,0,0],trivial(3) [1,0,0,1],trivial(3) [0,1,0,1],trivial(3) [0,0,1,1],trivial(3)
-----------------
+---------------- level 0
 expanding queue[0]^-1,meter=[8,8,8,8]: a³+b³+c³-d³
 [0+8a,0+8b,0+8c,0+8d]:	non-primitive
 -> solution [0,0,0,0],trivial(3) [8,0,0,8],trivial(3) [0,8,0,8],trivial(3) [0,0,8,8],trivial(3)
@@ -529,4 +529,6 @@ expanding queue[0]^-1,meter=[8,8,8,8]: a³+b³+c³-d³
 [4+8a,6+8b,7+8c,7+8d]:	transposed [107] by [2,1,0,3]
 [6+8a,6+8b,7+8c,7+8d]:	transposed [109] by [1,2,0,3]
 [1+8a,7+8b,7+8c,7+8d]:	transposed [101] by [2,0,1,3]
-Maximum level 0 [110] mod 8: a³+b³+c³-d³
+endexp[0]
+---------------- level 1
+Maximum level 1 [110] mod 8: a³+b³+c³-d³

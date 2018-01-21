@@ -1,7 +1,7 @@
 Expanding for base=3, level=2, reasons+features=base,same,similiar,evenexp showfail
 Refined variables=x,y
 [0+1x,0+1y]:	unknown -> [1] [0,0] 15x²-7y²-9
-----------------
+---------------- level 0
 expanding queue[0]^-1,meter=[3,3]: 15x²-7y²-9
 [0+3x,0+3y]:	same 135x²-63y²-9 map {x=>x/3,y=>y/3} -> [0] 15x²-7y²-9
 [1+3x,0+3y]:	failure constant=6, vgcd=9 [1,0] 90x+135x²-63y²+6
@@ -12,4 +12,5 @@ expanding queue[0]^-1,meter=[3,3]: 15x²-7y²-9
 [0+3x,2+3y]:	failure constant=-37, vgcd=3 [0,2] 135x²-84y-63y²-37
 [1+3x,2+3y]:	failure constant=-22, vgcd=3 [1,2] 90x+135x²-84y-63y²-22
 [2+3x,2+3y]:	failure constant=23, vgcd=3 [2,2] 180x+135x²-84y-63y²+23
+endexp[0]
 Proof [1] mod 3: 15x²-7y²-9

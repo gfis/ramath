@@ -152,7 +152,7 @@ public class RelationSet
             result.insert(this.get(ipoly).clone());
             ipoly ++;
         } // while ipoly
-        result.setPairAttributes       (this.getPairAttributes        ().clone());
+        result.setPairAttributes(this.getPairAttributes ().clone());
         result.setIndex         (this.getIndex          ()); // should be adapted
         result.setMapping       (this.getMapping        ());
         result.setNestingLevel  (this.getNestingLevel   ());
@@ -359,7 +359,7 @@ public class RelationSet
      *  Powers are expanded to multiplications.
      *  @param isoVar the isolated variable
      *  @return for example "a =  A13 + A12*m + A11*m^2;"
-     *           instead of " - A13 + a - A12*m - A11*m^2;"
+     *         instead of " - A13 + a - A12*m - A11*m^2;"
      */
     public String toAssignment(String isoVar) {
         String result = "/* to Assignment: variable " + isoVar + " not found */";
@@ -448,6 +448,7 @@ public class RelationSet
      *  @param upperSubst whether the exponents of uppercase variables should be counted
      *  @return degree &gt;= 0, or -1 if the {@link Polynomial}s have Monomials with different degrees
      */
+    @Override
     public int degree(boolean upperSubst) {
         int result = -1;
         int ipoly = this.polynomials.size() - 1;

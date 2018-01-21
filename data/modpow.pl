@@ -29,7 +29,7 @@ use strict;
             $hash3{sprintf("%04d", $rest3)} = 1;
             $num += 1;
         } # while $num
-        if (0) { # show all residues
+        if (1) { # show all residues
             print sprintf("%4d^2\t\t", $mod);
             foreach my $key(sort(keys(%hash2))) {
                 print " " . ($key + 0);

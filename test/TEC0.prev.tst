@@ -1,403 +1,274 @@
 Expanding for base=2, level=7, reasons+features=base,similiar invall,norm
 Refined variables=x,y
 [0+1x,0+1y]:	unknown -> [1] [0,0] x²-y²+3
-----------------
+---------------- level 0
 expanding queue[0]^-1,meter=[2,2]: x²-y²+3
 [1+2x,0+2y]:	unknown -> [1] [1,0] x+x²-y²+1
 -> solution [1,2],NONTRIVIAL
-----------------
+endexp[0]
+---------------- level 1
 expanding queue[1]^0,meter=[2,2]: x+x²-y²+1
 [1+4x,2+4y]:	unknown -> [2] [0,1] x+2x²-2y-2y²
 -> solution [1,2],NONTRIVIAL
 [3+4x,2+4y]:	unknown -> [3] [1,1] 3x+2x²-2y-2y²+1
-----------------
+endexp[1]
+---------------- level 2
 expanding queue[2]^1,meter=[2,2]: x+2x²-2y-2y²
 [1+8x,2+8y]:	unknown -> [4] [0,0] x+4x²-2y-4y²
 -> solution [1,2],NONTRIVIAL
 [1+8x,6+8y]:	unknown -> [5] [0,1] x+4x²-6y-4y²-2
+endexp[2]
 expanding queue[3]^1,meter=[2,2]: 3x+2x²-2y-2y²+1
 [7+8x,2+8y]:	unknown -> [6] [1,0] 7x+4x²-2y-4y²+3
 [7+8x,6+8y]:	unknown -> [7] [1,1] 7x+4x²-6y-4y²+1
-----------------
+endexp[3]
+---------------- level 3
 expanding queue[4]^2,meter=[2,2]: x+4x²-2y-4y²
 [1+16x,2+16y]:	unknown -> [8] [0,0] x+8x²-2y-8y²
 -> solution [1,2],NONTRIVIAL
 [1+16x,10+16y]:	unknown -> [9] [0,1] x+8x²-10y-8y²-3
+endexp[4]
 expanding queue[5]^2,meter=[2,2]: x+4x²-6y-4y²-2
 [1+16x,6+16y]:	unknown -> [10] [0,0] x+8x²-6y-8y²-1
 [1+16x,14+16y]:	unknown -> [11] [0,1] x+8x²-14y-8y²-6
+endexp[5]
 expanding queue[6]^3,meter=[2,2]: 7x+4x²-2y-4y²+3
 [15+16x,2+16y]:	unknown -> [12] [1,0] 15x+8x²-2y-8y²+7
 [15+16x,10+16y]:	unknown -> [13] [1,1] 15x+8x²-10y-8y²+4
+endexp[6]
 expanding queue[7]^3,meter=[2,2]: 7x+4x²-6y-4y²+1
 [15+16x,6+16y]:	unknown -> [14] [1,0] 15x+8x²-6y-8y²+6
 [15+16x,14+16y]:	unknown -> [15] [1,1] 15x+8x²-14y-8y²+1
-----------------
+endexp[7]
+---------------- level 4
 expanding queue[8]^4,meter=[2,2]: x+8x²-2y-8y²
 [1+32x,2+32y]:	unknown -> [16] [0,0] x+16x²-2y-16y²
 -> solution [1,2],NONTRIVIAL
 [1+32x,18+32y]:	unknown -> [17] [0,1] x+16x²-18y-16y²-5
+endexp[8]
 expanding queue[9]^4,meter=[2,2]: x+8x²-10y-8y²-3
 [17+32x,10+32y]:	unknown -> [18] [1,0] 17x+16x²-10y-16y²+3
 [17+32x,26+32y]:	unknown -> [19] [1,1] 17x+16x²-26y-16y²-6
+endexp[9]
 expanding queue[10]^5,meter=[2,2]: x+8x²-6y-8y²-1
 [17+32x,6+32y]:	unknown -> [20] [1,0] 17x+16x²-6y-16y²+4
 [17+32x,22+32y]:	unknown -> [21] [1,1] 17x+16x²-22y-16y²-3
+endexp[10]
 expanding queue[11]^5,meter=[2,2]: x+8x²-14y-8y²-6
 [1+32x,14+32y]:	unknown -> [22] [0,0] x+16x²-14y-16y²-3
 [1+32x,30+32y]:	unknown -> [23] [0,1] x+16x²-30y-16y²-14
+endexp[11]
 expanding queue[12]^6,meter=[2,2]: 15x+8x²-2y-8y²+7
 [31+32x,2+32y]:	unknown -> [24] [1,0] 31x+16x²-2y-16y²+15
 [31+32x,18+32y]:	unknown -> [25] [1,1] 31x+16x²-18y-16y²+10
+endexp[12]
 expanding queue[13]^6,meter=[2,2]: 15x+8x²-10y-8y²+4
 [15+32x,10+32y]:	unknown -> [26] [0,0] 15x+16x²-10y-16y²+2
 [15+32x,26+32y]:	unknown -> [27] [0,1] 15x+16x²-26y-16y²-7
+endexp[13]
 expanding queue[14]^7,meter=[2,2]: 15x+8x²-6y-8y²+6
 [15+32x,6+32y]:	unknown -> [28] [0,0] 15x+16x²-6y-16y²+3
 [15+32x,22+32y]:	unknown -> [29] [0,1] 15x+16x²-22y-16y²-4
+endexp[14]
 expanding queue[15]^7,meter=[2,2]: 15x+8x²-14y-8y²+1
 [31+32x,14+32y]:	unknown -> [30] [1,0] 31x+16x²-14y-16y²+12
 [31+32x,30+32y]:	unknown -> [31] [1,1] 31x+16x²-30y-16y²+1
-----------------
+endexp[15]
+---------------- level 5
 expanding queue[16]^8,meter=[2,2]: x+16x²-2y-16y²
 [1+64x,2+64y]:	unknown -> [32] [0,0] x+32x²-2y-32y²
 -> solution [1,2],NONTRIVIAL
 [1+64x,34+64y]:	unknown -> [33] [0,1] x+32x²-34y-32y²-9
+endexp[16]
 expanding queue[17]^8,meter=[2,2]: x+16x²-18y-16y²-5
 [33+64x,18+64y]:	unknown -> [34] [1,0] 33x+32x²-18y-32y²+6
 [33+64x,50+64y]:	unknown -> [35] [1,1] 33x+32x²-50y-32y²-11
+endexp[17]
 expanding queue[18]^9,meter=[2,2]: 17x+16x²-10y-16y²+3
 [49+64x,10+64y]:	unknown -> [36] [1,0] 49x+32x²-10y-32y²+18
 [49+64x,42+64y]:	unknown -> [37] [1,1] 49x+32x²-42y-32y²+5
+endexp[18]
 expanding queue[19]^9,meter=[2,2]: 17x+16x²-26y-16y²-6
 [17+64x,26+64y]:	unknown -> [38] [0,0] 17x+32x²-26y-32y²-3
 [17+64x,58+64y]:	unknown -> [39] [0,1] 17x+32x²-58y-32y²-24
+endexp[19]
 expanding queue[20]^10,meter=[2,2]: 17x+16x²-6y-16y²+4
 [17+64x,6+64y]:	unknown -> [40] [0,0] 17x+32x²-6y-32y²+2
 [17+64x,38+64y]:	unknown -> [41] [0,1] 17x+32x²-38y-32y²-9
+endexp[20]
 expanding queue[21]^10,meter=[2,2]: 17x+16x²-22y-16y²-3
 [49+64x,22+64y]:	unknown -> [42] [1,0] 49x+32x²-22y-32y²+15
 [49+64x,54+64y]:	unknown -> [43] [1,1] 49x+32x²-54y-32y²-4
+endexp[21]
 expanding queue[22]^11,meter=[2,2]: x+16x²-14y-16y²-3
 [33+64x,14+64y]:	unknown -> [44] [1,0] 33x+32x²-14y-32y²+7
 [33+64x,46+64y]:	unknown -> [45] [1,1] 33x+32x²-46y-32y²-8
+endexp[22]
 expanding queue[23]^11,meter=[2,2]: x+16x²-30y-16y²-14
 [1+64x,30+64y]:	unknown -> [46] [0,0] x+32x²-30y-32y²-7
 [1+64x,62+64y]:	unknown -> [47] [0,1] x+32x²-62y-32y²-30
+endexp[23]
 expanding queue[24]^12,meter=[2,2]: 31x+16x²-2y-16y²+15
 [63+64x,2+64y]:	unknown -> [48] [1,0] 63x+32x²-2y-32y²+31
 [63+64x,34+64y]:	unknown -> [49] [1,1] 63x+32x²-34y-32y²+22
+endexp[24]
 expanding queue[25]^12,meter=[2,2]: 31x+16x²-18y-16y²+10
 [31+64x,18+64y]:	unknown -> [50] [0,0] 31x+32x²-18y-32y²+5
 [31+64x,50+64y]:	unknown -> [51] [0,1] 31x+32x²-50y-32y²-12
+endexp[25]
 expanding queue[26]^13,meter=[2,2]: 15x+16x²-10y-16y²+2
 [15+64x,10+64y]:	unknown -> [52] [0,0] 15x+32x²-10y-32y²+1
 [15+64x,42+64y]:	unknown -> [53] [0,1] 15x+32x²-42y-32y²-12
+endexp[26]
 expanding queue[27]^13,meter=[2,2]: 15x+16x²-26y-16y²-7
 [47+64x,26+64y]:	unknown -> [54] [1,0] 47x+32x²-26y-32y²+12
 [47+64x,58+64y]:	unknown -> [55] [1,1] 47x+32x²-58y-32y²-9
+endexp[27]
 expanding queue[28]^14,meter=[2,2]: 15x+16x²-6y-16y²+3
 [47+64x,6+64y]:	unknown -> [56] [1,0] 47x+32x²-6y-32y²+17
 [47+64x,38+64y]:	unknown -> [57] [1,1] 47x+32x²-38y-32y²+6
+endexp[28]
 expanding queue[29]^14,meter=[2,2]: 15x+16x²-22y-16y²-4
 [15+64x,22+64y]:	unknown -> [58] [0,0] 15x+32x²-22y-32y²-2
 [15+64x,54+64y]:	unknown -> [59] [0,1] 15x+32x²-54y-32y²-21
+endexp[29]
 expanding queue[30]^15,meter=[2,2]: 31x+16x²-14y-16y²+12
 [31+64x,14+64y]:	unknown -> [60] [0,0] 31x+32x²-14y-32y²+6
 [31+64x,46+64y]:	unknown -> [61] [0,1] 31x+32x²-46y-32y²-9
+endexp[30]
 expanding queue[31]^15,meter=[2,2]: 31x+16x²-30y-16y²+1
 [63+64x,30+64y]:	unknown -> [62] [1,0] 63x+32x²-30y-32y²+24
 [63+64x,62+64y]:	unknown -> [63] [1,1] 63x+32x²-62y-32y²+1
-----------------
+endexp[31]
+---------------- level 6
 expanding queue[32]^16,meter=[2,2]: x+32x²-2y-32y²
 [1+128x,2+128y]:	unknown -> [64] [0,0] x+64x²-2y-64y²
 -> solution [1,2],NONTRIVIAL
 [1+128x,66+128y]:	unknown -> [65] [0,1] x+64x²-66y-64y²-17
+endexp[32]
 expanding queue[33]^16,meter=[2,2]: x+32x²-34y-32y²-9
 [65+128x,34+128y]:	unknown -> [66] [1,0] 65x+64x²-34y-64y²+12
 [65+128x,98+128y]:	unknown -> [67] [1,1] 65x+64x²-98y-64y²-21
+endexp[33]
 expanding queue[34]^17,meter=[2,2]: 33x+32x²-18y-32y²+6
 [33+128x,18+128y]:	unknown -> [68] [0,0] 33x+64x²-18y-64y²+3
 [33+128x,82+128y]:	unknown -> [69] [0,1] 33x+64x²-82y-64y²-22
+endexp[34]
 expanding queue[35]^17,meter=[2,2]: 33x+32x²-50y-32y²-11
 [97+128x,50+128y]:	unknown -> [70] [1,0] 97x+64x²-50y-64y²+27
 [97+128x,114+128y]:	unknown -> [71] [1,1] 97x+64x²-114y-64y²-14
+endexp[35]
 expanding queue[36]^18,meter=[2,2]: 49x+32x²-10y-32y²+18
 [49+128x,10+128y]:	unknown -> [72] [0,0] 49x+64x²-10y-64y²+9
 [49+128x,74+128y]:	unknown -> [73] [0,1] 49x+64x²-74y-64y²-12
+endexp[36]
 expanding queue[37]^18,meter=[2,2]: 49x+32x²-42y-32y²+5
 [113+128x,42+128y]:	unknown -> [74] [1,0] 113x+64x²-42y-64y²+43
 [113+128x,106+128y]:	unknown -> [75] [1,1] 113x+64x²-106y-64y²+6
+endexp[37]
 expanding queue[38]^19,meter=[2,2]: 17x+32x²-26y-32y²-3
 [81+128x,26+128y]:	unknown -> [76] [1,0] 81x+64x²-26y-64y²+23
 [81+128x,90+128y]:	unknown -> [77] [1,1] 81x+64x²-90y-64y²-6
+endexp[38]
 expanding queue[39]^19,meter=[2,2]: 17x+32x²-58y-32y²-24
 [17+128x,58+128y]:	unknown -> [78] [0,0] 17x+64x²-58y-64y²-12
 [17+128x,122+128y]:	unknown -> [79] [0,1] 17x+64x²-122y-64y²-57
+endexp[39]
 expanding queue[40]^20,meter=[2,2]: 17x+32x²-6y-32y²+2
 [17+128x,6+128y]:	unknown -> [80] [0,0] 17x+64x²-6y-64y²+1
 [17+128x,70+128y]:	unknown -> [81] [0,1] 17x+64x²-70y-64y²-18
+endexp[40]
 expanding queue[41]^20,meter=[2,2]: 17x+32x²-38y-32y²-9
 [81+128x,38+128y]:	unknown -> [82] [1,0] 81x+64x²-38y-64y²+20
 [81+128x,102+128y]:	unknown -> [83] [1,1] 81x+64x²-102y-64y²-15
+endexp[41]
 expanding queue[42]^21,meter=[2,2]: 49x+32x²-22y-32y²+15
 [113+128x,22+128y]:	unknown -> [84] [1,0] 113x+64x²-22y-64y²+48
 [113+128x,86+128y]:	unknown -> [85] [1,1] 113x+64x²-86y-64y²+21
+endexp[42]
 expanding queue[43]^21,meter=[2,2]: 49x+32x²-54y-32y²-4
 [49+128x,54+128y]:	unknown -> [86] [0,0] 49x+64x²-54y-64y²-2
 [49+128x,118+128y]:	unknown -> [87] [0,1] 49x+64x²-118y-64y²-45
+endexp[43]
 expanding queue[44]^22,meter=[2,2]: 33x+32x²-14y-32y²+7
 [97+128x,14+128y]:	unknown -> [88] [1,0] 97x+64x²-14y-64y²+36
 [97+128x,78+128y]:	unknown -> [89] [1,1] 97x+64x²-78y-64y²+13
+endexp[44]
 expanding queue[45]^22,meter=[2,2]: 33x+32x²-46y-32y²-8
 [33+128x,46+128y]:	unknown -> [90] [0,0] 33x+64x²-46y-64y²-4
 [33+128x,110+128y]:	unknown -> [91] [0,1] 33x+64x²-110y-64y²-43
+endexp[45]
 expanding queue[46]^23,meter=[2,2]: x+32x²-30y-32y²-7
 [65+128x,30+128y]:	unknown -> [92] [1,0] 65x+64x²-30y-64y²+13
 [65+128x,94+128y]:	unknown -> [93] [1,1] 65x+64x²-94y-64y²-18
+endexp[46]
 expanding queue[47]^23,meter=[2,2]: x+32x²-62y-32y²-30
 [1+128x,62+128y]:	unknown -> [94] [0,0] x+64x²-62y-64y²-15
 [1+128x,126+128y]:	unknown -> [95] [0,1] x+64x²-126y-64y²-62
+endexp[47]
 expanding queue[48]^24,meter=[2,2]: 63x+32x²-2y-32y²+31
 [127+128x,2+128y]:	unknown -> [96] [1,0] 127x+64x²-2y-64y²+63
 [127+128x,66+128y]:	unknown -> [97] [1,1] 127x+64x²-66y-64y²+46
+endexp[48]
 expanding queue[49]^24,meter=[2,2]: 63x+32x²-34y-32y²+22
 [63+128x,34+128y]:	unknown -> [98] [0,0] 63x+64x²-34y-64y²+11
 [63+128x,98+128y]:	unknown -> [99] [0,1] 63x+64x²-98y-64y²-22
+endexp[49]
 expanding queue[50]^25,meter=[2,2]: 31x+32x²-18y-32y²+5
 [95+128x,18+128y]:	unknown -> [100] [1,0] 95x+64x²-18y-64y²+34
 [95+128x,82+128y]:	unknown -> [101] [1,1] 95x+64x²-82y-64y²+9
+endexp[50]
 expanding queue[51]^25,meter=[2,2]: 31x+32x²-50y-32y²-12
 [31+128x,50+128y]:	unknown -> [102] [0,0] 31x+64x²-50y-64y²-6
 [31+128x,114+128y]:	unknown -> [103] [0,1] 31x+64x²-114y-64y²-47
+endexp[51]
 expanding queue[52]^26,meter=[2,2]: 15x+32x²-10y-32y²+1
 [79+128x,10+128y]:	unknown -> [104] [1,0] 79x+64x²-10y-64y²+24
 [79+128x,74+128y]:	unknown -> [105] [1,1] 79x+64x²-74y-64y²+3
+endexp[52]
 expanding queue[53]^26,meter=[2,2]: 15x+32x²-42y-32y²-12
 [15+128x,42+128y]:	unknown -> [106] [0,0] 15x+64x²-42y-64y²-6
 [15+128x,106+128y]:	unknown -> [107] [0,1] 15x+64x²-106y-64y²-43
+endexp[53]
 expanding queue[54]^27,meter=[2,2]: 47x+32x²-26y-32y²+12
 [47+128x,26+128y]:	unknown -> [108] [0,0] 47x+64x²-26y-64y²+6
 [47+128x,90+128y]:	unknown -> [109] [0,1] 47x+64x²-90y-64y²-23
+endexp[54]
 expanding queue[55]^27,meter=[2,2]: 47x+32x²-58y-32y²-9
 [111+128x,58+128y]:	unknown -> [110] [1,0] 111x+64x²-58y-64y²+35
 [111+128x,122+128y]:	unknown -> [111] [1,1] 111x+64x²-122y-64y²-10
+endexp[55]
 expanding queue[56]^28,meter=[2,2]: 47x+32x²-6y-32y²+17
 [111+128x,6+128y]:	unknown -> [112] [1,0] 111x+64x²-6y-64y²+48
 [111+128x,70+128y]:	unknown -> [113] [1,1] 111x+64x²-70y-64y²+29
+endexp[56]
 expanding queue[57]^28,meter=[2,2]: 47x+32x²-38y-32y²+6
 [47+128x,38+128y]:	unknown -> [114] [0,0] 47x+64x²-38y-64y²+3
 [47+128x,102+128y]:	unknown -> [115] [0,1] 47x+64x²-102y-64y²-32
+endexp[57]
 expanding queue[58]^29,meter=[2,2]: 15x+32x²-22y-32y²-2
 [15+128x,22+128y]:	unknown -> [116] [0,0] 15x+64x²-22y-64y²-1
 [15+128x,86+128y]:	unknown -> [117] [0,1] 15x+64x²-86y-64y²-28
+endexp[58]
 expanding queue[59]^29,meter=[2,2]: 15x+32x²-54y-32y²-21
 [79+128x,54+128y]:	unknown -> [118] [1,0] 79x+64x²-54y-64y²+13
 [79+128x,118+128y]:	unknown -> [119] [1,1] 79x+64x²-118y-64y²-30
+endexp[59]
 expanding queue[60]^30,meter=[2,2]: 31x+32x²-14y-32y²+6
 [31+128x,14+128y]:	unknown -> [120] [0,0] 31x+64x²-14y-64y²+3
 [31+128x,78+128y]:	unknown -> [121] [0,1] 31x+64x²-78y-64y²-20
+endexp[60]
 expanding queue[61]^30,meter=[2,2]: 31x+32x²-46y-32y²-9
 [95+128x,46+128y]:	unknown -> [122] [1,0] 95x+64x²-46y-64y²+27
 [95+128x,110+128y]:	unknown -> [123] [1,1] 95x+64x²-110y-64y²-12
+endexp[61]
 expanding queue[62]^31,meter=[2,2]: 63x+32x²-30y-32y²+24
 [63+128x,30+128y]:	unknown -> [124] [0,0] 63x+64x²-30y-64y²+12
 [63+128x,94+128y]:	unknown -> [125] [0,1] 63x+64x²-94y-64y²-19
+endexp[62]
 expanding queue[63]^31,meter=[2,2]: 63x+32x²-62y-32y²+1
 [127+128x,62+128y]:	unknown -> [126] [1,0] 127x+64x²-62y-64y²+48
 [127+128x,126+128y]:	unknown -> [127] [1,1] 127x+64x²-126y-64y²+1
-----------------
-expanding queue[64]^32,meter=[2,2]: x+64x²-2y-64y²
-[1+256x,2+256y]:	unknown -> [128] [0,0] x+128x²-2y-128y²
--> solution [1,2],NONTRIVIAL
-[1+256x,130+256y]:	unknown -> [129] [0,1] x+128x²-130y-128y²-33
-expanding queue[65]^32,meter=[2,2]: x+64x²-66y-64y²-17
-[129+256x,66+256y]:	unknown -> [130] [1,0] 129x+128x²-66y-128y²+24
-[129+256x,194+256y]:	unknown -> [131] [1,1] 129x+128x²-194y-128y²-41
-expanding queue[66]^33,meter=[2,2]: 65x+64x²-34y-64y²+12
-[65+256x,34+256y]:	unknown -> [132] [0,0] 65x+128x²-34y-128y²+6
-[65+256x,162+256y]:	unknown -> [133] [0,1] 65x+128x²-162y-128y²-43
-expanding queue[67]^33,meter=[2,2]: 65x+64x²-98y-64y²-21
-[193+256x,98+256y]:	unknown -> [134] [1,0] 193x+128x²-98y-128y²+54
-[193+256x,226+256y]:	unknown -> [135] [1,1] 193x+128x²-226y-128y²-27
-expanding queue[68]^34,meter=[2,2]: 33x+64x²-18y-64y²+3
-[161+256x,18+256y]:	unknown -> [136] [1,0] 161x+128x²-18y-128y²+50
-[161+256x,146+256y]:	unknown -> [137] [1,1] 161x+128x²-146y-128y²+9
-expanding queue[69]^34,meter=[2,2]: 33x+64x²-82y-64y²-22
-[33+256x,82+256y]:	unknown -> [138] [0,0] 33x+128x²-82y-128y²-11
-[33+256x,210+256y]:	unknown -> [139] [0,1] 33x+128x²-210y-128y²-84
-expanding queue[70]^35,meter=[2,2]: 97x+64x²-50y-64y²+27
-[225+256x,50+256y]:	unknown -> [140] [1,0] 225x+128x²-50y-128y²+94
-[225+256x,178+256y]:	unknown -> [141] [1,1] 225x+128x²-178y-128y²+37
-expanding queue[71]^35,meter=[2,2]: 97x+64x²-114y-64y²-14
-[97+256x,114+256y]:	unknown -> [142] [0,0] 97x+128x²-114y-128y²-7
-[97+256x,242+256y]:	unknown -> [143] [0,1] 97x+128x²-242y-128y²-96
-expanding queue[72]^36,meter=[2,2]: 49x+64x²-10y-64y²+9
-[177+256x,10+256y]:	unknown -> [144] [1,0] 177x+128x²-10y-128y²+61
-[177+256x,138+256y]:	unknown -> [145] [1,1] 177x+128x²-138y-128y²+24
-expanding queue[73]^36,meter=[2,2]: 49x+64x²-74y-64y²-12
-[49+256x,74+256y]:	unknown -> [146] [0,0] 49x+128x²-74y-128y²-6
-[49+256x,202+256y]:	unknown -> [147] [0,1] 49x+128x²-202y-128y²-75
-expanding queue[74]^37,meter=[2,2]: 113x+64x²-42y-64y²+43
-[241+256x,42+256y]:	unknown -> [148] [1,0] 241x+128x²-42y-128y²+110
-[241+256x,170+256y]:	unknown -> [149] [1,1] 241x+128x²-170y-128y²+57
-expanding queue[75]^37,meter=[2,2]: 113x+64x²-106y-64y²+6
-[113+256x,106+256y]:	unknown -> [150] [0,0] 113x+128x²-106y-128y²+3
-[113+256x,234+256y]:	unknown -> [151] [0,1] 113x+128x²-234y-128y²-82
-expanding queue[76]^38,meter=[2,2]: 81x+64x²-26y-64y²+23
-[209+256x,26+256y]:	unknown -> [152] [1,0] 209x+128x²-26y-128y²+84
-[209+256x,154+256y]:	unknown -> [153] [1,1] 209x+128x²-154y-128y²+39
-expanding queue[77]^38,meter=[2,2]: 81x+64x²-90y-64y²-6
-[81+256x,90+256y]:	unknown -> [154] [0,0] 81x+128x²-90y-128y²-3
-[81+256x,218+256y]:	unknown -> [155] [0,1] 81x+128x²-218y-128y²-80
-expanding queue[78]^39,meter=[2,2]: 17x+64x²-58y-64y²-12
-[17+256x,58+256y]:	unknown -> [156] [0,0] 17x+128x²-58y-128y²-6
-[17+256x,186+256y]:	unknown -> [157] [0,1] 17x+128x²-186y-128y²-67
-expanding queue[79]^39,meter=[2,2]: 17x+64x²-122y-64y²-57
-[145+256x,122+256y]:	unknown -> [158] [1,0] 145x+128x²-122y-128y²+12
-[145+256x,250+256y]:	unknown -> [159] [1,1] 145x+128x²-250y-128y²-81
-expanding queue[80]^40,meter=[2,2]: 17x+64x²-6y-64y²+1
-[145+256x,6+256y]:	unknown -> [160] [1,0] 145x+128x²-6y-128y²+41
-[145+256x,134+256y]:	unknown -> [161] [1,1] 145x+128x²-134y-128y²+6
-expanding queue[81]^40,meter=[2,2]: 17x+64x²-70y-64y²-18
-[17+256x,70+256y]:	unknown -> [162] [0,0] 17x+128x²-70y-128y²-9
-[17+256x,198+256y]:	unknown -> [163] [0,1] 17x+128x²-198y-128y²-76
-expanding queue[82]^41,meter=[2,2]: 81x+64x²-38y-64y²+20
-[81+256x,38+256y]:	unknown -> [164] [0,0] 81x+128x²-38y-128y²+10
-[81+256x,166+256y]:	unknown -> [165] [0,1] 81x+128x²-166y-128y²-41
-expanding queue[83]^41,meter=[2,2]: 81x+64x²-102y-64y²-15
-[209+256x,102+256y]:	unknown -> [166] [1,0] 209x+128x²-102y-128y²+65
-[209+256x,230+256y]:	unknown -> [167] [1,1] 209x+128x²-230y-128y²-18
-expanding queue[84]^42,meter=[2,2]: 113x+64x²-22y-64y²+48
-[113+256x,22+256y]:	unknown -> [168] [0,0] 113x+128x²-22y-128y²+24
-[113+256x,150+256y]:	unknown -> [169] [0,1] 113x+128x²-150y-128y²-19
-expanding queue[85]^42,meter=[2,2]: 113x+64x²-86y-64y²+21
-[241+256x,86+256y]:	unknown -> [170] [1,0] 241x+128x²-86y-128y²+99
-[241+256x,214+256y]:	unknown -> [171] [1,1] 241x+128x²-214y-128y²+24
-expanding queue[86]^43,meter=[2,2]: 49x+64x²-54y-64y²-2
-[49+256x,54+256y]:	unknown -> [172] [0,0] 49x+128x²-54y-128y²-1
-[49+256x,182+256y]:	unknown -> [173] [0,1] 49x+128x²-182y-128y²-60
-expanding queue[87]^43,meter=[2,2]: 49x+64x²-118y-64y²-45
-[177+256x,118+256y]:	unknown -> [174] [1,0] 177x+128x²-118y-128y²+34
-[177+256x,246+256y]:	unknown -> [175] [1,1] 177x+128x²-246y-128y²-57
-expanding queue[88]^44,meter=[2,2]: 97x+64x²-14y-64y²+36
-[97+256x,14+256y]:	unknown -> [176] [0,0] 97x+128x²-14y-128y²+18
-[97+256x,142+256y]:	unknown -> [177] [0,1] 97x+128x²-142y-128y²-21
-expanding queue[89]^44,meter=[2,2]: 97x+64x²-78y-64y²+13
-[225+256x,78+256y]:	unknown -> [178] [1,0] 225x+128x²-78y-128y²+87
-[225+256x,206+256y]:	unknown -> [179] [1,1] 225x+128x²-206y-128y²+16
-expanding queue[90]^45,meter=[2,2]: 33x+64x²-46y-64y²-4
-[33+256x,46+256y]:	unknown -> [180] [0,0] 33x+128x²-46y-128y²-2
-[33+256x,174+256y]:	unknown -> [181] [0,1] 33x+128x²-174y-128y²-57
-expanding queue[91]^45,meter=[2,2]: 33x+64x²-110y-64y²-43
-[161+256x,110+256y]:	unknown -> [182] [1,0] 161x+128x²-110y-128y²+27
-[161+256x,238+256y]:	unknown -> [183] [1,1] 161x+128x²-238y-128y²-60
-expanding queue[92]^46,meter=[2,2]: 65x+64x²-30y-64y²+13
-[193+256x,30+256y]:	unknown -> [184] [1,0] 193x+128x²-30y-128y²+71
-[193+256x,158+256y]:	unknown -> [185] [1,1] 193x+128x²-158y-128y²+24
-expanding queue[93]^46,meter=[2,2]: 65x+64x²-94y-64y²-18
-[65+256x,94+256y]:	unknown -> [186] [0,0] 65x+128x²-94y-128y²-9
-[65+256x,222+256y]:	unknown -> [187] [0,1] 65x+128x²-222y-128y²-88
-expanding queue[94]^47,meter=[2,2]: x+64x²-62y-64y²-15
-[129+256x,62+256y]:	unknown -> [188] [1,0] 129x+128x²-62y-128y²+25
-[129+256x,190+256y]:	unknown -> [189] [1,1] 129x+128x²-190y-128y²-38
-expanding queue[95]^47,meter=[2,2]: x+64x²-126y-64y²-62
-[1+256x,126+256y]:	unknown -> [190] [0,0] x+128x²-126y-128y²-31
-[1+256x,254+256y]:	unknown -> [191] [0,1] x+128x²-254y-128y²-126
-expanding queue[96]^48,meter=[2,2]: 127x+64x²-2y-64y²+63
-[255+256x,2+256y]:	unknown -> [192] [1,0] 255x+128x²-2y-128y²+127
-[255+256x,130+256y]:	unknown -> [193] [1,1] 255x+128x²-130y-128y²+94
-expanding queue[97]^48,meter=[2,2]: 127x+64x²-66y-64y²+46
-[127+256x,66+256y]:	unknown -> [194] [0,0] 127x+128x²-66y-128y²+23
-[127+256x,194+256y]:	unknown -> [195] [0,1] 127x+128x²-194y-128y²-42
-expanding queue[98]^49,meter=[2,2]: 63x+64x²-34y-64y²+11
-[191+256x,34+256y]:	unknown -> [196] [1,0] 191x+128x²-34y-128y²+69
-[191+256x,162+256y]:	unknown -> [197] [1,1] 191x+128x²-162y-128y²+20
-expanding queue[99]^49,meter=[2,2]: 63x+64x²-98y-64y²-22
-[63+256x,98+256y]:	unknown -> [198] [0,0] 63x+128x²-98y-128y²-11
-[63+256x,226+256y]:	unknown -> [199] [0,1] 63x+128x²-226y-128y²-92
-expanding queue[100]^50,meter=[2,2]: 95x+64x²-18y-64y²+34
-[95+256x,18+256y]:	unknown -> [200] [0,0] 95x+128x²-18y-128y²+17
-[95+256x,146+256y]:	unknown -> [201] [0,1] 95x+128x²-146y-128y²-24
-expanding queue[101]^50,meter=[2,2]: 95x+64x²-82y-64y²+9
-[223+256x,82+256y]:	unknown -> [202] [1,0] 223x+128x²-82y-128y²+84
-[223+256x,210+256y]:	unknown -> [203] [1,1] 223x+128x²-210y-128y²+11
-expanding queue[102]^51,meter=[2,2]: 31x+64x²-50y-64y²-6
-[31+256x,50+256y]:	unknown -> [204] [0,0] 31x+128x²-50y-128y²-3
-[31+256x,178+256y]:	unknown -> [205] [0,1] 31x+128x²-178y-128y²-60
-expanding queue[103]^51,meter=[2,2]: 31x+64x²-114y-64y²-47
-[159+256x,114+256y]:	unknown -> [206] [1,0] 159x+128x²-114y-128y²+24
-[159+256x,242+256y]:	unknown -> [207] [1,1] 159x+128x²-242y-128y²-65
-expanding queue[104]^52,meter=[2,2]: 79x+64x²-10y-64y²+24
-[79+256x,10+256y]:	unknown -> [208] [0,0] 79x+128x²-10y-128y²+12
-[79+256x,138+256y]:	unknown -> [209] [0,1] 79x+128x²-138y-128y²-25
-expanding queue[105]^52,meter=[2,2]: 79x+64x²-74y-64y²+3
-[207+256x,74+256y]:	unknown -> [210] [1,0] 207x+128x²-74y-128y²+73
-[207+256x,202+256y]:	unknown -> [211] [1,1] 207x+128x²-202y-128y²+4
-expanding queue[106]^53,meter=[2,2]: 15x+64x²-42y-64y²-6
-[15+256x,42+256y]:	unknown -> [212] [0,0] 15x+128x²-42y-128y²-3
-[15+256x,170+256y]:	unknown -> [213] [0,1] 15x+128x²-170y-128y²-56
-expanding queue[107]^53,meter=[2,2]: 15x+64x²-106y-64y²-43
-[143+256x,106+256y]:	unknown -> [214] [1,0] 143x+128x²-106y-128y²+18
-[143+256x,234+256y]:	unknown -> [215] [1,1] 143x+128x²-234y-128y²-67
-expanding queue[108]^54,meter=[2,2]: 47x+64x²-26y-64y²+6
-[47+256x,26+256y]:	unknown -> [216] [0,0] 47x+128x²-26y-128y²+3
-[47+256x,154+256y]:	unknown -> [217] [0,1] 47x+128x²-154y-128y²-42
-expanding queue[109]^54,meter=[2,2]: 47x+64x²-90y-64y²-23
-[175+256x,90+256y]:	unknown -> [218] [1,0] 175x+128x²-90y-128y²+44
-[175+256x,218+256y]:	unknown -> [219] [1,1] 175x+128x²-218y-128y²-33
-expanding queue[110]^55,meter=[2,2]: 111x+64x²-58y-64y²+35
-[239+256x,58+256y]:	unknown -> [220] [1,0] 239x+128x²-58y-128y²+105
-[239+256x,186+256y]:	unknown -> [221] [1,1] 239x+128x²-186y-128y²+44
-expanding queue[111]^55,meter=[2,2]: 111x+64x²-122y-64y²-10
-[111+256x,122+256y]:	unknown -> [222] [0,0] 111x+128x²-122y-128y²-5
-[111+256x,250+256y]:	unknown -> [223] [0,1] 111x+128x²-250y-128y²-98
-expanding queue[112]^56,meter=[2,2]: 111x+64x²-6y-64y²+48
-[111+256x,6+256y]:	unknown -> [224] [0,0] 111x+128x²-6y-128y²+24
-[111+256x,134+256y]:	unknown -> [225] [0,1] 111x+128x²-134y-128y²-11
-expanding queue[113]^56,meter=[2,2]: 111x+64x²-70y-64y²+29
-[239+256x,70+256y]:	unknown -> [226] [1,0] 239x+128x²-70y-128y²+102
-[239+256x,198+256y]:	unknown -> [227] [1,1] 239x+128x²-198y-128y²+35
-expanding queue[114]^57,meter=[2,2]: 47x+64x²-38y-64y²+3
-[175+256x,38+256y]:	unknown -> [228] [1,0] 175x+128x²-38y-128y²+57
-[175+256x,166+256y]:	unknown -> [229] [1,1] 175x+128x²-166y-128y²+6
-expanding queue[115]^57,meter=[2,2]: 47x+64x²-102y-64y²-32
-[47+256x,102+256y]:	unknown -> [230] [0,0] 47x+128x²-102y-128y²-16
-[47+256x,230+256y]:	unknown -> [231] [0,1] 47x+128x²-230y-128y²-99
-expanding queue[116]^58,meter=[2,2]: 15x+64x²-22y-64y²-1
-[143+256x,22+256y]:	unknown -> [232] [1,0] 143x+128x²-22y-128y²+39
-[143+256x,150+256y]:	unknown -> [233] [1,1] 143x+128x²-150y-128y²-4
-expanding queue[117]^58,meter=[2,2]: 15x+64x²-86y-64y²-28
-[15+256x,86+256y]:	unknown -> [234] [0,0] 15x+128x²-86y-128y²-14
-[15+256x,214+256y]:	unknown -> [235] [0,1] 15x+128x²-214y-128y²-89
-expanding queue[118]^59,meter=[2,2]: 79x+64x²-54y-64y²+13
-[207+256x,54+256y]:	unknown -> [236] [1,0] 207x+128x²-54y-128y²+78
-[207+256x,182+256y]:	unknown -> [237] [1,1] 207x+128x²-182y-128y²+19
-expanding queue[119]^59,meter=[2,2]: 79x+64x²-118y-64y²-30
-[79+256x,118+256y]:	unknown -> [238] [0,0] 79x+128x²-118y-128y²-15
-[79+256x,246+256y]:	unknown -> [239] [0,1] 79x+128x²-246y-128y²-106
-expanding queue[120]^60,meter=[2,2]: 31x+64x²-14y-64y²+3
-[159+256x,14+256y]:	unknown -> [240] [1,0] 159x+128x²-14y-128y²+49
-[159+256x,142+256y]:	unknown -> [241] [1,1] 159x+128x²-142y-128y²+10
-expanding queue[121]^60,meter=[2,2]: 31x+64x²-78y-64y²-20
-[31+256x,78+256y]:	unknown -> [242] [0,0] 31x+128x²-78y-128y²-10
-[31+256x,206+256y]:	unknown -> [243] [0,1] 31x+128x²-206y-128y²-81
-expanding queue[122]^61,meter=[2,2]: 95x+64x²-46y-64y²+27
-[223+256x,46+256y]:	unknown -> [244] [1,0] 223x+128x²-46y-128y²+93
-[223+256x,174+256y]:	unknown -> [245] [1,1] 223x+128x²-174y-128y²+38
-expanding queue[123]^61,meter=[2,2]: 95x+64x²-110y-64y²-12
-[95+256x,110+256y]:	unknown -> [246] [0,0] 95x+128x²-110y-128y²-6
-[95+256x,238+256y]:	unknown -> [247] [0,1] 95x+128x²-238y-128y²-93
-expanding queue[124]^62,meter=[2,2]: 63x+64x²-30y-64y²+12
-[63+256x,30+256y]:	unknown -> [248] [0,0] 63x+128x²-30y-128y²+6
-[63+256x,158+256y]:	unknown -> [249] [0,1] 63x+128x²-158y-128y²-41
-expanding queue[125]^62,meter=[2,2]: 63x+64x²-94y-64y²-19
-[191+256x,94+256y]:	unknown -> [250] [1,0] 191x+128x²-94y-128y²+54
-[191+256x,222+256y]:	unknown -> [251] [1,1] 191x+128x²-222y-128y²-25
-expanding queue[126]^63,meter=[2,2]: 127x+64x²-62y-64y²+48
-[127+256x,62+256y]:	unknown -> [252] [0,0] 127x+128x²-62y-128y²+24
-[127+256x,190+256y]:	unknown -> [253] [0,1] 127x+128x²-190y-128y²-39
-expanding queue[127]^63,meter=[2,2]: 127x+64x²-126y-64y²+1
-[255+256x,126+256y]:	unknown -> [254] [1,0] 255x+128x²-126y-128y²+96
-[255+256x,254+256y]:	unknown -> [255] [1,1] 255x+128x²-254y-128y²+1
-Maximum level 7 [256] mod 2: x²-y²+3
+endexp[63]
+---------------- level 7
+Maximum level 7 [128] mod 2: x²-y²+3

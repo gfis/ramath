@@ -34,7 +34,7 @@ import  java.util.regex.Pattern;
 
 /** Class Vector is used in conjunction with {@link Matrix} to
  *  implement some simple linear algebra operations
- *  on square matrices of small integer numbers (Java <em>byte</em>s).
+ *  on square matrices of small integer numbers (Java <em>int</em>s).
  *  Typically a Vector will have no more than 8 elements.
  *  @author Dr. Georg Fischer
  */

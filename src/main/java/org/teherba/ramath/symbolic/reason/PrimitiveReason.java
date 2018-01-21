@@ -1,5 +1,6 @@
 /*  PrimitiveReason: checks whether the RelationSet is the same as the root
  *  @(#) $Id: PrimitiveReason.java 970 2012-10-25 16:49:32Z gfis $
+ *  2018-01-20: primitive also if gcd(additive) divides gcd(multiplicative) in refined map
  *  2017-05-28: javadoc 1.8
  *  2015-09-10, Georg Fischer: copied from SameReason
  */
@@ -56,6 +57,7 @@ public class PrimitiveReason extends BaseReason {
      *  @param solver the {@link BaseSolver solver} which uses <em>this</em> reason for iteration control
      *  @param startNode the root node of the expansion (sub-)tree
      */
+    @Override
     public void initialize(BaseSolver solver, RelationSet startNode) {
         super.initialize(solver, startNode);
         this.startNode = startNode;
@@ -67,20 +69,65 @@ public class PrimitiveReason extends BaseReason {
 
     /** Whether <em>this</em> reason should be considered for
      *  the starting {@link RelationSet}.
-     *  @return <em>true</em> if the <em>this</em> should be considered (default),
+     *  @return <em>true</em> if the <em>this</em> has no constant,
      *  <em>false</em> otherwise.
      */
+    public boolean isConsiderable_11() {
+        boolean result = ! startNode.hasConstant();
+        if (result) {
+            solver.getWriter().println("!hasConstant");
+        }
+        return result;
+    } // isConsiderable
+
+    /** Whether <em>this</em> reason should be considered for
+     *  the starting {@link RelationSet}.
+     *  @return <em>true</em> if the <em>this</em> is homogeneous,
+     *  <em>false</em> otherwise.
+     */
+    @Override
     public boolean isConsiderable() {
         boolean result = startNode.isHomogeneous();
         if (result) {
             solver.getWriter().println("isHomogeneous");
         }
         return result;
-    } // isConsiderable
+    } // isConsiderable_99
 
     /** Determines whether all additive factors in a {@link RefiningMap} are 0,
      *  and all multiplicative factors are the same and &gt; 1.
-     *  @param  rmap2 investigat this {@link RefiningMap}
+     *  @param  rmap2 investigate this {@link RefiningMap}
+     *  @return true for the initial metered values when invall = true
+     */
+    public boolean isNonPrimitive_11(RefiningMap rmap2) {
+        boolean result  = false; // assume failure
+        String name     = null;
+        String value    = null;
+        String constant = null;
+        if (debug >= 1) {
+            solver.getWriter().println("isNonPrimitive? rmap2=" + rmap2.toVector());
+        }
+        Iterator<String> iter = rmap2.keySet().iterator();
+        if (iter.hasNext()) { // at least 1 element
+            name  = iter.next();
+            value = rmap2.get(name);
+            if (value.startsWith("0+")) {
+                constant = value.substring(0, value.indexOf("*"));
+                result   = true; // now assume success
+            }
+        } // at least 1 element
+        while (result && iter.hasNext()) {
+            name   = iter.next();
+            value  = rmap2.get(name);
+            result = value.startsWith(constant);
+        } // while iter
+        return result // all are equal and "0+a"
+                && ! constant.startsWith("0+1");
+    } // isNonPrimitive
+
+    /** Determines whether all additive factors in a {@link RefiningMap} are 0,
+     *  and all multiplicative factors are the same and &gt; 1.
+     *  @param  rmap2 investigate this {@link RefiningMap}
      *  @return true for the initial metered values when invall = true
      */
     public boolean isNonPrimitive(RefiningMap rmap2) {
@@ -120,6 +167,7 @@ public class PrimitiveReason extends BaseReason {
      *  @return a message String denoting the reasoning details,
      *  or {@link VariableMap#UNKNOWN} if the comparision is not conclusive.
      */
+    @Override
     public String consider(int iqueue, RelationSet rset1, RelationSet rset2) {
         String result = VariableMap.UNKNOWN;
         RefiningMap rmap2 = rset2.getMapping();

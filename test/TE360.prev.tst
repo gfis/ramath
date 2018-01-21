@@ -1,10 +1,10 @@
 TranspositionSet={[2,1,0,3],[1,2,0,3],[2,0,1,3],[0,2,1,3],[1,0,2,3]}
 isHomogeneous
-Expanding for base=6, level=0, reasons+features=base,transpose,primitive,same,similiar 
+Expanding for base=6, level=1, reasons+features=base,transpose,primitive,same,similiar 
 Refined variables=a,b,c,d
 [0+1a,0+1b,0+1c,0+1d]:	unknown -> [1] [0,0,0,0] a³+b³+c³-d³
 -> solution [0,0,0,0],trivial(3) [1,0,0,1],trivial(3) [0,1,0,1],trivial(3) [0,0,1,1],trivial(3)
-----------------
+---------------- level 0
 expanding queue[0]^-1,meter=[6,6,6,6]: a³+b³+c³-d³
 [0+6a,0+6b,0+6c,0+6d]:	non-primitive
 -> solution [0,0,0,0],trivial(3) [6,0,0,6],trivial(3) [0,6,0,6],trivial(3) [0,0,6,6],trivial(3)
@@ -166,4 +166,6 @@ expanding queue[0]^-1,meter=[6,6,6,6]: a³+b³+c³-d³
 [3+6a,3+6b,5+6c,5+6d]:	transposed [35] by [1,2,0,3]
 [2+6a,4+6b,5+6c,5+6d]:	transposed [34] by [2,1,0,3]
 [1+6a,5+6b,5+6c,5+6d]:	transposed [33] by [2,0,1,3]
-Maximum level 0 [36] mod 6: a³+b³+c³-d³
+endexp[0]
+---------------- level 1
+Maximum level 1 [36] mod 6: a³+b³+c³-d³

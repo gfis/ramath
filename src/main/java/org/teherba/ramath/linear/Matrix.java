@@ -36,7 +36,7 @@ import  java.util.ArrayList;
 import  org.apache.log4j.Logger;
 
 /** Class Matrix implements some simple linear algebra operations
- *  on square matrices of small integer numbers.
+ *  on square matrices of small integer numbers (Java <em>int</em>s).
  *  Typically a Matrix will have no more than 8 rows/columns.
  *  It is used to solve diophantine problems.
  *  @author Dr. Georg Fischer

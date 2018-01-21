@@ -1,7 +1,7 @@
 Expanding for base=5, level=3, reasons+features=base,same,similiar,evenexp invall,norm,showfail
 Refined variables=x,y
 [0+1x,0+1y]:	unknown -> [1] [0,0] 15x²-7y²-9
-----------------
+---------------- level 0
 expanding queue[0]^-1,meter=[5,5]: 15x²-7y²-9
 [0+5x,0+5y]:	failure constant=-9, vgcd=25 [0,0] 375x²-175y²-9
 [1+5x,0+5y]:	failure constant=6, vgcd=25 [1,0] 150x+375x²-175y²+6
@@ -28,4 +28,5 @@ expanding queue[0]^-1,meter=[5,5]: 15x²-7y²-9
 [2+5x,4+5y]:	failure constant=-61, vgcd=5 [2,4] 300x+375x²-280y-175y²-61
 [3+5x,4+5y]:	failure constant=14, vgcd=5 [3,4] 450x+375x²-280y-175y²+14
 [4+5x,4+5y]:	failure constant=119, vgcd=5 [4,4] 600x+375x²-280y-175y²+119
+endexp[0]
 Proof [1] mod 5: 15x²-7y²-9
