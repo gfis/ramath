@@ -2,6 +2,7 @@
 
 # test Ramath functions
 # @(#) $Id: makefile 741 2011-07-23 12:30:09Z  $
+# 2018-01-22: eec
 # 2018-01-20: jfind grep -iH "..."
 # 2016-08-31: unified with $(APPL)
 # 2016-07-10: jfind also in $(SRC)/../common
@@ -30,14 +31,32 @@ SUDO=
 CONST=+2
 LEVEL=3
 BASE=2
+MAX=32
 
-all: solver
+all: eec
 #-------------------------------------------------------------------
 # Perform a regression test 
 regression: simple symbolic ideal linear matrix sandbox solver regeval
 regeval:
 	grep -iHE "tests (FAILED|passed|recreated)" $(TESTDIR)/*.log
 #---------------------------------------------------
+cand: cand1 cand2 cand3
+cand1:
+	java -cp dist/ramath.jar org.teherba.ramath.eec.CandidateSelector \
+	-w 4 -m $(MAX) -e 4 -l 3 -r 1 -f data/euler413.man \
+	| tee x.tmp
+cand2:
+	grep "cand" test/CS42.this.tst | sort | tee cand.srt
+cand3:
+	cut -f 4 -d " " cand.srt | sort -n | uniq -c | tee cand3.tmp
+c42:
+	grep cand test/CS42.this.tst | sort -k 3 -k 2 > c42.srt
+	cut -f 4 -d " " c42.srt | sort -n | uniq -c | sort -rn | less 
+	less c42.srt
+#-----------------
+eec:
+	$(REGR) test/eec.tests 		$(TEST) 2>&1 | tee $(TESTDIR)/regression_$@.log
+	grep FAILED $(TESTDIR)/regression_$@.log
 ideal:
 	$(REGR) test/ideal.tests 	$(TEST) 2>&1 | tee $(TESTDIR)/regression_$@.log
 	grep FAILED $(TESTDIR)/regression_$@.log

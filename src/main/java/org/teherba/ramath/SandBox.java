@@ -544,13 +544,6 @@ public class SandBox {
                 limit --;
             } // while ! eof
             lineReader.close();
-            
-            // now evaluate all rows
-            ituple = 0;
-            while (ituple < tuples.size()) {
-                
-                ituple ++;
-            } // while ituple
         } catch (Exception exc) {
             log.error(exc.getMessage(), exc);
         } // try

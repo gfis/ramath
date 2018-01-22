@@ -103,6 +103,7 @@ public class Expander extends Dispenser {
 
     /** Resets the dispenser, next tuple is (0,0, -- 0)
      */
+    @Override
     public void reset() {
         super.reset();
         ceil = 0; // will increment up to base, where it stops
@@ -112,6 +113,7 @@ public class Expander extends Dispenser {
      *  {@link ModoMeter#next} algorithm - rather unpleasant and inefficient.
      *  @return an array with the <em>original</em> digits tuple <em>before</em> rolling
      */
+    @Override
     public int[] next() {
         int[] result = toArray(); // first copy current tuple to the result
         int im = 0;

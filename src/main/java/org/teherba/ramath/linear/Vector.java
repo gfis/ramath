@@ -1,5 +1,6 @@
 /*  Vector: a simple, short vector of small numbers
  *  @(#) $Id: Vector.java 744 2011-07-26 06:29:20Z gfis $
+ *  2018-01-22: more /+Type+/
  *  2017-05-28: javadoc 1.8
  *  2016-10-06: negate(), isNegative(); gcd, lcm corrected for 0
  *  2016-07-11: hasZero
@@ -73,11 +74,11 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
     /** Constructor for a Vector from a tuple of integers
      *  @param tuple array of integers
      */
-    public Vector(int[] tuple) {
+    public Vector(/*Type*/int[] tuple) {
         this.vecLen = tuple.length;
         this.vector = new /*Type*/int[this.vecLen];
         for (int itup = 0; itup < this.vecLen; itup ++) {
-            this.vector[itup] = (/*Type*/int) tuple[itup];
+            this.vector[itup] = tuple[itup];
         } // for itup
     } // Constructor(int[])
 
@@ -142,7 +143,7 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
      *  @return independant copy of the Vector
      */
     public Vector sort() {
-        int[] result = new int[this.vector.length];
+        /*Type*/int[] result = new /*Type*/int[this.vector.length];
         for (int ielem = 0; ielem < this.vecLen; ielem ++) {
             result[ielem] = this.vector[ielem];
         } // for ielem
@@ -156,7 +157,7 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
      *  @return independant copy of the Vector
      */
     public Vector nice() {
-        int[] result = new int[this.vecLen];
+        /*Type*/int[] result = new /*Type*/int[this.vecLen];
         int imax = 0;
         for (int ielem = 0; ielem < this.vecLen; ielem ++) {
             result[ielem] = this.vector[ielem];
@@ -247,7 +248,7 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
      *  @param icol number of the element (zero based)
      *  @param value a small number
      */
-    public void set(int icol, int value) {
+    public void set(int icol, /*Type*/int value) {
         this.vector[icol] = value;
     } // set
 
@@ -261,7 +262,7 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
     /** Gets the values of <em>this</em> {@link Vector} as an <em>int</em> array.
      *  @return int[]
      */
-    public int[] getValues() {
+    public /*Type*/int[] getValues() {
         return vector;
     } // getValues
 
@@ -303,7 +304,7 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
      *  @param elem search for this element
      *  @return index &gt;= 0 of <em>elem</em> in <em>this</em> Vector, or -1 if not found
      */
-    public int indexOf(int elem) {
+    public int indexOf(/*Type*/int elem) {
         int result = -1;
         int ielem = 0;
         while (result < 0 && ielem < this.vecLen) {
@@ -520,7 +521,7 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
      *  @param vect the array
      *  @return an integer &gt;= 1
      */
-    public static int gcd(int[] vect) {
+    public static int gcd(/*Type*/int[] vect) {
         int result = Math.abs(vect[0]);
         int vlen = vect.length;
         int ielem = 1;
@@ -863,15 +864,15 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
     /** Returns an array with the integer elements of the Vector
      *  @return a one-dimensional array of ints
      */
-    public int[] toArray() {
+    public /*Type*/int[] toArray_99() {
         return this.vector;
     } // toArray()
 
     /** Gives the minimum element in <em>this</em> Vector
      *  @return the minimum value
      */
-    public int min() {
-        int result = this.vector[0];
+    public /*Type*/int min() {
+        /*Type*/int result = this.vector[0];
         int icol = 1;
         while (icol < this.vecLen) {
             if (this.vector[icol] < result) {
@@ -885,8 +886,8 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
     /** Gives the maximum element in <em>this</em> Vector
      *  @return the maximum value
      */
-    public int max() {
-        int result = this.vector[0];
+    public /*Type*/int max() {
+        /*Type*/int result = this.vector[0];
         int icol = 1;
         while (icol < this.vecLen) {
             if (this.vector[icol] > result) {
@@ -900,8 +901,8 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
     /** Computes the sum of the absolute values of all elements
      *  @return sum of absolute values
      */
-    public int absSum() {
-        int result = Math.abs(this.vector[0]);
+    public /*Type*/int absSum() {
+        /*Type*/int result = Math.abs(this.vector[0]);
         int icol = 1;
         while (icol < this.vecLen) {
             result += Math.abs(this.vector[icol]);
@@ -913,8 +914,8 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
     /** Determines the sum of the last bits of all elements
      *  @return 0 if all elements are even, 1 if exactly one element is odd, &gt; 1 otherwise
      */
-    public int lastBitSum() {
-        int result = 0;
+    public /*Type*/int lastBitSum() {
+        /*Type*/int result = 0;
         int icol = 0;
         while (icol < this.vecLen) {
             result += this.vector[icol] & 1;
@@ -958,8 +959,8 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
      *  @return this * vect2,
      *  that is the sum of the products of corresponding elements
      */
-    public int multiply(Vector vect2) {
-        int result = 0;
+    public /*Type*/int multiply(Vector vect2) {
+        /*Type*/int result = 0;
         if (vect2.size() == this.vecLen) {
             int ielem = 0;
             while (ielem < this.vecLen) {
