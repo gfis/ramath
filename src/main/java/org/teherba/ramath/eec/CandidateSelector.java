@@ -101,8 +101,8 @@ public class CandidateSelector {
         tuples.add(tuple);
         int itup = 0;
         while (itup < width) { // store all elements
-            elements.put(tuple.get(itup)/*.toString()*/
-                    , String.format("%04d.%s", index, letters.substring(itup, itup + 1)));
+            elements.put(tuple.getBig(itup)/*.toString()*/
+                    , String.format("%04d\t%d", index, itup));
             itup ++;
         } // while itup
     } // add
@@ -137,13 +137,10 @@ public class CandidateSelector {
                         .split("\\D+"); // separate on non-digits
                 if (nums.length == this.width) {
                     BigVector vect = new BigVector(nums.length, 0, nums);
-                    if (debug > 0) {
-                        System.out.print(tuples.size() + ": " + vect.toString());
-                        System.out.print(" is "
-                                + (vect.isPowerSum(exponent, left, right) ? "" : "NO ")
-                                + "powerSum(4)");
-                        System.out.println();
-                    } // debug
+                    if (! vect.isPowerSum(exponent, left, right)) {
+                        System.out.println("no powersum(" + exponent + ", " + left + ", " + right + ") "
+                        	+ tuples.size() + ": " + vect.toString());
+                    } // no powersum
                     this.add(vect);
                 } // nums.length == 4
                 limit --;
@@ -204,13 +201,13 @@ public class CandidateSelector {
                 while (itup < width) { // innerproduct sum
                     if        (values[itup] ==  0) {
                     } else if (values[itup] == +1) {
-                        sum = sum.add     (tuple.get(itup));
+                        sum = sum.add     (tuple.getBig(itup));
                     } else if (values[itup] == -1) {
-                        sum = sum.subtract(tuple.get(itup));
+                        sum = sum.subtract(tuple.getBig(itup));
                     } else if (values[itup] >   0) {
-                        sum = sum.add     (prods[+ values[itup]].get(itup));
+                        sum = sum.add     (prods[+ values[itup]].getBig(itup));
                     } else if (values[itup] <   0) {
-                        sum = sum.subtract(prods[- values[itup]].get(itup));
+                        sum = sum.subtract(prods[- values[itup]].getBig(itup));
                     }
                     itup ++;
                 } // while itup innerproduct sum
@@ -218,7 +215,7 @@ public class CandidateSelector {
                 String cand = elements.get(sum/*.toString()*/);
                 if (cand != null && ! cand.startsWith(index4)) { // found a non-trivial one
                     System.out.print("cand\t" + index4);
-                    System.out.print("\t" + cand.replaceAll("\\.", "\t"));
+                    System.out.print("\t" + cand);
                     System.out.print("\t" + tuple.toString());
                     System.out.print("\t" + (new Vector(values)).toString(","));
                     System.out.println();

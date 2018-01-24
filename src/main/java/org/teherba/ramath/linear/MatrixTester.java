@@ -709,7 +709,7 @@ public class MatrixTester implements Serializable {
                         ivect ++;
                     } // while ivect
                     System.out.println(failed + " of " + count + " failed, "
-                            + String.format("%4.2f", failed * 100.0 / count) + "%");
+                            + String.format("%d%%", (int) (failed * 100 / count)));
                     // opt -follow
 
                 } else if (opt.equals("-gen" )) { // copied from -perms

@@ -254,4 +254,4 @@
 [280,35,-276,-99]	no follower
 [281,-50,-257,-172]	no follower
 [281,62,-257,-176]	no follower
-230 of 256 failed, 89,84%
+230 of 256 failed, 89%

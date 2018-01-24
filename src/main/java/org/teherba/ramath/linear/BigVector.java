@@ -33,7 +33,7 @@ import  java.util.regex.Pattern;
  *  Typically a BigVector will have no more than 8 elements.
  *  @author Dr. Georg Fischer
  */
-public class BigVector implements Cloneable, Serializable {
+public class BigVector extends Vector implements Cloneable, Serializable {
     private static final long serialVersionUID = 1L;
     public final static String CVSID = "@(#) $Id: BigVector.java 744 2011-07-26 06:29:20Z gfis $";
 
@@ -120,9 +120,9 @@ public class BigVector implements Cloneable, Serializable {
      *  @param icol number of the element (zero based)
      *  @return a small number
      */
-    public BigInteger get(int icol) {
+    public BigInteger getBig(int icol) {
         return this.vector[icol];
-    } // get
+    } // getBig
 
     /** Sets an element of the BigVector
      *  @param icol number of the element (zero based)
@@ -135,9 +135,9 @@ public class BigVector implements Cloneable, Serializable {
     /** Gets the values of <em>this</em> {@link BigVector} as an <em>BigInteger</em> array.
      *  @return array of BigIntegers
      */
-    public BigInteger[] getValues() {
+    public BigInteger[] getBigValues() {
         return vector;
-    } // getValues
+    } // getBigValues
 
     /** Returns the number of rows/columns
      *  @return a small number

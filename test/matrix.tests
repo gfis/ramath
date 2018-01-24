@@ -58,19 +58,19 @@ DATA
 CALL linear.MatrixTester -perms $(DATA)
 #--------
 TEST FL01 -follow
-CALL linear.MatrixTester -follow -mf data/find_seq.man -vf data/prewrob3.sub
+CALL linear.MatrixTester -follow -mf data/find_seq.man -vf data/prewrob3.sub.man
 
 TEST FL02 -follow inverse matrix
-CALL linear.MatrixTester -follow -mf data/inverse.man -vf data/prewrob3.sub
+CALL linear.MatrixTester -follow -mf data/inverse.man -vf data/prewrob3.sub.man
 
 TEST FL03 prepare determinants +/-1 and their inverses
-CALL linear.MatrixTester -inv -mf data/det1.grep
+CALL linear.MatrixTester -inv -mf data/det1.grep.man
 
 TEST FL04 -follow with determinants +/-1 
-CALL linear.MatrixTester -follow -mf test/FL03.this.tst -vf data/prewrob3.sub
+CALL linear.MatrixTester -follow -mf test/FL03.this.tst -vf data/prewrob3.sub.man
 
 TEST FL05 -follow =FL01+FL04
-CALL linear.MatrixTester -follow -mf data/find_seq.man -mf test/FL03.this.tst -vf data/prewrob3.sub
+CALL linear.MatrixTester -follow -mf data/find_seq.man -mf test/FL03.this.tst -vf data/prewrob3.sub.man
 #--------
 TEST FS01 generate data/find_seq.man
 CALL linear.MatrixTester -gen -mf data/find_seq.man [6,-3,-4,-5] 

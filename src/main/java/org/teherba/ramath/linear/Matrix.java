@@ -28,7 +28,6 @@
  */
 package org.teherba.ramath.linear;
 import  org.teherba.ramath.linear.Vector;
-import  org.teherba.ramath.linear.VectorArray;
 import  org.teherba.ramath.util.ModoMeter;
 import  org.teherba.ramath.util.Permutator;
 import  java.io.Serializable;
@@ -97,12 +96,12 @@ public class Matrix implements Cloneable, Serializable {
      *  @param rowLen number of rows/columns
      *  @param values linearized array of row values
      */
-    public Matrix(int rowLen, int[] values) {
+    public Matrix(int rowLen, /*Type*/int[] values) {
         this(rowLen, values.length / rowLen);
         int ival = 0;
         for (int irow = 0; irow < this.rowLen; irow ++) {
             for (int jcol = 0; jcol < this.colLen; jcol ++) {
-                this.matrix[irow][jcol] = (/*Type*/int) values[ival ++];
+                this.matrix[irow][jcol] = values[ival ++];
             } // for jcol
         } // for irow
         this.fraction = 1;
@@ -118,7 +117,7 @@ public class Matrix implements Cloneable, Serializable {
             for (int jcol = 0; jcol < this.colLen; jcol ++) {
                 this.matrix[irow][jcol] = 0;
                 try {
-                    this.matrix[irow][jcol] = Integer.parseInt(values[ival]);
+                    this.matrix[irow][jcol] = /*Type*/Integer.parseInt(values[ival]);
                 } catch (Exception exc) {
                 }
                 ival ++;

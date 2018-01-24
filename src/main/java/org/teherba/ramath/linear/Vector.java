@@ -45,18 +45,14 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
 
     /** Debugging switch: 0 = no, 1 = moderate, 2 = more, 3 = extreme verbosity */
     private int debug = 0;
-    /** System dependant newline character sequence */
-    protected static String newline = System.getProperty("line.separator");
 
     /*-------------- class properties -----------------------------*/
-
     /** a one-dimensional array of small numbers */
     protected /*Type*/int[] vector;
     /** number of elements in <em>vector</em> */
     protected int vecLen;
 
     /*-------------- construction -----------------------------*/
-
     /** No-args Constructor
      */
     public Vector() {
@@ -673,19 +669,6 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
         long temp = 0;
         if (left + right == this.vecLen) {
             int isum = 0;
-        /*
-            // check for trivial case: 2 elements are equal
-            for (isum = left; isum < this.vecLen; isum ++) {
-                for (int lsum = 0; lsum < left; lsum ++) {
-                    if (this.vector[isum] == this.vector[lsum]) {
-                        return false;
-                    }
-                } // for lsum
-            } // for isum
-            if (Math.abs(gcd()) > 1) { // common gcd: another trival case
-                return false;
-            }
-        */
             isum = 0;
             switch (exp) {
                 case 2:
@@ -721,11 +704,6 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
             throw new IllegalArgumentException("cannot test a vector with the wrong size " + this.vecLen);
         }
         boolean result = leftSum == rightSum;
-    /*
-        if (! result &&              left - 1 >= right + 1) {
-            result = isPowerSum(exp, left - 1,   right + 1);
-        }
-    */
         return result;
     } // isPowerSum
     

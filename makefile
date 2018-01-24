@@ -40,19 +40,10 @@ regression: simple symbolic ideal linear matrix sandbox solver regeval
 regeval:
 	grep -iHE "tests (FAILED|passed|recreated)" $(TESTDIR)/*.log
 #---------------------------------------------------
-cand: cand1 cand2 cand3
-cand1:
-	java -cp dist/ramath.jar org.teherba.ramath.eec.CandidateSelector \
-	-w 4 -m $(MAX) -e 4 -l 3 -r 1 -f data/euler413.man \
-	| tee x.tmp
-cand2:
-	grep "cand" test/CS42.this.tst | sort | tee cand.srt
-cand3:
-	cut -f 4 -d " " cand.srt | sort -n | uniq -c | tee cand3.tmp
+c31:
+	grep cand test/CS31.this.tst | cut -f 6 | sort | uniq -c | sort -rn | less
 c42:
-	grep cand test/CS42.this.tst | sort -k 3 -k 2 > c42.srt
-	cut -f 4 -d " " c42.srt | sort -n | uniq -c | sort -rn | less 
-	less c42.srt
+	grep cand test/CS42.this.tst | cut -f 6 | sort | uniq -c | sort -rn | less
 #-----------------
 eec:
 	$(REGR) test/eec.tests 		$(TEST) 2>&1 | tee $(TESTDIR)/regression_$@.log
