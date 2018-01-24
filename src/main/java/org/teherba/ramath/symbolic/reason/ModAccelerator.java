@@ -31,7 +31,6 @@ import  org.teherba.ramath.symbolic.RelationSet;
 import  org.teherba.ramath.symbolic.Signature;
 import  org.teherba.ramath.symbolic.VariableMap;
 import  org.teherba.ramath.linear.Vector;
-import  org.teherba.ramath.BigIntegerUtil;
 import  java.util.Iterator;
 import  java.math.BigInteger;
 

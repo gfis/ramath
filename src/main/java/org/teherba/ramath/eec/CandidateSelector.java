@@ -111,10 +111,9 @@ public class CandidateSelector {
      *  All behind "#" on a line is a comment and is ignored.
      *  Only lines with exactly {@link #width} numbers are processed and stored.
      *  @param fileName name of th einput file, or "-" for STDIN.
-     *  @param limit maximum number of lines to be read
      */
     public void read(String fileName) {
-        read(fileName, 65535); // very high
+        read(fileName, 65535); // very high limit
     } // read(String)
 
     /** Reads a list of tuples which represent a powersum, one tuple on one line.

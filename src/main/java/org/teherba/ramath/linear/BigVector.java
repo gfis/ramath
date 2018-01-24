@@ -45,7 +45,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
     /** a one-dimensional array of numbers */
     protected BigInteger[] vector;
     /** number of elements in <em>vector</em> */
-    protected int vecLen;
+    // inherited: protected int vecLen;
 
     /*-------------- construction -----------------------------*/
 
@@ -139,13 +139,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         return vector;
     } // getBigValues
 
-    /** Returns the number of rows/columns
-     *  @return a small number
-     */
-    public int size() {
-        return this.vecLen;
-    } // size
-
+	// inherited: size
     /*-------------- lightweight derived methods -----------------------------*/
 
     /** Equality of 2 BigVectors
@@ -196,7 +190,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
             if (icol > 0) {
                 result.append(sep);
             }
-            result.append(String.valueOf(this.vector[icol]));
+            result.append(this.vector[icol].toString());
             icol ++;
         } // while icol
         result.append(']');
@@ -276,8 +270,6 @@ public class BigVector extends Vector implements Cloneable, Serializable {
             String opt = args[iarg ++];
             if (false) {
             } else if (opt.startsWith("-div")) {
-            } else if (opt.startsWith("-gcd")) {
-            } else if (opt.startsWith("-lcm")) {
             } else if (opt.startsWith("-pow")) {
             } else if (opt.startsWith("-psum")) {
             } else if (opt.startsWith("-read")) {

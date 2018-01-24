@@ -1,4 +1,4 @@
-Expanding for base=2, reasons+features=accel
+Expanding for base=2, level=4, reasons+features=accel
 Refined variables=x,y
 ReasonFactory: accel, code="accel"
 consider(0, , 30x²-7y-14y²-2)

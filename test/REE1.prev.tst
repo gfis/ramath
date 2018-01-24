@@ -1,5 +1,4 @@
-ExponentGCDs=[4,4,4,4]
-Expanding for base=2, reasons+features=evenexp
+Expanding for base=2, level=4, reasons+features=evenexp
 Refined variables=a,b,c,d
 ReasonFactory: evenexp, code="evenexp"
 EvenExponentReason.consider(

@@ -25,16 +25,16 @@
  */
 package org.teherba.ramath;
 import  org.teherba.ramath.BigRational;
-import  org.teherba.ramath.BigIntegerUtil;
 import  org.teherba.ramath.ContinuedFraction;
-import  org.teherba.ramath.PrimeFactorization;
 import  org.teherba.ramath.linear.Matrix;
 import  org.teherba.ramath.linear.Vector;
 import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.PolyVector;
 import  org.teherba.ramath.symbolic.Signature;
 import  org.teherba.ramath.symbolic.VariableMap;
+import  org.teherba.ramath.util.BigIntegerUtil;
 import  org.teherba.ramath.util.IntegerExpander;
+import  org.teherba.ramath.util.PrimeFactorization;
 import  java.io.BufferedReader;
 import  java.io.FileReader;
 import  java.io.InputStreamReader;

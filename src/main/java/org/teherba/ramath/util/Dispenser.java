@@ -59,8 +59,6 @@ public abstract class Dispenser implements Iterator<int[]>, Serializable {
     //=====================================
     /** number of elements in the tuple to be returned */
     protected int     width;
-    /** some number base (or upper limit) for the digits in the tuple */
-    protected int     base;
     /** Array which contains the tuple */
     protected int[]   meter;
     /** Array which contains the signs for all elements of the tuple: positive &gt;= 0, negative &lt; 0 */
@@ -69,6 +67,12 @@ public abstract class Dispenser implements Iterator<int[]>, Serializable {
     protected boolean signed;
     /** Tells whether the dispenser has rolled through all combinations */
     protected boolean rollOver;
+    /** Normally, the starting values are all zero, but they can be different for each digit position. */
+    protected int[]   offsets;
+    /** some number base (or upper limit) for the digits in the tuple */
+    protected int     base;
+    /** Normally, the bases are all the same,       but they can be different for each digit position. */
+    protected int[]   bases;
 
     /** Gets the value of some digit
      *  @param im position of the digit
@@ -112,6 +116,7 @@ public abstract class Dispenser implements Iterator<int[]>, Serializable {
      */
     public void setSign(int sign) {
         this.signed = sign < 0;
+        this.signed = false;
     } // setSign
 
     /** Gets the width.
@@ -126,8 +131,9 @@ public abstract class Dispenser implements Iterator<int[]>, Serializable {
      */
     public void setWidth(int width) {
         this.width = width;
-        meter = new int[width];
-        signs = new int[width];
+        meter   = new int[width];
+        offsets = new int[width];
+        signs   = new int[width];
     } // setWidth
 
     /** Tells whether the dispenser has not yet rolled over
@@ -168,7 +174,8 @@ public abstract class Dispenser implements Iterator<int[]>, Serializable {
      *  @param sign 0 for natural (non-negative) values, -1 for integer (negative and positive) values
      */
     public Dispenser(int width, int base, int sign) {
-        signed = sign < 0;
+    //  signed = sign < 0;
+        signed = false;
         setWidth(width);
         setBase(base); // after setWidth, because of bases[]
         reset();
@@ -213,8 +220,9 @@ public abstract class Dispenser implements Iterator<int[]>, Serializable {
     public void reset() {
         int im = 0;
         while (im < width) {
-            meter[im] = 0;
-            signs[im] = 0; // no sign
+            meter  [im] = 0;
+            offsets[im] = 0; 
+            signs  [im] = 0; // no sign
             im ++;
         } // while im
         rollOver = false;
@@ -301,28 +309,8 @@ public abstract class Dispenser implements Iterator<int[]>, Serializable {
      *  other Dispensers will implement different methods.
      *  @return an array with the <em>original</em> digits tuple <em>before</em> rolling
      */
-    public int[] next() {
-        int[] result = toArray();  // first copy current tuple to the result
-        boolean iterating = signed ? toggleSigns() : true;
-        boolean busy = true;
-        while (iterating) { // as long as tuples are "bad"
-            int im = 0;
-            busy = true;
-            while (busy && im < width) { // then roll
-                meter[im] ++;
-                busy = meter[im] >= base;
-                if (busy) { // roll over and switch to next position
-                    meter[im] = 0;
-                }
-                // else stop at this position
-                im ++;
-            } // while busy
-            rollOver = busy; // true iff the highest digit rolled over
-            iterating = false; // always assume that it is a "good" tuple
-        } // while iterating
-        return result;
-    } // next
-
+    public abstract int[] next();
+    
     /** Rolls the least significant digit up by one, and
      *  eventually rolls carries into higher positions.
      *  This is the default implementation for a {@link ModoMeter}, but

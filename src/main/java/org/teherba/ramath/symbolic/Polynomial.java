@@ -45,15 +45,15 @@ import  org.teherba.ramath.symbolic.PolynomialParser;
 import  org.teherba.ramath.symbolic.RelationSet;
 import  org.teherba.ramath.symbolic.Signature;
 import  org.teherba.ramath.symbolic.VariableMap;
-import  org.teherba.ramath.BigIntegerUtil;
 import  org.teherba.ramath.BigRational;
 import  org.teherba.ramath.Coefficient;
-import  org.teherba.ramath.PrimeFactorization;
 import  org.teherba.ramath.linear.Matrix;
 import  org.teherba.ramath.linear.Vector;
+import  org.teherba.ramath.util.BigIntegerUtil;
 import  org.teherba.ramath.util.ExpressionReader;
 import  org.teherba.ramath.util.ModoMeter;
 import  org.teherba.ramath.util.Permutator;
+import  org.teherba.ramath.util.PrimeFactorization;
 import  java.io.Serializable;
 import  java.math.BigInteger;
 import  java.util.ArrayList;
@@ -2192,6 +2192,13 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=&gt; - 2*y + 4*z
                     ipoly = 0;
                     while (ipoly < exprs.length) {
 /* lines of the form (without the spaces):
+Expanding for base=2, level=5, reasons+features=base,same,similiar invall,norm,showfail
+Refined variables=x,y
+[0+1x,0+1y]:	unknown -> [1] [0,0] 15x²-7y²-9
+---------------- level 0
+expanding queue[0]^-1,meter=[2,2]: 15x²-7y²-9
+[0+2x,0+2y]:	failure constant=-9, vgcd=4 [0,0] 60x²-28y²-9
+[1+2x,0+2y]:	failure constant=3, vgcd=2 [1,0] 30x+30x²-14y²+3
 ----------------
 expanding queue[0]^-1: a^4 + b^4 - c^4 - d^4 meter=[2,2,2,2] *2
 solution [0,0,0,0],trivial(3)
@@ -2203,6 +2210,7 @@ solution [0,0,0,0],trivial(3)
                         int unkPos = line.indexOf("unknown");
                         if (unkPos >= 0) {
                             int cspPos = line.indexOf("]", unkPos);
+                            cspPos = line.indexOf("]", cspPos); // 2nd "]"
                             poly1 = Polynomial.parse(line.substring(cspPos + 1));
                             // System.out.println("poly1 = " + poly1.toString());
                             vmap1 = poly1.getReductionMap(0);

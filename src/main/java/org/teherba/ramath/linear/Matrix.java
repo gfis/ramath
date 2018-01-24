@@ -650,14 +650,14 @@ public class Matrix implements Cloneable, Serializable {
      */
     public Matrix multiply(Matrix matr2) {
         Matrix result = new Matrix(this.colLen);
-        if (matr2.getColLen() == this.rowLen && matr2.getRowLen() == this.colLen ) {
+        if (matr2.getColLen() == this.rowLen && matr2.getRowLen() == this.colLen) {
             for (int irow = 0; irow < this.rowLen; irow ++) {
                 for (int jcol = 0; jcol < this.colLen; jcol ++) {
                     int sum = 0;
                     for (int kvec = 0; kvec < this.rowLen; kvec ++) {
                         sum += this.matrix[irow][kvec] * matr2.matrix[kvec][jcol];
                     } // for kvec
-                    result.matrix[irow][jcol] = (/*Type*/int) sum;
+                    result.matrix[irow][jcol] = sum;
                 } // for jcol
             } // for irow
         } else {
@@ -678,7 +678,7 @@ public class Matrix implements Cloneable, Serializable {
                     for (int jcol = 0; jcol < this.colLen; jcol ++) {
                         sum += this.matrix[irow][jcol] * vect2.vector[jcol];
                     } // for jcol
-                    result.vector[irow] = (/*Type*/int) sum;
+                    result.vector[irow] = sum;
             } // for irow
         } else {
             throw new IllegalArgumentException("cannot multiply a matrix and a vector of different size: "

@@ -31,11 +31,11 @@
 package org.teherba.ramath.symbolic;
 import  org.teherba.ramath.symbolic.Factor;
 import  org.teherba.ramath.symbolic.Signature;
-import  org.teherba.ramath.BigIntegerUtil;
 import  org.teherba.ramath.BigRational;
 import  org.teherba.ramath.Coefficient;
-import  org.teherba.ramath.PrimeFactorization;
+import  org.teherba.ramath.util.BigIntegerUtil;
 import  org.teherba.ramath.util.Permutator; // for orderTest
+import  org.teherba.ramath.util.PrimeFactorization;
 import  org.teherba.common.SmallScript;
 import  java.io.Serializable;
 import  java.math.BigInteger;

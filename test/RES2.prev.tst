@@ -1,4 +1,4 @@
-Expanding for base=2, reasons+features=same
+Expanding for base=2, level=4, reasons+features=same
 Refined variables=a,b,c,d,w,x,y,z
 ReasonFactory: same, code="same"
 SameReason.consider(

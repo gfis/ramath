@@ -1,5 +1,5 @@
 TranspositionSet={[1,0,2]}
-Expanding for base=2, reasons+features=transp
+Expanding for base=2, level=4, reasons+features=transp
 Refined variables=x,y,z
 ReasonFactory: transp, code="transp"
 TranspositionReason.consider(

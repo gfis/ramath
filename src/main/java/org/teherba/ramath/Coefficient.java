@@ -21,9 +21,9 @@
  */
 package org.teherba.ramath;
 import  org.teherba.ramath.BigRational;
-import  org.teherba.ramath.BigIntegerUtil;
-import  org.teherba.ramath.PrimeFactorization;
 import  org.teherba.ramath.symbolic.Monomial;
+import  org.teherba.ramath.util.BigIntegerUtil;
+import  org.teherba.ramath.util.PrimeFactorization;
 import  java.io.Serializable;
 import  java.math.BigInteger;
 

@@ -516,6 +516,8 @@ public class MatrixTester implements Serializable {
                         } catch (Exception exc) {
                         }
                     }
+                    System.out.println("-chain " + amat.toString(",") + " " 
+                    		+ vect1.toString(",") + " " + left + " " + right); 
                     printPreservedChain(amat, vect1, 0, left, right);
                     // opt -chain
 
