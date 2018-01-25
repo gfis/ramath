@@ -1,5 +1,6 @@
 /*  MonotoneExpander: similiar to Expander, but val[i+1] < val[i] for all i
  *  @(#) $Id: MonotoneExpander.java 744 2011-07-26 06:29:20Z  $
+ *  2018-01-25: Constructor(2) changed - unsigned
  *  2017-05-28: javadoc 1.8
  *  2013-07-05: renamed from BinomialExpander
  *  2011-07-23, Georg Fischer: copied from ModoMeter
@@ -68,9 +69,7 @@ public class MonotoneExpander extends Expander {
      *  @param base  digits are incremented modulo this base
      */
     public MonotoneExpander(int width, int base) {
-        setBase(base);
-        setWidth(width);
-        reset();
+        super(width, base);
     } // Constructor(base,width)
 
     /** Resets the dispenser and establishes the first ascending tuple
@@ -135,55 +134,6 @@ public class MonotoneExpander extends Expander {
         } // while invalid
         return result;
     } // next
-
-    /** Takes the next fitting combination from an ordinary
-     *  {@link Expander} algorithm - rather unpleasant and inefficient.
-     *  @return true if there was yet another combination, false
-     *  if the method was called the maximum number of times.
-     */
-    public int[] next_99() {
-         // first copy current tuple to the result
-        int[] result = toArray();
-        int im = 0;
-        boolean busy = true;
-        boolean invalid = true;
-        while (invalid) { // as long as tuples are "bad"
-            im = 0;
-            busy = true;
-            while (busy && im < width) { // then roll
-                meter[im] ++;
-                busy = meter[im] > ceil;
-                if (busy) {
-                    meter[im] = 0;
-                }
-                im ++;
-            } // while busy
-            if (busy) { // true iff the highest digit rolled over
-                ceil ++;
-                im = 0;
-                while (im < width - 1) { // build a ramp
-                    meter[im] = 0; // im;
-                    im ++;
-                } // while ramp
-                meter[im ++] = ceil;
-                rollOver = ceil >= base;
-                invalid = ! rollOver;
-            }
-            if (invalid) {
-                invalid = false; // assume that it is a "good" tuple
-                im = 0;
-                while (im + 1 < width) {
-                    if (meter[im] >= meter[im + 1]) { // not ascending => this is a "bad" tuple
-                        invalid = true;
-                        im = width; // break loop
-                    }
-                    im ++;
-                } // while im
-                // System.out.println("invalid: " + invalid + ", busy: " + busy + ", ceil: " + ceil);
-            }
-        } // while invalid
-        return result;
-    } // next_99
 
     /** Test method, rolls through all combinations and prints them.
      *  @param args command line arguments: base width

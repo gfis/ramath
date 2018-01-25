@@ -335,7 +335,7 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
      *  by <em>vect0</em> while maintaining the power sum property.
      *  A default of 8 iterations is tried
      */
-    public ArrayList<Vector> preservedPowerSums(int exp, int left, int right, Vector vect0) {
+    public ArrayList<BigVector> preservedPowerSums(int exp, int left, int right, BigVector vect0) {
         return preservedPowerSums(exp, left, right, vect0, 8);
     } // preservedPowerSums(4)
 
@@ -351,14 +351,14 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
      *  the size determines the number of times that <em>this</em> BigMatrix could be multiplied
      *  by <em>vect0</em> while maintaining the power sum property.
      */
-    public ArrayList<Vector> preservedPowerSums(int exp, int left, int right, Vector vect0, int maxIter) {
-        ArrayList<Vector> result = new ArrayList<Vector>(maxIter);
-        Vector vect1 = vect0;;
-        Vector vect2 = this.multiply(vect1);
+    public ArrayList<BigVector> preservedPowerSums(int exp, int left, int right, BigVector vect0, int maxIter) {
+        ArrayList<BigVector> result = new ArrayList<BigVector>(maxIter);
+        BigVector vect1 = vect0;;
+        BigVector vect2 = this.multiply(vect1);
         int iter = 0;
         while ( true
-                && vect2.gcd() <= 1
-                && vect1.norm4() != vect2.norm4()
+        //      && vect2.gcd() <= 1
+                && vect1.normBig4() != vect2.normBig4()
                 && vect2.isPowerSum(exp, left, right)
                 && iter < maxIter) {
             result.add(vect2);

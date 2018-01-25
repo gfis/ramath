@@ -18,7 +18,6 @@
  * limitations under the License.
  */
 package org.teherba.ramath.linear;
-import  org.teherba.ramath.util.IntegerExpander;
 import  java.lang.Math; // abs(int)
 import  java.math.BigInteger;
 import  java.io.Serializable;
@@ -141,6 +140,19 @@ public class BigVector extends Vector implements Cloneable, Serializable {
 
 	// inherited: size
     /*-------------- lightweight derived methods -----------------------------*/
+
+    /** Computes the sum of squares of the elements of <em>this</em> BigVector
+     *  @return sum of elements ^2
+     */
+    public BigInteger normBig4() {
+        BigInteger result = BigInteger.ZERO;
+        int ivect = 0;
+        while (ivect < this.vecLen) {
+            result = result.add(this.vector[ivect].multiply(this.vector[ivect]));
+            ivect ++;
+        } // while ivect
+        return result;
+    } // normBig4
 
     /** Equality of 2 BigVectors
      *  @param vect2 compare <em>this</em> BigVector with it

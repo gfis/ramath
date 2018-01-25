@@ -611,7 +611,7 @@ public class MatrixTester implements Serializable {
                     ModoMeter meter = new ModoMeter(nlen * nlen); // binary
                     while (meter.hasNext()) {
                         int[] values = meter.next();
-                        Matrix bmat = amat.toggleSigns(values);
+                        Matrix bmat = amat.conditionallyNegate(values);
                         if (bmat.preservedPowerSums(3, 3, 1, next0).size() > 0) {
                             Vector vals = new Vector(values);
                             System.out.print("this too, det=" + bmat.determinant()

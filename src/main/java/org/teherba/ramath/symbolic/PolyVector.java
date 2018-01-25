@@ -29,8 +29,6 @@ import  org.teherba.ramath.symbolic.Signature;
 import  org.teherba.ramath.symbolic.VariableMap;
 import  org.teherba.ramath.linear.Matrix;
 import  org.teherba.ramath.linear.Vector;
-import  org.teherba.ramath.util.IntegerExpander;
-import  org.teherba.ramath.util.ModoMeter;
 import  java.io.BufferedReader;
 import  java.io.FileReader;
 import  java.io.InputStreamReader;

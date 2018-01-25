@@ -1,5 +1,6 @@
 /*  ModoMeter: an odometer which rolls digits modulo some base
  *  @(#) $Id: ModoMeter.java 970 2012-10-25 16:49:32Z gfis $
+ *  2018-01-24: offsets for ranges, may even start with negative values
  *  2014-04-06: incorporate MultiModoMeter
  *  2013-09-10: parameters base and width interchanged
  *  2011-07-23: extends Dispenser
@@ -61,31 +62,23 @@ public class ModoMeter extends Dispenser {
     /** No-args Constructor, creates a binary ModoMeter of width 8
      */
     public ModoMeter() {
-        super(4, 2, 0);
+        this(4, 2);
     } // no-args Constructor
 
     /** Constructor with base 2
      *  @param width number of binary digits to be rolled
      */
     public ModoMeter(int width) {
-        super(width, 2, 0);
+        this(width, 2);
     } // binary Constructor
-
-    /** Constructor with 2 parameters
-     *  @param width number of parallel {@link #base} digits to be rolled
-     *  @param base  digits are incremented modulo this base
-     */
-    public ModoMeter(int width, int base) {
-        super(width, base, 0);
-    } // Constructor(2)
 
     /** Constructor with 3 parameters
      *  @param width number of parallel {@link #base} digits to be rolled
      *  @param base  digits are incremented modulo this base
      *  @param sign 0 for natural (non-negative) values, -1 for integer (negative and positive) values
      */
-    public ModoMeter(int width, int base, int sign) {
-        super(width, base, sign);
+    public ModoMeter(int width, int base) {
+        super(width, base, 0);
         this.offsets = new int[width];
         this.bases   = new int[width];
         for (int ibase = 0; ibase < width; ibase ++) {
@@ -120,19 +113,10 @@ public class ModoMeter extends Dispenser {
         } // for ibase
     } // Constructor(1)
 
-    /** Gets the (unique) base.
-     *  Caution: This method makes no sense (and yields wrong values)
-     *  if the bases for digits are different!
-     *  In this case, method <em>getBase(int)</em> must be used instead .
-     *  @return base of digits which roll
-     */
-    public int getBase() {
-        return this.bases[0];
-    } // getBase
-
     /** Sets the base (all bases) to a unique value.
      *  @param base base of digits which roll
      */
+    @Override
     public void setBase(int base) {
         this.bases = new int[width];
         for (int ibase = 0; ibase < width; ibase ++) {
@@ -144,6 +128,7 @@ public class ModoMeter extends Dispenser {
      *  @param im index of the digit
      *  @return individual base
      */
+    @Override
     public int getBase(int im) {
         return this.bases[im];
     } // getBase(int)
@@ -163,6 +148,31 @@ public class ModoMeter extends Dispenser {
     public void setOffset(int im, int offset) {
         this.offsets[im] = offset;
     } // setOffset(int, int)
+
+    /** Sets {@link #offsets} and {@link #bases} such that 
+     *  Dispenser iterates through indexes for all groups of equal values in the
+     *  parameter array. There must be exactly {@link #width} groups (and ranges).
+     *  in the array.
+     *  @param ranges array with groups of equal values 
+     */
+    public void setIndexRanges(int[] ranges) {
+        int im = 0;
+        int ir = 0;
+        offsets[im] = ir; // start of first group
+        int vali = ranges[0];
+        while (ir < ranges.length) {
+            if (ranges[ir] != vali) { // group change
+                bases[im] = ir; // behind the group
+                vali = ranges[ir];
+                im ++;
+                if (im < ranges.length) {
+                    offsets[im] = ir;
+                }
+            } // group change
+            ir ++;
+        } // while ir
+        bases[im] = ir;
+    } // setIndexRanges
 
     /** Returns a string representation of the bases of the meter.
      *  @return string like "[1,2,2,1]"
@@ -205,7 +215,6 @@ public class ModoMeter extends Dispenser {
         int im = 0;
         while (im < width) {
             meter[im] = offsets[im];
-            signs[im] = 0; // no sign
             im ++;
         } // while im
         rollOver = false;
@@ -220,7 +229,7 @@ public class ModoMeter extends Dispenser {
     @Override
     public int[] next() {
         int[] result = toArray(); // first copy current tuple to the result
-        boolean iterating = signed ? toggleSigns() : true;
+        boolean iterating = true;
         boolean busy = true;
         while (iterating) { // as long as tuples are "bad"
             int im = 0;

@@ -275,7 +275,7 @@ public class Matrix implements Cloneable, Serializable {
      *  @param values with zeroes and ones for same and negate
      *  @return new Matrix
      */
-    public Matrix toggleSigns(int[] values) {
+    public Matrix conditionallyNegate(int[] values) {
         int ival = 0;
         Matrix result = new Matrix(this.rowLen);
         for (int irow = 0; irow < this.rowLen; irow ++) {
@@ -287,7 +287,7 @@ public class Matrix implements Cloneable, Serializable {
             } // for jcol
         } // for irow
         return result;
-    } // toggleSigns
+    } // conditionallyNegate
 
     /*-------------- bean methods, setters and getters -----------------------------*/
 

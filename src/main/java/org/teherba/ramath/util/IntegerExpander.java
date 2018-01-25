@@ -1,6 +1,6 @@
 /*  IntegerExpander: similiar to ModoMeter, but with different ordering
  *  @(#) $Id: IntegerExpander.java 744 2011-07-26 06:29:20Z  $
- *  2018-01-21: reduce constructors
+ *  2018-01-21: reduce constructors 
  *  2013-09-10: parameters base and width interchanged, signed dispenser
  *  2013-09-05: new sequence
  *  2013-07-05, Georg Fischer: copied from Expander

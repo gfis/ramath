@@ -1,5 +1,6 @@
 /*  Permutator: an odometer which enumerates all permutations of digits modulo some base.
  *  @(#) $Id: Permutator.java 744 2011-07-26 06:29:20Z gfis $
+ *  2018-01-25: signs removed
  *  2013-08-04: bad error when base was not initialized to width
  *  2009-07-09, Georg Fischer: copied from BigRational
  */
@@ -65,11 +66,11 @@ public class Permutator extends Dispenser {
      *  In contrast to other {@link Dispenser}s, the tuple is
      *  not reset to zeroes, but to the first permutation.
      */
+    @Override
     public void reset() {
         int im = 0;
         while (im < width) {
             meter[im] = im; // caution, not: meter[im] = 0; !
-            signs[im] = 0; // no sign
             im ++;
         } // for im
         rollOver = false;
@@ -87,6 +88,7 @@ public class Permutator extends Dispenser {
      *  {@link ModoMeter#next} algorithm - rather unpleasant and inefficient.
      *  @return an array with the <em>original</em> digits tuple <em>before</em> rolling
      */
+    @Override
     public int[] next() {
         int[] result = toArray(); // first copy current tuple to the result
         int im = 0;
