@@ -65,13 +65,35 @@ public class BigVector extends Vector implements Cloneable, Serializable {
     /** Constructor for a BigVector from a tuple of integers
      *  @param tuple array of integers
      */
+    public BigVector(int[] tuple) {
+        this.vecLen = tuple.length;
+        this.vector = new BigInteger[this.vecLen];
+        for (int itup = 0; itup < this.vecLen; itup ++) {
+            this.vector[itup] = BigInteger.valueOf(tuple[itup]);
+        } // for itup
+    } // Constructor(int[])
+
+    /** Constructor for a BigVector from a {@link Vector} of integers
+     *  @param tuple Vector
+     */
+    public BigVector(Vector tuple) {
+        this.vecLen = tuple.size();
+        this.vector = new BigInteger[this.vecLen];
+        for (int itup = 0; itup < this.vecLen; itup ++) {
+            this.vector[itup] = BigInteger.valueOf(tuple.get(itup));
+        } // for itup
+    } // Constructor(Vector)
+
+    /** Constructor for a BigVector from a tuple of BigIntegers
+     *  @param tuple array of BigIntegers
+     */
     public BigVector(BigInteger[] tuple) {
         this.vecLen = tuple.length;
         this.vector = new BigInteger[this.vecLen];
         for (int itup = 0; itup < this.vecLen; itup ++) {
             this.vector[itup] = tuple[itup];
         } // for itup
-    } // Constructor(int[])
+    } // Constructor(BigInteger[])
 
     /** Constructor for a BigVector from a array of strings
      *  @param numElems number of elements

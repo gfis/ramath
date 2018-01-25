@@ -36,8 +36,8 @@ CALL Expander 3 4
 TEST U06 MonotoneExpander
 CALL MonotoneExpander 3 8
 
-TEST U07 modulo generator also with negative values
-CALL ModoMeter 3 2 -1
+TEST U07 interate through index ranges
+CALL ModoMeter 0 0 0   1 1   2   3 3
 
 TEST U08 IntegerExpander
 CALL IntegerExpander 3 4 -1

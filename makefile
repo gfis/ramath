@@ -36,8 +36,12 @@ MAX=32
 all: eec
 #-------------------------------------------------------------------
 # Perform a regression test 
-regression: eec ideal linear matrix sandbox simple solver symbolic util 
-	grep -iHE "tests (FAILED|passed|recreated)" $(TESTDIR)/*.log
+regression: eec ideal linear matrix sandbox simple solver symbolic util \
+	regres2
+regres2:
+	grep -iHE "tests recreated" $(TESTDIR)/*.log
+	grep -iHE "tests passed"    $(TESTDIR)/*.log
+	grep -iHE "tests FAILED"    $(TESTDIR)/*.log
 #-----------------
 eec:
 	$(REGR) test/eec.tests 		$(TEST) 2>&1 | tee $(TESTDIR)/regression_$@.log

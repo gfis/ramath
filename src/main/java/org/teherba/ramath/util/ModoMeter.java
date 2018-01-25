@@ -149,31 +149,6 @@ public class ModoMeter extends Dispenser {
         this.offsets[im] = offset;
     } // setOffset(int, int)
 
-    /** Sets {@link #offsets} and {@link #bases} such that 
-     *  Dispenser iterates through indexes for all groups of equal values in the
-     *  parameter array. There must be exactly {@link #width} groups (and ranges).
-     *  in the array.
-     *  @param ranges array with groups of equal values 
-     */
-    public void setIndexRanges(int[] ranges) {
-        int im = 0;
-        int ir = 0;
-        offsets[im] = ir; // start of first group
-        int vali = ranges[0];
-        while (ir < ranges.length) {
-            if (ranges[ir] != vali) { // group change
-                bases[im] = ir; // behind the group
-                vali = ranges[ir];
-                im ++;
-                if (im < ranges.length) {
-                    offsets[im] = ir;
-                }
-            } // group change
-            ir ++;
-        } // while ir
-        bases[im] = ir;
-    } // setIndexRanges
-
     /** Returns a string representation of the bases of the meter.
      *  @return string like "[1,2,2,1]"
      */
@@ -249,25 +224,79 @@ public class ModoMeter extends Dispenser {
         return result;
     } // next
 
+    /** Sets {@link #offsets} and {@link #bases} such that <em>this</em>
+     *  Dispenser iterates through indexes for all groups of equal values in the
+     *  parameter array. 
+     *  There should {@link #width} groups (and ranges) in the array. 
+     *  [@link #reset} should be called after this method.
+     *  @param ranges array with groups of equal values 
+     *  @param len number of valid elements in {@link #ranges}
+     *  @return number of groups found, maybe different from {@link #width}
+     */
+    public int setIndexRanges(int[] ranges, int len) {
+        int im = 0;
+        int ir = 0;
+        offsets[im] = ir; // start first group
+        int valir = ranges[ir ++];
+        while (ir < len) {
+            if (ranges[ir] != valir) { // group change: ranges[ir] is already in new group
+                if (im < ranges.length) { // finish old group
+                    bases  [im] = ir; // behind the group
+                }
+                im ++;
+                if (im < ranges.length) { // start new group
+                    offsets[im] = ir;
+                }
+                valir = ranges[ir];
+            } // group change
+            ir ++;
+        } // while ir
+        if (im < ranges.length) { // finish last group
+            bases[im] = ir;
+        }
+        return im + 1;
+    } // setIndexRanges
+
     /** Test method, rolls through all combinations and prints them.
      *  @param args command line arguments: base width
      */
     public static void main(String[] args) {
         ModoMeter dispenser = new ModoMeter(4); // binary
-        dispenser.configure(args);
-        dispenser.reset();
-        while (dispenser.hasNext()) {
-            System.out.println(dispenser.toString());
-            dispenser.next();
-        } // while
-
-        dispenser.reset();
-        dispenser.setBase(1, 1); // meter[1] constantly remains 0
-        dispenser.setBase(dispenser.getWidth() - 1, 1); // highest digit also
-        while (dispenser.hasNext()) {
-            System.out.println(dispenser.toString());
-            dispenser.next();
-        } // while
+        if (args.length == 2) { // width, base
+            dispenser.configure(args);
+            dispenser.reset();
+            while (dispenser.hasNext()) {
+                System.out.println(dispenser.toString());
+                dispenser.next();
+            } // while
+    
+            dispenser.reset();
+            dispenser.setBase(1, 1); // meter[1] constantly remains 0
+            dispenser.setBase(dispenser.getWidth() - 1, 1); // highest digit also
+            while (dispenser.hasNext()) {
+                System.out.println(dispenser.toString());
+                dispenser.next();
+            } // while
+        } else { // an array of grouped values
+            int[] groups = new int[args.length];
+            int iarg = 0;
+            while (iarg < args.length) {
+                groups[iarg] = 0;
+                try {
+                    groups[iarg] = Integer.parseInt(args[iarg]);
+                } catch (Exception exc) {
+                }
+                iarg ++;
+            } // while
+            System.out.println(dispenser.setIndexRanges(groups, groups.length)
+                    + " index ranges");
+            dispenser.reset();
+            System.out.println("start with " + dispenser.getVector().toString());
+            while (dispenser.hasNext()) {
+                System.out.println(dispenser.toString());
+                dispenser.next();
+            } // while
+        }
     } // main
 
 } // ModoMeter

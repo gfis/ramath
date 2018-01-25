@@ -194,7 +194,7 @@ public class Expander extends Dispenser {
     } // toggleSigns
 
     /** Reads the current setting of the Dispenser.
-     *  @return an array with the <em>original</em> digits
+     *  @return a cloned array with the <em>original</em> digits
      */
     @Override
     public int[] toArray() {

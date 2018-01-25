@@ -7,17 +7,14 @@
 #===================================================
 PACKAGE=org.teherba.ramath.eec
 
+TEST CS21 2,2,1 data
+CALL CandidateSelector -w 3 -m 4  -e 2 -l 2 -r 1 -f data/euler221.man
+
 TEST CS31 3,1,3 data
-CALL CandidateSelector -w 4 -m 6  -e 3 -l 1 -r 3 -f data/euler313.man
-TEST CS31S
-SORT test/CS31.this.tst
+CALL CandidateSelector -w 4 -m 8  -e 3 -l 1 -r 3 -f data/euler313.man
 
 TEST CS41 4,1,3 data
-CALL CandidateSelector -w 4 -m 16 -e 4 -l 3 -r 1 -f data/euler413.man
-TEST CS41S
-SORT test/CS41.this.tst
+CALL CandidateSelector -w 4 -m 8 -e 4 -l 3 -r 1 -f data/euler413.man
 
 TEST CS42 4,2,2 data
 CALL CandidateSelector -w 4 -m 8 -e 4 -l 2 -r 2 -f data/euler422.man
-TEST CS42S
-SORT test/CS42.this.tst

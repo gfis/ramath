@@ -211,7 +211,6 @@ public abstract class Dispenser implements Iterator<int[]>, Serializable {
         int im = 0;
         while (im < width) {
             meter  [im] = 0;
-            offsets[im] = 0; 
             im ++;
         } // while im
         rollOver = false;
@@ -244,10 +243,16 @@ public abstract class Dispenser implements Iterator<int[]>, Serializable {
     } // isZeroes
 
     /** Reads the current setting of the Dispenser.
-     *  @return an array with the <em>original</em> digits
+     *  @return a cloned array with the <em>original</em> digits
      */
     public int[] toArray() {
-        return meter;
+        int[] result = new int[width];
+        int im = 0;
+        while (im < width) { 
+            result[im] = meter[im];
+            im ++;
+        } // while im
+        return result;
     } // toArray
 
     /** Reads the current setting of the Dispenser.

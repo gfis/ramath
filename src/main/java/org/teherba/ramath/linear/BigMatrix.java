@@ -154,7 +154,7 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
     } // clone
 
     /*-------------- bean methods, setters and getters -----------------------------*/
-	// inherited: size, getRowLen, getColLen
+    // inherited: size, getRowLen, getColLen
     
     /** Gets an element.
      *  @param rowNo number of the row, zero based
@@ -183,8 +183,9 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
     public BigVector getBigRow(int rowNo) {
         BigVector result = new BigVector(this.colLen);
         for (int jcol = 0; jcol < this.colLen; jcol ++) {
-            result.vector[jcol] = this.matrix[rowNo][jcol];
+            result.set(jcol, this.matrix[rowNo][jcol]);
         } // for jcol
+        // System.out.println("getBigRow(" + rowNo + ")=" + result.toString());
         return result;
     } // getBigRow
 
@@ -194,7 +195,8 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
      */
     public void setRow(int rowNo, BigVector vect1) {
         for (int jcol = 0; jcol < this.colLen; jcol ++) {
-            this.matrix[rowNo][jcol] = vect1.vector[jcol];
+            // System.out.println("amat.setRow " + rowNo + "," + jcol + " = " + vect1.getBig(jcol).toString());
+            this.set(rowNo, jcol, vect1.getBig(jcol));
         } // for jcol
     } // setRow
 
@@ -205,7 +207,7 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
     public BigVector getBigColumn(int colNo) {
         BigVector result = new BigVector(this.rowLen);
         for (int irow = 0; irow < this.rowLen; irow ++) {
-            result.vector[irow] = this.matrix[irow][colNo];
+            result.set(irow, this.matrix[irow][colNo]);
         } // for irow
         return result;
     } // getBigColumn
@@ -216,7 +218,7 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
      */
     public void setColumn(int colNo, BigVector vect1) {
         for (int irow = 0; irow < this.rowLen; irow ++) {
-            this.matrix[irow][colNo] = vect1.vector[irow];
+            this.matrix[irow][colNo] = vect1.getBig(irow);
         } // for irow
     } // setColumn
 
@@ -224,6 +226,7 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
      *  with 4 places per element and one line per row
      *  @return a 2-dimensional array of small numbers
      */
+    @Override
     public String toString() {
         String sep = ",";
         StringBuffer result = new StringBuffer(256);
@@ -238,9 +241,20 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
         return result.toString();
     } // toString()
 
+    /** Returns a string representation of the matrix
+     *  with 4 places per element and one line per row
+     *  @param format (not used)
+     *  @return a 2-dimensional array of small numbers
+     */
+    @Override
+    public String toString(String format) {
+		return this.toString();
+	} // toString(String)
+	
     /** Determines whether the matrix is zero (all elements are zero)
      *  @return true if the matrix is zero, or false otherwise
      */
+    @Override
     public boolean isZero() {
         boolean result = true;
         int irow = 0;
