@@ -11,10 +11,39 @@ TEST CS21 2,2,1 data
 CALL CandidateSelector -w 3 -m 4  -e 2 -l 2 -r 1 -f data/euler221.man
 
 TEST CS31 3,1,3 data
-CALL CandidateSelector -w 4 -m 8  -e 3 -l 1 -r 3 -f data/euler313.man
+CALL CandidateSelector -w 4 -m 5  -e 3 -l 1 -r 3 -f data/euler313.man
+
+TEST CS32 3,3,1 preserving? from L12 MatrixTester -many 2
+DATA
+(95,86,97,134)
+(459,412,461,642)
+CALL CandidateSelector -w 4 -m 7  -e 3 -l 3 -r 1 -f $(DATA)
+
+TEST CS33 3,3,1 preserving? from L12 MatrixTester -many 2
+DATA
+(2203,1974,2205,3076)
+(10559,9458,10561,14738)
+CALL CandidateSelector -w 4 -m 5  -e 3 -l 3 -r 1 -f $(DATA)
+
+TEST CS34 3,1,3 preserving? from L12 MatrixTester -many 2
+DATA
+(3076,2203,1974,2205)
+(14738,10559,9458,10561)
+CALL CandidateSelector -w 4 -m 5  -e 3 -l 1 -r 3 -f $(DATA)
+
+TEST CS35 3,2,2 preserving? from EC33.man.tst
+DATA
+# [12,1,9,10]
+[39,17,36,26]
+[141,76,138,85]
+# [12,9,1,10]
+# [39,36,17,26]
+# [141,138,76,85]
+CALL CandidateSelector -w 4 -m 4  -e 3 -l 2 -r 2 -f $(DATA)
+
 
 TEST CS41 4,1,3 data
-CALL CandidateSelector -w 4 -m 8 -e 4 -l 3 -r 1 -f data/euler413.man
+CALL CandidateSelector -w 4 -m 9 -e 4 -l 3 -r 1 -f data/euler413.man
 
 TEST CS42 4,2,2 data
-CALL CandidateSelector -w 4 -m 8 -e 4 -l 2 -r 2 -f data/euler422.man
+CALL CandidateSelector -w 4 -m 9 -e 4 -l 2 -r 2 -f data/euler422.man

@@ -31,7 +31,7 @@ import  java.math.BigInteger;
 import  java.util.ArrayList;
 import  java.util.HashMap;
 import  java.util.Iterator;
-import  java.util.TreeMap;
+import  java.util.TreeSet;
 import  org.apache.log4j.Logger;
 
 /** Finds candidate rows for matrices which
@@ -45,7 +45,7 @@ import  org.apache.log4j.Logger;
 public class CandidateSelector {
     public final static String CVSID = "@(#) $Id: CandidateSelectorjava 808 2011-09-20 16:56:14Z gfis $";
     /** Debugging switch, 0 = none, 1 = some */
-    private int debug = 1;
+    public int debug = 1;
     /** log4j logger (category) */
     private Logger log;
 
@@ -71,6 +71,8 @@ public class CandidateSelector {
     private int left;
     /** Number of elements in the right part of the power sum */
     private int right;
+    /** Separator for elements in the TreeSet's values */
+    private static final String tsep = "\t";
 
     //===========================
     // Construction
@@ -103,7 +105,7 @@ public class CandidateSelector {
         int target = tuples.size(); // index of next tuple stored
         tuples.add(tuple);
         for (int itup = 0; itup < width;  itup ++) { // store all elements
-            elements.put(tuple.getBig(itup), String.format("%04d\t%d", target, itup));
+            elements.put(tuple.getBig(itup), String.format("%04d%s%d", target, tsep, itup));
         } // for itup
     } // addTuple
 
@@ -154,14 +156,14 @@ public class CandidateSelector {
     /** Expands all tuples and tries to find a matching element.
      */
     public void expand() {
-        Dispenser dispenser = null;
-        if (true) {
-            dispenser = new IntegerExpander(width, maxDigit);
-        } else {
-            dispenser = new ModoMeter      (width, maxDigit);
-        }
-        int source = 0;
         try {
+            Dispenser dispenser = null;
+            if (true) {
+                dispenser = new IntegerExpander(width, maxDigit);
+            } else {
+                dispenser = new ModoMeter      (width, maxDigit);
+            }
+            int source = 0;
             while (source < tuples.size()) {
                 String source4 = String.format("%04d", source);
                 BigVector sourceTuple = tuples.get(source); // try to find an innerproduct of this tuple in the elements
@@ -171,12 +173,12 @@ public class CandidateSelector {
                         prods[idisp] = sourceTuple.multiply(idisp);
                     } // for idisp
                 } // for itup, precompute
-                TreeMap<String, Vector> sortMap = new TreeMap<String, Vector>(); // maps target to meter
+                TreeSet<String> sortSet = new TreeSet<String>(); // list of targets and meters
 
                 dispenser.reset();
                 while (dispenser.hasNext()) { // iterates through
                     int[] meter = dispenser.next();
-                    if (debug >= 2 && source == 0) {
+                    if (debug >= 3 && source == 0) {
                         System.out.println(dispenser.toString() + "; ");
                     }
                     BigInteger sum = BigInteger.ZERO;
@@ -198,20 +200,21 @@ public class CandidateSelector {
                     // check against all stored elements
                     String targetSpec = elements.get(sum); // 4 digits target, tab, itup
                     if (targetSpec != null && ! targetSpec.startsWith(source4)) { // found a different tuple
-                        sortMap.put(targetSpec, new Vector(meter));
+                        sortSet.add(targetSpec + tsep + new Vector(meter));
                         if (debug >= 2) {
                             int target = Integer.parseInt(targetSpec.substring(0, 4));
                             System.out.print("add\t" + source4);
+                            System.out.print("\tsum=" + sum.toString());
                             System.out.print("\t" + targetSpec);
                             System.out.print("\t" + sourceTuple.toString());
                             System.out.print("\t" + tuples.get(target).toString());
-                            System.out.print("\t" + sortMap.get(targetSpec).toString(","));
+                            System.out.print("\t" + (new Vector(meter)).toString(","));
                             System.out.println();
                         } // debug 2
                     } // found
                 } // while dispensing
 
-                groupTargets(source, sortMap);
+                groupTargets(source, sortSet);
                 source ++;
             } // while source
         } catch (Exception exc) {
@@ -228,23 +231,23 @@ public class CandidateSelector {
     /** Read the sorted map into arrays and extract
      *  chunks with the same target tuple.
      *  @param source numbe rof source tuple
-     *  @param sortMap map for all targets which are hit by this source
+     *  @param sortSet set of all targets which are hit by this source
      */
-    private void groupTargets(int source, TreeMap<String, Vector> sortMap) {
-        int len = sortMap.size();
-        colNos  = new int[len];
-        meters  = new Vector[len];
+    private void groupTargets(int source, TreeSet<String> sortSet) {
         try {
-            if (debug > 0) {
+            int len = sortSet.size();
+            colNos  = new int[len];
+            meters  = new Vector[len];
+            if (debug >= 2) {
                 System.out.println("source " + source + ", len=" + len);
             }
             // read all sorted information into arrays
-            Iterator<String> titer = sortMap.keySet().iterator();
+            Iterator<String> titer = sortSet.iterator();
             int itar = 0;
             int oldTarget = -1; // always different from a real target
             while (titer.hasNext()) {
-                String targetSpec = titer.next();
-                int newTarget = Integer.parseInt(targetSpec.substring(0, 4));
+                String[] tsetElem = titer.next().split(tsep);
+                int newTarget = Integer.parseInt(tsetElem[0]);
                 if (oldTarget != newTarget) { // group change
                     if (oldTarget >= 0) {
                         testMatrixChains(source, oldTarget, itar);
@@ -252,9 +255,9 @@ public class CandidateSelector {
                     oldTarget = newTarget;
                     itar = 0;
                 } // group change
-                colNos[itar] = Integer.parseInt(targetSpec.substring(5));
-                meters[itar] = sortMap.get(targetSpec);
-                if (debug > 0) {
+                colNos[itar] = Integer.parseInt(tsetElem[1]);
+                meters[itar] = new Vector(tsetElem[2]);
+                if (debug >= 2) {
                    System.out.println("source=" + source 
                         + "\toldTarget=" + oldTarget 
                         + "\tcolNos[" + itar + "]=" + colNos[itar] 
@@ -279,36 +282,50 @@ public class CandidateSelector {
      *  @param len size of {@link #colNos} and {@link #meters}
      */
     private void testMatrixChains(int source, int target, int len) {
-        ModoMeter dispenser = new ModoMeter(width);
-        BigMatrix amat = new BigMatrix(width);
-        int presentRows = dispenser.setIndexRanges(colNos, len);
-        if (presentRows == width) {
-            dispenser.reset();
-            if (debug >= 2) {
-                System.out.println("presentRows = " + presentRows + ", " + dispenser.toString());
-            }
-            while (dispenser.hasNext()) {
-                int[] indexes = dispenser.next();
-                for (int im = 0; im < width; im ++) {
-                    if (debug >= 2) {
-                        System.out.println("im=" + im + ", indexes[" + im + "]=" + indexes[im]
-                            + ", meters=" + (new BigVector(meters[indexes[im]])).toString());
-                    }
-                    amat.setRow(im, new BigVector(meters[indexes[im]]));
-                } // for im
-                ArrayList<BigVector> chains = amat.preservedPowerSums(exponent, left, right, tuples.get(source));
-                if (debug > 0) {
-                    System.out.print("test " + source);
-                    System.out.print(" " + target);
-                    System.out.print("\t" + tuples.get(source).toString());
-                    System.out.print("\t" + tuples.get(target).toString());
-                    System.out.print("\tidx=" + (new Vector(indexes)).toString());
-                    System.out.print("\tamat=" + amat.toString());
-                    System.out.print(", chain " + chains.size());
-                    System.out.println();
+        try {
+            ModoMeter dispenser = new ModoMeter(width);
+            BigMatrix bmat = new BigMatrix(width);
+            int presentRows = dispenser.setIndexRanges(colNos, len);
+            if (presentRows == width) {
+                dispenser.reset();
+                if (debug >= 2) {
+                    System.out.println("presentRows = " + presentRows + ", " + dispenser.toString());
                 }
-            } // while dispenser.hasNext
-        } // if presentRows
+                while (dispenser.hasNext()) {
+                    int[] indexes = dispenser.next();
+                    for (int im = 0; im < width; im ++) {
+                        if (debug >= 2) {
+                            System.out.println("im=" + im + ", indexes[" + im + "]=" + indexes[im]
+                                + ", meters=" + (new BigVector(meters[indexes[im]])).toString());
+                        }
+                        bmat.setRow(im, new BigVector(meters[indexes[im]]));
+                    } // for im
+                    ArrayList<BigVector> chains = bmat.preservedPowerSums(exponent, left, right, tuples.get(source), 4);
+                    if (debug >= 1) {
+                        int clen = chains.size();
+                        System.out.print("chain=" + clen);
+                    //  System.out.print(" src=" + source);
+                    //  System.out.print(" tar=" + target);
+                    //  System.out.print("\t" + tuples.get(source).toString());
+                    //  System.out.print("\t" + tuples.get(target).toString());
+                    //  System.out.print("\tidx=" + (new Vector(indexes)).toString());
+                        System.out.print("\tbmat=" + bmat.toString());
+                        System.out.print(" " + tuples.get(source).toString());
+                        if (clen >= 1) {
+                            int ichain = 0;
+                            while (ichain < clen) {
+                                System.out.print(" " + chains.get(ichain).toString());
+                                ichain ++;
+                            } // while ichain
+                        }
+                        System.out.println();
+                    }
+                } // while dispenser.hasNext
+            } // if presentRows
+        } catch (Exception exc) {
+            log.error(exc.getMessage());
+            exc.printStackTrace();
+        }
     } // testMatrixChains
 
     //==========================
@@ -326,54 +343,55 @@ public class CandidateSelector {
      *  </ul>
      */
     public static void main(String[] args) {
-        String op = "";
-        int maxDigit = 8;
-        int width    = 4;
-        int exponent = 4;
-        int left     = 3;
-        int right    = 1;
-        String fileName = "";
-        int iarg  = 0;
-        while (iarg < args.length) { // get all arguments
-            if (args[iarg].startsWith("-")) {
-                op = args[iarg ++].substring(1).toLowerCase();
-                if (false) {
-                } else if (op.equals("e")) {
-                    try {
+        CandidateSelector selector = new CandidateSelector();
+        try {
+            String op = "";
+            int maxDigit = 8;
+            int width    = 4;
+            int exponent = 4;
+            int left     = 3;
+            int right    = 1;
+            String fileName = "";
+            int iarg  = 0;
+            while (iarg < args.length) { // get all arguments
+                if (args[iarg].startsWith("-")) {
+                    op = args[iarg ++].substring(1).toLowerCase();
+                    if (false) {
+                    } else if (op.equals("e")) {
                         exponent = Integer.parseInt(args[iarg ++]);
-                    } catch (Exception exc) {
-                    }
-                } else if (op.equals("f")) {
-                    fileName = args[iarg ++];
-                } else if (op.equals("l")) {
-                    try {
+                    } else if (op.equals("f")) {
+                        fileName = args[iarg ++];
+                    } else if (op.equals("l")) {
                         left     = Integer.parseInt(args[iarg ++]);
-                    } catch (Exception exc) {
-                    }
-                } else if (op.equals("m")) {
-                    try {
+                    } else if (op.equals("m")) {
                         maxDigit = Integer.parseInt(args[iarg ++]);
-                    } catch (Exception exc) {
-                    }
-                } else if (op.equals("r")) {
-                    try {
+                    } else if (op.equals("r")) {
                         right    = Integer.parseInt(args[iarg ++]);
-                    } catch (Exception exc) {
-                    }
-                } else if (op.equals("w")) {
-                    try {
+                    } else if (op.equals("w")) {
                         width    = Integer.parseInt(args[iarg ++]);
-                    } catch (Exception exc) {
+                    } else {
+                        System.err.println("unknown option \"-" + op + "\"");
                     }
-                } else {
-                    System.err.println("unknown option \"-" + op + "\"");
-                }
-            } // startsWith "-"
-        } // while args
-
-        CandidateSelector selector = new CandidateSelector(width, maxDigit, exponent, left, right);
-        selector.read(fileName);
-        selector.expand();
+                } // startsWith "-"
+            } // while args
+            
+            selector = new CandidateSelector(width, maxDigit, exponent, left, right);
+            selector.read(fileName);
+            if (selector.debug >= 0) {
+                System.out.println("CandidateSelector"
+                        + ", width=" + width
+                        + ", maxDigit=" + maxDigit
+                        + ", exponent=" + exponent
+                        + ", left=" + left
+                        + ", right" + right
+                        + ", fileName=" + fileName
+                        );
+            }
+            selector.expand();
+        } catch (Exception exc) {
+            selector.log.error(exc.getMessage());
+            exc.printStackTrace();
+        }
     } // main
 
 } // CandidateSelector

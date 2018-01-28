@@ -237,22 +237,26 @@ public class ModoMeter extends Dispenser {
         int im = 0;
         int ir = 0;
         offsets[im] = ir; // start first group
-        int valir = ranges[ir ++];
-        while (ir < len) {
-            if (ranges[ir] != valir) { // group change: ranges[ir] is already in new group
-                if (im < ranges.length) { // finish old group
-                    bases  [im] = ir; // behind the group
-                }
-                im ++;
-                if (im < ranges.length) { // start new group
-                    offsets[im] = ir;
-                }
-                valir = ranges[ir];
-            } // group change
-            ir ++;
-        } // while ir
-        if (im < ranges.length) { // finish last group
-            bases[im] = ir;
+        if ( ranges.length > 0) {
+            int valir = ranges[ir ++];
+            while (ir < len) {
+                if (ranges[ir] != valir) { // group change: ranges[ir] is already in new group
+                    if (im < ranges.length) { // finish old group
+                        bases  [im] = ir; // behind the group
+                    }
+                    im ++;
+                    if (im < ranges.length) { // start new group
+                        offsets[im] = ir;
+                    }
+                    valir = ranges[ir];
+                } // group change
+                ir ++;
+            } // while ir
+            if (im < ranges.length) { // finish last group
+                bases[im] = ir;
+            }
+        } else {
+            im = -1;  // will return 0;
         }
         return im + 1;
     } // setIndexRanges
