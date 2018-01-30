@@ -135,6 +135,22 @@ public class BigVector extends Vector implements Cloneable, Serializable {
 
     // inherited: clone
 
+    /** Compute a permutation of <em>this</em> BigVector
+     *  @param meter definition of the permutation, result of {@link org.teherba.ramath.util.Permutator},
+     *  a permutation of the numbers [0 : n-1] defining, for each element, the 
+     *  position of the element of <em>this</em> BigVector to be taken
+     *  For example, [0,1,2,3] yields the identical vector, and [3,2,1,0] reverses the vector.
+     *  @return reference to a new BigVector
+     */
+    public BigVector permuteBig(int[] meter) {
+        BigVector result = new BigVector(this.vecLen);
+        for (int imet = 0; imet < this.vecLen; imet ++) {
+            result.set(imet, this.vector[meter[imet]]);
+        } // for imet
+        return result;
+    } // permuteBig
+
+
     /*-------------- bean methods, setters and getters -----------------------------*/
 
     /** Returns an element of the Vector
@@ -215,6 +231,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
     /** Returns a String representation of the BigVector
      *  @return a one-dimensional array of BigIntegers
      */
+    @Override
     public String toString() {
         String sep = ",";
         StringBuffer result = new StringBuffer(256);
@@ -276,6 +293,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
      *  @return whether the sum of left elements raised to exp equals the sum
      *  of right elements raised to exp
      */
+    @Override
     public boolean isPowerSum(int exp, int left, int right) {
         BigInteger leftSum  = BigInteger.ZERO;
         BigInteger rightSum = BigInteger.ZERO;

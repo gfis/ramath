@@ -8,28 +8,34 @@
 PACKAGE=org.teherba.ramath.eec
 
 TEST CS21 2,2,1 data
-CALL CandidateSelector -w 3 -m 4  -e 2 -l 2 -r 1 -f data/euler221.man
+CALL CandidateSelector expand -w 3 -b 4  -e 2 -l 2 -r 1 -f data/euler221.man
 
 TEST CS31 3,1,3 data
-CALL CandidateSelector -w 4 -m 5  -e 3 -l 1 -r 3 -f data/euler313.man
+CALL CandidateSelector expand -w 4 -b 5  -e 3 -l 1 -r 3 -f data/euler313.man
 
 TEST CS32 3,3,1 preserving? from L12 MatrixTester -many 2
 DATA
 (95,86,97,134)
 (459,412,461,642)
-CALL CandidateSelector -w 4 -m 7  -e 3 -l 3 -r 1 -f $(DATA)
+CALL CandidateSelector expand -w 4 -b 7  -e 3 -l 3 -r 1 -f $(DATA)
+
+TEST CS32N 3,4,0 preserving? from L12 MatrixTester -many 2
+DATA
+28,-18,-21,-19
+134,-86,-97,-95
+CALL CandidateSelector expand -w 4 -b 5  -e 3 -l 4 -r 0 -f $(DATA)
 
 TEST CS33 3,3,1 preserving? from L12 MatrixTester -many 2
 DATA
 (2203,1974,2205,3076)
 (10559,9458,10561,14738)
-CALL CandidateSelector -w 4 -m 5  -e 3 -l 3 -r 1 -f $(DATA)
+CALL CandidateSelector expand -w 4 -b 5  -e 3 -l 3 -r 1 -f $(DATA)
 
 TEST CS34 3,1,3 preserving? from L12 MatrixTester -many 2
 DATA
 (3076,2203,1974,2205)
 (14738,10559,9458,10561)
-CALL CandidateSelector -w 4 -m 5  -e 3 -l 1 -r 3 -f $(DATA)
+CALL CandidateSelector expand -w 4 -b 5  -e 3 -l 1 -r 3 -f $(DATA)
 
 TEST CS35 3,2,2 preserving? from EC33.man.tst
 DATA
@@ -39,11 +45,28 @@ DATA
 # [12,9,1,10]
 # [39,36,17,26]
 # [141,138,76,85]
-CALL CandidateSelector -w 4 -m 4  -e 3 -l 2 -r 2 -f $(DATA)
+CALL CandidateSelector expand -w 4 -b 4  -e 3 -l 2 -r 2 -f $(DATA)
 
+TEST CS35B 3,4,0 preserving? from EC33.man.tst
+DATA
+[12,1,-9,-10]
+[39,17,-36,-26]
+[141,76,-138,-85]
+CALL CandidateSelector expand -w 4 -b 4  -e 3 -l 4 -r 0 -f $(DATA)
+# chain8 [[3,2,1,-1],[-1,1,-2,-1],[-2,-2,0,1],[-2,-1,-1,1]] [39,17,-36,-26] [141,76,-138,-85] [522,296,-519,-305] [1944,1117,-1941,-1126] [7251,4181,-7248,-4190] [27057,15616,-27054,-15625] [100974,58292,-100971,-58301] [376836,217561,-376833,-217570] [1406367,811961,-1406364,-811970]
+# chain8 [[0,-2,-2,1],[1,2,2,0],[1,2,3,-1],[2,0,1,2]] [141,76,-138,-85] [39,17,-36,-26] [12,1,-9,-10] [6,-4,-3,-5] [9,-8,-6,-1] [27,-19,-24,10] [96,-59,-93,50] [354,-208,-351,199] [1317,-764,-1314,755]
+
+TEST CS36 3,4,0 preserving?
+CALL CandidateSelector expand -w 4 -b 5  -e 3 -l 4 -r 0 -f data/prewrob3.s36.man
+
+TEST CSP3 how is prewrob3 preserved - 36 groups found in 256 tuples = 7.11%
+CALL CandidateSelector preserve -w 4 -e 3 -l 4 -r 0 -m "[[1,-1,1,1],[1,4,-1,-1],[2,0,2,1],[2,0,1,2]]" -f data/prewrob3.sub.man
+
+TEST CSP35 how is prewrob3 preserved
+CALL CandidateSelector preserve -w 4 -e 3 -l 4 -r 0 -m "[[3,2,1,-1],[-1,1,-2,-1],[-2,-2,0,1],[-2,-1,-1,1]]" -f data/prewrob3.sub.man
 
 TEST CS41 4,1,3 data
-CALL CandidateSelector -w 4 -m 9 -e 4 -l 3 -r 1 -f data/euler413.man
+CALL CandidateSelector expand -w 4 -b 9 -e 4 -l 3 -r 1 -f data/euler413.man
 
 TEST CS42 4,2,2 data
-CALL CandidateSelector -w 4 -m 9 -e 4 -l 2 -r 2 -f data/euler422.man
+CALL CandidateSelector expand -w 4 -b 10 -e 4 -l 2 -r 2 -f data/euler422.man

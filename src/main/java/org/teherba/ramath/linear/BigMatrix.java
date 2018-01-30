@@ -101,6 +101,8 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
                 try {
                     this.matrix[irow][jcol] = new BigInteger(values[ival]);
                 } catch (Exception exc) {
+                	System.err.println(exc.getMessage());
+                	exc.printStackTrace();
                 }
                 ival ++;
             } // for jcol
@@ -367,7 +369,7 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
      */
     public ArrayList<BigVector> preservedPowerSums(int exp, int left, int right, BigVector vect0, int maxIter) {
         ArrayList<BigVector> result = new ArrayList<BigVector>(maxIter);
-        BigVector vect1 = vect0;;
+        BigVector vect1 = vect0;
         BigVector vect2 = this.multiply(vect1);
         int iter = 0;
         while ( true
