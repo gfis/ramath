@@ -210,6 +210,20 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         return result;
     } // equals
 
+    /** Whether there is any zero element in the BigVector
+     *  @return false if all elements are non-zero
+     */
+    @Override
+    public boolean hasZero() {
+        boolean result = false;
+        int ielem = 0;
+        while (! result && ielem < this.vecLen) {
+            result = this.vector[ielem].equals(BigInteger.ZERO);
+            ielem ++;
+        } // while ielem
+        return result;
+    } // hasZero
+
     /** Gets the (first) position of an element in <em>this</em> BigVector.
      *  @param elem search for this element
      *  @return index &gt;= 0 of <em>elem</em> in <em>this</em> BigVector, or -1 if not found
@@ -247,6 +261,100 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         result.append(']');
         return result.toString();
     } // toString()
+
+    //========================
+    // GCD, LCM and companions
+    //========================
+    /** Greatest common divisor of <em>this</em> BigVector's elements
+     *  @return a BigInteger &gt;= 1
+     */
+    public BigInteger gcdBig() {
+        return gcd(this.vector);
+    } // gcdBig()
+
+    /** Greatest common divisor of some array's elements
+     *  @param vect the array
+     *  @return an integer &gt;= 1
+     */
+    public static BigInteger gcd(BigInteger[] vect) {
+        BigInteger result = vect[0].abs();
+        int vlen = vect.length;
+        int ielem = 1;
+        while (! result.equals(BigInteger.ONE) && ielem < vlen) {
+            BigInteger p = result;
+            BigInteger q = vect[ielem].abs();
+            while (! q.equals(BigInteger.ZERO)) {
+                BigInteger[] temp = p.divideAndRemainder(q);
+                p = q; 
+                q = temp[1]; // the rest
+            }
+            result = p;
+            ielem ++;
+        } // while ielem
+        return result.abs();
+    } // gcd(array)
+
+    /** Computes the least common multiple (LCM) of 2 integers
+     *  @param a first integer
+     *  @param b second integer
+     *  @return lcm(a,b)
+     */
+    public static BigInteger lcm(BigInteger a, BigInteger b) {
+        BigInteger divisor = a.gcd(b);
+        BigInteger result = BigInteger.ZERO;
+        if (! divisor.equals(BigInteger.ZERO)) {
+            result = a.multiply(b).abs().divide(divisor);
+        }
+        return result;
+    } // lcm(a, b)
+
+    /** Least common multiple of <em>this</em> Vector's elements
+     *  @return an integer
+     */
+    public BigInteger lcmBig() {
+        return lcm(this.vector);
+    } // lcmBig()
+
+    /** Least common multiple of some array's elements
+     *  @param vect the array
+     *  @return an integer
+     */
+    public static BigInteger lcm(BigInteger[] vect) {
+        BigInteger result = vect[0];
+        int vlen = vect.length;
+        int ielem = 1;
+        while (ielem < vlen) {
+            result = lcm(result, vect[ielem]);
+            ielem ++;
+        } // while ielem
+        return result;
+    } // lcm(array)
+
+    /** Determine the greatest common divisor of this Vector's elements,
+     *  and divide all elements by this gcd if it is &gt; 1
+     *  @return an integer &gt;= 1
+     */
+    public BigInteger extractGcdBig() {
+        return this.extractGcdBig(this.vector);
+    } // extractGcdBig()
+
+    /** Determine the greatest common divisor of some array's elements,
+     *  and divide all elements by this GCD if it is &gt; 1
+     *  @param vect extract the GCD from this array
+     *  @return an integer &gt;= 1
+     */
+    public static BigInteger extractGcdBig(BigInteger[] vect) {
+        BigInteger result = BigVector.gcd(vect);
+        if (result.compareTo(BigInteger.ONE) > 0) {
+            int vlen = vect.length;
+            int ielem = 0;
+            while (ielem < vlen) {
+                vect[ielem] = vect[ielem].divide(result);
+                ielem ++;
+            } // while ielem
+        } // if gcd
+        return result;
+    } // extractGcdBig(array)
 
     /*-------------- arithmetic operations -------------------------*/
 

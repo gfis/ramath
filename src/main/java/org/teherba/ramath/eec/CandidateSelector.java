@@ -46,7 +46,7 @@ import  org.apache.log4j.Logger;
 public class CandidateSelector {
     public final static String CVSID = "@(#) $Id: CandidateSelectorjava 808 2011-09-20 16:56:14Z gfis $";
     /** Debugging switch, 0 = none, 1 = some */
-    public int debug = 2;
+    public int debug;
     /** log4j logger (category) */
     private Logger log;
 
@@ -54,6 +54,10 @@ public class CandidateSelector {
     private ArrayList<BigVector> tuples;
     /** Generating matrix, hopefully preserving the powersum property */
     public BigMatrix bmat;
+    /** Minimum length of a chain which should be printed */
+    public int minChain;
+    /** Whether the resulting matrix may not contain zeroes */
+    public boolean noZero;
     
     /** Maps tuple elements to indexes of the form nnnnX,
      *  where nnnn is a row index, and X is one of the {@link #letters}
@@ -95,12 +99,13 @@ public class CandidateSelector {
     public CandidateSelector(int width, int base, int exponent, int left, int right) {
         log = Logger.getLogger(CandidateSelector.class.getName());
         this.width    = width;
-        this.base = base;
+        this.base     = base;
         this.exponent = exponent;
         this.left     = left;
         this.right    = right;
         this.tuples   = new ArrayList<BigVector>(64);
-        this.elements = new HashMap<BigInteger/*String*/, String>(256); //
+        this.elements = new HashMap<BigInteger/*String*/, String>(256); 
+        this.debug    = 0;
     } // Constructor(,,,,)
 
     //==========================================================
@@ -310,25 +315,7 @@ public class CandidateSelector {
                         }
                         bmat.setRow(im, new BigVector(meters[indexes[im]]));
                     } // for im
-                    ArrayList<BigVector> chains = 
-                            bmat.preservedPowerSums(exponent, left, right, tuples.get(source), 8);
-                    int clen = chains.size();
-                    if (debug >= 1 || clen >= 1) {
-                        System.out.print("chain" + clen);
-                    //  System.out.print(" src=" + source);
-                    //  System.out.print(" tar=" + target);
-                    //  System.out.print("\t" + tuples.get(source).toString());
-                    //  System.out.print("\t" + tuples.get(target).toString());
-                    //  System.out.print("\tidx=" + (new Vector(indexes)).toString());
-                        System.out.print(" " + bmat.toString());
-                        System.out.print(" " + tuples.get(source).toString());
-                        if (clen >= 1) {
-                            for (int ichain = 0; ichain < clen; ichain ++) {
-                                System.out.print(" " + chains.get(ichain).toString());
-                            } // for ichain
-                        }
-                        System.out.println();
-                    }
+                    printChain(tuples.get(source));
                 } // while dispenser.hasNext
             } // if presentRows
         } catch (Exception exc) {
@@ -336,6 +323,27 @@ public class CandidateSelector {
             exc.printStackTrace();
         }
     } // testMatrixChains
+    
+    /** Print any chain which is interesting
+     *  @param starting vector
+     */
+    private void printChain(BigVector bvect) {
+        ArrayList<BigVector> chains = 
+                bmat.preservedPowerSums(exponent, left, right, bvect, 8);
+        int clen = chains.size();
+        if (debug >= 1 || clen >= minChain && (! noZero || ! bmat.hasZero())) {
+            System.out.print("chain" + clen);
+            System.out.print(" " + bmat.toString());
+            System.out.print(" det=" + bmat.determinantBig().toString());
+            System.out.print(" " + bvect.toString());
+            if (clen >= minChain) {
+                for (int ichain = 0; ichain < clen; ichain ++) {
+                    System.out.print(" " + chains.get(ichain).toString());
+                } // for ichain
+            }
+            System.out.println();
+        }
+    } // printChain
 
     /** Test which tuples lead to a preserving chain for the parameter matrix.
      */
@@ -351,20 +359,8 @@ public class CandidateSelector {
                 Permutator vperm = new Permutator(width);
                 while (vperm.hasNext()) {
                     int[] meter = vperm.next();
-                    BigVector vectb = sourceTuple.permuteBig(meter);
-                    ArrayList<BigVector> chains = 
-                            bmat.preservedPowerSums(exponent, left, right, vectb, 8);
-                    int clen = chains.size();
-                    if (debug >= 1 || clen >= 1) {
-                        System.out.print("preserve" + clen);
-                        System.out.print(" " + vectb.toString());
-                        if (clen >= 1) {
-                            for (int ichain = 0; ichain < clen; ichain ++) {
-                                System.out.print(" " + chains.get(ichain).toString());
-                            } // for ichain
-                        }
-                        System.out.println();
-                    }
+                    BigVector bvect = sourceTuple.permuteBig(meter);
+                    printChain(bvect);
                 } // while vperm
                 source ++;
             } // while tuples
@@ -377,28 +373,40 @@ public class CandidateSelector {
     //==========================
     // Main
     //==========================
-    /** Test method.
+    /** Main method.
      *  @param args command line arguments:
      *  <ul>
-     *  <li>-w width, number of elements in a tuple</li>
-     *  <li>-m maximum expansion digit</li>
-     *  <li>-e powersum exponent</li>
-     *  <li>-l left  powersum elements</li>
-     *  <li>-r right powersum elements</li>
-     *  <li>-f filename</li>
+     *  <li>expand - try to find matrixes between tuple elements</li>
+     *  <li>preserve - test whether whether all tuples preserve the powersum</lI>
+     *  <li>options:
+     *  <ul><li>
+     *  <li>-c minimum length of a chain to get it printed</li>
+     *  <li>-d debug level (default 0 = none)</li>
+     *  <li>-e powersum exponent, default: 3</li>
+     *  <li>-f filename for list of tuples</li>
+     *  <li>-l left  powersum elements, default: width</li>
+     *  <li>-m matrix to be applied</li>
+     *  <li>-n whether the matrix may not contain zero entries, default: false</li>
+     *  <li>-r right powersum elements, default: 0</li>
+     *  <li>-s number of leading tuples to be expanded, default: 0 = all</li>
+     *  <li>-w width, number of elements in a tuple, default: exponent + 1</li>
+     *  </ul>
      *  </ul>
      */
     public static void main(String[] args) {
         CandidateSelector selector = new CandidateSelector();
         try {
-            BigMatrix bmat = new BigMatrix(4);
-            int base     = 8;
-            int width    = 4;
-            int exponent = 4;
-            int left     = 3;
-            int right    = 1;
-            int start    = 0; // number of starting tuples to be expanded
-            String fileName = "";
+            int debug       = 0;
+            int exponent    = 3;
+            int width       = exponent + 1;
+            int base        = 5;
+            int left        = width;
+            int right       = 0;
+            int minChain    = 2; // minimum length of chains to be printed
+            boolean noZero  = false; // whether the matrix may not contain zero entries
+            int start       = 0; // number of starting tuples to be expanded
+            BigMatrix bmat  = new BigMatrix(width);
+            String fileName = "data/prewrob3.sub.man";
             int iarg  = 0;
             String oper  = args[iarg ++]; // first option 
             while (iarg < args.length) { // get all arguments
@@ -407,6 +415,10 @@ public class CandidateSelector {
                     if (false) {
                     } else if (opt.equals("b")) {
                         base     = Integer.parseInt(args[iarg ++]);
+                    } else if (opt.equals("c")) {
+                        minChain = Integer.parseInt(args[iarg ++]);
+                    } else if (opt.equals("d")) {
+                        debug    = Integer.parseInt(args[iarg ++]);
                     } else if (opt.equals("e")) {
                         exponent = Integer.parseInt(args[iarg ++]);
                     } else if (opt.equals("f")) {
@@ -414,8 +426,10 @@ public class CandidateSelector {
                     } else if (opt.equals("l")) {
                         left     = Integer.parseInt(args[iarg ++]);
                     } else if (opt.equals("m")) {
-                        bmat = new BigMatrix(args[iarg ++]);
+                        bmat     = new BigMatrix(args[iarg ++]);
                         // System.out.println("bmat=" + bmat);
+                    } else if (opt.equals("n")) {
+                        noZero   = true;
                     } else if (opt.equals("r")) {
                         right    = Integer.parseInt(args[iarg ++]);
                     } else if (opt.equals("s")) {
@@ -429,7 +443,10 @@ public class CandidateSelector {
             } // while args
             
             selector = new CandidateSelector(width, base, exponent, left, right);
-            selector.bmat = bmat;
+            selector.debug    = debug;
+            selector.bmat     = bmat;
+            selector.minChain = minChain;
+            selector.noZero   = noZero;
             selector.read(fileName);
             if (selector.debug >= 0) {
                 System.out.println("CandidateSelector " + oper

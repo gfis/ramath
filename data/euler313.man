@@ -1,6 +1,4 @@
 # from Wroblewski, 313 only,  positive
-6 3 5 4
-9 1 8 6
 19 3 18 10
 20 7 17 14
 25 4 22 17

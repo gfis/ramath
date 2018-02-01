@@ -1,5 +1,6 @@
 /*  Matrix: a simple, small, square matrix of small numbers
  *  @(#) $Id: Matrix.java 744 2011-07-26 06:29:20Z gfis $
+ *  2018-01-31: hasZero
  *  2017-05-28: javadoc 1.8
  *  2016-10-06: gcd()
  *  2015-09-04: Constructor(int) presets elements to 0
@@ -496,6 +497,23 @@ public class Matrix implements Cloneable, Serializable {
         return result.toString();
     } // toString(format)
 
+    /** Determines whether the matrix has a zero element
+     *  @return true if the matrix has a zero, or false otherwise
+     */
+    public boolean hasZero() {
+        boolean result = false;
+        int irow = 0;
+        while (! result && irow < this.rowLen) {
+            int jcol = 0;
+            while (! result && jcol < this.colLen) {
+                result = this.matrix[irow][jcol] == 0;
+                jcol ++;
+            } // for jcol
+            irow ++;
+        } // for irow
+        return result;
+    } // hasZero
+
     /** Determines whether the matrix is zero (all elements are zero)
      *  @return true if the matrix is zero, or false otherwise
      */
@@ -837,8 +855,10 @@ public class Matrix implements Cloneable, Serializable {
                             }
                             // subtract rowi * stone from rowj * pivot
                             for (jcol = 0; jcol < this.colLen; jcol ++) {
-                                lmat.matrix[jrow][jcol] = lmat.matrix[jrow][jcol] * pivot - lmat.matrix[irow][jcol] * stone;
-                                rmat.matrix[jrow][jcol] = rmat.matrix[jrow][jcol] * pivot - rmat.matrix[irow][jcol] * stone;
+                                lmat.matrix[jrow][jcol] = lmat.matrix[jrow][jcol] * pivot
+                                                        - lmat.matrix[irow][jcol] * stone;
+                                rmat.matrix[jrow][jcol] = rmat.matrix[jrow][jcol] * pivot 
+                                                        - rmat.matrix[irow][jcol] * stone;
                             } // for jcol
                         } // if stone != 0
                     } // jrow != irow
