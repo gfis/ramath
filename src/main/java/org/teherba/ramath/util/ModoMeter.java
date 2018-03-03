@@ -75,7 +75,6 @@ public class ModoMeter extends Dispenser {
     /** Constructor with 3 parameters
      *  @param width number of parallel {@link #base} digits to be rolled
      *  @param base  digits are incremented modulo this base
-     *  @param sign 0 for natural (non-negative) values, -1 for integer (negative and positive) values
      */
     public ModoMeter(int width, int base) {
         super(width, base, 0);
@@ -230,7 +229,7 @@ public class ModoMeter extends Dispenser {
      *  There should {@link #width} groups (and ranges) in the array. 
      *  [@link #reset} should be called after this method.
      *  @param ranges array with groups of equal values 
-     *  @param len number of valid elements in {@link #ranges}
+     *  @param len number of valid elements in <em>ranges</em>
      *  @return number of groups found, maybe different from {@link #width}
      */
     public int setIndexRanges(int[] ranges, int len) {

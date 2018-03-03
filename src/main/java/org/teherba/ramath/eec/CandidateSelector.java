@@ -325,7 +325,7 @@ public class CandidateSelector {
     } // testMatrixChains
     
     /** Print any chain which is interesting
-     *  @param starting vector
+     *  @param bvect starting vector
      */
     private void printChain(BigVector bvect) {
         ArrayList<BigVector> chains = 

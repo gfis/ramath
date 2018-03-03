@@ -28,7 +28,10 @@ DATA
 CALL ExpressionReader -f $(DATA)
 
 TEST U03 permute
-CALL Permutator 4
+CALL Permutator 3
+
+TEST U04 permute
+CALL Permutator 11
 
 TEST U05 Expander
 CALL Expander 3 4

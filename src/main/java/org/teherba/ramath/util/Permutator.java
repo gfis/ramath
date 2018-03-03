@@ -1,8 +1,10 @@
 /*  Permutator: an odometer which enumerates all permutations of digits modulo some base.
  *  @(#) $Id: Permutator.java 744 2011-07-26 06:29:20Z gfis $
+ *  2018-03-03: swapping
  *  2018-01-25: signs removed
  *  2013-08-04: bad error when base was not initialized to width
  *  2009-07-09, Georg Fischer: copied from BigRational
+ *
  */
 /*
  * Copyright 2009 Dr. Georg Fischer <punctum at punctum dot kom>
@@ -26,6 +28,7 @@ import  org.teherba.ramath.util.ModoMeter;
  *  a {@link ModoMeter}, namely all permutations of the digits modulo some {@link #base},
  *  which must be the same as the {@link #width}.
  *  That is, the digits in the result tuple are always all different.
+ *  <p>@see <a href="https://stackoverflow.com/questions/7341780/putting-hypertext-link-to-external-internet-site-inside-javadoc">permutation without recursion</a> on stackoverflow.com
  *  <p>
  *  This Dispenser yields factorial({@link #width}) different tuples until
  *  {@link #hasNext} becomes false.
@@ -46,6 +49,12 @@ public class Permutator extends Dispenser {
 
     /** Debugging switch */
     private int debug = 0;
+
+    /** Representation of the swap operations.
+     *  Any permutation can be representated  by a unique sequence
+     *  of swap operations.
+     */
+    private int[] swaps;
 
     /** No-args Constructor
      */
@@ -68,9 +77,11 @@ public class Permutator extends Dispenser {
      */
     @Override
     public void reset() {
+        swaps = new int[width];
         int im = 0;
         while (im < width) {
             meter[im] = im; // caution, not: meter[im] = 0; !
+            swaps[im] = im;
             im ++;
         } // for im
         rollOver = false;
@@ -84,12 +95,48 @@ public class Permutator extends Dispenser {
         this.base = getWidth();
     } // setBase
 
-    /** Takes the next fitting combination from an ordinary
-     *  {@link ModoMeter#next} algorithm - rather unpleasant and inefficient.
+    /** Determines the next permutation by swapping 2 elements.
+     *  Pleasant, efficient, non-recursive implementation derived from the stackoverflow answer.
      *  @return an array with the <em>original</em> digits tuple <em>before</em> rolling
      */
     @Override
     public int[] next() {
+        int[] result = toArray(); // first copy current tuple to the result
+        int i = width - 1;
+        while (i >= 0 && swaps[i] == width - 1) {
+            swap(i, swaps[i]); // Undo the swap represented by swaps[i]
+            swaps[i] = i;
+            i --;
+        } // while i
+
+        if (i < 0) {
+           rollOver = true; 
+        } else {
+            int prev = swaps[i];
+            swap(i, prev);
+            int next = prev + 1;
+            swaps[i] = next;
+            swap(i, next);
+        }
+        return result;
+    } // next
+
+    /** Exchange to elements of the array to be permuted
+     *  @param i index of 1st element
+     *  @param j index of 2nd element
+     */
+    private void swap(int i, int j) {
+        int tmp = meter[i];
+        meter[i] = meter[j];
+        meter[j] = tmp;
+    } // swap
+
+    /** Takes the next fitting combination from an ordinary
+     *  {@link ModoMeter#next} algorithm - rather unpleasant and inefficient.
+     *  @return an array with the <em>original</em> digits tuple <em>before</em> rolling
+     */
+    // @Override
+    public int[] next_99() {
         int[] result = toArray(); // first copy current tuple to the result
         int im = 0;
         boolean busy = true;
@@ -151,13 +198,17 @@ public class Permutator extends Dispenser {
     public static void main(String[] args) {
         Permutator dispenser = new Permutator(4);
         dispenser.configure(args);
+        int limit = 6;
         dispenser.reset();
-        int loop = 32;
-        while (loop > 0) {
-            System.out.println(dispenser.hasNext() +  "\t" + dispenser.toString());
+        if (dispenser.getWidth() > limit) {
+            System.out.println("no tuples - timing only");
+        }
+        while (dispenser.hasNext()) {
+            if (dispenser.getWidth()<= limit) {
+                System.out.println(dispenser.toString());
+            }
             dispenser.next();
-            loop --;
-        } // while loop
+        } // while hasNext
     } // main
 
 } // Permutator
