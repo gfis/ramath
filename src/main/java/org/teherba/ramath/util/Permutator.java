@@ -32,14 +32,32 @@ import  org.teherba.ramath.util.ModoMeter;
  *  <p>
  *  This Dispenser yields factorial({@link #width}) different tuples until
  *  {@link #hasNext} becomes false.
- *  For width = 3, the following 6 result tuples are delivered:
+ *  For width = 4, the following 24 result tuples are delivered:
 <pre>
 0 1 2 3
-2 1 0 3
-1 2 0 3
-2 0 1 3
+0 1 3 2
 0 2 1 3
+0 2 3 1
+0 3 2 1
+0 3 1 2
 1 0 2 3
+1 0 3 2
+1 2 0 3
+1 2 3 0
+1 3 2 0
+1 3 0 2
+2 1 0 3
+2 1 3 0
+2 0 1 3
+2 0 3 1
+2 3 0 1
+2 3 1 0
+3 1 2 0
+3 1 0 2
+3 2 1 0
+3 2 0 1
+3 0 2 1
+3 0 1 2
 </pre>
  *
  *  @author Dr. Georg Fischer

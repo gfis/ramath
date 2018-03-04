@@ -32,6 +32,7 @@ CALL Permutator 3
 
 TEST U04 permute
 CALL Permutator 11
+# about 2900 ms
 
 TEST U05 Expander
 CALL Expander 3 4
