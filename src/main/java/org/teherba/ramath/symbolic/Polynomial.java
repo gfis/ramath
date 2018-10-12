@@ -783,7 +783,7 @@ public class Polynomial implements Cloneable, Serializable {
      *  assuming that there is no rest.
      *  This method is needed only for {@link PolynomialParser},
      *  and <em>poly2</em> must be a {@link Monomial} which divides
-     *  evenly in all monomials of <em>this</em> Polynomial.
+     *  evenly in all Monomials of <em>this</em> Polynomial.
      *  @param poly2 divide by this Polynomial
      *  @return quotient
      */
@@ -1424,7 +1424,7 @@ public class Polynomial implements Cloneable, Serializable {
      *  For any powered variable a suitable power (square, cubic) completion is determined,
      *  and the Polynomial is widened appropriately.
      *  @param debug2 = 0: no debugging output, 1 = some, 2 = more, 3 = most
-     *  @return a new {@link VariableMap} with a mapping from variables to expression which
+     *  @return a new {@link VariableMap} with a mapping from variables to expressions which
      *  transforms this into the reduced Polynomial,
      *  and the reduced Polynomial mapped from "" (the empty String)
      *  <p>Trace of testcase LR1:
@@ -1855,7 +1855,7 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=&gt; - 2*y + 4*z
 
     /** Compute the (partial) nth order derivative of <em>this</em> {@link Polynomial}
      *  with respect to one variable.
-     *  @param varx derivate for this variable
+     *  @param varx compute the derivative for this variable
      *  @param order order n of derivation: first, second etc.
      *  @return a new Polynomial, the nth order derivative.
      *  For <em>order = 0</em>, a copy of <em>this</em> Polynomial is returned.
@@ -1891,7 +1891,7 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=&gt; - 2*y + 4*z
 
     /** Compute the (partial) 1st order derivative of <em>this</em> {@link Polynomial}
      *  with respect to one variable.
-     *  @param varx derivate for this variable
+     *  @param varx compute the derivative for this variable
      *  @return a new Polynomial, the 1st order derivative.
      *  For <em>x^3+x^2</em> the 1st order derivative is <em>3x^2+2x</em>,
      *  and the 2nd order derivative is <em>6x</em>.
@@ -2194,11 +2194,11 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=&gt; - 2*y + 4*z
 /* lines of the form (without the spaces):
 Expanding for base=2, level=5, reasons+features=base,same,similiar invall,norm,showfail
 Refined variables=x,y
-[0+1x,0+1y]:	unknown -> [1] [0,0] 15x²-7y²-9
+[0+1x,0+1y]:    unknown -> [1] [0,0] 15x²-7y²-9
 ---------------- level 0
 expanding queue[0]^-1,meter=[2,2]: 15x²-7y²-9
-[0+2x,0+2y]:	failure constant=-9, vgcd=4 [0,0] 60x²-28y²-9
-[1+2x,0+2y]:	failure constant=3, vgcd=2 [1,0] 30x+30x²-14y²+3
+[0+2x,0+2y]:    failure constant=-9, vgcd=4 [0,0] 60x²-28y²-9
+[1+2x,0+2y]:    failure constant=3, vgcd=2 [1,0] 30x+30x²-14y²+3
 ----------------
 expanding queue[0]^-1: a^4 + b^4 - c^4 - d^4 meter=[2,2,2,2] *2
 solution [0,0,0,0],trivial(3)

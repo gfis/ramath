@@ -6,8 +6,8 @@
 
 use strict;
 
-    my $limit = 2048;
-    my $lim2  = 4096;
+    my $limit = 4096;
+    my $lim2  = 16384;
     my $dist  = 2;
     my @p2 = ();
     my @p3 = ();
