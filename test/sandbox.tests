@@ -56,7 +56,7 @@ TEST BR1 Brahmagupta
 CALL SandBox -brahma
 #----
 TEST CMP0 Compositions
-CALL SandBox -compose dummy
+CALL SandBox -compose 32
 
 TEST CMP1 Compositions with factor 17
 CALL SandBox -compose 6 17

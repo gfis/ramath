@@ -1,5 +1,6 @@
 /*  Collection of several experimental methods
  *  @(#) $Id: SandBox.java 808 2011-09-20 16:56:14Z gfis $
+ *  2019-01-05: _a, _b, _c, _d in printCompositions; _c, _d with toCoefficients
  *  2017-07-12: -brahma
  *  2016-07-09: Signature
  *  2016-03-31: -compose
@@ -139,14 +140,20 @@ public class SandBox {
                 } // false
                 s = sums[0];
                 t = sums[1];
-                System.out.println(String.format("%4d: ", num)
+                System.out.println(String.format("%4d_a: ", num)
                         + "(a^2 + b^2)^" + String.valueOf(num) + " = ("
                         + sums[0].toString() + ")^2 + ("
                         + sums[1].toString() + ")^2");
-                System.out.println("      "
+                System.out.println(String.format("%4d_b: ", num)
                         + "(a^2 + b^2)^" + String.valueOf(num) + " = ("
                         + sums[2].toString() + ")^2 + ("
                         + sums[3].toString() + ")^2");
+                System.out.println(String.format("%4d_c: ", num)
+                        + sums[0].toCoefficients() + " "
+                        + sums[1].toCoefficients() );
+                System.out.println(String.format("%4d_d: ", num)
+                        + sums[2].toCoefficients() + "  "
+                        + sums[3].toCoefficients() );
                 num ++;
             } // while num
         } // true

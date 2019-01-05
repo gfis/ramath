@@ -1,7 +1,7 @@
-#!/usr/bin/perl
+#!perl
+
+# Determine which rests are left for m^4 mod 2..n 
 # @(#) $Id$
-# Determine which rests are left for m^4 mod n, m=3,5,7, ..., n 
-# 
 # 2018-10-09, Georg Fischer: copied from modpow.pl
 #
 # http://mathworld.wolfram.com/DiophantineEquation4thPowers.html
@@ -10,58 +10,91 @@
 #-------------------------
 
 use strict;
+use integer;
 
-    my $limit = 4096;
-    my $lim2  = 8192;
-    my $dist  = 2;
-    my @p2 = ();
-    my @p3 = ();
-    my @p4 = ();
+    my $limit  = 8192;
+    my $lim2   = 32768;
+    my $dist   = 2;
+    my $exp    = 4;
+    my @powers = ();
     my $ip = 0;
-    while ($ip < $lim2) { # precompute x^2 and x^3
-        $p4[$ip] = $ip**4;
+    while ($ip < $lim2) { # precompute 
+        $powers[$ip] = $ip**$exp;
         $ip ++;
     } # while $ip precompute
-    print STDERR "$lim2 4th powers precomputed\n";
+    print "$lim2 ${exp}th powers precomputed\n";
+    
     my $mod = 2;
     while ($mod < $limit) { # evaluate modulos
         my $num = 2;
-        my %hash4 = (); # residues of $num^3
+        my %residues = (); # residues of $num**$exp
         while ($num < $lim2) {
-            my $rest4 = $p4[$num] % $mod;
-            $hash4{sprintf("%04d", $rest4)} = 1;
+            my $residue = $powers[$num] % $mod;
+            $residues{sprintf("%04d", $residue)} = 1;
             $num += 1;
         } # while $num
         if (1) { # show all residues
-            my @arr = sort(keys(%hash4));
-            if (scalar(@arr) <= 16) {
-	            print sprintf("%d\t", $mod);
-            	print join(" ", map { $_ + 0 } @arr) . "\n";
+            my @arr = map { $_ + 0 } sort(keys(%residues));
+            if (scalar(@arr) <= 16000) {
+                # print STDERR sprintf("%d\t", $mod) . join(" ",  @arr) . "\n";
             }
+            my $comb = &combine(@arr);
+            print STDERR sprintf("%d\t", $mod) . "$comb\n";
         } # show all residues
-#        if (0) { # show matching
-#            my $count = 0;
-#            my $line = "";
-#            foreach my $key(sort(keys(%hash2))) {
-#                my $val = sprintf("%04d", ($key + $dist) % $mod);
-#                if (defined($hash3{$val})) {
-#                    $count ++;
-#                    $line .= " " . ($val + 0);
-#                }
-#            } # foreach $key
-#            if (0) {
-#            } elsif ($count == 0) {
-#                print sprintf("%4d= ", $mod) . " no matching residues\n";
-#            } elsif ($count <= 10) {
-#                print sprintf("%4d= ", $mod) . substr($line, 1) . "\n";
-#            } else {
-#                print sprintf("%4d= ", $mod) . substr($line, 1, 100) . " etc ... \n";
-#            }
-#        } # show matching
-
-        # print "\n";
         $mod += 1;
     } # while $mod evaluate modulos
+#-----------------------------------
+sub combine {
+    my @arr = @_;
+    my $len = scalar(@arr);
+    my $count = 0;
+    my @result = ();
+    my $i =       0; 
+    while ($i < $len) {
+    my $j =       0; 
+    while ($j < $len) {
+    if ($j != $i) {
+    my $k =      $j; 
+    while ($k < $len) {
+    if ($k != $i) {
+    my $l =      $k;
+    while ($l < $len) {
+    if ($l != $i) {
+        my $sumgt0 = 0;
+        $sumgt0 ++ if $arr[$i] > 0;
+        $sumgt0 ++ if $arr[$j] > 0;
+        $sumgt0 ++ if $arr[$k] > 0;
+        $sumgt0 ++ if $arr[$l] > 0;
+        if ($sumgt0 >= 3) {
+            if ($arr[$i] == ($arr[$j] + $arr[$k] + $arr[$l]) % $mod) { # power sum is possible
+                $count ++;
+                if ($count <= 64) {
+                    push(@result, "$arr[$i]=($arr[$j]+$arr[$k]+$arr[$l])%$mod");
+                } else {
+                    # print " and more";
+                    # break all loops
+                    $i = $len;
+                    $j = $len;
+                    $k = $len;
+                    $l = $len;
+                }
+            } # possible
+        } # sumgt0
+    } # $i != $l
+    $l ++;
+    } # while l
+    } # $i != $k
+    $k ++;
+    } # while k
+    } # $i != $j
+    $j ++;
+    } # while j
+    $i ++;
+    } # while i
+    
+    return ($count > 8 ) ? "..." : ($count >= 1 ? join(" ", @result) : "none");
+} # sub combine
+#---------------
 __DATA__
 dist =2, x^2 + 2 = y^3
    2= 0 1

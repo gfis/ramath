@@ -1,6 +1,7 @@
 /*  Polynomial: a symbolic, multivariate Polynomial with addition, multiplication,
  *  exponentiation, comparision and other operations
  *  @(#) $Id: Polynomial.java 744 2011-07-26 06:29:20Z gfis $
+ *  2019-01-05: toCoefficients
  *  2017-05-28: javadoc 1.8
  *  2016-07-09: Signature
  *  2016-04-14: isPreservedBy(Matrix)
@@ -364,6 +365,16 @@ public class Polynomial implements Cloneable, Serializable {
     public String niceString() {
         return toString(2);
     } // niceString()
+
+    /** Returns the coefficients only
+     *  @return "1 2 1 ", for example
+     */
+    public String toCoefficients() {
+        return toString(1)
+        	.replaceAll("\\*\\w+\\^\\d+", "")
+        	.replaceAll("\\s*\\=\\s*0", "; ")
+        	;
+    } // toCoefficients()
 
     /** Returns a String representation of <em>this</em> {@link Polynomial},
      *  in compressed representation, without the relation,
