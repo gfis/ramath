@@ -1,6 +1,7 @@
 /*  Polynomial: a symbolic, multivariate Polynomial with addition, multiplication,
  *  exponentiation, comparision and other operations
  *  @(#) $Id: Polynomial.java 744 2011-07-26 06:29:20Z gfis $
+ *  2018-05-02: -eval
  *  2017-05-28: javadoc 1.8
  *  2016-07-09: Signature
  *  2016-04-14: isPreservedBy(Matrix)
@@ -2127,6 +2128,21 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=&gt; - 2*y + 4*z
                     System.out.println(poly1.toString() + " <"
                             + (poly1.isEquivalent(poly2) ? "equiv" : "notequiv") + "> " + poly2);
                     // -equiv
+
+                } else if (opt.startsWith("-eval")) {
+                    String[] polies = ereader.getArguments(iarg, args);
+                    for (ipoly = 0; ipoly < polies.length; ipoly ++) {
+                        String result = Polynomial.parse(polies[ipoly]).toString();
+                        System.out.println(polies[ipoly] + ": " + result);
+                        if (! result.trim().equals("0")) {
+                        	System.out.println("# ** error: no power sum");
+                        }
+                        Vector nums = new Vector(polies[ipoly].replaceAll("\\^\\d+", "").replaceAll("\\D+", ","));
+                        if (nums.gcd() != 1) {
+                        	System.out.println("# ** error: not primitive, gcd=" + nums.gcd());
+                        }	
+                    } // for
+                    // -eval
 
                 } else if (opt.startsWith("-f")) {
                     poly1 = Polynomial.parse(ereader.read(args[iarg ++]));

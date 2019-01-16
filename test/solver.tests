@@ -323,6 +323,9 @@ CALL TreeSolver -b 7 -l 2 -e "14x+30x²-1323y-1890y²-900y³-307" -r norm,invall
 TEST TECP  Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3] far behind
 CALL TreeSolver -b 3 -l 3 -e "(155 + 2*x)^2 + 2 = (29 + 2*y)^3" -r norm,invall,no-evenexp,same
 
+TEST TECQ Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3] 
+CALL TreeSolver -b 2 -l 5 -e "(2*x + 1)^2 + 2 = (4*y+3)^3" -r norm,same
+
 TEST TEM22 Mordell 2 squared
 CALL TreeSolver -b 2 -l 4 -e "(x^2 + 2)^2 = y^6" -r norm,invall,no-evenexp,no-same
 

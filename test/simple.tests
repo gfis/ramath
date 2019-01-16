@@ -257,6 +257,46 @@ CALL ContinuedFraction -pell 109
 
 TEST CFA continued fraction: sqrt(cube)
 CALL ContinuedFraction -cube 32
+
+TEST CFB continued fraction of b-file of A072036
+DATA
+1 1
+0 1
+1 30
+2 2
+3 29
+4 3
+5 28
+6 4
+7 567
+8 888
+9 887
+10 886
+# 11 1253
+# 12 5
+# 13 24
+# 14 376
+# 15 23
+# 16 575
+# 17 22
+# 18 374
+# 19 6
+CALL ContinuedFraction -eval $(DATA)
+      
+TEST CFC A199714
+DATA
+# A199714 (b-file synthesized from sequence entry)
+# 1 0
+2 9
+3 23
+4 30
+5 35
+6 49
+7 58
+8 73
+9 94
+CALL ContinuedFraction -eval $(DATA)
+      
 #--------------------------------
 # PrimeFactorization
 PACKAGE=org.teherba.ramath
