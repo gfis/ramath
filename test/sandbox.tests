@@ -11,6 +11,9 @@ PACKAGE=org.teherba.ramath
 TEST BX1 eec422
 CALL SandBox -eec422 data/two4.1000000.txt
 
+TEST BX2 eec413
+CALL SandBox -eec413 data/euler413.man
+
 TEST BXP2 pdiff x^2
 CALL SandBox -pdiff "x^2"
 
@@ -53,7 +56,7 @@ TEST BR1 Brahmagupta
 CALL SandBox -brahma
 #----
 TEST CMP0 Compositions
-CALL SandBox -compose dummy
+CALL SandBox -compose 32
 
 TEST CMP1 Compositions with factor 17
 CALL SandBox -compose 6 17
@@ -98,7 +101,7 @@ TEST RP45 Representations y^5
 CALL SandBox -repres "y^5"                       64 1
 
 TEST RPN1 Representations y
-CALL SandBox -repres "y"                      32768 1
+CALL SandBox -repres "y"                        512 1
 
 TEST SQS1 SquareSumPrimes 
 CALL SandBox -sqsprim "x^2 + 2"
@@ -111,6 +114,33 @@ CALL SandBox -triple "(u^2 + v^2)" "(u^2 - v^2)" "(2*u*v)" 16
 
 TEST TRI3 Triples
 CALL SandBox -triple "(u^2 + v^2)" "(u^3 - 3*u*v^2)" "(3*u^2*v - v^3)" 16
+#---------------------------------------------------------------------
+LIM=64
+HEAD=6000
+
+# (m^2 - (m-n)^2)^2 ; (2*m*(m-n))^2 ; (m^2 + (m-n)^2)^2
+
+TEST EU01 standard Euclid, complete
+# (m^2 - n^2)^2 + (2*m*n)^2 - (m^2 + n^2)^2
+CALL SandBox -euclid [[1,0,-1],[0,2,0],[1,0,1]]     $(LIM)
+MAKE primit CASE=$(CASE) HEAD=$(HEAD)
+
+TEST EU02 generates negative
+CALL SandBox -euclid [[0,2,-2],[1,-2,0],[1,-2,2]]   $(LIM)
+MAKE primit CASE=$(CASE) HEAD=$(HEAD)
+
+TEST EU03 complete together with EU05?
+CALL SandBox -euclid [[1,2,0],[0,2,2],[1,2,2]]      $(LIM)
+MAKE primit CASE=$(CASE) HEAD=$(HEAD)
+
+TEST EU04 same as EU01? complete?
+# (2*m*n - n^2)^2 + (2*m^2 - 2*m*n)^2 - (2*m^2 - 2*m*n + n^2)^2
+CALL SandBox -euclid [[0,2,-1],[2,-2,0],[2,-2,1]]   $(LIM)
+MAKE primit CASE=$(CASE) HEAD=$(HEAD)
+
+TEST EU05 complete together with EU03?
+CALL SandBox -euclid [[0,2,1],[2,2,0],[2,2,1]]      $(LIM)
+MAKE primit CASE=$(CASE) HEAD=$(HEAD)
 
 #------------------------------------------
 # ProgramGenerator
@@ -123,7 +153,6 @@ TEST PG02 m2opts euclid
 CALL ProgramGenerator -w 3 -l 3 -v "[a^2+b^2,2*a*b,a^2-b^2]"                       -v "[5,3,4]"      -n \
                                 -p "p^2 = q^2 + r^2" m2opts
 MAKE progen
-
 
 # (a^2 + b^2)^3 = (a^3 - 3*a*b^2)^2 + (3*a^2*b - b^3)^2
 TEST PG03 m2opts
@@ -266,6 +295,8 @@ MAKE progen
 TEST PG26IE
 CALL IdentityEvaluator -l 16 -f test/PG26.this.tst -compr -chain
 #-----------------------------------------
+EXIT
+
 # cubic powersum
 #--------
 TEST PG30 pident Vieta + m^2*n^2, m only
@@ -460,29 +491,3 @@ CALL IdentityEvaluator -l 8 -f test/PG39.this.tst -compr -chain
 #??TEST PG41IE
 #??CALL IdentityEvaluator -l 8 -f test/PG41.this.tst -compr -chain
 #---------------------------------------
-LIM=64
-HEAD=6000
-
-# (m^2 - (m-n)^2)^2 ; (2*m*(m-n))^2 ; (m^2 + (m-n)^2)^2
-
-TEST EU01 standard Euclid, complete
-# (m^2 - n^2)^2 + (2*m*n)^2 - (m^2 + n^2)^2
-CALL SandBox -euclid [[1,0,-1],[0,2,0],[1,0,1]]     $(LIM)
-MAKE primit CASE=$(CASE) HEAD=$(HEAD)
-
-TEST EU02 generates negative
-CALL SandBox -euclid [[0,2,-2],[1,-2,0],[1,-2,2]]   $(LIM)
-MAKE primit CASE=$(CASE) HEAD=$(HEAD)
-
-TEST EU03 complete together with EU05?
-CALL SandBox -euclid [[1,2,0],[0,2,2],[1,2,2]]      $(LIM)
-MAKE primit CASE=$(CASE) HEAD=$(HEAD)
-
-TEST EU04 same as EU01? complete?
-# (2*m*n - n^2)^2 + (2*m^2 - 2*m*n)^2 - (2*m^2 - 2*m*n + n^2)^2
-CALL SandBox -euclid [[0,2,-1],[2,-2,0],[2,-2,1]]   $(LIM)
-MAKE primit CASE=$(CASE) HEAD=$(HEAD)
-
-TEST EU05 complete together with EU03?
-CALL SandBox -euclid [[0,2,1],[2,2,0],[2,2,1]]      $(LIM)
-MAKE primit CASE=$(CASE) HEAD=$(HEAD)

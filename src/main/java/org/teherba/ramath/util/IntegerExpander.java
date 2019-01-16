@@ -1,5 +1,6 @@
 /*  IntegerExpander: similiar to ModoMeter, but with different ordering
  *  @(#) $Id: IntegerExpander.java 744 2011-07-26 06:29:20Z  $
+ *  2018-01-21: reduce constructors 
  *  2013-09-10: parameters base and width interchanged, signed dispenser
  *  2013-09-05: new sequence
  *  2013-07-05, Georg Fischer: copied from Expander
@@ -37,17 +38,17 @@ import  org.teherba.ramath.util.Expander;
 public class IntegerExpander extends Expander {
     public final static String CVSID = "@(#) $Id: IntegerExpander.java 744 2011-07-26 06:29:20Z  $";
 
-    /** No-args Constructor, creates an IntegerExpander of width 4 for -1,0,+1
+    /** No-args Constructor, creates a defaultIntegerExpander of width 4 for -1,0,+1
      */
     public IntegerExpander() {
-        super(4, 2, -1);
+        this(4);
     } // no-args Constructor
 
-    /** Constructor with base 2
+    /** Constructor with default base 2
      *  @param width number of digits to be rolled
      */
     public IntegerExpander(int width) {
-        super(width, 2, -1);
+        this(width, 2);
     } // Constructor
 
     /** Constructor with 2 parameters

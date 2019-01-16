@@ -1,0 +1,135 @@
+# Collection of Testcases for Ramath
+# @(#) $Id: simple.tests 955 2012-06-05 07:22:59Z gfis $
+# 2018-01-24: Dr. Georg Fischer: extracted from simple.tests
+#-----------------------------------
+# Caution:
+# (1) Adjust the following line: URL where Ramath was deployed
+URL=http://localhost:8080/ramath/servlet
+# (2) Adjust the following line: default commandline arguments
+ARGS=
+#======================================================================
+ECHO 000
+#-------------------------
+# Tests of utility classes
+PACKAGE=org.teherba.ramath.util
+
+TEST BI1 BigIntegerUtil
+CALL BigIntegerUtil
+
+TEST U01 modulo generator
+CALL ModoMeter 4
+
+TEST U02 read expression
+DATA
+ 2.718281828459045235360287471
+ 35266249775724709369995957496696762772407
+ 663035354759457138217852516642742746639193200305992181741360027482234
+ 93348905414085151150263440892702877807403983408368897113419263142110356543
+CALL ExpressionReader -f $(DATA)
+
+TEST U03 permute
+CALL Permutator 3
+
+TEST U04 permute
+CALL Permutator 11
+# about 2900 ms
+
+TEST U05 Expander
+CALL Expander 3 4
+
+TEST U06 MonotoneExpander
+CALL MonotoneExpander 3 8
+
+TEST U07 interate through index ranges
+CALL ModoMeter 0 0 0   1 1   2   3 3
+
+TEST U08 IntegerExpander
+CALL IntegerExpander 3 4 -1
+
+#--------
+TEST U18 read b-file
+DATA
+ 1 0
+ 2 1
+ 3 1
+ 4 1
+ 5 2
+ 6 1
+ 7 2
+ 8 2
+ 9 2
+ 10 2
+ 11 3
+ 12 3
+ 13 3
+ 14 2
+ 15 3
+ 16 2
+ 17 4
+ 18 4
+ 19 2
+ 20 3
+ 21 4
+ 22 3
+ 23 4
+ 24 5
+ 25 4
+ 26 3
+ 27 5
+ 28 3
+ 29 4
+ 30 6
+ 31 3
+ 32 5
+CALL BFileReader -f $(DATA)
+
+TEST U19 read expressions
+DATA
+ x<sup>3</sup> + y^4
+ x<sup>2</sup> + y^5<br>
+CALL ExpressionReader " a + b " -f $(DATA)
+
+TEST U20 read expressions with comments - same result as U19
+DATA
+ # comment
+ x<sup>3</sup> + y^4
+ 
+ x<sup>2</sup> + y^5<br> # empty line before
+CALL ExpressionReader " a + b " -f $(DATA)
+DIFF test/U19.prev.tst test/U20.this.tst
+
+TEST D01 ModoMeter
+CALL DispenserFactory modo   3 3 64
+
+TEST D03 Permutator
+CALL DispenserFactory perm   4 4 64
+
+TEST D05 Expander
+CALL DispenserFactory exp    3 4 128
+
+TEST D06 MonotoneExpander
+CALL DispenserFactory monexp 3 8 128
+
+TEST D07 IntegerExpander
+CALL DispenserFactory intexp 3 8 128
+#--------------------------------
+# PrimeFactorization
+PACKAGE=org.teherba.ramath.util
+
+TEST FP1 PrimeFactorization 2
+CALL     PrimeFactorization 2
+
+TEST FP2 PrimeFactorization 60
+CALL     PrimeFactorization 60
+
+TEST FP3 PrimeFactorization 1729
+CALL     PrimeFactorization 1729
+
+TEST FP4 PrimeFactorization 900
+CALL     PrimeFactorization 900 
+
+TEST FP5 PrimeFactorization 19472906
+CALL     PrimeFactorization 19472906
+
+TEST FP6 PrimeFactorization 14400000
+CALL     PrimeFactorization 14400000

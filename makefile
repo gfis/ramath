@@ -2,6 +2,8 @@
 
 # test Ramath functions
 # @(#) $Id: makefile 741 2011-07-23 12:30:09Z  $
+# 2018-01-22: eec
+# 2018-01-20: jfind grep -iH "..."
 # 2016-08-31: unified with $(APPL)
 # 2016-07-10: jfind also in $(SRC)/../common
 # 2015-06-01: all -> symbolic
@@ -29,14 +31,21 @@ SUDO=
 CONST=+2
 LEVEL=3
 BASE=2
+MAX=32
 
-all: solver
+all: eec
 #-------------------------------------------------------------------
 # Perform a regression test 
-regression: simple symbolic ideal linear matrix sandbox solver regeval
-regeval:
-	grep -iHE "tests (FAILED|passed|recreated)" $(TESTDIR)/*.log
-#---------------------------------------------------
+regression: eec ideal linear matrix sandbox simple solver symbolic util \
+	regres2
+regres2:
+	grep -iHE "tests recreated" $(TESTDIR)/*.log
+	grep -iHE "tests passed"    $(TESTDIR)/*.log
+	grep -iHE "tests FAILED"    $(TESTDIR)/*.log
+#-----------------
+eec:
+	$(REGR) test/eec.tests 		$(TEST) 2>&1 | tee $(TESTDIR)/regression_$@.log
+	grep FAILED $(TESTDIR)/regression_$@.log
 ideal:
 	$(REGR) test/ideal.tests 	$(TEST) 2>&1 | tee $(TESTDIR)/regression_$@.log
 	grep FAILED $(TESTDIR)/regression_$@.log
@@ -58,6 +67,9 @@ solver:
 symbolic:
 	$(REGR) test/symbolic.tests $(TEST) 2>&1 | tee $(TESTDIR)/regression_$@.log
 	grep FAILED $(TESTDIR)/regression_$@.log
+util:
+	$(REGR) test/util.tests 	$(TEST) 2>&1 | tee $(TESTDIR)/regression_$@.log
+	grep FAILED $(TESTDIR)/regression_$@.log
 #---------------------------------------------------
 # Recreate all testcases which failed (i.e. remove xxx.prev.tst)
 # Handle with care!
@@ -76,7 +88,7 @@ check_tests:
 	diff -y --suppress-common-lines --width=32 $(TESTDIR)/tests_formal.tmp $(TESTDIR)/tests_actual.tmp
 #---------------------------------------------------
 jfind:
-	find src -iname "*.java" | xargs -l grep -H $(JF)
+	find src -iname "*.java" | xargs -l grep -iH "$(JF)"
 rmbak:
 	find src -iname "*.bak"  | xargs -l rm -v
 #---------------------------------------------------

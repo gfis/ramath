@@ -561,6 +561,7 @@ DATA ((2*m - 1)*(2*m^3 -  6*m^2 + 0*m - 1))^3
                 eec.evalVieta3(m);
             } else if (opt.startsWith("run")) {
                 int n       = Integer.parseInt(args[iarg ++]);
+                System.out.println("EEC run k=" + k);
                 switch (k) {
                     case 2:
                         eec.run_2_2_1();
@@ -575,7 +576,7 @@ DATA ((2*m - 1)*(2*m^3 -  6*m^2 + 0*m - 1))^3
                         eec.run_5_5_1();
                         break;
                     default:
-                        System.err.println("unknown exponent k = " + k);
+                        System.out.println("unknown exponent k = " + k);
                 } // switch
             } // case opt
         } catch (Exception exc) {

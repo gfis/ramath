@@ -1,13 +1,3 @@
-# flat	Pythagoras.X01	2*m*n
-# flat	Pythagoras.X01	m^2 - n^2
-# flat	Pythagoras.X01	m^2 + n^2
-# merg	Pythagoras.X01	0
-# merg	Pythagoras.X01	2*x_y_z^2
-# merg	Pythagoras.X01	2*x_y_z^2
-# orig	Pythagoras.X01	-(m^2+n^2)^2
-# orig	Pythagoras.X01	+(2*m*n)^2
-# orig	Pythagoras.X01	+(m^2-n^2)^2
-# poly	Pythagoras.X01	0
 000012	[3,4,5]	Pythagoras.X01	factor=1	parm= [1,2]
 000012	[3,4,5]	Pythagoras.X01	factor=1	parm= [2,1]
 000012	[3,4,5]	Pythagoras.X01	factor=2	parm= [1,3]
@@ -50,3 +40,13 @@
 000154	[33,56,65]	Pythagoras.X01	factor=1	parm= [7,4]
 000182	[13,84,85]	Pythagoras.X01	factor=1	parm= [6,7]
 000182	[13,84,85]	Pythagoras.X01	factor=1	parm= [7,6]
+# flat	Pythagoras.X01	2*m*n
+# flat	Pythagoras.X01	m^2 - n^2
+# flat	Pythagoras.X01	m^2 + n^2
+# merg	Pythagoras.X01	0
+# merg	Pythagoras.X01	2*x_y_z^2
+# merg	Pythagoras.X01	2*x_y_z^2
+# orig	Pythagoras.X01	+(2*m*n)^2
+# orig	Pythagoras.X01	-(m^2+n^2)^2
+# orig	Pythagoras.X01	+(m^2-n^2)^2
+# poly	Pythagoras.X01	0

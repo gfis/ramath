@@ -516,6 +516,8 @@ public class MatrixTester implements Serializable {
                         } catch (Exception exc) {
                         }
                     }
+                    System.out.println("-chain " + amat.toString(",") + " " 
+                            + vect1.toString(",") + " " + left + " " + right); 
                     printPreservedChain(amat, vect1, 0, left, right);
                     // opt -chain
 
@@ -609,7 +611,7 @@ public class MatrixTester implements Serializable {
                     ModoMeter meter = new ModoMeter(nlen * nlen); // binary
                     while (meter.hasNext()) {
                         int[] values = meter.next();
-                        Matrix bmat = amat.toggleSigns(values);
+                        Matrix bmat = amat.conditionallyNegate(values);
                         if (bmat.preservedPowerSums(3, 3, 1, next0).size() > 0) {
                             Vector vals = new Vector(values);
                             System.out.print("this too, det=" + bmat.determinant()
@@ -709,7 +711,7 @@ public class MatrixTester implements Serializable {
                         ivect ++;
                     } // while ivect
                     System.out.println(failed + " of " + count + " failed, "
-                            + String.format("%4.2f", failed * 100.0 / count) + "%");
+                            + String.format("%d%%", (int) (failed * 100 / count)));
                     // opt -follow
 
                 } else if (opt.equals("-gen" )) { // copied from -perms
@@ -768,12 +770,29 @@ public class MatrixTester implements Serializable {
                     } catch (Exception exc) {
                     }
                     ArrayList<Vector> test = new ArrayList<Vector>(64);
+
                     test.add(new Vector(new int[]{  3,  4,  5,  6 }));
+                    test.add(new Vector(new int[]{  3,  4,  5,  6 }));
+                    test.add(new Vector(new int[]{  1,  6,  8,  9 }));
+                    test.add(new Vector(new int[]{  3, 10, 18, 19 }));
+                    test.add(new Vector(new int[]{  7, 14, 17, 20 }));
+                    test.add(new Vector(new int[]{  4, 17, 22, 25 }));
+
+                    test.add(new Vector(new int[]{ 18, 19, 21, 28 }));
+
+                    test.add(new Vector(new int[]{ 11, 15, 27, 29 }));
+                    test.add(new Vector(new int[]{  2, 17, 40, 41 }));
+                    test.add(new Vector(new int[]{  6, 32, 33, 41 }));
+                    test.add(new Vector(new int[]{ 16, 23, 41, 44 }));
+                    test.add(new Vector(new int[]{  3, 36, 37, 46 }));
+                    test.add(new Vector(new int[]{ 27, 30, 37, 46 }));
+                    test.add(new Vector(new int[]{ 12, 19, 53, 54 }));
 /*
                     test.add(new Vector(new int[]{4,17,22,25}));
                     test.add(new Vector(new int[]{2,17,40,41}));
                     test.add(new Vector(new int[]{6,32,33,41}));
 */
+/*
                     test.add(new Vector(new int[]{29,34,44,53}));
                     test.add(new Vector(new int[]{22,51,54,67}));
                     test.add(new Vector(new int[]{14,23,70,71}));
@@ -798,6 +817,7 @@ public class MatrixTester implements Serializable {
                     test.add(new Vector(new int[]{38,57,124,129}));
                     test.add(new Vector(new int[]{5,76,123,132}));
                     test.add(new Vector(new int[]{44,73,128,137}));
+*/
 /*
                     test.add(new Vector(new int[]{4,17,22,25}));
                     test.add(new Vector(new int[]{2,17,40,41}));

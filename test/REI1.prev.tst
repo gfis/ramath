@@ -1,4 +1,4 @@
-Expanding for base=2, reasons+features=similiar
+Expanding for base=2, level=4, reasons+features=similiar
 Refined variables=a,b,c,d
 ReasonFactory: similiar, code="similiar"
 SimiliarReason.consider(

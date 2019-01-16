@@ -1,4 +1,4 @@
-Expanding for base=2, reasons+features=base
+Expanding for base=2, level=4, reasons+features=base
 Refined variables=
 ReasonFactory: base, code="base"
 BaseReason.consider(

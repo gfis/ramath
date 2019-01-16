@@ -18,8 +18,8 @@
  * limitations under the License.
  */
 package org.teherba.ramath;
-import  org.teherba.ramath.BigIntegerUtil;
-import  org.teherba.ramath.PrimeFactorization;
+import  org.teherba.ramath.util.BigIntegerUtil;
+import  org.teherba.ramath.util.PrimeFactorization;
 import  java.io.BufferedReader;
 import  java.io.FileReader;
 import  java.io.InputStreamReader;
@@ -141,13 +141,12 @@ public class TaxiCab {
     } // process422
 
     /** Reads lines from the condensed page at 
-     *  {@link http://euler.free.fr/taxicab.htm} which starts with either
+     *  <a href="http://euler.free.fr/taxicab.htm">taxicab.htm</a> which starts with either
      *  <ul>
      *  <li>Taxicab(n) <?= num1</li>
      *  <li>Cabtaxi(n) <?= num1</li>
      *  <li>= num1^3 +- num2^3</li>
      *  </ul>
-     *  <li>Taxicab</li>
      *  Appends the prime factorization of the number to the line,
      *  and prints the latter.
      *  The input is reproduced as a comment at the and of this source file.

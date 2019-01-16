@@ -1,5 +1,6 @@
 # Collection of Testcases for Ramath
 # @(#) $Id: simple.tests 955 2012-06-05 07:22:59Z gfis $
+# 2018-01-24: some moved to util.tests
 # 2015-11-16: Groebner bases moved to ideal.tests
 # 2014-04-05, Dr. Georg Fischer: extracted from all.tests
 #-----------------------------------
@@ -10,12 +11,6 @@ URL=http://localhost:8080/ramath/servlet
 ARGS=
 #======================================================================
 ECHO 000
-#-------------------------
-# BigIntegerUtil
-PACKAGE=org.teherba.ramath
-
-TEST BI1 BigIntegerUtil
-CALL BigIntegerUtil
 #-------------------------
 # EEC array generation
 PACKAGE=org.teherba.ramath
@@ -46,103 +41,6 @@ CALL EulersExtendedConjecture dutch2   4096 3 8
 
 TEST E10 generate from Choudhry's formula
 CALL EulersExtendedConjecture choud    4096 3 4
-
-#-------------------------
-# Tests of utility classes
-PACKAGE=org.teherba.ramath.util
-
-TEST U01 modulo generator
-CALL ModoMeter 4
-
-TEST U02 read expression
-DATA
- 2.718281828459045235360287471
- 35266249775724709369995957496696762772407
- 663035354759457138217852516642742746639193200305992181741360027482234
- 93348905414085151150263440892702877807403983408368897113419263142110356543
-CALL ExpressionReader -f $(DATA)
-
-TEST U03 permute
-CALL Permutator 4
-
-TEST U05 Expander
-CALL Expander 3 4
-
-TEST U06 MonotoneExpander
-CALL MonotoneExpander 3 8
-
-TEST U07 modulo generator also with negative values
-CALL ModoMeter 3 2 -1
-
-TEST U08 IntegerExpander
-CALL IntegerExpander 3 4 -1
-
-#--------
-TEST U18 read b-file
-DATA
- 1 0
- 2 1
- 3 1
- 4 1
- 5 2
- 6 1
- 7 2
- 8 2
- 9 2
- 10 2
- 11 3
- 12 3
- 13 3
- 14 2
- 15 3
- 16 2
- 17 4
- 18 4
- 19 2
- 20 3
- 21 4
- 22 3
- 23 4
- 24 5
- 25 4
- 26 3
- 27 5
- 28 3
- 29 4
- 30 6
- 31 3
- 32 5
-CALL BFileReader -f $(DATA)
-
-TEST U19 read expressions
-DATA
- x<sup>3</sup> + y^4
- x<sup>2</sup> + y^5<br>
-CALL ExpressionReader " a + b " -f $(DATA)
-
-TEST U20 read expressions with comments - same result as U19
-DATA
- # comment
- x<sup>3</sup> + y^4
- 
- x<sup>2</sup> + y^5<br> # empty line before
-CALL ExpressionReader " a + b " -f $(DATA)
-DIFF test/U19.prev.tst test/U20.this.tst
-
-TEST D01 ModoMeter
-CALL DispenserFactory modo   3 3 64
-
-TEST D03 Permutator
-CALL DispenserFactory perm   4 4 64
-
-TEST D05 Expander
-CALL DispenserFactory exp    3 4 128
-
-TEST D06 MonotoneExpander
-CALL DispenserFactory monexp 3 8 128
-
-TEST D07 IntegerExpander
-CALL DispenserFactory intexp 3 8 128
 
 #-------------------------------------------------
 # Generating Identities
@@ -307,17 +205,36 @@ CALL     PrimeFactorization 2
 TEST FP2 PrimeFactorization 60
 CALL     PrimeFactorization 60
 
-TEST FP3 PrimeFactorization 1729
-CALL     PrimeFactorization 1729
+TEST CFD continued fraction A112273     
+DATA
+1 1
+1 5
+2 15
+3 365
+4 945
+CALL ContinuedFraction -eval $(DATA)
 
-TEST FP4 PrimeFactorization 900
-CALL     PrimeFactorization 900 
+TEST CFE continued fraction A115603           
+DATA
+1 1
+2 10
+3 14
+4 30
+CALL ContinuedFraction -eval $(DATA)
 
-TEST FP5 PrimeFactorization 19472906
-CALL     PrimeFactorization 19472906
-
-TEST FP6 PrimeFactorization 14400000
-CALL     PrimeFactorization 14400000
+TEST CFF continued fraction A199714           
+DATA
+1 0
+2 9
+3 23
+4 30
+5 35
+6 49
+7 58
+8 73
+9 94
+CALL ContinuedFraction -eval $(DATA)
+# 0, 9, 23, 30, 35, 49, 58, 73, 94
 #-------------------------------
 # Mixed Tests
 PACKAGE=org.teherba.ramath

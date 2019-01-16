@@ -35,12 +35,12 @@ public class DispenserFactory {
     /** log4j logger (category) */
     private Logger log;
 
-    /** Maps codes to available dispensers */
+    /** Maps codes to available {@link Dispenser}s */
     private LinkedHashMap<String, Dispenser> dispensers;
 
-    /** Attempts to instantiate the dispenser for some code
-     *  @param code code designating the dispenser
-     *  @param className base name of the dispenser class
+    /** Attempts to instantiate the {@link Dispenser} for some code
+     *  @param code code designating the Dispenser
+     *  @param className base name of the Dispenser class
      */
     private void addDispenser(String code, String className) {
         try {
@@ -63,43 +63,45 @@ public class DispenserFactory {
         addDispenser("modo"     , "ModoMeter"           );
         addDispenser("monexp"   , "MonotoneExpander"    );
         addDispenser("perm"     , "Permutator"          );
+        addDispenser("range"    , "RangeDispenser"      );
     } // Constructor(0)
 
-    /** Gets an iterator over all implemented dispensers.
-     *  @return list iterator over the codes for all dispensers
+    /** Gets an iterator over all implemented {@link Dispenser}s.
+     *  @return list iterator over the codes for all {@link Dispenser}s
      */
     public Iterator<String> getIterator() {
         return dispensers.keySet().iterator();
     } // getIterator
 
-    /** Gets the number of available dispensers
+    /** Gets the number of available {@link Dispenser}s
      *  @return number of languages which can be spelled
      */
     public int getCount() {
         return dispensers.size();
     } // getCount
 
-    /** Determines whether the code denotes this dispenser class.
-     *  @param dispenser the dispenser to be tested
-     *  @param code code for the desired dispenser
-     *  @return whether the desired dispenser was found
+    /** Determines whether the code denotes this {@link Dispenser} class.
+     *  @param dispenser the Dispenser to be tested
+     *  @param code code for the desired Dispenser
+     *  @return whether the desired Dispenser was found
      */
     public boolean isApplicable(Dispenser dispenser, String code) {
-        boolean result = false; // dispenser instanceof dispensers.get(code).getClass();
+        boolean result = false; // Dispenser instanceof Dispensers.get(code).getClass();
         return result;
     } // isApplicable
 
-    /** Gets the applicable dispenser for a specified code.
-     *  @param code abbreviation for the dispenser
+    /** Gets the applicable {@link Dispenser} for a specified code.
+     *  @param code abbreviation for the Dispenser
      *  @return the dispenser for that code, or <em>null</em> if the
-     *  dispenser was not found
+     *  Dispenser was not found
      */
     public Dispenser getDispenser(String code) {
         Dispenser result = dispensers.get(code);
         return result;
     } // getDispenser
 
-    /** Test method, selects a dispenser, rolls through some combinations and prints them.
+    /** Test method, selects a {@link Dispenser}, 
+     *  rolls through some combinations and prints them.
      *  @param args command line arguments: code, width, base, loop
      */
     public static void main(String[] args) {
@@ -144,7 +146,6 @@ public class DispenserFactory {
         } else {
             System.err.println("no Dispenser known for code \"" + code +  "\"");
         }
-
     } // main
 
 } // DispenserFactory

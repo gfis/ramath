@@ -129,8 +129,9 @@ public class RefiningMap extends VariableMap implements Cloneable , Serializable
     } // getConstants
 
     /** Gets a {@link PolyVector}
-     *  of the constant expressions when refined variables are substituted from a
-     *  binary {@link Dispenser}.
+     *  of the additive constants when refined variables are substituted from a
+     *  {@link Dispenser}. 
+     *  This method is used to print solutions.
      *  @param meter underlaying Dispenser
      *  @return for example: [3,4] for this={x-&gt;3+2*x, y-&gt;0+4*y} and meter=[0,1]
      */

@@ -1,6 +1,7 @@
 /*  Polynomial: a symbolic, multivariate Polynomial with addition, multiplication,
  *  exponentiation, comparision and other operations
  *  @(#) $Id: Polynomial.java 744 2011-07-26 06:29:20Z gfis $
+ *  2019-01-05: toCoefficients
  *  2018-05-02: -eval
  *  2017-05-28: javadoc 1.8
  *  2016-07-09: Signature
@@ -46,15 +47,15 @@ import  org.teherba.ramath.symbolic.PolynomialParser;
 import  org.teherba.ramath.symbolic.RelationSet;
 import  org.teherba.ramath.symbolic.Signature;
 import  org.teherba.ramath.symbolic.VariableMap;
-import  org.teherba.ramath.BigIntegerUtil;
 import  org.teherba.ramath.BigRational;
 import  org.teherba.ramath.Coefficient;
-import  org.teherba.ramath.PrimeFactorization;
 import  org.teherba.ramath.linear.Matrix;
 import  org.teherba.ramath.linear.Vector;
+import  org.teherba.ramath.util.BigIntegerUtil;
 import  org.teherba.ramath.util.ExpressionReader;
 import  org.teherba.ramath.util.ModoMeter;
 import  org.teherba.ramath.util.Permutator;
+import  org.teherba.ramath.util.PrimeFactorization;
 import  java.io.Serializable;
 import  java.math.BigInteger;
 import  java.util.ArrayList;
@@ -365,6 +366,16 @@ public class Polynomial implements Cloneable, Serializable {
     public String niceString() {
         return toString(2);
     } // niceString()
+
+    /** Returns the coefficients only
+     *  @return "1 2 1 ", for example
+     */
+    public String toCoefficients() {
+        return toString(1)
+            .replaceAll("\\*\\w+\\^\\d+", "")
+            .replaceAll("\\s*\\=\\s*0", "; ")
+            ;
+    } // toCoefficients()
 
     /** Returns a String representation of <em>this</em> {@link Polynomial},
      *  in compressed representation, without the relation,
@@ -784,7 +795,7 @@ public class Polynomial implements Cloneable, Serializable {
      *  assuming that there is no rest.
      *  This method is needed only for {@link PolynomialParser},
      *  and <em>poly2</em> must be a {@link Monomial} which divides
-     *  evenly in all monomials of <em>this</em> Polynomial.
+     *  evenly in all Monomials of <em>this</em> Polynomial.
      *  @param poly2 divide by this Polynomial
      *  @return quotient
      */
@@ -1425,7 +1436,7 @@ public class Polynomial implements Cloneable, Serializable {
      *  For any powered variable a suitable power (square, cubic) completion is determined,
      *  and the Polynomial is widened appropriately.
      *  @param debug2 = 0: no debugging output, 1 = some, 2 = more, 3 = most
-     *  @return a new {@link VariableMap} with a mapping from variables to expression which
+     *  @return a new {@link VariableMap} with a mapping from variables to expressions which
      *  transforms this into the reduced Polynomial,
      *  and the reduced Polynomial mapped from "" (the empty String)
      *  <p>Trace of testcase LR1:
@@ -1856,7 +1867,7 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=&gt; - 2*y + 4*z
 
     /** Compute the (partial) nth order derivative of <em>this</em> {@link Polynomial}
      *  with respect to one variable.
-     *  @param varx derivate for this variable
+     *  @param varx compute the derivative for this variable
      *  @param order order n of derivation: first, second etc.
      *  @return a new Polynomial, the nth order derivative.
      *  For <em>order = 0</em>, a copy of <em>this</em> Polynomial is returned.
@@ -1892,7 +1903,7 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=&gt; - 2*y + 4*z
 
     /** Compute the (partial) 1st order derivative of <em>this</em> {@link Polynomial}
      *  with respect to one variable.
-     *  @param varx derivate for this variable
+     *  @param varx compute the derivative for this variable
      *  @return a new Polynomial, the 1st order derivative.
      *  For <em>x^3+x^2</em> the 1st order derivative is <em>3x^2+2x</em>,
      *  and the 2nd order derivative is <em>6x</em>.
@@ -2135,12 +2146,12 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=&gt; - 2*y + 4*z
                         String result = Polynomial.parse(polies[ipoly]).toString();
                         System.out.println(polies[ipoly] + ": " + result);
                         if (! result.trim().equals("0")) {
-                        	System.out.println("# ** error: no power sum");
+                            System.out.println("# ** error: no power sum");
                         }
                         Vector nums = new Vector(polies[ipoly].replaceAll("\\^\\d+", "").replaceAll("\\D+", ","));
                         if (nums.gcd() != 1) {
-                        	System.out.println("# ** error: not primitive, gcd=" + nums.gcd());
-                        }	
+                            System.out.println("# ** error: not primitive, gcd=" + nums.gcd());
+                        }   
                     } // for
                     // -eval
 
@@ -2208,6 +2219,13 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=&gt; - 2*y + 4*z
                     ipoly = 0;
                     while (ipoly < exprs.length) {
 /* lines of the form (without the spaces):
+Expanding for base=2, level=5, reasons+features=base,same,similiar invall,norm,showfail
+Refined variables=x,y
+[0+1x,0+1y]:    unknown -> [1] [0,0] 15x²-7y²-9
+---------------- level 0
+expanding queue[0]^-1,meter=[2,2]: 15x²-7y²-9
+[0+2x,0+2y]:    failure constant=-9, vgcd=4 [0,0] 60x²-28y²-9
+[1+2x,0+2y]:    failure constant=3, vgcd=2 [1,0] 30x+30x²-14y²+3
 ----------------
 expanding queue[0]^-1: a^4 + b^4 - c^4 - d^4 meter=[2,2,2,2] *2
 solution [0,0,0,0],trivial(3)
@@ -2219,6 +2237,7 @@ solution [0,0,0,0],trivial(3)
                         int unkPos = line.indexOf("unknown");
                         if (unkPos >= 0) {
                             int cspPos = line.indexOf("]", unkPos);
+                            cspPos = line.indexOf("]", cspPos); // 2nd "]"
                             poly1 = Polynomial.parse(line.substring(cspPos + 1));
                             // System.out.println("poly1 = " + poly1.toString());
                             vmap1 = poly1.getReductionMap(0);

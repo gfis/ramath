@@ -101,10 +101,25 @@ public class Expander extends Dispenser {
         reset();
     } // Constructor(3)
 
+    /** Sets the width.
+     *  @param width number of digits which roll
+     */
+    @Override
+    public void setWidth(int width) {
+        super.setWidth(width);
+        signs = new int[width];
+    } // setWidth
+
     /** Resets the dispenser, next tuple is (0,0, -- 0)
      */
+    @Override
     public void reset() {
         super.reset();
+        int im = 0;
+        while (im < width) {
+            signs[im] = 0;
+            im ++;
+        } // while im
         ceil = 0; // will increment up to base, where it stops
     } // reset
 
@@ -112,6 +127,7 @@ public class Expander extends Dispenser {
      *  {@link ModoMeter#next} algorithm - rather unpleasant and inefficient.
      *  @return an array with the <em>original</em> digits tuple <em>before</em> rolling
      */
+    @Override
     public int[] next() {
         int[] result = toArray(); // first copy current tuple to the result
         int im = 0;
@@ -147,6 +163,67 @@ public class Expander extends Dispenser {
         } // while iterating
         return result;
     } // next
+
+    /** Toggles into the next combination of signs if the Dispenser yields negative values.
+     *  This works like a simple odometer for the values {0, -1},
+     *  but positions where the <em>meter</em> is zero are skipped.
+     *  The <em>meter</em> tuple is steady during sign toggling.
+     *  A typical usage is:
+     <pre>
+        boolean iterating = signed &amp;&amp; toggleSigns();
+     </pre>
+     *  which relies strongly on the fact that Java lazily evaluates the "&amp;&amp;" operator.
+     *  @return <em>false</em> if there was another sign combination, or <em>true</em>
+     *  another meter tuple should be generated
+     */
+    protected boolean toggleSigns() {
+        boolean busy = true;
+        int im = 0;
+        while (busy && im < width) { // then roll
+            if (meter[im] != 0) {
+                signs[im] --;
+                busy = signs[im] <= - 2;
+                if (busy) { // roll over and switch to next position
+                    signs[im] = 0;
+                }
+                // else stop at this position
+            } // meter[im] != 0
+            im ++;
+        } // while busy
+        return busy; // true iff the highest digit rolled over
+    } // toggleSigns
+
+    /** Reads the current setting of the Dispenser.
+     *  @return a cloned array with the <em>original</em> digits
+     */
+    @Override
+    public int[] toArray() {
+        int[] result = new int[width];
+        int im = 0;
+        while (im < width) { // copy first
+            result[im] = (signs[im] >= 0) ? meter[im] : (- meter[im]);
+            im ++;
+        } // while im
+        return result;
+    } // toArray
+
+    /** Returns a string representation of the current meter reading:
+     *  all digits separated by spaces, fastest changing digit first.
+     *  @return string like "1 9 4 7"
+     */
+    @Override
+    public String toString() {
+        StringBuffer result = new StringBuffer(64);
+        int im = 0;
+        while (im < meter.length) {
+            if (im > 0) { // if not first
+                result.append(' ');
+            }
+            result.append(String.valueOf(signs[im] >= 0 ? meter[im] : - meter[im]));
+            im ++;
+        } // while im
+        return result.toString();
+    } // toString
 
     /** Test method, rolls through all combinations and prints them.
      *  @param args command line arguments: base width

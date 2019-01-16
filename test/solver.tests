@@ -138,19 +138,19 @@ TEST TE33 2 4 9 Proof
 CALL TreeSolver -b 3 -l 2 -e "a^3 + 2*b^3 + 4*c^3 - 9*d^3" -r igtriv
 
 TEST TE320 EEC(3) mod 2
-CALL TreeSolver    -b 2 -l 0 -e "a^3 + b^3 + c^3 - d^3" 
+CALL TreeSolver    -b 2 -l 1 -e "a^3 + b^3 + c^3 - d^3" 
 TEST TE330 EEC(3) mod 3
-CALL TreeSolver    -b 3 -l 0 -e "a^3 + b^3 + c^3 - d^3" 
+CALL TreeSolver    -b 3 -l 1 -e "a^3 + b^3 + c^3 - d^3" 
 TEST TE340 EEC(3) mod 4
-CALL TreeSolver    -b 4 -l 0 -e "a^3 + b^3 + c^3 - d^3" 
+CALL TreeSolver    -b 4 -l 1 -e "a^3 + b^3 + c^3 - d^3" 
 TEST TE350 EEC(3) mod 5
-CALL TreeSolver    -b 5 -l 0 -e "a^3 + b^3 + c^3 - d^3" 
+CALL TreeSolver    -b 5 -l 1 -e "a^3 + b^3 + c^3 - d^3" 
 TEST TE360 EEC(3) mod 6
-CALL TreeSolver    -b 6 -l 0 -e "a^3 + b^3 + c^3 - d^3" 
+CALL TreeSolver    -b 6 -l 1 -e "a^3 + b^3 + c^3 - d^3" 
 TEST TE370 EEC(3) mod 7
-CALL TreeSolver    -b 7 -l 0 -e "a^3 + b^3 + c^3 - d^3" 
+CALL TreeSolver    -b 7 -l 1 -e "a^3 + b^3 + c^3 - d^3" 
 TEST TE380 EEC(3) mod 8
-CALL TreeSolver    -b 8 -l 0 -e "a^3 + b^3 + c^3 - d^3" 
+CALL TreeSolver    -b 8 -l 1 -e "a^3 + b^3 + c^3 - d^3" 
 
 TEST TE41 EEC(4,2,2) OEIS A003824, http://cr.yp.to/sortedsums/two4.1000000
 CALL TreeSolver -b 2 -l 2 -e "a^4 + b^4 - c^4 - d^4" -r norm,invall
@@ -169,6 +169,13 @@ CALL TreeSolver -b 2 -l 3 -e "a^4 + b^4 + c^4 - d^4" -r norm,invall
 
 # TEST TE61 EEC(6,1,5), most wanted on euler.free.net, mod 3
 # CALL TreeSolver -b 3 -l 1 -e "a^6 + b^6 + c^6 + d^6 + e^6 - f^6"
+
+TEST TEE2 EEC(4,1,3) mod 2
+CALL TreeSolver -b 2 -l 2 -e "a^4 + b^4 + c^4 - d^4" -r norm,invall
+TEST TEE3 EEC(4,1,3) mod 6
+CALL TreeSolver -b 6 -l 1 -e "a^4 + b^4 + c^4 - d^4" -r norm,invall
+# TEST TEE30 EEC(4,1,3) mod 30
+# CALL TreeSolver -b 30 -l 1 -e "a^4 + b^4 + c^4 - d^4" -r norm,invall
 
 #----
 # Pell's equations
@@ -312,7 +319,7 @@ TEST TECL x^2 = y^3, solutions: (8,4), (27,9), ...
 CALL TreeSolver -b 6 -l 3 -e "x^2 - y^3" -r norm,invall,no-evenexp,no-same
 
 TEST TECM  Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3]
-CALL TreeSolver -b 3 -l 2 -e "2x+2x²-3y-6y²-4y³+1" -r norm,invall,no-evenexp,same
+CALL TreeSolver -b 27 -l 3 -e "x^2 + 2 = y^3" -r norm
 
 TEST TECN  Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3]
 CALL TreeSolver -b 5 -l 2 -e "2x+6x²-27y-54y²-36y³-4" -r norm,invall,no-evenexp,same

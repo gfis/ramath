@@ -1,16 +1,3 @@
-# flat	Dutch.X12	 - 2*m + 6*m^2 - 14*m^3 + 4*m^4 + 1
-# flat	Dutch.X12	 - 3*m + 9*m^2 - 9*m^3 + 6*m^4
-# flat	Dutch.X12	2*m - 6*m^2 - 4*m^3 + 5*m^4 - 1
-# flat	Dutch.X12	3*m + 3*m^4
-# merg	Dutch.X12	 - 2*x_y_z + 6*x_y_z^2 - 14*x_y_z^3 + 4*x_y_z^4 + 1
-# merg	Dutch.X12	 - 3*x_y_z + 9*x_y_z^2 - 9*x_y_z^3 + 6*x_y_z^4
-# merg	Dutch.X12	2*x_y_z - 6*x_y_z^2 - 4*x_y_z^3 + 5*x_y_z^4 - 1
-# merg	Dutch.X12	3*x_y_z + 3*x_y_z^4
-# orig	Dutch.X12	-((2*m-1)*(3*m^3-3*m^2+3*m))^3
-# orig	Dutch.X12	((2*m-1)*(2*m^3-6*m^2+0*m-1))^3
-# orig	Dutch.X12	+((1*m+1)*(3*m^3-3*m^2+3*m))^3
-# orig	Dutch.X12	+((1*m+1)*(5*m^3-9*m^2+3*m-1))^3
-# poly	Dutch.X12	0
 000018	[3,4,5,6]	Dutch.X12	factor=1	parm= [1]
 000240	[28,53,75,84]	Dutch.X12	factor=27	parm= [-4]
 000300	[33,70,92,105]	Dutch.X12	factor=27	parm= [5]
@@ -31,3 +18,16 @@
 138510	[19656,35216,36955,46683]	Dutch.X12	factor=1	parm= [-9]
 153900	[26581,30030,45419,51870]	Dutch.X12	factor=1	parm= [10]
 300564	[43890,77780,77947,100947]	Dutch.X12	factor=1	parm= [-11]
+# flat	Dutch.X12	 - 2*m + 6*m^2 - 14*m^3 + 4*m^4 + 1
+# flat	Dutch.X12	2*m - 6*m^2 - 4*m^3 + 5*m^4 - 1
+# flat	Dutch.X12	3*m + 3*m^4
+# flat	Dutch.X12	 - 3*m + 9*m^2 - 9*m^3 + 6*m^4
+# merg	Dutch.X12	 - 2*x_y_z + 6*x_y_z^2 - 14*x_y_z^3 + 4*x_y_z^4 + 1
+# merg	Dutch.X12	2*x_y_z - 6*x_y_z^2 - 4*x_y_z^3 + 5*x_y_z^4 - 1
+# merg	Dutch.X12	3*x_y_z + 3*x_y_z^4
+# merg	Dutch.X12	 - 3*x_y_z + 9*x_y_z^2 - 9*x_y_z^3 + 6*x_y_z^4
+# orig	Dutch.X12	+((1*m+1)*(3*m^3-3*m^2+3*m))^3
+# orig	Dutch.X12	+((1*m+1)*(5*m^3-9*m^2+3*m-1))^3
+# orig	Dutch.X12	((2*m-1)*(2*m^3-6*m^2+0*m-1))^3
+# orig	Dutch.X12	-((2*m-1)*(3*m^3-3*m^2+3*m))^3
+# poly	Dutch.X12	0

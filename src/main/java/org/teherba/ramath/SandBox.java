@@ -1,5 +1,6 @@
 /*  Collection of several experimental methods
  *  @(#) $Id: SandBox.java 808 2011-09-20 16:56:14Z gfis $
+ *  2019-01-05: _a, _b, _c, _d in printCompositions; _c, _d with toCoefficients
  *  2017-07-12: -brahma
  *  2016-07-09: Signature
  *  2016-03-31: -compose
@@ -25,20 +26,22 @@
  */
 package org.teherba.ramath;
 import  org.teherba.ramath.BigRational;
-import  org.teherba.ramath.BigIntegerUtil;
 import  org.teherba.ramath.ContinuedFraction;
-import  org.teherba.ramath.PrimeFactorization;
 import  org.teherba.ramath.linear.Matrix;
 import  org.teherba.ramath.linear.Vector;
 import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.PolyVector;
 import  org.teherba.ramath.symbolic.Signature;
 import  org.teherba.ramath.symbolic.VariableMap;
+import  org.teherba.ramath.util.BigIntegerUtil;
 import  org.teherba.ramath.util.IntegerExpander;
+import  org.teherba.ramath.util.PrimeFactorization;
 import  java.io.BufferedReader;
 import  java.io.FileReader;
 import  java.io.InputStreamReader;
 import  java.math.BigInteger;
+import  java.util.ArrayList;
+import  java.util.HashMap;
 import  org.apache.log4j.Logger;
 
 /** Collection of several experimental methods, see {@link #main}.
@@ -127,7 +130,7 @@ public class SandBox {
             int num = startValue;
             while (num < highValue) {
                 Polynomial[] sums = Polynomial.brahmagupta(
-                		new Polynomial[] { s, t, u, v, Polynomial.parse(String.valueOf(factor)) } );
+                        new Polynomial[] { s, t, u, v, Polynomial.parse(String.valueOf(factor)) } );
                 if (false) {
                     int isum = 0;
                     while (isum < sums.length) {
@@ -137,14 +140,20 @@ public class SandBox {
                 } // false
                 s = sums[0];
                 t = sums[1];
-                System.out.println(String.format("%4d: ", num)
+                System.out.println(String.format("%4d_a: ", num)
                         + "(a^2 + b^2)^" + String.valueOf(num) + " = ("
                         + sums[0].toString() + ")^2 + ("
                         + sums[1].toString() + ")^2");
-                System.out.println("      "
+                System.out.println(String.format("%4d_b: ", num)
                         + "(a^2 + b^2)^" + String.valueOf(num) + " = ("
                         + sums[2].toString() + ")^2 + ("
                         + sums[3].toString() + ")^2");
+                System.out.println(String.format("%4d_c: ", num)
+                        + sums[0].toCoefficients() + " "
+                        + sums[1].toCoefficients() );
+                System.out.println(String.format("%4d_d: ", num)
+                        + sums[2].toCoefficients() + "  "
+                        + sums[3].toCoefficients() );
                 num ++;
             } // while num
         } // true
@@ -458,7 +467,7 @@ public class SandBox {
      *  @param fileName name of file containing line with tuples of 4 numbers
      *  The results indicate that there is no prime factor = 3 mod 4.
      */
-    public void process422(String fileName) {
+    public void eec422(String fileName) {
         String line = null; // current line from text file
         try {
             BufferedReader lineReader = new BufferedReader
@@ -496,7 +505,56 @@ public class SandBox {
         } catch (Exception exc) {
             log.error(exc.getMessage(), exc);
         } // try
-    } // process422
+    } // eec422
+
+    /** Reads lines with numbers a, b, c, d such that a^4 + b^4 + c^4 = d^4.
+     *  Checks these tuples whether they are primitive,
+     *  whether they fulfill the powersum property,
+     *  and show the prime factorizations of the sum a^4 + b^4 and of the sum a^2 + b^2
+     *  @param fileName name of file containing line with tuples of 4 numbers
+     *  The results indicate that there is no prime factor = 3 mod 4.
+     */
+    public void eec413(String fileName) {
+        String line = null; // current line from text file
+        ArrayList<Polynomial> tuples    = new ArrayList<Polynomial>(64); // stores Polynomials
+        HashMap<String, String> elements = new HashMap<String, String>(256); // maps tuple elements to {w,x,y,z}+ tuple#
+        int ituple = 0; // index for data rows
+        try {
+            BufferedReader lineReader = new BufferedReader
+                    ( (fileName.equals("-"))
+                    ? new InputStreamReader(System.in)
+                    : new FileReader(fileName)
+                    );
+            int limit = 1024;
+            while (limit > 0 && (line = lineReader.readLine()) != null) { // read and process lines
+                String[] nums = line.replaceAll("\\s*\\#.*", "") // remove any comment
+                        .replaceAll("\\A\\s+","") // remove leading space
+                        .split("\\s+");
+                if (nums.length == 4) {
+                    PolyVector pvect = new PolyVector(nums.length, 0, nums);
+                    System.out.print(ituple + ": " + pvect.toString());
+                    System.out.println(" is " 
+                            + (pvect.isPowerSum(4, 3, 1) ? "" : "NO ") 
+                            + "powerSum(4)");
+                    Polynomial poly = pvect.convolve(new Polynomial("a*w + b*x + c*y + d*z")); 
+                            // the vector replaces a,b,c,d; poly is used for dispensing below
+                    System.out.println(poly.toString(3)); // prime factors, 4=colored
+                    tuples.add(poly);
+                    int ivect = 0;
+                    while (ivect < nums.length) {
+                        elements.put(nums[ivect].toString()
+                                , "wxyz".substring(ivect, ivect + 1) + String.valueOf(ituple));
+                        ivect ++;
+                    } // while ivect
+                    ituple ++;
+                } // nums.length == 4
+                limit --;
+            } // while ! eof
+            lineReader.close();
+        } catch (Exception exc) {
+            log.error(exc.getMessage(), exc);
+        } // try
+    } // eec413
 
     /** Evaluateds Bachet's duplication formula for Mordell equations
      *  <pre>
@@ -570,6 +628,7 @@ public class SandBox {
      *  <li>-bachet x y c [n]: evaluate Bachet's duplication formula</li>
      *  <li>-brahma a b c d [n]: evaluate Brahmagupta's identity</li>
      *  <li>-compose [end [f]]: print successive compositions of (u^2 + v^2)
+     *  <li>-eec413  filename: evaluate tuples of the form a^4 + b^4 + c^4 = d^4</li>
      *  <li>-eec422  filename: evaluate tuples of the form a^4 + b^4 = c^4 + d^4</li>
      *  <li>-euclid  matrix [lim]: generate Pythagorean triples for coprime u, v
      *  <li>-pdiff   polynomial [start [end]]: print successive differences</li>
@@ -581,6 +640,7 @@ public class SandBox {
     /*-------------------- Test Driver --------------------*/
     public static void main(String[] args) {
         SandBox sandBox = new SandBox();
+        String fileName = "test.dat";
         int iarg = 0;
         if (false) {
         } else if (args.length == 0) {
@@ -594,9 +654,12 @@ public class SandBox {
                 sandBox.printBrahmagupta    (args);
             } else if (opt.startsWith("-compose" )) {
                 sandBox.printCompositions   (args);
+            } else if (opt.startsWith("-eec413"  )) {
+                fileName = args[iarg ++];
+                sandBox.eec413              (fileName);
             } else if (opt.startsWith("-eec422"  )) {
-                String fileName = args[iarg ++];
-                sandBox.process422          (fileName);
+                fileName = args[iarg ++];
+                sandBox.eec422              (fileName);
             } else if (opt.startsWith("-euclid"  )) {
                 sandBox.printEuclid         (args);
             } else if (opt.startsWith("-pdiff"   )) {

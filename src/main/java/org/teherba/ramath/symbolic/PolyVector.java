@@ -29,8 +29,6 @@ import  org.teherba.ramath.symbolic.Signature;
 import  org.teherba.ramath.symbolic.VariableMap;
 import  org.teherba.ramath.linear.Matrix;
 import  org.teherba.ramath.linear.Vector;
-import  org.teherba.ramath.util.IntegerExpander;
-import  org.teherba.ramath.util.ModoMeter;
 import  java.io.BufferedReader;
 import  java.io.FileReader;
 import  java.io.InputStreamReader;
@@ -321,6 +319,8 @@ public class PolyVector implements Cloneable, Serializable {
      *  by the elements of <em>this</em> PolyVector.
      *  The lexicographical order of the names of the variables
      *  corresponds to the order of element numbers in the PolyVector.
+     *  Only so many variables are replaced as are available in
+     *  <em>this</em> PolyVector. The remaining variables are unchanged.
      *  @param pschema replace the variables in this Polynomial
      *  @return a new Polynomial with substituted variables.
      */
@@ -328,11 +328,16 @@ public class PolyVector implements Cloneable, Serializable {
         VariableMap vmap = pschema.getVariableMap();
         Iterator<String> viter = vmap.keySet().iterator();
         int ielem = 0;
-        while (viter.hasNext()) {
-            String vname = viter.next();
+        String vname = null;
+        while (ielem < this.size() && viter.hasNext()) {
+            vname = viter.next();
             vmap.put(vname, this.get(ielem).toString());
             ielem ++;
-        } // while viter
+        } // while viter 1
+        while (viter.hasNext()) { // substitute any remaining variables by themselves
+            vname = viter.next();
+            vmap.put(vname, vname);
+        } // while viter 2
         return pschema.substitute(vmap);
     } // convolve
 

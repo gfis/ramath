@@ -1,5 +1,6 @@
 /*  Dispenser: creates an "increasing" sequence of different number tuples in a systematic way
  *  @(#) $Id: Dispenser.java 744 2011-07-26 06:29:20Z  $
+ *  2018-01-24: offsets for ranges, may even start with negative values
  *  2017-05-28: javadoc 1.8
  *  2016-07-26: hasNoZero
  *  2015-02-13: getVector, nextVector; post-op +10
@@ -59,16 +60,20 @@ public abstract class Dispenser implements Iterator<int[]>, Serializable {
     //=====================================
     /** number of elements in the tuple to be returned */
     protected int     width;
-    /** some number base (or upper limit) for the digits in the tuple */
-    protected int     base;
     /** Array which contains the tuple */
     protected int[]   meter;
+    /** Tells whether the dispenser has rolled through all combinations */
+    protected boolean rollOver;
+    /** Normally, the starting values are all zero, but they can be different for each digit position. */
+    protected int[]   offsets;
+    /** some number base (or upper limit) for the digits in the tuple */
+    protected int     base;
+    /** Normally, the bases are all the same, but they can be different for each digit position. */
+    protected int[]   bases;
     /** Array which contains the signs for all elements of the tuple: positive &gt;= 0, negative &lt; 0 */
     protected int[]   signs;
     /** tells whether the Dispenser yields signed (negative) values */
     protected boolean signed;
-    /** Tells whether the dispenser has rolled through all combinations */
-    protected boolean rollOver;
 
     /** Gets the value of some digit
      *  @param im position of the digit
@@ -78,15 +83,8 @@ public abstract class Dispenser implements Iterator<int[]>, Serializable {
         return this.meter[im];
     } // get
 
-    /** Gets the base
-     *  @return base of digits which roll
-     */
-    public int getBase() {
-        return this.base;
-    } // getBase
-
     /** Gets the base with index - fake method, for compatibility with {@link ModoMeter} only
-     *  @param im index of the digit whose bese should be returned.
+     *  @param im index of the digit whose base should be returned.
      *  @return base of digits which roll
      */
     public int getBase(int im) {
@@ -99,6 +97,29 @@ public abstract class Dispenser implements Iterator<int[]>, Serializable {
     public void setBase(int base) {
         this.base = base;
     } // setBase
+
+    /** Gets the width.
+     *  @return number of digits which roll
+     */
+    public int getWidth() {
+        return this.width;
+    } // getWidth
+
+    /** Sets the width.
+     *  @param width number of digits which roll
+     */
+    public void setWidth(int width) {
+        this.width = width;
+        meter   = new int[width];
+        offsets = new int[width];
+    } // setWidth
+
+    /** Tells whether the dispenser has not yet rolled over
+     *  @return true if there is still another combination of digits
+     */
+    public boolean hasNext() {
+        return ! rollOver;
+    } // hasNext
 
     /** Gets the signed property.
      *  @return -1 if the Dispenser returns signed values, 0 if not
@@ -113,29 +134,6 @@ public abstract class Dispenser implements Iterator<int[]>, Serializable {
     public void setSign(int sign) {
         this.signed = sign < 0;
     } // setSign
-
-    /** Gets the width.
-     *  @return number of digits which roll
-     */
-    public int getWidth() {
-        return this.width;
-    } // getWidth
-
-    /** Sets the width.
-     *  @param width number of digits which roll
-     */
-    public void setWidth(int width) {
-        this.width = width;
-        meter = new int[width];
-        signs = new int[width];
-    } // setWidth
-
-    /** Tells whether the dispenser has not yet rolled over
-     *  @return true if there is still another combination of digits
-     */
-    public boolean hasNext() {
-        return ! rollOver;
-    } // hasNext
 
     //=====================
     // Construction
@@ -168,7 +166,6 @@ public abstract class Dispenser implements Iterator<int[]>, Serializable {
      *  @param sign 0 for natural (non-negative) values, -1 for integer (negative and positive) values
      */
     public Dispenser(int width, int base, int sign) {
-        signed = sign < 0;
         setWidth(width);
         setBase(base); // after setWidth, because of bases[]
         reset();
@@ -213,8 +210,7 @@ public abstract class Dispenser implements Iterator<int[]>, Serializable {
     public void reset() {
         int im = 0;
         while (im < width) {
-            meter[im] = 0;
-            signs[im] = 0; // no sign
+            meter  [im] = 0;
             im ++;
         } // while im
         rollOver = false;
@@ -246,43 +242,14 @@ public abstract class Dispenser implements Iterator<int[]>, Serializable {
         return result;
     } // isZeroes
 
-    /** Toggles into the next combination of signs if the Dispenser yields negative values.
-     *  This works like a simple odometer for the values {0, -1},
-     *  but positions where the <em>meter</em> is zero are skipped.
-     *  The <em>meter</em> tuple is steady during sign toggling.
-     *  A typical usage is:
-     <pre>
-        boolean iterating = signed &amp;&amp; toggleSigns();
-     </pre>
-     *  which relies strongly on the fact that Java lazily evaluates the "&amp;&amp;" operator.
-     *  @return <em>false</em> if there was another sign combination, or <em>true</em>
-     *  another meter tuple should be generated
-     */
-    public boolean toggleSigns() {
-        boolean busy = true;
-        int im = 0;
-        while (busy && im < width) { // then roll
-            if (meter[im] != 0) {
-                signs[im] --;
-                busy = signs[im] <= - 2;
-                if (busy) { // roll over and switch to next position
-                    signs[im] = 0;
-                }
-                // else stop at this position
-            } // meter[im] != 0
-            im ++;
-        } // while busy
-        return busy; // true iff the highest digit rolled over
-    } // toggleSigns
-
     /** Reads the current setting of the Dispenser.
-     *  @return an array with the <em>original</em> digits
+     *  @return a cloned array with the <em>original</em> digits
      */
     public int[] toArray() {
         int[] result = new int[width];
         int im = 0;
-        while (im < width) { // copy first
-            result[im] = (signs[im] >= 0) ? meter[im] : (- meter[im]);
+        while (im < width) { 
+            result[im] = meter[im];
             im ++;
         } // while im
         return result;
@@ -301,38 +268,8 @@ public abstract class Dispenser implements Iterator<int[]>, Serializable {
      *  other Dispensers will implement different methods.
      *  @return an array with the <em>original</em> digits tuple <em>before</em> rolling
      */
-    public int[] next() {
-        int[] result = toArray();  // first copy current tuple to the result
-        boolean iterating = signed ? toggleSigns() : true;
-        boolean busy = true;
-        while (iterating) { // as long as tuples are "bad"
-            int im = 0;
-            busy = true;
-            while (busy && im < width) { // then roll
-                meter[im] ++;
-                busy = meter[im] >= base;
-                if (busy) { // roll over and switch to next position
-                    meter[im] = 0;
-                }
-                // else stop at this position
-                im ++;
-            } // while busy
-            rollOver = busy; // true iff the highest digit rolled over
-            iterating = false; // always assume that it is a "good" tuple
-        } // while iterating
-        return result;
-    } // next
-
-    /** Rolls the least significant digit up by one, and
-     *  eventually rolls carries into higher positions.
-     *  This is the default implementation for a {@link ModoMeter}, but
-     *  other Dispensers will implement different methods.
-     *  @return a {@link Vector} with the <em>original</em> digits tuple <em>before</em> rolling
-     */
-    public Vector nextVector() {
-        return new Vector(next());
-    } // nextVector
-
+    public abstract int[] next();
+    
     /** Needed for Iterator interface, not implemented -
      *  Dispensers do never change the underlying data structure.
      */
@@ -351,7 +288,7 @@ public abstract class Dispenser implements Iterator<int[]>, Serializable {
             if (im > 0) { // if not first
                 result.append(' ');
             }
-            result.append(String.valueOf(signs[im] >= 0 ? meter[im] : - meter[im]));
+            result.append(meter[im]);
             im ++;
         } // while im
         return result.toString();

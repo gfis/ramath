@@ -1,5 +1,6 @@
 /*  Matrix: a simple, small, square matrix of small numbers
  *  @(#) $Id: Matrix.java 744 2011-07-26 06:29:20Z gfis $
+ *  2018-01-31: hasZero
  *  2017-05-28: javadoc 1.8
  *  2016-10-06: gcd()
  *  2015-09-04: Constructor(int) presets elements to 0
@@ -28,7 +29,6 @@
  */
 package org.teherba.ramath.linear;
 import  org.teherba.ramath.linear.Vector;
-import  org.teherba.ramath.linear.VectorArray;
 import  org.teherba.ramath.util.ModoMeter;
 import  org.teherba.ramath.util.Permutator;
 import  java.io.Serializable;
@@ -36,7 +36,7 @@ import  java.util.ArrayList;
 import  org.apache.log4j.Logger;
 
 /** Class Matrix implements some simple linear algebra operations
- *  on square matrices of small integer numbers.
+ *  on square matrices of small integer numbers (Java <em>int</em>s).
  *  Typically a Matrix will have no more than 8 rows/columns.
  *  It is used to solve diophantine problems.
  *  @author Dr. Georg Fischer
@@ -97,12 +97,12 @@ public class Matrix implements Cloneable, Serializable {
      *  @param rowLen number of rows/columns
      *  @param values linearized array of row values
      */
-    public Matrix(int rowLen, int[] values) {
+    public Matrix(int rowLen, /*Type*/int[] values) {
         this(rowLen, values.length / rowLen);
         int ival = 0;
         for (int irow = 0; irow < this.rowLen; irow ++) {
             for (int jcol = 0; jcol < this.colLen; jcol ++) {
-                this.matrix[irow][jcol] = (/*Type*/int) values[ival ++];
+                this.matrix[irow][jcol] = values[ival ++];
             } // for jcol
         } // for irow
         this.fraction = 1;
@@ -118,7 +118,7 @@ public class Matrix implements Cloneable, Serializable {
             for (int jcol = 0; jcol < this.colLen; jcol ++) {
                 this.matrix[irow][jcol] = 0;
                 try {
-                    this.matrix[irow][jcol] = Integer.parseInt(values[ival]);
+                    this.matrix[irow][jcol] = /*Type*/Integer.parseInt(values[ival]);
                 } catch (Exception exc) {
                 }
                 ival ++;
@@ -276,7 +276,7 @@ public class Matrix implements Cloneable, Serializable {
      *  @param values with zeroes and ones for same and negate
      *  @return new Matrix
      */
-    public Matrix toggleSigns(int[] values) {
+    public Matrix conditionallyNegate(int[] values) {
         int ival = 0;
         Matrix result = new Matrix(this.rowLen);
         for (int irow = 0; irow < this.rowLen; irow ++) {
@@ -288,7 +288,7 @@ public class Matrix implements Cloneable, Serializable {
             } // for jcol
         } // for irow
         return result;
-    } // toggleSigns
+    } // conditionallyNegate
 
     /*-------------- bean methods, setters and getters -----------------------------*/
 
@@ -497,6 +497,23 @@ public class Matrix implements Cloneable, Serializable {
         return result.toString();
     } // toString(format)
 
+    /** Determines whether the matrix has a zero element
+     *  @return true if the matrix has a zero, or false otherwise
+     */
+    public boolean hasZero() {
+        boolean result = false;
+        int irow = 0;
+        while (! result && irow < this.rowLen) {
+            int jcol = 0;
+            while (! result && jcol < this.colLen) {
+                result = this.matrix[irow][jcol] == 0;
+                jcol ++;
+            } // for jcol
+            irow ++;
+        } // for irow
+        return result;
+    } // hasZero
+
     /** Determines whether the matrix is zero (all elements are zero)
      *  @return true if the matrix is zero, or false otherwise
      */
@@ -651,14 +668,14 @@ public class Matrix implements Cloneable, Serializable {
      */
     public Matrix multiply(Matrix matr2) {
         Matrix result = new Matrix(this.colLen);
-        if (matr2.getColLen() == this.rowLen && matr2.getRowLen() == this.colLen ) {
+        if (matr2.getColLen() == this.rowLen && matr2.getRowLen() == this.colLen) {
             for (int irow = 0; irow < this.rowLen; irow ++) {
                 for (int jcol = 0; jcol < this.colLen; jcol ++) {
                     int sum = 0;
                     for (int kvec = 0; kvec < this.rowLen; kvec ++) {
                         sum += this.matrix[irow][kvec] * matr2.matrix[kvec][jcol];
                     } // for kvec
-                    result.matrix[irow][jcol] = (/*Type*/int) sum;
+                    result.matrix[irow][jcol] = sum;
                 } // for jcol
             } // for irow
         } else {
@@ -679,7 +696,7 @@ public class Matrix implements Cloneable, Serializable {
                     for (int jcol = 0; jcol < this.colLen; jcol ++) {
                         sum += this.matrix[irow][jcol] * vect2.vector[jcol];
                     } // for jcol
-                    result.vector[irow] = (/*Type*/int) sum;
+                    result.vector[irow] = sum;
             } // for irow
         } else {
             throw new IllegalArgumentException("cannot multiply a matrix and a vector of different size: "
@@ -838,8 +855,10 @@ public class Matrix implements Cloneable, Serializable {
                             }
                             // subtract rowi * stone from rowj * pivot
                             for (jcol = 0; jcol < this.colLen; jcol ++) {
-                                lmat.matrix[jrow][jcol] = lmat.matrix[jrow][jcol] * pivot - lmat.matrix[irow][jcol] * stone;
-                                rmat.matrix[jrow][jcol] = rmat.matrix[jrow][jcol] * pivot - rmat.matrix[irow][jcol] * stone;
+                                lmat.matrix[jrow][jcol] = lmat.matrix[jrow][jcol] * pivot
+                                                        - lmat.matrix[irow][jcol] * stone;
+                                rmat.matrix[jrow][jcol] = rmat.matrix[jrow][jcol] * pivot 
+                                                        - rmat.matrix[irow][jcol] * stone;
                             } // for jcol
                         } // if stone != 0
                     } // jrow != irow

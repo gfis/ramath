@@ -1,5 +1,7 @@
 /*  Prime Factorization of BigIntegers
  *  @(#) $Id: PrimeFactorization.java 231 2009-08-25 08:47:16Z gfis $
+ *  2018-01-24: moved from ramath to ramath.util
+ *  2018-01-21: incomplete decomposition for big numbers
  *  2017-05-28: javadoc 1.8
  *  2015-08-11, Georg Fischer: copied from BigIntegerUtil
  */
@@ -18,8 +20,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.teherba.ramath;
-import  org.teherba.ramath.BigIntegerUtil;
+package org.teherba.ramath.util;
+import  org.teherba.ramath.util.BigIntegerUtil;
 import  org.teherba.ramath.linear.Vector;
 import  org.teherba.common.SmallScript;
 import  java.io.Serializable;
@@ -47,6 +49,9 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
      *  This code was adapted from 
      *  <a href="http://stackoverflow.com/questions/16802233/faster-prime-factorization-for-huge-bigintegers-in-java">stackoverflow.com</a>
      *  @param number number to be factored
+     *  The decomposition is only reasonable fast for factors up to 17 decimal digits.
+     *  Therefore, at this size the loop is broken, 
+     *  and a pseudo prime factor of 1^1 is inserted which indicates the incomplete decomposition.
      */
     public PrimeFactorization(BigInteger number) {
         super();
@@ -62,24 +67,31 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
                 number = number.divide(BigIntegerUtil.TWO);
             } // while 2**x
         
-            if (number.compareTo(BigInteger.ONE) > 0) {
+            if (number.compareTo(BigInteger.ONE) > 0) { // any rest after removing 2^n
                 BigInteger factor = BigIntegerUtil.THREE;
-                while (factor.multiply(factor).compareTo(number) <= 0) {
+                BigInteger factor2 = factor.multiply(factor);
+                boolean busy = true;
+                while (busy && factor2.compareTo(number) <= 0) {
                     if (number.mod(factor).equals(BigInteger.ZERO)) {
                         oldExp = this.put(factor, 1);
                         if (oldExp != null) {
                             this.put(factor, oldExp + 1);
                         }
                         number = number.divide(factor);
-                    } else {
+                    } else { // not divisible by factor
                         factor = factor.add(BigIntegerUtil.TWO);
-                    }
+                        factor2 = factor.multiply(factor);
+                        if (factor2.bitLength() >= 40) { // about 13 decimal digits 14890026433468471
+                        	busy = false;
+                        	this.put(BigInteger.ONE, 1); // "prime" factor 1 indicates incomplete decomposition
+                        }
+                    } // not divisible
                 } // while factor <= number
                 oldExp = this.put(number, 1);
                 if (oldExp != null) {
                     this.put(number, oldExp + 1);
                 }
-            } // number > 0
+            } // any rest after removing 2^n
         } // > 3
     } // Constructor(BigInteger)
 

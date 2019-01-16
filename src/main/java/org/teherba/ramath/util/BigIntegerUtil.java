@@ -1,12 +1,17 @@
 /*  BigIntegerUtil: helper methods for BigInteger
  *  @(#) $Id: BigIntegerUtil.java 231 2009-08-25 08:47:16Z gfis $
+ *  2018-01-24: Root.java removed; moved from ramath to ramath.util
  *  2017-05-28: javadoc 1.8
- *  2015-08-11: binomial(), HREE
+ *  2015-08-11: binomial(), THREE
  *  2015-07-20: lcm(BigRationals)
  *  2014-04-08: use BigInteger.valueOf(long)
  *  2013-09-20, Georg Fischer: copied from BigRational
  *
  *  c.f. also http://intra.csb.ethz.ch/javadoc/metabolic/ch/javasoft/util/numeric/BigIntegerUtil.html
+ *  see:
+ *  http://pastebin.com/3UbgNMHG referenced by
+ *  http://stackoverflow.com/questions/8826822/calculate-nth-root-with-integer-arithmetic
+ *  Computes the n'th root of some BigInteger by Newton-Raphson iteration
  */
 /*
  * Copyright 2013 Dr. Georg Fischer <punctum at punctum dot kom>
@@ -23,7 +28,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.teherba.ramath;
+package org.teherba.ramath.util;
 import  org.teherba.ramath.BigRational;
 import  java.math.BigInteger;
 
@@ -83,11 +88,10 @@ public class BigIntegerUtil {
             result = posRoot ( prod, exp );
         } else {
             assert exp % 2 != 0;
-
             BigInteger res = posRoot ( prod.abs (), exp ).negate ();
-            while ( power ( res, exp ).compareTo ( prod ) > 0 )
+            while ( power ( res, exp ).compareTo ( prod ) > 0 ) {
                 res = res.subtract ( BigInteger.ONE );
-
+            } // while
             result = res;
         }
         if (! result.pow(exp).equals(prod)) {
@@ -104,15 +108,14 @@ public class BigIntegerUtil {
 
         BigInteger lb = BigInteger.ZERO;
         BigInteger ub = prod;
-        while ( !power ( lb, exp ).equals ( prod )
-                && ub.subtract ( lb ).compareTo ( BigInteger.ONE ) > 0 ) {
+        while ( !power ( lb, exp ).equals ( prod ) && ub.subtract ( lb ).compareTo ( BigInteger.ONE ) > 0 ) {
             final BigInteger mid = ub.add ( lb ).divide ( TWO );
             if ( power ( mid, exp ).compareTo ( prod ) <= 0 ) {
                 lb = mid;
             } else {
                 ub = mid;
             }
-        }
+        } // while
         return lb;
     } // posRoot
 
@@ -121,11 +124,15 @@ public class BigIntegerUtil {
         // shift-multiplier
         BigInteger res = BigInteger.ONE;
         while (true) {
-            if ( exp % 2 != 0 ) res = res.multiply ( base );
+            if ( exp % 2 != 0 ) {
+            	res = res.multiply ( base );
+            }
             exp >>= 1;
-            if ( exp == 0 ) return res;
+            if ( exp == 0 ) {
+            	return res;
+            }
             base = base.multiply ( base );
-        }
+        } // while
     } // power
 
     /** Computes the <em>n</em>th root of some BigInteger <em>a</em>.
