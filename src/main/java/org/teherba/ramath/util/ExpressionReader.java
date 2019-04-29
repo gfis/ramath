@@ -49,7 +49,7 @@ public class ExpressionReader {
     private String srcEncoding;
     
     /** Reader for the input file */
-    BufferedReader lineReader;
+    private BufferedReader lineReader;
 
     /** No-args Constructor
      */

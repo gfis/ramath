@@ -1,5 +1,6 @@
 /*  ContinuedFraction: a continued fraction in an array list of BigIntegers
  *  @(#) $Id: ContinuedFraction.java 738 2011-07-12 15:14:44Z gfis $
+ *  2019-04-04: commandline documented. joeis output
  *  2017-08-18: -cube
  *  2017-05-28: javadoc 1.8
  *  2015-06-17: BigRational extends BigInteger
@@ -9,7 +10,7 @@
  *  2008-10-30, Georg Fischer: copied from BigRational
  */
 /*
- * Copyright 2008 Dr. Georg Fischer <punctum at punctum dot kom>
+ * Copyright 2008 Dr. Georg Fischer <dr dot georg dot fischer at gmail do com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -616,18 +617,19 @@ public class ContinuedFraction extends ArrayList/*1.5*/<BigRational>/*1.5*/  {
 
     /** Test method.
      *  @param args command line arguments
+     *  <ul>
+     *  <li>-cf -f $(DATA)</li>
+     *  <li>-const expr</li>
+     *  <li>-cube n</li>
+     *  <li>-e    n</li>
+     *  <li>-eval $(DATA)</li>
+     *  <li>-gamma</li>
+     *  <li>-pell n</li>
+     *  <li>-pi1</li>
+     *  <li>-pi2</li>
+     *  </ul>
      */
     public static void main(String[] args) {
-/*
-        4/pi = 1;2/7, 1*3/8, 3*5/8, 5*7/8 ...
-    (2) pi/2 = 1;2/3, 1*3/4, 3*5/4, 5*7/4 ...; pi = 2;4/3, 1*3/4, ...
-        4/pi = 1; 1^2/3, 2^2/5, 3^2/7, 4^2/9, ...
-    (1) pi   = 3; 1^2/6, 3^2/6, 5^2/6, 7^2/6, ...
-
-    String[] fileList = f.list(new FilenameFilter() {
-        public boolean accept(File f, String s) { return s.endsWith(".java"); }
-        });
-*/
         BigDecimal e = new BigDecimal
                 ( "2.718281828459045235360287471"
                 + "35266249775724709369995957496696762772407"
@@ -683,33 +685,7 @@ public class ContinuedFraction extends ArrayList/*1.5*/<BigRational>/*1.5*/  {
                 + "5187072113 4999999837 2978049951 0597317328 1609631859"
                 + "5024459455 3469083026 425"
                 ).replaceAll(" ",""));
-    /*
-        Series ser = new Series();
-        ser.setNatural();
-        BigRational
-        er = BigRational.valueOf(40902L, 24140L);
-        er = BigRational.valueOf(khintchine100);
-        er = ser.getRational();
-        er = BigRational.valueOf(e);
-        er = BigRational.valueOf(gamma);
 
-        ContinuedFraction
-        cre = new ContinuedFraction(er, ContinuedFraction.MODE_REGULAR    );
-        System.out.println("regular     continued fraction: " + cre.toString());
-        System.out.println(cre.getRational());
-        cre = new ContinuedFraction(er, ContinuedFraction.MODE_CEILING    );
-        System.out.println("ceiling     continued fraction: " + cre.toString());
-        System.out.println(cre.getRational());
-        cre = new ContinuedFraction(er, ContinuedFraction.MODE_ALTERNATE_0);
-        System.out.println("alternate 0 continued fraction: " + cre.toString());
-        System.out.println(cre.getRational());
-        cre = new ContinuedFraction(er, ContinuedFraction.MODE_ALTERNATE_1);
-        System.out.println("alternate 1 continued fraction: " + cre.toString());
-        System.out.println(cre.getRational());
-        cre = new ContinuedFraction(er, ContinuedFraction.MODE_NEAREST    );
-        System.out.println("nearest     continued fraction: " + cre.toString());
-        System.out.println(cre.getRational());
-    */
         class PiElements1 implements BigRationalGenerator {
             public BigRational get(int index) {
                 BigRational result = BigRational.valueOf(0);
@@ -808,6 +784,19 @@ public class ContinuedFraction extends ArrayList/*1.5*/<BigRational>/*1.5*/  {
             } else if (opt.equals("-pell")) {
                 // cf.setDebuggingLevel(2);
                 System.out.println(Arrays.asList(cf.solvePellEquation(new BigInteger(expr), 4)).toString());
+            } else if (opt.equals("-sqrt2")) {
+            	int min = max; // print cf(sqrt of a range of numbers)
+            	expr = args[iargs ++]; 
+                try {
+                    max = Integer.parseInt(expr);
+                } catch (Exception exc) {
+                }
+                int ind = min; 
+                while (ind <= max) { // in range
+                	cf.sqrtOf(BigInteger.valueOf(ind));
+	                System.out.println(ind + "\t" + cf.toString());
+	                ind ++;
+	            } // while in range
             } else if (opt.equals("-sqrt")) {
                 cf.setDebuggingLevel(2);
                 cf.sqrtOf(new BigInteger(expr));

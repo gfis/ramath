@@ -757,7 +757,7 @@ public class RelationSet
     } // hasConstant
 
     /** Determines whether two {@link RelationSet}s are equivalent, that is whether
-     *  there is a permutation of the consituting {@link Polynomial}s
+     *  there is a permutation of the constituting {@link Polynomial}s
      *  which {@link Polynomial#isEqualTo are equal}.
      *  @param rset2 second comparision operand
      *  @return whether sets of Polynomials are the same
