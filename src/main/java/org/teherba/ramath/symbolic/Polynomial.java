@@ -372,9 +372,9 @@ public class Polynomial implements Cloneable, Serializable {
      */
     public String toCoefficients() {
         return toString(1)
-        	.replaceAll("\\*\\w+\\^\\d+", "")
-        	.replaceAll("\\s*\\=\\s*0", "; ")
-        	;
+            .replaceAll("\\*\\w+\\^\\d+", "")
+            .replaceAll("\\s*\\=\\s*0", "; ")
+            ;
     } // toCoefficients()
 
     /** Returns a String representation of <em>this</em> {@link Polynomial},
@@ -1037,7 +1037,7 @@ public class Polynomial implements Cloneable, Serializable {
     } // isHomogeneous
 
     //----------------
-    /** Determines the maximum of the exponents for some variable in all {@link Monomial}s
+    /** Determines the maximum degree for some variable in all {@link Monomial}s
      *  of <em>this</em> {@link Polynomial}
      *  @param varName determine the maximum degree of this variable
      *  @return maxDegree &gt;= 0
@@ -1046,20 +1046,16 @@ public class Polynomial implements Cloneable, Serializable {
         int result = 0;
         Iterator <Signature> titer = monomials.keySet().iterator();
         while (titer.hasNext()) {
-        	Monomial mono1 = monomials.get(titer.next());
-        	if (mono1 != null) {
-            	int deg1 = mono1.getExponent(varName);
-            	if (deg1 > result) {
-                	result = deg1;
-            	}
+            int deg1 = monomials.get(titer.next()).getExponent(varName);
+            if (deg1 > result) {
+                result = deg1;
             }
         } // while titer
         return result;
     } // maxDegree
 
-    /** Determines the maximum degree, that is the sum of exponents in all {@link Monomial}s
-     *  irrespective of the variable names
-     *  @param upperSubst whether the exponents of uppercase variables should be counted
+    /** Determines the maximum degree in all {@link Monomial}s irrespective of the variable names
+     *  @param upperSubst whether uppercase variables should be counted
      *  @return maxDegree &gt;= 0
      */
     public int maxDegree(boolean upperSubst) {
@@ -1074,8 +1070,7 @@ public class Polynomial implements Cloneable, Serializable {
         return result;
     } // maxDegree(boolean)
 
-    /** Determines the maximum degree, that is the sum of exponents in all {@link Monomial}s
-     *  irrespective of the variable names
+    /** Determines the maximum degree in all {@link Monomial}s irrespective of the variable names
      *  @return maxDegree &gt;= 0
      */
     public int maxDegree() {
@@ -1226,7 +1221,7 @@ public class Polynomial implements Cloneable, Serializable {
      *  @return Vector of coefficients, for example "[1, -1, -1]" for "1-x-x^2".
      */
     public BigVector getBigVector() {
-    	String varName = this.getVariableMap().getFirstName();
+        String varName = this.getVariableMap().getFirstName();
         BigVector result = new BigVector(this.maxDegree() + 1);
         int exp1 = 0;
         Iterator <Signature> titer = this.monomials.keySet().iterator();
@@ -1237,10 +1232,10 @@ public class Polynomial implements Cloneable, Serializable {
         } // while titer
         exp1 = result.size() - 1;
         while (exp1 >= 0) {
-        	if (result.getBig(exp1) == null) {
-        		result.set(exp1, BigInteger.ZERO);
-        	}
-        	exp1 --;
+            if (result.getBig(exp1) == null) {
+                result.set(exp1, BigInteger.ZERO);
+            }
+            exp1 --;
         }
         return result;
     } // getBigVector

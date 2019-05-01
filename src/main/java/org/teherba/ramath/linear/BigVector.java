@@ -36,8 +36,8 @@ public class BigVector extends Vector implements Cloneable, Serializable {
     private static final long serialVersionUID = 1L;
     public final static String CVSID = "@(#) $Id: BigVector.java 744 2011-07-26 06:29:20Z gfis $";
 
-    /** Debugging switch: 0 = no, 1 = moderate, 2 = more, 3 = extreme verbosity */
-    private int debug = 0;
+    /** Debugging level: 0 = none, 1 = moderate, 2 = more, 3 = most */
+    private int debug = 2;
 
     /*-------------- class properties -----------------------------*/
 
@@ -95,7 +95,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         } // for itup
     } // Constructor(BigInteger[])
 
-    /** Constructor for a BigVector from a array of strings
+    /** Constructor for a BigVector from an array of strings
      *  @param numElems number of elements
      *  @param iarg starting index in <em>args</em>
      *  @param args array of numbers as strings
@@ -150,8 +150,14 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         return result;
     } // permuteBig
 
-
     /*-------------- bean methods, setters and getters -----------------------------*/
+
+    /** Sets the debugging level
+     *  @param debug 0 = none, 1 = some , 2 = more
+     */
+    public void setDebug(int debug) {
+        this.debug = debug;
+    } // setDebug
 
     /** Returns an element of the Vector
      *  @param icol number of the element (zero based)
@@ -160,6 +166,14 @@ public class BigVector extends Vector implements Cloneable, Serializable {
     public BigInteger getBig(int icol) {
         return this.vector[icol];
     } // getBig
+
+    /** Sets an element of the BigVector
+     *  @param icol number of the element (zero based)
+     *  @param value a small number
+     */
+    public void setBig(int icol, BigInteger value) {
+        this.vector[icol] = value;
+    } // set
 
     /** Sets an element of the BigVector
      *  @param icol number of the element (zero based)
@@ -176,7 +190,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         return vector;
     } // getBigValues
 
-	// inherited: size
+    // inherited: size
     /*-------------- lightweight derived methods -----------------------------*/
 
     /** Computes the sum of squares of the elements of <em>this</em> BigVector
@@ -330,7 +344,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         return result;
     } // lcm(array)
 
-    /** Determine the greatest common divisor of this Vector's elements,
+    /** Determine the greatest common divisor of this BigVector's elements,
      *  and divide all elements by this gcd if it is &gt; 1
      *  @return an integer &gt;= 1
      */
@@ -386,6 +400,63 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         return result;
     } // negate()
 
+    /** Determines the quotient of the first elements of <em>this</em> (numerator of the g.f.)
+     *  and <em>vect2</em> (the division may not have a rest, and the first element of vect2 must be ONE), 
+     *  subtracts the product of <em>vect2 * quotient</em> 
+     *  from <em>this</em> (eventually after padding the latter with zeroes), 
+     *  removes the first element of <em>this</em> (this is zero then), 
+     *  and returns the quotient.
+     *  @param vect2 the divisor (denominator of the g.f.)
+     *  @return quotient, coefficient of the Taylor series
+     */
+    public BigInteger divisionStep(BigVector vect2) {
+        if (! vect2.getBig(0).equals(BigInteger.ONE)) {
+        	BigVector vectn = vect2.negate();
+	        if (! vectn.getBig(0).equals(BigInteger.ONE)) {
+        	    System.out.println("# assertion in BigVector: abs(first term of denominator) must be ONE; den="
+            		+ vect2.toString());
+            	return BigInteger.ZERO;
+            } else {
+            	vect2.vector = vectn.vector;
+            	BigVector vect1 = this.negate();
+            	this.vector  = vect1. vector;
+            }
+        }
+        BigInteger result   = this.getBig(0);
+        BigInteger quotient = result.negate();
+        int len1 = this.size();
+        int len2 = vect2.size();
+        if (len2 > len1) { 
+            len1 = len2; // the maximum of both lengths
+        } 
+        BigVector vect1 = new BigVector(len1 - 1); // will replace 'this' in the end
+        int iterm = 1; // the first term of vect1 becomes ZERO and is skipped
+        while (iterm < len1) { 
+            if (debug >= 2) {
+                System.out.println("# iterm=" + iterm + ", len1=" + len1 + ", len2=" + len2 
+                		+ ", quotient=" + quotient.toString() + ", this=" + this.toString());
+            }
+            BigInteger term = BigInteger.ZERO;
+            if (iterm < len2) {
+            	term = vect2.getBig(iterm).multiply(quotient);
+            }
+            if (iterm < this.size()) {
+            	term = term.add(this.getBig(iterm));
+            }
+            if (debug >= 2) {
+                System.out.println("# iterm=" + iterm + ", term=" + term);
+            }
+            vect1.set(iterm - 1, term);
+            iterm ++;
+        } // while iterm
+        if (debug >= 1) {
+            System.out.println("# result: " + result + ", vect1 = " + vect1.toString());
+        }
+        this.vector = vect1.vector; 
+        this.vecLen = this.vector.length; 
+        return result;
+    } // divisionStep(BigVector)
+
     /** Test whether <em>this</em> Vector contains a sum of like powers.
      *  Usual combinations of the parameters are:
      <pre>
@@ -424,7 +495,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
     public static void main(String[] args) {
         int iarg = 0;
         BigVector vect1 = new BigVector();
-        BigVector vect2 = new BigVector("[3 ,4,5,6 ]");
+        BigVector vect2 = new BigVector("[3,4,5,6]");
         if (args.length == 0) {
         } else { // arguments
             String opt = args[iarg ++];

@@ -1,5 +1,6 @@
 /*  Monomial: a product with a signed numeric coefficient and optional exponentiated variable(s)
  *  @(#) $Id: Monomial.java 522 2010-07-26 07:14:48Z gfis $
+ *  2019-05-01: degree of a constant
  *  2017-05-28: javadoc 1.8
  *  2016-07-09: Signature
  *  2015-12-06: toString(boolean) -&gt; toString(1)
@@ -231,10 +232,10 @@ public class Monomial implements Cloneable, Serializable {
     public int getExponent(String name) {
         int result = 0; // if the variable is not present
         if (vars.size() > 0) {
-        	Integer exp = vars.get(name);
-        	if (exp != null) {
-            	result = exp.intValue();
-        	}
+            Integer exp = vars.get(name);
+            if (exp != null) {
+                result = exp.intValue();
+            }
         }
         return result;
     } // getExponent

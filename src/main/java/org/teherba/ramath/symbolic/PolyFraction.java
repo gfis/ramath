@@ -22,11 +22,15 @@ import  org.teherba.ramath.Coefficient;
 import  org.teherba.ramath.linear.BigVector;
 import  org.teherba.ramath.util.BigIntegerUtil;
 import  org.teherba.ramath.util.ExpressionReader;
+import  java.io.BufferedReader;
+import  java.io.FileInputStream;
+import  java.io.InputStreamReader;
 import  java.io.Serializable;
+import  java.nio.channels.Channels;
+import  java.nio.channels.ReadableByteChannel;
 import  java.math.BigInteger;
 import  java.util.Iterator;
-import  java.util.ArrayList;
-import  java.util.TreeMap;
+import  org.apache.log4j.Logger;
 
 /** A PolyFraction is a pair of univariate {@link Polynomial}s which represent 
  *  the numerator and the denominator of the fraction.
@@ -39,7 +43,10 @@ public class PolyFraction
     public final static String CVSID = "@(#) $Id: PolyFraction.java 970 2012-10-25 16:49:32Z  $";
 
     /** Debugging switch */
-    public int debug = 0;
+    public static int debug = 0;
+
+    /** log4j logger (category) */
+    private Logger log;
 
     //==================
     // Construction
@@ -55,6 +62,7 @@ public class PolyFraction
     /** No-args constructor for an empty PolyFraction.
      */
     public PolyFraction() {
+        log = Logger.getLogger(PolyFraction.class.getName());
         polynomials     = new Polynomial[2];
     } // Constructor()
 
@@ -148,8 +156,8 @@ public class PolyFraction
      *  @return "[2, -1],[1, -1, -1]" for example
      */
     public String toVectors() {
-    	BigVector num = polynomials[0].getBigVector();
-    	BigVector den = polynomials[1].getBigVector();
+        BigVector num = polynomials[0].getBigVector();
+        BigVector den = polynomials[1].getBigVector();
         return num.toString() + "," + den.toString();
     } // toVectors(int)
 
@@ -202,41 +210,30 @@ public class PolyFraction
         return result.normalizeIt();
     } // normalize
 
-    /** Divides all {@link Polynomial}s of <em>this</em> {@link PolyFraction}
-     *  by a {@link BigInteger}.
-     *  @param number divide by this BigInteger
-     *  @return reference to <em>this</em> PolyFraction which was modified
+    /** Expands the fraction into a formal power series and
+     *  returns the coefficients of the powers of the variable.
+     *  @param numTerms return so many coefficients
+     *  @return a {@link BigVector} of numbers
      */
-    protected PolyFraction divideBy(BigInteger number) {
-        int ipoly = this.polynomials.length - 1;
-        while (ipoly >= 0) {
-            this.get(ipoly).divideBy(number);
-            ipoly --;
-        } // while ipoly
-        return this;
-    } // divideBy(number)
-
-    /** Multiplies all {@link Polynomial}s of <em>this</em> {@link PolyFraction}
-     *  with a {@link BigInteger}.
-     *  This is the inverse operation to {@link #deflateIt}.
-     *  @param number multiply with this BigInteger
-     *  @return reference to <em>this</em> PolyFraction which was modified
-     */
-    public PolyFraction multiplyBy(BigInteger number) {
-        int ipoly = this.polynomials.length - 1;
-        while (ipoly >= 0) {
-            this.get(ipoly).multiplyBy(number);
-            ipoly --;
-        } // while ipoly
-        return this;
-    } // multiplyBy(number)
+    public BigVector getSeriesCoefficients(int numTerms) {
+        BigVector num    = polynomials[0].getBigVector();
+        BigVector den    = polynomials[1].getBigVector();
+        BigVector result = new BigVector(numTerms);
+        num.setDebug(debug);
+        int iterm = 0;
+        while (iterm < numTerms) {
+            result.set(iterm, num.divisionStep(den));
+            iterm ++;
+        } // while iterm
+        return result;
+    } // getSeriesCoefficients
 
     /** Returns a {@link PolyFraction} constructed from a String representation, possibly with an
      *  error message inserted at the point where parsing could not proceed.
      *  @param input the input String, with whitespace, for example " + 17*a0^2*a1 + a2^2*a3^3 - 4*b4"
      *  @return a reference to a new {@link PolyFraction}
      */
-    public static PolyFraction parse(String input) {
+    public static PolyFraction parse_99(String input) {
         return new PolyFraction(input.split("\\/"));
     } // parse
 
@@ -246,8 +243,8 @@ public class PolyFraction
      *  @param pfrac2 second comparision operand
      *  @return whether sets of Polynomials are the same
      */
-    public boolean isEqualTo(PolyFraction pfrac2) {
-		return false;
+    public boolean isEqualTo_99(PolyFraction pfrac2) {
+        return false;
     } // isEqualTo
 
 
@@ -269,22 +266,13 @@ public class PolyFraction
     /*--------------- Test driver --------------------*/
 
     /** Test method, shows some fixed PolyFractions with no arguments, or the
-     *  PolyFraction resulting from the input formula.
+     *  PolyFraction resulting from the input parameters.
      *  @param args command line arguments
-     *  When called without arguments, the output is:
-     *  <pre>
-a^2 + b^2 - c^2 = 0, - a + b &gt; 0 ;  - b + c &gt; 0
-evaluate: unknown
-9*a_2^2 + 16*b_2^2 - 25*c_2^2 = 0 ;  - 3*a_2 + 4*b_2 &gt; 0 ;  - 4*b_2 + 5*c_2 &gt; 0
-     *  </pre>
      */
     public static void main(String[] args) {
         int iarg = 0;
         PolyFraction pfrac1 = new PolyFraction();
-        PolyFraction pfrac2 = new PolyFraction();
-        ExpressionReader ereader = new ExpressionReader();
-        String[] exprs = null;
-        int debug = 0;
+        int numTerms = 16;
 
         if (false) {
         } else if (args.length == 0) {
@@ -293,9 +281,8 @@ evaluate: unknown
             System.out.println(pfrac1.toVectors());
 
         } else if (args.length == 1 && ! args[0].startsWith("-")) {
-            pfrac1 = new PolyFraction(args[iarg], args[iarg + 1]);
-            iarg += 2;
-            System.out.println(pfrac1.toString(1));
+            pfrac1 = new PolyFraction(args[iarg], args[iarg + 1]); iarg += 2;
+            System.out.println(pfrac1.toString());
             System.out.println("evaluate: " + pfrac1.evaluate(null));
 
         } else if (args.length >= 2) {
@@ -307,29 +294,66 @@ evaluate: unknown
                     debug = 1;
                     try {
                         debug = Integer.parseInt(args[iarg ++]);
-                    } catch (Exception exc) {
+                    } catch (Exception exc) { // take default
                     }
                     // -d
 
-                } else if (opt.equals    ("-vect")     ) {
-                    pfrac1 = new PolyFraction
-                    		( Polynomial.parse(args[iarg    ])
-                    		, Polynomial.parse(args[iarg + 1])
-                    		); 
-                    iarg += 2;
+                } else if (opt.startsWith("-coeff")  ) {
+                    pfrac1 = new PolyFraction(args[iarg], args[iarg + 1]); iarg += 2;
+                    try {
+                        numTerms = Integer.parseInt(args[iarg ++]);
+                    } catch (Exception exc) {
+                    }
                     System.out.println(pfrac1.toString());
-		            System.out.println(pfrac1.toVectors());
-                    // -vect
-
-                } else if (opt.equals    ("-evaluate")   ) {
-                    System.out.println(pfrac1.toString(1));
-                    System.out.println("evaluate: " + pfrac1.evaluate(null));
+                    System.out.println("vectors: "      + pfrac1.toVectors());
+                    System.out.println("coefficients: " + pfrac1.getSeriesCoefficients(numTerms));
                     // -evaluate
 
                 } else if (opt.equals    ("-f")     ) {
                     String fileName = args[iarg ++];
-                    pfrac1 = PolyFraction.parse((new ExpressionReader()).read(fileName));
+					BufferedReader lineReader; // Reader for the input file
+                    String srcEncoding = "UTF-8"; // Encoding of the input file
+                    String line = null; // current line from text file
+                    try {
+                        if (fileName == null || fileName.length() <= 0 || fileName.equals("-")) {
+                            lineReader = new BufferedReader(new InputStreamReader(System.in, srcEncoding));
+                        } else {
+                            ReadableByteChannel lineChannel = (new FileInputStream(fileName)).getChannel();
+                            lineReader = new BufferedReader(Channels.newReader(lineChannel , srcEncoding));
+                        }
+                        while ((line = lineReader.readLine()) != null) { // read and process lines
+                            String parms[] = line.split("\\s+");
+                            int iparm = 0;
+                            String aseqno = parms[iparm ++];
+                            String mode   = parms[iparm ++];
+                            Polynomial num = new Polynomial(parms[iparm ++]);
+                            Polynomial den = new Polynomial(parms[iparm ++]);
+                            pfrac1 = new PolyFraction(num, den);
+                            System.out.println(aseqno 
+                                    + "\t" + mode 
+                                    + "\t" + pfrac1.toVectors()
+                                    + "\t" + pfrac1.getSeriesCoefficients(numTerms)
+                                    );
+                        } // while ! eof
+                        lineReader.close();
+                    } catch (Exception exc) {
+                        pfrac1.log.error(exc.getMessage(), exc);
+                    } // try
                     // -f
+
+                } else if (opt.equals    ("-n")     ) {
+                    numTerms = 16;
+                    try {
+                        numTerms = Integer.parseInt(args[iarg ++]);
+                    } catch (Exception exc) { // take default
+                    }
+                    // -n
+
+                } else if (opt.equals    ("-vect")  ) {
+                    pfrac1 = new PolyFraction(args[iarg], args[iarg + 1]); iarg += 2;
+                    System.out.println(pfrac1.toString());
+                    System.out.println("vectors: "      + pfrac1.toVectors());
+                    // -vect
 
                 } else {
                     System.err.println("??? invalid option: \"" + opt + "\"");
