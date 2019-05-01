@@ -19,6 +19,7 @@
 package org.teherba.ramath.symbolic;
 import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.Coefficient;
+import  org.teherba.ramath.linear.BigVector;
 import  org.teherba.ramath.util.BigIntegerUtil;
 import  org.teherba.ramath.util.ExpressionReader;
 import  java.io.Serializable;
@@ -62,10 +63,16 @@ public class PolyFraction
      *  @param den polynomial for the denominator
      */
     public PolyFraction(Polynomial num, Polynomial den) {
-        this();
-        polynomials[0] = num;
-        polynomials[1] = den;
+        this(new Polynomial[] { num, den });
     } // Constructor(Polynomial, Polynomial)
+
+    /** Construct from a pair of Strings.
+     *  @param num polynomial for the numerator
+     *  @param den polynomial for the denominator
+     */
+    public PolyFraction(String num, String den) {
+        this(new String[] { num, den });
+    } // Constructor(String, String)
 
     /** Construct from an array of Strings which represent {@link Polynomial}s.
      *  @param exprs array of String expressions
@@ -122,7 +129,7 @@ public class PolyFraction
     /** Returns a String representation of <em>this</em> {@link PolyFraction}
      *  @param mode 0 = normal, 1 = full (for substitution), 2 = nice / human legible,
      *  3 = with prime factors
-     *  @return "(17*a0^2*a1^1 + a2^2*a3^3) / ( - 4*b4^1 = 0)", for example for mode = 1
+     *  @return "(2 - x) / (1 - x - x^2)", for example
      */
     public String toString(int mode) {
         StringBuffer buffer = new StringBuffer(2048);
@@ -133,6 +140,18 @@ public class PolyFraction
         buffer.append(")");
         return buffer.toString();
     } // toString(int)
+
+    /** Returns a String representation of the coefficients
+     *  of the numerator and the denominator.
+     *  @param mode 0 = normal, 1 = full (for substitution), 2 = nice / human legible,
+     *  3 = with prime factors
+     *  @return "[2, -1],[1, -1, -1]" for example
+     */
+    public String toVectors() {
+    	BigVector num = polynomials[0].getBigVector();
+    	BigVector den = polynomials[1].getBigVector();
+        return num.toString() + "," + den.toString();
+    } // toVectors(int)
 
     /** Returns a string representation of the {@link Polynomial}s in <em>this</em> {@link PolyFraction},
      *  with leading signs, in compressed form.
@@ -269,11 +288,13 @@ evaluate: unknown
 
         if (false) {
         } else if (args.length == 0) {
-            pfrac1 = PolyFraction.parse("a²+b^2=c^2, a<b, b<c");
+            pfrac1 = new PolyFraction("(2-x)", "1-x-x^2"); // Lucas A000032: 2,1,3,4,7,11, ...
             System.out.println(pfrac1.toString());
+            System.out.println(pfrac1.toVectors());
 
         } else if (args.length == 1 && ! args[0].startsWith("-")) {
-            pfrac1 = PolyFraction.parse(args[iarg ++]);
+            pfrac1 = new PolyFraction(args[iarg], args[iarg + 1]);
+            iarg += 2;
             System.out.println(pfrac1.toString(1));
             System.out.println("evaluate: " + pfrac1.evaluate(null));
 
@@ -290,15 +311,15 @@ evaluate: unknown
                     }
                     // -d
 
-                } else if (opt.equals    ("-equals")     ) {
-                    pfrac1 = PolyFraction.parse(args[iarg ++]);
-                    pfrac2 = PolyFraction.parse(args[iarg ++]);
+                } else if (opt.equals    ("-vect")     ) {
+                    pfrac1 = new PolyFraction
+                    		( Polynomial.parse(args[iarg    ])
+                    		, Polynomial.parse(args[iarg + 1])
+                    		); 
+                    iarg += 2;
                     System.out.println(pfrac1.toString());
-                    System.out.println(pfrac2.toString());
-                    System.out.println("equals="       + pfrac1.equals      (pfrac2)
-                            +        ", isEqualTo="    + pfrac1.isEqualTo   (pfrac2)
-                            );
-                    // -equals
+		            System.out.println(pfrac1.toVectors());
+                    // -vect
 
                 } else if (opt.equals    ("-evaluate")   ) {
                     System.out.println(pfrac1.toString(1));

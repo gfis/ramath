@@ -2,7 +2,6 @@
  *  exponentiation, comparision and other operations
  *  @(#) $Id: Polynomial.java 744 2011-07-26 06:29:20Z gfis $
  *  2019-01-05: toCoefficients
- *  2018-05-02: -eval
  *  2017-05-28: javadoc 1.8
  *  2016-07-09: Signature
  *  2016-04-14: isPreservedBy(Matrix)
@@ -49,6 +48,7 @@ import  org.teherba.ramath.symbolic.Signature;
 import  org.teherba.ramath.symbolic.VariableMap;
 import  org.teherba.ramath.BigRational;
 import  org.teherba.ramath.Coefficient;
+import  org.teherba.ramath.linear.BigVector;
 import  org.teherba.ramath.linear.Matrix;
 import  org.teherba.ramath.linear.Vector;
 import  org.teherba.ramath.util.BigIntegerUtil;
@@ -372,9 +372,9 @@ public class Polynomial implements Cloneable, Serializable {
      */
     public String toCoefficients() {
         return toString(1)
-            .replaceAll("\\*\\w+\\^\\d+", "")
-            .replaceAll("\\s*\\=\\s*0", "; ")
-            ;
+        	.replaceAll("\\*\\w+\\^\\d+", "")
+        	.replaceAll("\\s*\\=\\s*0", "; ")
+        	;
     } // toCoefficients()
 
     /** Returns a String representation of <em>this</em> {@link Polynomial},
@@ -574,11 +574,6 @@ public class Polynomial implements Cloneable, Serializable {
                 throw new IllegalArgumentException("Polynomial: signatures of " + this.toString()
                     + " and " + mono2.toString() + " must be equal: "
                     + "\"" + mono1.signature() + "\" != \"" + mono2.signature() + "\"");
-            /*
-                System.out.println("signatures of " + this.toString()
-                    + " and " + mono2.toString() + " must be equal: "
-                    + "\"" + this.signature() + "\" != \"" + mono2.signature() + "\"");
-            */
             }
             mono1.addTo(mono2);
             if (mono1.isZero()) {
@@ -1051,9 +1046,12 @@ public class Polynomial implements Cloneable, Serializable {
         int result = 0;
         Iterator <Signature> titer = monomials.keySet().iterator();
         while (titer.hasNext()) {
-            int deg1 = monomials.get(titer.next()).getExponent(varName);
-            if (deg1 > result) {
-                result = deg1;
+        	Monomial mono1 = monomials.get(titer.next());
+        	if (mono1 != null) {
+            	int deg1 = mono1.getExponent(varName);
+            	if (deg1 > result) {
+                	result = deg1;
+            	}
             }
         } // while titer
         return result;
@@ -1221,6 +1219,31 @@ public class Polynomial implements Cloneable, Serializable {
         } // while titer
         return result;
     } // getPowerFactors
+
+    /** Extracts, from <em>this</em> univariate {@link Polynomial},
+     *  a {@link Vector} of the coefficients of the variables' powers
+     *  in increasing order.
+     *  @return Vector of coefficients, for example "[1, -1, -1]" for "1-x-x^2".
+     */
+    public BigVector getBigVector() {
+    	String varName = this.getVariableMap().getFirstName();
+        BigVector result = new BigVector(this.maxDegree() + 1);
+        int exp1 = 0;
+        Iterator <Signature> titer = this.monomials.keySet().iterator();
+        while (titer.hasNext()) { // over all monomials
+            Monomial mono1 = this.monomials.get(titer.next());
+            exp1 = mono1.getExponent(varName);
+            result.set(exp1, mono1.getCoefficient());
+        } // while titer
+        exp1 = result.size() - 1;
+        while (exp1 >= 0) {
+        	if (result.getBig(exp1) == null) {
+        		result.set(exp1, BigInteger.ZERO);
+        	}
+        	exp1 --;
+        }
+        return result;
+    } // getBigVector
 
     /** Extracts a new {@link Polynomial} consisting of all {@link Monomial}s
      *  that involve the variable <em>varName</em>.
@@ -2139,21 +2162,6 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=&gt; - 2*y + 4*z
                     System.out.println(poly1.toString() + " <"
                             + (poly1.isEquivalent(poly2) ? "equiv" : "notequiv") + "> " + poly2);
                     // -equiv
-
-                } else if (opt.startsWith("-eval")) {
-                    String[] polies = ereader.getArguments(iarg, args);
-                    for (ipoly = 0; ipoly < polies.length; ipoly ++) {
-                        String result = Polynomial.parse(polies[ipoly]).toString();
-                        System.out.println(polies[ipoly] + ": " + result);
-                        if (! result.trim().equals("0")) {
-                            System.out.println("# ** error: no power sum");
-                        }
-                        Vector nums = new Vector(polies[ipoly].replaceAll("\\^\\d+", "").replaceAll("\\D+", ","));
-                        if (nums.gcd() != 1) {
-                            System.out.println("# ** error: not primitive, gcd=" + nums.gcd());
-                        }   
-                    } // for
-                    // -eval
 
                 } else if (opt.startsWith("-f")) {
                     poly1 = Polynomial.parse(ereader.read(args[iarg ++]));

@@ -1,5 +1,6 @@
 /*  PolynomialParser: parser for the recognition of arithmetic expressions
  *  @(#) $Id: PolynomialParser.java 522 2010-07-26 07:14:48Z gfis $
+ *  2019-05-01: "**" like "^" : exponentiation
  *  2017-05-28: javadoc 1.8
  *  2016-10-04: insert 0 before unary minus after ( = < >
  *  2016-08-25: ignore comments after '#'
@@ -47,7 +48,7 @@ import  java.util.Stack;
  *  <li>integer constants</li>
  *  <li>variable names consisting of letters and digits, starting with a letter;
  *  names starting with an uppercase letter can be excluded from modulo substitution (option -u)</li>
- *  <li>^n for exponentiation with a (small) integer exponent</li>
+ *  <li>^n or **n for exponentiation with a (small) integer exponent</li>
  *  <li>'#' starts a comment - all characters up to '\n' are ignored</li>
  *  </ul>
  *  The parser knows precedence rules for the operators and expands the expression
@@ -79,14 +80,14 @@ public class PolynomialParser extends Polynomial {
             };
 
     /** pushdown stack for operators and parentheses */
-    private Stack    /*<1.5*/<String>/*1.5>*/ operStack = null;
+    private Stack    <String> operStack = null;
     /** append the operands and postfix operators to this list */
-    private ArrayList/*<1.5*/<String>/*1.5>*/ postfix   = null;
+    private ArrayList<String> postfix   = null;
 
     /** Gets the postfix list of operands and operators.
      *  @return postfix polish notation of the formula
      */
-    public ArrayList/*<1.5*/<String>/*1.5>*/ getPostfix() {
+    public ArrayList<String> getPostfix() {
         return postfix;
     } // getPostfix
 
@@ -137,7 +138,7 @@ public class PolynomialParser extends Polynomial {
         char ch = ' ';
         boolean busy = false;
         boolean readOff = true;
-        operStack = new Stack/*<1.5*/<String>/*1.5>*/();
+        operStack = new Stack<String>();
         int ipos = 0; // position in input string
         State state = State.IN_START;
         char prev = ' '; // previous non-space character, for unary minus detection
@@ -155,6 +156,7 @@ public class PolynomialParser extends Polynomial {
                             case '=':
                             case '!':
                             case '&':
+                            case '*':
                         //  case '|':
                                 buffer.setLength(0);
                                 buffer.append(ch);
@@ -187,9 +189,11 @@ public class PolynomialParser extends Polynomial {
                                 }
                                 replaceLower("m-");
                                 break;
+						/*  cf. above: IN_OPERATOR
                             case '*':
                                 replaceLower("p*");
                                 break;
+                        */
                             case '/':
                                 replaceLower("p/");
                                 break;
@@ -378,6 +382,16 @@ public class PolynomialParser extends Polynomial {
                                 break;
                         //  case '!': // not - later?
                         //  case '|': // or  - later?
+                            case '*':
+                                buffer.append(ch);
+                                oper = buffer.toString();
+                                if (false) {
+                                } else if (oper.equals("**")) { // exponentiation
+                                	replaceLower("q^");
+                                } else { 
+                                    System.err.println("invalid multiplication operator " + oper);
+                                }
+                                break;
                             case '&':
                                 buffer.append(ch);
                                 oper = buffer.toString();
@@ -397,6 +411,9 @@ public class PolynomialParser extends Polynomial {
                                         replaceLower("l" + buffer.substring(0, 1));
                                         break;
                                     case '!': // maybe supported later?
+                                        break;
+                                    case '*':
+                                        replaceLower("p" + buffer.substring(0, 1));
                                         break;
                                     case '&':
                                         replaceLower("k" + buffer.substring(0, 1));
@@ -466,8 +483,8 @@ public class PolynomialParser extends Polynomial {
      *  @return the corresponding polynomial
      */
     public Polynomial parseFrom(String input) {
-        postfix = new ArrayList/*<1.5*/<String>/*1.5>*/(256);
-        Stack/*<1.5*/<Polynomial>/*1.5>*/ polyStack = new Stack/*<1.5*/<Polynomial>/*1.5>*/();
+        postfix = new ArrayList<String>(256);
+        Stack<Polynomial> polyStack = new Stack<Polynomial>();
         Polynomial poly1 = null;
         Polynomial poly2 = null;
         // polyStack contains: ... poly1 poly2 <operator>

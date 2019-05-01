@@ -230,9 +230,11 @@ public class Monomial implements Cloneable, Serializable {
      */
     public int getExponent(String name) {
         int result = 0; // if the variable is not present
-        Integer exp = vars.get(name);
-        if (exp != null) {
-            result = exp.intValue();
+        if (vars.size() > 0) {
+        	Integer exp = vars.get(name);
+        	if (exp != null) {
+            	result = exp.intValue();
+        	}
         }
         return result;
     } // getExponent

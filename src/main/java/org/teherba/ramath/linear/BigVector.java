@@ -1,4 +1,4 @@
-/*  BigVector: a simple, short vector of small numbers
+/*  BigVector: a simple, short vector of big numbers
  *  @(#) $Id: BigVector.java 744 2011-07-26 06:29:20Z gfis $
  *  2018-01-22, Georg Fischer: copied from Vector
  */
