@@ -114,7 +114,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
     } // Constructor(3)
 
     /** Constructor for a BigVector from a vector expression
-     *  @param vectExpr an array of comma or space-separated elements 
+     *  @param vectExpr an array of comma or space-separated elements
      *  (optionally in square brackets),
      *  for example "[3, 4, 5]" or "3 4 5"
      */
@@ -137,7 +137,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
 
     /** Compute a permutation of <em>this</em> BigVector
      *  @param meter definition of the permutation, result of {@link org.teherba.ramath.util.Permutator},
-     *  a permutation of the numbers [0 : n-1] defining, for each element, the 
+     *  a permutation of the numbers [0 : n-1] defining, for each element, the
      *  position of the element of <em>this</em> BigVector to be taken
      *  For example, [0,1,2,3] yields the identical vector, and [3,2,1,0] reverses the vector.
      *  @return reference to a new BigVector
@@ -299,7 +299,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
             BigInteger q = vect[ielem].abs();
             while (! q.equals(BigInteger.ZERO)) {
                 BigInteger[] temp = p.divideAndRemainder(q);
-                p = q; 
+                p = q;
                 q = temp[1]; // the rest
             }
             result = p;
@@ -401,47 +401,47 @@ public class BigVector extends Vector implements Cloneable, Serializable {
     } // negate()
 
     /** Determines the quotient of the first elements of <em>this</em> (numerator of the g.f.)
-     *  and <em>vect2</em> (the division may not have a rest, and the first element of vect2 must be ONE), 
-     *  subtracts the product of <em>vect2 * quotient</em> 
-     *  from <em>this</em> (eventually after padding the latter with zeroes), 
-     *  removes the first element of <em>this</em> (this is zero then), 
+     *  and <em>vect2</em> (the division may not have a rest, and the first element of vect2 must be ONE),
+     *  subtracts the product of <em>vect2 * quotient</em>
+     *  from <em>this</em> (eventually after padding the latter with zeroes),
+     *  removes the first element of <em>this</em> (this is zero then),
      *  and returns the quotient.
      *  @param vect2 the divisor (denominator of the g.f.)
      *  @return quotient, coefficient of the Taylor series
      */
     public BigInteger divisionStep(BigVector vect2) {
-        if (! vect2.getBig(0).equals(BigInteger.ONE)) {
-        	BigVector vectn = vect2.negate();
-	        if (! vectn.getBig(0).equals(BigInteger.ONE)) {
-        	    System.out.println("# assertion in BigVector: abs(first term of denominator) must be ONE; den="
-            		+ vect2.toString());
-            	return BigInteger.ZERO;
-            } else {
-            	vect2.vector = vectn.vector;
-            	BigVector vect1 = this.negate();
-            	this.vector  = vect1. vector;
-            }
-        }
-        BigInteger result   = this.getBig(0);
+    	BigInteger divisor    = vect2.getBig(0);
+    	if (divisor.equals(BigInteger.ZERO)) {
+            System.out.println("# assertion in BigVector: divisor is zero: num="
+                    + this.toString() + ", den=" + vect2.toString());
+            return BigInteger.ZERO;
+        }    		
+        BigInteger[] quotRest = this.getBig(0).divideAndRemainder(divisor);
+        BigInteger result   = quotRest[0];
         BigInteger quotient = result.negate();
+        if (! quotRest[1].equals(BigInteger.ZERO)) {
+            System.out.println("# assertion in BigVector: no even division: num="
+                    + this.toString() + ", den=" + vect2.toString());
+            return BigInteger.ZERO;
+        }
         int len1 = this.size();
         int len2 = vect2.size();
-        if (len2 > len1) { 
+        if (len2 > len1) {
             len1 = len2; // the maximum of both lengths
-        } 
+        }
         BigVector vect1 = new BigVector(len1 - 1); // will replace 'this' in the end
         int iterm = 1; // the first term of vect1 becomes ZERO and is skipped
-        while (iterm < len1) { 
+        while (iterm < len1) {
             if (debug >= 2) {
-                System.out.println("# iterm=" + iterm + ", len1=" + len1 + ", len2=" + len2 
-                		+ ", quotient=" + quotient.toString() + ", this=" + this.toString());
+                System.out.println("# iterm=" + iterm + ", len1=" + len1 + ", len2=" + len2
+                        + ", quotient=" + quotient.toString() + ", this=" + this.toString());
             }
             BigInteger term = BigInteger.ZERO;
             if (iterm < len2) {
-            	term = vect2.getBig(iterm).multiply(quotient);
+                term = vect2.getBig(iterm).multiply(quotient);
             }
             if (iterm < this.size()) {
-            	term = term.add(this.getBig(iterm));
+                term = term.add(this.getBig(iterm));
             }
             if (debug >= 2) {
                 System.out.println("# iterm=" + iterm + ", term=" + term);
@@ -452,8 +452,8 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         if (debug >= 1) {
             System.out.println("# result: " + result + ", vect1 = " + vect1.toString());
         }
-        this.vector = vect1.vector; 
-        this.vecLen = this.vector.length; 
+        this.vector = vect1.vector;
+        this.vecLen = this.vector.length;
         return result;
     } // divisionStep(BigVector)
 

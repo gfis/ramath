@@ -32,7 +32,7 @@ import  java.math.BigInteger;
 import  java.util.Iterator;
 import  org.apache.log4j.Logger;
 
-/** A PolyFraction is a pair of univariate {@link Polynomial}s which represent 
+/** A PolyFraction is a pair of univariate {@link Polynomial}s which represent
  *  the numerator and the denominator of the fraction.
  *  @author Dr. Georg Fischer
  */
@@ -165,7 +165,7 @@ public class PolyFraction
      *  with leading signs, in compressed form.
      *  @return "17*a0^2*a1 + a2^2*a3^3; - 4*b4", for example
      */
-    public String toString() { 
+    public String toString() {
         return toString(0);
     } // toString()
 
@@ -311,7 +311,7 @@ public class PolyFraction
 
                 } else if (opt.equals    ("-f")     ) {
                     String fileName = args[iarg ++];
-					BufferedReader lineReader; // Reader for the input file
+                    BufferedReader lineReader; // Reader for the input file
                     String srcEncoding = "UTF-8"; // Encoding of the input file
                     String line = null; // current line from text file
                     try {
@@ -322,18 +322,29 @@ public class PolyFraction
                             lineReader = new BufferedReader(Channels.newReader(lineChannel , srcEncoding));
                         }
                         while ((line = lineReader.readLine()) != null) { // read and process lines
-                            String parms[] = line.split("\\s+");
-                            int iparm = 0;
-                            String aseqno = parms[iparm ++];
-                            String mode   = parms[iparm ++];
-                            Polynomial num = new Polynomial(parms[iparm ++]);
-                            Polynomial den = new Polynomial(parms[iparm ++]);
-                            pfrac1 = new PolyFraction(num, den);
-                            System.out.println(aseqno 
-                                    + "\t" + mode 
-                                    + "\t" + pfrac1.toVectors()
-                                    + "\t" + pfrac1.getSeriesCoefficients(numTerms)
-                                    );
+                            if (! line.matches("\\s*#.*")) { // is not a comment
+                                String parms[] = line.split("\\s+");
+                                int iparm = 0;
+                                String aseqno = parms[iparm ++];
+                                String mode   = parms[iparm ++];
+                                Polynomial num = new Polynomial(parms[iparm ++]);
+                                Polynomial den = new Polynomial(parms[iparm ++]);
+                                pfrac1 = new PolyFraction(num, den);
+                                System.out.println(aseqno
+                                        + "\t" + mode
+                                        + "\t" + num.toString() 
+                                        + "\t" + den.toString() 
+                                        );
+                                System.out.println(aseqno
+                                        + "\t" + "vect"
+                                        + "\t" + pfrac1.toVectors()
+                                        );
+                                System.out.println(aseqno
+                                        + "\t" + "coef"
+                                        + "\t" + numTerms
+                                        + "\t" + pfrac1.getSeriesCoefficients(numTerms)
+                                        );
+                            } // is not a comment
                         } // while ! eof
                         lineReader.close();
                     } catch (Exception exc) {
