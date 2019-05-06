@@ -1,5 +1,6 @@
 /*  PolyFraction: a fraction of two polynomials
  *  @(#) $Id: PolyFraction.java 970 2012-10-25 16:49:32Z  $
+ *  2019-05-06: -coxg
  *  2019-04-29: Georg Fischer: copied from RelationSet.java
  */
 /*
@@ -228,25 +229,46 @@ public class PolyFraction
         return result;
     } // getSeriesCoefficients
 
-    /** Returns a {@link PolyFraction} constructed from a String representation, possibly with an
-     *  error message inserted at the point where parsing could not proceed.
-     *  @param input the input String, with whitespace, for example " + 17*a0^2*a1 + a2^2*a3^3 - 4*b4"
-     *  @return a reference to a new {@link PolyFraction}
-     */
-    public static PolyFraction parse_99(String input) {
-        return new PolyFraction(input.split("\\/"));
-    } // parse
+    /** Returns a PolyFraction which generates a Coxeter group sequence.
+     *  This method corresponds with the Mathematica routine <em>coxG</em>
+     *  defined in OEIS {@link https://oeis.org/A169452}:
+     * <pre>
+     coxG[{pwr_, c1_, c2_, trms_:20}]:=Module[{
+     num=Total[2t^Range[pwr-1]]+t^pwr+ 1, 
+     den=Total[c2*t^Range[pwr-1]]+c1*t^pwr+1}, 
+     CoefficientList[ Series[ num/den, {t, 0, trms}], t]]; 
+     coxG[{33, 15, -5, 30}]
 
-    /** Determines whether two {@link PolyFraction}s are equivalent, that is whether
-     *  there is a permutation of the constituting {@link Polynomial}s
-     *  which {@link Polynomial#isEqualTo are equal}.
-     *  @param pfrac2 second comparision operand
-     *  @return whether sets of Polynomials are the same
+     G.f.: (t^33 + 2*t^32 + 2*t^31 + 2*t^30 + 2*t^29 + 2*t^28 + 2*t^27 + 2*t^26 
+     + 2*t^25 + 2*t^24 + 2*t^23 + 2*t^22 + 2*t^21 + 2*t^20 + 2*t^19 + 2*t^18 
+     + 2*t^17 + 2*t^16 + 2*t^15 + 2*t^14 + 2*t^13 + 2*t^12 + 2*t^11 + 2*t^10 
+     + 2*t^9 + 2*t^8 + 2*t^7 + 2*t^6 + 2*t^5 + 2*t^4 + 2*t^3 + 2*t^2 + 2*t + 1)/
+     (15*t^33 - 5*t^32 - 5*t^31 - 5*t^30 - 5*t^29 - 5*t^28 - 5*t^27 - 5*t^26 
+     - 5*t^25 - 5*t^24 - 5*t^23 - 5*t^22 - 5*t^21 - 5*t^20 - 5*t^19 - 5*t^18 
+     - 5*t^17 - 5*t^16 - 5*t^15 - 5*t^14 - 5*t^13 - 5*t^12 - 5*t^11 - 5*t^10 
+     - 5*t^9 - 5*t^8 - 5*t^7 - 5*t^6 - 5*t^5 - 5*t^4 - 5*t^3 - 5*t^2 - 5*t + 1).
+     * </pre>
+     *  @param pwr 
+     *  @param c1
+     *  @param c2
+     *  @return PolyFraction
      */
-    public boolean isEqualTo_99(PolyFraction pfrac2) {
-        return false;
-    } // isEqualTo
-
+    public static PolyFraction coxeterGroup(int pwr, int c1, int c2) {
+        BigVector num = new BigVector(pwr + 1);
+        BigVector den = new BigVector(pwr + 1);
+        num.setBig(pwr, BigInteger.ONE);
+        num.setBig(0,   BigInteger.ONE);
+        den.setBig(pwr, BigInteger.valueOf(c1));
+        den.setBig(0,   BigInteger.ONE);
+        BigInteger bigC2 = BigInteger.valueOf(c2);
+        int ipwr = pwr - 1;
+        while (ipwr > 0) {
+            num.setBig(ipwr, BigIntegerUtil.TWO);
+            den.setBig(ipwr, bigC2);
+            ipwr --;
+        } // while ipwr
+        return new PolyFraction(); // (num, den);
+    } // coxeterGroup
 
     /* ------------ Solver evaluation --------------- */
 
@@ -307,7 +329,23 @@ public class PolyFraction
                     System.out.println(pfrac1.toString());
                     System.out.println("vectors: "      + pfrac1.toVectors());
                     System.out.println("coefficients: " + pfrac1.getSeriesCoefficients(numTerms));
-                    // -evaluate
+                    // -coeff
+
+                } else if (opt.startsWith("-coxg")  ) {
+                    int p1 = 2;
+                    int p2 = 2;
+                    int p3 = 3;
+                    try {
+                        p1 = Integer.parseInt(args[iarg ++]);
+                        p2 = Integer.parseInt(args[iarg ++]);
+                        p3 = Integer.parseInt(args[iarg ++]);
+                    } catch (Exception exc) {
+                    }
+                    pfrac1 = PolyFraction.coxeterGroup(p1, p2, p3);
+                    System.out.println(pfrac1.toString());
+                    System.out.println("vectors: "      + pfrac1.toVectors());
+                    System.out.println("coefficients: " + pfrac1.getSeriesCoefficients(numTerms));
+                    // -coeff
 
                 } else if (opt.equals    ("-f")     ) {
                     String fileName = args[iarg ++];

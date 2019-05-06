@@ -477,10 +477,12 @@ public class PolynomialParser extends Polynomial {
         } // while
     } // shuntingYardAlgorithm
 
-    /** Parses a string and returns a polynomial. Error messages may
+    /** Parses a string and returns a {@link Polynomial}. Error messages may
      *  be printed to STDERR if parsing could not proceed.
      *  @param input the input string, with whitespace, for example " + 17*a0^2*a1 + a2^2*a3^3 - 4*b4"
-     *  @return the corresponding polynomial
+     *  @return the corresponding polynomial, 
+     *  or null if the input did not have the form of a Polynomial
+     *  with integer (non-variable) exponents.
      */
     public Polynomial parseFrom(String input) {
         postfix = new ArrayList<String>(256);

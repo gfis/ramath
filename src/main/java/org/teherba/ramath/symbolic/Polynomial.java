@@ -637,7 +637,12 @@ public class Polynomial implements Cloneable, Serializable {
         Iterator<Signature> iter2 = poly2.keySet().iterator();
         while (iter2.hasNext()) {
             Signature sig2 = iter2.next();
-            result.subtractFrom(poly2.get(sig2));
+            Monomial mono2 = poly2.get(sig2);
+            if (mono2 != null) {
+            	result.subtractFrom(mono2);
+            } else {
+	            throw new IllegalArgumentException("cannot subtract null");
+            }
         } // while iter2
         return result;
     } // subtract(Polynomial)

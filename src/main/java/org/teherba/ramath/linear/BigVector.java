@@ -410,12 +410,12 @@ public class BigVector extends Vector implements Cloneable, Serializable {
      *  @return quotient, coefficient of the Taylor series
      */
     public BigInteger divisionStep(BigVector vect2) {
-    	BigInteger divisor    = vect2.getBig(0);
-    	if (divisor.equals(BigInteger.ZERO)) {
+      BigInteger divisor    = vect2.getBig(0);
+      if (divisor.equals(BigInteger.ZERO)) {
             System.out.println("# assertion in BigVector: divisor is zero: num="
                     + this.toString() + ", den=" + vect2.toString());
             return BigInteger.ZERO;
-        }    		
+        }       
         BigInteger[] quotRest = this.getBig(0).divideAndRemainder(divisor);
         BigInteger result   = quotRest[0];
         BigInteger quotient = result.negate();
