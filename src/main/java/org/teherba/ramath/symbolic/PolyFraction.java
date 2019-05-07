@@ -107,6 +107,14 @@ public class PolyFraction
         } // while ipoly
     } // Constructor(Polynomial[])
 
+    /** Construct from an two {@link BigVector}s.
+     *  @param num BigVector for the coefficients of the numerator
+     *  @param den BigVector for the coefficients of the denominator
+     */
+    public PolyFraction(BigVector num, BigVector den) {
+        this(num.getPolynomial(), den.getPolynomial());
+    } // Constructor(BigVecto, BigVector)
+
     /** Deep copy of this PolyFraction with all {@link Polynomial}s.
      *  @return independant copy of the PolyFraction
      */
@@ -248,12 +256,14 @@ public class PolyFraction
      - 5*t^17 - 5*t^16 - 5*t^15 - 5*t^14 - 5*t^13 - 5*t^12 - 5*t^11 - 5*t^10 
      - 5*t^9 - 5*t^8 - 5*t^7 - 5*t^6 - 5*t^5 - 5*t^4 - 5*t^3 - 5*t^2 - 5*t + 1).
      * </pre>
-     *  @param pwr 
-     *  @param c1
-     *  @param c2
-     *  @return PolyFraction
+     *  @param pwr largest exponent in the g.f. and of "(S_i S_j)" in the name,
+     *  @param c1 first coefficient in the denominator of the g.f., 
+     *  = triangular(-c2) = binomial(-c2 + 1, 2) 
+     *  @param c2 second coefficient in the denominator of the g.f., 
+     *  = 2 - (numbers of generators in the name)
+     *  @return corresponding PolyFraction
      */
-    public static PolyFraction coxeterGroup(int pwr, int c1, int c2) {
+    public static PolyFraction getCoxeterFraction(int pwr, int c1, int c2) {
         BigVector num = new BigVector(pwr + 1);
         BigVector den = new BigVector(pwr + 1);
         num.setBig(pwr, BigInteger.ONE);
@@ -267,8 +277,25 @@ public class PolyFraction
             den.setBig(ipwr, bigC2);
             ipwr --;
         } // while ipwr
-        return new PolyFraction(); // (num, den);
-    } // coxeterGroup
+        return new PolyFraction(num, den); 
+    } // coxG
+
+    /** Returns a PolyFraction which generates a Coxeter group sequence.
+     *  This version has simpler parameters which are directly deduceable 
+     *  from the name of the OEIS sequence.
+     *  @param pwr the exponent
+     *  @param ngen number of generators
+     *  @return corresponding PolyFraction
+     */
+    public static PolyFraction getCoxeterFraction(int pwr, int ngen) {
+        int factorial = 1;
+        int ifact = ngen - 2;
+        while (ifact > 1) {
+            factorial *= ifact;
+            ifact --;
+        } // while ifact
+        return getCoxeterFraction(pwr, factorial, 2 - ngen);
+    } // getCoxeterFraction
 
     /* ------------ Solver evaluation --------------- */
 
@@ -341,7 +368,7 @@ public class PolyFraction
                         p3 = Integer.parseInt(args[iarg ++]);
                     } catch (Exception exc) {
                     }
-                    pfrac1 = PolyFraction.coxeterGroup(p1, p2, p3);
+                    pfrac1 = PolyFraction.getCoxeterFraction(p1, p2, p3);
                     System.out.println(pfrac1.toString());
                     System.out.println("vectors: "      + pfrac1.toVectors());
                     System.out.println("coefficients: " + pfrac1.getSeriesCoefficients(numTerms));

@@ -560,7 +560,7 @@ public class Polynomial implements Cloneable, Serializable {
      *  @param mono2 add this Monomial
      *  @return reference to <em>this</em> Polynomial that was modified
      */
-    protected Polynomial addTo(Monomial mono2) {
+    public Polynomial addTo(Monomial mono2) {
         Signature sig2 = mono2.signature();
         Monomial mono1 = this.monomials.get(sig2);
         if (mono2.isZero()) { // ignore "+ 0"

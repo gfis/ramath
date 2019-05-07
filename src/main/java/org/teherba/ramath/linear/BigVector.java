@@ -18,6 +18,8 @@
  * limitations under the License.
  */
 package org.teherba.ramath.linear;
+import  org.teherba.ramath.symbolic.Monomial;
+import  org.teherba.ramath.symbolic.Polynomial;
 import  java.lang.Math; // abs(int)
 import  java.math.BigInteger;
 import  java.io.Serializable;
@@ -189,6 +191,21 @@ public class BigVector extends Vector implements Cloneable, Serializable {
     public BigInteger[] getBigValues() {
         return vector;
     } // getBigValues
+
+    /** Gets an univariate {@link Polynomial} 
+     *  @return a Polynomial where the elements of <em>this</em> are the coefficients of the variable "x",
+     *  and the indices are the exponents.
+     */
+    public Polynomial getPolynomial() {
+        Polynomial result = new Polynomial();
+        String var = "x";
+        int ivect = 0;
+        while (ivect < this.vecLen) {
+            result.addTo(new Monomial(this.vector[ivect], var, ivect));
+            ivect ++;
+        } // while ivect
+        return result;
+    } // getPolynomial
 
     // inherited: size
     /*-------------- lightweight derived methods -----------------------------*/
