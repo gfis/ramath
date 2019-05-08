@@ -239,7 +239,7 @@ public class PolyFraction
 
     /** Returns a PolyFraction which generates a Coxeter group sequence.
      *  This method corresponds with the Mathematica routine <em>coxG</em>
-     *  defined in OEIS {@link https://oeis.org/A169452}:
+     *  defined in OEIS {@link https://oeis.org/A169452 A169452}:
      * <pre>
      coxG[{pwr_, c1_, c2_, trms_:20}]:=Module[{
      num=Total[2t^Range[pwr-1]]+t^pwr+ 1, 
@@ -288,13 +288,16 @@ public class PolyFraction
      *  @return corresponding PolyFraction
      */
     public static PolyFraction getCoxeterFraction(int pwr, int ngen) {
-        int factorial = 1;
-        int ifact = ngen - 2;
-        while (ifact > 1) {
-            factorial *= ifact;
-            ifact --;
-        } // while ifact
-        return getCoxeterFraction(pwr, factorial, 2 - ngen);
+        int triang = 0; 
+        // A000217 Triangular numbers: a(n) = binomial(n+1, 2) 
+        // 0  1  2  3   4   5   6   7   8   9  10
+        // 0, 1, 3, 6, 10, 15, 21, 28, 36, 45, 55
+        int itri = ngen - 2;
+        while (itri >= 1) {
+            triang += itri;
+            itri --;
+        } // while itri
+        return getCoxeterFraction(pwr, triang, 2 - ngen);
     } // getCoxeterFraction
 
     /* ------------ Solver evaluation --------------- */
@@ -359,16 +362,26 @@ public class PolyFraction
                     // -coeff
 
                 } else if (opt.startsWith("-coxg")  ) {
-                    int p1 = 2;
-                    int p2 = 2;
-                    int p3 = 3;
+                    int pwr  = 33;
+                    int c1   = 15;
+                    int c2   = -5;
+                    int ngen = 0;
                     try {
-                        p1 = Integer.parseInt(args[iarg ++]);
-                        p2 = Integer.parseInt(args[iarg ++]);
-                        p3 = Integer.parseInt(args[iarg ++]);
+                        pwr  = Integer.parseInt(args[iarg ++]);
+                        c1   = Integer.parseInt(args[iarg ++]);
+                        ngen = c1;
+                        if (iarg < args.length) {
+                            c2 = Integer.parseInt(args[iarg ++]);
+                        } else { // 2 parameter variant
+                            c2 = 0;
+                        }
                     } catch (Exception exc) {
                     }
-                    pfrac1 = PolyFraction.getCoxeterFraction(p1, p2, p3);
+                    if (c2 != 0) {
+                        pfrac1 = PolyFraction.getCoxeterFraction(pwr, c1, c2);
+                    } else {                    
+                        pfrac1 = PolyFraction.getCoxeterFraction(pwr, ngen);
+                    }
                     System.out.println(pfrac1.toString());
                     System.out.println("vectors: "      + pfrac1.toVectors());
                     System.out.println("coefficients: " + pfrac1.getSeriesCoefficients(numTerms));
@@ -392,23 +405,32 @@ public class PolyFraction
                                 int iparm = 0;
                                 String aseqno = parms[iparm ++];
                                 String mode   = parms[iparm ++];
-                                Polynomial num = new Polynomial(parms[iparm ++]);
-                                Polynomial den = new Polynomial(parms[iparm ++]);
-                                pfrac1 = new PolyFraction(num, den);
-                                System.out.println(aseqno
-                                        + "\t" + mode
-                                        + "\t" + num.toString() 
-                                        + "\t" + den.toString() 
-                                        );
-                                System.out.println(aseqno
-                                        + "\t" + "vect"
-                                        + "\t" + pfrac1.toVectors()
-                                        );
-                                System.out.println(aseqno
-                                        + "\t" + "coef"
-                                        + "\t" + numTerms
-                                        + "\t" + pfrac1.getSeriesCoefficients(numTerms)
-                                        );
+                                if (false) {
+                                } else if (mode.equals("sage")) {
+                                    Polynomial num = new Polynomial(parms[iparm ++]);
+                                    Polynomial den = new Polynomial(parms[iparm ++]);
+                                    pfrac1 = new PolyFraction(num, den);
+                                    System.out.println(aseqno + "\t" + mode
+                                            + "\t" + pfrac1.get(0).toString() + "\t" + pfrac1.get(1).toString() 
+                                            );
+                                    System.out.println(aseqno + "\t" + "vect"
+                                            + "\t" + pfrac1.toVectors()
+                                            );
+                                    System.out.println(aseqno + "\t" + "coef"
+                                            + "\t" + pfrac1.getSeriesCoefficients(numTerms)
+                                            );
+                                } else if (mode.equals("coxf")) {
+                                    try {
+                                        int pwr  = Integer.parseInt(parms[iparm ++]);
+                                        int ngen = Integer.parseInt(parms[iparm ++]);
+                                        pfrac1 = PolyFraction.getCoxeterFraction(pwr, ngen);
+                                    } catch (Exception exc) {
+                                    }
+                                    System.out.println(aseqno
+                                            + "\t" + pfrac1.getSeriesCoefficients(numTerms)
+                                            .toString().replaceAll("[\\[\\]]", "")
+                                            );
+                                } // switch mode
                             } // is not a comment
                         } // while ! eof
                         lineReader.close();

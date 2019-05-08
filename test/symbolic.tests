@@ -35,7 +35,7 @@ CALL Monomial
 TEST PO1 Pythagoras
 # from AM02: [a^2*m11-b^2*m11+2*a*b*m12+a^2*m13+b^2*m13,a^2*m21-b^2*m21+2*a*b*m22+a^2*m23+b^2*m23,a^2*m31-b^2*m31+2*a*b*m32+a^2*m33+b^2*m33]
 DATA
-  (a^2*m11-b^2*m11+2*a*b*m12+a^2*m13+b^2*m13)^2 + 
+  (a^2*m11-b^2*m11+2*a*b*m12+a^2*m13+b^2*m13)^2 +
   (a^2*m21-b^2*m21+2*a*b*m22+a^2*m23+b^2*m23)^2 -
   (a^2*m31-b^2*m31+2*a*b*m32+a^2*m33+b^2*m33)^2
 CALL Polynomial -var "a,b" $(DATA)
@@ -43,7 +43,7 @@ CALL Polynomial -var "a,b" $(DATA)
 TEST PO2 Pythagoras
 # from AM02: [a^2*m11-b^2*m11+2*a*b*m12+a^2*m13+b^2*m13,a^2*m21-b^2*m21+2*a*b*m22+a^2*m23+b^2*m23,a^2*m31-b^2*m31+2*a*b*m32+a^2*m33+b^2*m33]
 DATA
-  (a^2*m11-b^2*m11+2*a*b*m12+a^2*m13+b^2*m13)^2 + # a^2 + 
+  (a^2*m11-b^2*m11+2*a*b*m12+a^2*m13+b^2*m13)^2 + # a^2 +
   (a^2*m21-b^2*m21+2*a*b*m22+a^2*m23+b^2*m23)^2 - # b^2 -
   (a^2*m31-b^2*m31+2*a*b*m32+a^2*m33+b^2*m33)^2   # c^2
 CALL Polynomial -var "a,b" $(DATA)
@@ -100,7 +100,7 @@ TEST PD7 degree(inhomogeneous)
 CALL Polynomial -degree "a*x^2 + b*x*y^2 + c*y^4"
 #----
 TEST PDE1 derivative()
-CALL Polynomial -derive "x^3 + y*x^2 + y^2" 
+CALL Polynomial -derive "x^3 + y*x^2 + y^2"
 
 TEST PDE2 derivative(x,2)
 CALL Polynomial -derive "x^3 + y*x^2 + y^2" x 2
@@ -112,7 +112,7 @@ TEST PDE4 derivative(x,4)
 CALL Polynomial -derive "x^3 + y*x^2 + y^2" x 4
 #--
 TEST RDE1 derivative()
-CALL RelationSet -derive "x^3 + y*x^2 + y^2; x^4 - y^4" 
+CALL RelationSet -derive "x^3 + y*x^2 + y^2; x^4 - y^4"
 
 TEST RDE2 derivative(x,2)
 CALL RelationSet -derive "x^3 + y*x^2 + y^2; x^4 - y^4" x 2
@@ -136,7 +136,7 @@ CALL RelationSet -rest 2 "x^4 - y^4 - z^2 = 0"
 # PolyFraction
 
 TEST PF1 no args
-CALL PolyFraction 
+CALL PolyFraction
 
 TEST PF2 vectors
 CALL PolyFraction -vect  "(2 - x)" "(1-x-x**2)"
@@ -144,12 +144,22 @@ CALL PolyFraction -vect  "(2 - x)" "(1-x-x**2)"
 TEST PF3 coefficients
 CALL PolyFraction -coeff "(2 - x)" "(1-x-x**2)"
 
-TEST PF4 from a file
+TEST PF4 from a file - g.f.
 DATA
- A000008	sage	1	((1-x)*(1-x^2)*(1-x^5)*(1-x^10))
- A000012	sage	1	(1-x)
- A000027	sage	x	(1-x)^2
- A000032	sage	(2-x)	(1-x-x^2)
+ A000008  sage  1 ((1-x)*(1-x^2)*(1-x^5)*(1-x^10))
+ A000012  sage  1 (1-x)
+ A000027  sage  x (1-x)^2
+ A000032  sage  (2-x) (1-x-x^2)
+CALL PolyFraction -f $(DATA)
+
+TEST PF5 from a file -  coxg
+DATA
+ A169452  coxf  33 7
+ A162740  coxf  3 4
+ A162756  coxf  3 10
+ A162920  coxf  4 3
+ A170100  coxf  37 43
+ A170731  coxf  50 50
 CALL PolyFraction -f $(DATA)
 
 #-------------------------------
@@ -173,17 +183,17 @@ CALL DialogTree -f $(DATA)
 #-------------------------------
 # TEST GR1 isGrownFrom(poly)
 # CALL Polynomial   -grow "-80-96*x+16*x^2-96*y-128*x*y+16*y^2-96*z-128*x*z-128*y*z-128*x*y*z+16*z^2=0" "- 4 - 8*x + 4*x^2 - 8*y - 16*x*y + 4*y^2 - 8*z - 16*x*z - 16*y*z - 16*x*y*z + 4*z^2 = 0"
-# 
+#
 # TEST GR2 isGrownFrom(rset)
 # CALL RelationSet  -grow "-80-96*x+16*x^2-96*y-128*x*y+16*y^2-96*z-128*x*z-128*y*z-128*x*y*z+16*z^2=0" "- 4 - 8*x + 4*x^2 - 8*y - 16*x*y + 4*y^2 - 8*z - 16*x*z - 16*y*z - 16*x*y*z + 4*z^2 = 0"
-# 
+#
 # TEST GR3 isGrownFrom not all factors
 # CALL RelationSet  -grow "-48+16*x+96*x^2+256*x^3+256*x^4-16*y^4-112*z-64*z^2=0" "-8+8*x+24*x^2+32*x^3+16*x^4-16*y^4-24*z-16*z^2=0"
-# 
+#
 # TEST GR4 isGrownFrom different sizes
 # CALL RelationSet  -grow "-80-96*x+16*x^2     -128*x*y+16*y^2-96*z-128*x*z-128*y*z-128*x*y*z+16*z^2=0" "- 4 - 8*x + 4*x^2 - 8*y - 16*x*y + 4*y^2 - 8*z - 16*x*z - 16*y*z - 16*x*y*z + 4*z^2 = 0"
-# 
-# TEST GR5 isGrownFrom 
+#
+# TEST GR5 isGrownFrom
 # CALL RelationSet  -grow "- 24 + 16*x + 64*x^2 - 216*y - 576*y^2 - 512*y^3" "- 24 + 8*x + 16*x^2 - 108*y - 144*y^2 - 64*y^3"
 #                          - 24 + 16*x + 64*x^2 - 216*y - 576*y^2 - 512*y^3   - 24 + 8*x + 16*x^2 - 108*y - 144*y^2 - 64*y^3
 #--------------------------------
@@ -238,11 +248,11 @@ CALL Polynomial -equiv "3*(a^2+b^2)-c^2-d^2" "a^2+b^2-3*(d^2+c^2)"
 
 TEST P04 Korneck polynomial
 # degree 5                 6                        4
-# 
+#
 DATA
-  (6*t^3*m*f  + m*(t+m)*(m^4 + m^2*t^2 + t^4) + 3*m*(m-t)*f^2)^3 
+  (6*t^3*m*f  + m*(t+m)*(m^4 + m^2*t^2 + t^4) + 3*m*(m-t)*f^2)^3
 - (6*m^3*t*f  + t*(t+m)*(m^4 + m^2*t^2 + t^4) + 3*t*(t-m)*f^2)^3
-- (6*m^3*t*f  - t*(t+m)*(m^4 + m^2*t^2 + t^4) - 3*t*(t-m)*f^2)^3 
+- (6*m^3*t*f  - t*(t+m)*(m^4 + m^2*t^2 + t^4) - 3*t*(t-m)*f^2)^3
 - (-6*t^3*m*f + m*(t+m)*(m^4 + m^2*t^2 + t^4) + 3*m*(m-t)*f^2)^3
 CALL Polynomial -f $(DATA)
 
@@ -261,10 +271,10 @@ CALL Polynomial -f $(DATA)
 
 # TEST P08 Example from http://www.solitaryroad.com/c138.html
 # CALL Polynomial -reduce "x1^2 + 2x2^2 - 7x3^2 -4 x1*x2 + 8x1*x3"
-# 
+#
 # TEST P09 prepareCompletion
-# CALL Polynomial -reduce "3x1^2 - 3*x1*x2 + 7*x1*x3"  
-# 
+# CALL Polynomial -reduce "3x1^2 - 3*x1*x2 + 7*x1*x3"
+#
 TEST P09 superscript exponents
 CALL Polynomial "x¹⁴ + 3x²²+4x³+2x⁴⁴⁴+2y⁴-z-2z⁴"
 
@@ -276,15 +286,15 @@ DATA
 -(a41*3 + a42*4 + a43*5 + a44*6)^3
 CALL Polynomial -f $(DATA)
 
-# TEST P11 
-# CALL Polynomial -reduce "3x1^4 - 3*x1*x2 + 7*x1*x3"  
-# 
+# TEST P11
+# CALL Polynomial -reduce "3x1^4 - 3*x1*x2 + 7*x1*x3"
+#
 TEST P12
 CALL Polynomial "w = -(a^2 + b^2)"
 
 # TEST P13 widening for completion
 # CALL Polynomial -reduce "2x^3 + 3x^2 + x + y"
-# 
+#
 TEST P14 Price's  A' matrix times (a,b,c) yields powersum  4*a^2 + 4*b^2 - 4*c^2
 DATA
  (  2*a +   1*b    -1*c)^2
@@ -324,7 +334,7 @@ CALL Polynomial -var "a,b" $(DATA)
 #----------------------------------------------
 # Parsing
 
-TEST PP1 
+TEST PP1
 CALL Polynomial "-1*(2*x^3 + y^4) - (z+5)^2"
 
 TEST PP2 abbreviated
@@ -384,7 +394,7 @@ DATA
  a = m^2        - n^2;
  b =     2*m*n;
  c = m^2        + n^2
-CALL RelationSet -d 1 -f $(DATA) -simplify 
+CALL RelationSet -d 1 -f $(DATA) -simplify
 
 TEST SI8 simplify
 DATA
@@ -392,7 +402,7 @@ DATA
  a = A11*m^2 + A12*m*n + A13*n^2;
  b = A21*m^2 + A22*m*n + A23*n^2;
  c = A31*m^2 + A32*m*n + A33*n^2
-CALL RelationSet -d 1 -f $(DATA) -simplify 
+CALL RelationSet -d 1 -f $(DATA) -simplify
 
 TEST SI9 simplify delta m->m+n, n->m
 DATA
@@ -400,7 +410,7 @@ DATA
  a = A11*(m+n)^2 + A12*(m+n)*m + A13*m^2;
  b = A21*(m+n)^2 + A22*(m+n)*m + A23*m^2;
  c = A31*(m+n)^2 + A32*(m+n)*m + A33*m^2
-CALL RelationSet -d 1 -f $(DATA) -simplify 
+CALL RelationSet -d 1 -f $(DATA) -simplify
 
 TEST SIA simplify all: m^2 + m*n + n^2 + m + n + 1
 DATA
@@ -408,7 +418,7 @@ DATA
  a = A11*m^2 + A12*m*n + A13*n^2 + A14*m + A15*n + A16;
  b = A21*m^2 + A22*m*n + A23*n^2 + A24*m + A25*n + A26;
  c = A31*m^2 + A32*m*n + A33*n^2 + A34*m + A35*n + A36;
-CALL RelationSet -d 1 -f $(DATA) -simplify 
+CALL RelationSet -d 1 -f $(DATA) -simplify
 # simplified and grouped:
 #  + 2*m*(A14*A16 + A24*A26 - A34*A36)
 #  + m^2*(A14^2 + 2*A11*A16 + A24^2 + 2*A21*A26 - A34^2 - 2*A31*A36)
@@ -426,13 +436,13 @@ CALL RelationSet -d 1 -f $(DATA) -simplify
 #  + n^4*(A13^2 + A23^2 - A33^2)
 #  + 1*(A16^2 + A26^2 - A36^2)
 
-TEST SIB Euclid m^2 + m*n + n^2 
+TEST SIB Euclid m^2 + m*n + n^2
 DATA
  a^2 + b^2 = c^2;
  a = 1*m^2 + 0*m*n - 1*n^2;
  b = 0*m^2 + 2*m*n + 0*n^2;
  c = 1*m^2 + 0*m*n + 1*n^2;
-CALL RelationSet -d 1 -f $(DATA) -simplify 
+CALL RelationSet -d 1 -f $(DATA) -simplify
 
 TEST SIC Vieta
 DATA
@@ -442,23 +452,23 @@ DATA
 #  1    0      0      -2   0
 #  0    1      0       0   1
 #  0    2      0       0  -1
-#  1    0      0       1   0  
+#  1    0      0       1   0
  a^3 + b^3 + c^3 = d^3;
  a = (m*(1*m^3 - 2*n^3));
  b = (n*(1*m^3 + 1*n^3));
  c = (n*(2*m^3 - 1*n^3));
  d = (m*(1*m^3 + 1*n^3));
-CALL RelationSet -d 1 -f $(DATA) -simplify 
+CALL RelationSet -d 1 -f $(DATA) -simplify
 
 #----------------
-TEST SL1 rational solution 
+TEST SL1 rational solution
 CALL Polynomial -solution "(2*v+3 + 2)^2 + 2 = (2*v + 3)^3" 0
 
-TEST SL2 rational solution 
+TEST SL2 rational solution
 CALL Polynomial -solution "6*x^3 - 7*x^2 + 1" "-1 / 3"
-TEST SL3 rational solution 
+TEST SL3 rational solution
 CALL Polynomial -solution "6*x^3 - 7*x^2 + 1" 1
-TEST SL4 rational solution 
+TEST SL4 rational solution
 CALL Polynomial -solution "6*x^3 - 7*x^2 + 1" 1/2
 
 #-------------------------------
@@ -513,7 +523,7 @@ TEST VM3 VariableMap.parse
 CALL VariableMap "[0+4a,1+4x,0+2y,1+8z]"
 
 TEST RM1 RefiningMap
-CALL RefiningMap 
+CALL RefiningMap
 
 TEST RM2 RefiningMap.parse
 CALL RefiningMap "[1+4x,0+2y,1+8z]"
@@ -557,7 +567,7 @@ CALL TranspositionSet "a^2 + b^2 = c^2; a=x^2; b=y^2" "a,b,c,x,y" "b,a,c,x,y"
 TEST PT8 TranspositionSet 5 Polynomials: 1
 CALL TranspositionSet \
      "a^4 + b^4 = c^4 + d^4; a=w^2; b=x^2; c=y^2; d=z^2" \
-     "a,b,c,d,w,x,y,z"\ 
+     "a,b,c,d,w,x,y,z"\
      "a,b,d,c,w,x,z,y"
 
 #--------------------------------
@@ -569,12 +579,12 @@ TEST REF1 ReasonFactory
 CALL ReasonFactory
 
 # expanding queue[1]^0,meter=[2,2]*4: -4+15x^2-7y-7y^2 (TPE1)
-# [0+4x,1+4y]:	unknown -> [2] -2+30x^2-7y-14y^2
+# [0+4x,1+4y]:  unknown -> [2] -2+30x^2-7y-14y^2
 TEST REA1 ModAccelerator
 CALL BaseReason -accel \
-	-rset0 "-9+15x^2-7y^2" \
-	-rset2 "-2+30x^2-7y-14y^2" \
-	-rmap2 "[0+4x,1+4y]" 
+  -rset0 "-9+15x^2-7y^2" \
+  -rset2 "-2+30x^2-7y-14y^2" \
+  -rmap2 "[0+4x,1+4y]"
 
 TEST REB1 BaseReason: failure constant
 CALL BaseReason -base -rset2 "4a^2 - 4b + 1"
@@ -584,106 +594,105 @@ CALL BaseReason -base -rset2 "4a^2 + 4b"
 
 TEST RES1 SameReason: same form
 CALL BaseReason -same \
-	-rset0 "2a^2 - 2b + 2" \
-	-rset1 "2a^2 - 2b + 2" \
-	-rset2 "4a^2 - 4b + 4"
+  -rset0 "2a^2 - 2b + 2" \
+  -rset1 "2a^2 - 2b + 2" \
+  -rset2 "4a^2 - 4b + 4"
 
 TEST RES2 SameReason: same with map
 CALL BaseReason -same \
-	-rset0 "a^2+b^2-c^2-d^2; -a+w^2;  -b+ x^2; -c+ y^2; -d+ z^2" \
-	-rset1 "a^2+b^2-c^2-d^2; -a+w^2;  -b+ x^2; -c+ y^2; -d+ z^2" \
-	-rset2 "a^2+b^2-c^2-d^2; -a+4w^2; -b+4x^2; -c+4y^2; -d+4z^2"
+  -rset0 "a^2+b^2-c^2-d^2; -a+w^2;  -b+ x^2; -c+ y^2; -d+ z^2" \
+  -rset1 "a^2+b^2-c^2-d^2; -a+w^2;  -b+ x^2; -c+ y^2; -d+ z^2" \
+  -rset2 "a^2+b^2-c^2-d^2; -a+4w^2; -b+4x^2; -c+4y^2; -d+4z^2"
 
 # from T05:
 # [1+2x,0+2y,1+2z]: unknown -> [2] 2x+6x^2+8x^3+4x^4+4y^4-z-z^2
 # [0+2x,1+2y,1+2z]: transposed [2] by [1,0,2]
 TEST RET1 TranspositionReason
 CALL BaseReason -transp \
-	-rset0 "x^4+y^4-z^2" \
-	-rset1 "2x+6x^2+8x^3+4x^4+4y^4-z-z^2" \
-	-rset2 "4x^4+2y+6y^2+8y^3+4y^4-z-z^2"
-	
+  -rset0 "x^4+y^4-z^2" \
+  -rset1 "2x+6x^2+8x^3+4x^4+4y^4-z-z^2" \
+  -rset2 "4x^4+2y+6y^2+8y^3+4y^4-z-z^2"
+
 TEST RET2 TranspositionReason areTransposable(x,y) = true
 CALL BaseReason -transp -t "a,c" \
-	-rset0 "a^3+b^3+c^3-d^3" \
-	-rset1 "a^3+b^3+c^3-d^3" \
-	-rset2 "a^3+b^3+c^3-d^3" \
-	-rmap2 "[0+1*a,0+1*b,0+1*c,0+1*d]" 
-	
+  -rset0 "a^3+b^3+c^3-d^3" \
+  -rset1 "a^3+b^3+c^3-d^3" \
+  -rset2 "a^3+b^3+c^3-d^3" \
+  -rmap2 "[0+1*a,0+1*b,0+1*c,0+1*d]"
+
 TEST RET3 TranspositionReason
 CALL BaseReason -transp \
-	-rset0 "x^4+y^4+z^2; -2a*b+y^2; -a^2+b^2+z; a^2+b^2-x^2; a-2c*d; b-c^2+d^2; c^2+d^2-x" \
-	-rset1 "x^4+y^4+z^2; -2a*b+y^2; -a^2+b^2+z; a^2+b^2-x^2; a-2c*d; b-c^2+d^2; c^2+d^2-x" \
-	-rset2 "y^4+x^4+z^2; -2a*b+y^2; -a^2+b^2+z; a^2+b^2-x^2; a-2c*d; b-c^2+d^2; c^2+d^2-x"
+  -rset0 "x^4+y^4+z^2; -2a*b+y^2; -a^2+b^2+z; a^2+b^2-x^2; a-2c*d; b-c^2+d^2; c^2+d^2-x" \
+  -rset1 "x^4+y^4+z^2; -2a*b+y^2; -a^2+b^2+z; a^2+b^2-x^2; a-2c*d; b-c^2+d^2; c^2+d^2-x" \
+  -rset2 "y^4+x^4+z^2; -2a*b+y^2; -a^2+b^2+z; a^2+b^2-x^2; a-2c*d; b-c^2+d^2; c^2+d^2-x"
 
 TEST REE1 EvenExponentReason T52
 CALL BaseReason -evenexp \
-	-rset0 "a^4+b^4-c^4-d^4" \
-	-rset1 "1+  a+ 6a^2+16a^3+16a^4+8b+24b^2+32b^3+16b^4-c-6c^2-16c^3-16c^4-16d^4" \
-	-rset2 "6+27a+54a^2+48a^3+16a^4+8b+24b^2+32b^3+16b^4-c-6c^2-16c^3-16c^4-16d^4" \
-	-rmap1 "[1+4a,2+4b,1+4c,0+4d]"\
-	-rmap2 "[3+4a,2+4b,1+4c,0+4d]"
+  -rset0 "a^4+b^4-c^4-d^4" \
+  -rset1 "1+  a+ 6a^2+16a^3+16a^4+8b+24b^2+32b^3+16b^4-c-6c^2-16c^3-16c^4-16d^4" \
+  -rset2 "6+27a+54a^2+48a^3+16a^4+8b+24b^2+32b^3+16b^4-c-6c^2-16c^3-16c^4-16d^4" \
+  -rmap1 "[1+4a,2+4b,1+4c,0+4d]"\
+  -rmap2 "[3+4a,2+4b,1+4c,0+4d]"
 
 TEST REE2 EvenExponentReason T05
 CALL BaseReason -evenexp \
-	-rset0 "x^4+y^4-z^2" \
-	-rset1 "    x+ 6x^2+16x^3+16x^4+y^4-z-4z^2" \
-	-rset2 "5+27x+54x^2+48x^3+16x^4+y^4-z-4z^2" \
-	-rmap1 "[1+4x,0+2y,1+8z]" \
-	-rmap2 "[3+4x,0+2y,1+8z]" 
+  -rset0 "x^4+y^4-z^2" \
+  -rset1 "    x+ 6x^2+16x^3+16x^4+y^4-z-4z^2" \
+  -rset2 "5+27x+54x^2+48x^3+16x^4+y^4-z-4z^2" \
+  -rmap1 "[1+4x,0+2y,1+8z]" \
+  -rmap2 "[3+4x,0+2y,1+8z]"
 
 TEST REI1 SimiliarReason: is mappable by: {a=>1+2*a,b=>2+3*b,c=>c,d=>d}
 CALL BaseReason -similiar \
-	-rset0 "a^3+b^3+c^3-d^3" \
-	-rset1 "9+6a+12a^2+8a^3+36b+54b^2+27b^3+c^3-d^3" \
-	-rset2 "            a^3+            b^3+c^3-d^3"
+  -rset0 "a^3+b^3+c^3-d^3" \
+  -rset1 "9+6a+12a^2+8a^3+36b+54b^2+27b^3+c^3-d^3" \
+  -rset2 "            a^3+            b^3+c^3-d^3"
 
 TEST REP1 PrimitiveReason: true
 CALL BaseReason -primitive \
-	-rset0 "a^3+b^3+c^3-d^3" \
-	-rset1 "a^3+b^3+c^3-d^3" \
-	-rset2 "a^3+b^3+c^3-d^3" \
-	-rmap2 "[0+2a,0+2b,0+2c,0+2d]"
+  -rset0 "a^3+b^3+c^3-d^3" \
+  -rset1 "a^3+b^3+c^3-d^3" \
+  -rset2 "a^3+b^3+c^3-d^3" \
+  -rmap2 "[0+2a,0+2b,0+2c,0+2d]"
 
 TEST REP2 PrimitiveReason: false: m=1
 CALL BaseReason -primitive \
-	-rset0 "a^2+b^2-c^2" \
-	-rset1 "a^2+b^2-c^2" \
-	-rset2 "a^2+b^2-c^2" \
-	-rmap2 "[0+1a,0+1b,0+1c]"
+  -rset0 "a^2+b^2-c^2" \
+  -rset1 "a^2+b^2-c^2" \
+  -rset2 "a^2+b^2-c^2" \
+  -rmap2 "[0+1a,0+1b,0+1c]"
 
 TEST REP3 PrimitiveReason: false: a different
 CALL BaseReason -primitive \
-	-rset0 "a^2+b^2-c^2" \
-	-rset1 "a^2+b^2-c^2" \
-	-rset2 "a^2+b^2-c^2" \
-	-rmap2 "[0+2a,0+2b,1+2c]"
+  -rset0 "a^2+b^2-c^2" \
+  -rset1 "a^2+b^2-c^2" \
+  -rset2 "a^2+b^2-c^2" \
+  -rmap2 "[0+2a,0+2b,1+2c]"
 
 TEST REP4 PrimitiveReason: false: m different
 CALL BaseReason -primitive \
-	-rset0 "a^2+b^2-c^2" \
-	-rset1 "a^2+b^2-c^2" \
-	-rset2 "a^2+b^2-c^2" \
-	-rmap2 "[0+2a,0+2b,0+3c]"
+  -rset0 "a^2+b^2-c^2" \
+  -rset1 "a^2+b^2-c^2" \
+  -rset2 "a^2+b^2-c^2" \
+  -rmap2 "[0+2a,0+2b,0+3c]"
 
 TEST REP5 PrimitiveReason: from REY2
 CALL BaseReason -primitive \
-	-rset0 "x^4+y^4-z^2; -a^2+b^2+x^2; -2a*b+y^2; a^2+b^2-z; b-2c*d; -c^2+d^2+x; -a+c^2+d^2" \
-	-rset1 "x^4+y^4-z^2; -a^2+b^2+x^2; -2a*b+y^2; a^2+b^2-z; b-2c*d; -c^2+d^2+x; -a+c^2+d^2" \
-	-rset2 "x^4+y^4-z^2; -a^2+b^2+x^2; -2a*b+y^2; a^2+b^2-z; b-2c*d; -c^2+d^2+x; -a+c^2+d^2" \
-	-rmap2 "[0+1*a,0+2*b,0+1*c,0+1*d,1+2*x=0,0+2*y=0,1+2*z=0]"
-	
+  -rset0 "x^4+y^4-z^2; -a^2+b^2+x^2; -2a*b+y^2; a^2+b^2-z; b-2c*d; -c^2+d^2+x; -a+c^2+d^2" \
+  -rset1 "x^4+y^4-z^2; -a^2+b^2+x^2; -2a*b+y^2; a^2+b^2-z; b-2c*d; -c^2+d^2+x; -a+c^2+d^2" \
+  -rset2 "x^4+y^4-z^2; -a^2+b^2+x^2; -2a*b+y^2; a^2+b^2-z; b-2c*d; -c^2+d^2+x; -a+c^2+d^2" \
+  -rmap2 "[0+1*a,0+2*b,0+1*c,0+1*d,1+2*x=0,0+2*y=0,1+2*z=0]"
+
 TEST REY1 PythagoreanFork: normal
 CALL BaseReason -pythagoras \
-	-d 2 \
-	-rset0 "x^2+y^2-z^2" \
-	-rset2 "x^2+y^2-z^2" \
-	-rmap2 "[1+2*x,0+2*y,1+2*z]"
+  -d 2 \
+  -rset0 "x^2+y^2-z^2" \
+  -rset2 "x^2+y^2-z^2" \
+  -rmap2 "[1+2*x,0+2*y,1+2*z]"
 
 TEST REY2 PythagoreanFork: proof of FLT(4)
 CALL BaseReason -pythagoras \
-	-d 2 \
-	-rset0 "x^4+y^4-z^2" \
-	-rset2 "x^4+y^4-z^2" \
-	-rmap2 "[1+2*x,0+2*y,1+2*z]"
-	
+  -d 2 \
+  -rset0 "x^4+y^4-z^2" \
+  -rset2 "x^4+y^4-z^2" \
+  -rmap2 "[1+2*x,0+2*y,1+2*z]"
