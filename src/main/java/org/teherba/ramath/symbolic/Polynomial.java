@@ -157,7 +157,7 @@ public class Polynomial implements Cloneable, Serializable {
 
     /** Initializes all simple properties of the object
      */
-    private void initialize() {
+    protected void initialize() {
         setFactor(new Monomial("1"));
         setPseudo(0);
         setRelation(Relator.EQ_0);

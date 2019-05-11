@@ -430,6 +430,17 @@ public class PolyFraction
                                             + "\t" + pfrac1.getSeriesCoefficients(numTerms)
                                             .toString().replaceAll("[\\[\\]]", "")
                                             );
+                                } else if (mode.equals("poly")) {
+                                	String offset1 = parms[iparm++];
+                                    Polynomial num = new Polynomial(parms[iparm ++]);
+                                    Polynomial den = new Polynomial(parms[iparm ++]);
+                                    pfrac1 = new PolyFraction(num, den);
+                                    System.out.println(aseqno
+                                    		+ "\t" + offset1
+                                            + "\t" + pfrac1.toVectors()
+                                            .replaceAll("\\],\\[", "\t")
+                                            .replaceAll("[\\[\\]]", "")
+                                            );
                                 } // switch mode
                             } // is not a comment
                         } // while ! eof

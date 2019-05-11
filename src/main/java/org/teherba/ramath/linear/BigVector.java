@@ -427,8 +427,8 @@ public class BigVector extends Vector implements Cloneable, Serializable {
      *  @return quotient, coefficient of the Taylor series
      */
     public BigInteger divisionStep(BigVector vect2) {
-      BigInteger divisor    = vect2.getBig(0);
-      if (divisor.equals(BigInteger.ZERO)) {
+      	BigInteger divisor    = vect2.getBig(0);
+      	if (divisor.equals(BigInteger.ZERO)) {
             System.out.println("# assertion in BigVector: divisor is zero: num="
                     + this.toString() + ", den=" + vect2.toString());
             return BigInteger.ZERO;

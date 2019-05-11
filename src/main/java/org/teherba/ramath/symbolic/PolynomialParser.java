@@ -189,7 +189,7 @@ public class PolynomialParser extends Polynomial {
                                 }
                                 replaceLower("m-");
                                 break;
-						/*  cf. above: IN_OPERATOR
+                        /*  cf. above: IN_OPERATOR
                             case '*':
                                 replaceLower("p*");
                                 break;
@@ -387,7 +387,7 @@ public class PolynomialParser extends Polynomial {
                                 oper = buffer.toString();
                                 if (false) {
                                 } else if (oper.equals("**")) { // exponentiation
-                                	replaceLower("q^");
+                                    replaceLower("q^");
                                 } else { 
                                     System.err.println("invalid multiplication operator " + oper);
                                 }
@@ -493,109 +493,113 @@ public class PolynomialParser extends Polynomial {
         String elem = null;
         int exponent = 1;
         shuntingYardAlgorithm("(" + input + ")");
-        int ipfix = 0;
-        while (ipfix < postfix.size()) {
-            elem = postfix.get(ipfix ++);
-            if (debug >= 2) {
-                System.out.println("elem: " + elem + ", " + polyStack);
-            }
-            char ch = elem.charAt(0);
-            switch (ch) {
-                // relations
-                case '=':
-                    poly2 = polyStack.pop();
-                    poly1 = polyStack.pop().subtract(poly2);
-                    if (false) {
-                    } else {
-                        poly1.setRelation(Relator.EQ_0);
-                    }
-                    polyStack.push(poly1);
-                    break;
-                case '!':
-                    poly2 = polyStack.pop();
-                    poly1 = polyStack.pop().subtract(poly2);
-                    if (false) {
-                    } else if (elem.equals("!=")) {
-                        poly1.setRelation(Relator.NE_0);
-                    } else {
-                        System.err.println("PolynomialParser.parseFrom: invalid relation \"" + elem + "\"");
-                    }
-                    polyStack.push(poly1);
-                    break;
-                case '>':
-                    poly2 = polyStack.pop();
-                    poly1 = polyStack.pop().subtract(poly2);
-                    if (false) {
-                    } else if (elem.equals(">")) {
-                        poly1.setRelation(Relator.GT_0);
-                    } else if (elem.equals(">=")) {
-                        poly1.setRelation(Relator.GE_0);
-                    } else {
-                        System.err.println("PolynomialParser.parseFrom: invalid relation \"" + elem + "\"");
-                    }
-                    polyStack.push(poly1);
-                    break;
-                case '<':
-                    poly2 = polyStack.pop();
-                    poly1 = polyStack.pop().subtract(poly2).negativeOf(); // 1 < 2 ... 1 - 2 < 0 ... -1 + 2 > 0
-                    if (false) {
-                    } else if (elem.equals("<")) {
-                        poly1.setRelation(Relator.GT_0);
-                    } else if (elem.equals("<=")) {
-                        poly1.setRelation(Relator.GE_0);
-                    } else {
-                        System.err.println("PolynomialParser.parseFrom: invalid relation \"" + elem + "\"");
-                    }
-                    polyStack.push(poly1);
-                    break;
-
-                // additive operators
-                case '+':
-                    poly2 = polyStack.pop();
-                    polyStack.push(polyStack.pop().add     (poly2));
-                    break;
-                case '-':
-                    poly2 = polyStack.pop();
-                    polyStack.push(polyStack.pop().subtract(poly2));
-                    break;
-
-                // multiplicative operators
-                case '*':
-                    poly2 = polyStack.pop();
-                    polyStack.push(polyStack.pop().multiply(poly2));
-                    break;
-                case '/':
-                    poly2 = polyStack.pop();
-                    polyStack.push(polyStack.pop().divide  (poly2));
-                    break;
-                // exponentiation
-                case '^':
-                    poly2 = polyStack.pop();
-                    if (poly2.isConstant()) {
-                        BigInteger brexp = poly2.getConstant();
-                        exponent = brexp.intValue();
-                        polyStack.push(polyStack.pop().pow(exponent));
-                    } else {
-                        System.err.println("PolynomialParser.parseFrom:"
-                                + " exponent must be single natural number instead of \"" + poly2.toString() + "\"");
-                    }
-                    break;
-                default:
-                    if (false) {
-                    } else if (Character.isJavaIdentifierStart(ch)) {
-                        polyStack.push(new Polynomial(new Monomial(elem)));
-                    } else if (Character.isDigit              (ch)) {
-                        polyStack.push(new Polynomial(new Monomial(elem)));
-                    } else { // strange character
-                        System.err.println("PolynomialParser.parseFrom: strange operand \"" + elem + "\"");
-                    }
-                    break;
-            } // switch ch
-        } // while ipfix
-        poly2 = polyStack.pop();
-        setMonomials(poly2.getMonomials());
-        setPseudo   (poly2.getPseudo   ());
-        setRelation (poly2.getRelation ());
+        try {
+            int ipfix = 0;
+            while (ipfix < postfix.size()) {
+                elem = postfix.get(ipfix ++);
+                if (debug >= 2) {
+                    System.out.println("elem: " + elem + ", " + polyStack);
+                }
+                char ch = elem.charAt(0);
+                switch (ch) {
+                    // relations
+                    case '=':
+                        poly2 = polyStack.pop();
+                        poly1 = polyStack.pop().subtract(poly2);
+                        if (false) {
+                        } else {
+                            poly1.setRelation(Relator.EQ_0);
+                        }
+                        polyStack.push(poly1);
+                        break;
+                    case '!':
+                        poly2 = polyStack.pop();
+                        poly1 = polyStack.pop().subtract(poly2);
+                        if (false) {
+                        } else if (elem.equals("!=")) {
+                            poly1.setRelation(Relator.NE_0);
+                        } else {
+                            System.err.println("PolynomialParser.parseFrom: invalid relation \"" + elem + "\"");
+                        }
+                        polyStack.push(poly1);
+                        break;
+                    case '>':
+                        poly2 = polyStack.pop();
+                        poly1 = polyStack.pop().subtract(poly2);
+                        if (false) {
+                        } else if (elem.equals(">")) {
+                            poly1.setRelation(Relator.GT_0);
+                        } else if (elem.equals(">=")) {
+                            poly1.setRelation(Relator.GE_0);
+                        } else {
+                            System.err.println("PolynomialParser.parseFrom: invalid relation \"" + elem + "\"");
+                        }
+                        polyStack.push(poly1);
+                        break;
+                    case '<':
+                        poly2 = polyStack.pop();
+                        poly1 = polyStack.pop().subtract(poly2).negativeOf(); // 1 < 2 ... 1 - 2 < 0 ... -1 + 2 > 0
+                        if (false) {
+                        } else if (elem.equals("<")) {
+                            poly1.setRelation(Relator.GT_0);
+                        } else if (elem.equals("<=")) {
+                            poly1.setRelation(Relator.GE_0);
+                        } else {
+                            System.err.println("PolynomialParser.parseFrom: invalid relation \"" + elem + "\"");
+                        }
+                        polyStack.push(poly1);
+                        break;
+            
+                    // additive operators
+                    case '+':
+                        poly2 = polyStack.pop();
+                        polyStack.push(polyStack.pop().add     (poly2));
+                        break;
+                    case '-':
+                        poly2 = polyStack.pop();
+                        polyStack.push(polyStack.pop().subtract(poly2));
+                        break;
+            
+                    // multiplicative operators
+                    case '*':
+                        poly2 = polyStack.pop();
+                        polyStack.push(polyStack.pop().multiply(poly2));
+                        break;
+                    case '/':
+                        poly2 = polyStack.pop();
+                        polyStack.push(polyStack.pop().divide  (poly2));
+                        break;
+                    // exponentiation
+                    case '^':
+                        poly2 = polyStack.pop();
+                        if (poly2.isConstant()) {
+                            BigInteger brexp = poly2.getConstant();
+                            exponent = brexp.intValue();
+                            polyStack.push(polyStack.pop().pow(exponent));
+                        } else {
+                            System.err.println("PolynomialParser.parseFrom:"
+                                    + " exponent must be single natural number instead of \"" + poly2.toString() + "\"");
+                        }
+                        break;
+                    default:
+                        if (false) {
+                        } else if (Character.isJavaIdentifierStart(ch)) {
+                            polyStack.push(new Polynomial(new Monomial(elem)));
+                        } else if (Character.isDigit              (ch)) {
+                            polyStack.push(new Polynomial(new Monomial(elem)));
+                        } else { // strange character
+                            System.err.println("PolynomialParser.parseFrom: strange operand \"" + elem + "\"");
+                        }
+                        break;
+                } // switch ch
+            } // while ipfix
+            poly2 = polyStack.pop();
+            setMonomials(poly2.getMonomials());
+            setPseudo   (poly2.getPseudo   ());
+            setRelation (poly2.getRelation ());
+        } catch (java.util.EmptyStackException exc) {
+            super.initialize();
+        }
         return this;
     } // parseFrom
 
