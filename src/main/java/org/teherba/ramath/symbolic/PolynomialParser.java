@@ -1,5 +1,6 @@
 /*  PolynomialParser: parser for the recognition of arithmetic expressions
  *  @(#) $Id: PolynomialParser.java 522 2010-07-26 07:14:48Z gfis $
+ *  2019-05-12: ShuntingYard in separate class, unary "-."
  *  2019-05-01: "**" like "^" : exponentiation
  *  2017-05-28: javadoc 1.8
  *  2016-10-04: insert 0 before unary minus after ( = < >
@@ -31,8 +32,9 @@
  * limitations under the License.
  */
 package org.teherba.ramath.symbolic;
-import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.Monomial;
+import  org.teherba.ramath.symbolic.Polynomial;
+import  org.teherba.ramath.symbolic.ShuntingYard;
 import  java.math.BigInteger;
 import  java.util.Set;
 import  java.util.ArrayList;
@@ -60,422 +62,13 @@ public class PolynomialParser extends Polynomial {
     public final static String CVSID = "@(#) $Id: PolynomialParser.java 522 2010-07-26 07:14:48Z gfis $";
 
     /** Debugging switch */
-    private int debug = 0;
+    public int debug = 0;
 
     /** No-args Constructor
      */
     public PolynomialParser() {
         super();
     } // no-args Constructor
-
-    /** state of the finite automaton */
-    private enum State
-            { IN_START      // at the beginning of the input string
-            , IN_NAME       // after the first letter of a name
-            , IN_NUMBER     // after the first digit of a number
-            , IN_EXPONENT   // after the first superscripted digit
-            , IN_OPERATOR   // after first character of a relational or boolean operator, or after '%'
-            , IN_CLOSE      // after ')' - eventually insert '*'
-            , IN_COMMENT    // after '#' - ignore all up to "\n" or end of string
-            };
-
-    /** pushdown stack for operators and parentheses */
-    private Stack    <String> operStack = null;
-    /** append the operands and postfix operators to this list */
-    private ArrayList<String> postfix   = null;
-
-    /** Gets the postfix list of operands and operators.
-     *  @return postfix polish notation of the formula
-     */
-    public ArrayList<String> getPostfix() {
-        return postfix;
-    } // getPostfix
-
-    /** Pushes an operator and its precedence.
-     *  @param precOper precedence (1 lowercase letter) and operator (1-2 characters)
-     */
-    private void pushOper(String precOper) {
-        operStack.push(precOper);
-    } // pushOper
-
-    /** Pops all operators with lower precedence, and pushes the current operator
-     *  @param precOper precedence (1 lowercase letter) and operator (1-2 characters)
-     */
-    private void replaceLower(String precOper) {
-        boolean busy = true;
-        while (busy && ! operStack.empty()) {
-            String elem = operStack.peek();
-            if (precOper.charAt(0) <= elem.charAt(0) && elem.charAt(1) != '(') {
-                elem = operStack.pop();
-                postfix.add(elem.substring(1));
-            } else { // new precedence is higher
-                busy = false;
-            }
-        } // while
-        pushOper(precOper);
-    } // replaceLower
-
-    /** Reads an input string containing an arithmetic expression with infix notation
-     *  and fills a list of output symbols representing the same expression in postfix notation (reverse polish notation).
-     *  The railroad shunting yard algorithm is that of Edsger Dijkstra (1961) as described in
-     *  <a href="http://en.wikipedia.org/wiki/Shunting-yard_algorithm">Wikipedia</a>.
-     *  @param input the input string, with whitespace, for example " + 17*a0^2*a1 + a2^2*a3^3 - 4*b4"
-     *  <p>
-     *  The precedence of operators (in <em>precOper, operStack</em>) is indicated
-     *  by the ASCII order of lowercase letters according to the following table:
-     *  <table><caption>Operator Precedence and corresponding Codes</caption>
-     *  <tr><td>|                   </td><td>j</td></tr>
-     *  <tr><td>&amp;               </td><td>k</td></tr>
-     *  <tr><td>&lt;= &gt;= == !=   </td><td>l</td></tr>
-     *  <tr><td>* /                 </td><td>p</td></tr>
-     *  <tr><td>^                   </td><td>q</td></tr>
-     *  <tr><td>(                   </td><td>y</td></tr>
-     *  </table>
-     */
-    private void shuntingYardAlgorithm(String input) {
-        StringBuffer buffer = new StringBuffer(16); //accumulate variable names, numbers and operators here
-        String elem = null; // next element on stack / in postfix list
-        char ch = ' ';
-        boolean busy = false;
-        boolean readOff = true;
-        operStack = new Stack<String>();
-        int ipos = 0; // position in input string
-        State state = State.IN_START;
-        char prev = ' '; // previous non-space character, for unary minus detection
-        while (ipos < input.length()) {
-            if (readOff) {
-                ch = input.charAt(ipos);
-            }
-            readOff = true;
-            if (! Character.isWhitespace(ch)) { // ignore whitespace
-                switch (state) {
-                    case IN_START:
-                        switch (ch) {
-                            case '<':
-                            case '>':
-                            case '=':
-                            case '!':
-                            case '&':
-                            case '*':
-                        //  case '|':
-                                buffer.setLength(0);
-                                buffer.append(ch);
-                                state = State.IN_OPERATOR;
-                                break;
-                            case '%':
-                                int ich = 32; // ' '
-                                if (ipos < input.length() - 2 && Character.isLetterOrDigit(input.charAt(ipos + 1))) { // hex pair follows
-                                    try {
-                                        ch = (char) Integer.parseInt(input.substring(ipos + 1, ipos + 3), 16);
-                                        ipos += 2;
-                                        readOff = false;
-                                    } catch (Exception exc) { // no digits - continue
-                                        // ignore
-                                    }
-                                } // hex pair follows
-                                break;
-                            case '+':
-                                if (prev != '(') {
-                                    replaceLower("m+");
-                                } // else ignore unary +
-                                break;
-                            case '-':
-                                if (   prev == '('
-                                    || prev == '='
-                                    || prev == '<'
-                                    || prev == '>'
-                                        ) {
-                                    postfix.add("0"); // a zero is inserted before a unary "m-"
-                                }
-                                replaceLower("m-");
-                                break;
-                        /*  cf. above: IN_OPERATOR
-                            case '*':
-                                replaceLower("p*");
-                                break;
-                        */
-                            case '/':
-                                replaceLower("p/");
-                                break;
-                            case '^': // right-associative ???
-                                replaceLower("q^");
-                                break;
-                            case '¹': // '\u00b9', super 1
-                                replaceLower("q^");
-                                buffer.setLength(0);
-                                buffer.append('1');
-                                state = State.IN_EXPONENT;
-                                break;
-                            case '²': // '\u00b2', super 2
-                                replaceLower("q^");
-                                buffer.setLength(0);
-                                buffer.append('2');
-                                state = State.IN_EXPONENT;
-                                break;
-                            case '³': // '\u00b3', super 3
-                                replaceLower("q^");
-                                buffer.setLength(0);
-                                buffer.append('3');
-                                state = State.IN_EXPONENT;
-                                break;
-                            case '(':
-                                pushOper("y("); // higher than all other precedences
-                                break;
-                            case ')': // find the corresponding opening parenthesis on the stack
-                                busy = true;
-                                while (busy && ! operStack.empty()) {
-                                    elem = (String) operStack.pop();
-                                    if (elem.charAt(1) == '(') {
-                                        busy = false;
-                                    } else { // other operation
-                                        postfix.add(elem.substring(1));
-                                    }
-                                } // while
-                                state = State.IN_CLOSE;
-                                break;
-                            case '#':
-                                state = State.IN_COMMENT;
-                                break;
-                            default:
-                                if (false) {
-                                } else if (Character.isJavaIdentifierStart(ch)) {
-                                    buffer.setLength(0);
-                                    buffer.append(ch);
-                                    state = State.IN_NAME;
-                                } else if (ch >= '\u2070' && ch <= '\u2079') {
-                                    replaceLower("q^");
-                                    buffer.setLength(0);
-                                    buffer.append(Character.forDigit(ch - 0x2070, 10));
-                                    state = State.IN_EXPONENT;
-                                } else if (Character.isDigit(ch)) {
-                                    buffer.setLength(0);
-                                    buffer.append(ch);
-                                    state = State.IN_NUMBER;
-                                } else { // invalid character
-                                    System.err.println("invalid character in expression: " + input.substring(ipos));
-                                }
-                                break;
-                        } // switch ch
-                        break; // IN_START
-
-                    case IN_NAME:
-                        if (false) {
-                        } else if (Character.isJavaIdentifierPart(ch)) {
-                            buffer.append(ch);
-                        } else if (ch == '(') {
-                            postfix.add(buffer.toString());
-                            replaceLower("p*");
-                            readOff = false;
-                            state = State.IN_START;
-                        } else {
-                            postfix.add(buffer.toString());
-                            readOff = false;
-                            state = State.IN_START;
-                        }
-                        break; // IN_NAME
-
-                    case IN_NUMBER:
-                        switch (ch) {
-                            case '(':
-                                postfix.add(buffer.toString());
-                                replaceLower("p*");
-                                readOff = false;
-                                state = State.IN_START;
-                                break;
-                            case '¹': // '\u00b9', super 1, right-associative ???
-                            case '²': // '\u00b2', super 2, right-associative ???
-                            case '³': // '\u00b3', super 3, right-associative ???
-                                postfix.add(buffer.toString());
-                                readOff = false;
-                                state = State.IN_START;
-                                break;
-                            default:
-                                if (false) {
-                                } else if (ch >= '\u2070' && ch <= '\u2079') {
-                                    postfix.add(buffer.toString());
-                                    readOff = false;
-                                    state = State.IN_START;
-                                } else if (ch >= '0' && ch <= '9') { // Character.isDigit(ch)) {
-                                    buffer.append(ch);
-                                } else if (Character.isLetter(ch)) { // imply a multiplication operator
-                                    postfix.add(buffer.toString());
-                                    replaceLower("p*");
-                                    readOff = false;
-                                    state = State.IN_START;
-                                } else {
-                                    postfix.add(buffer.toString());
-                                    readOff = false;
-                                    state = State.IN_START;
-                                }
-                                break;
-                        } // switch ch
-                        break; // IN_NUMBER
-
-                    case IN_EXPONENT: // similiar to, but not identical with IN_NUMBER
-                        switch (ch) {
-                            case '(':
-                                postfix.add(buffer.toString());
-                                replaceLower("p*");
-                                readOff = false;
-                                state = State.IN_START;
-                                break;
-                            case '¹': // '\u00b9', super 1, right-associative ???
-                                buffer.append('1');
-                                break;
-                            case '²': // '\u00b2', super 2, right-associative ???
-                                buffer.append('2');
-                                break;
-                            case '³': // '\u00b3', super 3, right-associative ???
-                                buffer.append('3');
-                                break;
-                            default:
-                                if (false) {
-                                } else if (ch >= '\u2070' && ch <= '\u2079') {
-                                    buffer.append(Character.forDigit(ch - 0x2070, 10));
-                                } else if (ch >= '0' && ch <= '9') { // Character.isDigit(ch)) {
-                                    postfix.add(buffer.toString());
-                                    replaceLower("p*");
-                                    readOff = false;
-                                    state = State.IN_START;
-                                } else if (Character.isLetter(ch)) { // imply a multiplication operator
-                                    postfix.add(buffer.toString());
-                                    replaceLower("p*");
-                                    readOff = false;
-                                    state = State.IN_START;
-                                } else {
-                                    postfix.add(buffer.toString());
-                                    readOff = false;
-                                    state = State.IN_START;
-                                }
-                                break;
-                        } // switch ch
-                        break; // IN_NUMBER
-
-                    case IN_OPERATOR:
-                        String oper = null;
-                        switch (ch) {
-                            case '<':
-                            case '>':
-                            case '=':
-                                buffer.append(ch);
-                                oper = buffer.toString();
-                                if (false) {
-                                } else if (oper.equals("<=")) {
-                                    replaceLower("l<=");
-                                } else if (oper.equals(">=")) {
-                                    replaceLower("l>=");
-                                } else if (oper.equals("==")) {
-                                    replaceLower("l=" );
-                                } else if (oper.equals("=<")) {
-                                    replaceLower("l<=");
-                                } else if (oper.equals("=>")) {
-                                    replaceLower("l>=");
-                                } else if (oper.equals("!=")) {
-                                    replaceLower("l!=");
-                                } else if (oper.equals("<>")) {
-                                    replaceLower("l!=");
-                                } else if (oper.equals("><")) {
-                                    replaceLower("l!=");
-                                } else { // >> <<
-                                    System.err.println("invalid relational operator " + oper);
-                                }
-                                break;
-                        //  case '!': // not - later?
-                        //  case '|': // or  - later?
-                            case '*':
-                                buffer.append(ch);
-                                oper = buffer.toString();
-                                if (false) {
-                                } else if (oper.equals("**")) { // exponentiation
-                                    replaceLower("q^");
-                                } else { 
-                                    System.err.println("invalid multiplication operator " + oper);
-                                }
-                                break;
-                            case '&':
-                                buffer.append(ch);
-                                oper = buffer.toString();
-                                if (false) {
-                                } else if (oper.equals("&&")) {
-                                    replaceLower("k&");
-                                } else { // >> <<
-                                    System.err.println("invalid boolean operator " + oper);
-                                }
-                                break;
-                            default:
-                                char ch2 = buffer.charAt(0);
-                                switch (ch2) {
-                                    case '<':
-                                    case '>':
-                                    case '=':
-                                        replaceLower("l" + buffer.substring(0, 1));
-                                        break;
-                                    case '!': // maybe supported later?
-                                        break;
-                                    case '*':
-                                        replaceLower("p" + buffer.substring(0, 1));
-                                        break;
-                                    case '&':
-                                        replaceLower("k" + buffer.substring(0, 1));
-                                        break;
-                                    case '|': // maybe supported later?
-                                        replaceLower("j" + buffer.substring(0, 1));
-                                        break;
-                                    default: // should never happen
-                                        break;
-                                } // switch 2nd ch
-                                readOff = false;
-                                break;
-                        } // switch 1st ch
-                        state = State.IN_START;
-                        break; // IN_OPERATOR
-
-                    case IN_CLOSE: // after ')' - eventually insert a '*'
-                        if (false) {
-                        } else if (Character.isJavaIdentifierPart(ch)) { // following identifier
-                            replaceLower("p*");
-                        } else if (ch == '(') { // following "("
-                            replaceLower("p*");
-                        }
-                        readOff = false;
-                        state = State.IN_START;
-                        break; // IN_CLOSE
-
-                    case IN_COMMENT: // after '#' - skip until "\n" or EOS
-                        if (false) {
-                        } else if (ch == '\n') {
-                            state = State.IN_START;
-                        }
-                        break; // IN_COMMENT
-
-                    default: // should never be reached
-                        System.err.println("invalid state " + state + " in PolynomialParser.shuntingYardAlgorithm");
-                        state = State.IN_START;
-                        break;
-                } // switch state
-                if (readOff) {
-                    ipos ++;
-                    prev = ch;
-                }
-                // if not whitespace
-            } else {
-                ipos ++; // ignore all whitespace
-            }
-            if (debug >= 1) {
-                System.out.println(state + "," + ch + ", \toperStack=" + operStack + ", \tpostfix=" + postfix);
-            }
-        } // while ipos
-
-        // now move all remaining operations to the postfix queue
-        while (! operStack.empty()) {
-            elem = (String) operStack.pop();
-            if (elem.charAt(1) == '(') {
-                // error
-            } else { // other operation
-                postfix.add(elem.substring(1));
-            }
-        } // while
-    } // shuntingYardAlgorithm
 
     /** Parses a string and returns a {@link Polynomial}. Error messages may
      *  be printed to STDERR if parsing could not proceed.
@@ -485,14 +78,14 @@ public class PolynomialParser extends Polynomial {
      *  with integer (non-variable) exponents.
      */
     public Polynomial parseFrom(String input) {
-        postfix = new ArrayList<String>(256);
+        ArrayList<String> postfix = (new ShuntingYard()).convertToPostfix("(" + input + ")");
         Stack<Polynomial> polyStack = new Stack<Polynomial>();
         Polynomial poly1 = null;
         Polynomial poly2 = null;
         // polyStack contains: ... poly1 poly2 <operator>
         String elem = null;
         int exponent = 1;
-        shuntingYardAlgorithm("(" + input + ")");
+        
         try {
             int ipfix = 0;
             while (ipfix < postfix.size()) {
@@ -557,7 +150,12 @@ public class PolynomialParser extends Polynomial {
                         break;
                     case '-':
                         poly2 = polyStack.pop();
-                        polyStack.push(polyStack.pop().subtract(poly2));
+                        if (false) {
+                        } else if (elem.equals("-.")) { // unary -
+                        	polyStack.push(poly2.negativeOf());
+                        } else if (elem.equals("-")) {
+                        	polyStack.push(polyStack.pop().subtract(poly2));
+                        }
                         break;
             
                     // multiplicative operators
@@ -609,13 +207,13 @@ public class PolynomialParser extends Polynomial {
      */
     public static void main(String[] args) {
         PolynomialParser parser = new PolynomialParser();
+		parser.debug = 2;
         Polynomial poly = new Polynomial();
         if (args.length == 0) {
             poly = parser.parseFrom("(3*a²+b^2)-3*(c²+d^2)+0*e");
         } else { // with arguments
             poly = parser.parseFrom(args[0]);
         } // with args
-        System.out.println(parser.getPostfix());
         System.out.println(parser.toString());
         System.out.println(poly.toString());
     } // main
