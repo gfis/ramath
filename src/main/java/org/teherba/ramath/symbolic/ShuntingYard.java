@@ -65,8 +65,8 @@ public class ShuntingYard {
     /** No-args Constructor
      */
     public ShuntingYard() {
-		postfix   = new ArrayList<String>(256);
-		operStack = new Stack    <String>();
+        postfix   = new ArrayList<String>(256);
+        operStack = new Stack    <String>();
     } // no-args Constructor
 
     /** Appends an operand or operator to the postfix list.
@@ -382,19 +382,37 @@ public class ShuntingYard {
                                 break;
                             case '-':
                                 buffer.append(ch);
-                                oper = buffer.toString();
-                                if (false) {
-                                } else if (oper.equals("+-")) { // ignore "+"
-                                    popLowerSameAndPush("m-");
-                                } else if (oper.equals("*-")) { // unary "-"
-                                    popLowerSameAndPush("p*");
-                                    popLowerSameAndPush("x-."); // unary "-", negate
-                                } else if (oper.equals("/-")) { // unary "-"
-                                    popLowerSameAndPush("p/");
-                                    popLowerSameAndPush("x-."); // unary "-", negate
-                                } else {
-                                    System.err.println("invalid unary minus " + oper);
-                                }
+                                switch (buffer.charAt(0)) {
+                                    case '<':
+                                    case '>':
+                                    case '=':
+                                        popLowerSameAndPush("l" + buffer.substring(0, 1));
+                                        postfixAppend("0"); // a zero is inserted before an unary "-"
+                                        popLowerSameAndPush("m-");
+                                        break;
+                                    case '!': // maybe supported later?
+                                        break;
+                                    case '*':
+                                        popLowerSameAndPush("p*");
+                                        popLowerSameAndPush("x-."); // unary "-", negate
+                                        break;
+                                    case '/':
+                                        popLowerSameAndPush("p/");
+                                        popLowerSameAndPush("x-."); // unary "-", negate
+                                        break;
+                                    case '&':
+                                        popLowerSameAndPush("k" + buffer.substring(0, 1));
+                                        postfixAppend("0"); // a zero is inserted before an unary "-"
+                                        popLowerSameAndPush("m-");
+                                        break;
+                                    case '|': // maybe supported later?
+                                        popLowerSameAndPush("j" + buffer.substring(0, 1));
+                                        postfixAppend("0"); // a zero is inserted before an unary "-"
+                                        popLowerSameAndPush("m-");
+                                      break;
+                                    default: // should never happen
+                                        break;
+                                } // switch 2nd ch
                                 break;
                             case '+':
                                 buffer.append(ch);

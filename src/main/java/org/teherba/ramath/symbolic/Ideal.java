@@ -1,5 +1,6 @@
-/*  Ideal over a Polynomial ring - Gröbner basis methods
+/*  Ideal over a Polynomial ring - Groebner basis methods
  *  @(#) $Id: Polynomial.java 744 2011-07-26 06:29:20Z gfis $
+ *  2019-05-17: PolynomialParser -> Polynomial
  *  2016-07-09: Signature
  *  2015-11-16, Georg Fischer: extracted from Polynomial.java
  */
@@ -20,7 +21,7 @@
  */
 package org.teherba.ramath.symbolic;
 import  org.teherba.ramath.symbolic.Monomial;
-import  org.teherba.ramath.symbolic.PolynomialParser;
+import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.util.ExpressionReader;
 import  java.io.Serializable;
 import  java.util.ArrayList;
@@ -317,7 +318,7 @@ x^2 + 3*x^3 + 2*x^4
                     polys = new ArrayList<Polynomial>(16);
                     System.out.println("Input:");
                     while (ipoly < exprs.length) {
-                        polys.add((new PolynomialParser()).parseFrom(exprs[ipoly]));
+                        polys.add(Polynomial.parse(exprs[ipoly]));
                         System.out.println(polys.get(ipoly));
                         ipoly ++;
                     } // while ipoly
@@ -332,11 +333,11 @@ x^2 + 3*x^3 + 2*x^4
                 } else if (opt.startsWith("-mdiv")) {
                     exprs = ereader.getArguments(iarg, args);
                     ipoly = 0;
-                    poly1 = (new PolynomialParser()).parseFrom(exprs[ipoly]);
+                    poly1 = Polynomial.parse(exprs[ipoly]);
                     ipoly ++;
                     polys = new ArrayList<Polynomial>(16);
                     while (ipoly < exprs.length) {
-                        polys.add((new PolynomialParser()).parseFrom(exprs[ipoly]));
+                        polys.add(Polynomial.parse(exprs[ipoly]));
                         ipoly ++;
                     } // while ipoly
                     System.out.println("multiDivide(" + poly1.toString() + ") = "

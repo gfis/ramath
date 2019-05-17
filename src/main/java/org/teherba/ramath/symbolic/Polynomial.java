@@ -1,6 +1,7 @@
 /*  Polynomial: a symbolic, multivariate Polynomial with addition, multiplication,
  *  exponentiation, comparision and other operations
  *  @(#) $Id: Polynomial.java 744 2011-07-26 06:29:20Z gfis $
+ *  2019-05-17: PolynomialParser replaced (partly) by ShuntingYard
  *  2019-01-05: toCoefficients
  *  2017-05-28: javadoc 1.8
  *  2016-07-09: Signature
@@ -42,8 +43,8 @@
  */
 package org.teherba.ramath.symbolic;
 import  org.teherba.ramath.symbolic.Monomial;
-import  org.teherba.ramath.symbolic.PolynomialParser;
 import  org.teherba.ramath.symbolic.RelationSet;
+import  org.teherba.ramath.symbolic.ShuntingYard;
 import  org.teherba.ramath.symbolic.Signature;
 import  org.teherba.ramath.symbolic.VariableMap;
 import  org.teherba.ramath.BigRational;
@@ -62,6 +63,7 @@ import  java.util.ArrayList;
 import  java.util.Iterator;
 import  java.util.Map;
 import  java.util.Set;
+import  java.util.Stack;
 import  java.util.TreeMap;
 
 /** A {@link Polynomial} is a sum of {@link Monomial}s, ordered by the signatures
@@ -152,7 +154,7 @@ public class Polynomial implements Cloneable, Serializable {
      *  @param expr a sum of signed monomials
      */
     public Polynomial(String expr) {
-        this((new PolynomialParser()).parseFrom(expr));
+        this(Polynomial.parse(expr));
     } // Constructor(String)
 
     /** Initializes all simple properties of the object
@@ -187,7 +189,123 @@ public class Polynomial implements Cloneable, Serializable {
      *  @return a reference to a new Polynomial
      */
     public static Polynomial parse(String input) {
-        return (new PolynomialParser()).parseFrom(input);
+        ArrayList<String> postfix = (new ShuntingYard()).convertToPostfix("(" + input + ")");
+        Stack<Polynomial> polyStack = new Stack<Polynomial>();
+        Polynomial poly1 = null;
+        Polynomial poly2 = null;
+        // polyStack contains: ... poly1 poly2 <operator>
+        String elem = null;
+        int exponent = 1;
+        
+        try {
+            int ipfix = 0;
+            while (ipfix < postfix.size()) {
+                elem = postfix.get(ipfix ++);
+                if (debug >= 2) {
+                    System.out.println("elem: " + elem + ", " + polyStack);
+                }
+                char ch = elem.charAt(0);
+                switch (ch) {
+                    // relations
+                    case '=':
+                        poly2 = polyStack.pop();
+                        poly1 = polyStack.pop().subtract(poly2);
+                        if (false) {
+                        } else {
+                            poly1.setRelation(Relator.EQ_0);
+                        }
+                        polyStack.push(poly1);
+                        break;
+                    case '!':
+                        poly2 = polyStack.pop();
+                        poly1 = polyStack.pop().subtract(poly2);
+                        if (false) {
+                        } else if (elem.equals("!=")) {
+                            poly1.setRelation(Relator.NE_0);
+                        } else {
+                            System.err.println("PolynomialParser.parseFrom: invalid relation \"" + elem + "\"");
+                        }
+                        polyStack.push(poly1);
+                        break;
+                    case '>':
+                        poly2 = polyStack.pop();
+                        poly1 = polyStack.pop().subtract(poly2);
+                        if (false) {
+                        } else if (elem.equals(">")) {
+                            poly1.setRelation(Relator.GT_0);
+                        } else if (elem.equals(">=")) {
+                            poly1.setRelation(Relator.GE_0);
+                        } else {
+                            System.err.println("PolynomialParser.parseFrom: invalid relation \"" + elem + "\"");
+                        }
+                        polyStack.push(poly1);
+                        break;
+                    case '<':
+                        poly2 = polyStack.pop();
+                        poly1 = polyStack.pop().subtract(poly2).negativeOf(); // 1 < 2 ... 1 - 2 < 0 ... -1 + 2 > 0
+                        if (false) {
+                        } else if (elem.equals("<")) {
+                            poly1.setRelation(Relator.GT_0);
+                        } else if (elem.equals("<=")) {
+                            poly1.setRelation(Relator.GE_0);
+                        } else {
+                            System.err.println("PolynomialParser.parseFrom: invalid relation \"" + elem + "\"");
+                        }
+                        polyStack.push(poly1);
+                        break;
+            
+                    // additive operators
+                    case '+':
+                        poly2 = polyStack.pop();
+                        polyStack.push(polyStack.pop().add     (poly2));
+                        break;
+                    case '-':
+                        poly2 = polyStack.pop();
+                        if (false) {
+                        } else if (elem.equals("-.")) { // unary -
+                        	polyStack.push(poly2.negativeOf());
+                        } else if (elem.equals("-")) {
+                        	polyStack.push(polyStack.pop().subtract(poly2));
+                        }
+                        break;
+            
+                    // multiplicative operators
+                    case '*':
+                        poly2 = polyStack.pop();
+                        polyStack.push(polyStack.pop().multiply(poly2));
+                        break;
+                    case '/':
+                        poly2 = polyStack.pop();
+                        polyStack.push(polyStack.pop().divide  (poly2));
+                        break;
+                    // exponentiation
+                    case '^':
+                        poly2 = polyStack.pop();
+                        if (poly2.isConstant()) {
+                            BigInteger brexp = poly2.getConstant();
+                            exponent = brexp.intValue();
+                            polyStack.push(polyStack.pop().pow(exponent));
+                        } else {
+                            System.err.println("PolynomialParser.parseFrom:"
+                                    + " exponent must be single natural number instead of \"" + poly2.toString() + "\"");
+                        }
+                        break;
+                    default:
+                        if (false) {
+                        } else if (Character.isJavaIdentifierStart(ch)) {
+                            polyStack.push(new Polynomial(new Monomial(elem)));
+                        } else if (Character.isDigit              (ch)) {
+                            polyStack.push(new Polynomial(new Monomial(elem)));
+                        } else { // strange character
+                            System.err.println("PolynomialParser.parseFrom: strange operand \"" + elem + "\"");
+                        }
+                        break;
+                } // switch ch
+            } // while ipfix
+            poly2 = polyStack.pop();
+        } catch (java.util.EmptyStackException exc) {
+        }
+        return poly2;
     } // parse
 
     /*-------------- bean methods, setters and getters -----------------------------*/

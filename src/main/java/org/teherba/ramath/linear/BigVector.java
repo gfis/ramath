@@ -298,7 +298,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
     //========================
     /** Greatest common divisor of <em>this</em> BigVector's elements
      *  @return a BigInteger &gt;= 1
-     */
+   S  */
     public BigInteger gcdBig() {
         return gcd(this.vector);
     } // gcdBig()
