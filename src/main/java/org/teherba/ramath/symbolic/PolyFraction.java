@@ -18,6 +18,7 @@
  * limitations under the License.
  */
 package org.teherba.ramath.symbolic;
+import  org.teherba.ramath.symbolic.Monomial;
 import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.Coefficient;
 import  org.teherba.ramath.linear.BigVector;
@@ -30,7 +31,9 @@ import  java.io.Serializable;
 import  java.nio.channels.Channels;
 import  java.nio.channels.ReadableByteChannel;
 import  java.math.BigInteger;
+import  java.util.ArrayList;
 import  java.util.Iterator;
+import  java.util.Stack;
 import  org.apache.log4j.Logger;
 
 /** A PolyFraction is a pair of univariate {@link Polynomial}s which represent
@@ -63,8 +66,10 @@ public class PolyFraction
     /** No-args constructor for an empty PolyFraction.
      */
     public PolyFraction() {
-        log = Logger.getLogger(PolyFraction.class.getName());
-        polynomials     = new Polynomial[2];
+    	polynomials = new Polynomial[] 
+    			{ new Polynomial(new Monomial(Coefficient.ZERO))
+        		, new Polynomial(new Monomial(Coefficient.ONE ))
+        		};
     } // Constructor()
 
     /** Construct from a pair of {@link Polynomial}s.
@@ -72,7 +77,8 @@ public class PolyFraction
      *  @param den polynomial for the denominator
      */
     public PolyFraction(Polynomial num, Polynomial den) {
-        this(new Polynomial[] { num, den });
+    	polynomials = new Polynomial[] { num, den };
+        log = Logger.getLogger(PolyFraction.class.getName());
     } // Constructor(Polynomial, Polynomial)
 
     /** Construct from a pair of Strings.
@@ -80,32 +86,17 @@ public class PolyFraction
      *  @param den polynomial for the denominator
      */
     public PolyFraction(String num, String den) {
-        this(new String[] { num, den });
+        this(Polynomial.parse(num), Polynomial.parse(den));
     } // Constructor(String, String)
 
     /** Construct from an array of Strings which represent {@link Polynomial}s.
      *  @param exprs array of String expressions
      */
     public PolyFraction(String[] exprs) {
-        this();
         int ipoly = 0;
-        while (ipoly < 2) {
-            polynomials[ipoly] = new Polynomial(exprs[ipoly]);
-            ipoly ++;
-        } // while ipoly
+		setNum(Polynomial.parse(exprs[ipoly ++]));
+		setDen(Polynomial.parse(exprs[ipoly ++]));
     } // Constructor(String[])
-
-    /** Construct from an array of {@link Polynomial}s.
-     *  @param polys array of Polynomials
-     */
-    public PolyFraction(Polynomial[] polys) {
-        this();
-        int ipoly = 0;
-        while (ipoly < 2) {
-            polynomials[ipoly] = polys[ipoly];
-            ipoly ++;
-        } // while ipoly
-    } // Constructor(Polynomial[])
 
     /** Construct from an two {@link BigVector}s.
      *  @param num BigVector for the coefficients of the numerator
@@ -113,14 +104,102 @@ public class PolyFraction
      */
     public PolyFraction(BigVector num, BigVector den) {
         this(num.getPolynomial(), den.getPolynomial());
-    } // Constructor(BigVecto, BigVector)
+    } // Constructor(BigVector, BigVector)
 
     /** Deep copy of this PolyFraction with all {@link Polynomial}s.
      *  @return independant copy of the PolyFraction
      */
     public PolyFraction clone() {
-        return new PolyFraction(this.get(0).clone(), this.get(1).clone());
+        return new PolyFraction(this.getNum().clone(), this.getDen().clone());
     } // clone
+
+    /** Returns a new PolyFraction constructed from a String representation, possibly with an
+     *  error message inserted at the point where parsing could not proceed.
+     *  @param input the input string, with whitespace, for example " + 17*a0^2*a1 + a2^2*a3^3 - 4*b4"
+     *  @return a new PolyFraction, or null if no valid fraction could be recognized
+     */
+    public static PolyFraction parse(String input) {
+        PolyFraction result = null; // assume failure
+        ArrayList<String> postfix = (new ShuntingYard()).convertToPostfix("(" + input + ")");
+        Stack<PolyFraction> pfrStack = new Stack<PolyFraction>();
+        PolyFraction pfr1 = null;
+        PolyFraction pfr2 = null;
+        // pfrStack contains: ... pfr1 pfr2 <operator>
+        String elem = null;
+        int exponent = 1;
+        boolean busy = true;
+        try {
+            int ipfix = 0;
+            while (busy && ipfix < postfix.size()) {
+                elem = postfix.get(ipfix ++);
+                if (debug >= 2) {
+                    System.out.println("elem: " + elem + ", " + pfrStack);
+                }
+                char ch = elem.charAt(0);
+                switch (ch) {           
+                    // additive operators
+                    case '+':
+                        pfr2 = pfrStack.pop();
+                        pfrStack.push(pfrStack.pop().add(pfr2));
+                        break;
+                    case '-':
+                        pfr2 = pfrStack.pop();
+                        if (false) {
+                        } else if (elem.equals("-.")) { // unary -
+                            pfrStack.push(pfr2.negate());
+                        } else if (elem.equals("-")) {
+                            pfrStack.push(pfrStack.pop().subtract(pfr2));
+                        }
+                        break;
+            
+                    // multiplicative operators
+                    case '*':
+                        pfr2 = pfrStack.pop();
+                        pfrStack.push(pfrStack.pop().multiply(pfr2));
+                        break;
+                    case '/':
+                        pfr2 = pfrStack.pop();
+                        pfrStack.push(pfrStack.pop().divide  (pfr2));
+                        break;
+                        
+                    // exponentiation
+                    case '^':
+                        pfr2 = pfrStack.pop();
+                        if (pfr2.isConstant()) {
+                            BigInteger brexp = pfr2.getConstant();
+                            exponent = brexp.intValue();
+                            pfrStack.push(pfrStack.pop().pow(exponent));
+                        } else {
+                            pfrStack.removeAllElements();
+                            result = null;
+                            busy = false;
+                        /*  System.err.println("PolyFraction.parse:"
+                                    + " exponent must be single natural number instead of \"" + pfr2.toString() + "\"");
+                        */
+                        }
+                        break;
+                        
+                    default:
+                        if (false) {
+                        } else if (Character.isJavaIdentifierStart(ch)) {
+                            pfrStack.push(PolyFraction.parse(elem));
+                        } else if (Character.isDigit              (ch)) {
+                            pfrStack.push(PolyFraction.parse(elem));
+                        } else { // strange character
+                            System.err.println("PolyFraction.parse: strange operand \"" + elem + "\"");
+                            pfrStack.removeAllElements();
+                            result = null;
+                            busy = false;
+                        }
+                        break;
+                } // switch ch
+            } // while ipfix
+            result = pfrStack.pop();
+        } catch (java.util.EmptyStackException exc) {
+            result = null;
+        }
+        return result;
+    } // parse
 
     //===================================
     // Bean methods, setters and getters
@@ -133,13 +212,33 @@ public class PolyFraction
         return polynomials.length;
     } // size
 
-    /** Gets one of the {@link Polynomial}s in the fraction
-     *  @param index sequential index of the Polynomial: 0 or 1
-     *  @return a Polynomial
+    /** Gets the numerator {@link Polynomial} of the fraction
+     *  @return the Polynomial above the fraction bar
      */
-    public Polynomial get(int index) {
-        return polynomials[index];
-    } // get
+    public Polynomial getNum() {
+        return polynomials[0];
+    } // getNum
+
+    /** Gets the denominator {@link Polynomial} of the fraction
+     *  @return the Polynomial below the fraction bar
+     */
+    public Polynomial getDen() {
+        return polynomials[1];
+    } // getDen
+
+    /** Sets the numerator {@link Polynomial} of the fraction
+     *  @param poly2 the Polynomial to be set above the fraction bar
+     */
+    public void setNum(Polynomial poly2) {
+        polynomials[0] = poly2;
+    } // setNum
+
+    /** Sets the denominator {@link Polynomial} of the fraction
+     *  @param poly2 the Polynomial to be set below the fraction bar
+     */
+    public void setDen(Polynomial poly2) {
+        polynomials[1] = poly2;
+    } // setDem
 
     /*-------------- lightweight derived methods -----------------------------*/
 
@@ -151,9 +250,9 @@ public class PolyFraction
     public String toString(int mode) {
         StringBuffer buffer = new StringBuffer(2048);
         buffer.append("(");
-        buffer.append(this.get(0).toString(mode));
+        buffer.append(this.getNum().toString(mode));
         buffer.append(") / (");
-        buffer.append(this.get(1).toString(mode));
+        buffer.append(this.getDen().toString(mode));
         buffer.append(")");
         return buffer.toString();
     } // toString(int)
@@ -178,46 +277,143 @@ public class PolyFraction
         return toString(0);
     } // toString()
 
-    //----------------
-    /** Deflates all member {@link Polynomial}s in place
-     *  @return <em>this</em> deflated PolyFraction
-     */
-    public PolyFraction deflateIt() {
-        int ipoly = this.polynomials.length - 1;
-        while (ipoly >= 0) {
-            this.get(ipoly).deflateIt();
-            ipoly --;
-        } // while ipoly
-        return this;
-    } // deflateIt
+    //----------------------
+    // Arithmetic operations
 
-    /** Deflates all member {@link Polynomial}s
-     *  @return a new deflated PolyFraction
+    /** Adds another PolyFraction to <em>this</em>.
+     *  @param pfr2 add this PolyFraction
+     *  @return reference to a new object: this+pfr2
      */
-    public PolyFraction deflate() {
+    public PolyFraction add(PolyFraction pfr2) {
+        Polynomial den1 = this.getDen();
+        Polynomial den2 = pfr2.getDen();
+        PolyFraction result = null;
+        if (den1.isOne()) {
+            if (den2.isOne()) { // n1/1 + n2/1 = (n1 + n2)/1
+                result = new PolyFraction(this.getNum().add(pfr2.getNum())
+                        , den2);
+            } else { // n1/1 + n2/d2 = (n1*d2 + n2)/d2
+                result = new PolyFraction(this.getNum().multiply(den2).add(pfr2.getNum())
+                        , den2);
+            }
+        } else { // d1 != 1
+            if (den2.isOne()) { // n1/d1 + n2 = (n1 + n2*d1)/d1
+                result = new PolyFraction(this.getNum().add(pfr2.getNum().multiply(den1))
+                        , den1);
+            } else { // d1 != 1 && d2 != 1: n1/d1 + n2/d2 = (n1*d2 + n2*d1)/(d1*d2)
+                result = new PolyFraction(this.getNum().multiply(den2).add(pfr2.getNum().multiply(den1))
+                        , den1.multiply(den2));
+            }
+        } // d2 != 1
+        return result;
+    } // add(PolyFraction)
+
+    /** Subtracts another PolyFraction from <em>this</em>.
+     *  @param pfr2 subtract this PolyFraction
+     *  @return reference to a new object: this-pfr2
+     */
+    public PolyFraction subtract(PolyFraction pfr2) {
+        Polynomial den1 = this.getDen();
+        Polynomial den2 = pfr2.getDen();
+        PolyFraction result = null;
+        if (den1.isOne()) {
+            if (den2.isOne()) { // n1/1 - n2/1 = (n1 - n2)/1
+                result = new PolyFraction(this.getNum().subtract(pfr2.getNum())
+                        , den2);
+            } else { // n1/1 - n2/d2 = (n1*d2 - n2)/d2
+                result = new PolyFraction(this.getNum().multiply(den2).subtract(pfr2.getNum())
+                        , den2);
+            }
+        } else { // d1 != 1
+            if (den2.isOne()) { // n1/d1 - n2 = (n1 - n2*d1)/d1
+                result = new PolyFraction(this.getNum().subtract(pfr2.getNum().multiply(den1))
+                        , den1);
+            } else { // d1 != 1 && d2 != 1: n1/d1 - n2/d2 = (n1*d2 - n2*d1)/(d1*d2)
+                result = new PolyFraction(this.getNum().multiply(den2).subtract(pfr2.getNum().multiply(den1))
+                        , den1.multiply(den2));
+            }
+        } // d2 != 1
+        return result;
+    } // subtract(PolyFraction)
+
+    /** Negates <em>this</em>.
+     *  @return reference to a new object: -this
+     */
+    public PolyFraction negate() {
+       return new PolyFraction(this.getNum().clone().negativeOf(), this.getDen().clone());
+    } // negate(PolyFraction)
+
+    /** Multiplies another PolyFraction with <em>this</em>.
+     *  @param pfr2 multiply with this PolyFraction
+     *  @return reference to a new object: this*pfr2
+     */
+    public PolyFraction multiply(PolyFraction pfr2) {
+        Polynomial den1 = this.getDen();
+        Polynomial den2 = pfr2.getDen();
+        PolyFraction result = null;
+        if (den1.isOne()) {
+                // n1/1 * n2/d2 = (n1*n2)/d2
+                result = new PolyFraction(this.getNum().multiply(pfr2.getNum())
+                        , den2);
+        } else { // d1 != 1
+            if (den2.isOne()) { // n1/d1 * n2/1 = (n1*n2)/d1
+                result = new PolyFraction(this.getNum().multiply(pfr2.getNum())
+                        , den1);
+            } else { // d1 != 1 && d2 != 1: n1/d1 * n2/d2 = (n1*n2)/(d1*d2)
+                result = new PolyFraction(this.getNum().multiply(pfr2.getNum())
+                        , den1.multiply(den2));
+            }
+        } // d2 != 1
+        return result;
+    } // multiply(PolyFraction)
+
+    /** Clone and raise a PolyFraction to some power.
+     *  @param exponent raise to this power &gt;= 0; exponents 0 and 1 are handled individually.
+     *  @return reference to a <em>new</em> Polynomial
+     */
+    public PolyFraction pow(int exponent) {
         PolyFraction result = this.clone();
-        return result.deflateIt();
-    } // deflate
+        if (exponent < 0) {
+        	result = null;
+            throw new IllegalArgumentException("exponent may not be negative");
+        } else if (exponent == 0) {
+            result = new PolyFraction();
+        } else if (exponent == 1) {
+            // result = this.clone();
+        } else { // >= 2 : multiply as often;
+            // for higher exponents, this could be improved by some "powers of 2 evaluation" of the exponent
+            // result = this.clone();
+            while (exponent > 1) {
+                result = result.multiply(this);
+                exponent --;
+            } // while exponent
+        } // >= 2
+        return result;
+    } // pow
 
-    /** Normalizes all member {@link Polynomial}s in place
-     *  @return <em>this</em> normalized PolyFraction
+    /** Divides another PolyFraction into <em>this</em>.
+     *  @param pfr2 divide by this PolyFraction
+     *  @return reference to a new object: this/pfr2
      */
-    public PolyFraction normalizeIt() {
-        int ipoly = this.polynomials.length - 1;
-        while (ipoly >= 0) {
-            this.get(ipoly).normalizeIt();
-            ipoly --;
-        } // while ipoly
-        return this;
-    } // normalizeIt
-
-    /** Normalizes all member {@link Polynomial}s
-     *  @return a new normalized PolyFraction
-     */
-    public PolyFraction normalize() {
-        PolyFraction result = this.clone();
-        return result.normalizeIt();
-    } // normalize
+    public PolyFraction divide(PolyFraction pfr2) {
+        Polynomial den1 = this.getDen();
+        Polynomial den2 = pfr2.getDen();
+        PolyFraction result = null;
+        if (den1.isOne()) {
+                // (n1/1) / (n2/d2) = (n1*d2)/n2
+                result = new PolyFraction(this.getNum().multiply(den2)
+                        , pfr2.getNum());
+        } else { // d1 != 1
+            if (den2.isOne()) { // (n1/d1) / (n2/1) = (n1)/(n2*d1)
+                result = new PolyFraction(this.getNum()
+                        , pfr2.getNum().multiply(den1));
+            } else { // d1 != 1 && d2 != 1: (n1/d1) / (n2/d2) = (n1*d2)/(n2*d1)
+                result = new PolyFraction(this.getNum().multiply(den2)
+                        , pfr2.getNum().multiply(den1));
+            }
+        } // d2 != 1
+        return result;
+    } // divide(PolyFraction)
 
     /** Expands the fraction into a formal power series and
      *  returns the coefficients of the powers of the variable.
@@ -292,12 +488,7 @@ public class PolyFraction
         // A000217 Triangular numbers: a(n) = binomial(n+1, 2) 
         // 0  1  2  3   4   5   6   7   8   9  10
         // 0, 1, 3, 6, 10, 15, 21, 28, 36, 45, 55
-        int itri = ngen - 2;
-        while (itri >= 1) {
-            triang += itri;
-            itri --;
-        } // while itri
-        return getCoxeterFraction(pwr, triang, 2 - ngen);
+        return getCoxeterFraction(pwr, (ngen - 2) * (ngen - 1) / 2, 2 - ngen);
     } // getCoxeterFraction
 
     /* ------------ Solver evaluation --------------- */
@@ -309,7 +500,7 @@ public class PolyFraction
      *  <li>there is at least one (in)equality which fails =&gt; {@link VariableMap#FAILURE}</li>
      *  <li>the outcome cannot be decided                  =&gt; {@link VariableMap#UNKNOWN}</li>
      *  </ul>
-     *  @param pfrac1 evaluate this PolyFraction
+     *  @param pfr1 evaluate this PolyFraction
      *  @param varMap the map of the variables how they were recently substituted
      *  in <em>this</em> Polynomial, or <em>null</em>
      *  @return SUCCESS, FAILURE or UNKNOWN
@@ -323,19 +514,19 @@ public class PolyFraction
      */
     public static void main(String[] args) {
         int iarg = 0;
-        PolyFraction pfrac1 = new PolyFraction();
+        PolyFraction pfr1 = new PolyFraction();
         int numTerms = 16;
 
         if (false) {
         } else if (args.length == 0) {
-            pfrac1 = new PolyFraction("(2-x)", "1-x-x^2"); // Lucas A000032: 2,1,3,4,7,11, ...
-            System.out.println(pfrac1.toString());
-            System.out.println(pfrac1.toVectors());
+            pfr1 = new PolyFraction("(2-x)", "1-x-x^2"); // Lucas A000032: 2,1,3,4,7,11, ...
+            System.out.println(pfr1.toString());
+            System.out.println(pfr1.toVectors());
 
         } else if (args.length == 1 && ! args[0].startsWith("-")) {
-            pfrac1 = new PolyFraction(args[iarg], args[iarg + 1]); iarg += 2;
-            System.out.println(pfrac1.toString());
-            System.out.println("evaluate: " + pfrac1.evaluate(null));
+            pfr1 = new PolyFraction(args[iarg], args[iarg + 1]); iarg += 2;
+            System.out.println(pfr1.toString());
+            System.out.println("evaluate: " + pfr1.evaluate(null));
 
         } else if (args.length >= 2) {
             while (iarg < args.length) { // consume all arguments
@@ -351,14 +542,14 @@ public class PolyFraction
                     // -d
 
                 } else if (opt.startsWith("-coeff")  ) {
-                    pfrac1 = new PolyFraction(args[iarg], args[iarg + 1]); iarg += 2;
+                    pfr1 = new PolyFraction(args[iarg], args[iarg + 1]); iarg += 2;
                     try {
                         numTerms = Integer.parseInt(args[iarg ++]);
                     } catch (Exception exc) {
                     }
-                    System.out.println(pfrac1.toString());
-                    System.out.println("vectors: "      + pfrac1.toVectors());
-                    System.out.println("coefficients: " + pfrac1.getSeriesCoefficients(numTerms));
+                    System.out.println(pfr1.toString());
+                    System.out.println("vectors: "      + pfr1.toVectors());
+                    System.out.println("coefficients: " + pfr1.getSeriesCoefficients(numTerms));
                     // -coeff
 
                 } else if (opt.startsWith("-coxg")  ) {
@@ -378,13 +569,13 @@ public class PolyFraction
                     } catch (Exception exc) {
                     }
                     if (c2 != 0) {
-                        pfrac1 = PolyFraction.getCoxeterFraction(pwr, c1, c2);
+                        pfr1 = PolyFraction.getCoxeterFraction(pwr, c1, c2);
                     } else {                    
-                        pfrac1 = PolyFraction.getCoxeterFraction(pwr, ngen);
+                        pfr1 = PolyFraction.getCoxeterFraction(pwr, ngen);
                     }
-                    System.out.println(pfrac1.toString());
-                    System.out.println("vectors: "      + pfrac1.toVectors());
-                    System.out.println("coefficients: " + pfrac1.getSeriesCoefficients(numTerms));
+                    System.out.println(pfr1.toString());
+                    System.out.println("vectors: "      + pfr1.toVectors());
+                    System.out.println("coefficients: " + pfr1.getSeriesCoefficients(numTerms));
                     // -coeff
 
                 } else if (opt.equals    ("-f")     ) {
@@ -407,46 +598,47 @@ public class PolyFraction
                                 String mode   = parms[iparm ++];
                                 if (false) {
                                 } else if (mode.equals("sage")) {
-                                    Polynomial num = new Polynomial(parms[iparm ++]);
-                                    Polynomial den = new Polynomial(parms[iparm ++]);
-                                    pfrac1 = new PolyFraction(num, den);
+                                    Polynomial num = Polynomial.parse(parms[iparm ++]);
+                                    Polynomial den = Polynomial.parse(parms[iparm ++]);
+                                    pfr1 = new PolyFraction(num, den);
                                     System.out.println(aseqno + "\t" + mode
-                                            + "\t" + pfrac1.get(0).toString() + "\t" + pfrac1.get(1).toString() 
+                                            + "\t" + pfr1.getNum().toString() + "\t" + pfr1.getDen().toString() 
                                             );
                                     System.out.println(aseqno + "\t" + "vect"
-                                            + "\t" + pfrac1.toVectors()
+                                            + "\t" + pfr1.toVectors()
                                             );
                                     System.out.println(aseqno + "\t" + "coef"
-                                            + "\t" + pfrac1.getSeriesCoefficients(numTerms)
+                                            + "\t" + pfr1.getSeriesCoefficients(numTerms)
                                             );
                                 } else if (mode.equals("coxf")) {
                                     try {
                                         int pwr  = Integer.parseInt(parms[iparm ++]);
                                         int ngen = Integer.parseInt(parms[iparm ++]);
-                                        pfrac1 = PolyFraction.getCoxeterFraction(pwr, ngen);
+                                        pfr1 = PolyFraction.getCoxeterFraction(pwr, ngen);
                                     } catch (Exception exc) {
                                     }
                                     System.out.println(aseqno
-                                            + "\t" + pfrac1.getSeriesCoefficients(numTerms)
+                                            + "\t" + pfr1.getSeriesCoefficients(numTerms)
                                             .toString().replaceAll("[\\[\\]]", "")
                                             );
-                                } else if (mode.equals("poly")) {
-                                	String offset1 = parms[iparm++];
-                                    Polynomial num = new Polynomial(parms[iparm ++]);
-                                    Polynomial den = new Polynomial(parms[iparm ++]);
-                                    pfrac1 = new PolyFraction(num, den);
+                                } else if (mode.equals("fract")) {
+                                    String offset1 = parms[iparm++];
+                                    pfr1 = PolyFraction.parse(parms[iparm ++]);
                                     System.out.println(aseqno
-                                    		+ "\t" + offset1
-                                            + "\t" + pfrac1.toVectors()
+                                            + "\t" + offset1
+                                            + "\t" + pfr1.toVectors()
                                             .replaceAll("\\],\\[", "\t")
                                             .replaceAll("[\\[\\]]", "")
+                                            );
+                                    System.out.println(aseqno + "\t" + "coef"
+                                            + "\t" + pfr1.getSeriesCoefficients(numTerms)
                                             );
                                 } // switch mode
                             } // is not a comment
                         } // while ! eof
                         lineReader.close();
                     } catch (Exception exc) {
-                        pfrac1.log.error(exc.getMessage(), exc);
+                        pfr1.log.error(exc.getMessage(), exc);
                     } // try
                     // -f
 
@@ -459,9 +651,9 @@ public class PolyFraction
                     // -n
 
                 } else if (opt.equals    ("-vect")  ) {
-                    pfrac1 = new PolyFraction(args[iarg], args[iarg + 1]); iarg += 2;
-                    System.out.println(pfrac1.toString());
-                    System.out.println("vectors: "      + pfrac1.toVectors());
+                    pfr1 = new PolyFraction(args[iarg], args[iarg + 1]); iarg += 2;
+                    System.out.println(pfr1.toString());
+                    System.out.println("vectors: "      + pfr1.toVectors());
                     // -vect
 
                 } else {

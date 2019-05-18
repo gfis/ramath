@@ -541,7 +541,7 @@ public class Polynomial implements Cloneable, Serializable {
      */
     public boolean isConstant() {
         return monomials.size() == 0 || monomials.size() == 1 && hasConstant();
-    } // isConstant private static final String FAILURE = "? ";
+    } // isConstant 
 
     /** Determines whether there are one or more variables in the {@link Monomial}s of
      *  <em>this</em> {@link Polynomial}.
@@ -559,6 +559,13 @@ public class Polynomial implements Cloneable, Serializable {
     public boolean isZero() {
         return monomials.size() == 0;
     } // isZero
+
+    /** Determines whether <em>this</em> {@link Polynomial} is one
+     *  @return true if the Polynomial is +1, or false otherwise
+     */
+    public boolean isOne() {
+        return isConstant() && getConstant().equals(Coefficient.ONE);
+    } // isOne
 
     /** Determines whether all {@link Monomial}s in <em>this</em> {@link Polynomial}
      *  have the same sign. When all variables are assumed to have values &gt;= 0,
