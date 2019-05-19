@@ -69,6 +69,13 @@ public class ShuntingYard {
         operStack = new Stack    <String>();
     } // no-args Constructor
 
+    /** Sets the debugging flag
+     *  @param mode 0=no debugging output, 1=some, 2=more 
+     */
+    public void setDebug(int mode) {
+        debug = mode;
+    } // postfixAppend
+
     /** Appends an operand or operator to the postfix list.
      *  @param element to be appended
      */
@@ -81,6 +88,9 @@ public class ShuntingYard {
      */
     private void pushOper(String precOper) {
         operStack.push(precOper);
+        if (operStack.size() > 64) {
+        	throw new IllegalArgumentException("operStack overflow");
+        }
     } // pushOper
 
     /** Pops all operators with lower precedence, and pushes the parameter operator
@@ -498,7 +508,7 @@ public class ShuntingYard {
             } else {
                 ipos ++; // ignore all whitespace
             }
-            if (debug >= 1) {
+            if (debug >= 2) {
                 System.out.println(state + "," + ch + ", \toperStack=" + operStack + ", \tpostfix=" + postfix);
             }
         } // while ipos
@@ -512,6 +522,9 @@ public class ShuntingYard {
                 postfixAppend(elem.substring(1));
             }
         } // while
+        if (debug >= 1) {
+            System.out.println("result postfix=" + postfix);
+        }
         return postfix;
     } // convertToPostfix
 

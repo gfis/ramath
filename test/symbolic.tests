@@ -162,11 +162,17 @@ DATA
  A170731  coxf  50 50
 CALL PolyFraction -f $(DATA)
 
-TEST PF6 pfr parsing
+TEST PF6 PolyFraction parse
+CALL PolyFraction  -d 1 -parse "1/(1+x) + 1/(1-x)"
+
+TEST PF7 pfr parsing
 DATA
- A900001  fract 1 1/(1-x)
+ A900004  fract 1 10+(9x+8x^2+7)/(x+1)
+ A900001  fract 1 1/(1-x-x^2)
+ A900002  fract 1 10+9x/(1+x^2)
+ A900010  fract 1 1/(1-x)
  A900002  fract 0 2+3x+4x^2/(1-x)
-CALL PolyFraction -d 1 -f $(DATA)
+CALL PolyFraction -f $(DATA)
 -------------------------------
 # DialogStep and DialogTree
 

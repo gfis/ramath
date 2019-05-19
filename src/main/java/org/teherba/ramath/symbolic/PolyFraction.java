@@ -41,7 +41,6 @@ import  org.apache.log4j.Logger;
  *  @author Dr. Georg Fischer
  */
 public class PolyFraction
-        extends Polynomial
         implements Cloneable, Serializable {
     private static final long serialVersionUID = 3L;
     public final static String CVSID = "@(#) $Id: PolyFraction.java 970 2012-10-25 16:49:32Z  $";
@@ -71,6 +70,13 @@ public class PolyFraction
         		, new Polynomial(new Monomial(Coefficient.ONE ))
         		};
     } // Constructor()
+
+    /** Construct from a numerator {@link Polynomial} only.
+     *  @param num polynomial for the numerator; the denominator is 1
+     */
+    public PolyFraction(Polynomial num) {
+    	this(num, new Polynomial(new Monomial(Coefficient.ONE)));
+    } // Constructor(Polynomial)
 
     /** Construct from a pair of {@link Polynomial}s.
      *  @param num polynomial for the numerator
@@ -120,7 +126,9 @@ public class PolyFraction
      */
     public static PolyFraction parse(String input) {
         PolyFraction result = null; // assume failure
-        ArrayList<String> postfix = (new ShuntingYard()).convertToPostfix("(" + input + ")");
+        ShuntingYard shy = new ShuntingYard();
+        shy.setDebug(debug);
+        ArrayList<String> postfix = shy.convertToPostfix("(" + input + ")");
         Stack<PolyFraction> pfrStack = new Stack<PolyFraction>();
         PolyFraction pfr1 = null;
         PolyFraction pfr2 = null;
@@ -131,10 +139,11 @@ public class PolyFraction
         try {
             int ipfix = 0;
             while (busy && ipfix < postfix.size()) {
-                elem = postfix.get(ipfix ++);
+                elem = postfix.get(ipfix);
                 if (debug >= 2) {
-                    System.out.println("elem: " + elem + ", " + pfrStack);
+                    System.out.println("postfix elem[" + ipfix + "]: " + elem + ", " + pfrStack);
                 }
+                ipfix ++;
                 char ch = elem.charAt(0);
                 switch (ch) {           
                     // additive operators
@@ -165,8 +174,8 @@ public class PolyFraction
                     // exponentiation
                     case '^':
                         pfr2 = pfrStack.pop();
-                        if (pfr2.isConstant()) {
-                            BigInteger brexp = pfr2.getConstant();
+                        if (pfr2.getNum().isConstant() && pfr2.getDen().isOne()) {
+                            BigInteger brexp = pfr2.getNum().getConstant();
                             exponent = brexp.intValue();
                             pfrStack.push(pfrStack.pop().pow(exponent));
                         } else {
@@ -182,9 +191,9 @@ public class PolyFraction
                     default:
                         if (false) {
                         } else if (Character.isJavaIdentifierStart(ch)) {
-                            pfrStack.push(PolyFraction.parse(elem));
+                            pfrStack.push(new PolyFraction(Polynomial.parse(elem)));
                         } else if (Character.isDigit              (ch)) {
-                            pfrStack.push(PolyFraction.parse(elem));
+                            pfrStack.push(new PolyFraction(Polynomial.parse(elem)));
                         } else { // strange character
                             System.err.println("PolyFraction.parse: strange operand \"" + elem + "\"");
                             pfrStack.removeAllElements();
@@ -526,7 +535,6 @@ public class PolyFraction
         } else if (args.length == 1 && ! args[0].startsWith("-")) {
             pfr1 = new PolyFraction(args[iarg], args[iarg + 1]); iarg += 2;
             System.out.println(pfr1.toString());
-            System.out.println("evaluate: " + pfr1.evaluate(null));
 
         } else if (args.length >= 2) {
             while (iarg < args.length) { // consume all arguments
@@ -642,6 +650,10 @@ public class PolyFraction
                     } // try
                     // -f
 
+                } else if (opt.equals    ("-parse")) {
+                    pfr1 = PolyFraction.parse(args[iarg ++]);
+                    System.out.println("PolyFraction " + pfr1.toString());
+                
                 } else if (opt.equals    ("-n")     ) {
                     numTerms = 16;
                     try {
