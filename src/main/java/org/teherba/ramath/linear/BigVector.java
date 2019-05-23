@@ -433,6 +433,10 @@ public class BigVector extends Vector implements Cloneable, Serializable {
                     + this.toString() + ", den=" + vect2.toString());
             return BigInteger.ZERO;
         }
+        if (this.size() == 0) {
+            System.out.println("# assertion in BigVector: empty vector");
+            return BigInteger.ZERO;
+		}
         BigInteger[] quotRest = this.getBig(0).divideAndRemainder(divisor);
         BigInteger result     = quotRest[0];
         BigInteger quotient   = result.negate();
