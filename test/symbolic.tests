@@ -316,6 +316,12 @@ CALL Polynomial -var "a,b,c,d" $(DATA)
 TEST P16 Polynomial parsing
 CALL ShuntingYard
 
+TEST SH2 ShuntingYard with division
+CALL ShuntingYard "1/(1-x-x**2)"
+
+TEST SH3 ShuntingYard with function pattern
+CALL ShuntingYard "(sqrt|abs|mod|A\d{6}|a)" "a(n) = sqrt(2*a(n-1)) + A123456(n*2)"
+
 TEST P17 Polynomial with GT_0
 CALL Polynomial "(a + b) > 0"
 

@@ -126,9 +126,9 @@ public class PolyFraction
      */
     public static PolyFraction parse(String input) {
         PolyFraction result = null; // assume failure
-        ShuntingYard shy = new ShuntingYard();
-        shy.setDebug(debug);
-        ArrayList<String> postfix = shy.convertToPostfix("(" + input + ")");
+        ShuntingYard parser = new ShuntingYard();
+        parser.setDebug(debug);
+        ArrayList<String> postfix = parser.convertToPostfix("(" + input + ")");
         Stack<PolyFraction> pfrStack = new Stack<PolyFraction>();
         PolyFraction pfr1 = null;
         PolyFraction pfr2 = null;

@@ -1,5 +1,6 @@
 /*  ShuntingYard: parser for the recognition of arithmetic and boolean expressions
  *  @(#) $Id: ShuntingYard.java 522 2010-07-26 07:14:48Z gfis $
+ *  2019-05-23: + functionPattern
  *  2019-05-12: unary -, renaming; extracted from PolynomialParser
  *  2009-07-01, Georg Fischer: copied from Polynomial
  */
@@ -19,8 +20,16 @@
  * limitations under the License.
  */
 package org.teherba.ramath.symbolic;
+import  java.io.BufferedReader;
+import  java.io.FileInputStream;
+import  java.io.InputStreamReader;
+import  java.io.Serializable;
+import  java.nio.channels.Channels;
+import  java.nio.channels.ReadableByteChannel;
 import  java.util.ArrayList;
 import  java.util.Stack;
+import  java.util.regex.Matcher;
+import  java.util.regex.Pattern;
 
 /** This parser recognizes elementary arithmetic expressions and relations
  *  built from the following components:
@@ -61,20 +70,41 @@ public class ShuntingYard {
     private Stack    <String> operStack;
     /** append the operands and postfix operators to this list */
     private ArrayList<String> postfix;
+    /*  optional regex pattern for names which should be treated as functions,
+     *  for which no "*" is inserted before a "("
+     */
+    private Pattern functionPattern;
 
-    /** No-args Constructor
+    /** No-args Constructor with defautl funciton pattern
      */
     public ShuntingYard() {
+        this("\\W"); // no word character - no name is function name
+    } // no-args Constructor
+
+    /** Constructor with function pattern
+     *  @param funcPat a regular expression denoting the names 
+     *  for which no "*" is inserted before a "(".
+     */
+    public ShuntingYard(String funcPat) {
         postfix   = new ArrayList<String>(256);
         operStack = new Stack    <String>();
-    } // no-args Constructor
+        setFunctionPattern(funcPat);
+    } // Constructor(String)
 
     /** Sets the debugging flag
      *  @param mode 0=no debugging output, 1=some, 2=more 
      */
     public void setDebug(int mode) {
         debug = mode;
-    } // postfixAppend
+    } // setDebug
+
+    /** Sets the function pattern
+     *  @param funcPat a regular expression denoting the names 
+     *  for which no "*" is inserted before a "(".
+     */
+    public void setFunctionPattern(String funcPat) {
+        functionPattern = Pattern.compile(funcPat);
+    } // setFunctionPattern
 
     /** Appends an operand or operator to the postfix list.
      *  @param element to be appended
@@ -89,7 +119,7 @@ public class ShuntingYard {
     private void pushOper(String precOper) {
         operStack.push(precOper);
         if (operStack.size() > 64) {
-        	throw new IllegalArgumentException("operStack overflow");
+            throw new IllegalArgumentException("operStack overflow");
         }
     } // pushOper
 
@@ -114,7 +144,7 @@ public class ShuntingYard {
      *  and fills a list of output symbols representing the same expression in postfix notation (reverse polish notation).
      *  The railroad shunting yard algorithm is that of Edsger Dijkstra (1961) as described in
      *  <a href="http://en.wikipedia.org/wiki/Shunting-yard_algorithm">Wikipedia</a>.
-     *  @param input the input string, with whitespace, for example " + 17*a0^2*a1 + a2^2*a3^3 - 4*b4"
+     *  @param parmInput the input string, with whitespace, for example " + 17*a0^2*a1 + a2^2*a3^3 - 4*b4"
      *  <p>
      *  The precedence of operators (in <em>precOper, operStack</em>) is indicated
      *  by the ASCII order of lowercase letters according to the following table:
@@ -129,7 +159,8 @@ public class ShuntingYard {
      *  <tr><td>(                   </td><td>y</td></tr>
      *  </table>
      */
-    public ArrayList<String> convertToPostfix(String input) {
+    public ArrayList<String> convertToPostfix(String parmInput) {
+    	String input = "(" + parmInput + ")";
         StringBuffer buffer = new StringBuffer(16); //accumulate variable names, numbers and operators here
         String elem = null; // next element on stack / in postfix list
         char ch = ' ';
@@ -260,9 +291,15 @@ public class ShuntingYard {
                         if (false) {
                         } else if (Character.isJavaIdentifierPart(ch)) {
                             buffer.append(ch);
-                        } else if (ch == '(') {
-                            postfixAppend(buffer.toString());
-                            popLowerSameAndPush("p*");
+                        } else if (ch == '(') { // name before "("
+                            String  name = buffer.toString();
+                            Matcher matcher = functionPattern.matcher(name);
+                            if (matcher.matches()) { // is a function name
+                                name += "()";
+                            } else { // is no function name - insert "*"
+                                popLowerSameAndPush("p*");
+                            }
+                            postfixAppend(name);
                             readOff = false;
                             state = State.IN_START;
                         } else {
@@ -527,21 +564,59 @@ public class ShuntingYard {
         }
         return postfix;
     } // convertToPostfix
+    
+    private static void convertToJOEIS(String fileName) {
+        BufferedReader lineReader; // Reader for the input file
+        String srcEncoding = "UTF-8"; // Encoding of the input file
+        String line = null; // current line from text file
+        try {
+            if (fileName == null || fileName.length() <= 0 || fileName.equals("-")) {
+                lineReader = new BufferedReader(new InputStreamReader(System.in, srcEncoding));
+            } else {
+                ReadableByteChannel lineChannel = (new FileInputStream(fileName)).getChannel();
+                lineReader = new BufferedReader(Channels.newReader(lineChannel , srcEncoding));
+            }
+            while ((line = lineReader.readLine()) != null) { // read and process lines
+                if (! line.matches("\\s*#.*")) { // is not a comment
+                    String parms[] = line.split("\\s+");
+                    int iparm = 0;
+                    String aseqno  = parms[iparm ++];
+                    String formula = parms[iparm ++];
+                    ShuntingYard parser = new ShuntingYard("\\w+");
+                    ArrayList<String> postfix = parser.convertToPostfix(formula);
+                    System.out.println(aseqno + "\t" + postfix + "\t" + formula);
+                } // is not a comment
+            } // while ! eof
+            lineReader.close();
+        } catch (Exception exc) {
+            System.err.println(exc.getMessage());
+        } // try
+        // -f
+    } // convertToJOEIS
 
     /** Test method, with no arguments shows a fixed postfix expression,
      *  otherwise the postfix expression resulting from the argument string.
-     *  @param args command line arguments
+     *  @param args command line arguments: [funcPat] expression
      */
     public static void main(String[] args) {
         ShuntingYard parser = new ShuntingYard();
         parser.debug = 2;
         ArrayList<String> postfix = new ArrayList<String>(64);
-        if (args.length == 0) {
+        if (false) {
+        } else if (args.length == 0) { // default expression
             postfix = parser.convertToPostfix("(3*a²+b^2)-3*(c²+d^2)+0*e");
-        } else { // with arguments
+            System.out.println(postfix);
+        } else if (args.length == 1) { // expression only
             postfix = parser.convertToPostfix(args[0]);
+            System.out.println(postfix);
+        } else if (args.length == 2) { // funcPat expression
+            String funcPat = args[0];
+            parser.setFunctionPattern(funcPat);
+            postfix = parser.convertToPostfix(args[1]);
+            System.out.println(postfix);
+        } else if (args.length == 3 && args[0].equals("joeis") && args[1].equals("-f")) { // -joeis -f dexexp_extr.tmp
+            convertToJOEIS(args[2]);
         } // with args
-        System.out.println(postfix);
     } // main
 
 } // ShuntingYard
