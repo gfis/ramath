@@ -36,8 +36,10 @@ import  java.util.Iterator;
 import  java.util.Stack;
 import  org.apache.log4j.Logger;
 
-/** A PolyFraction is a pair of univariate {@link Polynomial}s which represent
+/** A PolyFraction is a pair of {@link Polynomial}s which represent
  *  the numerator and the denominator of the fraction.
+ *  Normally there is only one variable, but bivariate fractions or
+ +  also useful.
  *  @author Dr. Georg Fischer
  */
 public class PolyFraction
@@ -104,7 +106,7 @@ public class PolyFraction
         setDen(Polynomial.parse(exprs[ipoly ++]));
     } // Constructor(String[])
 
-    /** Construct from an two {@link BigVector}s.
+    /** Construct two {@link Polynomial}s in variable <em>x</em> from two {@link BigVector}s.
      *  @param num BigVector for the coefficients of the numerator
      *  @param den BigVector for the coefficients of the denominator
      */
@@ -249,6 +251,40 @@ public class PolyFraction
         polynomials[1] = poly2;
     } // setDem
 
+    /** Gets the variable names of both Polynomials
+     *  in "triangle" order, that is with decreasing degree.
+     *  @return array of variable names
+     */
+    public String[] getVariables() {
+        String[] result;
+    /*
+        Polynomial poden = getDen();
+        VariableMap vmap = getNum().getVariableMap();
+        vmap.putAll(poden.getVariableMap()); // union of both sets
+        int vlen = vmap.size();
+        String[] varExp  = new String[vlen];
+        Iterator<String> viter = vmap.keySet().iterator();
+        int [] maxExp = new int[vlen];
+        int iexp = 0;
+        while (viter.hasNext()) {
+            String vname = viter.next();
+            varExp[iexp] = vname;
+            maxExp[iexp] = poden.maxDegree(vname);
+            iexp ++;
+        } // while viter
+
+        // limitation to 2 variables only (for the moment)
+        if (maxExp[0] > maxExp[1]) {
+            result = new String[] { varExp[0], varExp[1] };
+        } else {
+            result = new String[] { varExp[1], varExp[0] };
+        }
+    */  
+        result = new String[] { "x", "y" };
+        return result;
+        // return 
+    } // getVariables
+    
     /*-------------- lightweight derived methods -----------------------------*/
 
     /** Returns a String representation of <em>this</em> {@link PolyFraction}
@@ -266,8 +302,17 @@ public class PolyFraction
         return buffer.toString();
     } // toString(int)
 
+    /** Returns a string representation of the {@link Polynomial}s in <em>this</em> {@link PolyFraction},
+     *  with leading signs, in compressed form.
+     *  @return "17*a0^2*a1 + a2^2*a3^3; - 4*b4", for example
+     */
+    public String toString() {
+        return toString(0);
+    } // toString()
+
     /** Returns a String representation of the coefficients
      *  of the numerator and the denominator.
+     *  For multivariate Polynomials, the result is somewhat meaningless.
      *  @param mode 0 = normal, 1 = full (for substitution), 2 = nice / human legible,
      *  3 = with prime factors
      *  @return "[2, -1],[1, -1, -1]" for example
@@ -277,14 +322,6 @@ public class PolyFraction
         BigVector den = polynomials[1].getBigVector();
         return num.toString() + "," + den.toString();
     } // toVectors(int)
-
-    /** Returns a string representation of the {@link Polynomial}s in <em>this</em> {@link PolyFraction},
-     *  with leading signs, in compressed form.
-     *  @return "17*a0^2*a1 + a2^2*a3^3; - 4*b4", for example
-     */
-    public String toString() {
-        return toString(0);
-    } // toString()
 
     //----------------------
     // Arithmetic operations
@@ -430,24 +467,92 @@ public class PolyFraction
      *  @return a {@link BigVector} of numbers
      */
     public BigVector getSeriesCoefficients(int numTerms) {
-        BigVector num    = polynomials[0].getBigVector();
-        BigVector den    = polynomials[1].getBigVector();
+        BigVector vnum   = polynomials[0].getBigVector();
+        BigVector vden   = polynomials[1].getBigVector();
         BigVector result = new BigVector(numTerms);
-        num.setDebug(debug);
+        vnum.setDebug(debug);
         int iterm = 0;
         boolean busy = true;
         while (busy && iterm < numTerms) {
-        	BigInteger coeff = num.divisionStep(den);
-        	if (coeff != null) {
-            	result.set(iterm, coeff);
+            BigInteger coeff = vnum.divisionStep(vden);
+            if (coeff != null) {
+                result.set(iterm, coeff);
             } else {
-            	result.set(iterm, BigInteger.ONE.negate());
-            	busy = false;
+                result.set(iterm, BigInteger.ONE.negate());
+                busy = false;
             }
             iterm ++;
         } // while iterm
         return result;
     } // getSeriesCoefficients
+
+    /** Normalizes the fraction by ensuring that any constant in the denominator
+     *  is positive.
+     */
+    public PolyFraction normalize() {
+        Coefficient cons1 = polynomials[1].getConstant();
+        if (cons1.compareTo(BigInteger.ZERO) < 0) {
+            polynomials[0].negativeOf();
+            polynomials[1].negativeOf();
+        }
+        return this;
+    } // normalize
+        
+    /** Expands the multivariate fraction into a formal power series and
+     *  returns the coefficients of the powers of the variables as
+     *  a flattened triangular array.
+     *  @param numTerms return so many coefficients
+     *  @param vars names of the variables, for example "x", "y".
+     *  @return a {@link BigVector} of numbers
+     *  For two variables, the triangle begins:
+     *  <pre>
+     *  c0*x^0*y^0
+     *  c1*x^1*y^0 c2*x^1*y^1
+     *  c3*x^2*y^0 c4*x^2*y^1 c5*x^2*y^2
+     *  c6*x^3*y^0 c7*x^3*y^1 c8*x^3*y^2 c9*x^3*y^3
+     *  ...
+     *  </pre>
+     */
+    public BigVector getCoefficientTriangle(int numTerms, String[] vars) {
+        BigVector result = new BigVector(numTerms);
+        this.normalize(); // make any denominator constant positive
+        Polynomial ponum  = polynomials[0].clone(); // we operate on both
+        Polynomial poden  = polynomials[1];
+        Coefficient cons1 = poden.getConstant();
+        if (! cons1.equals(BigInteger.ONE)) { 
+            System.err.println("Coefficient of denominator must be 1");
+            return new BigVector(new int[] { 0 });
+        }
+        int vlen = vars.length;      
+        int iterm = 0;
+        boolean busy = true;
+        int ix = 0;
+        while (busy) {
+            int iy = 0;
+            while (busy && iy <= ix) {
+                Monomial mono1 = new Monomial(vars, new int[] {ix, iy});
+                Signature sig1 = mono1.signature();
+                Monomial pivot = ponum.getMonomial(sig1);
+                if (pivot != null) {
+                    Coefficient coeff = pivot.getCoefficient();
+                    if (iterm < numTerms) {
+                        if (coeff != null) {
+                            result.set(iterm, coeff.bigIntegerValue());
+                        } else {
+                            result.set(iterm, BigInteger.ZERO);
+                        }
+                        iterm ++;
+                        ponum = ponum.subtract(poden.multiply(new Polynomial(pivot)));
+                    } else {
+                        busy = false;
+                    }
+                } // pivot != null
+                iy ++;
+            } // while iy
+            ix ++;
+        } // while iexp
+        return result;
+    } // getCoefficientTriangle
 
     /** Returns a PolyFraction which generates a Coxeter group sequence.
      *  This method corresponds with the Mathematica routine <em>coxG</em>
@@ -636,10 +741,12 @@ public class PolyFraction
                                             + "\t" + pfr1.getSeriesCoefficients(numTerms)
                                             .toString().replaceAll("[\\[\\]]", "")
                                             );
-                                } else if (mode.equals("fract")) {
+                                } else if (mode.startsWith("fract")) {
                                     String offset1 = parms[iparm++];
-                                    pfr1 = PolyFraction.parse(parms[iparm]);
-                                    if (pfr1 != null) {
+                                    pfr1 = PolyFraction.parse(parms[iparm]).normalize();
+                                    if (pfr1 == null) { 
+                                        // ignore, bad syntax
+                                    } else if (mode.equals("fract1")) {
                                         System.out.println(aseqno + "\t" + "orgf"
                                                 + "\t" + offset1 
                                                 + "\t" + pfr1.toVectors()
@@ -649,6 +756,14 @@ public class PolyFraction
                                         System.out.println(aseqno + "\t" + "coef"
                                                 + "\t" + pfr1.getSeriesCoefficients(numTerms)
                                                         .toString().replaceAll("[\\[\\]]", "")
+                                                );
+                                    } else if (mode.equals("fract2")) {
+                                        String[] vars = pfr1.getVariables();
+                                        System.out.println(aseqno + "\t" + "tria"
+                                                + "\t" + offset1 
+                                                + "\t" + pfr1.getNum().toTriangleList(vars)
+                                                + "\t" + pfr1.getDen().toTriangleList(vars)
+                                                + "\t" + vars[0] + "," + vars[1]
                                                 );
                                     } else {
                                         System.out.println(aseqno
@@ -677,6 +792,18 @@ public class PolyFraction
                     } catch (Exception exc) { // take default
                     }
                     // -n
+
+                } else if (opt.startsWith("-tria")  ) {
+                    numTerms = 16;
+                    try {
+                        numTerms = Integer.parseInt(args[iarg ++]);
+                    } catch (Exception exc) { // take default
+                    }
+                    pfr1 = new PolyFraction(args[iarg], args[iarg + 1]); iarg += 2;
+                    System.out.println(pfr1.toString());
+                    System.out.println("triangle: " 
+                        + pfr1.getCoefficientTriangle(numTerms, new String[] { "x", "y" }));
+                    // -trian
 
                 } else if (opt.equals    ("-vect")  ) {
                     pfr1 = new PolyFraction(args[iarg], args[iarg + 1]); iarg += 2;

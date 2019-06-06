@@ -1,3 +1,7 @@
+/*  Z - replacement for class irvine.math.z.Z implemented in Sean Irvine's jOEIS.
+ *  @(#) $Id$
+ *  2019-06-04, Georg Fischer
+ */
 package irvine.math.z;
 
 import java.math.BigInteger;
@@ -10,10 +14,10 @@ import java.math.BigInteger;
  */
 public class Z extends BigInteger {
 
-	/** 
-	 *  Constructor for long
-	 */
-	public Z(long zl) {
-		  super(String.valueOf(zl));
-	} 
-}
+    /** 
+     *  Constructor for long
+     */
+    public Z(long zl) {
+          super(String.valueOf(zl));
+    } 
+} // Z

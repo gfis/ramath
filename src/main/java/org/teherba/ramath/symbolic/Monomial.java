@@ -124,9 +124,9 @@ public class Monomial implements Cloneable, Serializable {
         this(name, 1);
     } // Constructor(name)
 
-    /** Constructor with variable names
-     *  @param names variable names; the monomial is the product of
-     *  these variables with coefficient +1 and exponents 1
+    /** Constructs from variable names; the result is 
+     *  the product of the variables with coefficient +1 and exponents 1
+     *  @param names variable names
      */
     public Monomial(String[] names) {
         setCoefficient(1);
@@ -138,10 +138,27 @@ public class Monomial implements Cloneable, Serializable {
         } // while ivar
     } // Constructor([] names)
 
+    /** Constructs from variable names; the result is 
+     *  the product of the variables with coefficient +1 and the specified exponents
+     *  @param names variable names
+     *  @param expos exponents of the variables
+     */
+    public Monomial(String[] names, int[] expos) {
+        setCoefficient(1);
+        vars = new TreeMap<String, Integer>();
+        int ivar = names.length - 1;
+        while (ivar >= 0) {
+            if (names[ivar].length() > 0 && expos[ivar] != 0) {
+                this.putExponent(names[ivar], expos[ivar]);
+            }
+            ivar --;
+        } // while ivar
+    } // Constructor([] names, [] expos)
+
     /** Constructor with {@link BigInteger}
      *  @param bint constant integer coefficient
      */
-    public Monomial(Coefficient/*ratint*/ bint) {
+    public Monomial(Coefficient bint) {
         this();
         setCoefficient(bint);
     } // Constructor(bint)

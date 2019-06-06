@@ -1,6 +1,7 @@
 /*  Polynomial: a symbolic, multivariate Polynomial with addition, multiplication,
  *  exponentiation, comparision and other operations
  *  @(#) $Id: Polynomial.java 744 2011-07-26 06:29:20Z gfis $
+ *  2019-06-06: toTriangleList
  *  2019-05-17: PolynomialParser replaced (partly) by ShuntingYard
  *  2019-01-05: toCoefficients
  *  2017-05-28: javadoc 1.8
@@ -516,6 +517,44 @@ public class Polynomial implements Cloneable, Serializable {
         return result.substring(result.startsWith(" + ") ? 3 : 0);
     } // toFactoredString()
 
+    /** Returns an array of the coefficients in the Polynomial 
+     *  in "triangle" order, with rows for the independant variable ("x") 
+     *  and columns for the dependant variable ("y"),
+     *  where the index or exponent of x is unbounded, and that of y is &lt;= that
+     *  of x.
+     *  This method is limited to 2 variables (triangles, no tetrahedron).
+     *  "triangle" indexes or exponents for [x,y], x=0..maxrow, y=0..ix are:
+     *  [0,0], [1,0],[1,1], [2,0],[2,1],[2,2], [3,0],[3,1],[3,2],[3,3], [4,0] ...
+     *  Trailing coefficients of ZERO could be omitted.
+     *  @param varNames variable name with increasing dependancy
+     *  @return "1,-1,-1" for "(1-x-x*y)"
+     */
+    public String toTriangleList(String[] varNames) {
+        int maxExp = this.maxDegree(varNames[0]);
+        StringBuffer result = new StringBuffer(128);
+        Polynomial pcopy = this.clone();
+        int ix = 0; // limited to 2 variables for the moment
+        int iy = 0;
+        while (ix <= maxExp) {
+            Monomial mono1 = new Monomial(varNames, new int[] {ix, iy});
+            Signature sig1 = mono1.signature();
+            Monomial pivot = pcopy.getMonomial(sig1);
+            if (pivot != null) {
+                result.append(",");
+                Coefficient coeff = pivot.getCoefficient();
+                result.append(coeff.toString());
+                pcopy.subtractFrom(pivot);
+            } else {
+                result.append(",0");
+            }
+            iy ++;
+            if (iy > ix) {
+                ix ++;
+                iy = 0;
+            }
+        } // while ix
+        return result.substring(1);
+    } // toTriangleList(String[])
     //----------------
     /** Gets the constant {@link Monomial} of <em>this</em> {@link Polynomial},
      *  if any, or the constant 0.

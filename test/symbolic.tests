@@ -167,11 +167,22 @@ CALL PolyFraction  -d 1 -parse "1/(1+x) + 1/(1-x)"
 
 TEST PF7 pfr parsing
 DATA
- A900004  fract 1 10+(9x+8x^2+7)/(x+1)
- A900001  fract 1 1/(1-x-x^2)
- A900002  fract 1 10+9x/(1+x^2)
- A900010  fract 1 1/(1-x)
- A900002  fract 0 2+3x+4x^2/(1-x)
+ A900004  fract1 1 10+(9x+8x^2+7)/(x+1)
+ A900001  fract1 1 1/(1-x-x^2)
+ A900002  fract1 1 10+9x/(1+x^2)
+ A900010  fract1 1 1/(1-x)
+ A900002  fract1 0 2+3x+4x^2/(1-x)
+CALL PolyFraction -f $(DATA)
+
+TEST PFT1 Expansion of Pascal's triangle A007318
+CALL PolyFraction -trian 32 1 1-x-x*y
+
+TEST PFT3 pfr triangles coefficient list
+DATA
+ A007318  fract2 0	1/(1-x-x*y)
+ A003983  fract2 1	1/((1-x)*(1-x*y)*(1-x^2*y))
+ A004736	fract2 1	1/((1-x)^2*(1-x*y))
+ A038763  fract2 0	(-1+2*x*y)/(-1+3*x*y+x)
 CALL PolyFraction -f $(DATA)
 -------------------------------
 # DialogStep and DialogTree
