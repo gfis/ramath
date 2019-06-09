@@ -420,9 +420,12 @@ public class PolyFraction
     public PolyFraction pow(int exponent) {
         PolyFraction result = this.clone();
         if (exponent < 0) {
-            result = null;
-            throw new IllegalArgumentException("exponent may not be negative");
-        } else if (exponent == 0) {
+        	exponent = - exponent;      // (x/y)^(-n) = (y/x)^n
+        	Polynomial temp = getNum(); // exchange num and den
+        	setNum(getDen());
+        	setDen(temp);
+        }
+        if (exponent == 0) {
             result = new PolyFraction();
         } else if (exponent == 1) {
             // result = this.clone();
@@ -772,6 +775,13 @@ public class PolyFraction
                                                 );
                                     }
                                     iparm ++;
+                                } else if (mode.equals("rioarr")) {
+                                    String offset1 = parms[iparm++];
+                                    pfr1 = PolyFraction.parse(parms[iparm]).normalize();
+                                    System.out.println(aseqno + "\t" 
+                                            + pfr1.getCoefficientTriangle(numTerms
+                                            , new String[] { "x", "y" })
+                                            .toString().replaceAll("[\\[\\]]", ""));
                                 } // switch mode
                             } // is not a comment
                         } // while ! eof
