@@ -1,5 +1,6 @@
-# Collection of Testcases for Ramath
+# Collection of simple testcases for Ramath
 # @(#) $Id: all.tests 955 2012-06-05 07:22:59Z gfis $
+# 2019-06-12: class was not found
 # 2019-05-06: PolyFraction
 # 2016-07-10: SI% = simplify tests
 # 2013-07-28: linear algebra

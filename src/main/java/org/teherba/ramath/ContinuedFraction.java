@@ -486,7 +486,7 @@ public class ContinuedFraction extends ArrayList/*1.5*/<BigRational>/*1.5*/  {
     public void sqrtOf(BigInteger n) {
         this.clear();
         // short variable names stem from KEWUN (ALGOL 60) from 1969
-        BigInteger g = BigInteger.ZERO;
+        BigInteger g = BigInteger.ZERO; // biggest integer <= sqrt(n)
         while (g.multiply(g).compareTo(n) <= 0) {
             g = g.add(BigInteger.ONE);
         } // while g*g <= n
@@ -499,9 +499,9 @@ public class ContinuedFraction extends ArrayList/*1.5*/<BigRational>/*1.5*/  {
             BigInteger p0 = BigInteger.ZERO;
             BigInteger q0 = BigInteger.ONE ;
             BigInteger b0 = g;
-            int periodIndex = 0;
+            int periodIndex  = 0;
             int periodLength = 0;
-            int loopCheck = 128;
+            int loopCheck    = 4096; 
             while (loopCheck > 0) {
                 loopCheck --;
                 BigInteger p1 = b0.multiply(q0).subtract(p0);

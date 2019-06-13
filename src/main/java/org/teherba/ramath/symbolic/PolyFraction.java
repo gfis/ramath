@@ -279,12 +279,12 @@ public class PolyFraction
         } else {
             result = new String[] { varExp[1], varExp[0] };
         }
-    */  
+    */
         result = new String[] { "x", "y" };
         return result;
-        // return 
+        // return
     } // getVariables
-    
+
     /*-------------- lightweight derived methods -----------------------------*/
 
     /** Returns a String representation of <em>this</em> {@link PolyFraction}
@@ -420,10 +420,10 @@ public class PolyFraction
     public PolyFraction pow(int exponent) {
         PolyFraction result = this.clone();
         if (exponent < 0) {
-        	exponent = - exponent;      // (x/y)^(-n) = (y/x)^n
-        	Polynomial temp = getNum(); // exchange num and den
-        	setNum(getDen());
-        	setDen(temp);
+            exponent = - exponent;      // (x/y)^(-n) = (y/x)^n
+            Polynomial temp = getNum(); // exchange num and den
+            setNum(getDen());
+            setDen(temp);
         }
         if (exponent == 0) {
             result = new PolyFraction();
@@ -500,7 +500,7 @@ public class PolyFraction
         }
         return this;
     } // normalize
-        
+
     /** Expands the multivariate fraction into a formal power series and
      *  returns the coefficients of the powers of the variables as
      *  a flattened triangular array.
@@ -522,11 +522,13 @@ public class PolyFraction
         Polynomial ponum  = polynomials[0].clone(); // we operate on both
         Polynomial poden  = polynomials[1];
         Coefficient cons1 = poden.getConstant();
-        if (! cons1.equals(BigInteger.ONE)) { 
-            System.err.println("Coefficient of denominator must be 1");
+        if (! cons1.equals(BigInteger.ONE)) {
+            System.err.println("PolyFraction.getCoefficientTriangle: Coefficient of"
+                    +  "denominator must be 1 instead of " + cons1.toString()
+                    + " in pfr " + this.toString());
             return new BigVector(new int[] { 0 });
         }
-        int vlen = vars.length;      
+        int vlen = vars.length;
         int iterm = 0;
         boolean busy = true;
         int ix = 0;
@@ -549,7 +551,14 @@ public class PolyFraction
                     } else {
                         busy = false;
                     }
-                } // pivot != null
+                } else {
+                    if (iterm < numTerms) {
+                        result.set(iterm, BigInteger.ZERO);
+                        iterm ++;
+                    } else {
+                        busy = false;
+                    }
+                }
                 iy ++;
             } // while iy
             ix ++;
@@ -747,11 +756,11 @@ public class PolyFraction
                                 } else if (mode.startsWith("fract")) {
                                     String offset1 = parms[iparm++];
                                     pfr1 = PolyFraction.parse(parms[iparm]).normalize();
-                                    if (pfr1 == null) { 
+                                    if (pfr1 == null) {
                                         // ignore, bad syntax
                                     } else if (mode.equals("fract1")) {
                                         System.out.println(aseqno + "\t" + "orgf"
-                                                + "\t" + offset1 
+                                                + "\t" + offset1
                                                 + "\t" + pfr1.toVectors()
                                                         .replaceAll("\\],\\[", "\t")
                                                         .replaceAll("[\\[\\]]", "")
@@ -763,7 +772,7 @@ public class PolyFraction
                                     } else if (mode.equals("fract2")) {
                                         String[] vars = pfr1.getVariables();
                                         System.out.println(aseqno + "\t" + "tria"
-                                                + "\t" + offset1 
+                                                + "\t" + offset1
                                                 + "\t" + pfr1.getNum().toTriangleList(vars)
                                                 + "\t" + pfr1.getDen().toTriangleList(vars)
                                                 + "\t" + vars[0] + "," + vars[1]
@@ -777,9 +786,9 @@ public class PolyFraction
                                     iparm ++;
                                 } else if (mode.equals("rioarr")) {
                                     String offset1 = parms[iparm++];
+                                    System.out.print(aseqno + "\t");
                                     pfr1 = PolyFraction.parse(parms[iparm]).normalize();
-                                    System.out.println(aseqno + "\t" 
-                                            + pfr1.getCoefficientTriangle(numTerms
+                                    System.out.println(pfr1.getCoefficientTriangle(numTerms
                                             , new String[] { "x", "y" })
                                             .toString().replaceAll("[\\[\\]]", ""));
                                 } // switch mode
@@ -788,6 +797,7 @@ public class PolyFraction
                         lineReader.close();
                     } catch (Exception exc) {
                         pfr1.log.error(exc.getMessage(), exc);
+                        System.err.println("exception for pfr1=" + pfr1.toString());
                     } // try
                     // -f
 
@@ -811,7 +821,7 @@ public class PolyFraction
                     }
                     pfr1 = new PolyFraction(args[iarg], args[iarg + 1]); iarg += 2;
                     System.out.println(pfr1.toString());
-                    System.out.println("triangle: " 
+                    System.out.println("triangle: "
                         + pfr1.getCoefficientTriangle(numTerms, new String[] { "x", "y" }));
                     // -trian
 
