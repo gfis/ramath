@@ -794,7 +794,7 @@ public class ContinuedFraction extends ArrayList/*1.5*/<BigRational>/*1.5*/  {
                 int ind = min; 
                 while (ind <= max) { // in range
                 	cf.sqrtOf(BigInteger.valueOf(ind));
-	                System.out.println(ind + "\t" + cf.toString());
+	                System.out.println(ind + "\t" + cf.toString().replaceAll(" 1\\/",""));
 	                ind ++;
 	            } // while in range
             } else if (opt.equals("-sqrt")) {

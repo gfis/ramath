@@ -524,7 +524,7 @@ public class PolyFraction
         Coefficient cons1 = poden.getConstant();
         if (! cons1.equals(BigInteger.ONE)) {
             System.err.println("PolyFraction.getCoefficientTriangle: Coefficient of"
-                    +  "denominator must be 1 instead of " + cons1.toString()
+                    +  " denominator must be 1 instead of " + cons1.toString()
                     + " in pfr " + this.toString());
             return new BigVector(new int[] { 0 });
         }

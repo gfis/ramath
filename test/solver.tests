@@ -40,6 +40,14 @@ TEST TBI2 biased expression - in rset2
 CALL TreeSolver -b 2 -l 6 -e "-2 + a^2 + b^2" -r showfail
 
 #----
+# Quintic - RM
+TEST TQQ1 tree solver, quintic
+CALL TreeSolver -l 9 -e "(q+1)^2 = 2*(t+1)^5 - 1" -r norm
+
+TEST TQQ2 tree solver, x^+ 2 = y^3
+CALL TreeSolver -l 9 -e "(x+5)^2 + 2 = (y+3)^3x" -r norm,showfail,no-igtriv
+
+#----
 # Square root
 TEST TQR1 tree solver, sqrt(2)
 CALL TreeSolver -l 4 -e "2*q^2 - p^2" 
