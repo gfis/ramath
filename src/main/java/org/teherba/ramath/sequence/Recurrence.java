@@ -18,6 +18,8 @@
  * limitations under the License.
  */
 package org.teherba.ramath.sequence;
+import  org.teherba.ramath.sequence.Sequence;
+import  org.teherba.ramath.linear.BigVector;
 import  java.math.BigInteger;
 
 /** General methods for recurrences
@@ -26,10 +28,41 @@ import  java.math.BigInteger;
 public class Recurrence {
     public final static String CVSID = "@(#) $Id: Recurrence.java 194 2009-07-07 21:10:32Z gfis $";
 
+    /** List of initial terms (at least as long as the signature) */
+    BigVector initTerms;
+
     /** No-args Constructor
      */
     public Recurrence() {
     } // no-args Constructor
+
+    /** Compute one term a(n+1) from the existing terms.
+     *  This is only a dummy implementation -
+     *  the method is typically overwritten by the subclass.
+     *  @param seq {@link Sequence} with existing terms
+     *  @param np1 index of the new term to be computed
+     */
+    public void compute(Sequence seq, int np1) {
+        seq.setBig(np1, BigInteger.ONE);
+    } // compute
+
+    /** Generates a sequence from the recurrence.
+     *  @param noTerms number of terms to be generated
+     *  @return {@link Sequence}
+     */
+    public Sequence generate(int termNo) {
+        Sequence result = new Sequence(termNo);
+        int ncur = 0;
+        while (ncur < initTerms.size()) {
+            result.setBig(ncur, initTerms.getBig(ncur));
+            ncur ++;
+        } // while init
+        while (ncur < termNo) { // compute
+            compute(result, ncur); // a(n+1) = 17*a(n) + ...
+            ncur ++;
+        } // compute
+        return result;
+    } // generate
 
     /** Test method.
      *  @param args command line arguments: none

@@ -64,6 +64,18 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         this.vector = new BigInteger[this.vecLen];
     } // Constructor(int)
 
+    /** Constructor for a constant BigVector of some length
+     *  @param numElems number of elements
+     *  @param value constant for all elements
+     */
+    public BigVector(int numElems, BigInteger value) {
+        this.vecLen = numElems;
+        this.vector = new BigInteger[this.vecLen];
+        for (int itup = 0; itup < this.vecLen; itup ++) {
+            this.vector[itup] = value;
+        } // for itup
+    } // Constructor(int, BigInteger)
+
     /** Constructor for a BigVector from a tuple of integers
      *  @param tuple array of integers
      */
