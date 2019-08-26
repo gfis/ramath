@@ -792,12 +792,45 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
     } // toString()
 
     /** Returns a String representation of the Vector
+     *  @param formatSpec specification of the layout: null = printf(%3d), ",", " ", " %4d"
+     *  @return a one-dimensional array of small numbers
+     */
+    public String toString(String formatSpec) {
+        String sep = ",";
+        StringBuffer result = new StringBuffer(256);
+        if (false) {
+        } else if (formatSpec == null || formatSpec.length() == 0) {
+            for (int icol = 0; icol < vecLen; icol ++) {
+                result.append(String.format(" %3d", vector[icol]));
+            } // for icol
+        } else if (formatSpec.indexOf('%') >= 0) { // printf spec
+            for (int icol = 0; icol < vecLen; icol ++) {
+                result.append(String.format(formatSpec, vector[icol]));
+            } // for icol
+        } else { 
+            if (formatSpec.indexOf(sep) >= 0) {
+                result.append('[');
+            }
+            for (int icol = 0; icol < vecLen; icol ++) {
+                if (icol > 0) {
+                    result.append(formatSpec);
+                }
+                result.append(String.valueOf(vector[icol]));
+            } // for icol
+            if (formatSpec.indexOf(sep) >= 0) {
+                result.append(']');
+            }
+        }
+        return result.toString();
+    } // toString()
+
+    /** Returns a String representation of the Vector
      *  with comma separators and enclosed in square brackets,
      *  and with the GCD extracted and multiplied behind.
      *  @return "[1,6,8,9]*2" instead of "[2,12,16,18]"
      */
     public String toFactoredString() {
-        Vector copy = this.clone();
+        Vector copy = clone();
         int gcd = extractGcd(copy.getValues());
         String result = copy.toString(",");
         if (gcd > 1) {
@@ -805,46 +838,6 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
         }
         return result;
     } // toFactoredString()
-
-    /** Returns a String representation of the Vector
-     *  @param formatSpecSpec specification of the layout: null = printf(%3d), ",", " ", " %4d"
-     *  @return a one-dimensional array of small numbers
-     */
-    public String toString(String formatSpecSpec) {
-        String sep = ",";
-        StringBuffer result = new StringBuffer(256);
-        if (false) {
-        } else if (formatSpecSpec == null || formatSpecSpec.length() == 0) {
-            for (int icol = 0; icol < this.vecLen; icol ++) {
-                result.append(String.format(" %3d", this.vector[icol]));
-            } // for icol
-        } else if (formatSpecSpec.indexOf('%') >= 0) { // printf spec
-            for (int icol = 0; icol < this.vecLen; icol ++) {
-                result.append(String.format(formatSpecSpec, this.vector[icol]));
-            } // for icol
-        } else { 
-            if (formatSpecSpec.indexOf(sep) >= 0) {
-                result.append('[');
-            }
-            for (int icol = 0; icol < this.vecLen; icol ++) {
-                if (icol > 0) {
-                    result.append(sep);
-                }
-                result.append(String.valueOf(this.vector[icol]));
-            } // for icol
-            if (formatSpecSpec.indexOf(sep) >= 0) {
-                result.append(']');
-            }
-        }
-        return result.toString();
-    } // toString()
-
-    /** Returns an array with the integer elements of the Vector
-     *  @return a one-dimensional array of ints
-     */
-    public /*Type*/int[] toArray_99() {
-        return this.vector;
-    } // toArray()
 
     /** Gives the minimum element in <em>this</em> Vector
      *  @return the minimum value

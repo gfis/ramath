@@ -286,31 +286,56 @@ public class BigVector extends Vector implements Cloneable, Serializable {
     // inherited: contains
 
     /** Returns a String representation of the BigVector
-     *  @return a one-dimensional array of BigIntegers
+     *  @return a list of the form "[n1,n2,n3]"
      */
     @Override
     public String toString() {
+        return toString(",");
+    } // toString()
+    
+    /** Returns a String representation of the BigVector
+     *  @param formatSpec separator or printf spec; "%3d" is converted to "%-3s".
+     *  @return a separated list of BigIntegers
+     */
+    @Override
+    public String toString(String formatSpec) {
+        if (formatSpec.matches("\\s*\\%\\d*d")) {
+            formatSpec = formatSpec.replaceAll("\\%", "%-").replaceAll("d\\Z", "s");
+        }
         String sep = ",";
         StringBuffer result = new StringBuffer(256);
-        result.append('[');
-        int icol = 0;
-        while (icol < this.vecLen) {
-            if (icol > 0) {
-                result.append(sep);
+        if (false) {
+        } else if (formatSpec == null || formatSpec.length() == 0) {
+            for (int icol = 0; icol < vecLen; icol ++) {
+                result.append(String.format(" %-3s", vector[icol]));
+            } // for icol
+        } else if (formatSpec.indexOf('%') >= 0) { // printf spec
+            for (int icol = 0; icol < vecLen; icol ++) {
+                result.append(String.format(formatSpec, vector[icol]));
+            } // for icol
+        } else { 
+            if (formatSpec.indexOf(sep) >= 0) {
+                result.append('[');
             }
-            result.append(this.vector[icol].toString());
-            icol ++;
-        } // while icol
-        result.append(']');
+            for (int icol = 0; icol < vecLen; icol ++) {
+                if (icol > 0) {
+                    result.append(formatSpec);
+                }
+                result.append(String.valueOf(vector[icol]));
+            } // for icol
+            if (formatSpec.indexOf(sep) >= 0) {
+                result.append(']');
+            }
+        }
         return result.toString();
     } // toString()
-
+    
     //========================
     // GCD, LCM and companions
     //========================
     /** Greatest common divisor of <em>this</em> BigVector's elements
      *  @return a BigInteger &gt;= 1
-   S  */
+     */
     public BigInteger gcdBig() {
         return gcd(this.vector);
     } // gcdBig()
@@ -448,7 +473,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         if (this.size() == 0) {
             System.out.println("# assertion in BigVector: empty vector");
             return BigInteger.ZERO;
-		}
+        }
         BigInteger[] quotRest = this.getBig(0).divideAndRemainder(divisor);
         BigInteger result     = quotRest[0];
         BigInteger quotient   = result.negate();

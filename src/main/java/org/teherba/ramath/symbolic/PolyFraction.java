@@ -624,21 +624,6 @@ public class PolyFraction
         return getCoxeterFraction(pwr, (ngen - 2) * (ngen - 1) / 2, 2 - ngen);
     } // getCoxeterFraction
 
-    /* ------------ Solver evaluation --------------- */
-
-    /** Evaluates a {@link PolyFraction} without any proof history by evaluating
-     *  all its member {@link Polynomial}s, and returning the cummulative results, whether
-     *  <ul>
-     *  <li>all its (in)equalities hold / are true         =&gt; {@link VariableMap#SUCCESS}</li>
-     *  <li>there is at least one (in)equality which fails =&gt; {@link VariableMap#FAILURE}</li>
-     *  <li>the outcome cannot be decided                  =&gt; {@link VariableMap#UNKNOWN}</li>
-     *  </ul>
-     *  @param pfr1 evaluate this PolyFraction
-     *  @param varMap the map of the variables how they were recently substituted
-     *  in <em>this</em> Polynomial, or <em>null</em>
-     *  @return SUCCESS, FAILURE or UNKNOWN
-     */
-
     /*--------------- Test driver --------------------*/
 
     /** Test method, shows some fixed PolyFractions with no arguments, or the
@@ -803,7 +788,7 @@ public class PolyFraction
 
                 } else if (opt.equals    ("-parse")) {
                     pfr1 = PolyFraction.parse(args[iarg ++]);
-                    System.out.println("PolyFraction " + pfr1.toString());
+                    System.out.println(pfr1.toString());
 
                 } else if (opt.equals    ("-n")     ) {
                     numTerms = 16;
