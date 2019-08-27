@@ -33,7 +33,7 @@ import  java.math.BigInteger;
  *  @author Dr. Georg Fischer
  */
 public class Coefficient 
-        extends BigInteger
+        extends BigInteger // BigRational
         implements Cloneable, Serializable 
         {
     private static final long serialVersionUID = 1L;

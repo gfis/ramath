@@ -38,7 +38,7 @@ import  java.math.RoundingMode;
  *  @author Dr. Georg Fischer
  */
 public class BigRational
-        // extends BigInteger
+        extends BigInteger
         implements Cloneable, Serializable
         {
     private static final long serialVersionUID = 1L;
@@ -58,7 +58,7 @@ public class BigRational
      *  all characters except from 0-9, '.' and '/' are stripped.
      */
     public BigRational(String rawNumber) {
-        // super("0");
+        super(rawNumber);
         String number = rawNumber.replaceAll("[^\\d\\.\\/\\-\\+]", "");
         int slashPos = number.indexOf("/");
         if (slashPos < 0) { // integral
@@ -73,7 +73,7 @@ public class BigRational
      *  @param bytes the result of BigInteger.toByteArray()
      */
     public BigRational(byte[] bytes) {
-        // super("0");
+        super(bytes);
         this.num = new BigInteger(bytes);
         this.den = BigInteger.ONE;
     } // Constructor(byte[])

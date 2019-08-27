@@ -1,4 +1,4 @@
-/*  BigMatrix: a simple, small, square matrix of numbers
+/*  BigMatrix: a simple, square matrix of BigInteger numbers
  *  @(#) $Id: BigMatrix.java 744 2011-07-26 06:29:20Z gfis $
  *  2018-01-24, Georg Fischer: copied from Matrix
  */
@@ -19,7 +19,7 @@
  */
 package org.teherba.ramath.linear;
 import  org.teherba.ramath.linear.BigVector;
-import  org.teherba.ramath.linear.Vector;
+import  org.teherba.ramath.linear.Matrix;
 import  org.teherba.ramath.util.ModoMeter;
 import  org.teherba.ramath.util.Permutator;
 import  java.io.Serializable;
@@ -28,8 +28,7 @@ import  java.util.ArrayList;
 import  org.apache.log4j.Logger;
 
 /** Class BigMatrix implements some simple linear algebra operations
- *  on square matrices of small integer numbers (Java <em>int</em>s).
- *  Typically a BigMatrix will have no more than 8 rows/columns.
+ *  on square matrices of BigInteger numbers (Java <em>int</em>s).
  *  It is used to solve diophantine problems.
  *  @author Dr. Georg Fischer
  */
@@ -42,7 +41,7 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
 
     /*-------------- class properties -----------------------------*/
 
-    /** a 2-dimensional array of small numbers */
+    /** a 2-dimensional array of numbers */
     protected BigInteger[][] matrix;
     /*-------------- construction -----------------------------*/
 
@@ -130,7 +129,7 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
     /** Constructor for a rectangular BigMatrix which initializes it from a matrix expression.
      *  If the number of elements is no square number, the next lower square
      *  number is taken, and some elements at the end are ignored.
-     *  @param matExpr comma-separated array of {@link Vector}s in square brackets,
+     *  @param matExpr comma-separated array of {@link BigVector}s in square brackets,
      *  for example "[[11,12,13],[21,22,23],[31,32,33]]"
      */
     public BigMatrix(String matExpr) {
@@ -169,7 +168,7 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
 
     /*-------------- bean methods, setters and getters -----------------------------*/
     // inherited: size, getRowLen, getColLen
-    
+
     /** Gets an element.
      *  @param rowNo number of the row, zero based
      *  @param colNo number of the column, zero based
@@ -190,9 +189,9 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
 
     /*-------------- lightweight derived methods -----------------------------*/
 
-    /** Returns a row as a {@link Vector}.
+    /** Returns a row as a {@link BigVector}.
      *  @param rowNo number of the row, zero based
-     *  @return a Vector containing the elements of the matrix' row
+     *  @return a BigVector containing the elements of the matrix' row
      */
     public BigVector getBigRow(int rowNo) {
         BigVector result = new BigVector(this.colLen);
@@ -236,7 +235,7 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
         } // for irow
     } // setColumn
 
-    /** Exchanges two rows in <em>this</em> Matrix.
+    /** Exchanges two rows in <em>this</em> BigMatrix.
      *  @param rowNo1 number of the 1st row
      *  @param rowNo2 number of the 2nd row
      */
@@ -250,7 +249,7 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
 
     /** Returns a string representation of the matrix
      *  with 4 places per element and one line per row
-     *  @return a 2-dimensional array of small numbers
+     *  @return a 2-dimensional array of numbers
      */
     @Override
     public String toString() {
@@ -270,13 +269,13 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
     /** Returns a string representation of the matrix
      *  with 4 places per element and one line per row
      *  @param format (not used)
-     *  @return a 2-dimensional array of small numbers
+     *  @return a 2-dimensional array of numbers
      */
     @Override
     public String toString(String format) {
-        return this.toString();
+        return toString();
     } // toString(String)
-    
+
     /** Determines whether the BigMatrix has a zero element
      *  @return true if the matrix has a zero, or false otherwise
      */
@@ -369,9 +368,9 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
                 for (int jcol = 0; jcol < this.colLen; jcol ++) {
                     BigInteger sum = BigInteger.ZERO;
                     for (int kvec = 0; kvec < this.rowLen; kvec ++) {
-                        sum = sum.add(this.matrix[irow][kvec].multiply(matr2.matrix[kvec][jcol]));
+                        sum = sum.add(this.getBig(irow, kvec).multiply(matr2.getBig(kvec,jcol)));
                     } // for kvec
-                    result.matrix[irow][jcol] = sum;
+                    result.set(irow, jcol, sum);
                 } // for jcol
             } // for irow
         } else {
@@ -574,7 +573,7 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
      *  @param exp exponent
      *  @param left  number of leading  elements which represent the left  side
      *  @param right number of trailing elements which represent the right side
-     *  @param vect0 the {@link Vector} to start with
+     *  @param vect0 the {@link BigVector} to start with
      *  @return an array of Vectors as result of the multiplication;
      *  the size determines the number of times that <em>this</em> BigMatrix could be multiplied
      *  by <em>vect0</em> while maintaining the power sum property.
@@ -665,7 +664,5 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
             log.error(exc.getMessage(), exc);
         }
     } // main
-
-
 
 } // BigMatrix

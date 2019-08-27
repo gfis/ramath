@@ -28,10 +28,9 @@ import  java.util.Arrays;
 import  java.util.regex.Matcher;
 import  java.util.regex.Pattern;
 
-/** Class BigVector is used in conjunction with {@link Matrix} to
+/** Class BigVector is used to
  *  implement some simple linear algebra operations
- *  on square matrices of small integer numbers (Java <em>int</em>s).
- *  Typically a BigVector will have no more than 8 elements.
+ *  on vectors of BigInteger numbers.
  *  @author Dr. Georg Fischer
  */
 public class BigVector extends Vector implements Cloneable, Serializable {
@@ -175,18 +174,18 @@ public class BigVector extends Vector implements Cloneable, Serializable {
 
     /** Returns an element of the Vector
      *  @param icol number of the element (zero based)
-     *  @return a small number
+     *  @return a number
      */
     public BigInteger getBig(int icol) {
-        return this.vector[icol];
+        return vector[icol];
     } // getBig
 
     /** Sets an element of the BigVector
      *  @param icol number of the element (zero based)
-     *  @param value a small number
+     *  @param value a number
      */
     public void setBig(int icol, BigInteger value) {
-        this.vector[icol] = value;
+        vector[icol] = value;
     } // set
 
     /** Sets an element of the BigVector
@@ -194,7 +193,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
      *  @param value a small number
      */
     public void set(int icol, BigInteger value) {
-        this.vector[icol] = value;
+        vector[icol] = value;
     } // set
 
     /** Gets the values of <em>this</em> {@link BigVector} as an <em>BigInteger</em> array.
@@ -212,8 +211,8 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         Polynomial result = new Polynomial();
         String var = "x";
         int ivect = 0;
-        while (ivect < this.vecLen) {
-            result.addTo(new Monomial(this.vector[ivect], var, ivect));
+        while (ivect < vecLen) {
+            result.addTo(new Monomial(vector[ivect], var, ivect));
             ivect ++;
         } // while ivect
         return result;
