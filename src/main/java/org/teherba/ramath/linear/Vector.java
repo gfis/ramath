@@ -813,7 +813,7 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
             }
             for (int icol = 0; icol < vecLen; icol ++) {
                 if (icol > 0) {
-                    result.append(formatSpec);
+                    result.append(sep);
                 }
                 result.append(String.valueOf(vector[icol]));
             } // for icol

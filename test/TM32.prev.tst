@@ -1,4 +1,4 @@
-TranspositionSet={[2,1,0],[1,2,0],[2,0,1],[0,2,1],[1,0,2]}
+TranspositionSet={[0,2,1],[1,0,2],[1,2,0],[2,1,0],[2,0,1]}
 Expanding for base=3, level=3, reasons+features=base,transpose,same,similiar igtriv,invall,norm
 Refined variables=x,y,z
 [0+1x,0+1y,0+1z]:	unknown -> [1] [0,0,0] x²+y²-3x*y*z+z²
@@ -7,11 +7,11 @@ expanding queue[0]^-1,meter=[3,3,3]: x²+y²-3x*y*z+z²
 [0+3x,0+3y,0+3z]:	unknown -> [1] [0,0,0] x²+y²-9x*y*z+z²
 [1+3x,1+3y,1+3z]:	unknown -> [2] [1,1,1] x-3x²+y+9x*y-3y²+z+9x*z+9y*z+27x*y*z-3z²
 [2+3x,1+3y,1+3z]:	unknown -> [3] [2,1,1] x+3x²-4y-9x*y+3y²-4z-9x*z-18y*z-27x*y*z+3z²
-[1+3x,2+3y,1+3z]:	transposed [3] by [1,0,2]
+[1+3x,2+3y,1+3z]:	transposed [3] by [2,0,1]
 [2+3x,2+3y,1+3z]:	unknown -> [4] [2,2,1] 2x-3x²+2y+9x*y-3y²+10z+18x*z+18y*z+27x*y*z-3z²+1
 -> solution [5,2,1],NONTRIVIAL [2,5,1],NONTRIVIAL
-[1+3x,1+3y,2+3z]:	transposed [3] by [1,2,0]
-[2+3x,1+3y,2+3z]:	transposed [4] by [0,2,1]
+[1+3x,1+3y,2+3z]:	transposed [3] by [2,1,0]
+[2+3x,1+3y,2+3z]:	transposed [4] by [1,2,0]
 [1+3x,2+3y,2+3z]:	transposed [4] by [2,0,1]
 [2+3x,2+3y,2+3z]:	unknown -> [5] [2,2,2] 8x-3x²+8y+18x*y-3y²+8z+18x*z+18y*z+27x*y*z-3z²+4
 endexp[0]
@@ -20,10 +20,10 @@ expanding queue[1]^0,meter=[3,3,3]: x²+y²-9x*y*z+z²
 [0+9x,0+9y,0+9z]:	unknown -> [6] [0,0,0] x²+y²-27x*y*z+z²
 [3+9x,3+9y,3+9z]:	unknown -> [7] [1,1,1] 7x-3x²+7y+27x*y-3y²+7z+27x*z+27y*z+81x*y*z-3z²+2
 [6+9x,3+9y,3+9z]:	unknown -> [8] [2,1,1] 5x-3x²+16y+27x*y-3y²+16z+27x*z+54y*z+81x*y*z-3z²+4
-[3+9x,6+9y,3+9z]:	transposed [8] by [1,0,2]
+[3+9x,6+9y,3+9z]:	transposed [8] by [2,0,1]
 [6+9x,6+9y,3+9z]:	unknown -> [9] [2,2,1] 14x-3x²+14y+27x*y-3y²+34z+54x*z+54y*z+81x*y*z-3z²+9
-[3+9x,3+9y,6+9z]:	transposed [8] by [1,2,0]
-[6+9x,3+9y,6+9z]:	transposed [9] by [0,2,1]
+[3+9x,3+9y,6+9z]:	transposed [8] by [2,1,0]
+[6+9x,3+9y,6+9z]:	transposed [9] by [1,2,0]
 [3+9x,6+9y,6+9z]:	transposed [9] by [2,0,1]
 [6+9x,6+9y,6+9z]:	unknown -> [10] [2,2,2] 32x-3x²+32y+54x*y-3y²+32z+54x*z+54y*z+81x*y*z-3z²+20
 endexp[1]
@@ -64,13 +64,13 @@ expanding queue[4]^0,meter=[3,3,3]: 2x-3x²+2y+9x*y-3y²+10z+18x*z+18y*z+27x*y*z
 endexp[4]
 expanding queue[5]^0,meter=[3,3,3]: 8x-3x²+8y+18x*y-3y²+8z+18x*z+18y*z+27x*y*z-3z²+4
 [5+9x,2+9y,2+9z]:	unknown -> [27] [1,0,0] 2x-9x²+26y+54x*y-9y²+26z+54x*z+135y*z+243x*y*z-9z²+3
-[2+9x,5+9y,2+9z]:	transposed [27] by [1,0,2]
+[2+9x,5+9y,2+9z]:	transposed [27] by [2,0,1]
 [8+9x,8+9y,2+9z]:	unknown -> [28] [2,2,0] 32x-9x²+32y+54x*y-9y²+188z+216x*z+216y*z+243x*y*z-9z²+28
-[2+9x,2+9y,5+9z]:	transposed [27] by [1,2,0]
+[2+9x,2+9y,5+9z]:	transposed [27] by [2,1,0]
 [8+9x,5+9y,5+9z]:	unknown -> [29] [2,1,1] 59x-9x²+110y+135x*y-9y²+110z+135x*z+216y*z+243x*y*z-9z²+54
-[5+9x,8+9y,5+9z]:	transposed [29] by [1,0,2]
-[8+9x,2+9y,8+9z]:	transposed [28] by [0,2,1]
-[5+9x,5+9y,8+9z]:	transposed [29] by [1,2,0]
+[5+9x,8+9y,5+9z]:	transposed [29] by [2,0,1]
+[8+9x,2+9y,8+9z]:	transposed [28] by [1,2,0]
+[5+9x,5+9y,8+9z]:	transposed [29] by [2,1,0]
 [2+9x,8+9y,8+9z]:	transposed [28] by [2,0,1]
 endexp[5]
 ---------------- level 2
@@ -78,22 +78,22 @@ expanding queue[6]^1,meter=[3,3,3]: x²+y²-27x*y*z+z²
 [0+27x,0+27y,0+27z]:	unknown -> [30] [0,0,0] x²+y²-81x*y*z+z²
 [9+27x,9+27y,9+27z]:	unknown -> [31] [1,1,1] 25x-3x²+25y+81x*y-3y²+25z+81x*z+81y*z+243x*y*z-3z²+8
 [18+27x,9+27y,9+27z]:	unknown -> [32] [2,1,1] 23x-3x²+52y+81x*y-3y²+52z+81x*z+162y*z+243x*y*z-3z²+16
-[9+27x,18+27y,9+27z]:	transposed [32] by [1,0,2]
+[9+27x,18+27y,9+27z]:	transposed [32] by [2,0,1]
 [18+27x,18+27y,9+27z]:	unknown -> [33] [2,2,1] 50x-3x²+50y+81x*y-3y²+106z+162x*z+162y*z+243x*y*z-3z²+33
-[9+27x,9+27y,18+27z]:	transposed [32] by [1,2,0]
-[18+27x,9+27y,18+27z]:	transposed [33] by [0,2,1]
+[9+27x,9+27y,18+27z]:	transposed [32] by [2,1,0]
+[18+27x,9+27y,18+27z]:	transposed [33] by [1,2,0]
 [9+27x,18+27y,18+27z]:	transposed [33] by [2,0,1]
 [18+27x,18+27y,18+27z]:	unknown -> [34] [2,2,2] 104x-3x²+104y+162x*y-3y²+104z+162x*z+162y*z+243x*y*z-3z²+68
 endexp[6]
 expanding queue[7]^1,meter=[3,3,3]: 7x-3x²+7y+27x*y-3y²+7z+27x*z+27y*z+81x*y*z-3z²+2
 [12+27x,3+27y,3+27z]:	unknown -> [35] [1,0,0] x-9x²+34y+81x*y-9y²+34z+81x*z+324y*z+729x*y*z-9z²+2
-[3+27x,12+27y,3+27z]:	transposed [35] by [1,0,2]
+[3+27x,12+27y,3+27z]:	transposed [35] by [2,0,1]
 [21+27x,21+27y,3+27z]:	unknown -> [36] [2,2,0] 49x-9x²+49y+81x*y-9y²+439z+567x*z+567y*z+729x*y*z-9z²+38
-[3+27x,3+27y,12+27z]:	transposed [35] by [1,2,0]
+[3+27x,3+27y,12+27z]:	transposed [35] by [2,1,0]
 [21+27x,12+27y,12+27z]:	unknown -> [37] [2,1,1] 130x-9x²+244y+324x*y-9y²+244z+324x*z+567y*z+729x*y*z-9z²+103
-[12+27x,21+27y,12+27z]:	transposed [37] by [1,0,2]
-[21+27x,3+27y,21+27z]:	transposed [36] by [0,2,1]
-[12+27x,12+27y,21+27z]:	transposed [37] by [1,2,0]
+[12+27x,21+27y,12+27z]:	transposed [37] by [2,0,1]
+[21+27x,3+27y,21+27z]:	transposed [36] by [1,2,0]
+[12+27x,12+27y,21+27z]:	transposed [37] by [2,1,0]
 [3+27x,21+27y,21+27z]:	transposed [36] by [2,0,1]
 endexp[7]
 expanding queue[8]^1,meter=[3,3,3]: 5x-3x²+16y+27x*y-3y²+16z+27x*z+54y*z+81x*y*z-3z²+4
@@ -121,12 +121,12 @@ endexp[9]
 expanding queue[10]^1,meter=[3,3,3]: 32x-3x²+32y+54x*y-3y²+32z+54x*z+54y*z+81x*y*z-3z²+20
 [24+27x,6+27y,6+27z]:	unknown -> [50] [2,0,0] 20x-9x²+140y+162x*y-9y²+140z+162x*z+648y*z+729x*y*z-9z²+24
 [15+27x,15+27y,6+27z]:	unknown -> [51] [1,1,0] 80x-9x²+80y+162x*y-9y²+221z+405x*z+405y*z+729x*y*z-9z²+44
-[6+27x,24+27y,6+27z]:	transposed [50] by [1,0,2]
-[15+27x,6+27y,15+27z]:	transposed [51] by [0,2,1]
+[6+27x,24+27y,6+27z]:	transposed [50] by [2,0,1]
+[15+27x,6+27y,15+27z]:	transposed [51] by [1,2,0]
 [6+27x,15+27y,15+27z]:	transposed [51] by [2,0,1]
 [24+27x,24+27y,15+27z]:	unknown -> [52] [2,2,1] 344x-9x²+344y+405x*y-9y²+566z+648x*z+648y*z+729x*y*z-9z²+303
-[6+27x,6+27y,24+27z]:	transposed [50] by [1,2,0]
-[24+27x,15+27y,24+27z]:	transposed [52] by [0,2,1]
+[6+27x,6+27y,24+27z]:	transposed [50] by [2,1,0]
+[24+27x,15+27y,24+27z]:	transposed [52] by [1,2,0]
 [15+27x,24+27y,24+27z]:	transposed [52] by [2,0,1]
 endexp[10]
 expanding queue[11]^2,meter=[3,3,3]: x-9x²+y+27x*y-9y²+z+27x*z+27y*z+243x*y*z-9z²
@@ -155,23 +155,23 @@ endexp[12]
 expanding queue[13]^2,meter=[3,3,3]: 40x-9x²+40y+108x*y-9y²+40z+108x*z+108y*z+243x*y*z-9z²+16
 [22+27x,4+27y,4+27z]:	unknown -> [66] [2,0,0] 4x-27x²+256y+324x*y-27y²+256z+324x*z+1782y*z+2187x*y*z-27z²+20
 [13+27x,13+27y,4+27z]:	unknown -> [67] [1,1,0] 130x-27x²+130y+324x*y-27y²+499z+1053x*z+1053y*z+2187x*y*z-27z²+62
-[4+27x,22+27y,4+27z]:	transposed [66] by [1,0,2]
-[13+27x,4+27y,13+27z]:	transposed [67] by [0,2,1]
+[4+27x,22+27y,4+27z]:	transposed [66] by [2,0,1]
+[13+27x,4+27y,13+27z]:	transposed [67] by [1,2,0]
 [4+27x,13+27y,13+27z]:	transposed [67] by [2,0,1]
 [22+27x,22+27y,13+27z]:	unknown -> [68] [2,2,1] 814x-27x²+814y+1053x*y-27y²+1426z+1782x*z+1782y*z+2187x*y*z-27z²+657
-[4+27x,4+27y,22+27z]:	transposed [66] by [1,2,0]
-[22+27x,13+27y,22+27z]:	transposed [68] by [0,2,1]
+[4+27x,4+27y,22+27z]:	transposed [66] by [2,1,0]
+[22+27x,13+27y,22+27z]:	transposed [68] by [1,2,0]
 [13+27x,22+27y,22+27z]:	transposed [68] by [2,0,1]
 endexp[13]
 expanding queue[14]^2,meter=[3,3,3]: 133x-9x²+133y+189x*y-9y²+133z+189x*z+189y*z+243x*y*z-9z²+98
 [16+27x,7+27y,7+27z]:	unknown -> [69] [1,0,0] 115x-27x²+322y+567x*y-27y²+322z+567x*z+1296y*z+2187x*y*z-27z²+74
-[7+27x,16+27y,7+27z]:	transposed [69] by [1,0,2]
+[7+27x,16+27y,7+27z]:	transposed [69] by [2,0,1]
 [25+27x,25+27y,7+27z]:	unknown -> [70] [2,2,0] 475x-27x²+475y+567x*y-27y²+1861z+2025x*z+2025y*z+2187x*y*z-27z²+438
-[7+27x,7+27y,16+27z]:	transposed [69] by [1,2,0]
+[7+27x,7+27y,16+27z]:	transposed [69] by [2,1,0]
 [25+27x,16+27y,16+27z]:	unknown -> [71] [2,1,1] 718x-27x²+1168y+1296x*y-27y²+1168z+1296x*z+2025y*z+2187x*y*z-27z²+669
-[16+27x,25+27y,16+27z]:	transposed [71] by [1,0,2]
-[25+27x,7+27y,25+27z]:	transposed [70] by [0,2,1]
-[16+27x,16+27y,25+27z]:	transposed [71] by [1,2,0]
+[16+27x,25+27y,16+27z]:	transposed [71] by [2,0,1]
+[25+27x,7+27y,25+27z]:	transposed [70] by [1,2,0]
+[16+27x,16+27y,25+27z]:	transposed [71] by [2,1,0]
 [7+27x,25+27y,25+27z]:	transposed [70] by [2,0,1]
 endexp[14]
 expanding queue[15]^3,meter=[3,3,3]: x+9x²-4y-27x*y+9y²-4z-27x*z-54y*z-243x*y*z+9z²

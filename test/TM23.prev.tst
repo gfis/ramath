@@ -1,4 +1,4 @@
-TranspositionSet={[2,1,0],[1,2,0],[2,0,1],[0,2,1],[1,0,2]}
+TranspositionSet={[0,2,1],[1,0,2],[1,2,0],[2,1,0],[2,0,1]}
 Expanding for base=2, level=6, reasons+features=base,transpose,same,similiar 
 Refined variables=x,y,z
 [0+1x,0+1y,0+1z]:	unknown -> [1] [0,0,0] -4x+x²-4y-4x*y+y²-4z-4x*z-4y*z-2x*y*z+z²-4

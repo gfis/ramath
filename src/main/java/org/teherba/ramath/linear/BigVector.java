@@ -480,7 +480,43 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         if (! quotRest[1].equals(BigInteger.ZERO)) {
             System.out.println("# assertion in BigVector: no even division: num="
                     + this.toString() + ", den=" + vect2.toString());
-            return BigInteger.ZERO;
+            return BigInteger.ZERO
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            ;
         }
         int len1 = this.size();
         int len2 = vect2.size();

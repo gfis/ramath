@@ -1,4 +1,4 @@
-TranspositionSet={[3,2,1,0],[2,3,1,0],[3,2,0,1],[2,3,0,1],[1,0,3,2],[0,1,3,2],[1,0,2,3]}
+TranspositionSet={[0,1,3,2],[1,0,2,3],[1,0,3,2],[2,3,0,1],[2,3,1,0],[3,2,1,0],[3,2,0,1]}
 considerNonPrimitive
 Expanding for base=2, level=2, reasons+features=base,transpose,primitive,same,similiar,evenexp invall,norm
 Refined variables=a,b,c,d
@@ -10,9 +10,9 @@ expanding queue[0]^-1,meter=[2,2,2,2]: a²+b²-c²-d²
 -> solution [0,0,0,0],trivial(3) [2,0,2,0],trivial(3) [0,2,2,0],trivial(3) [2,0,0,2],trivial(3) [0,2,0,2],trivial(3) [2,2,2,2],trivial(2)
 [1+2a,0+2b,1+2c,0+2d]:	unknown -> [1] [1,0,1,0] a+a²+b²-c-c²-d²
 -> solution [1,0,1,0],trivial(3) [3,0,3,0],trivial(3) [1,2,1,2],trivial(2) [3,2,3,2],trivial(2)
-[0+2a,1+2b,1+2c,0+2d]:	transposed [1] by [1,0,2,3]
-[1+2a,0+2b,0+2c,1+2d]:	transposed [1] by [0,1,3,2]
-[0+2a,1+2b,0+2c,1+2d]:	transposed [1] by [1,0,3,2]
+[0+2a,1+2b,1+2c,0+2d]:	transposed [1] by [3,2,0,1]
+[1+2a,0+2b,0+2c,1+2d]:	transposed [1] by [2,3,1,0]
+[0+2a,1+2b,0+2c,1+2d]:	transposed [1] by [3,2,1,0]
 [1+2a,1+2b,1+2c,1+2d]:	unknown -> [2] [1,1,1,1] a+a²+b+b²-c-c²-d-d²
 -> solution [1,1,1,1],trivial(2) [3,1,3,1],trivial(2) [1,3,3,1],trivial(2) [3,1,1,3],trivial(2) [1,3,1,3],trivial(2) [3,3,3,3],trivial(2)
 endexp[0]

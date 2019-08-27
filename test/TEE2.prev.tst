@@ -1,4 +1,4 @@
-TranspositionSet={[2,1,0,3],[1,2,0,3],[2,0,1,3],[0,2,1,3],[1,0,2,3]}
+TranspositionSet={[0,2,1,3],[1,0,2,3],[1,2,0,3],[2,1,0,3],[2,0,1,3]}
 considerNonPrimitive
 Expanding for base=2, level=2, reasons+features=base,transpose,primitive,same,similiar,evenexp invall,norm
 Refined variables=a,b,c,d
@@ -10,8 +10,8 @@ expanding queue[0]^-1,meter=[2,2,2,2]: a⁴+b⁴+c⁴-d⁴
 -> solution [0,0,0,0],trivial(3) [2,0,0,2],trivial(3) [0,2,0,2],trivial(3) [0,0,2,2],trivial(3)
 [1+2a,0+2b,0+2c,1+2d]:	unknown -> [1] [1,0,0,1] a+3a²+4a³+2a⁴+2b⁴+2c⁴-d-3d²-4d³-2d⁴
 -> solution [1,0,0,1],trivial(3) [3,0,0,3],trivial(3)
-[0+2a,1+2b,0+2c,1+2d]:	transposed [1] by [1,0,2,3]
-[0+2a,0+2b,1+2c,1+2d]:	transposed [1] by [1,2,0,3]
+[0+2a,1+2b,0+2c,1+2d]:	transposed [1] by [2,0,1,3]
+[0+2a,0+2b,1+2c,1+2d]:	transposed [1] by [2,1,0,3]
 endexp[0]
 ---------------- level 1
 expanding queue[1]^0,meter=[2,2,2,2]: a+3a²+4a³+2a⁴+2b⁴+2c⁴-d-3d²-4d³-2d⁴

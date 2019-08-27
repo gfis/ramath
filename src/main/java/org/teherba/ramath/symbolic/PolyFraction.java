@@ -38,8 +38,8 @@ import  org.apache.log4j.Logger;
 
 /** A PolyFraction is a pair of {@link Polynomial}s which represent
  *  the numerator and the denominator of the fraction.
- *  Normally there is only one variable, but bivariate fractions or
- +  also useful.
+ *  Normally there is only one variable, but bivariate fractions could
+ +  also be useful.
  *  @author Dr. Georg Fischer
  */
 public class PolyFraction

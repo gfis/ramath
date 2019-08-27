@@ -1,4 +1,4 @@
-TranspositionSet={[1,0,3,2],[0,1,3,2],[1,0,2,3]}
+TranspositionSet={[0,1,3,2],[1,0,2,3],[1,0,3,2]}
 considerNonPrimitive
 Expanding for base=2, level=4, reasons+features=base,transpose,primitive,same,similiar,evenexp igtriv,invall,norm,showfail
 Refined variables=a,b,c,d

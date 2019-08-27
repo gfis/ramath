@@ -1,3 +1,16 @@
+# flat	Euler-Binet.X08	 - p + p^4 + 3*q + 6*p^2*q^2 + 9*q^4
+# flat	Euler-Binet.X08	 - p^3 + 3*p^2*q - 3*p*q^2 + 9*q^3 + 1
+# flat	Euler-Binet.X08	p - p^4 + 3*q - 6*p^2*q^2 - 9*q^4
+# flat	Euler-Binet.X08	p^3 + 3*p^2*q + 3*p*q^2 + 9*q^3 - 1
+# merg	Euler-Binet.X08	16*x_y_z^3 - 1
+# merg	Euler-Binet.X08	2*x_y_z + 16*x_y_z^4
+# merg	Euler-Binet.X08	4*x_y_z - 16*x_y_z^4
+# merg	Euler-Binet.X08	8*x_y_z^3 + 1
+# orig	Euler-Binet.X08	-(-(p-3*q)+(p^2+3*q^2)^2)^3
+# orig	Euler-Binet.X08	-((p+3*q)-(p^2+3*q^2)^2)^3
+# orig	Euler-Binet.X08	(1-(p-3*q)*(p^2+3*q^2))^3
+# orig	Euler-Binet.X08	+(-1+(p+3*q)*(p^2+3*q^2))^3
+# poly	Euler-Binet.X08	0
 000018	[3,4,5,6]	Euler-Binet.X08	factor=2	parm= [0,-1]
 000018	[3,4,5,6]	Euler-Binet.X08	factor=2	parm= [0,1]
 000018	[3,4,5,6]	Euler-Binet.X08	factor=3	parm= [1,-1]
@@ -108,16 +121,3 @@
 016638	[1007,1513,7044,7074]	Euler-Binet.X08	factor=1	parm= [-3,5]
 022990	[1001,1999,9980,10010]	Euler-Binet.X08	factor=1	parm= [5,-5]
 022990	[1001,1999,9980,10010]	Euler-Binet.X08	factor=1	parm= [5,5]
-# flat	Euler-Binet.X08	 - p^3 + 3*p^2*q - 3*p*q^2 + 9*q^3 + 1
-# flat	Euler-Binet.X08	p^3 + 3*p^2*q + 3*p*q^2 + 9*q^3 - 1
-# flat	Euler-Binet.X08	 - p + p^4 + 3*q + 6*p^2*q^2 + 9*q^4
-# flat	Euler-Binet.X08	p - p^4 + 3*q - 6*p^2*q^2 - 9*q^4
-# merg	Euler-Binet.X08	16*x_y_z^3 - 1
-# merg	Euler-Binet.X08	2*x_y_z + 16*x_y_z^4
-# merg	Euler-Binet.X08	4*x_y_z - 16*x_y_z^4
-# merg	Euler-Binet.X08	8*x_y_z^3 + 1
-# orig	Euler-Binet.X08	(1-(p-3*q)*(p^2+3*q^2))^3
-# orig	Euler-Binet.X08	+(-1+(p+3*q)*(p^2+3*q^2))^3
-# orig	Euler-Binet.X08	-(-(p-3*q)+(p^2+3*q^2)^2)^3
-# orig	Euler-Binet.X08	-((p+3*q)-(p^2+3*q^2)^2)^3
-# poly	Euler-Binet.X08	0

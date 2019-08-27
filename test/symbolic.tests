@@ -252,8 +252,8 @@ CALL Polynomial -reduce "15x^2 - 7*(x+w)^2 - 9"
 TEST LRA squareCompletion, from T28
 CALL Polynomial -reduce "2+8x+9x^2-3y^3"
 
-TEST LT1 getReductionMap
-CALL Polynomial -redsol -f test/TPE1.this.tst
+# TEST LT1 getReductionMap
+# CALL Polynomial -redsol -f test/TPE1.this.tst
 
 #------------------------------------
 TEST P00 constant

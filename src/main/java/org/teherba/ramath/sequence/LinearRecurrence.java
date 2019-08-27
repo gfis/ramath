@@ -1,6 +1,10 @@
 /*  Linear recurrence with constant coefficients
  *  @(#) $Id: LinearRecurrence.java 194 2009-07-07 21:10:32Z gfis $
- *  2019-08-25, Georg Fischer
+ *  2019-08-27: find with Berlekamp-Massey's algorithm
+ *  2019-08-25, Georg Fischer: Lunnon's algorithm - failed
+ *
+ *  Derived from the SageMath code of William Stein <wstein@gmail.com> (2005):
+ *      https://sage.math.leidenuniv.nl/src/matrix/berlekamp_massey.py
  */
 /*
  * Copyright 2019 Dr. Georg Fischer <dr.georg.fischer@gmail.com>
@@ -20,6 +24,9 @@
 package org.teherba.ramath.sequence;
 import  org.teherba.ramath.linear.BigVector;
 import  org.teherba.ramath.sequence.Sequence;
+import  org.teherba.ramath.symbolic.Monomial;
+import  org.teherba.ramath.symbolic.Polynomial;
+import  org.teherba.ramath.symbolic.RelationSet;
 import  java.math.BigInteger;
 import  java.util.ArrayList;
 
@@ -71,7 +78,7 @@ public class LinearRecurrence extends Recurrence {
      *  @param seq {@link Sequence} with existing terms
      *  @param termNo include so many terms in the derivation
      */
-    public static BigVector find(Sequence seq, int termNo) {
+    public static BigVector findLunnon(Sequence seq, int termNo) {
         BigVector result = null;
         ArrayList<BigVector> stab = new ArrayList<BigVector>(16);
         stab.add(new BigVector(termNo, BigInteger.ONE));
@@ -96,15 +103,15 @@ public class LinearRecurrence extends Recurrence {
                 if (icol < ioff || icol >= termNo - ioff) { // outside
                     vect2.setBig(icol, BigInteger.ZERO);
                 } else {
-                    BigInteger tabN = stab.get(irow - 1).getBig(icol);
-                    if (! tabN.equals(BigInteger.ZERO)) {
-                        BigInteger tabS =
+                    BigInteger north = stab.get(irow - 1).getBig(icol);
+                    if (! north.equals(BigInteger.ZERO)) {
+                        BigInteger south =
                                 stab.get(irow).getBig(icol    ).pow(2).subtract(
                                 stab.get(irow).getBig(icol - 1).multiply(
                                 stab.get(irow).getBig(icol + 1)         )
-                                ).divide(tabN);
-                        vect2.setBig(icol, tabS);
-                        if (! tabS.equals(BigInteger.ZERO)) {
+                                ).divide(north);
+                        vect2.setBig(icol, south);
+                        if (! south.equals(BigInteger.ZERO)) {
                             allZero = false;
                         }
                     } else {
@@ -149,7 +156,6 @@ public class LinearRecurrence extends Recurrence {
      = (-c2*(s11^2 - c1*s11*s10 - c2*s10^2)) / s02
  =>  c2 = (- s[k,k] / s[k,k-1]) * s[k-2,k]        = 3
  =>  c1 = (s[k-1,k] - c2*s[k-1,k-2]) / s[k1-,k-1] = (7 - 3*1) / 2 = 2
-
 */
         if (allZero) {
             if (debug >= 1) {
@@ -167,6 +173,69 @@ public class LinearRecurrence extends Recurrence {
                 System.out.println("row=" + irow + ", c1=" + cr.toString() + ", c2=" + cr_1.toString());
             } // if debug
             result = vect1;
+        }
+        return result;
+    } // findLunnon
+
+    /** Find a signature of constant coefficients from a sequence
+     *  with the Berlekamp-Massey algorithm.
+     *  @param seq {@link Sequence} with existing terms
+     *  @param termNo include so many terms in the derivation
+     *  Derived from the SageMath code of William Stein &lt;wstein@gmail.com&gt; (2005):
+     *      https://sage.math.leidenuniv.nl/src/matrix/berlekamp_massey.py
+     */
+    public static BigVector find(Sequence seq, int termNo) {
+        BigVector result = new BigVector(1, BigInteger.ONE);
+        StringBuffer polyBuf = new StringBuffer(256);
+        if (termNo % 2 != 0) {
+            termNo --; // must be even
+        }
+        int m = termNo / 2; 
+        int iexp = 0;
+        while (iexp < termNo) { // create Polynomial
+            polyBuf.append(" + " + seq.getBig(iexp).toString() + "*x^" + String.valueOf(iexp));
+            iexp ++;
+        } // while creating
+        RelationSet f = new RelationSet(new String[] { polyBuf.toString(), "x^" + String.valueOf(termNo) });
+        RelationSet q = new RelationSet();
+        RelationSet s = new RelationSet(new String[] { "1", "0" } );
+        RelationSet t = new RelationSet(new String[] { "0", "1" } );
+
+        if (debug >= 1) {
+            System.out.println("Initialization:"
+                    + "\nf = " + f.toString()
+            //      + "\nq = " + q.toString()
+                    + "\ns = " + s.toString()
+                    + "\nt = " + t.toString()
+                    );
+        } // if debug
+
+        int j = 1;
+        while (f.get(j).degree() >= m) {
+            j ++;
+            if (debug >= 1) {
+                System.out.println("---- j = " + String.valueOf(j)
+                        + "\nf = " + f.toString()
+                        + "\nq = " + q.toString()
+                        + "\ns = " + s.toString()
+                        + "\nt = " + t.toString()
+                        );
+            } // if debug
+            Polynomial quot[] = new Polynomial[2];
+            quot[0] = f.get(j - 2).divide /* AndRemainder */ (f.get(j-1));
+            q.insert(j, quot[0]);
+            f.insert(j, quot[1]);
+            if (false) { // assertion
+            }
+            s.insert(j, s.get(j - 2).subtract(q.get(j).multiply(s.get(j - 1))));
+            t.insert(j, t.get(j - 2).subtract(q.get(j).multiply(t.get(j - 1))));
+        } // while
+        
+        int irow = 1;
+        boolean busy = true;
+        int maxRow = 64;
+        if (termNo < maxRow) {
+            maxRow = termNo;
         }
         return result;
     } // find

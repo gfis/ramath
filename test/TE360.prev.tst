@@ -1,4 +1,4 @@
-TranspositionSet={[2,1,0,3],[1,2,0,3],[2,0,1,3],[0,2,1,3],[1,0,2,3]}
+TranspositionSet={[0,2,1,3],[1,0,2,3],[1,2,0,3],[2,1,0,3],[2,0,1,3]}
 considerNonPrimitive
 Expanding for base=6, level=1, reasons+features=base,transpose,primitive,same,similiar 
 Refined variables=a,b,c,d
@@ -38,19 +38,19 @@ expanding queue[0]^-1,meter=[6,6,6,6]: a³+b³+c³-d³
 [3+6a,4+6b,5+6c,0+6d]:	transposed [3] by [2,1,0,3]
 [1+6a,0+6b,0+6c,1+6d]:	unknown -> [4] [1,0,0,1] 18a+108a²+216a³+216b³+216c³-18d-108d²-216d³
 -> solution [1,0,0,1],trivial(3) [7,0,0,7],trivial(3)
-[0+6a,1+6b,0+6c,1+6d]:	transposed [4] by [1,0,2,3]
+[0+6a,1+6b,0+6c,1+6d]:	transposed [4] by [2,0,1,3]
 [4+6a,3+6b,0+6c,1+6d]:	unknown -> [5] [4,3,0,1] 288a+432a²+216a³+162b+324b²+216b³+216c³-18d-108d²-216d³+90
 [3+6a,4+6b,0+6c,1+6d]:	transposed [5] by [1,0,2,3]
-[0+6a,0+6b,1+6c,1+6d]:	transposed [4] by [1,2,0,3]
+[0+6a,0+6b,1+6c,1+6d]:	transposed [4] by [2,1,0,3]
 [5+6a,1+6b,1+6c,1+6d]:	unknown -> [6] [5,1,1,1] 450a+540a²+216a³+18b+108b²+216b³+18c+108c²+216c³-18d-108d²-216d³+126
 [4+6a,2+6b,1+6c,1+6d]:	unknown -> [7] [4,2,1,1] 288a+432a²+216a³+72b+216b²+216b³+18c+108c²+216c³-18d-108d²-216d³+72
 [3+6a,3+6b,1+6c,1+6d]:	unknown -> [8] [3,3,1,1] 162a+324a²+216a³+162b+324b²+216b³+18c+108c²+216c³-18d-108d²-216d³+54
 [2+6a,4+6b,1+6c,1+6d]:	transposed [7] by [1,0,2,3]
-[1+6a,5+6b,1+6c,1+6d]:	transposed [6] by [1,0,2,3]
+[1+6a,5+6b,1+6c,1+6d]:	transposed [6] by [2,0,1,3]
 [4+6a,1+6b,2+6c,1+6d]:	transposed [7] by [0,2,1,3]
 [1+6a,4+6b,2+6c,1+6d]:	transposed [7] by [2,0,1,3]
 [4+6a,0+6b,3+6c,1+6d]:	transposed [5] by [0,2,1,3]
-[3+6a,1+6b,3+6c,1+6d]:	transposed [8] by [0,2,1,3]
+[3+6a,1+6b,3+6c,1+6d]:	transposed [8] by [1,2,0,3]
 [1+6a,3+6b,3+6c,1+6d]:	transposed [8] by [2,0,1,3]
 [0+6a,4+6b,3+6c,1+6d]:	transposed [5] by [2,0,1,3]
 [3+6a,0+6b,4+6c,1+6d]:	transposed [5] by [1,2,0,3]
@@ -58,9 +58,9 @@ expanding queue[0]^-1,meter=[6,6,6,6]: a³+b³+c³-d³
 [1+6a,2+6b,4+6c,1+6d]:	transposed [7] by [2,1,0,3]
 [0+6a,3+6b,4+6c,1+6d]:	transposed [5] by [2,1,0,3]
 [5+6a,4+6b,4+6c,1+6d]:	unknown -> [9] [5,4,4,1] 450a+540a²+216a³+288b+432b²+216b³+288c+432c²+216c³-18d-108d²-216d³+252
-[4+6a,5+6b,4+6c,1+6d]:	transposed [9] by [1,0,2,3]
-[1+6a,1+6b,5+6c,1+6d]:	transposed [6] by [1,2,0,3]
-[4+6a,4+6b,5+6c,1+6d]:	transposed [9] by [1,2,0,3]
+[4+6a,5+6b,4+6c,1+6d]:	transposed [9] by [2,0,1,3]
+[1+6a,1+6b,5+6c,1+6d]:	transposed [6] by [2,1,0,3]
+[4+6a,4+6b,5+6c,1+6d]:	transposed [9] by [2,1,0,3]
 [2+6a,0+6b,0+6c,2+6d]:	non-primitive
 -> solution [2,0,0,2],trivial(3) [8,0,0,8],trivial(3)
 [0+6a,2+6b,0+6c,2+6d]:	non-primitive
@@ -77,7 +77,7 @@ expanding queue[0]^-1,meter=[6,6,6,6]: a³+b³+c³-d³
 [2+6a,4+6b,2+6c,2+6d]:	non-primitive
 [1+6a,5+6b,2+6c,2+6d]:	transposed [11] by [2,0,1,3]
 [5+6a,0+6b,3+6c,2+6d]:	transposed [10] by [0,2,1,3]
-[3+6a,2+6b,3+6c,2+6d]:	transposed [12] by [0,2,1,3]
+[3+6a,2+6b,3+6c,2+6d]:	transposed [12] by [1,2,0,3]
 [2+6a,3+6b,3+6c,2+6d]:	transposed [12] by [2,0,1,3]
 [0+6a,5+6b,3+6c,2+6d]:	transposed [10] by [2,0,1,3]
 [2+6a,2+6b,4+6c,2+6d]:	non-primitive
@@ -86,7 +86,7 @@ expanding queue[0]^-1,meter=[6,6,6,6]: a³+b³+c³-d³
 [2+6a,1+6b,5+6c,2+6d]:	transposed [11] by [1,2,0,3]
 [1+6a,2+6b,5+6c,2+6d]:	transposed [11] by [2,1,0,3]
 [0+6a,3+6b,5+6c,2+6d]:	transposed [10] by [2,1,0,3]
-[5+6a,4+6b,5+6c,2+6d]:	transposed [13] by [0,2,1,3]
+[5+6a,4+6b,5+6c,2+6d]:	transposed [13] by [1,2,0,3]
 [4+6a,5+6b,5+6c,2+6d]:	transposed [13] by [2,0,1,3]
 [3+6a,0+6b,0+6c,3+6d]:	non-primitive
 -> solution [3,0,0,3],trivial(3) [9,0,0,9],trivial(3)
@@ -128,21 +128,21 @@ expanding queue[0]^-1,meter=[6,6,6,6]: a³+b³+c³-d³
 -> solution [0,4,0,4],trivial(3) [0,10,0,10],trivial(3)
 [3+6a,0+6b,1+6c,4+6d]:	transposed [18] by [0,2,1,3]
 [2+6a,1+6b,1+6c,4+6d]:	unknown -> [19] [2,1,1,4] 72a+216a²+216a³+18b+108b²+216b³+18c+108c²+216c³-288d-432d²-216d³-54
-[1+6a,2+6b,1+6c,4+6d]:	transposed [19] by [1,0,2,3]
+[1+6a,2+6b,1+6c,4+6d]:	transposed [19] by [2,0,1,3]
 [0+6a,3+6b,1+6c,4+6d]:	transposed [18] by [2,0,1,3]
 [5+6a,4+6b,1+6c,4+6d]:	unknown -> [20] [5,4,1,4] 450a+540a²+216a³+288b+432b²+216b³+18c+108c²+216c³-288d-432d²-216d³+126
 [4+6a,5+6b,1+6c,4+6d]:	transposed [20] by [1,0,2,3]
-[1+6a,1+6b,2+6c,4+6d]:	transposed [19] by [1,2,0,3]
+[1+6a,1+6b,2+6c,4+6d]:	transposed [19] by [2,1,0,3]
 [4+6a,4+6b,2+6c,4+6d]:	non-primitive
 [1+6a,0+6b,3+6c,4+6d]:	transposed [18] by [1,2,0,3]
 [0+6a,1+6b,3+6c,4+6d]:	transposed [18] by [2,1,0,3]
 [4+6a,3+6b,3+6c,4+6d]:	unknown -> [21] [4,3,3,4] 288a+432a²+216a³+162b+324b²+216b³+162c+324c²+216c³-288d-432d²-216d³+54
-[3+6a,4+6b,3+6c,4+6d]:	transposed [21] by [1,0,2,3]
+[3+6a,4+6b,3+6c,4+6d]:	transposed [21] by [2,0,1,3]
 [0+6a,0+6b,4+6c,4+6d]:	non-primitive
 -> solution [0,0,4,4],trivial(3) [0,0,10,10],trivial(3)
 [5+6a,1+6b,4+6c,4+6d]:	transposed [20] by [0,2,1,3]
 [4+6a,2+6b,4+6c,4+6d]:	non-primitive
-[3+6a,3+6b,4+6c,4+6d]:	transposed [21] by [1,2,0,3]
+[3+6a,3+6b,4+6c,4+6d]:	transposed [21] by [2,1,0,3]
 [2+6a,4+6b,4+6c,4+6d]:	non-primitive
 [1+6a,5+6b,4+6c,4+6d]:	transposed [20] by [2,0,1,3]
 [4+6a,1+6b,5+6c,4+6d]:	transposed [20] by [1,2,0,3]
@@ -151,11 +151,11 @@ expanding queue[0]^-1,meter=[6,6,6,6]: a³+b³+c³-d³
 -> solution [5,0,0,5],trivial(3) [11,0,0,11],trivial(3)
 [3+6a,2+6b,0+6c,5+6d]:	unknown -> [23] [3,2,0,5] 162a+324a²+216a³+72b+216b²+216b³+216c³-450d-540d²-216d³-90
 [2+6a,3+6b,0+6c,5+6d]:	transposed [23] by [1,0,2,3]
-[0+6a,5+6b,0+6c,5+6d]:	transposed [22] by [1,0,2,3]
+[0+6a,5+6b,0+6c,5+6d]:	transposed [22] by [2,0,1,3]
 [2+6a,2+6b,1+6c,5+6d]:	unknown -> [24] [2,2,1,5] 72a+216a²+216a³+72b+216b²+216b³+18c+108c²+216c³-450d-540d²-216d³-108
 [5+6a,5+6b,1+6c,5+6d]:	unknown -> [25] [5,5,1,5] 450a+540a²+216a³+450b+540b²+216b³+18c+108c²+216c³-450d-540d²-216d³+126
 [3+6a,0+6b,2+6c,5+6d]:	transposed [23] by [0,2,1,3]
-[2+6a,1+6b,2+6c,5+6d]:	transposed [24] by [0,2,1,3]
+[2+6a,1+6b,2+6c,5+6d]:	transposed [24] by [1,2,0,3]
 [1+6a,2+6b,2+6c,5+6d]:	transposed [24] by [2,0,1,3]
 [0+6a,3+6b,2+6c,5+6d]:	transposed [23] by [2,0,1,3]
 [5+6a,4+6b,2+6c,5+6d]:	unknown -> [26] [5,4,2,5] 450a+540a²+216a³+288b+432b²+216b³+72c+216c²+216c³-450d-540d²-216d³+72
@@ -163,13 +163,13 @@ expanding queue[0]^-1,meter=[6,6,6,6]: a³+b³+c³-d³
 [2+6a,0+6b,3+6c,5+6d]:	transposed [23] by [1,2,0,3]
 [0+6a,2+6b,3+6c,5+6d]:	transposed [23] by [2,1,0,3]
 [5+6a,3+6b,3+6c,5+6d]:	unknown -> [27] [5,3,3,5] 450a+540a²+216a³+162b+324b²+216b³+162c+324c²+216c³-450d-540d²-216d³+54
-[3+6a,5+6b,3+6c,5+6d]:	transposed [27] by [1,0,2,3]
+[3+6a,5+6b,3+6c,5+6d]:	transposed [27] by [2,0,1,3]
 [5+6a,2+6b,4+6c,5+6d]:	transposed [26] by [0,2,1,3]
 [2+6a,5+6b,4+6c,5+6d]:	transposed [26] by [2,0,1,3]
-[0+6a,0+6b,5+6c,5+6d]:	transposed [22] by [1,2,0,3]
-[5+6a,1+6b,5+6c,5+6d]:	transposed [25] by [0,2,1,3]
+[0+6a,0+6b,5+6c,5+6d]:	transposed [22] by [2,1,0,3]
+[5+6a,1+6b,5+6c,5+6d]:	transposed [25] by [1,2,0,3]
 [4+6a,2+6b,5+6c,5+6d]:	transposed [26] by [1,2,0,3]
-[3+6a,3+6b,5+6c,5+6d]:	transposed [27] by [1,2,0,3]
+[3+6a,3+6b,5+6c,5+6d]:	transposed [27] by [2,1,0,3]
 [2+6a,4+6b,5+6c,5+6d]:	transposed [26] by [2,1,0,3]
 [1+6a,5+6b,5+6c,5+6d]:	transposed [25] by [2,0,1,3]
 endexp[0]

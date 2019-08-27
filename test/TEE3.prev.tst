@@ -1,4 +1,4 @@
-TranspositionSet={[2,1,0,3],[1,2,0,3],[2,0,1,3],[0,2,1,3],[1,0,2,3]}
+TranspositionSet={[0,2,1,3],[1,0,2,3],[1,2,0,3],[2,1,0,3],[2,0,1,3]}
 considerNonPrimitive
 Expanding for base=6, level=1, reasons+features=base,transpose,primitive,same,similiar,evenexp invall,norm
 Refined variables=a,b,c,d
@@ -19,13 +19,13 @@ expanding queue[0]^-1,meter=[6,6,6,6]: a⁴+b⁴+c⁴-d⁴
 [1+6a,0+6b,0+6c,1+6d]:	unknown -> [1] [1,0,0,1] a+9a²+36a³+54a⁴+54b⁴+54c⁴-d-9d²-36d³-54d⁴
 -> solution [1,0,0,1],trivial(3) [7,0,0,7],trivial(3)
 [5+6a,0+6b,0+6c,1+6d]:	negative-1 [1] by {a=>-a-1}
-[0+6a,1+6b,0+6c,1+6d]:	transposed [1] by [1,0,2,3]
+[0+6a,1+6b,0+6c,1+6d]:	transposed [1] by [2,0,1,3]
 [3+6a,2+6b,0+6c,1+6d]:	unknown -> [2] [3,2,0,1] 27a+81a²+108a³+54a⁴+8b+36b²+72b³+54b⁴+54c⁴-d-9d²-36d³-54d⁴+4
 [2+6a,3+6b,0+6c,1+6d]:	transposed [2] by [1,0,2,3]
 [4+6a,3+6b,0+6c,1+6d]:	unknown -> [3] [4,3,0,1] 64a+144a²+144a³+54a⁴+27b+81b²+108b³+54b⁴+54c⁴-d-9d²-36d³-54d⁴+14
 [3+6a,4+6b,0+6c,1+6d]:	transposed [3] by [1,0,2,3]
 [0+6a,5+6b,0+6c,1+6d]:	unknown -> [4] [0,5,0,1] 54a⁴+125b+225b²+180b³+54b⁴+54c⁴-d-9d²-36d³-54d⁴+26
-[0+6a,0+6b,1+6c,1+6d]:	transposed [1] by [1,2,0,3]
+[0+6a,0+6b,1+6c,1+6d]:	transposed [1] by [2,1,0,3]
 [3+6a,0+6b,2+6c,1+6d]:	transposed [2] by [0,2,1,3]
 [0+6a,3+6b,2+6c,1+6d]:	transposed [2] by [2,0,1,3]
 [2+6a,0+6b,3+6c,1+6d]:	transposed [2] by [1,2,0,3]
@@ -34,7 +34,7 @@ expanding queue[0]^-1,meter=[6,6,6,6]: a⁴+b⁴+c⁴-d⁴
 [0+6a,4+6b,3+6c,1+6d]:	transposed [3] by [2,0,1,3]
 [3+6a,0+6b,4+6c,1+6d]:	transposed [3] by [1,2,0,3]
 [0+6a,3+6b,4+6c,1+6d]:	transposed [3] by [2,1,0,3]
-[0+6a,0+6b,5+6c,1+6d]:	transposed [4] by [0,2,1,3]
+[0+6a,0+6b,5+6c,1+6d]:	transposed [4] by [2,0,1,3]
 [2+6a,0+6b,0+6c,2+6d]:	non-primitive
 -> solution [2,0,0,2],trivial(3) [8,0,0,8],trivial(3)
 [4+6a,0+6b,0+6c,2+6d]:	non-primitive

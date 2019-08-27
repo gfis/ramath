@@ -1,5 +1,6 @@
 /*  BigRational: a fraction as a pair of BigIntegers
  *  @(#) $Id: BigRational.java 231 2009-08-25 08:47:16Z gfis $
+ *  2019-08-27: MINUS_ONE
  *  2017-05-28: javadoc 1.8
  *  2015-11-14: numerator -&gt; num, denominator -&gt; den (again)
  *  2015-06-17: extends BigInteger
@@ -137,6 +138,8 @@ public class BigRational
     public static BigRational ZERO = BigRational.valueOf(0);
     /** constant 1 */
     public static BigRational ONE  = BigRational.valueOf(1);
+    /** constant -1 */
+    public static BigRational MINUS_ONE  = BigRational.valueOf(-1);
     /** constant 2 */
     public static BigRational TWO  = BigRational.valueOf(2);
 
