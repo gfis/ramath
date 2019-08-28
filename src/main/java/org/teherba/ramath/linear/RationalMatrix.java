@@ -122,6 +122,9 @@ public class RationalMatrix extends Matrix implements Cloneable, Serializable {
      *  @param value BigRational value of the element
      */
     public void set(int rowNo, int colNo, BigRational value) {
+        while (rowNo >= size()) {
+            matrix.add(new RationalVector());
+        }
         matrix.get(rowNo).set(colNo, value);
     } // set(int, int, BigRational)
 
@@ -138,39 +141,27 @@ public class RationalMatrix extends Matrix implements Cloneable, Serializable {
      *  @param value the row as a RationalVector
      */
     public void set(int rowNo, RationalVector value) {
+        while (rowNo >= size()) {
+            matrix.add(new RationalVector());
+        }
         matrix.set(rowNo, value);
     } // set(int, RationalVector)
 
+    /** Returns the current number of rows
+     *  @return length of the the ArrayList for rows
+     */
+    public int size() {
+        return matrix.size();
+    } // size
+
+
     /*-------------- lightweight derived methods -----------------------------*/
-
-    /** Returns a row as a {@link Vector}.
-     *  @param rowNo number of the row, zero based
-     *  @return a Vector containing the elements of the matrix' row
-     */
-    public RationalVector getRatRow(int rowNo) {
-        RationalVector result = new RationalVector(this.colLen);
-        for (int jcol = 0; jcol < this.colLen; jcol ++) {
-            result.set(jcol, this.getRat(rowNo, jcol));
-        } // for jcol
-        // System.out.println("getRatRow(" + rowNo + ")=" + result.toString());
-        return result;
-    } // getRatRow
-
-    /** Sets a row from a {@link RationalVector}.
-     *  @param rowNo number of the row, zero based
-     *  @param vect1 RationalVector containing the elements of the matrix' row
-     */
-    public void setRow(int rowNo, RationalVector vect1) {
-        for (int jcol = 0; jcol < this.colLen; jcol ++) {
-            // System.out.println("amat.setRow " + rowNo + "," + jcol + " = " + vect1.getRat(jcol).toString());
-            this.set(rowNo, jcol, vect1.getRat(jcol));
-        } // for jcol
-    } // setRow
 
     /** Returns a column as a {@link RationalVector}.
      *  @param colNo number of the column, zero based
      *  @return a RationalVector containing the elements of the matrix' column
      */
+/*
     public RationalVector getRatColumn(int colNo) {
         RationalVector result = new RationalVector(this.rowLen);
         for (int irow = 0; irow < this.rowLen; irow ++) {
@@ -178,31 +169,31 @@ public class RationalMatrix extends Matrix implements Cloneable, Serializable {
         } // for irow
         return result;
     } // getRatColumn
-
+*/
     /** Sets a column from a {@link RationalVector}.
      *  @param colNo number of the column, zero based
      *  @param vect1 RationalVector containing the elements of the matrix' column
      */
+/*
     public void setColumn(int colNo, RationalVector vect1) {
         for (int irow = 0; irow < this.rowLen; irow ++) {
             this.set(irow, colNo, vect1.getRat(irow));
         } // for irow
     } // setColumn
-
+*/
     /** Exchanges two rows in <em>this</em> Matrix.
      *  @param rowNo1 number of the 1st row
      *  @param rowNo2 number of the 2nd row
      */
     @Override
     public void exchangeRows(int rowNo1, int rowNo2) {
-        RationalVector row1 = getRatRow(rowNo1);
-        RationalVector row2 = getRatRow(rowNo2);
-        setRow(rowNo2, row1);
-        setRow(rowNo1, row2);
+        RationalVector row1 = get(rowNo1);
+        RationalVector row2 = get(rowNo2);
+        set(rowNo2, row1);
+        set(rowNo1, row2);
     } // exchangeRows
 
-    /** Returns a string representation of the matrix
-     *  with 4 places per element and one line per row
+    /** Returns a String representation of the matrix
      *  @return a 2-dimensional array of numbers
      */
     @Override
@@ -210,11 +201,11 @@ public class RationalMatrix extends Matrix implements Cloneable, Serializable {
         String sep = ",";
         StringBuffer result = new StringBuffer(256);
         result.append('[');
-        for (int irow = 0; irow < this.rowLen; irow ++) {
+        for (int irow = 0; irow < size(); irow ++) {
             if (irow > 0) {
                 result.append(sep);
             }
-            result.append(this.getRatRow(irow).toString());
+            result.append(this.get(irow).toString());
         } // for irow
         result.append(']');
         return result.toString();

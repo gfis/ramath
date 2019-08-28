@@ -25,7 +25,11 @@ import  java.io.Serializable;
 
 /** Class RationalVector is used in conjunction with {@link RationalMatrix} to
  *  implement some simple linear algebra operations on vectors
- *  and square matrices of {@link BigRational} numbers.
+ *  and arrays of vectors of {@link BigRational} numbers.
+ *  When the indices are interpreted as powers of x, a RationalVector
+ +  represents a univariate polynomial with rational coefficients.
+ *  It is maintained that the highest element of every vector is never zero,
+ *  except for element [0], which is always present.
  *  @author Dr. Georg Fischer
  */
 public class RationalVector extends Vector implements Cloneable, Serializable {
@@ -44,53 +48,79 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
 
     /*-------------- construction -----------------------------*/
 
-    /** No-args Constructor
+    /** No-args Constructor - a single zero
      */
     public RationalVector() {
-        super();
+        vecLen = 1;
+        vector = new BigRational[] { BigRational.ZERO };
     } // no-args Constructor
 
-    /** Constructor for a RationalVector of some length
+    /** Constructor for a RationalVector of some length, filled with zeroes
      *  @param numElems number of elements
      */
     public RationalVector(int numElems) {
         vecLen = numElems;
         vector = new BigRational[vecLen];
+        int itup = 0;
+        while (itup < vecLen) {
+            set(itup, BigRational.ZERO);
+            itup ++;
+        } // while itup
     } // Constructor(int)
 
-    /** Constructor for a constant RationalVector of some length
+    /** Constructor for a constant RationalVector of some length, filled with a value
      *  @param numElems number of elements
      *  @param value constant for all numerators; the denominators are 1.
      */
     public RationalVector(int numElems, BigInteger value) {
-        vecLen = numElems;
-        vector = new BigRational[vecLen];
-        for (int itup = 0; itup < vecLen; itup ++) {
+        this(numElems);
+        int itup = 0;
+        while (itup < vecLen) {
             set(itup, BigRational.valueOf(value, BigInteger.ONE));
-        } // for itup
+            itup ++;
+        } // while itup
     } // Constructor(int, BigInteger)
 
     /** Constructor for a RationalVector from a tuple of integers
      *  @param tuple array of integers
      */
     public RationalVector(int[] tuple) {
-        vecLen = tuple.length;
-        vector = new BigRational[vecLen];
-        for (int itup = 0; itup < vecLen; itup ++) {
+        this(tuple.length);
+        int itup = 0;
+        while (itup < vecLen) {
             set(itup, BigRational.valueOf(tuple[itup], 1));
-        } // for itup
+            itup ++;
+        } // while itup
     } // Constructor(int[])
 
     /** Constructor for a RationalVector from a {@link Vector} of integers
      *  @param tuple Vector
      */
     public RationalVector(BigVector tuple) {
-        vecLen = tuple.size();
-        vector = new BigRational[this.vecLen];
-        for (int itup = 0; itup < vecLen; itup ++) {
+        this(tuple.size());
+        int itup = 0;
+        while (itup < vecLen) {
             set(itup, BigRational.valueOf(tuple.getBig(itup), BigInteger.ONE));
-        } // for itup
+            itup ++;
+        } // while itup
     } // Constructor(BigVector)
+
+    /** Constructor for a RationalVector from a String in vector notation
+     *  @param vecNotation String of the form "[1/2,2/3]"
+     *  @param args array of numbers as strings
+     */
+    public RationalVector(String vecNotation) {
+        this();
+        String[] parts = vecNotation.replaceAll("[\\[\\]\\s]", "") // remove "[", "]" and whitespece
+                .split("\\,");
+        vecLen = parts.length;
+        vector = new BigRational[vecLen];
+        int itup = 0;
+        while (itup < vecLen) {
+            vector[itup] = new BigRational(parts[itup]);
+            itup ++;
+        } // while itup
+    } // Constructor(3)
 
     /** Constructor for a RationalVector from an array of Strings
      *  of the form "num[/ den]".
@@ -100,15 +130,11 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
      */
     public RationalVector(int numElems, int iarg, String[] args) {
         this(numElems);
-        int ivect = 0;
-        while (ivect < vecLen) {
-            vector[ivect] = BigRational.ZERO;
-            try {
-                vector[ivect] = new BigRational(args[iarg ++]);
-            } catch (Exception exc) {
-            }
-            ivect ++;
-        } // while ivect
+        int itup = 0;
+        while (itup < vecLen) {
+            vector[itup] = new BigRational(args[iarg ++]);
+            itup ++;
+        } // while itup
     } // Constructor(3)
 
     // inherited: clone
@@ -130,15 +156,14 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
         return vector[icol];
     } // getRat
 
-    /** Sets an element of the RationalVector
+    /** Returns an element of the Vector
      *  @param icol number of the element (zero based)
-     *  @param value a number
+     *  @return a number
      */
-/*
-    public void setRat(int icol, BigRational value) {
-        vector[icol] = value;
-    } // setRat
-*/
+    public BigRational getRatLast() {
+        return getRat(size() - 1);
+    } // getRatLast
+
     /** Sets an element of the RationalVector
      *  @param icol number of the element (zero based)
      *  @param value a small number
@@ -163,14 +188,14 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
      */
     public boolean equals(RationalVector vect2) {
         boolean result = true;
-        if (vect2.size() == this.vecLen) {
-            int ielem = 0;
-            while (ielem < this.vecLen && this.getRat(ielem).equals(vect2.getRat(ielem))) {
-                ielem ++;
-            } // while ielem
-            result = ielem == this.vecLen; // false if the loop stopped before because of a difference
+        if (vect2.size() == size()) {
+            int icol = 0;
+            while (icol < size() && getRat(icol).equals(vect2.getRat(icol))) {
+                icol ++;
+            } // while icol
+            result = icol == size(); // false if the loop stopped before because of a difference
         } else {
-            throw new IllegalArgumentException("cannot compare two vectors of different size " + this.vecLen);
+            result = false;
         }
         return result;
     } // equals
@@ -181,11 +206,11 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
     @Override
     public boolean hasZero() {
         boolean result = false;
-        int ielem = 0;
-        while (! result && ielem < this.vecLen) {
-            result = this.getRat(ielem).equals(BigRational.ZERO);
-            ielem ++;
-        } // while ielem
+        int icol = 0;
+        while (! result && icol < size()) {
+            result = getRat(icol).equals(BigRational.ZERO);
+            icol ++;
+        } // while icol
         return result;
     } // hasZero
 
@@ -195,13 +220,13 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
      */
     public int indexOf(BigRational elem) {
         int result = -1;
-        int ielem = 0;
-        while (result < 0 && ielem < this.vecLen) {
-            if (elem.equals(this.getRat(ielem))) {
-                result = ielem;
+        int icol = 0;
+        while (result < 0 && icol < size()) {
+            if (elem.equals(getRat(icol))) {
+                result = icol;
             }
-            ielem ++;
-        } // while ielem
+            icol ++;
+        } // while icol
         return result;
     } // indexOf
 
@@ -214,7 +239,7 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
     public String toString() {
         return toString(",");
     } // toString()
-    
+
     /** Returns a String representation of the RationalVector
      *  @param formatSpec separator or printf spec; "%3d" is converted to "%-3s".
      *  @return a separated list of BigIntegers
@@ -235,7 +260,7 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
             for (int icol = 0; icol < vecLen; icol ++) {
                 result.append(String.format(formatSpec, getRat(icol)));
             } // for icol
-        } else { 
+        } else {
             if (formatSpec.indexOf(sep) >= 0) {
                 result.append('[');
             }
@@ -251,80 +276,151 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
         }
         return result.toString();
     } // toString()
-    
+
     /*-------------- arithmetic operations -------------------------*/
+    /** Shrinks <em>this</em> RationalVector, that is removes zeroes at the tail.
+     *  @return the shrinked RationalVector
+     */
+    public RationalVector shrink() {
+        int icol = size() - 1;
+        while (icol > 0 && getRat(icol).equals(BigRational.ZERO)) {
+            icol --;
+        } // while icol
+        RationalVector result = new RationalVector(icol + 1);
+        while (icol >= 0) {
+            result.set(icol, getRat(icol));
+            icol --;
+        } // while icol
+        return result;
+    } // shrink
+
+    /** Gets a new RationalVector which is the sum of <em>this</em> and a second
+     *  RationalVector, which may have a differing length.
+     *  @param vect2 the RationalVector to be added to <em>this</em>.
+     *  @return this + vect2
+     */
+    public RationalVector add(RationalVector vect2) {
+        int len1 = size();
+        int len2 = vect2.size();
+        int lenr = len1 > len2 ? len1 : len2;
+        RationalVector result = new RationalVector(lenr);
+        int icol = 0;
+        while (icol < lenr) {
+            BigRational rat1 = icol >= len1 ? BigRational.ZERO : getRat(icol);
+            result.set(icol,  icol >= len2 ? rat1 : rat1.add(vect2.getRat(icol)));
+            icol ++;
+        } // while icol
+        return result.shrink();
+    } // add(BigRational)
+
+    /** Gets a new RationalVector which is the difference of <em>this</em> and a second
+     *  RationalVector, which may have a differing length.
+     *  @param vect2 the RationalVector to be subtracted from <em>this</em>.
+     *  @return this - vect2
+     */
+    public RationalVector subtract(RationalVector vect2) {
+        int len1 = size();
+        int len2 = vect2.size();
+        int lenr = len1 > len2 ? len1 : len2;
+        RationalVector result = new RationalVector(lenr);
+        int icol = 0;
+        while (icol < lenr) {
+            BigRational rat1 = icol >= len1 ? BigRational.ZERO : getRat(icol);
+            result.set(icol,  icol >= len2 ? rat1 : rat1.subtract(vect2.getRat(icol)));
+            icol ++;
+        } // while icol
+        return result.shrink();
+    } // subtract(BigRational)
 
     /** Gets a new RationalVector which is a multiple of <em>this</em> RationalVector.
-     *  @param scale multiply by this integer (maybe negative or zero)
+     *  @param scale multiply by this BigRational
      *  @return this * scale,
      *  that is a RationalVector where each element is multiplied by <em>scale</em>
      */
-/*
-    public RationalVector multiply(long scale) {
-        RationalVector result = new RationalVector(vecLen);
-        int ielem = 0;
-        while (ielem < vecLen) {
-            result.set(ielem, getBig(ielem).multiply(BigRational.valueOf(scale));
-            ielem ++;
-        } // while ielem
-        return result;
-    } // multiply(int)
-*/
-    /** Gets a new RationalVector which is the negative <em>this</em> RationalVector.
+    public RationalVector multiply(BigRational scale) {
+        int len1 = size();
+        int lenr = len1;
+        RationalVector result = new RationalVector(len1);
+        int icol = 0;
+        while (icol < lenr) {
+            result.set(icol, getRat(icol).multiply(scale));
+            icol ++;
+        } // while icol
+        return result.shrink();
+    } // multiply(BigRational)
+
+    /** Gets a new RationalVector which is the product of <em>this</em> and a second
+     *  RationalVector, which may have a differing length.
+     *  @param vect2 multiply by this RationalVector
+     *  @return this * vect2, that is a RationalVector
+     */
+    public RationalVector multiply(RationalVector vect2) {
+        int len1 = size();
+        int len2 = vect2.size();
+        int lenr = len1 + len2 - 1; // [x^0..x^5]#6 * [x^0..x^7]#8 => [0..x^12]#13
+        RationalVector result = new RationalVector(lenr, BigInteger.ZERO);
+        int icol1 = 0;
+        while (icol1 < len1) {
+            int icol2 = 0;
+            while (icol2 < len2) {
+                int icolr = icol1 + icol2;
+                result.set(icolr, result.getRat(icolr)
+                        .add(getRat(icol1).multiply(vect2.getRat(icol2))));
+                icol2 ++;
+            } // while icol2
+            icol1 ++;
+        } // while icol1
+        return result.shrink();
+    } // multiply(RationalVector)
+
+    /** Gets a new RationalVector which is the negative of <em>this</em> RationalVector.
      *  @return a RationalVector where each original element is multiplied by <em>-1</em>
      */
     public RationalVector negate() {
-        RationalVector result = new RationalVector(vecLen);
-        int ielem = 0;
-        while (ielem < vecLen) {
-            result.set(ielem, getRat(ielem).negate());
-            ielem ++;
-        } // while ielem
+        int len1 = size();
+        int lenr = len1;
+        RationalVector result = new RationalVector(len1);
+        int icol = 0;
+        while (icol < lenr) {
+            result.set(icol, getRat(icol).negate());
+            icol ++;
+        } // while icol
         return result;
     } // negate()
 
-    /** Determines the quotient of the first elements of <em>this</em> (numerator of the g.f.)
-     *  and <em>vect2</em> (the division may not have a rest, and the first element of vect2 must be ONE),
-     *  subtracts the product of <em>vect2 * quotient</em>
-     *  from <em>this</em> (eventually after padding the latter with zeroes),
-     *  removes the first element of <em>this</em> (this is zero then),
-     *  and returns the quotient.
-     *  @param vect2 the divisor (denominator of the g.f.)
-     *  @return quotient, coefficient of the Taylor series
+    /** Gets the quotient and the remainder from a division of <em>this</em>
+     *  and a second RationalVector, which  may have a differing length.
+     *  @param vect2 the divisor
+     *  @return [quotient, remainder]
      */
-/*
-    public BigInteger divisionStep(RationalVector vect2) {
-        BigInteger divisor    = vect2.getBig(0);
-        if (divisor.equals(BigInteger.ZERO)) {
+    public RationalVector[] divideAndRemainder(RationalVector vect2) {
+        BigRational divisor    = vect2.getRatLast();
+        if (divisor.equals(BigRational.ZERO)) {
             System.out.println("# assertion in RationalVector: divisor is zero: num="
-                    + this.toString() + ", den=" + vect2.toString());
-            return BigInteger.ZERO;
+                    + toString() + ", den=" + vect2.toString());
+            return new RationalVector[] { new RationalVector(), new RationalVector() };
         }
-        if (this.size() == 0) {
+        if (size() == 0) {
             System.out.println("# assertion in RationalVector: empty vector");
-            return BigInteger.ZERO;
+            return new RationalVector[] { new RationalVector(), new RationalVector() };
         }
-        BigInteger[] quotRest = this.getBig(0).divideAndRemainder(divisor);
-        BigInteger result     = quotRest[0];
-        BigInteger quotient   = result.negate();
-        if (! quotRest[1].equals(BigInteger.ZERO)) {
-            System.out.println("# assertion in RationalVector: no even division: num="
-                    + this.toString() + ", den=" + vect2.toString());
-            return BigInteger.ZERO
-        }
-        int len1 = this.size();
+        BigRational fractNeg     = getRatLast().divide(divisor).negate();
+        RationalVector quotient  = new RationalVector();
+        RationalVector remainder = new RationalVector();
+        int len1 = size();
         int len2 = vect2.size();
         if (len2 > len1) {
             len1 = len2; // the maximum of both lengths
         }
         RationalVector vect1 = new RationalVector(len1 - 1); // will replace 'this' in the end
         int iterm = 1; // the first term of vect1 becomes ZERO and is skipped
+/*
         while (iterm < len1) {
             if (debug >= 2) {
                 System.out.println("# iterm=" + iterm + ", len1=" + len1 + ", len2=" + len2
                         + ", quotient=" + quotient.toString() + ", this=" + this.toString());
             }
-            BigInteger term = BigInteger.ZERO;
+            BigRational term = BigRational.ZERO;
             if (iterm < len2) {
                 term = vect2.getBig(iterm).multiply(quotient);
             }
@@ -342,28 +438,53 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
         }
         this.vector = vect1.vector;
         this.vecLen = this.vector.length;
-        return result;
-    } // divisionStep(RationalVector)
 */
+        return new RationalVector[] { quotient, remainder };
+    } // divisideAndRemainder(RationalVector)
     /*-------------------- Test Driver --------------------*/
 
     /** Test method, shows some fixed matrices with no arguments, or the
      *  matrix resulting from the input formula.
-     *  @param args command line arguments
+     *  @param args command line arguments: [vect1] oper [vect2] (cf. test/linear.tests)
      */
     public static void main(String[] args) {
         int iarg = 0;
         RationalVector vect1 = new RationalVector();
         RationalVector vect2 = new RationalVector();
+        RationalVector vectq = new RationalVector();
+        RationalVector vectr = new RationalVector();
         if (args.length == 0) {
+            System.out.println("usage: java -cp dist/ramath.jar org.teherba.ramath.linear.RationalVector \"[vect1] oper [vect2]\"");
+            System.out.println("    oper = + - * /");
         } else { // arguments
-            String opt = args[iarg ++];
+            String expr = args[iarg ++];
+            String[] parts = expr.split("\\s+");
+            String oper = parts[1];
+            BigRational brat2 = new BigRational("0");
+            vect1 = new RationalVector(parts[0]);
+            if (parts.length >= 3) {
+                if (parts[2].startsWith("[")) {
+                    vect2 = new RationalVector(parts[2]);
+                } else {
+                    brat2 = new BigRational(parts[2]);
+                }
+            }
             if (false) {
-            } else if (opt.startsWith("-div")) {
-            } else if (opt.startsWith("-mult")) {
-            } else if (opt.startsWith("-sub")) {
-            } else if (opt.startsWith("-read")) {
-            } // if opt
+            } else if (oper.equals("+")) {
+                System.out.println(expr + " = " + vect1.add(vect2).toString());
+            } else if (oper.equals("-")) {
+                System.out.println(expr + " = " + vect1.add(vect2).toString());
+            } else if (oper.equals("*")) {
+                if (parts[2].startsWith("[")) {
+                    System.out.println(expr + " = " + vect1.multiply(vect2).toString());
+                } else {
+                    System.out.println(expr + " = " + vect1.multiply(brat2).toString());
+                }
+            } else if (oper.startsWith("/")) {
+                RationalVector[] quoRem = vect1.divideAndRemainder(vect2);
+                System.out.println(expr + " = " + quoRem[0].toString() 
+                        + ", remainder = "      + quoRem[1].toString() );
+            } // if oper
         } // more than 1 argument
     } // main
 
