@@ -58,6 +58,9 @@ matrix:
 sandbox:
 	$(REGR) test/sandbox.tests 	$(TEST) 2>&1 | tee $(TESTDIR)/regression_$@.log
 	grep FAILED $(TESTDIR)/regression_$@.log
+sequence:
+	$(REGR) test/sequence.tests $(TEST) 2>&1 | tee $(TESTDIR)/regression_$@.log
+	grep FAILED $(TESTDIR)/regression_$@.log
 simple:
 	$(REGR) test/simple.tests 	$(TEST) 2>&1 | tee $(TESTDIR)/regression_$@.log
 	grep FAILED $(TESTDIR)/regression_$@.log

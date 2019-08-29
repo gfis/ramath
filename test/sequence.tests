@@ -1,0 +1,20 @@
+# Collection of Testcases for Ramath
+# @(#) $Id: sequence.tests 955 2012-06-05 07:22:59Z gfis $
+# 2019-08-29: LinearRecurrence with Berlekamp-Massey
+# 2015-03-23, Dr. Georg Fischer: extracted from linear.tests
+#-----------------------------------
+# Caution:
+# (1) Adjust the following line: URL where Ramath was deployed
+URL=http://localhost:8080/ramath/servlet
+# (2) Adjust the following line: default commandline arguments
+ARGS=
+#======================================================================
+
+PACKAGE=org.teherba.ramath.sequence
+# LinearRecurrence
+
+TEST LIR1 LinearRecurrence -comp
+CALL LinearRecurrence -comp 1,2,3 5,6,7 6 
+
+TEST LIR2 LinearRecurrence -find
+CALL LinearRecurrence -find test/LIR1.this.tst

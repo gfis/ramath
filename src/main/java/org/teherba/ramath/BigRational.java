@@ -52,21 +52,29 @@ public class BigRational
     /** divisor, denominator, the natural number which divides the numerator (always positive) */
     private BigInteger den;
 
-    /** Construct from a String: either a decimal number (with decimal dot),
+    /** No-args constructor - create 0
+     */
+    public BigRational() {
+        super("0");
+        this.num = BigInteger.ZERO;
+        this.den = BigInteger.ONE;
+    } // Constructor 
+
+     /** Construct from a String: either a decimal number (with decimal dot),
      *  or a fraction of the form numerator/denominator.
      *  @param rawNumber String with decimal digits, decimal dot or slash;
      *  all characters except from 0-9, '.' and '/' are stripped.
      */
     public BigRational(String rawNumber) {
-        super(rawNumber);
-        String number = rawNumber.replaceAll("[^\\d\\.\\/\\-\\+]", "");
+        super("0");
+        String number = rawNumber.replaceAll("[^0-9\\.\\/\\-\\+]", "");
         int slashPos = number.indexOf("/");
         if (slashPos < 0) { // integral
             slashPos = number.length();
             number += "/1";
         } // integral
-        this.num = new BigInteger(number.substring(0, slashPos) , 10);
-        this.den = new BigInteger(number.substring(slashPos + 1), 10);
+        this.num = new BigInteger(number.substring(0, slashPos));
+        this.den = new BigInteger(number.substring(slashPos + 1));
     } // Constructor String
 
     /** Construct from a byte array containing a BigInteger
@@ -501,9 +509,9 @@ public class BigRational
     /** Returns 1 / this
      *  @return inverted fraction
      */
-    public BigRational invert() {
+    public BigRational inverse() {
         return BigRational.valueOf(this.den, this.num);
-    } // invert
+    } // inverse
 
     /** Returns a string representation of the fraction in radix 10
      *  @return "a/b"

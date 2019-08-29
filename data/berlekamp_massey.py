@@ -38,9 +38,11 @@ def berlekamp_massey(a):
         s[j] = s[j-2] - q[j]*s[j-1]
         t[j] = t[j-2] - q[j]*t[j-1]
     print "----result:"
-    t = s[j].reverse()
-    f = ~(t[t.degree()]) * t  # make monic  (~ is inverse in python)
     print "s=", s
-    print "t=", t
-    print "f=", f
+    t = s[j].reverse()
+    print "t reversed=", t
+    print "t factor=", (t[t.degree()])
+    f = ~(t[t.degree()]) * t  # make monic  (~ is inverse in python)
+    print "f result=", f
     return f
+berlekamp_massey([5,6,7,34,66,155])

@@ -185,8 +185,7 @@ public class LinearRecurrence extends Recurrence {
      *  Derived from the SageMath code of William Stein &lt;wstein@gmail.com&gt; (2005):
      *      https://sage.math.leidenuniv.nl/src/matrix/berlekamp_massey.py
      */
-    public static BigVector find(Sequence seq, int termNo) {
-        BigVector result = new BigVector(1, BigInteger.ONE);
+    public static RationalVector find(Sequence seq, int termNo) {
         if (termNo % 2 != 0) {
             termNo --; // must be even
         }
@@ -203,19 +202,9 @@ public class LinearRecurrence extends Recurrence {
         RationalMatrix t = new RationalMatrix();
         t.set(0, new RationalVector(1, BigInteger.ZERO));
         t.set(1, new RationalVector(1, BigInteger.ONE ));
-        if (debug >= 1) {
-            System.out.println("Initialization:"
-                    + "\nf = " + f.toString()
-                    + "\nq = " + q.toString()
-                    + "\ns = " + s.toString()
-                    + "\nt = " + t.toString()
-                    );
-        } // if debug
 
         int j = 1;
-        while (f.get(j).size() >= m
-                && j < m
-                ) {
+        while (f.get(j).size() > m) {
             j ++;
             if (debug >= 1) {
                 System.out.println("---- j = " + String.valueOf(j)
@@ -225,17 +214,17 @@ public class LinearRecurrence extends Recurrence {
                         + "\nt = " + t.toString()
                         );
             } // if debug
-            RationalVector quoRem[] = f.get(j - 2).divideAndRemainder(f.get(j-1));
-            q.set(j, quoRem[0]);
-            f.set(j, quoRem[1]);
+            RationalVector quotRemd[] = f.get(j - 2).divideAndRemainder(f.get(j-1));
+            q.set(j, quotRemd[0]);
+            f.set(j, quotRemd[1]);
             if (false) { // assertion
             }
             s.set(j, s.get(j - 2).subtract(q.get(j).multiply(s.get(j - 1))));
             t.set(j, t.get(j - 2).subtract(q.get(j).multiply(t.get(j - 1))));
-    /*
-    */
         } // while
-        return result;
+        BigRational factor = s.get(j).getRat(0).inverse();
+        RationalVector result = s.get(j).multiply(factor);
+        return result.reverse();
     } // find
 
     /** Test method.
