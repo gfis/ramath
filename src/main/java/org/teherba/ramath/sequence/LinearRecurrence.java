@@ -150,6 +150,9 @@ public class LinearRecurrence extends Recurrence {
         BigMatrix t = new BigMatrix();
         t.set(0, new BigVector(1, BigInteger.ZERO));
         t.set(1, new BigVector(1, BigInteger.ONE ));
+        BigMatrix a = new BigMatrix();
+        a.set(0, new BigVector(1, BigInteger.ONE ));
+        a.set(1, new BigVector(1, BigInteger.ONE ));
 
         int j = 1;
         while (f.get(j).size() > m) {
@@ -162,14 +165,17 @@ public class LinearRecurrence extends Recurrence {
                         + "\nt = " + t.toString()
                         );
             } // if debug
-            BigVector quotRemd[] = f.get(j - 2).divideAndRemainder(f.get(j-1));
-            q.set(j, quotRemd[0]);
-            f.set(j, quotRemd[1]);
+            BigVector quotRemdFact[] = f.get(j - 2).divideAndRemainder(f.get(j - 1));
+            q.set(j,  quotRemdFact[0]);
+            f.set(j,  quotRemdFact[1]);
+            // a.set(j,  quotRemdFact[2]);
             if (false) { // assertion
             }
-            s.set(j, s.get(j - 2).subtract(q.get(j).multiply(s.get(j - 1))));
-            t.set(j, t.get(j - 2).subtract(q.get(j).multiply(t.get(j - 1))));
-        } // while
+            s.set(j, s.get(j - 2) /* .multiply(a.get(j - 2).getBig(0)) */ 
+            		.subtract(q.get(j).multiply(s.get(j - 1) /* .multiply(a.get(j - 1).getBig(0)) */ )));
+            t.set(j, t.get(j - 2) /* .multiply(a.get(j - 2).getBig(0)) */ 
+            		.subtract(q.get(j).multiply(t.get(j - 1) /* .multiply(a.get(j - 1).getBig(0)) */ )));
+        } // while                
         BigVector  result = s.get(j).normalize();
         return result.reverse();
     } // find

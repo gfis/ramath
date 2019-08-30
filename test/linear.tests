@@ -29,7 +29,7 @@ TEST BV5 BigVector scale
 CALL BigVector "[1,2,-5] * -2"
 
 TEST BV6 BigVector multiply
-CALL BigVector "[1,2] * [1,2,-5]"
+CALL BigVector "[1,2]    * [1,2,-5]"
 
 TEST BV7 BigVector divide - no remainder
 CALL BigVector "[7,14,-35] / [1,2,-5]"
@@ -37,8 +37,20 @@ CALL BigVector "[7,14,-35] / [1,2,-5]"
 TEST BV8 BigVector divideAndRemainder
 CALL BigVector "[7,28,-35] / [2,4,-10]"
 
-TEST BV9 BigVector divideAndRemainder: quotient = 0
-CALL BigVector "[7,8] / [1,2,-5]"
+TEST BV9 BigVector divideAndRemainder: quotient = [0]
+CALL BigVector "[7,8]      / [1,2,-5]"
+
+TEST BV10 BigVector divideAndRemainder with den
+CALL BigVector "[5,1,2,3,6]  / [2,3]"
+
+# TEST BV10 BigVector divideRemainderFactor: quotient = [4]
+# CALL BigVector "[4,8]     // [1,2]"
+# 
+# TEST BV11 BigVector divideRemainderFactor: quotient = [4]
+# CALL BigVector "[3,6]     // [2,4]"
+# 
+# TEST BV12 BigVector divideRemainderFactor: quotient = [4], rest
+# CALL BigVector "[-1,3,6]  // [2,4]"
 #----
 # RationalVector
 PACKAGE=org.teherba.ramath.linear
