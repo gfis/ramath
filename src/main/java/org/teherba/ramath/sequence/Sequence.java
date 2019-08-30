@@ -30,6 +30,8 @@ public class Sequence extends BigVector
         {
     private static final long serialVersionUID = 1L;
     public final static String CVSID = "@(#) $Id: Sequence.java 231 2009-08-25 08:47:16Z gfis $";
+    /** Debugging level: 0 = none, 1 = some, 2 = more */
+    public static int debug = 0;
 
     /** Array of the terms */
     protected BigInteger terms[];

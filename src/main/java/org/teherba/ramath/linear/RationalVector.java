@@ -37,7 +37,7 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
     public final static String CVSID = "@(#) $Id: RationalVector.java 744 2011-07-26 06:29:20Z gfis $";
 
     /** Debugging level: 0 = none, 1 = moderate, 2 = more, 3 = most */
-    private int debug = 0;
+    private static int debug = 0;
 
     /*-------------- class properties -----------------------------*/
 
@@ -360,6 +360,15 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
         return result.shrink();
     } // multiply(BigRational)
 
+    /** Gets a new RationalVector which is a multiple of <em>this</em> RationalVector.
+     *  @param scale multiply by this int
+     *  @return this * scale,
+     *  that is a RationalVector where each element is multiplied by <em>scale</em>
+     */
+    public RationalVector multiply(int scale) {
+        return this.multiply(BigRational.valueOf(scale));
+    } // multiply(int)
+    
     /** Gets a new RationalVector which is the product of <em>this</em> and a second
      *  RationalVector, which may have a differing length.
      *  @param vect2 multiply by this RationalVector
@@ -420,10 +429,6 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
      *  @return [quotient, remainder]
      */
     public RationalVector[] divideAndRemainder(RationalVector vect2) {
-       if (debug >= 1) {
-            System.out.println("divideAndRemainder: " + this.toString() 
-                    + " / " + vect2.toString());
-        }
         BigRational last2 = vect2.getRatLast();
         if (last2.equals(BigRational.ZERO)) { // can only be a single zero
             System.out.println("# assertion in RationalVector: divisor is zero: num="
@@ -432,15 +437,11 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
         }
         RationalVector quot = new RationalVector(); // [0] = zero
         RationalVector remd = this.clone();
-        int lenr = remd.size();
+        int lenr = remd .size();
         int len2 = vect2.size();
-        int lenq = lenr >= len2 ? lenr - len2 + 1: 0;
+        int lenq = lenr >= len2 ? lenr - len2 + 1 : 0;
         if (lenq > 1) {
             quot = new RationalVector(lenq);
-        }
-       if (debug >= 1) {
-            System.out.println("divideAndRemainder: quot=" + this.toString() 
-                    + " / " + vect2.toString());
         }
         while (lenr >= len2) {
             int iremd = remd .size() - 1;

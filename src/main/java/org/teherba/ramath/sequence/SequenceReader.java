@@ -1,5 +1,6 @@
 /*  Reader for text file, returns a string without any whitespace
  *  @(#) $Id: SequenceReader.java 744 2011-07-26 06:29:20Z gfis $
+ *  2019-08-29: parameter skip
  *  2019-08-25, Georg Fischer: copied from BigRational
  */
 /*
@@ -99,15 +100,30 @@ public class SequenceReader {
      *  @return a {@link Sequence} with several properties set.
      */
     public Sequence readBFile(String fileName) {
-		return readBFile(fileName, 2961947); // more than in any real b-file
-	} // readBFile(String)
-	
+        return readBFile(fileName, 2961947, 0); // more than in any real b-file
+    } // readBFile(String)
+    
     /** Reads a sequence from an OEIS b-file.
      *  @param fileName name of the file to be read
      *  @param maxTermNo maximum number of terms to be read
      *  @return a {@link Sequence} with several properties set.
      */
     public Sequence readBFile(String fileName, int maxTermNo) {
+    /** Reads a sequence from an OEIS b-file.
+     *  @param fileName name of the file to be read
+     *  @param maxTermNo maximum number of terms to be read
+     *  @return a {@link Sequence} with several properties set.
+     */
+        return readBFile(fileName, maxTermNo, 0); // start at first term
+    } // readBFile(String,int)
+    
+    /** Reads a sequence from an OEIS b-file.
+     *  @param fileName name of the file to be read
+     *  @param maxTermNo maximum number of terms to be read
+     *  @param skip number of leading terms to be skipped, or 0 if none
+     *  @return a {@link Sequence} with several properties set.
+     */
+    public Sequence readBFile(String fileName, int maxTermNo, int skip) {
         ArrayList<BigInteger> buffer = new ArrayList<BigInteger>(256);
         long offset = 0;
         int termNo = 0;
@@ -129,11 +145,15 @@ public class SequenceReader {
                 if (line.length() > 0) { // line not empty
                     int spacePos = line.indexOf(' ');
                     if (spacePos >= 0) {
-                        termNo ++;
-                        if (termNo == 1) {
-                            offset = Long.parseLong(line.substring(0, spacePos));
+                        if (skip <= 0) {
+                            termNo ++;
+                            if (termNo == 1) {
+                                offset = Long.parseLong(line.substring(0, spacePos));
+                            }
+                            buffer.add(new BigInteger(line.substring(spacePos + 1)));
+                        } else {
+                            skip --;
                         }
-                        buffer.add(new BigInteger(line.substring(spacePos + 1)));
                     } else { // wrong format
                         log.error("wrong b-file format in line " + lineCount);
                         busy = false; // break loop

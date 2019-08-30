@@ -1,5 +1,6 @@
 /*  BigMatrix: a simple, square matrix of BigInteger numbers
  *  @(#) $Id: BigMatrix.java 744 2011-07-26 06:29:20Z gfis $
+ *  2019-08-30: with ArrayList of rows
  *  2018-01-24, Georg Fischer: copied from Matrix
  */
 /*
@@ -42,13 +43,13 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
     /*-------------- class properties -----------------------------*/
 
     /** a 2-dimensional array of numbers */
-    protected BigInteger[][] matrix;
+    protected ArrayList<BigVector> matrix;
     /*-------------- construction -----------------------------*/
 
-    /** No-args Constructor: an empty, square BigMatrix of size 3
+    /** No-args Constructor: an empty, square RationalMatrix of size 3
      */
     public BigMatrix() {
-        this (3, 3);
+        matrix = new ArrayList<BigVector>(16);
     } // no-args Constructor
 
     /** Constructor for an empty, square BigMatrix.
@@ -64,13 +65,11 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
      *  @param colLen number of columns
      */
     public BigMatrix(int rowLen, int colLen) {
+        this();
         this.rowLen = rowLen;
         this.colLen = colLen;
-        this.matrix = new BigInteger[this.rowLen][this.colLen];
         for (int irow = 0; irow < this.rowLen; irow ++) {
-            for (int jcol = 0; jcol < this.colLen; jcol ++) {
-                this.matrix[irow][jcol] = BigInteger.ZERO;
-            } // for jcol
+            matrix.add(new BigVector(colLen, BigInteger.ZERO));
         } // for irow
     } // Constructor(int, int)
 
@@ -78,27 +77,29 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
      *  @param rowLen number of rows/columns
      *  @param values linearized array of row values
      */
+/*
     public BigMatrix(int rowLen, BigInteger[] values) {
         this(rowLen, values.length / rowLen);
         int ival = 0;
-        for (int irow = 0; irow < this.rowLen; irow ++) {
+        for (int irow = 0; irow < this.size(); irow ++) {
             for (int jcol = 0; jcol < this.colLen; jcol ++) {
-                this.matrix[irow][jcol] = values[ival ++];
+                this.matrix[irow, jcol, values[ival ++];
             } // for jcol
         } // for irow
     } // Constructor(int, int[])
-
+*/
     /** Fills a rectangular BigMatrix from an array of values
      *  @param values array of values
      */
+/*
     private void fill(String[] values) {
-        this.matrix = new BigInteger[this.rowLen][this.colLen];
+        this.matrix = new BigInteger[this.size(), this.colLen];
         int ival = 0;
-        for (int irow = 0; irow < this.rowLen; irow ++) {
+        for (int irow = 0; irow < this.size(); irow ++) {
             for (int jcol = 0; jcol < this.colLen; jcol ++) {
-                this.matrix[irow][jcol] = BigInteger.ZERO;
+                this.matrix[irow, jcol, BigInteger.ZERO;
                 try {
-                    this.matrix[irow][jcol] = new BigInteger(values[ival]);
+                    this.matrix[irow, jcol, new BigInteger(values[ival]);
                 } catch (Exception exc) {
                     System.err.println(exc.getMessage());
                     exc.printStackTrace();
@@ -107,12 +108,13 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
             } // for jcol
         } // for irow
     } // fill
-
+*/
     /** Constructor for a square BigMatrix which initializes it from an array of values.
      *  If the number of elements is no square number, the next lower square
      *  number is taken, and some elements at the end are ignored.
      *  @param values linearized array of rows of arrays of column values
      */
+/*
     public BigMatrix(String[] values) {
         int numElem = values.length;
         rowLen = 0;
@@ -125,7 +127,7 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
         colLen = rowLen;
         fill(values);
     } // Constructor(String[])
-
+*/
     /** Constructor for a rectangular BigMatrix which initializes it from a matrix expression.
      *  If the number of elements is no square number, the next lower square
      *  number is taken, and some elements at the end are ignored.
@@ -133,23 +135,26 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
      *  for example "[[11,12,13],[21,22,23],[31,32,33]]"
      */
     public BigMatrix(String matExpr) {
-        String vectExpr = matExpr.substring(0, matExpr.indexOf("]"));
-        String[] values = vectExpr.replaceAll("[\\[\\]\\s]+","").split("\\,");
-        colLen = values.length; // first row, has how many columns?
-        values = matExpr.replaceAll("[\\[\\]\\s]+","").split("\\,");// all
-        rowLen = values.length / colLen;
-        fill(values);
+        this();
+        String[] rows = matExpr.replaceAll("\\s", "").split("\\],\\[");
+        int irow = 0;
+        while (irow < rows.length) {
+            BigVector vect = new BigVector(rows[irow]);
+            this.colLen = vect.size();
+            this.set(irow, vect);
+            irow ++;
+        } // while irow
     } // Constructor(String)
 
     /** Deep copy of the BigMatrix and its properties.
      *  @return independant copy of the BigMatrix
      */
     public BigMatrix clone() {
-        BigMatrix result = new BigMatrix(rowLen, colLen);
-        for (int irow = 0; irow < rowLen; irow ++) {
-            for (int jcol = 0; jcol < colLen; jcol ++) {
-                result.matrix[irow][jcol] = matrix[irow][jcol];
-            } // for jcol
+        BigMatrix result = new BigMatrix();
+        int irow = 0;
+        while (irow < size()) {
+            result.set(irow, this.get(irow));
+            irow ++;
         } // for irow
         return result;
     } // clone
@@ -159,10 +164,12 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
      */
     @Override
     public void setIdentity() {
-        for (int irow = 0; irow < this.rowLen; irow ++) {
-            for (int jcol = 0; jcol < this.colLen; jcol ++) {
-                this.matrix[irow][jcol] = (irow == jcol) ? BigInteger.ONE : BigInteger.ZERO;
-             } // for jcol
+        int irow = 0;
+        while (irow < size()) {
+            BigVector row = new BigVector(colLen, BigInteger.ZERO);
+            row.set(irow, BigInteger.ONE);
+            this.set(irow, row);
+            irow ++;
         } // for irow
     } // setIdentity
 
@@ -175,7 +182,7 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
      *  @return value value of the element
      */
     public BigInteger getBig(int rowNo, int colNo) {
-        return this.matrix[rowNo][colNo];
+        return this.matrix.get(rowNo).getBig(colNo);
     } // getBig
 
     /** Sets an element.
@@ -184,43 +191,57 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
      *  @param value value of the element
      */
     public void set(int rowNo, int colNo, BigInteger value) {
-        this.matrix[rowNo][colNo] = value;
+        BigVector row = matrix.get(rowNo);
+        row.set(colNo, value);
+        matrix.set(rowNo, row);
     } // set
-
-    /*-------------- lightweight derived methods -----------------------------*/
 
     /** Returns a row as a {@link BigVector}.
      *  @param rowNo number of the row, zero based
      *  @return a BigVector containing the elements of the matrix' row
      */
     public BigVector getBigRow(int rowNo) {
-        BigVector result = new BigVector(this.colLen);
-        for (int jcol = 0; jcol < this.colLen; jcol ++) {
-            result.set(jcol, this.matrix[rowNo][jcol]);
-        } // for jcol
-        // System.out.println("getBigRow(" + rowNo + ")=" + result.toString());
-        return result;
+        return matrix.get(rowNo);
     } // getBigRow
+
+    /** Returns a row as a {@link BigVector}.
+     *  @param rowNo number of the row, zero based
+     *  @return a BigVector containing the elements of the matrix' row
+     */
+    public BigVector get(int rowNo) {
+        return matrix.get(rowNo);
+    } // get
 
     /** Sets a row from a {@link BigVector}.
      *  @param rowNo number of the row, zero based
      *  @param vect1 BigVector containing the elements of the matrix' row
      */
     public void setRow(int rowNo, BigVector vect1) {
-        for (int jcol = 0; jcol < this.colLen; jcol ++) {
-            // System.out.println("amat.setRow " + rowNo + "," + jcol + " = " + vect1.getBig(jcol).toString());
-            this.set(rowNo, jcol, vect1.getBig(jcol));
-        } // for jcol
+        while (rowNo >= matrix.size()) {
+            matrix.add(new BigVector(colLen));
+        }
+        matrix.set(rowNo, vect1);
     } // setRow
+
+     /** Sets a row from a {@link BigVector}.
+     *  @param rowNo number of the row, zero based
+     *  @param vect1 BigVector containing the elements of the matrix' row
+     */
+    public void set(int rowNo, BigVector vect1) {
+        while (rowNo >= matrix.size()) {
+            matrix.add(new BigVector(colLen));
+        }
+        matrix.set(rowNo, vect1);
+    } // set
 
     /** Returns a column as a {@link BigVector}.
      *  @param colNo number of the column, zero based
      *  @return a BigVector containing the elements of the matrix' column
      */
     public BigVector getBigColumn(int colNo) {
-        BigVector result = new BigVector(this.rowLen);
-        for (int irow = 0; irow < this.rowLen; irow ++) {
-            result.set(irow, this.matrix[irow][colNo]);
+        BigVector result = new BigVector(this.size());
+        for (int irow = 0; irow < this.size(); irow ++) {
+            result.set(irow, this.getBig(irow, colNo));
         } // for irow
         return result;
     } // getBigColumn
@@ -229,12 +250,13 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
      *  @param colNo number of the column, zero based
      *  @param vect1 BigVector containing the elements of the matrix' column
      */
+/*
     public void setColumn(int colNo, BigVector vect1) {
-        for (int irow = 0; irow < this.rowLen; irow ++) {
-            this.matrix[irow][colNo] = vect1.getBig(irow);
+        for (int irow = 0; irow < this.size(); irow ++) {
+            this.matrix.[rowNo, colNo, vect1.getBig(irow);
         } // for irow
     } // setColumn
-
+*/
     /** Exchanges two rows in <em>this</em> BigMatrix.
      *  @param rowNo1 number of the 1st row
      *  @param rowNo2 number of the 2nd row
@@ -247,6 +269,15 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
         setRow(rowNo1, row2);
     } // exchangeRows
 
+    /** Returns the number of rows
+     *  @return a small number
+     */
+    public int size() {
+        return matrix.size();
+    } // size
+
+    /*-------------- lightweight derived methods -----------------------------*/
+
     /** Returns a string representation of the matrix
      *  with 4 places per element and one line per row
      *  @return a 2-dimensional array of numbers
@@ -256,7 +287,7 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
         String sep = ",";
         StringBuffer result = new StringBuffer(256);
         result.append('[');
-        for (int irow = 0; irow < this.rowLen; irow ++) {
+        for (int irow = 0; irow < this.size(); irow ++) {
             if (irow > 0) {
                 result.append(sep);
             }
@@ -283,10 +314,10 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
     public boolean hasZero() {
         boolean result = false;
         int irow = 0;
-        while (! result && irow < this.rowLen) {
+        while (! result && irow < this.size()) {
             int jcol = 0;
             while (! result && jcol < this.colLen) {
-                result = this.matrix[irow][jcol].equals(BigInteger.ZERO);
+                result = this.getBig(irow, jcol).equals(BigInteger.ZERO);
                 jcol ++;
             } // for jcol
             irow ++;
@@ -301,10 +332,10 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
     public boolean isZero() {
         boolean result = true;
         int irow = 0;
-        while (result && irow < this.rowLen) {
+        while (result && irow < this.size()) {
             int jcol = 0;
             while (result && jcol < this.colLen) {
-                result = this.matrix[irow][jcol].equals(BigInteger.ZERO);
+                result = this.getBig(irow, jcol).equals(BigInteger.ZERO);
                 jcol ++;
             } // for jcol
             irow ++;
@@ -318,19 +349,19 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
      */
     public boolean equals(BigMatrix matr2) {
         boolean result = true;
-        if (matr2.getRowLen() == this.rowLen && matr2.getColLen() == this.colLen) {
+        if (matr2.getRowLen() == this.size() && matr2.getColLen() == this.colLen) {
             int irow = 0;
-            while (result && irow < this.rowLen) {
+            while (result && irow < this.size()) {
                 int jcol = 0;
                 while (result && jcol < this.colLen) {
-                    result = this.matrix[irow][jcol].equals(matr2.matrix[irow][jcol]);
+                    result = this.getBig(irow, jcol).equals(matr2.getBig(irow, jcol));
                     jcol ++;
                 } // for jcol
                 irow ++;
             } // for irow
         } else {
             throw new IllegalArgumentException("cannot compare matrices of different size "
-                    + this.rowLen + "," + this.colLen);
+                    + this.size() + "," + this.colLen);
         }
         return result;
     } // equals
@@ -343,16 +374,16 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
      *  @return reference to a new object, the sum
      */
     public BigMatrix add(BigMatrix matr2) {
-        BigMatrix result = new BigMatrix(this.rowLen);
-        if (matr2.getRowLen() == this.rowLen && matr2.getColLen() == this.colLen) {
-            for (int irow = 0; irow < this.rowLen; irow ++) {
+        BigMatrix result = new BigMatrix(this.size());
+        if (matr2.getRowLen() == this.size() && matr2.getColLen() == this.colLen) {
+            for (int irow = 0; irow < this.size(); irow ++) {
                 for (int jcol = 0; jcol < this.colLen; jcol ++) {
                     result.set(irow, jcol, this.getBig(irow, jcol).add(matr2.getBig(irow, jcol)));
                 } // for jcol
             } // for irow
         } else {
             throw new IllegalArgumentException("cannot add matrices of different size "
-                    + this.rowLen + "," + this.colLen);
+                    + this.size() + "," + this.colLen);
         }
         return result;
     } // add(BigMatrix)
@@ -363,18 +394,18 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
      */
     public BigMatrix multiply(BigMatrix matr2) {
         BigMatrix result = new BigMatrix(this.colLen);
-        if (matr2.getColLen() == this.rowLen && matr2.getRowLen() == this.colLen) {
-            for (int irow = 0; irow < this.rowLen; irow ++) {
+        if (matr2.getColLen() == this.size() && matr2.getRowLen() == this.colLen) {
+            for (int irow = 0; irow < this.size(); irow ++) {
                 for (int jcol = 0; jcol < this.colLen; jcol ++) {
                     BigInteger sum = BigInteger.ZERO;
-                    for (int kvec = 0; kvec < this.rowLen; kvec ++) {
+                    for (int kvec = 0; kvec < this.size(); kvec ++) {
                         sum = sum.add(this.getBig(irow, kvec).multiply(matr2.getBig(kvec,jcol)));
                     } // for kvec
                     result.set(irow, jcol, sum);
                 } // for jcol
             } // for irow
         } else {
-            throw new IllegalArgumentException("cannot multiply matrices of different size " + this.rowLen);
+            throw new IllegalArgumentException("cannot multiply matrices of different size " + this.size());
         }
         return result;
     } // multiply(BigMatrix)
@@ -386,7 +417,7 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
     public BigVector multiply(BigVector vect2) {
         BigVector result = new BigVector(this.colLen);
         if (vect2.size() == this.colLen) {
-            for (int irow = 0; irow < this.rowLen; irow ++) {
+            for (int irow = 0; irow < this.size(); irow ++) {
                     BigInteger sum = BigInteger.ZERO;
                     for (int jcol = 0; jcol < this.colLen; jcol ++) {
                         sum = sum.add(this.getBig(irow, jcol).multiply(vect2.getBig(jcol)));
@@ -408,7 +439,7 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
     public BigInteger gcdBig() {
         BigVector rowGCDs = new BigVector(rowLen);
         int irow = 0;
-        while (irow < rowLen) {
+        while (irow < size()) {
             rowGCDs.set(irow, getBigRow(irow).gcdBig());
             irow ++;
         } // while irow
@@ -421,49 +452,50 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
      */
     public BigInteger determinantBig() {
         BigInteger result = BigInteger.ZERO;
-        switch (this.rowLen) {
+        switch (this.size()) {
             case 0:
                 result =  BigInteger.ZERO;
                 break;
             case 1:
-                result =  this.matrix[0][0];
+                result =  this.getBig(0, 0);
                 break;
             case 2:
-                result =  this.matrix[0][0].multiply(this.matrix[1][1]).subtract(
-                          this.matrix[0][1].multiply(this.matrix[1][0])         );
+                result =  this.getBig(0, 0).multiply(this.getBig(1, 1)).subtract(
+                          this.getBig(0, 1).multiply(this.getBig(1, 0))         );
                 break;
+        /*
             case 3:
-                result =  this.matrix[0][0].multiply(this.matrix[1][1].multiply(this.matrix[2][2])).subtract(
-                          this.matrix[0][2].multiply(this.matrix[1][1].multiply(this.matrix[2][0])).add     (
-                          this.matrix[0][1].multiply(this.matrix[1][2].multiply(this.matrix[2][0])).subtract(
-                          this.matrix[0][1].multiply(this.matrix[1][0].multiply(this.matrix[2][2])).add     (
-                          this.matrix[0][2].multiply(this.matrix[1][0].multiply(this.matrix[2][1])).subtract(
-                          this.matrix[0][0].multiply(this.matrix[1][2].multiply(this.matrix[2][1])) )))));
+                result =  this.getBig(0, 0).multiply(this.getBig(1, 1).multiply(this.getBig(2, 1))).subtract(
+                          this.getBig(0, 1).multiply(this.getBig(1, 1).multiply(this.getBig(2, 0))).add     (
+                          this.getBig(0, 1).multiply(this.getBig(1, 1).multiply(this.getBig(2, 0))).subtract(
+                          this.getBig(0, 1).multiply(this.getBig(1, 0).multiply(this.getBig(2, 1))).add     (
+                          this.getBig(0, 1).multiply(this.getBig(1, 0).multiply(this.getBig(2, 1))).subtract(
+                          this.getBig(0, 0).multiply(this.getBig(1, 1).multiply(this.getBig(2, 1))) )))));
                 break;
-
+        */
             default: // recursive Laplace expansion over minors of the first row
-                BigMatrix minor = new BigMatrix(this.rowLen - 1);
+                BigMatrix minor = new BigMatrix(this.size() - 1);
                 // populate minor for 1st column
-                for (int irow = 1; irow < this.rowLen; irow ++) { // omit row 0
+                for (int irow = 1; irow < this.size(); irow ++) { // omit row 0
                     for (int jcol = 1; jcol < this.colLen; jcol ++) { // omit column 0
-                        minor.matrix[irow - 1][jcol - 1] = this.matrix[irow][jcol];
+                        minor.set(irow - 1, jcol - 1, this.getBig(irow, jcol));
                     } // for jcol
                 } // for irow
                 // now expand minors over row 0
                 for (int jcol = 0; jcol < this.colLen; jcol ++) {
                     if (jcol > 0) { // repair 1st column of minor
-                        for (int irow2 = 1; irow2 < this.rowLen; irow2 ++) {
-                            minor.matrix[irow2 - 1][jcol - 1] = this.matrix[irow2][jcol - 1];
+                        for (int irow2 = 1; irow2 < this.size(); irow2 ++) {
+                            minor.set(irow2 - 1, jcol - 1, this.getBig(irow2, jcol - 1));
                         } // for irow2
                     }
                     if ((jcol & 1) == 0) { // even
-                        result = result.add     (minor.determinantBig().multiply(this.matrix[0][jcol]));
+                        result = result.add     (minor.determinantBig().multiply(this.getBig(0, jcol)));
                     } else { // odd
-                        result = result.subtract(minor.determinantBig().multiply(this.matrix[0][jcol]));
+                        result = result.subtract(minor.determinantBig().multiply(this.getBig(0, jcol)));
                     }
                 } // for jcol
                 break;
-        } // switch this.rowLen
+        } // switch this.size()
         return result;
     } // determinantBig
 
@@ -475,7 +507,7 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
         int debugInverse = 2906;
         int result = 0;
         BigMatrix lmat = this.clone();
-        BigMatrix rmat = new BigMatrix(this.rowLen);
+        BigMatrix rmat = new BigMatrix(this.size());
         rmat.setIdentity();
         // now always operate on combined matrix L|R
         boolean pivotFound = true;
@@ -484,14 +516,14 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
         int jrow  = 0;
         int jcol  = 0;
         BigInteger pivot = BigInteger.ZERO;
-        BigVector vpivot = new BigVector(this.rowLen);
-        while (pivotFound && irow < this.rowLen) {
-            if (lmat.matrix[irow][irow].equals(BigInteger.ZERO)) { // no proper pivot element - exchange
+        BigVector vpivot = new BigVector(this.size());
+        while (pivotFound && irow < this.size()) {
+            if (lmat.getBig(irow, irow).equals(BigInteger.ZERO)) { // no proper pivot element - exchange
                 jrow = irow + 1;
-                while (jrow < this.rowLen && lmat.matrix[jrow][irow].equals(BigInteger.ZERO)) { // search first non-zero -> pivot
+                while (jrow < this.size() && lmat.getBig(jrow, irow).equals(BigInteger.ZERO)) { // search first non-zero -> pivot
                     jrow ++;
                 } // while jrow
-                if (jrow < this.rowLen) {
+                if (jrow < this.size()) {
                     lmat.exchangeRows(irow, jrow);
                     rmat.exchangeRows(irow, jrow);
                 } else { // no pivot
@@ -499,26 +531,26 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
                 }
             } // no pivot - exchange
             if (pivotFound) {
-                pivot = lmat.matrix[irow][irow];
+                pivot = lmat.getBig(irow, irow);
                 if (pivot.compareTo(BigInteger.ZERO) < 0) { // negate row[irow]
-                    for (icol = 0; icol < this.rowLen; icol ++) {
-                        lmat.matrix[irow][icol] = lmat.matrix[irow][icol].negate();
-                        rmat.matrix[irow][icol] = rmat.matrix[irow][icol].negate();
+                    for (icol = 0; icol < this.size(); icol ++) {
+                        lmat.set(irow, icol, lmat.getBig(irow, icol).negate());
+                        rmat.set(irow, icol, rmat.getBig(irow, icol).negate());
                     } // for icol
-                    pivot = lmat.matrix[irow][irow];
+                    pivot = lmat.getBig(irow, irow);
                 } // negate row
                 vpivot.set(irow, pivot);
                 jrow = 0;
-                while (jrow < this.rowLen) {
+                while (jrow < this.size()) {
                     if (jrow != irow) {
-                        BigInteger stone = lmat.matrix[jrow][irow];
+                        BigInteger stone = lmat.getBig(jrow, irow);
                         if (! stone.equals(BigInteger.ZERO)) { // remove this stone
                             // subtract rowi * stone from rowj * pivot
                             for (jcol = 0; jcol < this.colLen; jcol ++) {
-                                lmat.matrix[jrow][jcol] = lmat.matrix[jrow][jcol].multiply(pivot)
-                                                .subtract(lmat.matrix[irow][jcol].multiply(stone));
-                                rmat.matrix[jrow][jcol] = rmat.matrix[jrow][jcol].multiply(pivot)
-                                                .subtract(rmat.matrix[irow][jcol].multiply(stone));
+                                lmat.set(jrow, jcol, lmat.getBig(jrow, jcol).multiply(pivot)
+                                           .subtract(lmat.getBig(irow, jcol).multiply(stone)));
+                                rmat.set(jrow, jcol, rmat.getBig(jrow, jcol).multiply(pivot)
+                                           .subtract(rmat.getBig(irow, jcol).multiply(stone)));
                             } // for jcol
                         } // if stone != 0
                     } // jrow != irow
@@ -530,22 +562,22 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
 
         // normalizing of the diagonal
         BigInteger lcmDiag = BigInteger.ONE;
-        for (irow = 0; irow < this.rowLen; irow ++) {
-            pivot = lmat.matrix[irow][irow];
+        for (irow = 0; irow < this.size(); irow ++) {
+            pivot = lmat.getBig(irow, irow);
             if (pivot.compareTo(BigInteger.ONE) > 0) {
                 boolean divisible = true;
                 icol = 0;
                 while (divisible && icol < this.colLen) {
-                    BigInteger[] temp = rmat.matrix[irow][icol].divideAndRemainder(pivot);
+                    BigInteger[] temp = rmat.getBig(irow, icol).divideAndRemainder(pivot);
                     if (! temp[1].equals(BigInteger.ZERO)) { // rest != 0
                         divisible = false;
                     }
                     icol ++;
                 } // while divisible
                 if (divisible) { // now divide
-                    lmat.matrix[irow][irow] = lmat.matrix[irow][irow].divide(pivot);
+                    lmat.set(irow,     irow, lmat.getBig(irow, irow).divide(pivot));
                     for (icol = 0; icol < this.colLen; icol ++) {
-                        rmat.matrix[irow][icol] = rmat.matrix[irow][icol].divide(pivot);
+                        rmat.set(irow, icol, rmat.getBig(irow, icol).divide(pivot));
                     } // for dividing
                 } else { // not divisible
                     lcmDiag = BigVector.lcm(lcmDiag, pivot);
@@ -553,12 +585,12 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
             } // pivot > 1
         } // for irow
         if (lcmDiag.compareTo(BigInteger.ONE) > 0) { // scale all rows up to this LCM
-            for (irow = 0; irow < this.rowLen; irow ++) {
-                pivot = lmat.matrix[irow][irow];
+            for (irow = 0; irow < this.size(); irow ++) {
+                pivot = lmat.getBig(irow, irow);
                 BigInteger ifact = lcmDiag.divide(pivot);
-                lmat.matrix[irow][irow] = lmat.matrix[irow][irow].multiply(ifact);
+                lmat.set(irow, irow, lmat.getBig(irow, irow).multiply(ifact));
                 for (icol = 0; icol < this.colLen; icol ++) {
-                    rmat.matrix[irow][icol] = rmat.matrix[irow][icol].multiply(ifact);
+                    rmat.set(irow, icol, rmat.getBig(irow, icol).multiply(ifact));
                 } // for icol
             } // for irow
             // rmat.setFraction(lcmDiag);

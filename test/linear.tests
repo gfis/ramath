@@ -10,6 +10,36 @@ URL=http://localhost:8080/ramath/servlet
 ARGS=
 #======================================================================
 
+# BigVector
+PACKAGE=org.teherba.ramath.linear
+
+TEST BV1 BigVector no-args
+CALL BigVector
+
+TEST BV2 BigVector add
+CALL BigVector "[1,2,-5] + [1,1,1,7]"
+
+TEST BV3 BigVector subtract
+CALL BigVector "[1,2,-5] - [1,1,1,7]"
+
+TEST BV4 BigVector negate
+CALL BigVector "[1,2,-5] -"
+
+TEST BV5 BigVector scale
+CALL BigVector "[1,2,-5] * -2"
+
+TEST BV6 BigVector multiply
+CALL BigVector "[1,2] * [1,2,-5]"
+
+TEST BV7 BigVector divide - no remainder
+CALL BigVector "[7,14,-35] / [1,2,-5]"
+
+TEST BV8 BigVector divideAndRemainder
+CALL BigVector "[7,28,-35] / [2,4,-10]"
+
+TEST BV9 BigVector divideAndRemainder: quotient = 0
+CALL BigVector "[7,8] / [1,2,-5]"
+#----
 # RationalVector
 PACKAGE=org.teherba.ramath.linear
 

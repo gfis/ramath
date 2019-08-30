@@ -30,7 +30,7 @@ import  java.io.FileReader;
 import  java.io.InputStreamReader;
 import  java.math.BigInteger;
 import  java.util.ArrayList;
-import  java.util.HashMap;
+import  java.util.TreeMap;
 import  java.util.Iterator;
 import  java.util.TreeSet;
 import  org.apache.log4j.Logger;
@@ -63,7 +63,7 @@ public class CandidateSelector {
      *  where nnnn is a row index, and X is one of the {@link #letters}
      *  at the beginning of the alphabet ("a", "b") etc.
      */
-    private HashMap<BigInteger/*String*/, String> elements;
+    private TreeMap<BigInteger/*String*/, String> elements;
     /** Letters for variables */
     private static final String letters = "abcdefgh";
     /** Number of elements in one tuple */
@@ -104,12 +104,12 @@ public class CandidateSelector {
         this.left     = left;
         this.right    = right;
         this.tuples   = new ArrayList<BigVector>(64);
-        this.elements = new HashMap<BigInteger/*String*/, String>(256); 
+        this.elements = new TreeMap<BigInteger, String>(); 
         this.debug    = 0;
     } // Constructor(,,,,)
 
     //==========================================================
-    /** Adds a tuple to the list, and remember its elements in a HashMap
+    /** Adds a tuple to the list, and remember its elements in a TreeMap
      *  @param tuple tuple to be added, must be of length {@link #width}
      */
     public void addTuple(BigVector tuple) {
