@@ -218,7 +218,7 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
      */
     public void setRow(int rowNo, BigVector vect1) {
         while (rowNo >= matrix.size()) {
-            matrix.add(new BigVector(colLen));
+            matrix.add(new BigVector());
         }
         matrix.set(rowNo, vect1);
     } // setRow
@@ -229,7 +229,7 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
      */
     public void set(int rowNo, BigVector vect1) {
         while (rowNo >= matrix.size()) {
-            matrix.add(new BigVector(colLen));
+            matrix.add(new BigVector());
         }
         matrix.set(rowNo, vect1);
     } // set

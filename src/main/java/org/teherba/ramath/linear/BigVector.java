@@ -70,7 +70,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         comDen  = BigInteger.ONE;
         int icol = 0;
         while (icol < vecLen) {
-            set(icol, BigInteger.ZERO);
+            vector[icol] = BigInteger.ZERO;
             icol ++;
         } // while icol
     } // Constructor(int)
@@ -80,11 +80,14 @@ public class BigVector extends Vector implements Cloneable, Serializable {
      *  @param value constant for all elements
      */
     public BigVector(int numElems, BigInteger value) {
-        this.vecLen = numElems;
-        this.vector = new BigInteger[this.vecLen];
+        vecLen = numElems;
+        if (vecLen == 0) {
+            vecLen ++;
+        }
+        vector = new BigInteger[vecLen];
         comDen  = BigInteger.ONE;
-        for (int icol = 0; icol < this.vecLen; icol ++) {
-            this.vector[icol] = value;
+        for (int icol = 0; icol < vecLen; icol ++) {
+            vector[icol] = value;
         } // for icol
     } // Constructor(int, BigInteger)
 
@@ -210,14 +213,14 @@ public class BigVector extends Vector implements Cloneable, Serializable {
     } // setDebug
 
     /** Returns the common denominator
-     *  @return a number &gt;= 1 
+     *  @return a number &gt;= 1
      */
     public BigInteger getDen() {
         return comDen;
     } // getDen
 
     /** Sets the common denominator
-     *  @param den a number &gt;= 1 
+     *  @param den a number &gt;= 1
      */
     public void setDen(BigInteger den) {
         comDen = den;
@@ -279,13 +282,13 @@ public class BigVector extends Vector implements Cloneable, Serializable {
     /*-------------- lightweight derived methods -----------------------------*/
 
     /** Returns a new BigVector which has the highest element &gt; 0, and
-     *  all elements are divided by any greatest common divisor; 
+     *  all elements are divided by any greatest common divisor;
      *  the common denominator is set to 1.
      *  @return normalized BigVector
      */
     public BigVector normalize() {
         BigVector result = this.shrink();
-        if (result.getBig(this.size() - 1).compareTo(BigInteger.ZERO) < 0) { // highest element is negative
+        if (result.getBig(result.size() - 1).compareTo(BigInteger.ZERO) < 0) { // highest element is negative
             result = result.negate(); // make it positive
         }
         result.extractGcdBig();
@@ -382,11 +385,19 @@ public class BigVector extends Vector implements Cloneable, Serializable {
             for (int icol = 0; icol < size(); icol ++) {
                 result.append(String.format(" %-3s", getBig(icol)));
             } // for icol
+            if (! this.getDen().equals(BigInteger.ONE)) {
+                result.append("/");
+                result.append(getDen().toString());
+            }
         } else if (formatSpec.indexOf('%') >= 0) { // printf spec
             for (int icol = 0; icol < size(); icol ++) {
                 result.append(String.format(formatSpec, getBig(icol)));
             } // for icol
-        } else {
+            if (! this.getDen().equals(BigInteger.ONE)) {
+                result.append("/");
+                result.append(getDen().toString());
+            }
+        } else { // normal vector representation "[1,2,8]/4 => [1/4,1/2,2]"
             if (formatSpec.indexOf(sep) >= 0) {
                 result.append('[');
             }
@@ -394,15 +405,29 @@ public class BigVector extends Vector implements Cloneable, Serializable {
                 if (icol > 0) {
                     result.append(formatSpec);
                 }
-                result.append(String.valueOf(getBig(icol)));
+                BigInteger tden = getDen();
+                BigInteger tval = getBig(icol);
+                if (tden.equals(BigInteger.ONE)) {
+                    result.append(String.valueOf(tval));
+                } else { // tden != 1
+                    BigInteger fgcd = tden.gcd(tval);
+                    if (fgcd.equals(BigInteger.ONE)) {
+                        result.append(String.valueOf(tval));
+                        result.append("/");
+                        result.append(String.valueOf(tden));
+                    } else {
+                        result.append(String.valueOf(tval.divide(fgcd)));
+                        tden = tden.divide(fgcd);
+                        if (! tden.equals(BigInteger.ONE)) {
+                            result.append("/");
+                            result.append(String.valueOf(tden));
+                        }
+                    } // fgcd != 1
+                }
             } // for icol
             if (formatSpec.indexOf(sep) >= 0) {
                 result.append(']');
             }
-        }
-        if (! this.getDen().equals(BigInteger.ONE)) {
-            result.append("/");
-            result.append(getDen().toString());
         }
         return result.toString();
     } // toString()
@@ -426,6 +451,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         int vlen = vect.length;
         int icol = 1;
         while (! result.equals(BigInteger.ONE) && icol < vlen) {
+        /*
             BigInteger p = result;
             BigInteger q = vect[icol].abs();
             while (! q.equals(BigInteger.ZERO)) {
@@ -434,9 +460,11 @@ public class BigVector extends Vector implements Cloneable, Serializable {
                 q = temp[1]; // the rest
             }
             result = p;
+        */
+            result = result.gcd(vect[icol]); // method in BigInteger
             icol ++;
         } // while icol
-        return result.abs();
+        return result;
     } // gcd(array)
 
     /** Computes the least common multiple (LCM) of 2 integers
@@ -450,7 +478,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         if (! divisor.equals(BigInteger.ZERO)) {
             result = a.multiply(b).abs().divide(divisor);
         }
-        return result;
+        return result.abs();
     } // lcm(a, b)
 
     /** Least common multiple of <em>this</em> Vector's elements
@@ -469,7 +497,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         int vlen = vect.length;
         int icol = 1;
         while (icol < vlen) {
-            result = lcm(result, vect[icol]);
+            result = lcm(result, vect[icol]); // static
             icol ++;
         } // while icol
         return result;
@@ -502,13 +530,21 @@ public class BigVector extends Vector implements Cloneable, Serializable {
     } // extractGcdBig(array)
 
     /*-------------- arithmetic operations -------------------------*/
-
     /** Shrinks <em>this</em> BigVector, that is removes zeroes at the tail.
+     *  By default extract a GCD from the vector and the common denominator.
      *  @return the shrinked BigVector
      */
     public BigVector shrink() {
+        return shrink(true);
+    } // shrink
+
+    /** Shrinks <em>this</em> BigVector, that is removes zeroes at the tail.
+     *  @param reduce whether to extract a GCD from the vector and the common denominator
+     *  @return the shrinked BigVector
+     */
+    public BigVector shrink(boolean reduce) {
         int icol = size() - 1;
-        while (icol > 0 && getBig(icol).equals(BigInteger.ZERO)) {
+        while (icol > 0 && getBig(icol).equals(BigInteger.ZERO)) { // remove leading zeroes
             icol --;
         } // while icol
         BigVector result = new BigVector(icol + 1);
@@ -517,8 +553,32 @@ public class BigVector extends Vector implements Cloneable, Serializable {
             result.set(icol, getBig(icol));
             icol --;
         } // while icol
+        return reduce ? result.shorten() : result;
+    } // shrink(boolean)
+
+    /** Creates a new BigVector with any GCD of the nominators and the denominator removed
+     *  @return a new, shortened BigVector
+     */
+    public BigVector shorten() {
+        int icol = size() - 1;
+        BigInteger tden = this.getDen();
+        BigInteger fgcd = tden.gcd(this.gcdBig());
+        BigVector result = new BigVector(icol + 1);
+        if (fgcd.equals(BigInteger.ONE)) {
+            while (icol >= 0) {
+                result.set(icol, getBig(icol));
+                icol --;
+            } // while icoltden.divide(fgcd));
+            result.setDen(tden);
+        } else {
+            while (icol >= 0) {
+                result.set(icol, getBig(icol).divide(fgcd));
+                icol --;
+            } // while icoltden.divide(fgcd));
+            result.setDen(tden.divide(fgcd));
+        }
         return result;
-    } // shrink
+    } // shorten
 
     /** Gets a new BigVector which is the sum of <em>this</em> and a second
      *  BigVector, which may have a differing length.
@@ -602,7 +662,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         BigInteger lcm12 = lcm(getDen(), vect2.getDen());
         BigInteger fac1  = lcm12.divide(      getDen());
         BigInteger fac2  = lcm12.divide(vect2.getDen());
-        int len1 = size();
+        int len1 =       size();
         int len2 = vect2.size();
         int lenr = len1 + len2 - 1; // [x^0..x^5]#6 * [x^0..x^7]#8 => [0..x^12]#13
         BigVector result = new BigVector(lenr, BigInteger.ZERO);
@@ -613,11 +673,18 @@ public class BigVector extends Vector implements Cloneable, Serializable {
             while (icol2 < len2) {
                 int icolr = icol1 + icol2;
                 result.set(icolr, result.getBig(icolr)
-                        .add(getBig(icol1).multiply(fac1).multiply(vect2.getBig(icol2).multiply(fac2))));
+                        .add(getBig(icol1)
+                        // .multiply(fac1)
+                        .multiply(vect2.getBig(icol2)
+                        // .multiply(fac2)
+                        )));
                 icol2 ++;
             } // while icol2
             icol1 ++;
         } // while icol1
+        if (debug >= 2) {
+            System.out.println("multiply before shrink: result=" + result + ", lcm12=" + lcm12 + ", fac1=" + fac1 + ", fac2=" + fac2);
+        }
         return result.shrink();
     } // multiply(BigVector)
 
@@ -652,6 +719,25 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         } // while icol
         return result;
     } // reverse()
+
+    /** Gets a new BigVector which is the quotient of <em>this</em> BigVector;
+     *  there may not remain a rest for any element.
+     *  @param scale divide by this BigInteger - must be non-zero
+     *  @return this / scale,
+     *  that is a BigVector where each element is divided by <em>scale</em>
+     */
+    public BigVector divide(BigInteger scale) {
+        int len1 = size();
+        int lenr = len1;
+        BigVector result = new BigVector(len1);
+        result.setDen(getDen());
+        int icol = 0;
+        while (icol < lenr) {
+            result.set(icol, getBig(icol).divide(scale));
+            icol ++;
+        } // while icol
+        return result; // no !! shrink, since that uses this method
+    } // divide(BigInteger)
 
     /** Gets the quotient and the remainder from a division of <em>this</em>
      *  and a second BigVector, which  may have a differing length.
@@ -701,14 +787,14 @@ public class BigVector extends Vector implements Cloneable, Serializable {
                 iremd --;
                 icol2 --;
             } // while iremd
-            remd = remd.shrink();
+            remd = remd.shrink(false);
             lenr = remd.size();
             if (debug >= 1) {
                 System.out.println("quot=" + quot + ", remd=" + remd);
             }
         } // while lenr
         return new BigVector[] { quot, remd };
-    } // divideAndRemainder(BigVector)
+    } // divideAndRemainder_99(BigVector)
 
     /** Gets the quotient and the remainder from a division of <em>this</em>
      *  and a second BigVector
@@ -716,32 +802,38 @@ public class BigVector extends Vector implements Cloneable, Serializable {
      *  @return [quotient, remainder]
      */
     public BigVector[] divideAndRemainder(BigVector vect2) {
-        int len2 = vect2.size();
-        BigInteger last2 = vect2.getBig(vect2.size() - 1).abs();
-        if (last2.equals(BigInteger.ZERO)) { // can only be a single zero
-            System.out.println("# assertion in BigVector: divisor is zero: num="
-                    + this.toString() + ", den=" + vect2.toString());
-            return new BigVector[] { new BigVector(), new BigVector() };
-        }
-        BigVector  rem1 = clone().multiply(vect2.getDen());
+        BigVector  rem1 = clone().multiply(vect2.getDen()); // cross over
         BigVector  div2 = vect2  .multiply(      getDen());
         rem1.setDen(BigInteger.ONE);
         div2.setDen(BigInteger.ONE);
-        BigInteger newDen = BigInteger.ONE;
-        BigInteger fact   = BigInteger.ONE;
+        BigInteger rden = BigInteger.ONE;
         int len1 = rem1.size();
+        int len2 = div2.size();
+        BigInteger last2 = div2.getBig(len2 - 1);
+        if (last2.equals(BigInteger.ZERO)) { // can only be a single zero
+            System.out.println("# assertion in BigVector: divisor is zero: num="
+                    + toString() + ", den=" + vect2.toString());
+            return new BigVector[] { new BigVector(), new BigVector() };
+        }
         int lenq = len1 >= len2 ? len1 - len2 + 1 : 0;
-        BigVector  quot  = new BigVector(lenq); 
+        BigVector  quot  = new BigVector(lenq);
+        if (debug >= 1) {
+                System.out.println("\nbefore loop: quot=" + quot + ", rem1=" + rem1 + ", div2=" + div2
+                         + ", lenq=" + lenq + ", len1=" + len1 + ", len2=" + len2);
+        }
         while (len1 >= len2) {
             int irem1 = rem1.size() - 1;
             int icol2 = div2.size() - 1;
             BigInteger last1 = rem1.getBig(irem1);
-            BigInteger[] bigPair = last1.divideAndRemainder(div2.getBig(icol2));
-            if (! bigPair[1].equals(BigInteger.ZERO)) { // some rest - expand to least common multiple
-                BigInteger lcm12  = this.lcm(last1, last2);
+            // last2 = div2.getBig(icol2);
+            BigInteger[] bigPair = last1.divideAndRemainder(last2);
+            if (! bigPair[1].equals(BigInteger.ZERO)) { // does not divide evenly - expand to least common multiple
+                BigInteger lcm12  = this.lcm(last1, last2); // always positive
                 BigInteger fac1   = lcm12.divide(last1).abs();
-                newDen = newDen.multiply(fac1);
-                rem1   = rem1  .multiply(fac1);
+            //  BigInteger fac2   = lcm12.divide(last2).abs();
+                rden = rden.multiply(fac1);
+                rem1 = rem1.multiply(fac1);
+            //  div2 = div2 .multiply(fac2);
                 int iquo = len1 - len2 + 1;
                 while (iquo < lenq) {
                     quot.set(iquo, quot.getBig(iquo).multiply(fac1));
@@ -750,13 +842,19 @@ public class BigVector extends Vector implements Cloneable, Serializable {
                 last1  = rem1.getBig(irem1);
                 bigPair = last1.divideAndRemainder(last2); // { blcm / last2, 0 }
                 if (debug >= 1) {
-                    System.out.println("lcm12=" + lcm12 + ", last1=" + last1 + ", last2=" + last2 + ", rem1=" + rem1);
+                    System.out.println("expanded: lcm12=" + lcm12 + ", last1=" + last1
+                            + ", last2=" + last2 + ", rem1=" + rem1
+                            + ", fac1="  + fac1  // + ", fac2=" + fac2
+                            );
                 }
-            } // no even factor
-            BigInteger bquot = bigPair[0];
+                // no even division
+            } else { // last2 evenly divides last1
+            } // evenly
+            BigInteger bquot = bigPair[0]; // no rest at this point
             if (debug >= 1) {
-                System.out.println("quot=" + quot + ", rem1=" + rem1 + ", div2=" + div2 + "\n\t, bquot" + bquot
-                         + ", lenq=" + lenq + ", len1=" + len1 + ", len2=" + len2);
+                System.out.println("step end: quot=" + quot + ", rem1=" + rem1
+                        + ", div2=" + div2 + ", bquot=" + bquot
+                        + ", lenq=" + lenq + ", len1=" + len1 + ", len2=" + len2);
             }
             quot.set(len1 - len2, bquot);
             while (irem1 >= 0) {
@@ -767,15 +865,15 @@ public class BigVector extends Vector implements Cloneable, Serializable {
                 irem1 --;
                 icol2 --;
             } // while irem1
-            rem1 = rem1.shrink();
+            rem1 = rem1.shrink(false);
             len1 = rem1.size();
             if (debug >= 1) {
                 System.out.println("quot=" + quot + ", rem1=" + rem1);
             }
         } // while lenr
-        rem1.setDen(newDen);
-        quot.setDen(newDen);
-        return new BigVector[] { quot, rem1 };
+        rem1.setDen(rden);
+        quot.setDen(rden);
+        return new BigVector[] { quot.shrink(), rem1.shrink() };
     } // divisideAndRemainder(BigVector)
 
     /** Determines the quotient of the first elements of <em>this</em> (numerator of the g.f.)
@@ -879,7 +977,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         int iarg = 0;
         BigVector vect1 = new BigVector();
         BigVector vect2 = new BigVector();
-        BigVector vectq = new BigVector();
+        BigVector vectq[] = null;
         BigVector vectr = new BigVector();
         if (args.length == 0) {
             System.out.println("usage: java -cp dist/ramath.jar org.teherba.ramath.linear.BigVector \"[vect1] oper [vect2]\"");
@@ -900,18 +998,23 @@ public class BigVector extends Vector implements Cloneable, Serializable {
             System.out.print(expr + " = ");
             if (false) {
             } else if (oper.equals("+")) {
-                System.out.println(vect1.add         (vect2).toString());
+                    vectr = vect1.add     (vect2);
+                    System.out.println(vectr + ", original = " + vectr.subtract(vect2));
             } else if (oper.equals("-")) {
                 if (parts.length == 2) { // unary minus
                     System.out.println(vect1.negate  (     ).toString());
                 } else {
-                    System.out.println(vect1.subtract(vect2).toString());
+                    vectr = vect1.subtract(vect2);
+                    System.out.println(vectr + ", original = " + vectr.add(vect2));
                 }
             } else if (oper.equals("*")) {
                 if (parts[2].startsWith("[")) {
-                    System.out.println(vect1.multiply(vect2).toString());
+                    vectr = vect1.multiply(vect2);
+                    vectq = vectr.divideAndRemainder(vect2);
+                    System.out.println(vectr + ", original = " + vectq[0]);
                 } else {
-                    System.out.println(vect1.multiply(big2 ).toString());
+                    vectr = vect1.multiply(big2);
+                    System.out.println(vectr + ", original = " + vectr.divide(big2));
                 }
         /*
             } else if (oper.startsWith("//")) {
@@ -923,7 +1026,8 @@ public class BigVector extends Vector implements Cloneable, Serializable {
             } else if (oper.startsWith("/")) {
                 BigVector[] quotRemd = vect1.divideAndRemainder(vect2);
                 System.out.println(quotRemd[0].toString() + ", remainder = "
-                                 + quotRemd[1].toString() );
+                                 + quotRemd[1].toString() + ", original = " 
+                                 + quotRemd[0].multiply(vect2).add(quotRemd[1]));
             } // if oper
         } // more than 1 argument
     } // main

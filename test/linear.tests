@@ -40,17 +40,39 @@ CALL BigVector "[7,28,-35] / [2,4,-10]"
 TEST BV9 BigVector divideAndRemainder: quotient = [0]
 CALL BigVector "[7,8]      / [1,2,-5]"
 
-TEST BV10 BigVector divideAndRemainder with den
+TEST BV10 BigVector divideAndRemainder
 CALL BigVector "[5,1,2,3,6]  / [2,3]"
 
-# TEST BV10 BigVector divideRemainderFactor: quotient = [4]
-# CALL BigVector "[4,8]     // [1,2]"
-# 
-# TEST BV11 BigVector divideRemainderFactor: quotient = [4]
-# CALL BigVector "[3,6]     // [2,4]"
-# 
-# TEST BV12 BigVector divideRemainderFactor: quotient = [4], rest
-# CALL BigVector "[-1,3,6]  // [2,4]"
+TEST BV11 BigVector divideAndRemainder with dens
+CALL BigVector "[5,1,2,3,6]/2  / [2,3]/7"
+
+TEST BV12 BigVector add
+CALL BigVector "[1,2,-5]/3 + [1,1,1,7]/5"
+
+TEST BV13 BigVector subtract
+CALL BigVector "[1,2,-5]/3 - [1,1,1,7]/5"
+
+TEST BV14 BigVector negate
+CALL BigVector "[1,2,-5]/3 -"
+
+TEST BV15 BigVector scale
+CALL BigVector "[1,2,-5]/3 * -2"
+
+TEST BV16 BigVector multiply
+CALL BigVector "[1,2]/3    * [1,2,-5]/5"
+
+TEST BV17 BigVector divide - no remainder
+CALL BigVector "[7,14,-35]/3 / [1,2,-5]/5"
+
+TEST BV18 BigVector divideAndRemainder
+CALL BigVector "[7,28,-35]/3 / [2,4,-10]/5"
+
+TEST BV19 BigVector divideAndRemainder: quotient = [0]
+CALL BigVector "[7,8]/3      / [1,2,-5]/5"
+
+TEST BV20 BigVector multiply
+CALL BigVector "[1,7]/3    * [1,7]/5"
+
 #----
 # RationalVector
 PACKAGE=org.teherba.ramath.linear
@@ -250,8 +272,8 @@ CALL MatrixTester -elem 4
 # TEST L11 unimodular matrices from 2 vectors, 1st and 3rd element exchanged
 # CALL MatrixTester -div 4   3 4 5 6  21 18 19 28
 #
-TEST L12 unimodular matrices with permutations -2
-CALL MatrixTester -many -2
+# TEST L12 unimodular matrices with permutations -2
+# CALL MatrixTester -many -2
 #
 # TEST L13 unimodular matrices from many -3
 # CALL MatrixTester -many -3

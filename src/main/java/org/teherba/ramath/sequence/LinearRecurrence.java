@@ -113,13 +113,22 @@ public class LinearRecurrence extends Recurrence {
                         + "\nt = " + t.toString()
                         );
             } // if debug
-            RationalVector quotRemd[] = f.get(j - 2).divideAndRemainder(f.get(j-1));
+            RationalVector quotRemd[] = f.get(j - 2).divideAndRemainder(f.get(j - 1));
             q.set(j, quotRemd[0]);
             f.set(j, quotRemd[1]);
             if (false) { // assertion
             }
             s.set(j, s.get(j - 2).subtract(q.get(j).multiply(s.get(j - 1))));
             t.set(j, t.get(j - 2).subtract(q.get(j).multiply(t.get(j - 1))));
+            if (debug >= 1) {
+                System.out.println(""
+                        + "\nf = " + f.toString()
+                        + "\nq = " + q.toString()
+                        + "\ns = " + s.toString()
+                        + "\nt = " + t.toString()
+                        + "\n-----------------------------"
+                        );
+            } // if debug
         } // while
         BigRational factor = s.get(j).getRat(0).inverse();
         RationalVector result = s.get(j).multiply(factor);
@@ -144,16 +153,8 @@ public class LinearRecurrence extends Recurrence {
         xpow.set(2*m, BigInteger.ONE);
         f.set(1, xpow);
         BigMatrix q = new BigMatrix();
-        BigMatrix s = new BigMatrix();
-        s.set(0, new BigVector(1, BigInteger.ONE ));
-        s.set(1, new BigVector(1, BigInteger.ZERO));
-        BigMatrix t = new BigMatrix();
-        t.set(0, new BigVector(1, BigInteger.ZERO));
-        t.set(1, new BigVector(1, BigInteger.ONE ));
-        BigMatrix a = new BigMatrix();
-        a.set(0, new BigVector(1, BigInteger.ONE ));
-        a.set(1, new BigVector(1, BigInteger.ONE ));
-
+        BigMatrix s = new BigMatrix(); s.set(0, new BigVector(1, BigInteger.ONE )); s.set(1, new BigVector(1, BigInteger.ZERO));
+        BigMatrix t = new BigMatrix(); t.set(0, new BigVector(1, BigInteger.ZERO)); t.set(1, new BigVector(1, BigInteger.ONE ));
         int j = 1;
         while (f.get(j).size() > m) {
             j ++;
@@ -168,13 +169,17 @@ public class LinearRecurrence extends Recurrence {
             BigVector quotRemdFact[] = f.get(j - 2).divideAndRemainder(f.get(j - 1));
             q.set(j,  quotRemdFact[0]);
             f.set(j,  quotRemdFact[1]);
-            // a.set(j,  quotRemdFact[2]);
-            if (false) { // assertion
-            }
-            s.set(j, s.get(j - 2) /* .multiply(a.get(j - 2).getBig(0)) */ 
-            		.subtract(q.get(j).multiply(s.get(j - 1) /* .multiply(a.get(j - 1).getBig(0)) */ )));
-            t.set(j, t.get(j - 2) /* .multiply(a.get(j - 2).getBig(0)) */ 
-            		.subtract(q.get(j).multiply(t.get(j - 1) /* .multiply(a.get(j - 1).getBig(0)) */ )));
+            s.set(j, s.get(j - 2).subtract(q.get(j).multiply(s.get(j - 1))));
+            t.set(j, t.get(j - 2).subtract(q.get(j).multiply(t.get(j - 1))));
+            if (debug >= 1) {
+                System.out.println(""
+                        + "\nf = " + f.toString()
+                        + "\nq = " + q.toString()
+                        + "\ns = " + s.toString()
+                        + "\nt = " + t.toString()
+                        + "\n-----------------------------"
+                        );
+            } // if debug
         } // while                
         BigVector  result = s.get(j).normalize();
         return result.reverse();
@@ -227,7 +232,11 @@ public class LinearRecurrence extends Recurrence {
                             seq = (new SequenceReader()).readBFile(fileName);
                             termNo = seq.size();
                         }
-                        System.out.println("found: " + LinearRecurrence.find(seq, termNo).toString());
+                        if (oper.startsWith("-findr")) {
+                        	System.out.println("found: " + LinearRecurrence.findRational(seq, termNo).toString());
+                        } else {
+                        	System.out.println("found: " + LinearRecurrence.find(seq, termNo).toString());
+                        }
                     } else {
                         System.out.println("invalid operation \"" + oper + "\"");
                     }
