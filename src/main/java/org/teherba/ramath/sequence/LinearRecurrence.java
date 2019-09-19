@@ -116,7 +116,13 @@ public class LinearRecurrence extends Recurrence {
             RationalVector quotRemd[] = f.get(j - 2).divideAndRemainder(f.get(j - 1));
             q.set(j, quotRemd[0]);
             f.set(j, quotRemd[1]);
-            if (false) { // assertion
+            if (true) { // assertion
+                // assert q[j]*f[j-1] + f[j] == f[j-2], "poly divide failed."
+                RationalVector orig = q.get(j).multiply(f.get(j - 1)).add(f.get(j-2));
+                if (! orig.equals(f.get(j - 2))) {
+                    System.out.println("assertion poly divide failed: orig = "
+                            + orig + ", f[j-2] = " + f.get(j - 2));
+                }
             }
             s.set(j, s.get(j - 2).subtract(q.get(j).multiply(s.get(j - 1))));
             t.set(j, t.get(j - 2).subtract(q.get(j).multiply(t.get(j - 1))));
@@ -195,7 +201,7 @@ public class LinearRecurrence extends Recurrence {
      *  </pre>
      */
     public static void main(String[] args) {
-        LinearRecurrence.debug = 1;
+        LinearRecurrence.debug = 0;
         Sequence seq = null;
         try {
             if (args.length == 0) {
@@ -233,9 +239,9 @@ public class LinearRecurrence extends Recurrence {
                             termNo = seq.size();
                         }
                         if (oper.startsWith("-findr")) {
-                        	System.out.println("found: " + LinearRecurrence.findRational(seq, termNo).toString());
+                            System.out.println("found: " + LinearRecurrence.findRational(seq, termNo).toString());
                         } else {
-                        	System.out.println("found: " + LinearRecurrence.find(seq, termNo).toString());
+                            System.out.println("found: " + LinearRecurrence.find(seq, termNo).toString());
                         }
                     } else {
                         System.out.println("invalid operation \"" + oper + "\"");

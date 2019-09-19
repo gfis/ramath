@@ -1,3 +1,4 @@
 [7,8]/3      / [1,2,-5]/5 = 
-before loop: quot=[0], rem1=[35,40], div2=[3,6,-15], lenq=0, len1=2, len2=3
+initial: [7/3,8/3] / [1/5,2/5,-1], rem1=[35,40], div2=[3,6,-15], lenq=0, len1=2, len2=3
 [0], remainder = [35,40]
+, original = [35,40]

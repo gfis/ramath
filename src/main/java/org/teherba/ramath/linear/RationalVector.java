@@ -24,7 +24,7 @@ import  java.math.BigInteger;
 import  java.io.Serializable;
 
 /** Class RationalVector is used in conjunction with {@link RationalMatrix} to
- *  implement some simple linear algebra operations on vectors
+ *  implement some simple linear algebraic operations on vectors
  *  and arrays of vectors of {@link BigRational} numbers.
  *  When the indices are interpreted as powers of x, a RationalVector
  +  represents a univariate polynomial with rational coefficients.
@@ -112,7 +112,7 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
     public RationalVector(String vecNotation) {
         this();
         String[] parts = vecNotation.replaceAll("[\\[\\]\\s]", "") // remove "[", "]" and whitespece
-                .split("\\,");
+                .split("[\\,\\;]"); // ";" for RationalTriangle
         vecLen = parts.length;
         vector = new BigRational[vecLen];
         int icol = 0;
@@ -262,33 +262,23 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
         }
         String sep = ",";
         StringBuffer result = new StringBuffer(256);
-        if (false) {
-        } else if (formatSpec == null || formatSpec.length() == 0) {
-            for (int icol = 0; icol < vecLen; icol ++) {
-                result.append(String.format(" %-3s", getRat(icol)));
-            } // for icol
-        } else if (formatSpec.indexOf('%') >= 0) { // printf spec
-            for (int icol = 0; icol < vecLen; icol ++) {
-                result.append(String.format(formatSpec, getRat(icol)));
-            } // for icol
-        } else {
-            if (formatSpec.indexOf(sep) >= 0) {
-                result.append('[');
+        if (formatSpec.indexOf(sep) >= 0) {
+            result.append('[');
+        }
+        int icol = 0; 
+        while (icol < vecLen) {
+            if (icol > 0) {
+                result.append(formatSpec);
             }
-            for (int icol = 0; icol < vecLen; icol ++) {
-                if (icol > 0) {
-                    result.append(formatSpec);
-                }
-                result.append(String.valueOf(getRat(icol)));
-            } // for icol
-            if (formatSpec.indexOf(sep) >= 0) {
-                result.append(']');
-            }
+            result.append(String.valueOf(getRat(icol)));
+            icol ++;
+        } // while icol
+        if (formatSpec.indexOf(sep) >= 0) {
+            result.append(']');
         }
         return result.toString();
     } // toString()
 
-    /*-------------- arithmetic operations -------------------------*/
     /** Shrinks <em>this</em> RationalVector, that is removes zeroes at the tail.
      *  @return the shrinked RationalVector
      */
@@ -305,6 +295,7 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
         return result;
     } // shrink
 
+    /*-------------- arithmetic operations -------------------------*/
     /** Gets a new RationalVector which is the sum of <em>this</em> and a second
      *  RationalVector, which may have a differing length.
      *  @param vect2 the RationalVector to be added to <em>this</em>.
@@ -322,7 +313,7 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
             icol ++;
         } // while icol
         return result.shrink();
-    } // add(BigRational)
+    } // add(RationalVector)
 
     /** Gets a new RationalVector which is the difference of <em>this</em> and a second
      *  RationalVector, which may have a differing length.
@@ -341,7 +332,7 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
             icol ++;
         } // while icol
         return result.shrink();
-    } // subtract(BigRational)
+    } // subtract(RationalVector)
 
     /** Gets a new RationalVector which is a multiple of <em>this</em> RationalVector.
      *  @param scale multiply by this BigRational
@@ -436,7 +427,7 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
             return new RationalVector[] { new RationalVector(), new RationalVector() };
         }
         RationalVector quot = new RationalVector(); // [0] = zero
-        RationalVector remd = this.clone();
+        RationalVector remd = clone();
         int lenr = remd .size();
         int len2 = vect2.size();
         int lenq = lenr >= len2 ? lenr - len2 + 1 : 0;
@@ -464,7 +455,7 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
             lenr = remd.size();
         } // while lenr
         return new RationalVector[] { quot, remd };
-    } // divisideAndRemainder(RationalVector)
+    } // divideAndRemainder(RationalVector)
     
     /*-------------------- Test Driver --------------------*/
 

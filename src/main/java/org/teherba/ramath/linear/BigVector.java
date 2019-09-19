@@ -329,6 +329,18 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         return result;
     } // equals
 
+    /** Whether this < 0
+     *  @return true if the highest element is negative
+     */
+    public boolean isNegative() {
+        boolean result = false;
+        int icol = size() - 1;
+        if (icol >= 0) {
+            result = getBig(icol).compareTo(BigInteger.ZERO) < 0;
+        }   
+        return result;
+    } // isNegative
+
     /** Whether there is any zero element in the BigVector
      *  @return false if all elements are non-zero
      */
@@ -807,6 +819,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         rem1.setDen(BigInteger.ONE);
         div2.setDen(BigInteger.ONE);
         BigInteger rden = BigInteger.ONE;
+        BigInteger qden = BigInteger.ONE;
         int len1 = rem1.size();
         int len2 = div2.size();
         BigInteger last2 = div2.getBig(len2 - 1);
@@ -818,8 +831,9 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         int lenq = len1 >= len2 ? len1 - len2 + 1 : 0;
         BigVector  quot  = new BigVector(lenq);
         if (debug >= 1) {
-                System.out.println("\nbefore loop: quot=" + quot + ", rem1=" + rem1 + ", div2=" + div2
-                         + ", lenq=" + lenq + ", len1=" + len1 + ", len2=" + len2);
+                System.out.println("\ninitial: " + this + " / " + vect2 
+                        + ", rem1=" + rem1 + ", div2=" + div2
+                        + ", lenq=" + lenq + ", len1=" + len1 + ", len2=" + len2);
         }
         while (len1 >= len2) {
             int irem1 = rem1.size() - 1;
@@ -843,7 +857,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
                 bigPair = last1.divideAndRemainder(last2); // { blcm / last2, 0 }
                 if (debug >= 1) {
                     System.out.println("expanded: lcm12=" + lcm12 + ", last1=" + last1
-                            + ", last2=" + last2 + ", rem1=" + rem1
+                            + ", last2=" + last2 + ", rem1=" + rem1 + ", rden=" + rden
                             + ", fac1="  + fac1  // + ", fac2=" + fac2
                             );
                 }
@@ -852,7 +866,8 @@ public class BigVector extends Vector implements Cloneable, Serializable {
             } // evenly
             BigInteger bquot = bigPair[0]; // no rest at this point
             if (debug >= 1) {
-                System.out.println("step end: quot=" + quot + ", rem1=" + rem1
+                System.out.println("step end: quot=" + quot + "/qden=" + qden
+                        + ", rem1=" + rem1 + "/rden=" + rden
                         + ", div2=" + div2 + ", bquot=" + bquot
                         + ", lenq=" + lenq + ", len1=" + len1 + ", len2=" + len2);
             }
@@ -867,12 +882,20 @@ public class BigVector extends Vector implements Cloneable, Serializable {
             } // while irem1
             rem1 = rem1.shrink(false);
             len1 = rem1.size();
+            if (len1 == 1 && rem1.getBig(0).equals(BigInteger.ZERO)) {
+                len1 = 0;
+            }
             if (debug >= 1) {
-                System.out.println("quot=" + quot + ", rem1=" + rem1);
+                System.out.println("while end: quot=" + quot + "/" + qden 
+                        + ", rem1=" + rem1 + "/" + rden);
             }
         } // while lenr
         rem1.setDen(rden);
         quot.setDen(rden);
+        if (false && rem1.isNegative()) {
+            rem1 = rem1.add     (div2);
+            quot = quot.subtract(div2);
+        }
         return new BigVector[] { quot.shrink(), rem1.shrink() };
     } // divisideAndRemainder(BigVector)
 
@@ -1010,24 +1033,19 @@ public class BigVector extends Vector implements Cloneable, Serializable {
             } else if (oper.equals("*")) {
                 if (parts[2].startsWith("[")) {
                     vectr = vect1.multiply(vect2);
+                    System.out.println(vectr); 
+                    vectq = vectr.divideAndRemainder(vect1);
+                    System.out.println("/ vect1 = " + vectq[0]);
                     vectq = vectr.divideAndRemainder(vect2);
-                    System.out.println(vectr + ", original = " + vectq[0]);
+                    System.out.println("/ vect2 = " + vectq[0]);
                 } else {
                     vectr = vect1.multiply(big2);
                     System.out.println(vectr + ", original = " + vectr.divide(big2));
                 }
-        /*
-            } else if (oper.startsWith("//")) {
-                BigVector[] quotRemdFact = vect1.divideRemainderFactor(vect2);
-                System.out.println(quotRemdFact[0].toString() + ", remainder = "
-                                 + quotRemdFact[1].toString() + ", factor = "
-                                 + quotRemdFact[2].toString());
-        */
             } else if (oper.startsWith("/")) {
                 BigVector[] quotRemd = vect1.divideAndRemainder(vect2);
-                System.out.println(quotRemd[0].toString() + ", remainder = "
-                                 + quotRemd[1].toString() + ", original = " 
-                                 + quotRemd[0].multiply(vect2).add(quotRemd[1]));
+                System.out.println(quotRemd[0].toString() + ", remainder = " + quotRemd[1].toString());
+                System.out.println(", original = " + quotRemd[0].multiply(vect2).add(quotRemd[1]));
             } // if oper
         } // more than 1 argument
     } // main

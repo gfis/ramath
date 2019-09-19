@@ -14,10 +14,16 @@ PACKAGE=org.teherba.ramath.sequence
 # LinearRecurrence
 
 TEST LIR1 LinearRecurrence -comp
-CALL LinearRecurrence -comp 1,2,3 5,6,7 6 
+CALL LinearRecurrence -comp 1,2,3 5,6,7 6
 
 TEST LIR2 LinearRecurrence -findrat
-CALL LinearRecurrence -findrat test/LIR1.this.tst
+CALL LinearRecurrence -d 1 -findrat test/LIR1.this.tst
 
 TEST LIR3 LinearRecurrence -find
-CALL LinearRecurrence -find test/LIR1.this.tst
+CALL LinearRecurrence -d 1 -find    test/LIR1.this.tst
+
+TEST LIR4 LinearRecurrence A041142
+CALL LinearRecurrence -comp 0,18,0,-1 8,9,152,161 10
+
+TEST LIR5 LinearRecurrence -find
+CALL LinearRecurrence -d 1 -findrat test/LIR4.this.tst
