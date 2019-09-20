@@ -153,10 +153,10 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
     /*-------------- bean methods, setters and getters -----------------------------*/
 
     /** Sets the debugging level
-     *  @param debug 0 = none, 1 = some , 2 = more
+     *  @param level 0 = none, 1 = some , 2 = more
      */
-    public void setDebug(int debug) {
-        this.debug = debug;
+    public static void setDebug(int level) {
+        debug = level;
     } // setDebug
 
     /** Returns an element of the Vector
@@ -265,7 +265,7 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
         if (formatSpec.indexOf(sep) >= 0) {
             result.append('[');
         }
-        int icol = 0; 
+        int icol = 0;
         while (icol < vecLen) {
             if (icol > 0) {
                 result.append(formatSpec);
@@ -359,14 +359,14 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
     public RationalVector multiply(int scale) {
         return this.multiply(BigRational.valueOf(scale));
     } // multiply(int)
-    
+
     /** Gets a new RationalVector which is the product of <em>this</em> and a second
      *  RationalVector, which may have a differing length.
      *  @param vect2 multiply by this RationalVector
-     *  @return this * vect2, that is a RationalVector
+     *  @return this * vect2
      */
     public RationalVector multiply(RationalVector vect2) {
-        int len1 = size();
+        int len1 =       size();
         int len2 = vect2.size();
         int lenr = len1 + len2 - 1; // [x^0..x^5]#6 * [x^0..x^7]#8 => [0..x^12]#13
         RationalVector result = new RationalVector(lenr, BigInteger.ZERO);
@@ -440,11 +440,11 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
             BigRational factor = remd.getRat(iremd).divide(last2);
             quot.set(lenr - len2, factor);
             if (debug >= 1) {
-                System.out.println("quot[" + (lenr - len2) + "] = " + factor.toString() 
+                System.out.println("quot[" + (lenr - len2) + "] = " + factor.toString()
                         + ", remd = " + remd.toString());
             }
             while (iremd >= 0) {
-                if (icol2 >= 0) { 
+                if (icol2 >= 0) {
                     remd.set(iremd, remd.getRat(iremd).subtract(vect2.getRat(icol2).multiply(factor)));
                 } else { // keep remd[iremd]
                 }
@@ -456,7 +456,7 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
         } // while lenr
         return new RationalVector[] { quot, remd };
     } // divideAndRemainder(RationalVector)
-    
+
     /*-------------------- Test Driver --------------------*/
 
     /** Test method, shows some fixed matrices with no arguments, or the
