@@ -93,7 +93,7 @@ CALL RationalVector "[1/2,2/3,-1/5] -"
 TEST RV5 RationalVector scale
 CALL RationalVector "[1/2,2/3,-1/5] * -1/2"
 
-TEST RV6 RationalVector multiply
+TEST RV6 RationalVector multiply -> [1/4,1/2,11/90,-2/15]
 CALL RationalVector "[1/2,2/3] * [1/2,1/3,-1/5]"
 
 TEST RV7 RationalVector divide - no remainder
@@ -104,8 +104,14 @@ CALL RationalVector "[7/2,8/3,-7/5] / [1/2,1/3,-1/5]"
 
 TEST RV9 RationalVector divideAndRemainder: quotient = 0
 CALL RationalVector "[7/2,8/3] / [1/2,1/3,-1/5]"
+
+TEST RV11 RationalVector divideAndRemainder 
+CALL RationalVector "[1/4,1/2,11/90,-2/15] / [1/2,2/3]"
+
+TEST RV12 RationalVector divideAndRemainder 
+CALL RationalVector "[1/4,1/2,11/90,-2/15] / [1/2,1/3,-1/5]"
 #----
-# RationalVector
+# RationalTriangle
 PACKAGE=org.teherba.ramath.linear
 
 TEST RT1 RationalTriangle no-args
@@ -123,8 +129,8 @@ CALL RationalTriangle "[1/2,2/3,-1/5] -"
 TEST RT5 RationalTriangle scale
 CALL RationalTriangle "[1/2,2/3,-1/5] * -1/2"
 
-TEST RT6 RationalTriangle multiply
-CALL RationalTriangle "[1/2,[2/3,5]] * [1/2,[1/3,-1/5]]"
+TEST RT6 RationalTriangle multiply -> [[2],[-1,5],[-6,25,-25]]
+CALL RationalTriangle "[1,[-2,5]] * [2,[3,-5]]"
 
 TEST RT7 RationalTriangle divide - no remainder
 CALL RationalTriangle "[7/2,7/3,-7/5] / [1/2,1/3,-1/5]"
@@ -135,8 +141,14 @@ CALL RationalTriangle "[7/2,8/3,-7/5] / [1/2,1/3,-1/5]"
 TEST RT9 RationalTriangle divideAndRemainder: quotient = 0
 CALL RationalTriangle "[7/2,8/3] / [1/2,1/3,-1/5]"
 
-TEST RT10 RationalTriangle multiply by identity
+TEST RT10 RationalTriangle multiply -> [[2],[3,6],[0,3,6],[0,0,3,4]]
 CALL RationalTriangle "[2,[3,4]] * [1,[0,1],[0,0,1]]"
+
+TEST RT11 RationalTriangle divide
+CALL RationalTriangle "[[2],[3,6],[0,3,6],[0,0,3,4]] / [1,[0,1],[0,0,1]]"
+
+TEST RT12 RationalTriangle divide
+CALL RationalTriangle "[[2],[3,6],[0,3,6],[0,0,3,4]] / [2,[3,4]]"
 
 #------------------------
 # Symbolic Matrix Algebra

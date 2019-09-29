@@ -20,6 +20,7 @@
 package org.teherba.ramath.linear;
 import  org.teherba.ramath.BigRational;
 import  org.teherba.ramath.linear.RationalVector;
+import  org.teherba.ramath.symbolic.Polynomial;
 import  java.math.BigInteger;
 import  java.io.Serializable;
 
@@ -203,7 +204,7 @@ public class RationalTriangle extends RationalVector implements Cloneable, Seria
         int icol = 0;
         int rowLen = 1;
         int irow = 0;
-        while (icol < vecLen) {
+        while (icol < size()) {
             if (icol > 0) {
                 result.append(formatSpec);
             }
@@ -221,7 +222,32 @@ public class RationalTriangle extends RationalVector implements Cloneable, Seria
         } // while icol
         result.append(']');
         return result.toString();
-    } // toString()
+    } // toString(String)
+
+    /** Returns the {@link Polynomial} in two variables x, y
+     *  which is represented by <em>this</em> RationalTriangle
+     *  @return a Polynomial
+     */
+    public Polynomial toPolynomial() {
+        StringBuffer result = new StringBuffer(256);
+        int ielem = 0;
+        int irow = 0;
+        while (ielem < size()) {
+            int icol = 0;
+            while (icol <= irow) {
+                result.append("+");
+                result.append(getTri(irow, icol));
+                result.append("*x^");
+                result.append(irow);
+                result.append("*y^");
+                result.append(icol);
+                ielem ++;
+                icol ++;
+            } // while icol
+            irow ++;
+        } // while irow
+        return new Polynomial(result.toString().replaceAll("\\+\\-", "-"));
+    } // toPolynomial()
 
     // shrink() is inherited
 
@@ -262,11 +288,11 @@ public class RationalTriangle extends RationalVector implements Cloneable, Seria
         return new RationalTriangle(super.multiply(BigRational.valueOf(scale)));
     } // multiply(int)
 
-    /** Gets a new RationalTriangle which is the product of <em>this</em> 
+    /** Gets a new RationalTriangle which is the product of <em>this</em>
      *  and a second RationalTriangle which may have a different size.
      *  Each element of this triangle is multiplied with each element
      *  of the second triangle, and the product is added to the
-     *  element which corresponds to the exponent sums of the variables 
+     *  element which corresponds to the exponent sums of the variables
      *  involved in the two elements.
      *  If the last row is not complete, the remaining elements are assumed to be zero.
      *  @param triang2 multiply by this RationalTriangle
@@ -291,15 +317,15 @@ public class RationalTriangle extends RationalVector implements Cloneable, Seria
                         int irowr = irow1 + irow2;
                         int icolr = icol1 + icol2;
                         if (debug >= 1) {
-                            System.out.println(   "[" + irow1 + "," + icol1 
-                                    +        "] *  [" + irow2 + "," + icol2 
+                            System.out.println(   "[" + irow1 + "," + icol1
+                                    +        "] *  [" + irow2 + "," + icol2
                                     +        "] -> [" + irowr + "," + icolr + "]"
                                     );
                         }
                         result.setTri(irowr, icolr, result.getTri(irowr, icolr)
                                 .add(             getTri(irow1, icol1)
                                 .multiply(triang2.getTri(irow2, icol2))));
-                        
+
                         icol2 ++;
                     } // while icol2
                     irow2 ++;
@@ -318,27 +344,12 @@ public class RationalTriangle extends RationalVector implements Cloneable, Seria
         return new RationalTriangle(super.negate());
     } // negate()
 
-    /** Gets <em>this</em> RationalTriangle with all rows in reversed order.
-     *  @return the original RationalTriangle read from right to left.
-     */
-    public RationalTriangle reverse() {
-        int len1 = size();
-        int lenr = len1;
-        RationalTriangle result = new RationalTriangle(len1);
-        int icol = 0;
-        while (icol < lenr) {
-            result.set(icol, getRat(len1 - 1 - icol));
-            icol ++;
-        } // while icol
-        return result;
-    } // reverse()
-
     /** Gets the quotient and the remainder from a division of <em>this</em>
      *  and a second RationalTriangle, which  may have a differing length.
      *  @param triang2 the divisor
      *  @return [quotient, remainder]
      */
-    public RationalTriangle[] divideAndRemainder(RationalTriangle triang2) {
+    public RationalTriangle[] divideAndRemainder_99(RationalTriangle triang2) {
         BigRational last2 = triang2.getRatLast();
         if (last2.equals(BigRational.ZERO)) { // can only be a single zero
             System.out.println("# assertion in RationalTriangle: divisor is zero: num="
@@ -374,6 +385,17 @@ public class RationalTriangle extends RationalVector implements Cloneable, Seria
             lenr = remd.size();
         } // while lenr
         return new RationalTriangle[] { quot, remd };
+    } // divideAndRemainder(RationalTriangle)
+
+    /** Gets the quotient and the remainder from a division of <em>this</em>
+     *  and a second RationalTriangle, which  may have a differing length.
+     *  @param triang2 the divisor
+     *  @return [quotient, remainder]
+     */
+    public RationalTriangle[] divideAndRemainder(RationalTriangle triang2) {
+        RationalVector[] quotRemd = super.divideAndRemainder(triang2);
+        return new RationalTriangle[] { new RationalTriangle(quotRemd[0])
+                                      , new RationalTriangle(quotRemd[1]) };
     } // divideAndRemainder(RationalTriangle)
 
     /*-------------------- Test Driver --------------------*/
@@ -416,15 +438,22 @@ public class RationalTriangle extends RationalVector implements Cloneable, Seria
                     System.out.println(vect1.subtract(vect2).toString());
                 }
             } else if (oper.equals("*")) {
-                if (parts[2].startsWith("[")) {
+                if (parts[2].startsWith("[")) { // 2nd operand is a triangle, too
                     System.out.println(vect1.multiply(vect2).toString());
-                } else {
+                    if (! expr.matches("\\/")) { // no fractional constants involved
+                        System.out.println((vect1.toPolynomial().multiply(vect2.toPolynomial())).toString());
+                    }
+                } else { // 2nd operand is a (fractional) constant
                     System.out.println(vect1.multiply(brat2).toString());
                 }
             } else if (oper.startsWith("/")) {
                 RationalTriangle[] quotRemd = vect1.divideAndRemainder(vect2);
                 System.out.println(quotRemd[0].toString() + ", remainder = "
                                  + quotRemd[1].toString() );
+                if (! expr.matches("\\/")) { // no fractional constants involved
+                    System.out.println(   quotRemd[0].toPolynomial().toString()
+                            + ", rest=" + quotRemd[1].toPolynomial().toString());
+                }
             } // if oper
         } // more than 1 argument
     } // main

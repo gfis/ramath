@@ -415,9 +415,9 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
     } // reverse()
 
     /** Gets the quotient and the remainder from a division of <em>this</em>
-     *  and a second RationalVector, which  may have a differing length.
+     *  and a second RationalVector, which may have a differing length.
      *  @param vect2 the divisor
-     *  @return [quotient, remainder]
+     *  @return a tuple [quotient, remainder]
      */
     public RationalVector[] divideAndRemainder(RationalVector vect2) {
         BigRational last2 = vect2.getRatLast();
