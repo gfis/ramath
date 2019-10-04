@@ -1,5 +1,6 @@
 /*  RationalVector: a simple, short vector of BigRational numbers
  *  @(#) $Id: RationalVector.java 744 2011-07-26 06:29:20Z gfis $
+ *  2019-10-04: shifted multiplication
  *  2019-08-27, Georg Fischer: copied from BigVector
  */
 /*
@@ -26,7 +27,7 @@ import  java.io.Serializable;
 /** Class RationalVector is used in conjunction with {@link RationalMatrix} to
  *  implement some simple linear algebraic operations on vectors
  *  and arrays of vectors of {@link BigRational} numbers.
- *  When the indices are interpreted as powers of x, a RationalVector
+ *  When the indices are interpreted as exponents of x, a RationalVector
  +  represents a univariate polynomial with rational coefficients.
  *  It is maintained that the highest element of every vector is never zero,
  *  except for element [0], which is always present.
@@ -164,7 +165,7 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
      *  @return a number
      */
     public BigRational getRat(int icol) {
-        return vector[icol];
+        return icol < vecLen ? vector[icol] : BigRational.ZERO;
     } // getRat
 
     /** Returns an element of the Vector
@@ -351,6 +352,41 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
         return result.shrink();
     } // multiply(BigRational)
 
+    /** Gets a new RationalVector which is a shifted multiple of <em>this</em> RationalVector.
+     *  @param scale multiply by this BigRational
+     *  @param xexp multiply by <em>scale*x^xexp</em>
+     *  @return this * scale*x^exp,
+     *  that is a RationalVector where each element is multiplied by <em>scale</em>,
+     *  and <em>xexp</em> zeroes are inserted at the beginning
+     */
+    public RationalVector multiply(BigRational scale, int xexp) {
+        int len1 = size();
+        RationalVector result = new RationalVector(len1 + xexp);
+        int lenr = result.size();
+        int icol = 0;
+        while (icol < lenr) {
+            if (icol < xexp) {
+                result.set(icol, BigRational.ZERO);
+            } else {
+                result.set(icol, getRat(icol - xexp).multiply(scale));
+            }
+            icol ++;
+        } // while icol
+        return result.shrink();
+    } // multiply(BigRational, int)
+
+    /** Gets a new RationalVector which is a shifted multiple of <em>this</em> RationalVector.
+     *  @param scale multiply by this BigRational
+     *  @param xexp multiply by <em>scale*x^xexp</em>
+     *  @param yexp - ignored, for compatibility with {@link RationalTriangle}
+     *  @return this * scale*x^exp,
+     *  that is a RationalVector where each element is multiplied by <em>scale</em>,
+     *  and <em>xexp</em> zeroes are inserted at the beginning
+     */
+    public RationalVector multiply(BigRational scale, int xexp, int yexp) {
+        return multiply(scale, xexp);
+    } // multiply(BigRational, int, int)
+
     /** Gets a new RationalVector which is a multiple of <em>this</em> RationalVector.
      *  @param scale multiply by this int
      *  @return this * scale,
@@ -416,10 +452,49 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
 
     /** Gets the quotient and the remainder from a division of <em>this</em>
      *  and a second RationalVector, which may have a differing length.
+     *  This is the new version which uses shifting multiplication.
      *  @param vect2 the divisor
      *  @return a tuple [quotient, remainder]
      */
     public RationalVector[] divideAndRemainder(RationalVector vect2) {
+        BigRational last2 = vect2.getRatLast();
+        if (last2.equals(BigRational.ZERO)) { // can only be a single zero
+            System.out.println("# assertion in RationalVector: divisor is zero: num="
+                    + toString() + ", den=" + vect2.toString());
+            return new RationalVector[] { new RationalVector(), new RationalVector() };
+        }
+        RationalVector quot = new RationalVector(); // [0] = zero
+        RationalVector remd = clone();
+        int lenr = remd .size();
+        int len2 = vect2.size();
+        int lenq = lenr >= len2 ? lenr - len2 + 1 : 0;
+        if (lenq > 1) {
+            quot = new RationalVector(lenq);
+        }
+        while (lenr >= len2) {
+            int iremd = remd .size() - 1;
+            int icol2 = vect2.size() - 1;
+            BigRational factor = remd.getRat(iremd).divide(last2);
+            int xexp = iremd - icol2;
+            RationalVector prod = vect2.multiply(factor, xexp);
+            quot.set(xexp, factor);
+            if (debug >= 1) {
+                System.out.println("quot[" + xexp + "] = " + factor.toString()
+                        + ", remd = " + remd.toString());
+            }
+            remd = remd.subtract(prod).shrink();
+            lenr = remd.size();
+        } // while lenr
+        return new RationalVector[] { quot, remd };
+    } // divideAndRemainder(RationalVector)
+
+    /** Gets the quotient and the remainder from a division of <em>this</em>
+     *  and a second RationalVector, which may have a differing length.
+     *  This is the old version which does not use shifting multiplication.
+     *  @param vect2 the divisor
+     *  @return a tuple [quotient, remainder]
+     */
+    public RationalVector[] divideAndRemainder_99(RationalVector vect2) {
         BigRational last2 = vect2.getRatLast();
         if (last2.equals(BigRational.ZERO)) { // can only be a single zero
             System.out.println("# assertion in RationalVector: divisor is zero: num="
@@ -478,13 +553,22 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
             vect1 = new RationalVector(parts        [0]);
             String oper = parts                             [1];
             BigRational brat2 = new BigRational("0");
-            if (parts.length >= 3) {
-                if (parts[2].startsWith("[")) {
-                    vect2 = new RationalVector(parts             [2]);
-                } else {
-                    brat2 = new BigRational(parts                [2]);
+            int xexp = 0; // no shift
+            int yexp = 0; // no shift
+            try {
+                if (parts.length >= 3) {
+                    if (parts[2].startsWith("[")) {
+                        vect2 = new RationalVector(parts             [2]);
+                    } else {
+                        brat2 = new BigRational(parts                [2]);
+                    }
+                    if (parts.length >= 4) {
+                        xexp = Integer.parseInt(parts[3]);
+                        yexp = Integer.parseInt(parts[4]);
+                    }
                 }
-            }
+            } catch (Exception exc) { // ignore
+            } 
             System.out.print(expr + " = ");
             if (false) {
             } else if (oper.equals("+")) {
@@ -499,7 +583,7 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
                 if (parts[2].startsWith("[")) {
                     System.out.println(vect1.multiply(vect2).toString());
                 } else {
-                    System.out.println(vect1.multiply(brat2).toString());
+                    System.out.println(vect1.multiply(brat2, xexp, yexp).toString());
                 }
             } else if (oper.startsWith("/")) {
                 RationalVector[] quotRemd = vect1.divideAndRemainder(vect2);

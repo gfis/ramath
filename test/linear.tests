@@ -105,6 +105,9 @@ CALL RationalVector "[7/2,8/3,-7/5] / [1/2,1/3,-1/5]"
 TEST RV9 RationalVector divideAndRemainder: quotient = 0
 CALL RationalVector "[7/2,8/3] / [1/2,1/3,-1/5]"
 
+TEST RV10 RationalVector scale and shift
+CALL RationalVector "[1/2,2/3,-1/5] * -1/2 3"
+
 TEST RV11 RationalVector divideAndRemainder 
 CALL RationalVector "[1/4,1/2,11/90,-2/15] / [1/2,2/3]"
 
@@ -150,6 +153,38 @@ CALL RationalTriangle "[[2],[3,6],[0,3,6],[0,0,3,4]] / [1,[0,1],[0,0,1]]"
 TEST RT12 RationalTriangle divide
 CALL RationalTriangle "[[2],[3,6],[0,3,6],[0,0,3,4]] / [2,[3,4]]"
 
+TEST RT13 RationalTriangle scale xexp yexp
+CALL RationalTriangle "[[1],[2,3]] * 7 3 2" 
+
+TEST RT14 RationalTriangle xexp yexp
+CALL RationalTriangle 1 0
+
+TEST RT15 RationalTriangle scale xexp yexp
+CALL RationalTriangle "[1/2,2/3,-1/5] * -1/2 3 2" 
+
+TEST RT16 RationalTriangle xexp yexp
+CALL RationalTriangle 3 2 
+
+TEST RT17 RationalTriangle xexp yexp
+CALL RationalTriangle 4 4 
+
+TEST RT18 RationalTriangle xexp yexp
+CALL RationalTriangle 4 0
+
+TEST RT19 RationalTriangle xexp yexp
+CALL RationalTriangle 0 0
+
+TEST RT20 RationalTriangle multiply -> [[1],[4,6],[8,17,15],[8,22,27,18]]
+CALL RationalTriangle "[[1],[2,3],[4,5,6]] * [[1],[2,3]]"
+
+TEST RT21 RationalTriangle divide evenly ->  [[1],[2,3]]
+CALL RationalTriangle "[[1],[4,6],[8,17,15],[8,22,27,18]] / [[1],[2,3],[4,5,6]]"
+
+TEST RT22 RationalTriangle divide evenly ->  [[1],[2,3],[4,5,6]]
+CALL RationalTriangle "[[1],[4,6],[8,17,15],[8,22,27,18]] / [[1],[2,3]]"
+
+TEST RT23 RationalTriangle divide with rest ->  [[1],[2,3]]
+CALL RationalTriangle "[[1],[4,7],[9,17,15],[8,22,27,18]] / [[1],[2,3]]"
 #------------------------
 # Symbolic Matrix Algebra
 PACKAGE=org.teherba.ramath.symbolic
