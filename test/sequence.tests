@@ -25,5 +25,5 @@ CALL LinearRecurrence -d 1 -find    test/LIR1.this.tst
 TEST LIR4 LinearRecurrence A041142
 CALL LinearRecurrence -comp 0,18,0,-1 8,9,152,161 10
 
-TEST LIR5 LinearRecurrence -find
+TEST LIR5 LinearRecurrence -findrat
 CALL LinearRecurrence -d 1 -findrat test/LIR4.this.tst
