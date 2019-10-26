@@ -1,5 +1,5 @@
 /*  Superclass for recurrences
- *  @(#) $Id: Recurrence.java 194 2009-07-07 21:10:32Z gfis $
+ *  @(#) $Id: Recurrence.java $
  *  2019-08-25, Georg Fischer
  */
 /*
@@ -36,7 +36,7 @@ public class Recurrence {
     public Recurrence() {
     } // no-args Constructor
 
-    /** Compute one term a(n+1) from the existing terms.
+    /** Compute one term <em>a(n+1)</em> from the existing terms <em>a(n), a(n-1) ...</em>.
      *  This is only a dummy implementation -
      *  the method is typically overwritten by the subclass.
      *  @param seq {@link Sequence} with existing terms

@@ -109,10 +109,10 @@ CALL SandBox -sqsprim "x^2 + 2"
 TEST SQS2 SquareSumPrimes 
 CALL SandBox -sqsprim "(54x + 5)^2 + 2"          8192
 
-TEST TRI2 Triples
+TEST CMP4 Triples
 CALL SandBox -triple "(u^2 + v^2)" "(u^2 - v^2)" "(2*u*v)" 16
 
-TEST TRI3 Triples
+TEST CMP3 Triples
 CALL SandBox -triple "(u^2 + v^2)" "(u^3 - 3*u*v^2)" "(3*u^2*v - v^3)" 16
 #---------------------------------------------------------------------
 LIM=64

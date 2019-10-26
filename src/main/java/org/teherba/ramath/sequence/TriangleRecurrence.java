@@ -1,8 +1,6 @@
 /*  Linear recurrence with constant coefficients
- *  @(#) $Id: LinearRecurrence.java $
- *  2019-08-29: parameter skip
- *  2019-08-27: find with Berlekamp-Massey's algorithm
- *  2019-08-25, Georg Fischer: Lunnon's algorithm - failed
+ *  @(#) $Id: TriangleRecurrence.java $
+ *  2019-10-12, Georg Fischer: copied from LinearRecurrence.java
  *
  *  Derived from the SageMath code of William Stein <wstein@gmail.com> (2005):
  *      https://sage.math.leidenuniv.nl/src/matrix/berlekamp_massey.py
@@ -26,17 +24,18 @@ package org.teherba.ramath.sequence;
 import  org.teherba.ramath.BigRational;
 import  org.teherba.ramath.linear.BigVector;
 import  org.teherba.ramath.linear.RationalVector;
+import  org.teherba.ramath.linear.RationalTriangle;
 import  org.teherba.ramath.sequence.Sequence;
 import  java.math.BigInteger;
 import  java.util.ArrayList;
 
-/** Linear recurrence with constant coefficients.
+/** Triangular recurrence with constant coefficients.
  *  The interface is close to Mathematica's, for example
- *  LinearRecurrence[{1,0,0,9,-9},{1,9,3,15,6},20].
+ *  TriangleRecurrence[{1,0,0,9,-9},{1,9,3,15,6},20].
  *  @author Dr. Georg Fischer
  */
-public class LinearRecurrence extends Recurrence {
-    public final static String CVSID = "@(#) $Id: LinearRecurrence.java 194 2009-07-07 21:10:32Z gfis $";
+public class TriangleRecurrence extends Recurrence {
+    public final static String CVSID = "@(#) $Id: TriangleRecurrence.java 194 2009-07-07 21:10:32Z gfis $";
     /** Debugging level: 0 = none, 1 = some, 2 = more */
     public static int debug = 0;
 
@@ -45,15 +44,15 @@ public class LinearRecurrence extends Recurrence {
 
     /** No-args Constructor
      */
-    public LinearRecurrence() {
+    public TriangleRecurrence() {
     } // no-args Constructor
 
     /** Constructor with signature and initial terms.
      *  @param signature list of constant coefficients
      *  @param initTerms list of inital terms
      */
-    public LinearRecurrence(BigVector signature, BigVector initTerms) {
-        this.signature = signature;
+    public TriangleRecurrence(BigVector signature, BigVector initTerms) {
+        this.signature  = signature;
         super.initTerms = initTerms;
     } // Constructor(,)
 
@@ -76,30 +75,38 @@ public class LinearRecurrence extends Recurrence {
 
     /** Find a signature of constant coefficients from a sequence
      *  with the Berlekamp-Massey algorithm.
-     *  @param seq {@link Sequence} with existing terms
+     *  @param seq {@link Sequence} with existing integer terms in triangular order
      *  @param termNo include so many terms in the derivation
      *  Derived from the SageMath code of William Stein &lt;wstein@gmail.com&gt; (2005):
      *      https://sage.math.leidenuniv.nl/src/matrix/berlekamp_massey.py
      */
-    public static RationalVector find(Sequence seq, int termNo) {
+    public static RationalTriangle find(Sequence seq, int termNo) {
         if (termNo % 2 != 0) {
             termNo --; // must be even
         }
         int m = termNo / 2;
-        ArrayList<RationalVector> f = new ArrayList<RationalVector>(16);
-        f.add(new RationalVector(new BigVector(seq.getBigValues())));
-        RationalVector xpow = new RationalVector(2*m + 1, BigInteger.ZERO);
-        xpow.set(2*m, BigRational.ONE);
+        ArrayList<RationalTriangle> f = new ArrayList<RationalTriangle>(16);
+        f.add(new RationalTriangle(new BigVector(seq.getBigValues())));
+        int m2 = f.get(0).getRowSize();
+        RationalTriangle xpow = new RationalTriangle(RationalTriangle.linearIndex(m2, m2) + 1, BigInteger.ZERO);
+        xpow.setTri(m2, m2, BigRational.ONE);
+    /*
+        int im2  = 0; 
+        while (im2 <= m2) {
+            xpow.setTri(im2, im2, BigRational.ONE);
+            im2 ++;
+        } // while im2
+    */
         f.add(xpow);
-        ArrayList<RationalVector> q = new ArrayList<RationalVector>(16);
-        q.add(new RationalVector(1, BigInteger.ZERO));
-        q.add(new RationalVector(1, BigInteger.ZERO));
-        ArrayList<RationalVector> s = new ArrayList<RationalVector>(16);
-        s.add(new RationalVector(1, BigInteger.ONE ));
-        s.add(new RationalVector(1, BigInteger.ZERO));
-        ArrayList<RationalVector> t = new ArrayList<RationalVector>(16);
-        t.add(new RationalVector(1, BigInteger.ZERO));
-        t.add(new RationalVector(1, BigInteger.ONE ));
+        ArrayList<RationalTriangle> q = new ArrayList<RationalTriangle>(16);
+        q.add(new RationalTriangle(1, BigInteger.ZERO));
+        q.add(new RationalTriangle(1, BigInteger.ZERO));
+        ArrayList<RationalTriangle> s = new ArrayList<RationalTriangle>(16);
+        s.add(new RationalTriangle(1, BigInteger.ONE ));
+        s.add(new RationalTriangle(1, BigInteger.ZERO));
+        ArrayList<RationalTriangle> t = new ArrayList<RationalTriangle>(16);
+        t.add(new RationalTriangle(1, BigInteger.ZERO));
+        t.add(new RationalTriangle(1, BigInteger.ONE ));
 
         int j = 1;
         while (f.get(j).size() > m) {
@@ -112,12 +119,12 @@ public class LinearRecurrence extends Recurrence {
                         + "\nt = " + t.toString()
                         );
             } // if debug
-            RationalVector quotRemd[] = f.get(j - 2).divideAndRemainder(f.get(j - 1));
+            RationalTriangle quotRemd[] = f.get(j - 2).divideAndRemainder(f.get(j - 1));
             q.add(quotRemd[0]);
             f.add(quotRemd[1]);
             if (true) { // assertion
                 // assert q[j]*f[j-1] + f[j] == f[j-2], "poly divide failed."
-                RationalVector orig = q.get(j).multiply(f.get(j - 1)).add(f.get(j-2));
+                RationalTriangle orig = q.get(j).multiply(f.get(j - 1)).add(f.get(j-2));
                 if (! orig.equals(f.get(j - 2))) {
                     System.out.println("assertion poly divide failed: orig = "
                             + orig + ", f[j-2] = " + f.get(j - 2));
@@ -136,8 +143,8 @@ public class LinearRecurrence extends Recurrence {
             } // if debug
         } // while
         BigRational factor = s.get(j).getRat(0).inverse();
-        RationalVector result = s.get(j).multiply(factor);
-        return result.reverse();
+        RationalTriangle result = s.get(j).multiply(factor);
+        return result; // .reverse();
     } // find
 
     /** Test method.
@@ -150,13 +157,13 @@ public class LinearRecurrence extends Recurrence {
      *  </pre>
      */
     public static void main(String[] args) {
-        LinearRecurrence.debug = 0;
+        TriangleRecurrence.debug = 0;
         Sequence seq = null;
         try {
             if (args.length == 0) {
                 System.out.print("usage:\n"
-                        + "    java org.teherba.ramath.sequence.LinearRecurrence [-d n] -comp signature initTerms noTerms\n"
-                        + "    java org.teherba.ramath.sequence.LinearRecurrence [-d n] -find filename [noterms [start]]\n"
+                        + "    java org.teherba.ramath.sequence.TriangleRecurrence [-d n] -comp signature initTerms noTerms\n"
+                        + "    java org.teherba.ramath.sequence.TriangleRecurrence [-d n] -find filename [noterms [start]]\n"
                         );
             } else { // some arguments
                 int termNo = 0;
@@ -165,9 +172,9 @@ public class LinearRecurrence extends Recurrence {
                     String oper = args[iarg ++];
                     if (false) {
                     } else if (oper.equals    ("-d")) {
-                        LinearRecurrence.debug = Integer.parseInt(args[iarg ++]);
+                        TriangleRecurrence.debug = Integer.parseInt(args[iarg ++]);
                     } else if (oper.startsWith("-comp")) {
-                        LinearRecurrence linRec = new LinearRecurrence
+                        TriangleRecurrence linRec = new TriangleRecurrence
                                 ( new BigVector(args[iarg    ])
                                 , new BigVector(args[iarg + 1]));
                         iarg += 2;
@@ -187,7 +194,7 @@ public class LinearRecurrence extends Recurrence {
                             seq = (new SequenceReader()).readBFile(fileName);
                             termNo = seq.size();
                         }
-                        System.out.println("found: " + LinearRecurrence.find(seq, termNo).toString());
+                        System.out.println("found: " + TriangleRecurrence.find(seq, termNo).toString());
                     } else {
                         System.out.println("invalid operation \"" + oper + "\"");
                     }
@@ -199,4 +206,4 @@ public class LinearRecurrence extends Recurrence {
         }
     } // main
 
-} // LinearRecurrence
+} // TriangleRecurrence
