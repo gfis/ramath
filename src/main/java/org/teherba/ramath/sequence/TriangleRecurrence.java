@@ -3,7 +3,7 @@
  *  2019-10-12, Georg Fischer: copied from LinearRecurrence.java
  *
  *  Derived from the SageMath code of William Stein <wstein@gmail.com> (2005):
- *      https://sage.math.leidenuniv.nl/src/matrix/berlekamp_massey.py
+ *      https://github.com/sagemath/sagelib/blob/master/sage/matrix/berlekamp_massey.py
  */
 /*
  * Copyright 2019 Dr. Georg Fischer <dr.georg.fischer@gmail.com>
@@ -86,28 +86,43 @@ public class TriangleRecurrence extends Recurrence {
         }
         int m = termNo / 2;
         ArrayList<RationalTriangle> f = new ArrayList<RationalTriangle>(16);
-        f.add(new RationalTriangle(new BigVector(seq.getBigValues())));
+        RationalTriangle seq3 = new RationalTriangle(new BigVector(seq.getBigValues()));
+        RationalTriangle seq4 = seq3.clone();
+        int [] rc3 = seq3.triangleIndex(seq3.size() - 1);
+        int nrow = rc3[0];
+        int irow, icol;
+        for (irow = 0; irow < nrow; irow ++) {
+            for (icol = 0; icol <= irow; icol ++) {
+                seq3.setTri(irow, icol, BigRational.ZERO);
+            }
+        } // for irow
+        for (icol = 0; icol <= nrow; icol ++) {
+            seq4.setTri(nrow, icol, BigRational.ZERO);
+        }
+        f.add(seq4.shrink()); // without last row -> f[0]
+        f.add(seq3); // all rows except last = 0 -> f[1]
+    /*
         int m2 = f.get(0).getRowSize();
         RationalTriangle xpow = new RationalTriangle(RationalTriangle.linearIndex(m2, m2) + 1, BigInteger.ZERO);
-        xpow.setTri(m2, m2, BigRational.ONE);
-    /*
+        xpow.setTri(m2, m2 , BigRational.ONE);
         int im2  = 0; 
         while (im2 <= m2) {
-            xpow.setTri(im2, im2, BigRational.ONE);
+            xpow.setTri(m2, im2, BigRational.ONE);
             im2 ++;
         } // while im2
+        f.add(xpow); // f[1]
     */
-        f.add(xpow);
         ArrayList<RationalTriangle> q = new ArrayList<RationalTriangle>(16);
         q.add(new RationalTriangle(1, BigInteger.ZERO));
         q.add(new RationalTriangle(1, BigInteger.ZERO));
         ArrayList<RationalTriangle> s = new ArrayList<RationalTriangle>(16);
         s.add(new RationalTriangle(1, BigInteger.ONE ));
         s.add(new RationalTriangle(1, BigInteger.ZERO));
+    /*
         ArrayList<RationalTriangle> t = new ArrayList<RationalTriangle>(16);
         t.add(new RationalTriangle(1, BigInteger.ZERO));
         t.add(new RationalTriangle(1, BigInteger.ONE ));
-
+    */
         int j = 1;
         while (f.get(j).size() > m) {
             j ++;
@@ -116,28 +131,30 @@ public class TriangleRecurrence extends Recurrence {
                         + "\nf = " + f.toString()
                         + "\nq = " + q.toString()
                         + "\ns = " + s.toString()
-                        + "\nt = " + t.toString()
+    //                  + "\nt = " + t.toString()
                         );
             } // if debug
             RationalTriangle quotRemd[] = f.get(j - 2).divideAndRemainder(f.get(j - 1));
             q.add(quotRemd[0]);
             f.add(quotRemd[1]);
             if (true) { // assertion
+                System.out.println(f.get(j - 2) + " / " + f.get(j - 1) + " =\n"
+                        + quotRemd[0] + " rest " + quotRemd[1]);
                 // assert q[j]*f[j-1] + f[j] == f[j-2], "poly divide failed."
-                RationalTriangle orig = q.get(j).multiply(f.get(j - 1)).add(f.get(j-2));
+                RationalTriangle orig = q.get(j).multiply(f.get(j - 1)).add(f.get(j));
                 if (! orig.equals(f.get(j - 2))) {
                     System.out.println("assertion poly divide failed: orig = "
                             + orig + ", f[j-2] = " + f.get(j - 2));
                 }
             }
             s.add(s.get(j - 2).subtract(q.get(j).multiply(s.get(j - 1))));
-            t.add(t.get(j - 2).subtract(q.get(j).multiply(t.get(j - 1))));
+    //      t.add(t.get(j - 2).subtract(q.get(j).multiply(t.get(j - 1))));
             if (debug >= 1) {
                 System.out.println(""
                         + "\nf = " + f.toString()
                         + "\nq = " + q.toString()
                         + "\ns = " + s.toString()
-                        + "\nt = " + t.toString()
+    //                  + "\nt = " + t.toString()
                         + "\n-----------------------------"
                         );
             } // if debug

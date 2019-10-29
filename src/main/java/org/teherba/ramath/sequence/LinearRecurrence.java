@@ -5,7 +5,9 @@
  *  2019-08-25, Georg Fischer: Lunnon's algorithm - failed
  *
  *  Derived from the SageMath code of William Stein <wstein@gmail.com> (2005):
- *      https://sage.math.leidenuniv.nl/src/matrix/berlekamp_massey.py
+ *      https://github.com/sagemath/sagelib/blob/master/sage/matrix/berlekamp_massey.py
+ *  See also:
+ *      https://codeforces.com/blog/entry/61306
  */
 /*
  * Copyright 2019 Dr. Georg Fischer <dr.georg.fischer@gmail.com>
@@ -97,10 +99,11 @@ public class LinearRecurrence extends Recurrence {
         ArrayList<RationalVector> s = new ArrayList<RationalVector>(16);
         s.add(new RationalVector(1, BigInteger.ONE ));
         s.add(new RationalVector(1, BigInteger.ZERO));
+    /*
         ArrayList<RationalVector> t = new ArrayList<RationalVector>(16);
         t.add(new RationalVector(1, BigInteger.ZERO));
         t.add(new RationalVector(1, BigInteger.ONE ));
-
+    */
         int j = 1;
         while (f.get(j).size() > m) {
             j ++;
@@ -109,28 +112,30 @@ public class LinearRecurrence extends Recurrence {
                         + "\nf = " + f.toString()
                         + "\nq = " + q.toString()
                         + "\ns = " + s.toString()
-                        + "\nt = " + t.toString()
+        //              + "\nt = " + t.toString()
                         );
             } // if debug
             RationalVector quotRemd[] = f.get(j - 2).divideAndRemainder(f.get(j - 1));
             q.add(quotRemd[0]);
             f.add(quotRemd[1]);
             if (true) { // assertion
+                System.out.println(f.get(j - 2) + " / " + f.get(j - 1) + " =\n"
+                        + quotRemd[0] + " rest " + quotRemd[1]);
                 // assert q[j]*f[j-1] + f[j] == f[j-2], "poly divide failed."
-                RationalVector orig = q.get(j).multiply(f.get(j - 1)).add(f.get(j-2));
+                RationalVector orig = q.get(j).multiply(f.get(j - 1)).add(f.get(j));
                 if (! orig.equals(f.get(j - 2))) {
-                    System.out.println("assertion poly divide failed: orig = "
-                            + orig + ", f[j-2] = " + f.get(j - 2));
+                    System.out.println("** assertion poly divide failed:\norig   = "
+                            + orig + "\nf[j-2] = " + f.get(j - 2));
                 }
             }
             s.add(s.get(j - 2).subtract(q.get(j).multiply(s.get(j - 1))));
-            t.add(t.get(j - 2).subtract(q.get(j).multiply(t.get(j - 1))));
+        //  t.add(t.get(j - 2).subtract(q.get(j).multiply(t.get(j - 1))));
             if (debug >= 1) {
                 System.out.println(""
                         + "\nf = " + f.toString()
                         + "\nq = " + q.toString()
                         + "\ns = " + s.toString()
-                        + "\nt = " + t.toString()
+        //              + "\nt = " + t.toString()
                         + "\n-----------------------------"
                         );
             } // if debug

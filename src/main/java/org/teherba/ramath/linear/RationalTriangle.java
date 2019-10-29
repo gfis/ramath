@@ -374,7 +374,7 @@ public class RationalTriangle extends RationalVector implements Cloneable, Seria
                     while (icol2 <= irow2) {
                         int irowr = irow1 + irow2;
                         int icolr = icol1 + icol2;
-                        if (debug >= 1) {
+                        if (debug >= 2) {
                             System.out.println(   "[" + irow1 + "," + icol1
                                     +        "] *  [" + irow2 + "," + icol2
                                     +        "] -> [" + irowr + "," + icolr + "]"
@@ -426,30 +426,30 @@ public class RationalTriangle extends RationalVector implements Cloneable, Seria
             quot = new RationalTriangle(lenq);
         }
         try {
-	        while (lenr >= len2) {
-	            int iremd = lenr           - 1;
-	            int icol2 = triang2.size() - 1;
-	            BigRational factor = remd.getRat(iremd).divide(last2);
-	            int[] coordr = triangleIndex(iremd);
-	            int[] coord2 = triangleIndex(icol2);
-	            int xexp = coordr[0] - coord2[0];
-	            int yexp = coordr[1] - coord2[1];
-	            if (xexp >= 0 && yexp >= 0) {
-	            	RationalTriangle prod = triang2.multiply(factor, xexp, yexp);
-		            quot.setTri(xexp, yexp, factor);
-		            if (debug >= 1) {
-		                System.out.println("quot[" + xexp + "," + yexp + "] = " + factor.toString()
-		                        + ", remd = " + remd.toString()
-		                        + ", prod = " + prod.toString());
-		            }
-		            remd = remd.subtract(prod);
-		        } // both non-negative
-	            lenr --;
-	        } // while lenr
-    	} catch (Throwable exc) {
-    		System.out.println("Exception in divideAndRemainder " + exc.getMessage());
-    		exc.printStackTrace();
-    	}
+            while (lenr >= len2) {
+                int iremd = lenr           - 1;
+                int icol2 = triang2.size() - 1;
+                BigRational factor = remd.getRat(iremd).divide(last2);
+                int[] coordr = triangleIndex(iremd);
+                int[] coord2 = triangleIndex(icol2);
+                int xexp = coordr[0] - coord2[0];
+                int yexp = coordr[1] - coord2[1];
+                if (xexp >= 0 && yexp >= 0) {
+                    RationalTriangle prod = triang2.multiply(factor, xexp, yexp);
+                    quot.setTri(xexp, yexp, factor);
+                    if (debug >= 1) {
+                        System.out.println("quot[" + xexp + "," + yexp + "] = " + factor.toString()
+                                + ", remd = " + remd.toString()
+                                + ", prod = " + prod.toString());
+                    }
+                    remd = remd.subtract(prod);
+                } // both non-negative
+                lenr --;
+            } // while lenr
+        } catch (Throwable exc) {
+            System.out.println("Exception in divideAndRemainder " + exc.getMessage());
+            exc.printStackTrace();
+        }
         return new RationalTriangle[] { quot.shrink(), remd.shrink() };
     } // divideAndRemainder(RationalTriangle)
 
