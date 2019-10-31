@@ -65,7 +65,7 @@ CALL TriangleRecurrence -d 1 -find $(DATA)
 
 TEST TRI2 TriangleRecurrence -find
 # A056242
-# T(n,k) = 2*T(n-1,k) + 2*T(n-1,k-1) - T(n-2,k) - T(n-2,k-1), T(1,1) = 1, T(2,1) = 1, T(2,2) = 2. - Philippe Deléham, Feb 11 2012
+# T(n,k) = 2*T(n-1,k) + 2*T(n-1,k-1) - T(n-2,k) - T(n-2,k-1), T(1,1) = 1, T(2,1) = 1, T(2,2) = 2. - Philippe DelÃ©ham, Feb 11 2012
 # G.f.: -(-1+x)*x*y/(1-2*x-2*x*y+x^2*y+x^2). - R. J. Mathar, Aug 11 2015
 DATA
  1 1
@@ -89,6 +89,28 @@ DATA
  19 146
  20 112
  21 32
+CALL TriangleRecurrence -d 1 -find  $(DATA)
+
+TEST TRI3 TriangleRecurrence -find
+# A046741
+# G.f.: (1-t*z)/(1 - z - 2*t*z - t*z^2 + t^3*z^3)
+# T(n,k) = T(n-1,k) + 2*T(n-1,k-1) + T(n-2,k-1) - T(n-3,k-3).
+DATA
+ 0 1
+ 1 1
+ 2 1
+ 3 1
+ 4 4
+ 5 2
+ 6 1
+ 7 7
+ 8 11
+ 9 3
+ 10 1
+ 11 10
+ 12 29
+ 13 26
+ 14 5
 CALL TriangleRecurrence -d 1 -find  $(DATA)
 
 # 

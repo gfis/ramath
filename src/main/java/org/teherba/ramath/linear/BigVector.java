@@ -1,5 +1,6 @@
 /*  BigVector: a simple, short vector of big numbers
  *  @(#) $Id: BigVector.java 744 2011-07-26 06:29:20Z gfis $
+ *  2019-10-29: isZero(emptyVector)
  *  2018-01-22, Georg Fischer: copied from Vector
  */
 /*
@@ -31,6 +32,8 @@ import  java.util.regex.Pattern;
 /** Class BigVector is used to
  *  implement some simple linear algebra operations
  *  on vectors of BigInteger numbers.
+ *  The elements of the vector are indexed starting with 0,
+ *  Both [0] and an empty vector represent a zero.
  *  @author Dr. Georg Fischer
  */
 public class BigVector extends Vector implements Cloneable, Serializable {
@@ -329,18 +332,6 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         return result;
     } // equals
 
-    /** Whether this < 0
-     *  @return true if the highest element is negative
-     */
-    public boolean isNegative() {
-        boolean result = false;
-        int icol = size() - 1;
-        if (icol >= 0) {
-            result = getBig(icol).compareTo(BigInteger.ZERO) < 0;
-        }   
-        return result;
-    } // isNegative
-
     /** Whether there is any zero element in the BigVector
      *  @return false if all elements are non-zero
      */
@@ -355,6 +346,26 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         return result;
     } // hasZero
 
+    /** Whether the RationalVector is empty or consists of a single constant zero.
+     *  @return true if zero
+     */
+    @Override
+    public boolean isZero() {
+        int len = size();
+        return len == 0 || (len == 1 && getBig(0).equals(BigInteger.ZERO));
+    } // isZero
+
+    /** Whether this < 0
+     *  @return true if the highest element is negative
+     */
+    public boolean isNegative() {
+        boolean result = false;
+        int icol = size() - 1;
+        if (icol >= 0) {
+            result = getBig(icol).compareTo(BigInteger.ZERO) < 0;
+        }   
+        return result;
+    } // isNegative
     /** Gets the (first) position of an element in <em>this</em> BigVector.
      *  @param elem search for this element
      *  @return index &gt;= 0 of <em>elem</em> in <em>this</em> BigVector, or -1 if not found
@@ -551,7 +562,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
     } // shrink
 
     /** Shrinks <em>this</em> BigVector, that is removes zeroes at the tail.
-     *  @param reduce whether to extract a GCD from the vector and the common denominator
+     *  @param reduce whether to remove a GCD from the vector
      *  @return the shrinked BigVector
      */
     public BigVector shrink(boolean reduce) {
@@ -750,63 +761,6 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         } // while icol
         return result; // no !! shrink, since that uses this method
     } // divide(BigInteger)
-
-    /** Gets the quotient and the remainder from a division of <em>this</em>
-     *  and a second BigVector, which  may have a differing length.
-     *  @param vect2 the divisor
-     *  @return [quotient, remainder]
-     */
-    public BigVector[] divideAndRemainder_99(BigVector vect2) {
-        int len2 = vect2.size();
-        BigInteger last2 = vect2.getBig(len2 - 1);
-        if (last2.equals(BigInteger.ZERO)) { // can only be a single zero
-            System.out.println("# assertion in BigVector: divisor is zero: num="
-                    + this.toString() + ", den=" + vect2.toString());
-            return new BigVector[] { new BigVector(), new BigVector() };
-        }
-        BigVector remd  = this .clone();
-        int lenr = remd .size();
-        int lenq = lenr >= len2 ? lenr - len2 + 1 : 0;
-        BigVector quot  = new BigVector(); // [0] = zero, den = 1
-        if (lenq > 1) {
-            quot = new BigVector(lenq);
-        }
-        while (lenr >= len2) {
-            int iremd = remd .size() - 1;
-            int icol2 = vect2.size() - 1;
-            BigInteger last1 = remd .getBig(iremd);
-            BigInteger[] bigPair = last1.divideAndRemainder(last2);
-            if (! bigPair[1].equals(BigInteger.ZERO)) { // no even factor -expand to least common multiple
-                BigInteger blcm  = this.lcm(last1, last2);
-                remd  = remd .multiply(blcm.divide(last1));
-                last1 = remd .getBig(iremd);
-                bigPair = last1.divideAndRemainder(last2); // { blcm / last2, 0 }
-                if (debug >= 1) {
-                    System.out.println("blcm=" + blcm + ", last1=" + last1 + ", last2=" + last2 + ", remd=" + remd);
-                }
-            } // no even factor
-            BigInteger factor = bigPair[0];
-            if (debug >= 1) {
-                System.out.println("quot=" + quot + ", remd=" + remd + ", factor=" + factor
-                         + ", lenq=" + lenq + ", lenr=" + lenr + ", len2=" + len2);
-            }
-            quot.set(lenr - len2, factor);
-            while (iremd >= 0) {
-                if (icol2 >= 0) {
-                    remd.set(iremd, remd.getBig(iremd).subtract(vect2.getBig(icol2).multiply(factor)));
-                } else { // keep remd[iremd]
-                }
-                iremd --;
-                icol2 --;
-            } // while iremd
-            remd = remd.shrink(false);
-            lenr = remd.size();
-            if (debug >= 1) {
-                System.out.println("quot=" + quot + ", remd=" + remd);
-            }
-        } // while lenr
-        return new BigVector[] { quot, remd };
-    } // divideAndRemainder_99(BigVector)
 
     /** Gets the quotient and the remainder from a division of <em>this</em>
      *  and a second BigVector

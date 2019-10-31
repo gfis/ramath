@@ -1,5 +1,6 @@
 /*  Vector: a simple, short vector of small numbers
  *  @(#) $Id: Vector.java 744 2011-07-26 06:29:20Z gfis $
+ *  2019-10-29: isZero(emptyVector)
  *  2018-01-22: more /+Type+/
  *  2017-05-28: javadoc 1.8
  *  2016-10-06: negate(), isNegative(); gcd, lcm corrected for 0
@@ -37,6 +38,7 @@ import  java.util.regex.Pattern;
  *  implement some simple linear algebra operations
  *  on square matrices of small integer numbers (Java <em>int</em>s).
  *  Typically a Vector will have no more than 8 elements.
+ *  Both [0] and an empty vector represent a zero.
  *  @author Dr. Georg Fischer
  */
 public class Vector implements Cloneable, Comparable<Vector>, Serializable {
@@ -436,6 +438,14 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
         } // while ielem
         return result;
     } // hasNegative
+
+    /** Whether the RationalVector is empty or consists of a single constant zero.
+     *  @return true if zero
+     */
+    public boolean isZero() {
+        int len = size();
+        return len == 0 || (len == 1 && get(0) == 0);
+    } // isZero
 
     /** Whether all elements of the vector are &lt;= 0
      *  @return false if there is any &gt; 0

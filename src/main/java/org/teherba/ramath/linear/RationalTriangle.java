@@ -1,5 +1,6 @@
 /*  RationalTriangle: a lower left triangle of BigRational numbers
  *  @(#) $Id: RationalTriangle.java 744 2011-07-26 06:29:20Z gfis $
+ *  2019-10-30: reduce
  *  2019-10-04: shifted multiplication
  *  2019-09-19, Georg Fischer: copied from RationalVector
  */
@@ -220,6 +221,15 @@ public class RationalTriangle extends RationalVector implements Cloneable, Seria
         int ielem = (irow + 1) * irow / 2 + icol;
         vector[ielem] = value;
     } // setTri
+
+    /** Whether the RationalVector is empty or consists of a single constant zero.
+     *  @return true if zero
+     */
+    @Override
+    public boolean isZero() {
+        int len = size();
+        return len == 0 || (len == 1 && getTri(0, 0).equals(BigRational.ZERO));
+    } // isZero
 
     /** Returns a String representation of the RationalTriangle
      *  @return a list of the form "[[n00],[n10,n11],[n20,n21,n22],...]"
@@ -464,6 +474,31 @@ public class RationalTriangle extends RationalVector implements Cloneable, Seria
                                       , new RationalTriangle(quotRemd[1]) };
     } // divideAndRemainder(RationalTriangle)
 
+    /** Repetitively divide <em>this</em>
+     *  by a second {@link RationalVector}, 
+     *  then the divisor by the rest and so on.
+     *  @param vect2 the divisor
+     *  @return the result of the EUclidian algorithm which 
+     *  repetitively divides the divisor by the rest.
+     */
+    public RationalTriangle reduce(RationalTriangle vect2) {
+        RationalTriangle quot = this ;
+        RationalTriangle remd = vect2;
+        while (! remd.isZero()) {
+            RationalTriangle[] quotRemd = quot.divideAndRemainder(remd);
+            if (debug >= 1) {
+                System.out.println("reduce: " + quot.toString() + " / " + remd.toString() 
+                        + " -> " + quotRemd[0] + " rest " + quotRemd[1]);
+            }
+            quot = remd;
+            remd = quotRemd[1];
+        } // while > 0
+        if (debug >= 1) {
+            System.out.println("reduced: " + quot.toString());
+        }
+        return quot;
+    } // reduce(RationalTriangle)
+
     /*-------------------- Test Driver --------------------*/
 
     /** Test method, shows some fixed matrices with no arguments, or the
@@ -482,9 +517,19 @@ public class RationalTriangle extends RationalVector implements Cloneable, Seria
         try {
             if (args.length == 0) {
                 System.out.println("usage: java -cp dist/ramath.jar org.teherba.ramath.linear.RationalTriangle \"[vect1] oper [vect2]\"");
-                System.out.println("    oper= + - * /");
-            } else if (args.length == 1) { // expression
+                System.out.println("    oper= + - * / |");
+            } else if (args.length == 1 || args.length == 3) { // [-d debug] "expression"
                 String expr = args[iarg ++];
+                if (expr.equals("-d")) {
+                    expr = args[iarg ++];
+                    try {
+                        int debug = Integer.parseInt(expr);
+                        RationalVector  .setDebug(debug);
+                        RationalTriangle.setDebug(debug);
+                    } catch (Exception exc) {
+                    }
+                    expr = args[iarg ++];
+                } // -d
                 String[] parts = expr.split("\\s+"); // [vect1] oper [vect2] xexp yexp
                 vect1 = new RationalTriangle(parts        [0]);
                 String oper = parts                             [1];
@@ -527,6 +572,10 @@ public class RationalTriangle extends RationalVector implements Cloneable, Seria
                         System.out.println(   quotRemd[0].toPolynomial().toString()
                                 + ", rest=" + quotRemd[1].toPolynomial().toString());
                     }
+                } else if (oper.equals("|")) { // repetitively divide
+                    System.out.println();
+                    vectq = vect1.reduce(vect2);
+                    System.out.println("result: " + vectq.toString());
                 } // if oper
             } else {
                 xexp  = Integer.parseInt(args[iarg ++]);
@@ -536,8 +585,10 @@ public class RationalTriangle extends RationalVector implements Cloneable, Seria
                 int[] coords = triangleIndex(ielem);
                 System.out.println("triangleIndex(" + ielem + ") = (" + coords[0] + "," + coords[1] + ")");
             } // more than 1 argument
-        } catch (Exception exc) { // ignore
-        } 
+        } catch (Exception exc) {
+            System.err.println(exc.getMessage());
+            exc.printStackTrace();
+        } // try
     } // main
 
 } // RationalTriangle

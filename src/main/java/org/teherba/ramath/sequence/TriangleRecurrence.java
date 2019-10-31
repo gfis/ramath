@@ -78,7 +78,7 @@ public class TriangleRecurrence extends Recurrence {
      *  @param seq {@link Sequence} with existing integer terms in triangular order
      *  @param termNo include so many terms in the derivation
      *  Derived from the SageMath code of William Stein &lt;wstein@gmail.com&gt; (2005):
-     *      https://sage.math.leidenuniv.nl/src/matrix/berlekamp_massey.py
+     *      https://github.com/sagemath/sagelib/blob/master/sage/matrix/berlekamp_massey.py
      */
     public static RationalTriangle find(Sequence seq, int termNo) {
         if (termNo % 2 != 0) {
@@ -124,7 +124,8 @@ public class TriangleRecurrence extends Recurrence {
         t.add(new RationalTriangle(1, BigInteger.ONE ));
     */
         int j = 1;
-        while (f.get(j).size() > m) {
+        boolean shrinking = true;
+        while (f.get(j).size() > m && shrinking) {
             j ++;
             if (debug >= 1) {
                 System.out.println("---- j = " + String.valueOf(j)
@@ -134,6 +135,7 @@ public class TriangleRecurrence extends Recurrence {
     //                  + "\nt = " + t.toString()
                         );
             } // if debug
+            shrinking = (j <= 3 || f.get(j - 2).size() > f.get(j - 1).size());
             RationalTriangle quotRemd[] = f.get(j - 2).divideAndRemainder(f.get(j - 1));
             q.add(quotRemd[0]);
             f.add(quotRemd[1]);
@@ -161,7 +163,7 @@ public class TriangleRecurrence extends Recurrence {
         } // while
         BigRational factor = s.get(j).getRat(0).inverse();
         RationalTriangle result = s.get(j).multiply(factor);
-        return result; // .reverse();
+        return shrinking ? result : new RationalTriangle(); // .reverse();
     } // find
 
     /** Test method.

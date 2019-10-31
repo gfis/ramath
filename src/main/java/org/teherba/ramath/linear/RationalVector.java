@@ -1,5 +1,6 @@
 /*  RationalVector: a simple, short vector of BigRational numbers
  *  @(#) $Id: RationalVector.java 744 2011-07-26 06:29:20Z gfis $
+ *  2019-10-29: isZero(emptyVector); reduce
  *  2019-10-04: shifted multiplication
  *  2019-08-27, Georg Fischer: copied from BigVector
  */
@@ -30,7 +31,8 @@ import  java.io.Serializable;
  *  When the indices are interpreted as exponents of x, a RationalVector
  +  represents a univariate polynomial with rational coefficients.
  *  It is maintained that the highest element of every vector is never zero,
- *  except for element [0], which is always present.
+ *  except for element [0].
+ *  Both [0] and an empty vector represent a zero.
  *  @author Dr. Georg Fischer
  */
 public class RationalVector extends Vector implements Cloneable, Serializable {
@@ -225,6 +227,15 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
         } // while icol
         return result;
     } // hasZero
+
+    /** Whether the RationalVector is empty or consists of a single constant zero.
+     *  @return true if zero
+     */
+    @Override
+    public boolean isZero() {
+        int len = size();
+        return len == 0 || (len == 1 && getRat(0).equals(BigRational.ZERO));
+    } // isZero
 
     /** Gets the (first) position of an element in <em>this</em> RationalVector.
      *  @param elem search for this element
@@ -471,66 +482,47 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
         if (lenq > 1) {
             quot = new RationalVector(lenq);
         }
-        while (lenr >= len2) {
+        while (lenr >= len2 && ! remd.isZero()) {
             int iremd = remd .size() - 1;
             int icol2 = vect2.size() - 1;
             BigRational factor = remd.getRat(iremd).divide(last2);
             int xexp = iremd - icol2;
             RationalVector prod = vect2.multiply(factor, xexp);
             quot.set(xexp, factor);
-            if (debug >= 1) {
-                System.out.println("quot[" + xexp + "] = " + factor.toString()
-                        + ", remd = " + remd.toString());
-            }
             remd = remd.subtract(prod).shrink();
             lenr = remd.size();
+            if (debug >= 1) {
+                System.out.println("divide: quot[" + xexp + "] = " + factor.toString()
+                        + ", remd = " + remd.toString());
+            }
         } // while lenr
         return new RationalVector[] { quot, remd };
     } // divideAndRemainder(RationalVector)
 
-    /** Gets the quotient and the remainder from a division of <em>this</em>
-     *  and a second RationalVector, which may have a differing length.
-     *  This is the old version which does not use shifting multiplication.
+    /** Repetitively divide <em>this</em>
+     *  by a second {@link RationalVector}, 
+     *  then the divisor by the rest and so on.
      *  @param vect2 the divisor
-     *  @return a tuple [quotient, remainder]
+     *  @return the result of the EUclidian algorithm which 
+     *  repetitively divides the divisor by the rest.
      */
-    public RationalVector[] divideAndRemainder_99(RationalVector vect2) {
-        BigRational last2 = vect2.getRatLast();
-        if (last2.equals(BigRational.ZERO)) { // can only be a single zero
-            System.out.println("# assertion in RationalVector: divisor is zero: num="
-                    + toString() + ", den=" + vect2.toString());
-            return new RationalVector[] { new RationalVector(), new RationalVector() };
-        }
-        RationalVector quot = new RationalVector(); // [0] = zero
-        RationalVector remd = clone();
-        int lenr = remd .size();
-        int len2 = vect2.size();
-        int lenq = lenr >= len2 ? lenr - len2 + 1 : 0;
-        if (lenq > 1) {
-            quot = new RationalVector(lenq);
-        }
-        while (lenr >= len2) {
-            int iremd = remd .size() - 1;
-            int icol2 = vect2.size() - 1;
-            BigRational factor = remd.getRat(iremd).divide(last2);
-            quot.set(lenr - len2, factor);
+    public RationalVector reduce(RationalVector vect2) {
+        RationalVector quot = this ;
+        RationalVector remd = vect2;
+        while (! remd.isZero()) {
+            RationalVector[] quotRemd = quot.divideAndRemainder(remd);
             if (debug >= 1) {
-                System.out.println("quot[" + (lenr - len2) + "] = " + factor.toString()
-                        + ", remd = " + remd.toString());
+                System.out.println("reduce: " + quot.toString() + " / " + remd.toString() 
+                        + " -> " + quotRemd[0] + " rest " + quotRemd[1]);
             }
-            while (iremd >= 0) {
-                if (icol2 >= 0) {
-                    remd.set(iremd, remd.getRat(iremd).subtract(vect2.getRat(icol2).multiply(factor)));
-                } else { // keep remd[iremd]
-                }
-                iremd --;
-                icol2 --;
-            } // while iremd
-            remd = remd.shrink();
-            lenr = remd.size();
-        } // while lenr
-        return new RationalVector[] { quot, remd };
-    } // divideAndRemainder(RationalVector)
+            quot = remd;
+            remd = quotRemd[1];
+        } // while > 0
+        if (debug >= 1) {
+            System.out.println("reduced: " + quot.toString());
+        }
+        return quot;
+    } // reduce(RationalVector)
 
     /*-------------------- Test Driver --------------------*/
 
@@ -539,58 +531,78 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
      *  @param args command line arguments: [vect1] oper [vect2] (cf. test/linear.tests)
      */
     public static void main(String[] args) {
+        RationalVector.setDebug(1);
         int iarg = 0;
         RationalVector vect1 = new RationalVector();
         RationalVector vect2 = new RationalVector();
         RationalVector vectq = new RationalVector();
         RationalVector vectr = new RationalVector();
-        if (args.length == 0) {
-            System.out.println("usage: java -cp dist/ramath.jar org.teherba.ramath.linear.RationalVector \"[vect1] oper [vect2]\"");
-            System.out.println("    oper= + - * /");
-        } else { // arguments
-            String expr = args[iarg ++];
-            String[] parts = expr.split("\\s+"); // [vect1] oper [vect2]
-            vect1 = new RationalVector(parts        [0]);
-            String oper = parts                             [1];
-            BigRational brat2 = new BigRational("0");
-            int xexp = 0; // no shift
-            int yexp = 0; // no shift
-            try {
-                if (parts.length >= 3) {
-                    if (parts[2].startsWith("[")) {
-                        vect2 = new RationalVector(parts             [2]);
+        RationalVector[] quotRemd = null;
+        try {
+            if (args.length == 0) {
+                System.out.println("usage: java -cp dist/ramath.jar org.teherba.ramath.linear.RationalVector \"[vect1] oper [vect2]\"");
+                System.out.println("    oper= + - * / |");
+            } else { // arguments
+                String expr = args[iarg ++];
+                if (expr.equals("-d")) {
+                    expr = args[iarg ++];
+                    try {
+                        int debug = Integer.parseInt(expr);
+                        RationalVector.setDebug(debug);
+                    } catch (Exception exc) {
+                    }
+                    expr = args[iarg ++];
+                } // -d
+                String[] parts = expr.split("\\s+"); // [vect1] oper [vect2]
+                vect1 = new RationalVector(parts        [0]);
+                String oper = parts                             [1];
+                BigRational brat2 = new BigRational("0");
+                int xexp = 0; // no shift
+                int yexp = 0; // no shift
+                try {
+                    if (parts.length >= 3) {
+                        if (parts[2].startsWith("[")) {
+                            vect2 = new RationalVector(parts             [2]);
+                        } else {
+                            brat2 = new BigRational(parts                [2]);
+                        }
+                        if (parts.length >= 4) {
+                            xexp = Integer.parseInt(parts[3]);
+                            yexp = Integer.parseInt(parts[4]);
+                        }
+                    }
+                } catch (Exception exc) { // ignore
+                } 
+                System.out.print(expr + " = ");
+                if (false) {
+                } else if (oper.equals("+")) {
+                    System.out.println(vect1.add         (vect2).toString());
+                } else if (oper.equals("-")) {
+                    if (parts.length == 2) { // unary minus
+                        System.out.println(vect1.negate  (     ).toString());
                     } else {
-                        brat2 = new BigRational(parts                [2]);
+                        System.out.println(vect1.subtract(vect2).toString());
                     }
-                    if (parts.length >= 4) {
-                        xexp = Integer.parseInt(parts[3]);
-                        yexp = Integer.parseInt(parts[4]);
+                } else if (oper.equals("*")) {
+                    if (parts[2].startsWith("[")) {
+                        System.out.println(vect1.multiply(vect2).toString());
+                    } else {
+                        System.out.println(vect1.multiply(brat2, xexp, yexp).toString());
                     }
-                }
-            } catch (Exception exc) { // ignore
-            } 
-            System.out.print(expr + " = ");
-            if (false) {
-            } else if (oper.equals("+")) {
-                System.out.println(vect1.add         (vect2).toString());
-            } else if (oper.equals("-")) {
-                if (parts.length == 2) { // unary minus
-                    System.out.println(vect1.negate  (     ).toString());
-                } else {
-                    System.out.println(vect1.subtract(vect2).toString());
-                }
-            } else if (oper.equals("*")) {
-                if (parts[2].startsWith("[")) {
-                    System.out.println(vect1.multiply(vect2).toString());
-                } else {
-                    System.out.println(vect1.multiply(brat2, xexp, yexp).toString());
-                }
-            } else if (oper.startsWith("/")) {
-                RationalVector[] quotRemd = vect1.divideAndRemainder(vect2);
-                System.out.println(quotRemd[0].toString() + ", remainder = "
-                                 + quotRemd[1].toString() );
-            } // if oper
-        } // more than 1 argument
+                } else if (oper.equals("/")) { // single divide
+                    quotRemd = vect1.divideAndRemainder(vect2);
+                    System.out.println(quotRemd[0].toString() + ", remainder = "
+                                     + quotRemd[1].toString() );
+                } else if (oper.equals("|")) { // repetitively divide
+                    System.out.println();
+                    vectq = vect1.reduce(vect2);
+                    System.out.println("result: " + vectq.toString());
+                } // if oper
+            } // more than 1 argument
+        } catch (Exception exc) {
+            System.err.println(exc.getMessage());
+            exc.printStackTrace();
+        } // try
     } // main
 
 } // RationalVector
