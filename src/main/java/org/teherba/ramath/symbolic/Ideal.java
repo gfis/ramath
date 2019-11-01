@@ -1,11 +1,11 @@
 /*  Ideal over a Polynomial ring - Groebner basis methods
- *  @(#) $Id: Polynomial.java 744 2011-07-26 06:29:20Z gfis $
+ *  @(#) $Id: Ideal.java $
  *  2019-05-17: PolynomialParser -> Polynomial
  *  2016-07-09: Signature
  *  2015-11-16, Georg Fischer: extracted from Polynomial.java
  */
 /*
- * Copyright 2015 Dr. Georg Fischer <punctum at punctum dot kom>
+ * Copyright 2015 Dr. Georg Fischer <dr.georg.fischer@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -357,4 +357,4 @@ x^2 + 3*x^3 + 2*x^4
         } // at least 1 argument
     } // main
 
-} // Polynomial
+} // Ideal

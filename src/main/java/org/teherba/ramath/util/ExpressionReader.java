@@ -1,4 +1,4 @@
-/*  Reader for text file, returns a string without any whitespace
+/*  Reader for a text file, returns a string without any whitespace
  *  @(#) $Id: ExpressionReader.java 744 2011-07-26 06:29:20Z gfis $
  *  2016-08-25: inline comments; Porto Valtravaglia
  *  2014-03-31: encoding, channels
@@ -9,7 +9,7 @@
  *  2009-07-09, Georg Fischer: copied from BigRational
  */
 /*
- * Copyright 2009 Dr. Georg Fischer <punctum at punctum dot kom>
+ * Copyright 2009 Dr. Georg Fischer <dr.georg.fischer(at)gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.

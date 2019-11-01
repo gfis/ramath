@@ -5,7 +5,7 @@
  *  2019-09-19, Georg Fischer: copied from RationalVector
  */
 /*
- * Copyright 2019 Dr. Georg Fischer <punctum at punctum dot kom>
+ * Copyright 2019 Dr. Georg Fischer <dr.georg.fischer(at)gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.

@@ -6,7 +6,7 @@
  *      https://github.com/sagemath/sagelib/blob/master/sage/matrix/berlekamp_massey.py
  */
 /*
- * Copyright 2019 Dr. Georg Fischer <dr.georg.fischer@gmail.com>
+ * Copyright 2019 Dr. Georg Fischer <dr.georg.fischer(at)gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import  org.teherba.ramath.linear.BigVector;
 import  org.teherba.ramath.linear.RationalVector;
 import  org.teherba.ramath.linear.RationalTriangle;
 import  org.teherba.ramath.sequence.Sequence;
+import  org.teherba.ramath.sequence.SequenceReader;
 import  java.math.BigInteger;
 import  java.util.ArrayList;
 

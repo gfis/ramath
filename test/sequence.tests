@@ -12,6 +12,26 @@ ARGS=
 #======================================================================
 
 PACKAGE=org.teherba.ramath.sequence
+# SequenceReader
+
+TEST SER1 -a -d
+CALL SequenceReader -a A131313 -d 1,2,3,4,5,6,7,8,9,0,1
+
+TEST SER2 -f
+DATA 
+ A111111 1,2,3,4,5,6,7,8,9,0,1
+ A222222 2,2,3,4,5,6,7,8,9,0,1
+ A333333 3,2,3,4,5,6,7,8,9,0,1
+CALL SequenceReader -f $(DATA)
+
+TEST SER3 -b -f
+DATA 
+ A322469 1
+ A307048 2
+ A160016 3
+ A000027 4
+CALL SequenceReader -b ../OEIS-mat/common/bfile -f $(DATA)
+
 # LinearRecurrence
 
 TEST LIR1 LinearRecurrence -comp
@@ -113,13 +133,3 @@ DATA
  14 5
 CALL TriangleRecurrence -d 1 -find  $(DATA)
 
-# 
-# TEST TRI3 TriangleRecurrence -find
-# CALL TriangleRecurrence      -find    test/LIR1.this.tst
-# 
-# TEST TRI4 TriangleRecurrence A041142
-# CALL TriangleRecurrence -comp 0,18,0,-1 8,9,152,161 10
-# 
-# TEST TRI5 TriangleRecurrence -find
-# CALL TriangleRecurrence -d 1 -find    test/LIR4.this.tst
-# 

@@ -29,6 +29,7 @@ import  org.teherba.ramath.BigRational;
 import  org.teherba.ramath.linear.BigVector;
 import  org.teherba.ramath.linear.RationalVector;
 import  org.teherba.ramath.sequence.Sequence;
+import  org.teherba.ramath.sequence.SequenceReader;
 import  java.math.BigInteger;
 import  java.util.ArrayList;
 
