@@ -463,17 +463,6 @@ public class RationalTriangle extends RationalVector implements Cloneable, Seria
         return new RationalTriangle[] { quot.shrink(), remd.shrink() };
     } // divideAndRemainder(RationalTriangle)
 
-    /** Gets the quotient and the remainder from a division of <em>this</em>
-     *  and a second RationalTriangle, which  may have a differing length.
-     *  @param triang2 the divisor
-     *  @return [quotient, remainder]
-     */
-    public RationalTriangle[] divideAndRemainder_88(RationalTriangle triang2) {
-        RationalVector[] quotRemd = super.divideAndRemainder(triang2);
-        return new RationalTriangle[] { new RationalTriangle(quotRemd[0])
-                                      , new RationalTriangle(quotRemd[1]) };
-    } // divideAndRemainder(RationalTriangle)
-
     /** Repetitively divide <em>this</em>
      *  by a second {@link RationalVector}, 
      *  then the divisor by the rest and so on.

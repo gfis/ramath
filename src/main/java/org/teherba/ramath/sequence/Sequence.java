@@ -120,6 +120,13 @@ public class Sequence extends BigVector
     } // printBFile
 
     /** Gets a comma separated list of a number of terms
+     *  @return list with all elements
+     */
+    public String toList() {
+        return toList(29061947);
+    } // toList()
+    
+    /** Gets a comma separated list of a number of terms
      *  @termNo number of terms to be concatenated
      *  @return list with at most <em>termNo</em> elements
      */

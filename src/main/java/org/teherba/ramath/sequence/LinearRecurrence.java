@@ -157,6 +157,8 @@ public class LinearRecurrence extends Recurrence {
      */
     public static void main(String[] args) {
         LinearRecurrence.debug = 0;
+        String aNumber = "A000000";
+        SequenceReader reader = new SequenceReader(15);
         Sequence seq = null;
         try {
             if (args.length == 0) {
@@ -170,8 +172,10 @@ public class LinearRecurrence extends Recurrence {
                 while (iarg < args.length) {
                     String oper = args[iarg ++];
                     if (false) {
+
                     } else if (oper.equals    ("-d")) {
                         LinearRecurrence.debug = Integer.parseInt(args[iarg ++]);
+
                     } else if (oper.startsWith("-comp")) {
                         LinearRecurrence linRec = new LinearRecurrence
                                 ( new BigVector(args[iarg    ])
@@ -179,7 +183,9 @@ public class LinearRecurrence extends Recurrence {
                         iarg += 2;
                         termNo = Integer.parseInt(args[iarg ++]);
                         seq = linRec.generate(termNo);
+                        seq.setANumber(aNumber);
                         seq.printBFile();
+
                     } else if (oper.startsWith("-find")) {
                         String fileName = args[iarg ++];
                         if (iarg < args.length) {
@@ -188,12 +194,13 @@ public class LinearRecurrence extends Recurrence {
                             if (iarg < args.length) {
                                 skip = Integer.parseInt(args[iarg ++]);
                             }
-                            seq = (new SequenceReader()).readBFile(fileName, termNo, skip);
+                            seq = reader.readBFile(fileName, termNo, skip);
                         } else {
-                            seq = (new SequenceReader()).readBFile(fileName);
+                            seq = reader.readBFile(fileName);
                             termNo = seq.size();
                         }
                         System.out.println("found: " + LinearRecurrence.find(seq, termNo).toString());
+
                     } else {
                         System.out.println("invalid operation \"" + oper + "\"");
                     }

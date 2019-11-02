@@ -141,13 +141,16 @@ public class TriangleRecurrence extends Recurrence {
             q.add(quotRemd[0]);
             f.add(quotRemd[1]);
             if (true) { // assertion
-                System.out.println(f.get(j - 2) + " / " + f.get(j - 1) + " =\n"
-                        + quotRemd[0] + " rest " + quotRemd[1]);
                 // assert q[j]*f[j-1] + f[j] == f[j-2], "poly divide failed."
                 RationalTriangle orig = q.get(j).multiply(f.get(j - 1)).add(f.get(j));
                 if (! orig.equals(f.get(j - 2))) {
-                    System.out.println("assertion poly divide failed: orig = "
-                            + orig + ", f[j-2] = " + f.get(j - 2));
+                    if (debug >= 1) {
+                        System.out.println("TriangleRecurrence.f: " + f.get(j - 2) + " / " + f.get(j - 1) + " =\n"
+                                + quotRemd[0] + " rest " + quotRemd[1]);
+                        System.out.println("assertion poly divide failed: orig = "
+                                + orig + ", f[j-2] = " + f.get(j - 2));
+                    }
+                    shrinking = false;
                 }
             }
             s.add(s.get(j - 2).subtract(q.get(j).multiply(s.get(j - 1))));
@@ -168,22 +171,20 @@ public class TriangleRecurrence extends Recurrence {
     } // find
 
     /** Test method.
-     *  @param args command line arguments: signature init-terms no-of-terms
-     *  For example:
-     *  <pre>
-     *  A001047 a(n) = 3^n - 2^n.
-     *  (Formerly M3887 N1596)
-     *  0, 1, 5, 19, 65, 211, 665, 2059, 6305, 19171, 58025, 175099, 527345, 1586131, 4766585,
-     *  </pre>
+     *  @param args command line arguments. 
+     *  See printout with 0 arguments, and arguments for {@link SequenceReader.configure}.
      */
     public static void main(String[] args) {
         TriangleRecurrence.debug = 0;
+        String aNumber = "A000000";
+        SequenceReader reader = new SequenceReader(15);
         Sequence seq = null;
         try {
             if (args.length == 0) {
                 System.out.print("usage:\n"
                         + "    java org.teherba.ramath.sequence.TriangleRecurrence [-d n] -comp signature initTerms noTerms\n"
                         + "    java org.teherba.ramath.sequence.TriangleRecurrence [-d n] -find filename [noterms [start]]\n"
+                        + "    java org.teherba.ramath.sequence.TriangleRecurrence [-d n] -eval -f -b -m ...\n"
                         );
             } else { // some arguments
                 int termNo = 0;
@@ -191,16 +192,19 @@ public class TriangleRecurrence extends Recurrence {
                 while (iarg < args.length) {
                     String oper = args[iarg ++];
                     if (false) {
+
                     } else if (oper.equals    ("-d")) {
                         TriangleRecurrence.debug = Integer.parseInt(args[iarg ++]);
+
                     } else if (oper.startsWith("-comp")) {
-                        TriangleRecurrence linRec = new TriangleRecurrence
+                        TriangleRecurrence triRec = new TriangleRecurrence
                                 ( new BigVector(args[iarg    ])
                                 , new BigVector(args[iarg + 1]));
                         iarg += 2;
                         termNo = Integer.parseInt(args[iarg ++]);
-                        seq = linRec.generate(termNo);
+                        seq = triRec.generate(termNo);
                         seq.printBFile();
+
                     } else if (oper.startsWith("-find")) {
                         String fileName = args[iarg ++];
                         if (iarg < args.length) {
@@ -209,12 +213,26 @@ public class TriangleRecurrence extends Recurrence {
                             if (iarg < args.length) {
                                 skip = Integer.parseInt(args[iarg ++]);
                             }
-                            seq = (new SequenceReader()).readBFile(fileName, termNo, skip);
+                            seq = reader.readBFile(fileName, termNo, skip);
                         } else {
-                            seq = (new SequenceReader()).readBFile(fileName);
+                            seq = reader.readBFile(fileName);
                             termNo = seq.size();
                         }
                         System.out.println("found: " + TriangleRecurrence.find(seq, termNo).toString());
+
+                    } else if (oper.startsWith("-eval")) {
+                        reader = SequenceReader.configure(iarg, args);
+                        termNo = reader.getMaxTermNo();
+                        while (reader.hasNext()) {
+                            seq = reader.next();
+                            System.out.println("eval: " + seq.getANumber() + " " + seq.toList(10));
+                            RationalTriangle result = TriangleRecurrence.find(seq, termNo);
+                            if (! result.isZero()) {
+                                System.out.println(seq.getANumber() + "\tresult\t" + result.toString());
+                            }
+                        } // while hasNext
+                        iarg = args.length;
+
                     } else {
                         System.out.println("invalid operation \"" + oper + "\"");
                     }

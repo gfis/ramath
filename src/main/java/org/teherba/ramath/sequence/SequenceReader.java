@@ -47,20 +47,53 @@ public class SequenceReader {
     /** log4j logger (category) */
     private Logger log;
 
+    /** debug mode: 0=none, 1=some, 2=more */
+    private int debug = 1;
+
     /** Encoding of the input file */
     private String srcEncoding;
 
     /** Reader for the list input file */
     private BufferedReader listReader;
 
+    //---- -a
+    /** OEIS A-number */
+    private String aNumber;
+    /** Gets the OEIS A-number.
+     *  @return aNumber "A" and 6 digits
+     */
+    public String getANumber() {
+        return aNumber;
+    } // getANumber
+    /** Sets the OEIS A-number.
+     *  @param aNumber "A" and 6 digits
+     */
+    public void setANumber(String aNumber) {
+        this.aNumber = aNumber;
+    } // setANumber
+
+    //---- -b
     /** Path to the b-file directory */
     private String bFilePath;
+    /** Gets the path where to find all b-files.
+     *  @return absolute or relative directory name
+     */
+    public String getBFilePath() {
+        return bFilePath;
+    } // getBFilePath
     /** Sets the path where to find all b-files.
      *  @param bFilePath absolute or relative directory name
      */
     public void setBFilePath(String bFilePath) {
         this.bFilePath = bFilePath;
     } // setBFilePath
+
+    /** Gets the name of the b-file
+     *  @return absolute or relative path and filename
+     */
+    public String getBFileName() {
+        return bFilePath + "/b" + getANumber().substring(1) + ".txt";
+    } // getBFileName
 
     /** Whether to read terms from the list (stripped extract), or from b-files */
     private boolean readFromBFile;
@@ -70,51 +103,140 @@ public class SequenceReader {
     public void setReadFromBFile(boolean readFromBFile) {
         this.readFromBFile = readFromBFile;
     } // setReadFromBFile
-    
+
+    //---- -d
+    /** Comma-separated list of terms */
+    private String dataList;
+    /** Gets the data list.
+     *  @return comma-separated list of terms
+     */
+    public String getDataList() {
+        return dataList;
+    } // getDataList
+    /** Sets the data list.
+     *  @param dataList comma-separated list of terms
+     */
+    public void setDataList(String dataList) {
+        this.dataList = dataList;
+    } // setDataList
+
+    //---- -f
+    /** Name of a list file icontaining A-numbers and term lists*/
+    private String listFile;
+    /** Gets the list file name.
+     *  @return name of list file
+     */
+    public String getListFile() {
+        return listFile;
+    } // getListFile
+    /** Sets the list file name.
+     *  @param listFile name of list file
+     */
+    public void setListFile(String listFile) {
+        this.listFile = listFile;
+    } // setListFile
+
+    /** Determines whether a list file is read, or a single sequence.
+     *  @return whether a list file is read
+     */
+    public boolean hasListFile() {
+        return this.listFile != null;
+    } // hasListFile
+
+    //---- -m
+    /** Maximum number of terms to be read */
+    private int maxTermNo;
+    /** Gets the maximum number of terms to be read.
+     *  @return number of terms, irrespective of offset
+     */
+    public int getMaxTermNo() {
+        return this.maxTermNo;
+    } // getMaxTermNo
+    /** Sets the maximum number of terms to be read.
+     *  @param maxTermNo number of terms, irrespective of offset
+     */
+    public void setMaxTermNo(int maxTermNo) {
+        this.maxTermNo = maxTermNo;
+    } // setMaxTermNo
+
+    /** Line containing next sequence to be returned from the iterator */
+    private String oldLine;
+    /** Determines whether there is a next sequence to be returned from the iterator,
+     *  @return true if there is still a sequence, false otherwise
+     */
+    public boolean hasNext() {
+        return this.oldLine != null;
+    } // hasListFile
     //----------------------------------
 
     /** No-args Constructor
      */
     public SequenceReader() {
-        log           = Logger.getLogger(SequenceReader.class.getName());
-        srcEncoding   = "UTF-8";
-        readFromBFile = false;
-        bFilePath     = ".";
+        log = Logger.getLogger(SequenceReader.class.getName());
+        oldLine        = null;
+        srcEncoding    = "UTF-8";
+        setANumber      ("A000000");
+        setReadFromBFile(false);
+        setBFilePath    (null);
+        setDataList     ("1,2,3,4");
+        setListFile     (null);
+        setMaxTermNo    (29061947); // for one b-file, very high
     } // no-args Constructor
 
-    /** Create an iterator over a list of lines which start with A-numbers, possibly followed
-     *  by a term list.
-     *  @param fileName name of the list file, or "-" for STDIN.
+    /** Constructor with maximum number of terms
+     *  @param maxTermNo number of terms
      */
-    public void iterator(String fileName) {
-        try {
-            if (fileName == null || fileName.length() <= 0 || fileName.equals("-")) {
-                listReader = new BufferedReader(new InputStreamReader(System.in, srcEncoding));
-            } else {
-                ReadableByteChannel lineChannel = (new FileInputStream(fileName)).getChannel();
-                listReader = new BufferedReader(Channels.newReader(lineChannel , srcEncoding));
-            }
-        } catch (Throwable exc) {
-            log.error("failed to read \"" + fileName + "\"");
-        } // try
-    } // iterator(String)
+    public SequenceReader(int maxTermNo) {
+        this();
+        setMaxTermNo(maxTermNo);
+    } // Constructor(int)
+
+    /** Create an iterator over a list of lines which start with A-numbers, possibly followed
+     *  by a comma-separated term list. 
+     *  Comment lines starting with whitespace and "#" are ignored.
+     */
+    private void initialize() {
+        if (hasListFile()) {
+            String fileName = getListFile();
+            try {
+                if (fileName == null || fileName.length() <= 0 || fileName.equals("-")) {
+                    listReader = new BufferedReader(new InputStreamReader(System.in, srcEncoding));
+                } else {
+                    ReadableByteChannel lineChannel = (new FileInputStream(fileName)).getChannel();
+                    listReader = new BufferedReader(Channels.newReader(lineChannel , srcEncoding));
+                }
+                oldLine = listReader.readLine();
+                while (oldLine != null && oldLine.matches("\\A\\s*\\#.*")) { // skip comments
+                    oldLine = listReader.readLine();
+                } // while skipping comments
+            } catch (Throwable exc) {
+                log.error("SequenceReader.initialize: failed to read \"" + fileName + "\"");
+            } // try
+        } else {
+            oldLine = getANumber() + " " + getDataList();
+        }
+    } // initialize()
 
     /** Read next sequence from the iterator.
      *  @return the sequence which was read, or <em>null</em> at the end of the list file
      */
     public Sequence next() {
-        Sequence result = null;
-        try {
-            String line = listReader.readLine();
-            if (line != null) {
-                result = parse(line, readFromBFile);
-            } else {
-                listReader.close();
-                // return null
-            }
-        } catch (Throwable exc) {
-            log.error(exc.getMessage());
-        } // try
+        Sequence result = parse(oldLine, readFromBFile);
+        if (hasListFile()) { // with -f
+            try {
+                oldLine = listReader.readLine();
+                while (oldLine != null && oldLine.matches("\\A\\s*\\#.*")) { // skip comments
+                    oldLine = listReader.readLine();
+                } // while skipping comments
+                if (oldLine == null) {
+                    listReader.close();
+                }
+            } catch (Throwable exc) {
+                log.error(exc.getMessage());
+            } // try
+        } else { // only one data line from -a and -d
+            oldLine = null;
+        }
         return result;
     } // next()
 
@@ -136,34 +258,35 @@ public class SequenceReader {
     public Sequence parse(String dataLine, boolean fromBfile) {
         Sequence result = null;
         int startPos = 0;
-        String aNumber = "Annnnnn";
         if (dataLine.startsWith("A")) {
             startPos = dataLine.indexOf(' ');
-            if (startPos >= 6) {
-                aNumber = dataLine.substring(0, startPos);
-            } else {
-                startPos = 0;
+            if (startPos < 0) {
+                startPos = dataLine.length();
             }
+            setANumber(dataLine.substring(0, startPos));
             // System.out.println("dataLine=\"" + dataLine + "\",  startPos=" +  startPos + ", aNumber=\"" + aNumber + "\"");
-        } // startsWIth("A")
+            // .startsWith("A")
+        } else { 
+            startPos = 0;
+        }
 
         if (fromBfile) {
-            result = readBFile(bFilePath + "/b" + aNumber.substring(1) + ".txt");
-            result.setANumber(aNumber);
+            result = readBFile(getBFileName(), maxTermNo, 0);
         } else { // not from b-file
             int endPos = dataLine.length() - 1;
-            while (endPos >= 0 && ! Character.isDigit(dataLine.charAt(endPos))) {
+            while (endPos >= 0 && ! Character.isDigit(dataLine.charAt(endPos))) { // remove trailing non-digits
                 endPos --;
-            }
+            } // while trailing
             while (startPos <= endPos && dataLine.substring(startPos, startPos + 1).matches("[^\\-0-9]+")) {
+                // remove leading non-digits
                 startPos ++;
-            }
-            String[] terms = dataLine.substring(startPos, endPos + 1).split("[^\\-0-9]+");
-            result = new Sequence(terms.length);
-            result.setANumber(aNumber);
+            } // while leading
+            String[] terms = dataLine.substring(startPos, endPos + 1).split("[^\\-0-9]+"); // split on non-digits
+            int minTerms = terms.length < maxTermNo ? terms.length : maxTermNo;
+            result = new Sequence(minTerms);
             int iterm = 0;
             result.setOffset(iterm);
-            while (iterm < terms.length) {
+            while (iterm < minTerms) {
                 // System.out.println("terms[" + iterm + "] = \"" + terms[iterm] + "\"");
                 if (terms[iterm].length() > 0) {
                     result.setBig(iterm, new BigInteger(terms[iterm]));
@@ -172,12 +295,13 @@ public class SequenceReader {
             } // while iterm
             result.setBfimax(iterm - 1);
         } // not from b-file
+        result.setANumber(getANumber());
         return result;
     } // parse(String,boolean)
 
     /** Reads a sequence from an OEIS b-file.
      *  All terms are read.
-     *  @param fileName name of the file to be read
+     *  @param fileName name of b-file
      *  @return a {@link Sequence} with several properties set.
      */
     public Sequence readBFile(String fileName) {
@@ -185,37 +309,33 @@ public class SequenceReader {
     } // readBFile(String)
 
     /** Reads a sequence from an OEIS b-file.
-     *  @param fileName name of the file to be read
-     *  @param maxTermNo maximum number of terms to be read
+     *  @param bFilePath path to directory with b-files
+     *  @param aNumber OEIS A-number of the sequence which implies the name of the b-file
+     *  @param maxTerms maximum number of terms to be read
      *  @return a {@link Sequence} with several properties set.
      */
-    public Sequence readBFile(String fileName, int maxTermNo) {
-    /** Reads a sequence from an OEIS b-file.
-     *  @param fileName name of the file to be read
-     *  @param maxTermNo maximum number of terms to be read
-     *  @return a {@link Sequence} with several properties set.
-     */
-        return readBFile(fileName, maxTermNo, 0); // start at first term
+    public Sequence readBFile(String bFilePath, String aNumber, int maxTerms) {
+        String fileName = bFilePath + "/b" + aNumber.substring(1) + ".txt";
+        return readBFile(fileName, maxTerms, 0); // start at first term
     } // readBFile(String,int)
 
     /** Reads a sequence from an OEIS b-file.
-     *  @param fileName name of the file to be read
-     *  @param maxTermNo maximum number of terms to be read
+     *  @param fileName name of b-file
+     *  @param maxTerms maximum number of terms to be read
      *  @param skip number of leading terms to be skipped, or 0 if none
      *  @return a {@link Sequence} with several properties set.
      */
-    public Sequence readBFile(String fileName, int maxTermNo, int skip) {
+    public Sequence readBFile(String fileName, int maxTerms, int skip) {
         ArrayList<BigInteger> buffer = new ArrayList<BigInteger>(256);
         long offset = 0;
         int termNo = 0;
-        String aNumber = "Annnnnn";
         try {
             ReadableByteChannel lineChannel = (new FileInputStream(fileName)).getChannel();
             BufferedReader lineReader = new BufferedReader(Channels.newReader(lineChannel , srcEncoding));
             String line = null;
             int lineCount = 0;
             boolean busy = true;
-            while (busy && termNo < maxTermNo && (line = lineReader.readLine()) != null) { // read and process lines
+            while (busy && termNo < maxTerms && (line = lineReader.readLine()) != null) { // read and process lines
                 lineCount ++;
                 int hashPos = line.indexOf('#');
                 if (hashPos >= 0) { // hash found
@@ -262,6 +382,44 @@ public class SequenceReader {
         return result;
     } // readBFile
 
+    /** Create and configure a new {@link SequenceReader}-
+     *  @param iarg starting index in <em>args</em>
+     *  @param args command line arguments:
+     *  <ol>
+     *  <li>-a A-number</li>
+     *  <li>-b dir, when b-files should be read</li>
+     *  <li>-d term list, comma separated</li>
+     *  <li>-f name of list file</li>
+     *  <li>-m maximum number of terms (default: 8)</li>
+     *  </ol>
+     */
+    public static SequenceReader configure(int iarg, String[] args) {
+        SequenceReader reader = new SequenceReader();
+        while (iarg < args.length) { // evaluate args
+            String opt = args[iarg ++];
+            if (false) {
+            } else if (opt.equals("-a")) {
+                reader.setANumber   (args[iarg ++]);
+            } else if (opt.equals("-b")) {
+                reader.setBFilePath (args[iarg ++]);
+                reader.setReadFromBFile(true);
+            } else if (opt.equals("-d")) {
+                reader.setDataList  (args[iarg ++]);
+            } else if (opt.equals("-f")) {
+                reader.setListFile  (args[iarg ++]);
+            } else if (opt.equals("-m")) {
+                try {
+                    reader.setMaxTermNo(Integer.parseInt(args[iarg ++]));
+                } catch (Exception exc) {
+                }
+            } else {
+                System.err.println("invalid option \"" + opt + "\"");
+            }
+        } // while args
+        reader.initialize();
+        return reader;
+    } // Configure()
+
     //=========================================================================
     /** Test method: evaluates arguments and prints the terms in b-file format.
      *  @param args command line arguments:
@@ -270,57 +428,32 @@ public class SequenceReader {
      *  <li>-b dir, when b-files should be read</li>
      *  <li>-d term list, comma separated</li>
      *  <li>-f name of list file</li>
+     *  <li>-m maximum number of terms (default: 8)</li>
      *  </ol>
      */
     public static void main(String[] args) {
         Sequence seq = null;
-        String aNumber  = "";
+        String aNumber  = "A123456";
         String bfPath   = "";
-        String dataList = "";
+        String dataList = "1,2,3,4";
         String fileName = "";
-        SequenceReader reader = new SequenceReader();
+        int maxTerms    = 8; // default
         int iarg = 0;
         if (false) {
         } else if (args.length == 0) {
             System.out.println("usage: java -cp ramath.jar org.teherba.ramath.sequence.SequenceReader"
-                    + "\n    -a A-number\n"
-                    + "\n    -b path path to the directory with b-files\n"
-                    + "\n    -d term list, comma separated<\n"
-                    + "\n    -f name of list file");
+                    + "\n    -a A-number"
+                    + "\n    -b path path to the directory with b-files"
+                    + "\n    -d term list, comma separated"
+                    + "\n    -f name of list file"
+                    + "\n    -m maximim number of terms to be read per sequence"
+                     );
         } else { // more than one argment
-            while (iarg < args.length) { // evaluate args
-                String opt = args[iarg ++];
-                if (false) {
-                } else if (opt.equals("-a")) {
-                    aNumber      = args[iarg ++];
-                } else if (opt.equals("-b")) {
-                    bfPath       = args[iarg ++];
-                    reader.setReadFromBFile(true);
-                    reader.setBFilePath(bfPath);
-                } else if (opt.equals("-d")) {
-                    dataList     = args[iarg ++];
-                } else if (opt.equals("-f")) {
-                    fileName     = args[iarg ++];
-                } else {
-                    System.err.println("invalid option \"" + opt + "\"");
-                }
-            } // while args
-            
-            if (fileName.length() > 0) {
-                reader.iterator(fileName);
-                boolean busy = true;
-                while (busy) {
-                    seq = reader.next();
-                    if (seq != null) {
-                        System.out.println(seq.getANumber() + " " + seq.toList(8));
-                    } else {
-                        busy = false;
-                    }
-                } // while busy
-            } else {
-                seq = reader.parse(aNumber + " "+ dataList);
-                System.out.println(seq.getANumber() + " " + seq.toList(8));
-            }   
+            SequenceReader reader = SequenceReader.configure(iarg, args);
+            while (reader.hasNext()) {
+                seq = reader.next();
+                System.out.println(seq.getANumber() + " " + seq.toList());
+            } // while hasNext
         } // several arguments
     } // main
 
