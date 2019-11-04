@@ -73,6 +73,13 @@ CALL LinearRecurrence      -comp 1,1 0,1 10
 TEST LIR7 LinearRecurrence -find Fibonacci A000045
 CALL LinearRecurrence -d 1 -find test/LIR6.this.tst
 
+TEST LIR8 LinearRecurrence some lin.rec.s
+DATA
+ A041142
+ A000045
+ A322469
+ A307048
+CALL LinearRecurrence -d 0 -eval -b ../OEIS-mat/common/bfile -f $(DATA) -m 16
 #--------
 # TriangleRecurrence
 

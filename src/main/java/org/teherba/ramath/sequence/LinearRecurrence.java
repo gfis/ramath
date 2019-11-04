@@ -120,11 +120,11 @@ public class LinearRecurrence extends Recurrence {
             q.add(quotRemd[0]);
             f.add(quotRemd[1]);
             if (true) { // assertion
-                System.out.println(f.get(j - 2) + " / " + f.get(j - 1) + " =\n"
-                        + quotRemd[0] + " rest " + quotRemd[1]);
                 // assert q[j]*f[j-1] + f[j] == f[j-2], "poly divide failed."
                 RationalVector orig = q.get(j).multiply(f.get(j - 1)).add(f.get(j));
                 if (! orig.equals(f.get(j - 2))) {
+                    System.out.println(f.get(j - 2) + " / " + f.get(j - 1) + " =\n"
+                            + quotRemd[0] + " rest " + quotRemd[1]);
                     System.out.println("** assertion poly divide failed:\norig   = "
                             + orig + "\nf[j-2] = " + f.get(j - 2));
                 }
@@ -200,6 +200,21 @@ public class LinearRecurrence extends Recurrence {
                             termNo = seq.size();
                         }
                         System.out.println("found: " + LinearRecurrence.find(seq, termNo).toString());
+
+                    } else if (oper.startsWith("-eval")) {
+                        reader = SequenceReader.configure(iarg, args);
+                        termNo = reader.getMaxTermNo();
+                        while (reader.hasNext()) {
+                            seq = reader.next();
+                            System.out.print("eval: " + seq.getANumber() );
+                            RationalVector result = LinearRecurrence.find(seq, termNo);
+                            if (result.isInteger()) {
+                                System.out.println("\t" + result.toString() + "\t" + seq.toList(8));
+                            } else {
+                                System.out.println();
+                            }
+                         } // while hasNext
+                        iarg = args.length;
 
                     } else {
                         System.out.println("invalid operation \"" + oper + "\"");

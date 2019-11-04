@@ -39,9 +39,6 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
     private static final long serialVersionUID = 1L;
     public final static String CVSID = "@(#) $Id: RationalVector.java 744 2011-07-26 06:29:20Z gfis $";
 
-    /** Debugging level: 0 = none, 1 = moderate, 2 = more, 3 = most */
-    private static int debug = 0;
-
     /*-------------- class properties -----------------------------*/
 
     /** a one-dimensional array of numbers */
@@ -155,6 +152,9 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
 
     /*-------------- bean methods, setters and getters -----------------------------*/
 
+    /** Debugging level: 0 = none, 1 = moderate, 2 = more, 3 = most */
+    private static int debug = 0;
+
     /** Sets the debugging level
      *  @param level 0 = none, 1 = some , 2 = more
      */
@@ -227,6 +227,19 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
         } // while icol
         return result;
     } // hasZero
+
+    /** Whether the RationalVector has integer (non-fractional) elements only.
+     *  @return true if there is no fraction, false if there is one.
+     */
+    public boolean isInteger() {
+    	boolean result = true;
+        int icol = 0;
+        while (result && icol < size()) {
+            result = getRat(icol).isInteger();
+            icol ++;
+        } // while icol
+        return result;
+    } // isInteger
 
     /** Whether the RationalVector is empty or consists of a single constant zero.
      *  @return true if zero
@@ -531,7 +544,7 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
      *  @param args command line arguments: [vect1] oper [vect2] (cf. test/linear.tests)
      */
     public static void main(String[] args) {
-        RationalVector.setDebug(1);
+        RationalVector.setDebug(0);
         int iarg = 0;
         RationalVector vect1 = new RationalVector();
         RationalVector vect2 = new RationalVector();
@@ -547,8 +560,7 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
                 if (expr.equals("-d")) {
                     expr = args[iarg ++];
                     try {
-                        int debug = Integer.parseInt(expr);
-                        RationalVector.setDebug(debug);
+                        RationalVector.setDebug(Integer.parseInt(expr));
                     } catch (Exception exc) {
                     }
                     expr = args[iarg ++];

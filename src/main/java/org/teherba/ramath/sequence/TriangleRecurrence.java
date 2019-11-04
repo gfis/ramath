@@ -225,10 +225,12 @@ public class TriangleRecurrence extends Recurrence {
                         termNo = reader.getMaxTermNo();
                         while (reader.hasNext()) {
                             seq = reader.next();
-                            System.out.println("eval: " + seq.getANumber() + " " + seq.toList(10));
+                            System.out.print("eval: " + seq.getANumber() + " " + seq.toList(16));
                             RationalTriangle result = TriangleRecurrence.find(seq, termNo);
                             if (! result.isZero()) {
-                                System.out.println(seq.getANumber() + "\tresult\t" + result.toString());
+                                System.out.println("\tresult\t" + result.toString());
+                            } else {
+                                System.out.println("");
                             }
                         } // while hasNext
                         iarg = args.length;
