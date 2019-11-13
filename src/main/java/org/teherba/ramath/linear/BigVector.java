@@ -260,6 +260,13 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         return this.vector;
     } // getBigValues
 
+    /** Gets the last element.
+     *  @return the last element of <em>this</em> vector
+     */
+    public BigInteger getLastElement() {
+        return vector[vector.length - 1];
+    } // getLast
+
     /** Gets an univariate {@link Polynomial}
      *  @return a Polynomial where the elements of <em>this</em> are the coefficients of the variable "x",
      *  and the indices are the exponents.

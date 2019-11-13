@@ -1,5 +1,6 @@
 /*  PolyFraction: a fraction of two polynomials
  *  @(#) $Id: PolyFraction.java 970 2012-10-25 16:49:32Z  $
+ *  2019-11-10: shorten
  *  2019-05-06: -coxg
  *  2019-04-29: Georg Fischer: copied from RelationSet.java
  */
@@ -86,6 +87,7 @@ public class PolyFraction
      */
     public PolyFraction(Polynomial num, Polynomial den) {
         polynomials = new Polynomial[] { num, den };
+        shorten();
         log = Logger.getLogger(PolyFraction.class.getName());
     } // Constructor(Polynomial, Polynomial)
 
@@ -286,6 +288,20 @@ public class PolyFraction
     } // getVariables
 
     /*-------------- lightweight derived methods -----------------------------*/
+
+    /** Removes any GCD of <em>this</em> nominator and the denominator.
+     *  @return <em>this</em> shortened PolyFraction
+     */
+    public PolyFraction shorten() {
+        BigInteger gcd = polynomials[0].gcdCoefficients()
+                    .gcd(polynomials[1].gcdCoefficients());
+        if (! gcd.equals(BigInteger.ZERO)) {
+            Monomial gcdMono = new Monomial(Coefficient.valueOf(gcd));
+            polynomials[0].divideBy(gcdMono);
+            polynomials[1].divideBy(gcdMono);
+        }
+        return this;
+    } // shorten
 
     /** Returns a String representation of <em>this</em> {@link PolyFraction}
      *  @param mode 0 = normal, 1 = full (for substitution), 2 = nice / human legible,
@@ -738,8 +754,17 @@ public class PolyFraction
                                             + "\t" + pfr1.getSeriesCoefficients(numTerms)
                                             .toString().replaceAll("[\\[\\]]", "")
                                             );
+                                } else if (mode.equals("delta")) {
+                                    String offset1 = parms[iparm ++];
+                                    System.out.print(aseqno + "\tdelta1\toffset1\t");
+                                    pfr1 = PolyFraction.parse(parms[iparm]).normalize();
+                                    System.out.println(pfr1.toString());
+                                    System.out.print(aseqno + "\tdelta2\toffset1\t");
+                                    System.out.println(pfr1.getCoefficientTriangle(numTerms
+                                            , new String[] { "x", "y" })
+                                            .toString().replaceAll("[\\[\\]]", ""));
                                 } else if (mode.startsWith("fract")) {
-                                    String offset1 = parms[iparm++];
+                                    String offset1 = parms[iparm ++];
                                     pfr1 = PolyFraction.parse(parms[iparm]).normalize();
                                     if (pfr1 == null) {
                                         // ignore, bad syntax
@@ -770,7 +795,7 @@ public class PolyFraction
                                     }
                                     iparm ++;
                                 } else if (mode.equals("rioarr")) {
-                                    String offset1 = parms[iparm++];
+                                    String offset1 = parms[iparm ++];
                                     System.out.print(aseqno + "\t");
                                     pfr1 = PolyFraction.parse(parms[iparm]).normalize();
                                     System.out.println(pfr1.getCoefficientTriangle(numTerms

@@ -85,6 +85,7 @@ public class LinearRecurrence extends Recurrence {
      *      https://sage.math.leidenuniv.nl/src/matrix/berlekamp_massey.py
      */
     public static RationalVector find(Sequence seq, int termNo) {
+        RationalVector result = null;
         if (termNo % 2 != 0) {
             termNo --; // must be even
         }
@@ -100,11 +101,6 @@ public class LinearRecurrence extends Recurrence {
         ArrayList<RationalVector> s = new ArrayList<RationalVector>(16);
         s.add(new RationalVector(1, BigInteger.ONE ));
         s.add(new RationalVector(1, BigInteger.ZERO));
-    /*
-        ArrayList<RationalVector> t = new ArrayList<RationalVector>(16);
-        t.add(new RationalVector(1, BigInteger.ZERO));
-        t.add(new RationalVector(1, BigInteger.ONE ));
-    */
         int j = 1;
         while (f.get(j).size() > m) {
             j ++;
@@ -113,7 +109,6 @@ public class LinearRecurrence extends Recurrence {
                         + "\nf = " + f.toString()
                         + "\nq = " + q.toString()
                         + "\ns = " + s.toString()
-        //              + "\nt = " + t.toString()
                         );
             } // if debug
             RationalVector quotRemd[] = f.get(j - 2).divideAndRemainder(f.get(j - 1));
@@ -123,26 +118,28 @@ public class LinearRecurrence extends Recurrence {
                 // assert q[j]*f[j-1] + f[j] == f[j-2], "poly divide failed."
                 RationalVector orig = q.get(j).multiply(f.get(j - 1)).add(f.get(j));
                 if (! orig.equals(f.get(j - 2))) {
-                    System.out.println(f.get(j - 2) + " / " + f.get(j - 1) + " =\n"
-                            + quotRemd[0] + " rest " + quotRemd[1]);
-                    System.out.println("** assertion poly divide failed:\norig   = "
-                            + orig + "\nf[j-2] = " + f.get(j - 2));
+                    if (debug >= 1) {
+                        System.out.println(f.get(j - 2) + " / " + f.get(j - 1) + " =\n"
+                                + quotRemd[0] + " rest " + quotRemd[1]);
+                        System.out.println("** assertion poly divide failed:\norig   = "
+                                + orig + "\nf[j-2] = " + f.get(j - 2));
+                    } // if debug
+                    result = new RationalVector("[1/65536]"); // strange fraction
+                    return result;
                 }
             }
             s.add(s.get(j - 2).subtract(q.get(j).multiply(s.get(j - 1))));
-        //  t.add(t.get(j - 2).subtract(q.get(j).multiply(t.get(j - 1))));
             if (debug >= 1) {
                 System.out.println(""
                         + "\nf = " + f.toString()
                         + "\nq = " + q.toString()
                         + "\ns = " + s.toString()
-        //              + "\nt = " + t.toString()
                         + "\n-----------------------------"
                         );
             } // if debug
         } // while
         BigRational factor = s.get(j).getRat(0).inverse();
-        RationalVector result = s.get(j).multiply(factor);
+        result = s.get(j).multiply(factor);
         return result.reverse();
     } // find
 
@@ -206,13 +203,18 @@ public class LinearRecurrence extends Recurrence {
                         termNo = reader.getMaxTermNo();
                         while (reader.hasNext()) {
                             seq = reader.next();
-                            System.out.print("eval: " + seq.getANumber() );
-                            RationalVector result = LinearRecurrence.find(seq, termNo);
-                            if (result.isInteger()) {
-                                System.out.println("\t" + result.toString() + "\t" + seq.toList(8));
+                            if (seq.size() < termNo) {
+                                    System.out.println("# " + seq.getANumber() + "\ttoo short (" + seq.size() + ")");
+                            } else if (seq.getLastElement().bitLength() >= 512) {
+                                    System.out.println("# " + seq.getANumber() + "\tlast term too long (" + seq.getLastElement().bitLength() + ")");
                             } else {
-                                System.out.println();
-                            }
+                                RationalVector result = LinearRecurrence.find(seq, termNo);
+                                if (result.isInteger()) {
+                                    System.out.println(seq.getANumber() + "\t" + result.toString() + "\t" + seq.toString());
+                                } else {
+                                    System.out.println("# " + seq.getANumber());
+                                }
+                            } // not too short
                          } // while hasNext
                         iarg = args.length;
 

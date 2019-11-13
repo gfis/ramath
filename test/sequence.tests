@@ -80,6 +80,12 @@ DATA
  A322469
  A307048
 CALL LinearRecurrence -d 0 -eval -b ../OEIS-mat/common/bfile -f $(DATA) -m 16
+
+TEST LIR9 LinearRecurrence loop?
+DATA
+ A000058
+CALL LinearRecurrence -d 1 -eval -d 1 -b ../OEIS-mat/common/bfile -f $(DATA) -m 13
+
 #--------
 # TriangleRecurrence
 
