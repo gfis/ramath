@@ -1,5 +1,6 @@
 /*  PolyVector: a vector Polynomials
  *  @(#) $Id: PolyVector.java 744 2011-07-26 06:29:20Z gfis $
+ *  2019-12-04: getBigMatrix()
  *  2016-07-09: Signature
  *  2015-07-14: read expression allows for RelationSets with semicolons and "=0"
  *  2015-04-27: triviality(), describe()
@@ -27,7 +28,7 @@ package org.teherba.ramath.symbolic;
 import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.Signature;
 import  org.teherba.ramath.symbolic.VariableMap;
-import  org.teherba.ramath.linear.Matrix;
+import  org.teherba.ramath.linear.BigMatrix;
 import  org.teherba.ramath.linear.Vector;
 import  java.io.BufferedReader;
 import  java.io.FileReader;
@@ -39,7 +40,7 @@ import  java.util.Iterator;
 import  java.util.regex.Matcher;
 import  java.util.regex.Pattern;
 
-/** Class PolyVector is used in conjunction with {@link Matrix} to
+/** Class PolyVector is used to
  *  implement linear algebra operations
  *  on square matrices of symbolic {@link Polynomial}s.
  *  Typically a PolyVector will have no more than 8 elements.
@@ -214,6 +215,17 @@ public class PolyVector implements Cloneable, Serializable {
         return result;
     } // equals
 
+    /** Returns an array of vectors with increasing exponents
+     *  @return a one-dimensional array of arrays of varying length
+     */
+    public BigMatrix getBigMatrix() {
+    	BigMatrix result = new BigMatrix();
+        for (int irow = 0; irow < size(); irow ++) {
+            result.setRow(irow, this.get(irow).getBigVector());
+        } // for irow
+        return result;
+    } // getBigMatrix()
+
     /** Returns a String representation of the PolyVector
      *  @return a 1-dimensional array of {@link Polynomial}s.
      */
@@ -237,7 +249,7 @@ public class PolyVector implements Cloneable, Serializable {
         } // for icol
         result.append(']');
         return result.toString();
-    } // toString()
+    } // toString(String)
 
     /** Describes the triviality of <em>this</em>PolyVector:
      *  <ul>
@@ -420,8 +432,8 @@ public class PolyVector implements Cloneable, Serializable {
 
     /*-------------------- Test Driver --------------------*/
 
-    /** Test method, shows some fixed matrices with no arguments, or the
-     *  matrix resulting from the input formula.
+    /** Test method, shows some fixed vectors with no arguments, or the
+     *  PolyVector resulting from the input formula.
      *  @param args command line arguments
      */
     public static void main(String[] args) {
@@ -445,6 +457,11 @@ public class PolyVector implements Cloneable, Serializable {
                 System.out.println("convolve(\"u^2+v^2-w^2\"): "
                         + vect1.convolve(new Polynomial("u^2+v^2-w^2")).toString());
                 // -read
+            } else if (opt.startsWith("-matrix")) {
+                vect1 = new PolyVector(args[iarg]);
+                System.out.println("parse: " + args[iarg]);
+                System.out.println("matrix:" + vect1.getBigMatrix().toString());
+                // -matrix
             } // if opt
         } // more than 1 argument
     } // main

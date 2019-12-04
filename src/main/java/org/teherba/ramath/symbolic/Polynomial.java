@@ -1388,7 +1388,7 @@ public class Polynomial implements Cloneable, Serializable {
 
     /** Extracts, from <em>this</em> univariate {@link Polynomial},
      *  a {@link Vector} of the coefficients of the variables' powers
-     *  in increasing order.
+     *  in increasing order, with zeroes interspersed for non-existing exponents.
      *  @return Vector of coefficients, for example "[1, -1, -1]" for "1-x-x^2".
      */
     public BigVector getBigVector() {
@@ -2461,6 +2461,11 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=&gt; - 2*y + 4*z
                         System.out.println("getVariablePowers(" + varName + ")=" + poly1.getVariablePowers(mono4));
                         System.out.println(          "groupBy(" + varName + ")=" + poly1.groupBy          (mono4).toList());
                         // -var
+
+                    } else if (opt.startsWith("-vect")) { // getBigVector
+                        poly1 = Polynomial.parse(args[iarg ++]);
+                        System.out.println(poly1.getBigVector().toString());
+                        // -vect
 
                     } else {
                         System.err.println("??? invalid option: \"" + opt + "\"");

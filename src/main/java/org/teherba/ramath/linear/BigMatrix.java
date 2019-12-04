@@ -29,8 +29,7 @@ import  java.util.ArrayList;
 import  org.apache.log4j.Logger;
 
 /** Class BigMatrix implements some simple linear algebra operations
- *  on square matrices of BigInteger numbers (Java <em>int</em>s).
- *  It is used to solve diophantine problems.
+ *  on square matrices of BigInteger numbers.
  *  @author Dr. Georg Fischer
  */
 public class BigMatrix extends Matrix implements Cloneable, Serializable {
@@ -129,8 +128,6 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
     } // Constructor(String[])
 */
     /** Constructor for a rectangular BigMatrix which initializes it from a matrix expression.
-     *  If the number of elements is no square number, the next lower square
-     *  number is taken, and some elements at the end are ignored.
      *  @param matExpr comma-separated array of {@link BigVector}s in square brackets,
      *  for example "[[11,12,13],[21,22,23],[31,32,33]]"
      */
