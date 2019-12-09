@@ -1,5 +1,6 @@
 /*  JoeisPreparer: prepare *.gen files for joeis-lite
- *  @(#) $Id: JoeisPreparer.java 970 2012-10-25 16:49:32Z  $
+ *  @(#) $Id$
+ *  2019-12-08: reproduce^; offset1 is always read
  *  2019-12-04: Georg Fischer: copied from PolyFraction.java
  */
 /*
@@ -34,7 +35,7 @@ import  org.apache.log4j.Logger;
 /** This class implements several filters for *.gen files to be
  *  prepared for project joeis-lite.
  *  A typical record has the fields
- *  aseqno, callCode, offset, parm1, parm2 ...
+ *  aseqno, callCode, offset1, parm1, parm2 ...
  *  @author Dr. Georg Fischer
  */
 public class JoeisPreparer
@@ -60,8 +61,8 @@ public class JoeisPreparer
     /** number of terms to be generated */
     private int numTerms;
 
-    /** Offset1 of the sequence, as String */
-    private String offset1;
+    /** Offset1 of the sequence */
+    private int offset1;
 
     /** Current index for {@link #parms} */
     private int iparm;
@@ -78,15 +79,12 @@ public class JoeisPreparer
 
     /** Process one input line, and determine 
      *  whether it should be written to the output.
-     *  @return true if the (modified) record should be written
      */
-    private boolean processRecord() {
-        boolean result = true;
+    private void processRecord() {
         PolyFraction pfr1 = null;
         if (false) {
 
         } else if (callCode.equals("coxf")) {
-            result = false;
             try {
                 int pwr  = Integer.parseInt(parms[iparm ++]);
                 int ngen = Integer.parseInt(parms[iparm ++]);
@@ -99,18 +97,15 @@ public class JoeisPreparer
                     );
 
         } else if (callCode.equals("delta")) {
-            offset1 = parms[iparm ++];
-            System.out.print(aseqno + "\tdelta1\toffset1\t");
+            System.out.print(aseqno + "\tdelta1\t" + offset1 + "\t");
             pfr1 = PolyFraction.parse(parms[iparm]).normalize();
             System.out.println(pfr1.toString());
-            System.out.print(aseqno + "\tdelta2\toffset1\t");
+            System.out.print(aseqno + "\tdelta2\t" + offset1 + "\t");
             System.out.println(pfr1.getCoefficientTriangle(numTerms
                     , new String[] { "x", "y" })
                     .toString().replaceAll("[\\[\\]]", ""));
 
         } else if (callCode.equals("fract1")) {
-            result = false;
-            offset1 = parms[iparm ++];
             pfr1 = PolyFraction.parse(parms[iparm]).normalize();
             if (pfr1 != null) {
                 System.out.println(aseqno + "\t" + "orgf"
@@ -125,8 +120,6 @@ public class JoeisPreparer
                         );
             }
         } else if (callCode.equals("fract2")) {
-            result = false;
-            offset1 = parms[iparm ++];
             pfr1 = PolyFraction.parse(parms[iparm]).normalize();
             if (pfr1 != null) {
                 String[] vars = pfr1.getVariables();
@@ -138,30 +131,31 @@ public class JoeisPreparer
                         );
             }
         } else if (callCode.startsWith("fract")) {
-            result = false;
             System.out.println(aseqno
                         + "\t" + offset1
                         + "\t??" + parms[iparm ++]
                         );
  
         } else if (callCode.equals("rioarr")) {
-            result = false;
-            offset1 = parms[iparm ++];
             System.out.print(aseqno + "\t");
             pfr1 = PolyFraction.parse(parms[iparm]).normalize();
             System.out.println(pfr1.getCoefficientTriangle(numTerms
                     , new String[] { "x", "y" })
                     .toString().replaceAll("[\\[\\]]", ""));
 
-        } else if (callCode.equals("holon")) { // OEIS-mat/linrec/makefile.rectab
-            result = true;
-            parms[iparm - 1] = "holon1";
-            offset1 = parms[iparm ++];
-            PolyVector pvect = new PolyVector(parms[iparm]);
-            parms[iparm] = pvect.getBigMatrix().toString();
+        } else if (callCode.equals("holo")) { // OEIS-mat/linrec/makefile.rectab
+            parms[iparm - 1] = "holos";
+            try {
+            	offset1 = 0; 
+                offset1 = Integer.parseInt(parms[iparm ++]);
+                PolyVector pvect = new PolyVector(parms[iparm]);
+                parms[iparm] = pvect.getBigMatrix().toString();
+            } catch (Exception exc) {
+            }
+            reproduce();
             
         } else if (callCode.equals("sage")) {
-            result = false;
+        	  iparm --; // no offset1
             Polynomial num = Polynomial.parse(parms[iparm ++]);
             Polynomial den = Polynomial.parse(parms[iparm ++]);
             pfr1 = new PolyFraction(num, den);
@@ -176,8 +170,13 @@ public class JoeisPreparer
                     );
 
         } // switch callCode
-        return result;
     } // processRecord
+
+    /** Reproduces the record with the (maybe modified) parameters.
+     */
+    protected void reproduce() {
+         System.out.println(String.join("\t", parms));
+    } // reproduce
 
     /** Filters a file and writes the modified output lines.
      *  @param fileName name of the input file, or "-" for STDIN
@@ -202,16 +201,19 @@ public class JoeisPreparer
                     iparm = 0;
                     aseqno   = parms[iparm ++];
                     callCode = parms[iparm ++];
-                    if (processRecord()) {
-                        System.out.println(String.join("\t", parms));
+                    try {
+                        offset1 = 0;
+                        offset1 = Integer.parseInt(parms[iparm ++]);
+                    } catch (Exception exc) {
                     }
+                    processRecord();
                 } // is not a comment
             } // while ! eof
             lineReader.close();
         } catch (Exception exc) {
             log.error(exc.getMessage(), exc);
         } // try
-    } // process
+    } // processFile
 
     /** Main method, filters a file and writes the copy to STDOUT.
      *  @param args command line arguments: filename, or "-" or none for STDIN
@@ -220,7 +222,7 @@ public class JoeisPreparer
         int iarg = 0;
         JoeisPreparer prep = new JoeisPreparer();
         prep.numTerms = 16;
-        prep.offset1  = "0";
+        prep.offset1  = 0;
         String fileName = "-"; // assume STDIN
         while (iarg < args.length) { // consume all arguments
             String opt = args[iarg ++];
