@@ -120,12 +120,12 @@ public class HolonomicRecurrenceTest {
    * @param holRec instance to be reversed
    * @return a new HolonomicRecurrence which will run backwards
    */
-  private HolonomicRecurrence reverse(HolonomicRecurrence holRec) {
+  private static HolonomicRecurrence reverse(HolonomicRecurrence holRec) {
     ArrayList<Z[]> polyList = holRec.getPolyList();
     ArrayList<Z[]> rPolyList = new ArrayList<Z[]>(16);
     rPolyList.add(polyList.get(0)); // the constant
     int ind = 0;
-    for (ind = polyList.size();      ind >= 1; ind --) { // polynomials
+    for (ind = polyList.size() - 1;  ind >= 1; ind --) { // polynomials
       rPolyList.add(polyList.get(ind));
     } // for ind - polynomials
     
@@ -184,15 +184,23 @@ public class HolonomicRecurrenceTest {
     mHolRec = new HolonomicRecurrence(mOffset, mPolyList, mInitTerms, mNDist); // instance to be tested
     
     if (false) {
-    } else if (callCode.startsWith("holos")) { 
+    } else if (callCode.startsWith("holos")) { // getTermList
       parms[6] = ""; // clear name
       reproduce();
       System.out.println(aseqno + "\t" + callCode + "1" + "\t" + mOffset 
           + "\t" + getTermList(mHolRec));
     
+    } else if (callCode.startsWith("holor")) { // getTermList(reverse)
+      HolonomicRecurrence rHolRec = reverse(mHolRec);
+      parms[6] = ""; // clear name
+      // parms[3] = rHolRec.getPolyList().toString();
+      reproduce();
+      System.out.println(aseqno + "\t" + callCode + "1" + "\t" + mOffset 
+          + "\t" + getTermList(rHolRec));
+    
     } else {
       reproduce();
-      System.out.println(aseqno + "\t" + "unknown callcode " + callCode);
+      System.out.println(aseqno + "\t" + "unknown callcode \"" + callCode + "\"");
     } // switch callCode
   } // processRecord
 

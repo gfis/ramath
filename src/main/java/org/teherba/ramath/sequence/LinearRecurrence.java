@@ -1,5 +1,6 @@
 /*  Linear recurrence with constant coefficients
  *  @(#) $Id: LinearRecurrence.java $
+ *  2019-12-10: -o offset -find
  *  2019-08-29: parameter skip
  *  2019-08-27: find with Berlekamp-Massey's algorithm
  *  2019-08-25, Georg Fischer: Lunnon's algorithm - failed
@@ -85,13 +86,25 @@ public class LinearRecurrence extends Recurrence {
      *      https://sage.math.leidenuniv.nl/src/matrix/berlekamp_massey.py
      */
     public static RationalVector find(Sequence seq, int termNo) {
+		return find(seq, 0, termNo);
+	} // find(Sequence, int)
+	
+    /** Find a signature of constant coefficients from a sequence
+     *  with the Berlekamp-Massey algorithm.
+     *  @param seq {@link Sequence} with existing terms
+     *  @param offset start the terms of <em>seq</em> at some index &gt;= 0.
+     *  @param termNo include so many terms in the derivation
+     *  Derived from the SageMath code of William Stein &lt;wstein@gmail.com&gt; (2005):
+     *      https://sage.math.leidenuniv.nl/src/matrix/berlekamp_massey.py
+     */
+    public static RationalVector find(Sequence seq, int offset, int termNo) {
         RationalVector result = null;
         if (termNo % 2 != 0) {
             termNo --; // must be even
         }
         int m = termNo / 2;
         ArrayList<RationalVector> f = new ArrayList<RationalVector>(16);
-        f.add(new RationalVector(new BigVector(seq.getBigValues())));
+        f.add(new RationalVector(new BigVector(seq.getBigValues(offset))));
         RationalVector xpow = new RationalVector(2*m + 1, BigInteger.ZERO);
         xpow.set(2*m, BigRational.ONE);
         f.add(xpow);
@@ -157,6 +170,7 @@ public class LinearRecurrence extends Recurrence {
         String aNumber = "A000000";
         SequenceReader reader = new SequenceReader(15);
         Sequence seq = null;
+        int offset = 0;
         try {
             if (args.length == 0) {
                 System.out.print("usage:\n"
@@ -172,6 +186,9 @@ public class LinearRecurrence extends Recurrence {
 
                     } else if (oper.equals    ("-d")) {
                         LinearRecurrence.debug = Integer.parseInt(args[iarg ++]);
+
+                    } else if (oper.equals    ("-o")) {
+                        offset = Integer.parseInt(args[iarg ++]);
 
                     } else if (oper.startsWith("-comp")) {
                         LinearRecurrence linRec = new LinearRecurrence
@@ -196,7 +213,7 @@ public class LinearRecurrence extends Recurrence {
                             seq = reader.readBFile(fileName);
                             termNo = seq.size();
                         }
-                        System.out.println("found: " + LinearRecurrence.find(seq, termNo).toString());
+                        System.out.println("found: " + LinearRecurrence.find(seq, offset, termNo - offset).toString());
 
                     } else if (oper.startsWith("-eval")) {
                         reader = SequenceReader.configure(iarg, args);
@@ -208,7 +225,7 @@ public class LinearRecurrence extends Recurrence {
                             } else if (seq.getLastElement().bitLength() >= 512) {
                                     System.out.println("# " + seq.getANumber() + "\tlast term too long (" + seq.getLastElement().bitLength() + ")");
                             } else {
-                                RationalVector result = LinearRecurrence.find(seq, termNo);
+                                RationalVector result = LinearRecurrence.find(seq, offset, termNo - offset);
                                 if (result.isInteger()) {
                                     System.out.println(seq.getANumber() + "\t" + result.toString() + "\t" + seq.toString());
                                 } else {

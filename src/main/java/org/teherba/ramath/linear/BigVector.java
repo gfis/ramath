@@ -1,5 +1,6 @@
 /*  BigVector: a simple, short vector of big numbers
  *  @(#) $Id: BigVector.java 744 2011-07-26 06:29:20Z gfis $
+ *  2019-12-10: getBigValues(offset)
  *  2019-10-29: isZero(emptyVector)
  *  2018-01-22, Georg Fischer: copied from Vector
  */
@@ -260,6 +261,17 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         return this.vector;
     } // getBigValues
 
+    /** Gets the values of <em>this</em> {@link BigVector} starting at some offset &gt; 0,
+     *  as an <em>BigInteger</em> array.
+     *  @param offset start copy at this index
+     *  @return array of BigIntegers
+     */
+    public BigInteger[] getBigValues(int offset) {
+        BigInteger[] result = new BigInteger[this.vector.length - offset];
+        System.arraycopy(this.vector, offset, result, 0, result.length);
+        return result;
+    } // getBigValues(int)
+
     /** Gets the last element.
      *  @return the last element of <em>this</em> vector
      */
@@ -370,7 +382,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         int icol = size() - 1;
         if (icol >= 0) {
             result = getBig(icol).compareTo(BigInteger.ZERO) < 0;
-        }   
+        }
         return result;
     } // isNegative
     /** Gets the (first) position of an element in <em>this</em> BigVector.
@@ -792,7 +804,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         int lenq = len1 >= len2 ? len1 - len2 + 1 : 0;
         BigVector  quot  = new BigVector(lenq);
         if (debug >= 1) {
-                System.out.println("\ninitial: " + this + " / " + vect2 
+                System.out.println("\ninitial: " + this + " / " + vect2
                         + ", rem1=" + rem1 + ", div2=" + div2
                         + ", lenq=" + lenq + ", len1=" + len1 + ", len2=" + len2);
         }
@@ -847,7 +859,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
                 len1 = 0;
             }
             if (debug >= 1) {
-                System.out.println("while end: quot=" + quot + "/" + qden 
+                System.out.println("while end: quot=" + quot + "/" + qden
                         + ", rem1=" + rem1 + "/" + rden);
             }
         } // while lenr
@@ -994,7 +1006,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
             } else if (oper.equals("*")) {
                 if (parts[2].startsWith("[")) {
                     vectr = vect1.multiply(vect2);
-                    System.out.println(vectr); 
+                    System.out.println(vectr);
                     vectq = vectr.divideAndRemainder(vect1);
                     System.out.println("/ vect1 = " + vectq[0]);
                     vectq = vectr.divideAndRemainder(vect2);

@@ -23,16 +23,12 @@ public class Z extends BigInteger {
   /** The constant negative one. */
   public static final Z NEG_ONE = new Z(-1L);
   
-  /** underlaying BigINteger */
-  protected BigInteger num;
-
   /** 
    *  Constructor for long
    *  @param zl long value
    */
   public Z(long zl) {
-  	super("0");
-    num = BigInteger.valueOf(zl);
+    this(BigInteger.valueOf(zl));
   } 
 
   /** 
@@ -40,8 +36,7 @@ public class Z extends BigInteger {
    *  @param zs number as String in base 10
    */
   public Z(String zs) {
-  	super("0");
-    num = new BigInteger(zs);
+    super(zs);
   } 
 
   /** 
@@ -49,8 +44,7 @@ public class Z extends BigInteger {
    *  @param zbi number as BigInteger
    */
   public Z(BigInteger zbi) {
-  	super("0");
-    num = zbi;
+    super(zbi.toByteArray());
   } 
 
   /**
@@ -68,7 +62,7 @@ public class Z extends BigInteger {
    * @return sum of this and <code>n</code>.
    */
   public Z add(Z n) {
-   	return new Z(num.add(n.num));
+    return new Z(super.add(n));
   }
 
   /**
@@ -77,7 +71,7 @@ public class Z extends BigInteger {
    * @return difference of this and <code>n</code>.
    */
   public Z subtract(Z n) {
-   	return new Z(num.subtract(n.num));
+    return new Z(super.subtract(n));
   }
 
   /**
@@ -86,7 +80,7 @@ public class Z extends BigInteger {
    * @return product of this and <code>n</code>.
    */
   public Z multiply(Z n) {
-    return new Z(num.multiply(n.num));
+    return new Z(super.multiply(n));
   }
 
   /**
@@ -95,7 +89,7 @@ public class Z extends BigInteger {
    * @return product of this and <code>n</code>.
    */
   public Z multiply(long n) {
-    return new Z(num.multiply(BigInteger.valueOf(n)));
+    return new Z(super.multiply(BigInteger.valueOf(n)));
   }
 
   /**
@@ -104,7 +98,7 @@ public class Z extends BigInteger {
    * @return product of this and <code>n</code>.
    */
   public Z negate() {
-    return new Z(num.negate());
+    return new Z(super.negate());
   }
 
   /**
@@ -113,7 +107,7 @@ public class Z extends BigInteger {
    * @return product of this and <code>n</code>.
    */
   public Z[] divideAndRemainder(Z n) {
-    BigInteger[] quotRemd = num.divideAndRemainder(n.num);
+    BigInteger[] quotRemd = super.divideAndRemainder(n);
     return new Z[] { new Z(quotRemd[0]), new Z(quotRemd[1]) };
   }
 
@@ -123,7 +117,7 @@ public class Z extends BigInteger {
    * @return true if the two numbers are equal, false otherwise
    */
   public boolean equals(Z val2) {
-    return num.equals(val2.num);
+    return super.equals(val2);
   }
 
   /**
@@ -131,7 +125,7 @@ public class Z extends BigInteger {
    * @return for example "123"
    */
   public String toString() {
-    return num.toString();
+    return super.toString();
   }
 
 } // Z
