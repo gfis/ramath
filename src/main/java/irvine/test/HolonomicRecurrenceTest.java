@@ -139,11 +139,51 @@ public class HolonomicRecurrenceTest {
   } // reverse
 
   /** 
-   * Evaluate a HolonomicRecurrene and gets a list of terms.
+   * Gets a String representation
+   * of the coefficient polynomials.
+   * @param holRec instance to be evaluated
+   * @return a list of polynomials of the form "[[0,1],[1,2],[1]]".
+   */
+  private String getPolyList(HolonomicRecurrence holRec) {
+    StringBuffer result = new StringBuffer(256);
+    ArrayList<Z[]> polyList = holRec.getPolyList();
+    for (int i = 0; i < polyList.size(); i ++) { // polynomials
+      Z[] poly = polyList.get(i);
+      result.append(i == 0 ? '[' : ',');     
+      for (int j = 0; j < poly.length; j ++) {
+        result.append(j == 0 ? '[' : ',');     
+        result.append(poly[j].toString());
+      } // for j
+      result.append(']');
+    } // for i
+    result.append(']');
+    return result.toString();
+  } // getPolyList
+
+  /** 
+   * Gets a String representation
+   * of the initial terms.
+   * @param holRec instance to be evaluated
+   * @return a list terms of the form "[0,1,1,2,1]".
+   */
+  private String getInitTerms(HolonomicRecurrence holRec) {
+    StringBuffer result = new StringBuffer(256);
+    Z[] initTerms = holRec.getInitTerms();
+    for (int j = 0; j < initTerms.length; j ++) {
+      result.append(j == 0 ? '[' : ',');     
+      result.append(initTerms[j].toString());
+    } // for j
+    result.append(']');
+    return result.toString();
+  } // getInitTerms
+
+  /** 
+   * Evaluate a HolonomicRecurrence and gets a list 
+   * 22of the resulting data terms.
    * @param holRec instance to be evaluated
    * @return a list of terms of the form "0,1,1,2,3,5,8".
    */
-  private String getTermList(HolonomicRecurrence holRec) {
+  private String getDataList(HolonomicRecurrence holRec) {
     StringBuffer result = new StringBuffer(256);
     int n = 0;
     boolean busy = true;
@@ -160,7 +200,7 @@ public class HolonomicRecurrenceTest {
     } // while n
     result.deleteCharAt(result.length() - 1); // remove last comma
     return result.toString();
-  } // getTermList
+  } // getDataList
 
   /** 
    * Process one input line, and determine 
@@ -174,29 +214,28 @@ public class HolonomicRecurrenceTest {
     // input record is: aseqno callCode mOffset polyList initTerms mNDist data
     iparm = 2;
     try {
-      mOffset = Integer.parseInt(parms[iparm ++]);
-      mPolyList = parms[iparm ++];
-      mInitTerms = parms[iparm ++];
+      mOffset = Integer.parseInt(parms[iparm ++]); // [2]
+      mPolyList = parms[iparm ++];  // [3]
+      mInitTerms = parms[iparm ++]; // [4]
       mNDist = 0;
-      mNDist = Integer.parseInt(parms[iparm ++]);
+      mNDist = Integer.parseInt(parms[iparm ++]); // [5]
     } catch (Exception exc) {
     }
     mHolRec = new HolonomicRecurrence(mOffset, mPolyList, mInitTerms, mNDist); // instance to be tested
     
     if (false) {
     } else if (callCode.startsWith("holos")) { // getTermList
-      parms[6] = ""; // clear name
-      reproduce();
       System.out.println(aseqno + "\t" + callCode + "1" + "\t" + mOffset 
-          + "\t" + getTermList(mHolRec));
+          + "\t" + getDataList(mHolRec));
     
     } else if (callCode.startsWith("holor")) { // getTermList(reverse)
       HolonomicRecurrence rHolRec = reverse(mHolRec);
       parms[6] = ""; // clear name
-      // parms[3] = rHolRec.getPolyList().toString();
-      reproduce();
-      System.out.println(aseqno + "\t" + callCode + "1" + "\t" + mOffset 
-          + "\t" + getTermList(rHolRec));
+      parms[3] = getPolyList (rHolRec);
+      parms[4] = getInitTerms(rHolRec);
+      reproduce(6);
+      System.out.println(aseqno + "\t" + callCode + "1" + "\t" + mOffset + "\t" + getDataList(rHolRec));
+      System.out.println(aseqno + "\t" + "--------"); // will remain there even after sort
     
     } else {
       reproduce();
@@ -208,8 +247,20 @@ public class HolonomicRecurrenceTest {
    * Reproduces the record with the (maybe modified) parameters.
    */
   protected void reproduce() {
-    System.out.println(String.join("\t", parms));
+  	reproduce(parms.length);
   } // reproduce
+
+  /** 
+   * Reproduces part of the the record with the (maybe modified) parameters.
+   * @param num print only so many parameters.
+   */
+  protected void reproduce(int num) {
+    for (int j = 0; j < num; j ++) {
+      System.out.print(j == 0 ? "" : "\t");
+      System.out.print(parms[j]);
+    } // for j
+    System.out.println();
+  } // reproduce(int)
 
   /** 
    * Filters a file and writes the modified output lines.

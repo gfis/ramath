@@ -144,9 +144,9 @@ public class JoeisPreparer
                     .toString().replaceAll("[\\[\\]]", ""));
 
         } else if (callCode.equals("holo")) { // OEIS-mat/linrec/makefile.rectab
-            parms[iparm - 1] = "holos";
+            parms[1] = "holos";
             try {
-            	offset1 = 0; 
+                offset1 = 0; 
                 offset1 = Integer.parseInt(parms[iparm ++]);
                 PolyVector pvect = new PolyVector(parms[iparm]);
                 parms[iparm] = pvect.getBigMatrix().toString();
@@ -155,7 +155,7 @@ public class JoeisPreparer
             reproduce();
             
         } else if (callCode.equals("sage")) {
-        	  iparm --; // no offset1
+              iparm --; // no offset1
             Polynomial num = Polynomial.parse(parms[iparm ++]);
             Polynomial den = Polynomial.parse(parms[iparm ++]);
             pfr1 = new PolyFraction(num, den);
