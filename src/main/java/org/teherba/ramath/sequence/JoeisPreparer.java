@@ -146,13 +146,11 @@ public class JoeisPreparer
         } else if (callCode.equals("holo")) { // OEIS-mat/linrec/makefile.rectab
             parms[1] = "holos";
             try {
-                offset1 = 0; 
-                offset1 = Integer.parseInt(parms[iparm ++]);
                 PolyVector pvect = new PolyVector(parms[iparm]);
                 parms[iparm] = pvect.getBigMatrix().toString();
+                reproduce();
             } catch (Exception exc) {
             }
-            reproduce();
             
         } else if (callCode.equals("sage")) {
               iparm --; // no offset1

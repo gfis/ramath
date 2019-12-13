@@ -213,7 +213,7 @@ public class HolonomicRecurrence implements Sequence {
         result = null;
       }
     }
-    mBuffer[mN % mBufSize] = result;
+    mBuffer[(mN < 0 ? mN + mBufSize : mN) % mBufSize] = result;
     return result;
   } // next
 

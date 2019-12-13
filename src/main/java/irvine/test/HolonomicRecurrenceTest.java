@@ -1,5 +1,6 @@
 /* Test class HolonomicRecurrence, determine init terms, run backwards
  * @(#) $Id$
+ * 2019-12-12: -p polylist -i initterms
  * 2019-12-08: Georg Fischer
  */
 package irvine.test;
@@ -30,7 +31,7 @@ import irvine.oeis.HolonomicRecurrence;
  * <code>a[n]</code> is the next term to be computed.
  * The recurrence equation may have a term <code>P[0]</code> which is independent
  * of any sequence term.
- * This class runs {@link HolonomicRecurrence} 
+ * This class runs {@link HolonomicRecurrence}
  * <ul>
  * <li>with parameter lists read from a file,</li>
  * <li>for the determination of the necessary initial terms,</li>
@@ -67,7 +68,7 @@ public class HolonomicRecurrenceTest {
 
   /** Current index for {@link #parms} */
   private int iparm;
-  
+
   /** Instance to be tested. */
   private HolonomicRecurrence mHolRec;
 
@@ -78,7 +79,7 @@ public class HolonomicRecurrenceTest {
     mHolRec = new HolonomicRecurrence(0, "[0,1,1,-1]" /* Fibonacci */, "[0,1]", 0);
   }
 
-//  /** 
+//  /**
 //   * Evaluate the recurrence and gets a list of terms.
 //   * @param holRec instance to be reversed
 //   * @return a call to RecurrenceTable.
@@ -99,7 +100,7 @@ public class HolonomicRecurrenceTest {
 //      result.append("]=");
 //      result.append(mInitTerms[ind]);
 //    } // for ind - polynomials
-//    
+//
 //    result.append("=0, ");
 //    for (ind = 0; ind < mInitTerms.size(); ind ++) { // initial terms
 //      result.append(",a[");
@@ -115,8 +116,8 @@ public class HolonomicRecurrenceTest {
 //    return result.toString();
 //  } // getMathematica
 
-  /** 
-   * Reverse <code>this</code> recurrence 
+  /**
+   * Reverse <code>this</code> recurrence
    * @param holRec instance to be reversed
    * @return a new HolonomicRecurrence which will run backwards
    */
@@ -128,7 +129,7 @@ public class HolonomicRecurrenceTest {
     for (ind = polyList.size() - 1;  ind >= 1; ind --) { // polynomials
       rPolyList.add(polyList.get(ind));
     } // for ind - polynomials
-    
+
     Z[] initTerms = holRec.getInitTerms();
     Z[] rInitTerms = new Z[initTerms.length];
     int rind = 0;
@@ -138,7 +139,7 @@ public class HolonomicRecurrenceTest {
     return new HolonomicRecurrence(holRec.getOffset(), rPolyList, rInitTerms, holRec.getDistance());
   } // reverse
 
-  /** 
+  /**
    * Gets a String representation
    * of the coefficient polynomials.
    * @param holRec instance to be evaluated
@@ -149,9 +150,9 @@ public class HolonomicRecurrenceTest {
     ArrayList<Z[]> polyList = holRec.getPolyList();
     for (int i = 0; i < polyList.size(); i ++) { // polynomials
       Z[] poly = polyList.get(i);
-      result.append(i == 0 ? '[' : ',');     
+      result.append(i == 0 ? '[' : ',');
       for (int j = 0; j < poly.length; j ++) {
-        result.append(j == 0 ? '[' : ',');     
+        result.append(j == 0 ? '[' : ',');
         result.append(poly[j].toString());
       } // for j
       result.append(']');
@@ -160,7 +161,7 @@ public class HolonomicRecurrenceTest {
     return result.toString();
   } // getPolyList
 
-  /** 
+  /**
    * Gets a String representation
    * of the initial terms.
    * @param holRec instance to be evaluated
@@ -170,15 +171,15 @@ public class HolonomicRecurrenceTest {
     StringBuffer result = new StringBuffer(256);
     Z[] initTerms = holRec.getInitTerms();
     for (int j = 0; j < initTerms.length; j ++) {
-      result.append(j == 0 ? '[' : ',');     
+      result.append(j == 0 ? '[' : ',');
       result.append(initTerms[j].toString());
     } // for j
     result.append(']');
     return result.toString();
   } // getInitTerms
 
-  /** 
-   * Evaluate a HolonomicRecurrence and gets a list 
+  /**
+   * Evaluate a HolonomicRecurrence and gets a list
    * 22of the resulting data terms.
    * @param holRec instance to be evaluated
    * @return a list of terms of the form "0,1,1,2,3,5,8".
@@ -202,8 +203,8 @@ public class HolonomicRecurrenceTest {
     return result.toString();
   } // getDataList
 
-  /** 
-   * Process one input line, and determine 
+  /**
+   * Process one input line, and determine
    * whether it should be written to the output.
    */
   private void processRecord() {
@@ -222,47 +223,49 @@ public class HolonomicRecurrenceTest {
     } catch (Exception exc) {
     }
     mHolRec = new HolonomicRecurrence(mOffset, mPolyList, mInitTerms, mNDist); // instance to be tested
-    
+
     if (false) {
     } else if (callCode.startsWith("holos")) { // getTermList
-      System.out.println(aseqno + "\t" + callCode + "1" + "\t" + mOffset 
-          + "\t" + getDataList(mHolRec));
-    
+      System.out.println(aseqno + "\t" + callCode + "1" + "\t" + mOffset + "\t" + getDataList(mHolRec));
+      /*
+      System.out.println(aseqno + "\t" + "--------"); // will remain there even after sort
+      */
     } else if (callCode.startsWith("holor")) { // getTermList(reverse)
       HolonomicRecurrence rHolRec = reverse(mHolRec);
-      parms[6] = ""; // clear name
       parms[3] = getPolyList (rHolRec);
       parms[4] = getInitTerms(rHolRec);
       reproduce(6);
       System.out.println(aseqno + "\t" + callCode + "1" + "\t" + mOffset + "\t" + getDataList(rHolRec));
-      System.out.println(aseqno + "\t" + "--------"); // will remain there even after sort
-    
+      System.out.println(aseqno + "\t" + "========"); // will remain there even after sort
+
     } else {
       reproduce();
       System.out.println(aseqno + "\t" + "unknown callcode \"" + callCode + "\"");
     } // switch callCode
   } // processRecord
 
-  /** 
+  /**
    * Reproduces the record with the (maybe modified) parameters.
    */
   protected void reproduce() {
-  	reproduce(parms.length);
+    reproduce(parms.length);
   } // reproduce
 
-  /** 
+  /**
    * Reproduces part of the the record with the (maybe modified) parameters.
    * @param num print only so many parameters.
    */
   protected void reproduce(int num) {
-    for (int j = 0; j < num; j ++) {
+    int j = 0;
+    while (j < num && j < parms.length) {
       System.out.print(j == 0 ? "" : "\t");
       System.out.print(parms[j]);
+      j ++;
     } // for j
     System.out.println();
   } // reproduce(int)
 
-  /** 
+  /**
    * Filters a file and writes the modified output lines.
    * @param fileName name of the input file, or "-" for STDIN
    */
@@ -301,13 +304,15 @@ public class HolonomicRecurrenceTest {
     } // try
   } // processFile
 
-  /** 
+  /**
    * Main method, filters a file and writes the copy to STDOUT.
-   * @param args command line arguments: 
+   * @param args command line arguments:
    * <ul>
    * <li>-d level debugging level (default 0=none, 1=some, 2=more)</li>
    * <li>-f filename input file or "-" or none for STDIN</li>
+   * <li>-i initTerms initial terms</li>
    * <li>-n numTerms number of terms to be computed (default: 16)</li>
+   * <li>-p polyList list of vectors for coefficient polynomials in n</li>
    * </ul>
    */
   public static void main(String[] args) {
@@ -316,6 +321,8 @@ public class HolonomicRecurrenceTest {
     holTest.numTerms = 16;
     holTest.mOffset  = 0;
     String fileName = "-"; // assume STDIN
+    String polyList = null;
+    String initTerms = null;
     while (iarg < args.length) { // consume all arguments
       String opt = args[iarg ++];
       if (false) {
@@ -327,16 +334,26 @@ public class HolonomicRecurrenceTest {
         }
       } else if (opt.equals    ("-f")     ) {
         fileName = args[iarg ++];
+      } else if (opt.equals    ("-i")     ) {
+        initTerms = args[iarg ++];
       } else if (opt.equals    ("-n")     ) {
         try {
             holTest.numTerms = Integer.parseInt(args[iarg ++]);
         } catch (Exception exc) { // take default
         }
+      } else if (opt.equals    ("-p")     ) {
+        polyList = args[iarg ++];
+
       } else {
         System.err.println("??? invalid option: \"" + opt + "\"");
       }
     } // while args
-    holTest.processFile(fileName);
+    if (polyList != null) {
+      holTest.mHolRec = new HolonomicRecurrence(0, polyList, initTerms, 0);
+      System.out.println(holTest.getDataList(holTest.mHolRec));
+    } else {
+      holTest.processFile(fileName);
+    }
   } // main
 
 } // HolonomicRecurrenceTest
