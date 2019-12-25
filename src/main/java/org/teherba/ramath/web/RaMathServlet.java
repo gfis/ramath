@@ -1,5 +1,6 @@
 /*  RaMathServlet.java - Rational and Symbolic Mathematics
  *  @(#) $Id: RaMathServlet.java 199 2009-07-13 20:16:23Z gfis $
+ *  2019-12-22: 2nd result line with mode=0=normal
  *  2017-05-28: javadoc 1.8
  *  2017-01-03: moved to subpackage web
  *  2016-08-28: remove JSPs
@@ -142,7 +143,7 @@ public class RaMathServlet extends HttpServlet {
                         rset.deflateIt();
                     }
                     form2  =  rset.toString(mode);
-                    form2c =  rset.toString(mode + 1) + "<br />" + rset.toString(mode - 1);
+                    form2c =  rset.toString(mode + 1) + "<br />" + rset.toString(0);
                     (new IndexPage    ()).dialog(request, response, basePage, language, area, opt, form1, form2, form2c, rmap);
                 } else { // invalid area
                     basePage.writeMessage(request, response, language, new String[] { "401", "area", area });

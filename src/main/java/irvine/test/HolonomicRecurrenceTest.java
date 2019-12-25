@@ -151,7 +151,7 @@ public class HolonomicRecurrenceTest {
    * @return a new HolonomicRecurrence which will run backwards
    */
   private static HolonomicRecurrence reverse(HolonomicRecurrence holRec) {
-	return reverse(holRec, holRec.getInitTerms().length); 
+    return reverse(holRec, holRec.getInitTerms().length); 
   } // reverse
 
   /**
@@ -187,10 +187,18 @@ public class HolonomicRecurrenceTest {
   private String getInitString(HolonomicRecurrence holRec, int offset, int len) {
     StringBuffer result = new StringBuffer(256);
     Z[] initTerms = holRec.getInitTerms();
-    for (int j = 0; j < len; j ++) {
-      result.append(j == 0 ? '[' : ',');
-      result.append(initTerms[offset + j].toString());
-    } // for j
+    int j = 0; 
+    while (j < len) {
+      if (offset + j < initTerms.length) {
+        result.append(j == 0 ? '[' : ',');
+        result.append(initTerms[offset + j].toString());
+      } else {
+        // System.out.println("# signature longer (" + String.valueOf(offset + j) + ") than initTerms (" + initTerms.length + ")");
+        result.append(",??");
+        j = len; // break loop
+      }
+      j ++;
+    } // while j
     result.append(']');
     return result.toString();
   } // getInitString(int, int)
@@ -389,32 +397,34 @@ public class HolonomicRecurrenceTest {
     HolonomicRecurrenceTest holTest = new HolonomicRecurrenceTest();
     holTest.numTerms = 16;
     holTest.mOffset  = 0;
-    String fileName = "-"; // assume STDIN
-    String polyList = null;
+    String fileName  = "-"; // assume STDIN
+    String polyList  = null;
     String initTerms = null;
     while (iarg < args.length) { // consume all arguments
       String opt = args[iarg ++];
-      if (false) {
-      } else if (opt.equals    ("-d")     ) {
-        sDebug = 1;
-        try {
-            sDebug = Integer.parseInt(args[iarg ++]);
-        } catch (Exception exc) { // take default
+      try {
+        if (false) {
+        } else if (opt.equals    ("-d")     ) {
+          sDebug = 1;
+          try {
+              sDebug = Integer.parseInt(args[iarg ++]);
+          } catch (Exception exc) { // take default
+          }
+        } else if (opt.equals    ("-f")     ) {
+          fileName = args[iarg ++];
+        } else if (opt.equals    ("-i")     ) {
+          initTerms = args[iarg ++];
+        } else if (opt.equals    ("-n")     ) {
+          holTest.numTerms = Integer.parseInt(args[iarg ++]);
+        } else if (opt.equals    ("-o")     ) {
+          holTest.mOffset  = Integer.parseInt(args[iarg ++]);
+        } else if (opt.equals    ("-p")     ) {
+          polyList = args[iarg ++];
+  
+        } else {
+          System.err.println("??? invalid option: \"" + opt + "\"");
         }
-      } else if (opt.equals    ("-f")     ) {
-        fileName = args[iarg ++];
-      } else if (opt.equals    ("-i")     ) {
-        initTerms = args[iarg ++];
-      } else if (opt.equals    ("-n")     ) {
-        try {
-            holTest.numTerms = Integer.parseInt(args[iarg ++]);
-        } catch (Exception exc) { // take default
-        }
-      } else if (opt.equals    ("-p")     ) {
-        polyList = args[iarg ++];
-
-      } else {
-        System.err.println("??? invalid option: \"" + opt + "\"");
+      } catch (Exception exc) { // take default
       }
     } // while args
     if (polyList != null) {
