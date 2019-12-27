@@ -207,7 +207,7 @@ public class PolyFraction
                         break;
                 } // switch ch
             } // while ipfix
-            result = pfrStack.pop();
+            result = pfrStack.pop().shorten();
         } catch (java.util.EmptyStackException exc) {
             result = null;
         }

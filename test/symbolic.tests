@@ -180,6 +180,13 @@ CALL PolyFraction -f $(DATA)
 TEST PF8 PolyFraction parse and shorten
 CALL PolyFraction  -d 1 -parse "(32x+64x*y)/(32*y - 128*x*y)"
 
+TEST PF9 PolyFraction parse and shorten, A055536
+CALL PolyFraction  -d 1 -parse "(1/(1-x)^8-3/(1-x)^4/(1-x^2)^2+2/(1-x)^2/(1-x^3)^2)/6"
+
+# A055536:  LinearRecurrence[{4, -4, -2, 2, 4, 3, -12, 3, 4, 2, -2, -4, 4, -1}, {1, 8, 29, 82, 198, 426, 841, 1556, 2726, 4568, 7373, 11522, 17507, 25958},16] 
+# x='x+O('x^200); Vec((1/(1-x)^8-3/(1-x)^4/(1-x^2)^2+2/(1-x)^2/(1-x^3)^2)/6)
+# A055536[1000]: 34004359531403908, 34242154383851956}
+
 TEST PFT1 Expansion of Pascal's triangle A007318
 CALL PolyFraction -trian 32 1 1-x-x*y
 
