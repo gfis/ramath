@@ -709,7 +709,7 @@ public class PolyFraction
                     System.out.println(pfr1.toString());
                     System.out.println("vectors: "      + pfr1.toVectors());
                     System.out.println("coefficients: " + pfr1.getSeriesCoefficients(numTerms));
-                    // -coeff
+                    // -coxg
 
                 } else if (opt.equals    ("-f")     ) {
                     String fileName = args[iarg ++];

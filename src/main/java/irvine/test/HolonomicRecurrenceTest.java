@@ -265,6 +265,28 @@ public class HolonomicRecurrenceTest {
     return result.substring(1); // without leading comma
   } // getDataList
 
+/*
+  public CoxeterSequence(final int pwr, final Z c1, final Z c2) {
+    super();
+    mNum = new Z[pwr + 1];
+    mDen = new Z[pwr + 1];
+    mNum[pwr] = Z.ONE;
+    mNum[0] = Z.ONE;
+    mDen[pwr] = c1;
+    mDen[0] = Z.ONE;
+    int ipwr = pwr - 1;
+    while (ipwr > 0) {
+      mNum[ipwr] = Z.TWO;
+      mDen[ipwr] = c2;
+      --ipwr;
+    } // while ipwr
+  }
+
+  public CoxeterSequence(final int pwr, final int ngen) {
+    this(pwr, Z.valueOf(ngen - 2).multiply(ngen - 1).divide2(), Z.valueOf(2 - ngen));
+  }
+*/
+
   /**
    * Compute the initial terms of an ordinary (rational) generating function.
    * @param nums numerator   as a comma separated list
@@ -327,7 +349,7 @@ public class HolonomicRecurrenceTest {
    * @param offset2 index of first term with abs() &gt;= 2, counted from 1
    * @return comma separated list with the (maybe truncated) initial terms
    */
-  public String adjustOffset2(String[] terms, int offset2) {
+  public String adjustToOffset2(String[] terms, int offset2) {
     StringBuffer result = new StringBuffer(256);
     int count2 = 0; // count (starting from 1) of first term with abs() >= 2; 0 if not yet determined
     int iterm  = 0; // index of term to be investigated
@@ -341,20 +363,31 @@ public class HolonomicRecurrenceTest {
       result.append(term);
       iterm ++;
     } // while iterm
+    if (offset2 == 1) { // either first abs() >= 2 or all abs() < 2
+      if (count2 == 0) { // all computed are abs() < 2
+        offset2 = 0;
+      }
+    }
+    if (count2 == 0) { // cannot adjust
+      count2 = offset2;
+    }
+    
+    int iadj = count2; // loop counter
     int start = 1; // skip over leading comma
     if (count2 > offset2) { // needs adjustment - remove count2 - offset2 leading zeroes
-      int iadj = count2;
       while (iadj > offset2) {
         start = result.indexOf(",", start) + 1; // skip behind next comma
         iadj --;
-      }
+      } // while iadj --
       if (sDebug >= 1) {
         System.out.println("# " + aseqno + " adjust count2=" + count2 + " > offset2=" + offset2
             + ", start=" + start + ", result=\"" + result.toString() + "\"");
       }
     } else if (count2 < offset2) { // strange - some leading zeroes are missing?
-      result.insert(0, ",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"
-          .substring(0, Math.min(64, (offset2 - count2) * 2)));
+      while (iadj < offset2) {
+        result.insert(0, ",0");
+        iadj ++;
+      } // while iadj ++
       if (sDebug >= 1) {
         System.out.println("# " + aseqno + " adjust count2=" + count2 + " < offset2=" + offset2
             + ", start=" + start + ", result=\"" + result.toString() + "\"");
@@ -405,7 +438,7 @@ public class HolonomicRecurrenceTest {
       parms[iparm ++] = String.valueOf(mOffset1);
       parms[iparm ++] = reverse("[" + mPolyString + ",0]");
       String[] terms  = computeInitialTerms(mInitString, mPolyString); // nums, dens
-      parms[iparm ++] = "[" + adjustOffset2(terms, offset2) + "]"; // nums. densgetInitString (mHolRec);
+      parms[iparm ++] = "[" + adjustToOffset2(terms, offset2) + "]"; // nums. densgetInitString (mHolRec);
       parms[iparm ++] = "0";
       reproduce();
 
