@@ -1011,6 +1011,20 @@ public class Polynomial implements Cloneable, Serializable {
         return result;
     } // hasSolution
 
+    /** Extracts rational roots from <em>this</em> univariate Polynomial
+     *  @return a {@link RelationSet} consisting - as first element - 
+     *  of the remaining Polynomial which has only irrational roots, 
+     *  followed by the factor expressions of the form <code>c1*x - c2 = 0</code>.
+     */
+/* nyi
+    public RelationSet extractRationalRoots() {
+        RelationSet result = new RelationSet(this.clone());
+        if (this.isUniVariate()) {
+            VariableMap vmap1 = this.getVariableMap();
+        } // univeriate
+        return result;
+    } // extractRationalRoots
+*/
     //-----------------------------------------------
 
     /** Gets a map from all variable names (key) to <em>null</em> (value).
@@ -1365,7 +1379,7 @@ public class Polynomial implements Cloneable, Serializable {
     } // getRest
 
     /** Extracts, from <em>this</em> {@link Polynomial},
-     *  a new {@link RelationSet} with a Polynomial
+     *  a new {@link RelationSet} with one Polynomial
      *  for each power of the parameter variable.
      *  These Polynomials gather the factors of the variable's power.
      *  The indexes of the resulting RelationSet correspond with those powers.
@@ -1387,27 +1401,31 @@ public class Polynomial implements Cloneable, Serializable {
     } // getPowerFactors
 
     /** Extracts, from <em>this</em> univariate {@link Polynomial},
-     *  a {@link Vector} of the coefficients of the variables' powers
+     *  a {@link BigVector} of the coefficients of the variables' powers
      *  in increasing order, with zeroes interspersed for non-existing exponents.
      *  @return Vector of coefficients, for example "[1, -1, -1]" for "1-x-x^2".
      */
     public BigVector getBigVector() {
-        String varName = this.getVariableMap().getFirstName();
-        BigVector result = new BigVector(this.maxDegree() + 1);
-        int exp1 = 0;
-        Iterator <Signature> titer = this.monomials.keySet().iterator();
-        while (titer.hasNext()) { // over all monomials
-            Monomial mono1 = this.monomials.get(titer.next());
-            exp1 = mono1.getExponent(varName);
-            result.set(exp1, mono1.getCoefficient());
-        } // while titer
-        exp1 = result.size() - 1;
-        while (exp1 >= 0) {
-            if (result.getBig(exp1) == null) {
-                result.set(exp1, BigInteger.ZERO);
-            }
-            exp1 --;
-        }
+        VariableMap vmap = this.getVariableMap();
+        BigVector result = null; // assume multivariate
+        if (vmap.size() <= 1) { // is univariate
+            String varName = vmap.getFirstName();
+            result = new BigVector(this.maxDegree() + 1);
+            int exp1 = 0;
+            Iterator <Signature> titer = this.monomials.keySet().iterator();
+            while (titer.hasNext()) { // over all monomials
+                Monomial mono1 = this.monomials.get(titer.next());
+                exp1 = mono1.getExponent(varName);
+                result.set(exp1, mono1.getCoefficient());
+            } // while titer
+            exp1 = result.size() - 1;
+            while (exp1 >= 0) { // over uncovered exponents
+                if (result.getBig(exp1) == null) {
+                    result.set(exp1, BigInteger.ZERO);
+                }
+                exp1 --;
+            } // while uncovered
+        } // if univariate
         return result;
     } // getBigVector
 
@@ -2464,6 +2482,7 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=&gt; - 2*y + 4*z
 
                     } else if (opt.startsWith("-vect")) { // getBigVector
                         poly1 = Polynomial.parse(args[iarg ++]);
+                        System.out.println(poly1.toString());
                         System.out.println(poly1.getBigVector().toString());
                         // -vect
 

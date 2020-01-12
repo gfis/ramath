@@ -296,10 +296,11 @@ public class ShuntingYard {
                             Matcher matcher = functionPattern.matcher(name);
                             if (matcher.matches()) { // is a function name
                                 name += "()";
+                                postfixAppend(name);
                             } else { // is no function name - insert "*"
+                                postfixAppend(name);
                                 popLowerSameAndPush("p*");
                             }
-                            postfixAppend(name);
                             readOff = false;
                             state = State.IN_START;
                         } else {

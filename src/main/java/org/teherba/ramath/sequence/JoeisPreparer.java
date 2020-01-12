@@ -77,8 +77,40 @@ public class JoeisPreparer
         log = Logger.getLogger(JoeisPreparer.class.getName());
     } // Constructor()
 
+    /**
+     * Reproduces the record with the (maybe modified) parameters.
+     */
+    protected void reproduce() {
+        reproduce(parms.length);
+    } // reproduce
+    
+    /**
+     * Reproduces part of the the record with the (maybe modified) parameters.
+     * @param num print only so many parameters.
+     */
+    protected void reproduce(int num) {
+        int j = 0;
+        while (j < num && j < parms.length) {
+            System.out.print(j == 0 ? "" : "\t");
+            System.out.print(parms[j]);
+            j ++;
+        } // for j
+        System.out.println();
+    } // reproduce(int)
+
     /** Process one input line, and determine 
      *  whether it should be written to the output.
+     *  The following <code>callCode</code>s are processed:
+     *  <ul>
+     *  <li><code>coxf</code>  </li>
+     *  <li><code>delta</code> </li>
+     *  <li><code>fract1</code></li>
+     *  <li><code>fract2</code></li>
+     *  <li><code>fract</code></li>
+     *  <li><code>rioarr</code></li>
+     *  <li><code>sage</code></li>
+     *  </ul>
+     *  The following parameters are already consumed: <em>aseqno, callCode, offset1</em>.
      */
     private void processRecord() {
         PolyFraction pfr1 = null;
@@ -98,7 +130,7 @@ public class JoeisPreparer
 
         } else if (callCode.equals("delta")) {
             System.out.print(aseqno + "\tdelta1\t" + offset1 + "\t");
-            pfr1 = PolyFraction.parse(parms[iparm]).normalize();
+            pfr1 = PolyFraction.parse(parms[iparm ++]).normalize();
             System.out.println(pfr1.toString());
             System.out.print(aseqno + "\tdelta2\t" + offset1 + "\t");
             System.out.println(pfr1.getCoefficientTriangle(numTerms
@@ -107,20 +139,20 @@ public class JoeisPreparer
 
         } else if (callCode.equals("fract1")) {
             pfr1 = PolyFraction.parse(parms[iparm]).normalize();
-            if (pfr1 != null) {
-                System.out.println(aseqno + "\t" + "orgf"
-                        + "\t" + offset1
-                        + "\t" + pfr1.toVectors()
-                                .replaceAll("\\],\\[", "\t")
-                                .replaceAll("[\\[\\]]", "")
-                        );
-                System.out.println(aseqno + "\t" + "coef"
-                        + "\t" + pfr1.getSeriesCoefficients(numTerms)
-                                .toString().replaceAll("[\\[\\]]", "")
-                        );
-            }
+            if (pfr1 != null) { // parse ok
+                String vects = pfr1.toVectors();
+                if (vects != null) { // is not multivariate
+                    parms[1] = "orgf";
+                    parms[iparm] = vects.replaceAll("\\],\\[", "\t").replaceAll("[\\[\\]]", "");
+                    reproduce();
+                    System.out.println(aseqno + "\t" + "coef"
+                            + "\t" + pfr1.getSeriesCoefficients(numTerms)
+                                    .toString().replaceAll("[\\[\\]]", "")
+                            );
+                } // not multivariate
+            } // parse ok
         } else if (callCode.equals("fract2")) {
-            pfr1 = PolyFraction.parse(parms[iparm]).normalize();
+            pfr1 = PolyFraction.parse(parms[iparm ++]).normalize();
             if (pfr1 != null) {
                 String[] vars = pfr1.getVariables();
                 System.out.println(aseqno + "\t" + "tria"
@@ -136,13 +168,6 @@ public class JoeisPreparer
                         + "\t??" + parms[iparm ++]
                         );
  
-        } else if (callCode.equals("rioarr")) {
-            System.out.print(aseqno + "\t");
-            pfr1 = PolyFraction.parse(parms[iparm]).normalize();
-            System.out.println(pfr1.getCoefficientTriangle(numTerms
-                    , new String[] { "x", "y" })
-                    .toString().replaceAll("[\\[\\]]", ""));
-
         } else if (callCode.equals("holo")) { // OEIS-mat/linrec/makefile.rectab
             parms[1] = "holos";
             try {
@@ -152,6 +177,13 @@ public class JoeisPreparer
             } catch (Exception exc) {
             }
             
+        } else if (callCode.equals("rioarr")) {
+            System.out.print(aseqno + "\t");
+            pfr1 = PolyFraction.parse(parms[iparm ++]).normalize();
+            System.out.println(pfr1.getCoefficientTriangle(numTerms
+                    , new String[] { "x", "y" })
+                    .toString().replaceAll("[\\[\\]]", ""));
+
         } else if (callCode.equals("sage")) {
               iparm --; // no offset1
             Polynomial num = Polynomial.parse(parms[iparm ++]);
@@ -169,12 +201,6 @@ public class JoeisPreparer
 
         } // switch callCode
     } // processRecord
-
-    /** Reproduces the record with the (maybe modified) parameters.
-     */
-    protected void reproduce() {
-         System.out.println(String.join("\t", parms));
-    } // reproduce
 
     /** Filters a file and writes the modified output lines.
      *  @param fileName name of the input file, or "-" for STDIN

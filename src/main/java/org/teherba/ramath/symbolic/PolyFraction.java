@@ -331,12 +331,15 @@ public class PolyFraction
      *  For multivariate Polynomials, the result is somewhat meaningless.
      *  @param mode 0 = normal, 1 = full (for substitution), 2 = nice / human legible,
      *  3 = with prime factors
-     *  @return "[2, -1],[1, -1, -1]" for example
+     *  @return "[2, -1],[1, -1, -1]" for example, 
+     *  or <em>null/em> if one of the Polynomials is multivariate
      */
     public String toVectors() {
         BigVector num = polynomials[0].getBigVector();
         BigVector den = polynomials[1].getBigVector();
-        return num.toString() + "," + den.toString();
+        return num != null && den != null 
+                ? num.toString() + "," + den.toString()
+                : null;
     } // toVectors(int)
 
     //----------------------
@@ -769,16 +772,21 @@ public class PolyFraction
                                     if (pfr1 == null) {
                                         // ignore, bad syntax
                                     } else if (mode.equals("fract1")) {
-                                        System.out.println(aseqno + "\t" + "orgf"
-                                                + "\t" + offset1
-                                                + "\t" + pfr1.toVectors()
-                                                        .replaceAll("\\],\\[", "\t")
-                                                        .replaceAll("[\\[\\]]", "")
-                                                );
-                                        System.out.println(aseqno + "\t" + "coef"
-                                                + "\t" + pfr1.getSeriesCoefficients(numTerms)
-                                                        .toString().replaceAll("[\\[\\]]", "")
-                                                );
+                                        String vects = pfr1.toVectors();
+                                        if (vects != null) {
+                                            System.out.println(aseqno + "\t" + "orgf"
+                                                    + "\t" + offset1
+                                                    + "\t" + vects
+                                                            .replaceAll("\\],\\[", "\t")
+                                                            .replaceAll("[\\[\\]]", "")
+                                                    );
+                                            System.out.println(aseqno + "\t" + "coef"
+                                                    + "\t" + pfr1.getSeriesCoefficients(numTerms)
+                                                            .toString().replaceAll("[\\[\\]]", "")
+                                                    );
+                                        } else { 
+                                            System.out.println("PolyFraction is not univariate");
+                                        }
                                     } else if (mode.equals("fract2")) {
                                         String[] vars = pfr1.getVariables();
                                         System.out.println(aseqno + "\t" + "tria"

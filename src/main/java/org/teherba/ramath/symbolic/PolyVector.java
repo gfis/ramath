@@ -56,7 +56,7 @@ public class PolyVector implements Cloneable, Serializable {
     /*-------------- class properties -----------------------------*/
 
     /** a one-dimensional array of {@link Polynomial}s */
-    protected /*Type*/Polynomial[] vector;
+    protected Polynomial[] vector;
     /** number of elements in <em>vector</em> */
     protected int vecLen;
 
@@ -73,7 +73,7 @@ public class PolyVector implements Cloneable, Serializable {
      */
     public PolyVector(int numElems) {
         this.vecLen = numElems;
-        this.vector = new /*Type*/Polynomial[vecLen];
+        this.vector = new Polynomial[vecLen];
     } // Constructor(int)
 
     /** lowercase letters for variable generation */
@@ -92,7 +92,7 @@ public class PolyVector implements Cloneable, Serializable {
             ipos = 0; // assume "a"
         }
         for (int ivect = 0; ivect < this.vecLen && ipos + ivect < letters.length(); ivect ++) {
-            this.vector[ivect] = new /*Type*/Polynomial(letters.substring(ipos + ivect, ipos + ivect + 1));
+            this.vector[ivect] = new Polynomial(letters.substring(ipos + ivect, ipos + ivect + 1));
         } // for ivect
     } // Constructor(int, String)
 
@@ -102,7 +102,7 @@ public class PolyVector implements Cloneable, Serializable {
     public PolyVector(int[] tuple) {
         this(tuple.length);
         for (int itup = 0; itup < this.vecLen; itup ++) {
-            this.vector[itup] = new /*Type*/Polynomial(String.valueOf(tuple[itup]));
+            this.vector[itup] = new Polynomial(String.valueOf(tuple[itup]));
         } // for itup
     } // Constructor(int[])
 
@@ -112,7 +112,7 @@ public class PolyVector implements Cloneable, Serializable {
     public PolyVector(Vector vect2) {
         this(vect2.size());
         for (int ivect = 0; ivect < this.vecLen; ivect ++) {
-            this.vector[ivect] = new /*Type*/Polynomial(String.valueOf(vect2.get(ivect)));
+            this.vector[ivect] = new Polynomial(String.valueOf(vect2.get(ivect)));
         } // for ivect
     } // Constructor(Vector)
 
@@ -149,7 +149,7 @@ public class PolyVector implements Cloneable, Serializable {
                 .replaceAll("\\=0", "") // from Polynomial.toString(1)
                 .split("[\\,\\;]");
         this.vecLen = values.length;
-        this.vector = new /*Type*/Polynomial[vecLen];
+        this.vector = new Polynomial[vecLen];
         int ivect = 0;
         while (ivect < this.vecLen) {
             this.vector[ivect] = new Polynomial(values[ivect]);
@@ -163,7 +163,7 @@ public class PolyVector implements Cloneable, Serializable {
     public PolyVector clone() {
         PolyVector result = new PolyVector();
         result.vecLen = this.vecLen;
-        result.vector = new /*Type*/Polynomial[vecLen];
+        result.vector = new Polynomial[vecLen];
         for (int ielem = 0; ielem < this.vecLen; ielem ++) {
             result.vector[ielem] = this.vector[ielem];
         } // for ielem
@@ -215,14 +215,19 @@ public class PolyVector implements Cloneable, Serializable {
         return result;
     } // equals
 
-    /** Returns an array of vectors with increasing exponents
-     *  @return a one-dimensional array of arrays of varying length
+    /** Returns an array of vectors with increasing exponents 
+     *  @return a one-dimensional array of arrays of varying length 
+     *  if the vector contains only one variable, or <em>null</em> otherwise.
      */
     public BigMatrix getBigMatrix() {
-    	BigMatrix result = new BigMatrix();
-        for (int irow = 0; irow < size(); irow ++) {
-            result.setRow(irow, this.get(irow).getBigVector());
-        } // for irow
+        BigMatrix result = null; // assume multivariate
+        VariableMap vmap = this.getVariableMap();
+        if (vmap.size() <= 1) { // is univariate
+            result = new BigMatrix();
+            for (int irow = 0; irow < size(); irow ++) {
+                result.setRow(irow, this.get(irow).getBigVector());
+            } // for irow
+        } // univariate
         return result;
     } // getBigMatrix()
 
@@ -320,7 +325,7 @@ public class PolyVector implements Cloneable, Serializable {
      *  @return map of variable names mapped to <em>null</em>
      */
     public VariableMap getVariableMap() {
-    	VariableMap result = new VariableMap();
+        VariableMap result = new VariableMap();
         for (int kvec = 0; kvec < this.vecLen; kvec ++) {
             result.addTo(this.vector[kvec].getVariableMap());
         } // for kvec

@@ -401,11 +401,12 @@ public class HolonomicRecurrenceTest {
    * whether it should be written to the output.
    * The following <code>callCode</code>s are processed:
    * <ul>
-   * <li><code>holgf</code> - GeneratingFunction parameters -&gt; HolonomicRecurrence
+   * <li><code>holgf</code> - GeneratingFunction parameters -&gt; HolonomicRecurrence</li>
    * <li><code>holog</code> - determine the prefixed initial terms</li>
    * <li><code>holor</code> - try to evaluate the recurrence backwards</li>
    * <li><code>holos</code> - evaluate the recurrence <code>numTerms</code> times</li>
    * </ul>
+   * The following parameters are already consumed: <em>aseqno, callCode, offset</em>.
    */
   private void processRecord() {
     boolean result = false;
