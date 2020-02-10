@@ -138,8 +138,9 @@ public class JoeisPreparer
                     .toString().replaceAll("[\\[\\]]", ""));
 
         } else if (callCode.equals("fract1")) {
-            pfr1 = PolyFraction.parse(parms[iparm]).normalize();
+            pfr1 = PolyFraction.parse(parms[iparm]);
             if (pfr1 != null) { // parse ok
+            	pfr1 = pfr1.normalize();
                 String vects = pfr1.toVectors();
                 if (vects != null) { // is not multivariate
                     parms[1] = "orgf";
