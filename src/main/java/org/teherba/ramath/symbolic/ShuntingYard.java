@@ -58,12 +58,12 @@ public class ShuntingYard {
     /** state of the finite automaton */
     private enum State
             { IN_START      // at the beginning of the input string
-            , IN_NAME       // after the first letter of a name
-            , IN_NUMBER     // after the first digit of a number
-            , IN_EXPONENT   // after the first superscripted digit
-            , IN_OPERATOR   // after first character of a relational or boolean operator, or after '%'
+            , IN_VNAME      // after the first letter of a name
+            , IN_NUMBR      // after the first digit of a number
+            , IN_EXPON      // after the first superscripted digit
+            , IN_OPTOR      // after first character of a relational or boolean operator, or after '%'
             , IN_CLOSE      // after ')' - eventually insert '*'
-            , IN_COMMENT    // after '#' - ignore all up to "\n" or end of string
+            , IN_COMMT      // after '#' - ignore all up to "\n" or end of string
             };
 
     /** pushdown stack for operators and parentheses */
@@ -82,7 +82,7 @@ public class ShuntingYard {
     } // no-args Constructor
 
     /** Constructor with function pattern
-     *  @param funcPat a regular expression denoting the names 
+     *  @param funcPat a regular expression denoting the names
      *  for which no "*" is inserted before a "(".
      */
     public ShuntingYard(String funcPat) {
@@ -92,14 +92,14 @@ public class ShuntingYard {
     } // Constructor(String)
 
     /** Sets the debugging flag
-     *  @param mode 0=no debugging output, 1=some, 2=more 
+     *  @param mode 0=no debugging output, 1=some, 2=more
      */
     public void setDebug(int mode) {
         debug = mode;
     } // setDebug
 
     /** Sets the function pattern
-     *  @param funcPat a regular expression denoting the names 
+     *  @param funcPat a regular expression denoting the names
      *  for which no "*" is inserted before a "(".
      */
     public void setFunctionPattern(String funcPat) {
@@ -160,7 +160,7 @@ public class ShuntingYard {
      *  </table>
      */
     public ArrayList<String> convertToPostfix(String parmInput) {
-    	String input = "(" + parmInput + ")";
+        String input = "(" + parmInput + ")";
         StringBuffer buffer = new StringBuffer(16); //accumulate variable names, numbers and operators here
         String elem = null; // next element on stack / in postfix list
         char ch = ' ';
@@ -176,6 +176,9 @@ public class ShuntingYard {
             }
             readOff = true;
             if (! Character.isWhitespace(ch)) { // ignore whitespace
+                if (debug >= 2) {
+                    System.out.println("old " + state + "'" + ch + "' \tOS=" + operStack + "\tPF=" + postfix);
+                }
                 switch (state) {
                     case IN_START:
                         switch (ch) {
@@ -188,7 +191,7 @@ public class ShuntingYard {
                         //  case '|':
                                 buffer.setLength(0);
                                 buffer.append(ch);
-                                state = State.IN_OPERATOR;
+                                state = State.IN_OPTOR;
                                 break;
                             case '%':
                                 int ich = 32; // ' '
@@ -233,53 +236,56 @@ public class ShuntingYard {
                                 popLowerSameAndPush("q^");
                                 buffer.setLength(0);
                                 buffer.append('1');
-                                state = State.IN_EXPONENT;
+                                state = State.IN_EXPON;
                                 break;
                             case '²': // '\u00b2', super 2
                                 popLowerSameAndPush("q^");
                                 buffer.setLength(0);
                                 buffer.append('2');
-                                state = State.IN_EXPONENT;
+                                state = State.IN_EXPON;
                                 break;
                             case '³': // '\u00b3', super 3
                                 popLowerSameAndPush("q^");
                                 buffer.setLength(0);
                                 buffer.append('3');
-                                state = State.IN_EXPONENT;
+                                state = State.IN_EXPON;
                                 break;
                             case '(':
                                 pushOper("y("); // higher than all other precedences
                                 break;
                             case ')': // find the corresponding opening parenthesis on the stack
+                                state = State.IN_CLOSE;
                                 busy = true;
                                 while (busy && ! operStack.empty()) {
                                     elem = (String) operStack.pop();
                                     if (elem.charAt(1) == '(') {
                                         busy = false;
+                                        if (elem.charAt(0) == 'z') { // function call
+                                        	postfixAppend("funct");
+                                        } // function call
                                     } else { // other operation
                                         postfixAppend(elem.substring(1));
                                     }
                                 } // while
-                                state = State.IN_CLOSE;
                                 break;
                             case '#':
-                                state = State.IN_COMMENT;
+                                state = State.IN_COMMT;
                                 break;
                             default:
                                 if (false) {
                                 } else if (Character.isJavaIdentifierStart(ch)) {
                                     buffer.setLength(0);
                                     buffer.append(ch);
-                                    state = State.IN_NAME;
+                                    state = State.IN_VNAME;
                                 } else if (ch >= '\u2070' && ch <= '\u2079') {
                                     popLowerSameAndPush("q^");
                                     buffer.setLength(0);
                                     buffer.append(Character.forDigit(ch - 0x2070, 10));
-                                    state = State.IN_EXPONENT;
+                                    state = State.IN_EXPON;
                                 } else if (Character.isDigit(ch)) {
                                     buffer.setLength(0);
                                     buffer.append(ch);
-                                    state = State.IN_NUMBER;
+                                    state = State.IN_NUMBR;
                                 } else { // invalid character
                                     System.err.println("invalid character in expression: " + input.substring(ipos));
                                 }
@@ -287,7 +293,7 @@ public class ShuntingYard {
                         } // switch ch
                         break; // IN_START
 
-                    case IN_NAME:
+                    case IN_VNAME:
                         if (false) {
                         } else if (Character.isJavaIdentifierPart(ch)) {
                             buffer.append(ch);
@@ -297,20 +303,23 @@ public class ShuntingYard {
                             if (matcher.matches()) { // is a function name
                                 name += "()";
                                 postfixAppend(name);
+                                pushOper("z("); // higher than all other precedences
+                                readOff = true;
+                                state = State.IN_START;
                             } else { // is no function name - insert "*"
                                 postfixAppend(name);
                                 popLowerSameAndPush("p*");
+                                readOff = false;
+                                state = State.IN_START;
                             }
-                            readOff = false;
-                            state = State.IN_START;
                         } else {
                             postfixAppend(buffer.toString());
                             readOff = false;
                             state = State.IN_START;
                         }
-                        break; // IN_NAME
+                        break; // IN_VNAME
 
-                    case IN_NUMBER:
+                    case IN_NUMBR:
                         switch (ch) {
                             case '(':
                                 postfixAppend(buffer.toString());
@@ -345,9 +354,9 @@ public class ShuntingYard {
                                 }
                                 break;
                         } // switch ch
-                        break; // IN_NUMBER
+                        break; // IN_NUMBR
 
-                    case IN_EXPONENT: // similiar to, but not identical with IN_NUMBER
+                    case IN_EXPON: // similiar to, but not identical with IN_NUMBR
                         switch (ch) {
                             case '(':
                                 postfixAppend(buffer.toString());
@@ -385,9 +394,9 @@ public class ShuntingYard {
                                 }
                                 break;
                         } // switch ch
-                        break; // IN_NUMBER
+                        break; // IN_NUMBR
 
-                    case IN_OPERATOR:
+                    case IN_OPTOR:
                         String oper = null;
                         switch (ch) {
                             case '<':
@@ -513,7 +522,7 @@ public class ShuntingYard {
                                 break;
                         } // switch 1st ch
                         state = State.IN_START;
-                        break; // IN_OPERATOR
+                        break; // IN_OPTOR
 
                     case IN_CLOSE: // after ')' - eventually insert a '*'
                         if (false) {
@@ -526,12 +535,12 @@ public class ShuntingYard {
                         state = State.IN_START;
                         break; // IN_CLOSE
 
-                    case IN_COMMENT: // after '#' - skip until "\n" or EOS
+                    case IN_COMMT: // after '#' - skip until "\n" or EOS
                         if (false) {
                         } else if (ch == '\n') {
                             state = State.IN_START;
                         }
-                        break; // IN_COMMENT
+                        break; // IN_COMMT
 
                     default: // should never be reached
                         System.err.println("invalid state " + state + " in ShuntingYard.shuntingYardAlgorithm");
@@ -546,8 +555,9 @@ public class ShuntingYard {
             } else {
                 ipos ++; // ignore all whitespace
             }
-            if (debug >= 2) {
-                System.out.println(state + "," + ch + ", \toperStack=" + operStack + ", \tpostfix=" + postfix);
+            if (debug >= 3) {
+                System.out.println("new " + state + "'" + ch + "' \tOS=" + operStack + "\tPF=" + postfix);
+                System.out.println("----------------");
             }
         } // while ipos
 
@@ -565,7 +575,7 @@ public class ShuntingYard {
         }
         return postfix;
     } // convertToPostfix
-    
+
     private static void convertToJOEIS(String fileName) {
         BufferedReader lineReader; // Reader for the input file
         String srcEncoding = "UTF-8"; // Encoding of the input file

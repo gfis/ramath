@@ -17,7 +17,7 @@
  *  2009-10-13, Georg Fischer: copied from Polynomial
  */
 /*
- * Copyright 2009 Dr. Georg Fischer <punctum at punctum dot kom>
+ * Copyright 2009 Dr. Georg Fischer <dr.georg.fischer at gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,8 +32,6 @@
  * limitations under the License.
  */
 package org.teherba.ramath.symbolic;
-import  org.teherba.ramath.symbolic.PolyVector;
-import  org.teherba.ramath.symbolic.RefiningMap;
 import  org.teherba.ramath.util.Dispenser;
 import  org.teherba.ramath.linear.Matrix;
 import  org.teherba.ramath.linear.Vector;
@@ -224,7 +222,7 @@ public class VariableMap extends TreeMap<String, String> implements Cloneable, S
     } // toString
 
     /** Returns a short string representation of the values in the variable map
-     *  as the string representatin of a [@link PolyVector}
+     *  as a comma separated list of values enclosed in square brackets.
      *  @return "[3,4,5]", for example
      */
     public String toVector() {

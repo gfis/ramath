@@ -1,6 +1,7 @@
 /*  Polynomial: a symbolic, multivariate Polynomial with addition, multiplication,
  *  exponentiation, comparision and other operations
  *  @(#) $Id: Polynomial.java 744 2011-07-26 06:29:20Z gfis $
+ *  2020-02-10: parse returns null for bad expressions and funciton calls
  *  2019-06-06: toTriangleList
  *  2019-05-17: PolynomialParser replaced (partly) by ShuntingYard
  *  2019-01-05: toCoefficients
@@ -184,7 +185,7 @@ public class Polynomial implements Cloneable, Serializable {
         return result;
     } // clone
 
-    /** Returns a new Polynomial constructed from a string representation, possibly with an
+    /** Returns a new Polynomial constructed from a String representation, possibly with an
      *  error message inserted at the point where parsing could not proceed.
      *  @param input the input string, with whitespace, for example " + 17*a0^2*a1 + a2^2*a3^3 - 4*b4"
      *  @return a reference to a new Polynomial
@@ -193,21 +194,28 @@ public class Polynomial implements Cloneable, Serializable {
         ShuntingYard shy = new ShuntingYard();
         shy.setDebug(debug);
         ArrayList<String> postfix = shy.convertToPostfix("(" + input + ")");
+        return build(postfix);
+    } // parse
+
+    /** Returns a new Polynomial constructed from a postfix array of Strings
+     *  @param operands and operators in polish postfix notation
+     *  @return a reference to a new Polynomial
+     */
+    public static Polynomial build(ArrayList<String> postfix) {
         Stack<Polynomial> polyStack = new Stack<Polynomial>();
+        // polyStack contains: ... poly1 poly2 <operator>
         Polynomial poly1 = null;
         Polynomial poly2 = null;
-        // polyStack contains: ... poly1 poly2 <operator>
         String elem = null;
         int exponent = 1;
-
+        int ipfix = 0;
         try {
-            int ipfix = 0;
             while (ipfix < postfix.size()) {
                 elem = postfix.get(ipfix ++);
+                char ch = elem.charAt(0);
                 if (debug >= 2) {
                     System.out.println("elem: " + elem + ", " + polyStack);
                 }
-                char ch = elem.charAt(0);
                 switch (ch) {
                     // relations
                     case '=':
@@ -226,7 +234,8 @@ public class Polynomial implements Cloneable, Serializable {
                         } else if (elem.equals("!=")) {
                             poly1.setRelation(Relator.NE_0);
                         } else {
-                            System.err.println("PolynomialParser.parseFrom: invalid relation \"" + elem + "\"");
+                            System.err.println("PolynomialParser.parse: invalid relation \"" + elem + "\"");
+                            /* error */ poly2 = null; ipfix = postfix.size();
                         }
                         polyStack.push(poly1);
                         break;
@@ -239,7 +248,8 @@ public class Polynomial implements Cloneable, Serializable {
                         } else if (elem.equals(">=")) {
                             poly1.setRelation(Relator.GE_0);
                         } else {
-                            System.err.println("PolynomialParser.parseFrom: invalid relation \"" + elem + "\"");
+                            System.err.println("PolynomialParser.parse: invalid relation \"" + elem + "\"");
+                            /* error */ poly2 = null; ipfix = postfix.size();
                         }
                         polyStack.push(poly1);
                         break;
@@ -252,7 +262,8 @@ public class Polynomial implements Cloneable, Serializable {
                         } else if (elem.equals("<=")) {
                             poly1.setRelation(Relator.GE_0);
                         } else {
-                            System.err.println("PolynomialParser.parseFrom: invalid relation \"" + elem + "\"");
+                            System.err.println("PolynomialParser.parse: invalid relation \"" + elem + "\"");
+                            /* error */ poly2 = null; ipfix = postfix.size();
                         }
                         polyStack.push(poly1);
                         break;
@@ -289,27 +300,38 @@ public class Polynomial implements Cloneable, Serializable {
                             exponent = brexp.intValue();
                             polyStack.push(polyStack.pop().pow(exponent));
                         } else {
-                            System.err.println("PolynomialParser.parseFrom:"
+                            System.err.println("PolynomialParser.parse:"
                                     + " exponent must be single natural number instead of \"" + poly2.toString() + "\"");
+                            /* error */ poly2 = null; ipfix = postfix.size();
                         }
                         break;
                     default:
                         if (false) {
                         } else if (Character.isJavaIdentifierStart(ch)) {
-                            polyStack.push(new Polynomial(new Monomial(elem)));
+                            if (elem.endsWith(")") || elem.equals("funct")) { // function name, call
+                                System.err.println("PolynomialParser.parse: function call \"" + elem + "\"");
+                                /* error */ poly2 = null; ipfix = postfix.size();
+                            } else {
+                                polyStack.push(new Polynomial(new Monomial(elem)));
+                            }
                         } else if (Character.isDigit              (ch)) {
                             polyStack.push(new Polynomial(new Monomial(elem)));
                         } else { // strange character
-                            System.err.println("PolynomialParser.parseFrom: strange operand \"" + elem + "\"");
+                            System.err.println("PolynomialParser.parse: strange operand \"" + elem + "\"");
+                            /* error */ poly2 = null; ipfix = postfix.size();
                         }
                         break;
                 } // switch ch
             } // while ipfix
             poly2 = polyStack.pop();
         } catch (java.util.EmptyStackException exc) {
+            /* error */ poly2 = null; ipfix = postfix.size();
+        }
+        if (polyStack.size() != 0) {
+            /* error */ poly2 = null; ipfix = postfix.size();
         }
         return poly2;
-    } // parse
+    } // build
 
     /*-------------- bean methods, setters and getters -----------------------------*/
 
@@ -517,8 +539,8 @@ public class Polynomial implements Cloneable, Serializable {
         return result.substring(result.startsWith(" + ") ? 3 : 0);
     } // toFactoredString()
 
-    /** Returns an array of the coefficients in the Polynomial 
-     *  in "triangle" order, with rows for the independant variable ("x") 
+    /** Returns an array of the coefficients in the Polynomial
+     *  in "triangle" order, with rows for the independant variable ("x")
      *  and columns for the dependant variable ("y"),
      *  where the index or exponent of x is unbounded, and that of y is &lt;= that
      *  of x.
@@ -1012,8 +1034,8 @@ public class Polynomial implements Cloneable, Serializable {
     } // hasSolution
 
     /** Extracts rational roots from <em>this</em> univariate Polynomial
-     *  @return a {@link RelationSet} consisting - as first element - 
-     *  of the remaining Polynomial which has only irrational roots, 
+     *  @return a {@link RelationSet} consisting - as first element -
+     *  of the remaining Polynomial which has only irrational roots,
      *  followed by the factor expressions of the form <code>c1*x - c2 = 0</code>.
      */
 /* nyi

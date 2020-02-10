@@ -26,8 +26,15 @@ import  java.math.BigInteger;
 import  java.util.ArrayList;
 import  org.apache.log4j.Logger;
 
-/** Class BigVectorArray implements some simple linear algebra operations
- *  on square matrices of BigInteger numbers.
+/** Class BigVectorArray implements operations on an array of {@link BigVector}s
+ *  which are indexed by natural numbers 0, 1, 2 and so on.
+ *  It can be used, for example, to represent:
+ *  <ul>
+ *  <li>the coefficients of a set of univariate {@link Polynomial}s </li>
+ *  <li>a univariate {@link RelationSet}</li>
+ *  <li>a linear recurrence equation</li>
+ *  <li>a linear differential equation</li>
+ *  </ul>
  *  @author Dr. Georg Fischer
  */
 public class BigVectorArray implements Cloneable, Serializable {
@@ -62,7 +69,8 @@ public class BigVectorArray implements Cloneable, Serializable {
 
     /** Constructor for a BigVectorArray which initializes it
      *  from an array expression.
-     *  @param arrExpr comma-separated array of {@link BigVector}s in square brackets,
+     *  @param arrExpr comma-separated list of {@link BigVector} representations
+     *  in square brackets,
      *  for example "[[11,12,13],[21,22,23],[31,32,33]]"
      */
     public BigVectorArray(String arrExpr) {
@@ -170,7 +178,7 @@ public class BigVectorArray implements Cloneable, Serializable {
     /*-------------- lightweight derived methods -----------------------------*/
 
     /** Returns a string representation of the array
-     *  with comma separated lists of values for the {@link BigVector}s 
+     *  with comma separated lists of values for the {@link BigVector}s
      *  enclosed in quare brackets, where the vector expressions
      *  are in turn comma separated and enclosed in square brackets.
      *  @return "[[0],[0,1],[0,1,2]]" for example.
@@ -202,7 +210,7 @@ public class BigVectorArray implements Cloneable, Serializable {
         return result;
     } // hasZero
 
-    /** Determines whether all elements of the array are zero 
+    /** Determines whether all elements of the array are zero
      *  @return true if the array is zero, or false otherwise
      */
     public boolean isZero() {

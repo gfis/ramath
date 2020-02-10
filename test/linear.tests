@@ -80,58 +80,58 @@ CALL BigVector "[1,7]/3    * [1,7]/5"
 PACKAGE=org.teherba.ramath.linear
 
 TEST RV1 RationalVector no-args
-CALL RationalVector
+CALL RationalVector -d 1
 
 TEST RV2 RationalVector add
-CALL RationalVector "[1/2,2/3,-1/5] + [1/2,1/3,1/5,7/6]"
+CALL RationalVector -d 1 "[1/2,2/3,-1/5] + [1/2,1/3,1/5,7/6]"
 
 TEST RV3 RationalVector subtract
-CALL RationalVector "[1/2,2/3,-1/5,-4/3] - [1/2,1/3,1/5]"
+CALL RationalVector -d 1 "[1/2,2/3,-1/5,-4/3] - [1/2,1/3,1/5]"
 
 TEST RV4 RationalVector negate
-CALL RationalVector "[1/2,2/3,-1/5] -"
+CALL RationalVector -d 1 "[1/2,2/3,-1/5] -"
 
 TEST RV5 RationalVector scale
-CALL RationalVector "[1/2,2/3,-1/5] * -1/2"
+CALL RationalVector -d 1 "[1/2,2/3,-1/5] * -1/2"
 
 TEST RV6 RationalVector multiply -> [1/4,1/2,11/90,-2/15]
-CALL RationalVector "[1/2,2/3] * [1/2,1/3,-1/5]"
+CALL RationalVector -d 1 "[1/2,2/3] * [1/2,1/3,-1/5]"
 
 TEST RV7 RationalVector divide - no remainder
-CALL RationalVector "[7/2,7/3,-7/5] / [1/2,1/3,-1/5]"
+CALL RationalVector -d 1 "[7/2,7/3,-7/5] / [1/2,1/3,-1/5]"
 
 TEST RV8 RationalVector divideAndRemainder
-CALL RationalVector "[7/2,8/3,-7/5] / [1/2,1/3,-1/5]"
+CALL RationalVector -d 1 "[7/2,8/3,-7/5] / [1/2,1/3,-1/5]"
 
 TEST RV9 RationalVector divideAndRemainder: quotient = 0
-CALL RationalVector "[7/2,8/3] / [1/2,1/3,-1/5]"
+CALL RationalVector -d 1 "[7/2,8/3] / [1/2,1/3,-1/5]"
 
 TEST RV10 RationalVector scale and shift
-CALL RationalVector "[1/2,2/3,-1/5] * -1/2 3"
+CALL RationalVector -d 1 "[1/2,2/3,-1/5] * -1/2 3"
 
 TEST RV11 RationalVector divideAndRemainder 
-CALL RationalVector "[1/4,1/2,11/90,-2/15] / [1/2,2/3]"
+CALL RationalVector -d 1 "[1/4,1/2,11/90,-2/15] / [1/2,2/3]"
 
 TEST RV12 RationalVector divideAndRemainder 
-CALL RationalVector "[1/4,1/2,11/90,-2/15] / [1/2,1/3,-1/5]"
+CALL RationalVector -d 1 "[1/4,1/2,11/90,-2/15] / [1/2,1/3,-1/5]"
 
 TEST RV20 RationalVector reduce
-CALL RationalVector "[3,2,1] | [1,1]"
+CALL RationalVector -d 1 "[3,2,1] | [1,1]"
 
 TEST RV21 RationalVector reduce
-CALL RationalVector "[1,1,1,1,2,1,1,3,3,1] | [1,4,6,4,1]"
+CALL RationalVector -d 1 "[1,1,1,1,2,1,1,3,3,1] | [1,4,6,4,1]"
 
 TEST RV22 RationalVector reduce Fibonacci
-CALL RationalVector "[0,0,0,0,0,0,1] | [0,1,1,2,3,5]"
+CALL RationalVector -d 1 "[0,0,0,0,0,0,1] | [0,1,1,2,3,5]"
 
 TEST RV23 RationalVector reduce Fibonacci
-CALL RationalVector "[0,0,0,0,0,0,8,13] | [0,1,1,2,3,5]"
+CALL RationalVector -d 1 "[0,0,0,0,0,0,8,13] | [0,1,1,2,3,5]"
 
 TEST RV24 RationalVector reduce Fibonacci
-CALL RationalVector "[0,0,0,0,0,0,0,13] | [0,1,1,2,3,5,8]"
+CALL RationalVector -d 1 "[0,0,0,0,0,0,0,13] | [0,1,1,2,3,5,8]"
 
 TEST RV25 RationalVector reduce Fibonacci
-CALL RationalVector "[1,9,16,8] | [1,5,4]"
+CALL RationalVector -d 1 "[1,9,16,8] | [1,5,4]"
 #----
 # RationalTriangle
 PACKAGE=org.teherba.ramath.linear
@@ -217,17 +217,17 @@ CALL RationalTriangle "[0,0,0,0,0,0,0,0,0,0,1,4,6,4,1] | [1,1,1,1,2,1,1,3,3,1]"
 # TEST RT33 RationalTriangle reduce Pascal
 # CALL RationalTriangle "[0,0,0,0,0,0,0,0,0,0,1]         | [1,1,1,1,2,1,1,3,3,1]"
 
-TEST RT34 RationalTriangle reduce Pascal
-CALL RationalTriangle "[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,5,10,10,5,1] | [1,1,1,1,2,1,1,3,3,1,1,4,6,4,1]"
-
-TEST RT35 RationalTriangle reduce A056242
-CALL RationalTriangle -d 2 "[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,20,85,146,112,32] | [1,1,2,1,5,4,1,9,16,8,1,14,41,44,16]"
-
-TEST RT36 RationalTriangle reduce A056242
-CALL RationalTriangle -d 2 "[0,0,0,0,0,0,0,0,0,0,1,14,41,44,16] | [1,1,2,1,5,4,1,9,16,8]"
-
-TEST RT37 RationalTriangle reduce A056242
-CALL RationalTriangle -d 2 "[0,0,0,0,0,0,1,9,16,8] | [1,1,2,1,5,4]"
+# TEST RT34 RationalTriangle reduce Pascal
+# CALL RationalTriangle "[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,5,10,10,5,1] | [1,1,1,1,2,1,1,3,3,1,1,4,6,4,1]"
+# 
+# TEST RT35 RationalTriangle reduce A056242
+# CALL RationalTriangle -d 2 "[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,20,85,146,112,32] | [1,1,2,1,5,4,1,9,16,8,1,14,41,44,16]"
+# 
+# TEST RT36 RationalTriangle reduce A056242
+# CALL RationalTriangle -d 2 "[0,0,0,0,0,0,0,0,0,0,1,14,41,44,16] | [1,1,2,1,5,4,1,9,16,8]"
+# 
+# TEST RT37 RationalTriangle reduce A056242
+# CALL RationalTriangle -d 2 "[0,0,0,0,0,0,1,9,16,8] | [1,1,2,1,5,4]"
 #------------------------
 PACKAGE=org.teherba.ramath.linear
 
@@ -450,3 +450,8 @@ CALL BigMatrix
 
 TEST BMB
 CALL BigMatrix -inv [[4,-4,-4,-4],[0,2,0,0],[-3,4,5,4],[3,-4,3,4]]
+#--------------------------------
+# BigVectorArray
+TEST BA1
+CALL BigVectorArray
+

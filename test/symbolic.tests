@@ -391,6 +391,9 @@ CALL ShuntingYard "(sqrt|abs|mod|A\d{6}|a)" "a(n) = sqrt(2*a(n-1)) + A123456(n*2
 TEST SH4 ShuntingYard exponentiation stronger than multiplication
 CALL ShuntingYard "1-4x(1+x)^2"
 
+TEST SH5 ShuntingYard function a() in A064063: 2*n*a(n) +(-23*n+36)*a(n-1) +6*(-2*n+3)*a(n-2)=0
+CALL ShuntingYard "a" "2*n*a(n) +(-23*n+36)*a(n-1) +6*(-2*n+3)*a(n-2)=0"
+
 TEST P17 Polynomial with GT_0
 CALL Polynomial "(a + b) > 0"
 

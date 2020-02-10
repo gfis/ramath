@@ -181,7 +181,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
      *  @return independant copy of the Vector
      */
     public BigVector clone() {
-        BigVector result = new BigVector(size());
+        BigVector result = new BigVector(this.size());
         result.setDen(this.getDen());
         int icol = 0;
         while (icol < size()) {

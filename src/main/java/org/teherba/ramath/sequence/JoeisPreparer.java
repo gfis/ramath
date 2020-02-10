@@ -4,7 +4,7 @@
  *  2019-12-04: Georg Fischer: copied from PolyFraction.java
  */
 /*
- * Copyright 2019 Dr. Georg Fischer
+ * Copyright 2019 Dr. Georg Fischer <dr.georg.fischer at gmail.com>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,8 +18,6 @@
  * limitations under the License.
  */
 package org.teherba.ramath.sequence;
-import  org.teherba.ramath.linear.BigMatrix;
-import  org.teherba.ramath.linear.BigVector;
 import  org.teherba.ramath.symbolic.PolyFraction;
 import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.PolyVector;
@@ -140,7 +138,7 @@ public class JoeisPreparer
         } else if (callCode.equals("fract1")) {
             pfr1 = PolyFraction.parse(parms[iparm]);
             if (pfr1 != null) { // parse ok
-            	pfr1 = pfr1.normalize();
+                pfr1 = pfr1.normalize();
                 String vects = pfr1.toVectors();
                 if (vects != null) { // is not multivariate
                     parms[1] = "orgf";
@@ -173,7 +171,7 @@ public class JoeisPreparer
             parms[1] = "holos";
             try {
                 PolyVector pvect = new PolyVector(parms[iparm]);
-                parms[iparm] = pvect.getBigMatrix().toString();
+                parms[iparm] = pvect.getBigVectorArray().toString();
                 reproduce();
             } catch (Exception exc) {
             }

@@ -1,5 +1,6 @@
 /*  PolyVector: a vector Polynomials
  *  @(#) $Id: PolyVector.java 744 2011-07-26 06:29:20Z gfis $
+ *  2020-02-10: getBigMatrix() -> getBigVectorArray
  *  2019-12-04: getBigMatrix()
  *  2016-07-09: Signature
  *  2015-07-14: read expression allows for RelationSets with semicolons and "=0"
@@ -10,7 +11,7 @@
  *  2013-08-15, Georg Fischer: copied from linear.Vector
  */
 /*
- * Copyright 2013 Dr. Georg Fischer <punctum at punctum dot kom>
+ * Copyright 2013 Dr. Georg Fischer <dr.georg.fischer at gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +29,7 @@ package org.teherba.ramath.symbolic;
 import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.Signature;
 import  org.teherba.ramath.symbolic.VariableMap;
-import  org.teherba.ramath.linear.BigMatrix;
+import  org.teherba.ramath.linear.BigVectorArray;
 import  org.teherba.ramath.linear.Vector;
 import  java.io.BufferedReader;
 import  java.io.FileReader;
@@ -215,21 +216,21 @@ public class PolyVector implements Cloneable, Serializable {
         return result;
     } // equals
 
-    /** Returns an array of vectors with increasing exponents 
+    /** Returns an array of {@link BigVector}s with increasing exponents 
      *  @return a one-dimensional array of arrays of varying length 
-     *  if the vector contains only one variable, or <em>null</em> otherwise.
+     *  if <em>this</em> PolyVector contains only one variable, or <em>null</em> otherwise.
      */
-    public BigMatrix getBigMatrix() {
-        BigMatrix result = null; // assume multivariate
+    public BigVectorArray getBigVectorArray() {
+        BigVectorArray result = null; // assume multivariate
         VariableMap vmap = this.getVariableMap();
         if (vmap.size() <= 1) { // is univariate
-            result = new BigMatrix();
+            result = new BigVectorArray();
             for (int irow = 0; irow < size(); irow ++) {
-                result.setRow(irow, this.get(irow).getBigVector());
+                result.setBigVector(irow, this.get(irow).getBigVector());
             } // for irow
         } // univariate
         return result;
-    } // getBigMatrix()
+    } // getBigVectorArray()
 
     /** Returns a String representation of the PolyVector
      *  @return a 1-dimensional array of {@link Polynomial}s.
@@ -465,7 +466,7 @@ public class PolyVector implements Cloneable, Serializable {
             } else if (opt.startsWith("-matrix")) {
                 vect1 = new PolyVector(args[iarg]);
                 System.out.println("parse: " + args[iarg]);
-                System.out.println("matrix:" + vect1.getBigMatrix().toString());
+                System.out.println("matrix:" + vect1.getBigVectorArray().toString());
                 // -matrix
             } // if opt
         } // more than 1 argument
