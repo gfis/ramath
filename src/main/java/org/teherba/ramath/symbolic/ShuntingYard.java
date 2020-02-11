@@ -5,7 +5,7 @@
  *  2009-07-01, Georg Fischer: copied from Polynomial
  */
 /*
- * Copyright 2019 Dr. Georg Fischer
+ * Copyright 2019 Dr. Georg Fischer <dr.georg.fischer(at)gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,6 +65,7 @@ public class ShuntingYard {
             , IN_CLOSE      // after ')' - eventually insert '*'
             , IN_COMMT      // after '#' - ignore all up to "\n" or end of string
             };
+    public static String FUNCT = "funct";
 
     /** pushdown stack for operators and parentheses */
     private Stack    <String> operStack;
@@ -261,7 +262,7 @@ public class ShuntingYard {
                                     if (elem.charAt(1) == '(') {
                                         busy = false;
                                         if (elem.charAt(0) == 'z') { // function call
-                                        	postfixAppend("funct");
+                                        	postfixAppend(FUNCT);
                                         } // function call
                                     } else { // other operation
                                         postfixAppend(elem.substring(1));

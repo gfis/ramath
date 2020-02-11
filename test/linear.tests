@@ -74,7 +74,17 @@ CALL BigVector "[7,8]/3      / [1,2,-5]/5"
 
 TEST BV20 BigVector multiply
 CALL BigVector "[1,7]/3    * [1,7]/5"
+#----------------------
+# BigVectorArray
 
+TEST BVA1 BigVectorArray
+CALL BigVectorArray
+
+TEST BVA2 BigVectorArray: parseRecurrence("2*n*a(n) +(-23*n+36)*a(n-1) +6*(-2*n+3)*a(n-2)=0")
+CALL BigVectorArray -d 2 -recur "2*n*a(n) +(-23*n+36)*a(n-1) +6*(-2*n+3)*a(n-2)=0"
+
+TEST BVA3 BigVectorArray: parseRecurrence, same with middle "="
+CALL BigVectorArray -d 2 -recur "2*n*a(n) = (23*n-36)*a(n-1) -6*(-2*n+3)*a(n-2)"
 #----
 # RationalVector
 PACKAGE=org.teherba.ramath.linear

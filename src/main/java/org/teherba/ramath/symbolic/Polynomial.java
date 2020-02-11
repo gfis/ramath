@@ -29,7 +29,7 @@
  *  2009-07-01, Georg Fischer: copied from ContinuedFraction
  */
 /*
- * Copyright 2009 Dr. Georg Fischer <punctum at punctum dot kom>
+ * Copyright 2009 Dr. Georg Fischer <dr.georg.fischer(at)gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -197,21 +197,31 @@ public class Polynomial implements Cloneable, Serializable {
         return build(postfix);
     } // parse
 
-    /** Returns a new Polynomial constructed from a postfix array of Strings
-     *  @param operands and operators in polish postfix notation
+    /** Returns a new Polynomial constructed from a polish postfix array of Strings
+     *  @param postfix list of operands and operators in polish postfix notation
      *  @return a reference to a new Polynomial
      */
     public static Polynomial build(ArrayList<String> postfix) {
+    	return build(postfix, 0, postfix.size());
+    } // build(ArrayList)
+
+    /** Returns a new Polynomial constructed from a polish postfix array of Strings
+     *  @param postfix list of operands and operators in polish postfix notation
+     *  @param fromIndex (inclusive) at start of list
+     *  @param toIndex   (exclusive) behind end of list
+     *  @return a reference to a new Polynomial
+     */
+    public static Polynomial build(ArrayList<String> postfix, int fromIndex, int toIndex) {
         Stack<Polynomial> polyStack = new Stack<Polynomial>();
         // polyStack contains: ... poly1 poly2 <operator>
         Polynomial poly1 = null;
         Polynomial poly2 = null;
         String elem = null;
         int exponent = 1;
-        int ipfix = 0;
+        int ipfix = fromIndex;
         try {
-            while (ipfix < postfix.size()) {
-                elem = postfix.get(ipfix ++);
+            while (ipfix < toIndex) {
+                elem = postfix.get(ipfix);
                 char ch = elem.charAt(0);
                 if (debug >= 2) {
                     System.out.println("elem: " + elem + ", " + polyStack);
@@ -322,6 +332,7 @@ public class Polynomial implements Cloneable, Serializable {
                         }
                         break;
                 } // switch ch
+                ipfix ++;
             } // while ipfix
             poly2 = polyStack.pop();
         } catch (java.util.EmptyStackException exc) {
@@ -331,7 +342,7 @@ public class Polynomial implements Cloneable, Serializable {
             /* error */ poly2 = null; ipfix = postfix.size();
         }
         return poly2;
-    } // build
+    } // build(ArrayList, int, int)
 
     /*-------------- bean methods, setters and getters -----------------------------*/
 

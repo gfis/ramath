@@ -3,7 +3,7 @@
  *  2013-08-04, Georg Fischer: copied from Vector
  */
 /*
- * Copyright 2013 Dr. Georg Fischer <punctum at punctum dot kom>
+ * Copyright 2013 Dr. Georg Fischer <dr.georg.fischer(at)gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.

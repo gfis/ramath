@@ -1,5 +1,6 @@
 /*  BigVectorArray: an array of BigVectors with possibly different lengths
  *  @(#) $Id: BigVectorArray.java 744 2011-07-26 06:29:20Z gfis $
+ *  2020-02-11: parseRecurrence
  *  2020-02-03: copied from BigMatrix
  *  2019-08-30: with ArrayList of rows
  *  2018-01-24, Georg Fischer: copied from Matrix
@@ -21,9 +22,15 @@
  */
 package org.teherba.ramath.linear;
 import  org.teherba.ramath.linear.BigVector;
+import  org.teherba.ramath.symbolic.Monomial;
+import  org.teherba.ramath.symbolic.Polynomial;
+import  org.teherba.ramath.symbolic.Signature;
+import  org.teherba.ramath.symbolic.ShuntingYard;
 import  java.io.Serializable;
 import  java.math.BigInteger;
 import  java.util.ArrayList;
+import  java.util.Iterator;
+import  java.util.TreeMap;
 import  org.apache.log4j.Logger;
 
 /** Class BigVectorArray implements operations on an array of {@link BigVector}s
@@ -83,6 +90,128 @@ public class BigVectorArray implements Cloneable, Serializable {
         } // while irow
     } // Constructor(String)
 
+    /** Returns a new BigVectorArray constructed from a String representation
+     *  of a recurrence equation.
+     *  @param input the input string, for example
+     *  <code>"2*n*a(n) +(-23*n+36)*a(n-1) +6*(-2*n+3)*a(n-2)=0"</code>
+     *  @return a reference to a new BigVectorArray, or null if
+     *  the input could not properly be parsed
+     */
+    public static BigVectorArray parseRecurrence(String input) {
+        BigVectorArray result = null; // assume error
+        ShuntingYard shy = new ShuntingYard();
+        // shy.setDebug(debug);
+        input = input
+                .replaceAll("\\s", "")
+                .replaceAll("\\=\\=","=")
+                .replaceAll("\\[", "(")
+                .replaceAll("\\]", ")")
+                ;
+        if (input.endsWith("=0")) {
+            input = input.substring(0, input.length() - 2);
+     /*
+        } else {
+            input = input.replaceAll("\\=", "-(") + ")";
+     */
+        }
+        shy.setFunctionPattern("[a-h]");
+        ArrayList<String> postfix = shy.convertToPostfix("(" + input + ")");
+        if (debug >= 2) {
+            System.out.println("postfix=" + postfix);
+        }
+        // in:  "2*n*a(n) +(-23*n+36)*a(n-1) +6*(-2*n+3)*a(n-2)=0"
+        // out: [2,n,*,a(),n,funct,*,0,23,n,*,-,36,+,a(),n,1,-,funct,*,+,6,0,2,n,*,-,3,+,*,a(),n,2,-,funct,*,+,0,=]
+        int ipfix = 0;
+        int start = ipfix;
+        Polynomial coeffPoly = null;
+        TreeMap<BigInteger,Polynomial> polyMap = new TreeMap<BigInteger,Polynomial>();
+        String recurVar = null; // "a"
+        String indexVar = null; // "n"
+        int signFactor  = +1; // additive operator between recurrence elements
+        int equalFactor = +1; // do not yet negate because of "=" in the middle of the equation
+        int offset = 0;
+        while (ipfix < postfix.size()) {
+            String elem = postfix.get(ipfix);
+            if (debug >= 2) {
+                System.out.println("postfix[" + ipfix + "] = \"" + elem + "\"");
+            }
+            if (false) {
+            } else if (elem.endsWith("()")) { // "a()"
+                coeffPoly = Polynomial.build(postfix, start, ipfix);
+                if (debug >= 2) {
+                    System.out.println("start=" + start + ", ipfix=" + ipfix
+                            + ", equalFactor=" + equalFactor + ", signFactor="  + signFactor 
+                            + ", coeffPoly= "  + coeffPoly);
+                }
+                if (equalFactor * signFactor == -1) {
+                    coeffPoly.negativeOf();
+                }
+                if (recurVar == null) { // first
+                    recurVar =      elem.substring(0, elem.length() - 2);
+                } else {
+                    if (! recurVar.equals(elem.substring(0, elem.length() - 2))) {
+                        System.out.println("** series variable \"" + recurVar + "\" differs from \""
+                                  + elem.substring(0, elem.length() - 2) + "\"");
+                    } // differs
+                }
+                start = ipfix + 1;
+            } else if (elem.equals(ShuntingYard.FUNCT)) { // "funct"
+                Polynomial indexPoly = Polynomial.build(postfix, start, ipfix);
+                if (debug >= 2) {
+                    System.out.println("start=" + start + ", ipfix=" + ipfix
+                            + ", indexPoly= " + indexPoly);
+                }
+                ipfix ++; // ignore "*" behind "funct" 
+                elem = postfix.get(ipfix + 1); // look at next
+                if (elem.matches("[\\+\\-]")) {
+                    signFactor = elem.equals("+") ? +1 : -1;
+                    ipfix ++; // skip the additive operator, too
+                } else {
+                	signFactor = +1;
+                }
+                Iterator <Signature> titer = indexPoly.keySet().iterator();
+                String var = null;
+                BigInteger bindex = BigInteger.ZERO; // -4 for "a(n-4)"
+                while (titer.hasNext()) {
+                    Monomial mono1 = indexPoly.get(titer.next());
+                    if (mono1.isConstant()) {
+                        bindex = mono1.getCoefficient().bigIntegerValue();
+                    } else if (mono1.isUniVariate() && mono1.degree() == 1) {
+                        var = mono1.firstName();
+                    } else {
+                        System.out.println("** invalid monomial " + mono1.toString());
+                    }
+                } // while titer
+                if (indexVar == null) { // first
+                    indexVar =      var;
+                } else {
+                    if (! indexVar.equals(var)) {
+                        System.out.println("** index variable " + indexVar + " differs from " + var);
+                    } // differs
+                }
+                polyMap.put(bindex, coeffPoly);
+                start = ipfix + 1;
+            } else if (elem.equals("=")) { // is it at the end: "=0" ?
+                if (ipfix == postfix.size() - 2 && postfix.get(ipfix).equals("0")) {
+                    // ok, ignore
+                } else {
+                    System.out.println("** parseRecurrence: \"=\" at the end only");
+                }
+            } else {
+            }
+            ipfix ++;
+        } // while ipfix
+        if (debug >= 1) {
+            System.out.println("parseRecurrence: " + input);
+            Iterator <BigInteger> piter = polyMap.keySet().iterator();
+            while (piter.hasNext()) {
+                BigInteger key = piter.next();
+                System.out.println("a(" + key.toString() + "): " + polyMap.get(key));
+                } // while piter
+        } // debug
+        return result;
+    } // parseRecurrence
+
     /** Deep copy of the BigVectorArray and its properties.
      *  @return independant copy of the BigVectorArray
      */
@@ -98,6 +227,13 @@ public class BigVectorArray implements Cloneable, Serializable {
 
     /*-------------- bean methods, setters and getters -----------------------------*/
     // inherited: size, getRowLen, getColLen
+
+    /** Sets the debugging flag
+     *  @param mode 0=no debugging output, 1=some, 2=more
+     */
+    public static void setDebug(int mode) {
+        debug = mode;
+    } // setDebug
 
     /** Gets an element.
      *  @param rowNo number of the row, zero based
@@ -254,21 +390,25 @@ public class BigVectorArray implements Cloneable, Serializable {
      */
     public static void main(String[] args) {
         int iarg = 0;
-        BigVector vect1 = null;
-        BigVector vect2 = null;
         try {
             if (args.length == 0) {
                 System.out.println("new BigVectorArray(\"[[1],[3, 4], [5, 6, 7]]\") = "
                         + (new BigVectorArray          ("[[1],[3, 4], [5, 6, 7]]")).toString());
-
-            } else if (args.length >= 2) { // syntax is: -opt filename
-                String opt = args[iarg ++];
-
-                if (false) {
-                } else if (opt.equals("-f"    )  ) {
-
-                } // options
-            } // 2 args
+            } else {
+                while (iarg < args.length) { // syntax is: -opt filename
+	                String opt = args[iarg ++];
+	                if (false) {
+	                } else if (opt.equals("-d")) {
+	                    int debug = Integer.parseInt(args[iarg ++]);
+	                    BigVectorArray.setDebug(debug);
+	                } else if (opt.startsWith("-recur")) {
+	                    BigVectorArray bva = BigVectorArray.parseRecurrence(args[iarg ++]);
+	                } else {
+	                    System.out.println("invalid option[" + iarg + "]: \"" + opt + "\"");
+	                    iarg ++;
+	                }
+	            } // while iarg
+            } // >= 1 args
         } catch (Exception exc) {
             log.error(exc.getMessage(), exc);
         }

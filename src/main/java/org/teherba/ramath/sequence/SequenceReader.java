@@ -1,5 +1,6 @@
 /*  Reader for text file, returns a string without any whitespace
- *  @(#) $Id: SequenceReader.java 744 2011-07-26 06:29:20Z gfis $
+ *  @(#) $Id: SequenceReader.java gfis $
+ *  2020-02-10: private static parse
  *  2019-11-01: iterate over a list of A-numbers or an extract of file 'stripped'
  *  2019-08-29: parameter skip
  *  2019-08-25, Georg Fischer: copied from BigRational
@@ -245,7 +246,7 @@ public class SequenceReader {
      *  and possibly prepended by the A-number and a space.
      *  No b-file is read by this method.
      */
-    public Sequence parse(String dataLine) {
+    private Sequence parse(String dataLine) {
         return parse(dataLine, false); // do not read from b-file
     } // parse(String)
 
@@ -255,7 +256,7 @@ public class SequenceReader {
      *  @param fromBfile whether the terms are to be read from the <em>dataLine</em>,
      *  or from the b-file.
      */
-    public Sequence parse(String dataLine, boolean fromBfile) {
+    private Sequence parse(String dataLine, boolean fromBfile) {
         Sequence result = null;
         int startPos = 0;
         if (dataLine.startsWith("A")) {
