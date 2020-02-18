@@ -1,5 +1,6 @@
 /*  JoeisPreparer: prepare *.gen files for joeis-lite
  *  @(#) $Id$
+ *  2020-02-11: -bva
  *  2019-12-08: reproduce^; offset1 is always read
  *  2019-12-04: Georg Fischer: copied from PolyFraction.java
  */
@@ -18,6 +19,7 @@
  * limitations under the License.
  */
 package org.teherba.ramath.sequence;
+import  org.teherba.ramath.linear.BigVectorArray;
 import  org.teherba.ramath.symbolic.PolyFraction;
 import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.PolyVector;
@@ -87,6 +89,7 @@ public class JoeisPreparer
      * @param num print only so many parameters.
      */
     protected void reproduce(int num) {
+        parms[1] = callCode;
         int j = 0;
         while (j < num && j < parms.length) {
             System.out.print(j == 0 ? "" : "\t");
@@ -114,6 +117,12 @@ public class JoeisPreparer
         PolyFraction pfr1 = null;
         if (false) {
 
+        } else if (callCode.equals("bva")) { // OEIS-mat/linrec/makefile.rectab
+            parms[1] = "holos";
+            BigVectorArray bva = BigVectorArray.parseRecurrence(parms[iparm]);
+            parms[iparm] = bva.toString();
+            reproduce();
+
         } else if (callCode.equals("coxf")) {
             try {
                 int pwr  = Integer.parseInt(parms[iparm ++]);
@@ -126,14 +135,12 @@ public class JoeisPreparer
                     .toString().replaceAll("[\\[\\]]", "")
                     );
 
-        } else if (callCode.equals("delta")) {
-            System.out.print(aseqno + "\tdelta1\t" + offset1 + "\t");
-            pfr1 = PolyFraction.parse(parms[iparm ++]).normalize();
-            System.out.println(pfr1.toString());
-            System.out.print(aseqno + "\tdelta2\t" + offset1 + "\t");
-            System.out.println(pfr1.getCoefficientTriangle(numTerms
-                    , new String[] { "x", "y" })
-                    .toString().replaceAll("[\\[\\]]", ""));
+        } else if (callCode.equals("dhd")) { // pfract, 
+            pfr1 = PolyFraction.parse(parms[iparm]).normalize();
+            String[] vars = pfr1.getVariables();
+            parms[iparm + 0] = pfr1.getNum().toTriangleList(vars);
+            parms[iparm + 1] = pfr1.getDen().toTriangleList(vars);
+            reproduce();
 
         } else if (callCode.equals("fract1")) {
             pfr1 = PolyFraction.parse(parms[iparm]);
@@ -150,17 +157,23 @@ public class JoeisPreparer
                             );
                 } // not multivariate
             } // parse ok
+            
         } else if (callCode.equals("fract2")) {
-            pfr1 = PolyFraction.parse(parms[iparm ++]).normalize();
+            pfr1 = PolyFraction.parse(parms[iparm]);
             if (pfr1 != null) {
+                pfr1 = pfr1.normalize();
                 String[] vars = pfr1.getVariables();
-                System.out.println(aseqno + "\t" + "tria"
-                        + "\t" + offset1
-                        + "\t" + pfr1.getNum().toTriangleList(vars)
-                        + "\t" + pfr1.getDen().toTriangleList(vars)
-                        + "\t" + vars[0] + "," + vars[1]
-                        );
+                parms[iparm + 0] = pfr1.getNum().toTriangleList(vars);
+                parms[iparm + 1] = pfr1.getDen().toTriangleList(vars);
+                callCode = "fract21"; // with lexicographically ordered variables
+                reproduce();
+                String temp = vars[0]; vars[0] = vars[1]; vars[1] = temp;
+                parms[iparm + 0] = pfr1.getNum().toTriangleList(vars);
+                parms[iparm + 1] = pfr1.getDen().toTriangleList(vars);
+                callCode = "fract22"; // with exchanged variables
+                reproduce();
             }
+            
         } else if (callCode.startsWith("fract")) {
             System.out.println(aseqno
                         + "\t" + offset1

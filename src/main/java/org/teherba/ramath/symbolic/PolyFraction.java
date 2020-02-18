@@ -757,6 +757,7 @@ public class PolyFraction
                                             + "\t" + pfr1.getSeriesCoefficients(numTerms)
                                             .toString().replaceAll("[\\[\\]]", "")
                                             );
+                            /*
                                 } else if (mode.equals("delta")) {
                                     String offset1 = parms[iparm ++];
                                     System.out.print(aseqno + "\tdelta1\toffset1\t");
@@ -766,6 +767,7 @@ public class PolyFraction
                                     System.out.println(pfr1.getCoefficientTriangle(numTerms
                                             , new String[] { "x", "y" })
                                             .toString().replaceAll("[\\[\\]]", ""));
+                            */
                                 } else if (mode.startsWith("fract")) {
                                     String offset1 = parms[iparm ++];
                                     pfr1 = PolyFraction.parse(parms[iparm]).normalize();

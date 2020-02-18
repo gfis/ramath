@@ -161,7 +161,7 @@ public class ShuntingYard {
      *  </table>
      */
     public ArrayList<String> convertToPostfix(String parmInput) {
-        String input = "(" + parmInput + ")";
+        String input = "(" + (parmInput.trim().startsWith("-") ? "0" : "") + parmInput + ")";
         StringBuffer buffer = new StringBuffer(16); //accumulate variable names, numbers and operators here
         String elem = null; // next element on stack / in postfix list
         char ch = ' ';

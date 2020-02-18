@@ -573,6 +573,7 @@ public class HolonomicRecurrenceTest {
     HolonomicRecurrenceTest holTest = new HolonomicRecurrenceTest();
     holTest.numTerms = 16;
     holTest.mOffset1  = 0;
+    int dist = 0;
     String fileName  = "-"; // assume STDIN
     String polyList  = null;
     String initTerms = null;
@@ -582,10 +583,9 @@ public class HolonomicRecurrenceTest {
         if (false) {
         } else if (opt.equals    ("-d")     ) {
           sDebug = 1;
-          try {
-              sDebug = Integer.parseInt(args[iarg ++]);
-          } catch (Exception exc) { // take default
-          }
+          sDebug = Integer.parseInt(args[iarg ++]);
+        } else if (opt.equals    ("-dist")  ) {
+          dist = Integer.parseInt(args[iarg ++]);
         } else if (opt.equals    ("-f")     ) {
           fileName = args[iarg ++];
         } else if (opt.equals    ("-i")     ) {
@@ -604,7 +604,7 @@ public class HolonomicRecurrenceTest {
       }
     } // while args
     if (polyList != null) {
-      holTest.mHolRec = new HolonomicRecurrence(holTest.mOffset1, polyList, initTerms, 0);
+      holTest.mHolRec = new HolonomicRecurrence(holTest.mOffset1, polyList, initTerms, dist);
       holTest.mHolRec.sDebug = sDebug;
       System.out.println(holTest.getDataList(holTest.mHolRec, holTest.numTerms));
     } else {
