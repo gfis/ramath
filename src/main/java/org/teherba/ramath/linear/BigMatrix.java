@@ -133,7 +133,9 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
      */
     public BigMatrix(String matExpr) {
         this();
-        String[] rows = matExpr.replaceAll("\\s", "").split("\\],\\[");
+        String[] rows = matExpr
+                .replaceAll("[\\{\\(]", "[").replaceAll("[\\}\\)]", "]").replaceAll("\\s", "")
+                .split("\\],\\[");
         int irow = 0;
         while (irow < rows.length) {
             BigVector vect = new BigVector(rows[irow]);

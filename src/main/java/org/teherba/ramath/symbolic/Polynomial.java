@@ -563,29 +563,27 @@ public class Polynomial implements Cloneable, Serializable {
      *  @return "1,-1,-1" for "(1-x-x*y)"
      */
     public String toTriangleList(String[] varNames) {
-        int maxExp = this.maxDegree(varNames[0]);
         StringBuffer result = new StringBuffer(128);
         Polynomial pcopy = this.clone();
-        int ix = 0; // limited to 2 variables for the moment
-        int iy = 0;
-        while (ix <= maxExp) {
+        int maxExp = pcopy.maxDegree();
+        // System.out.println("toTriangleList(" + pcopy.toString() + ", varNames=" + varNames[0] + "," + varNames[1] + ", maxDegree=" + maxExp);
+        for (int ix = 0; ix <= maxExp; ix ++) { // limited to 2 variables for the moment
+        for (int iy = 0; iy <= ix; iy ++) {
             Monomial mono1 = new Monomial(varNames, new int[] {ix, iy});
             Signature sig1 = mono1.signature();
+            // System.out.println("mono1=" + mono1.toString() + ", signature=" + sig1);
             Monomial pivot = pcopy.getMonomial(sig1);
             if (pivot != null) {
+                // System.out.println("pivot=" + pivot.toString());
                 result.append(",");
                 Coefficient coeff = pivot.getCoefficient();
                 result.append(coeff.toString());
-                pcopy.subtractFrom(pivot);
+                // pcopy.subtractFrom(pivot);
             } else {
                 result.append(",0");
             }
-            iy ++;
-            if (iy > ix) {
-                ix ++;
-                iy = 0;
-            }
-        } // while ix
+        } // for iy
+        } // for ix
         return result.substring(1);
     } // toTriangleList(String[])
     //----------------

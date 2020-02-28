@@ -164,7 +164,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
                 slashPos = vectExpr.length();
             }
             String[] values = vectExpr.substring(0, slashPos)
-                    .replaceAll("[\\[\\]\\s\\,]+"," ").trim().split(" ");
+                    .replaceAll("[\\[\\]\\(\\)\\{\\}\\s\\,]+"," ").trim().split(" ");
             this.vecLen = values.length;
             this.vector = new BigInteger[this.vecLen];
             int icol = 0;

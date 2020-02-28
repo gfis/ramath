@@ -419,8 +419,8 @@ public class HolonomicRecurrenceTest {
     iparm = 2;
     try {
       mOffset1 = Integer.parseInt(parms[iparm ++]); // [2]
-      mPolyString = parms[iparm ++];  // [3]
-      mInitString = parms[iparm ++]; // [4]
+      mPolyString = parms[iparm ++].replaceAll("[\\{\\(]", "[").replaceAll("[\\}\\)]", "]");  // [3]
+      mInitString = parms[iparm ++].replaceAll("[\\{\\(]", "[").replaceAll("[\\}\\)]", "]"); // [4]
       mNDist  = Integer.parseInt(parms[iparm ++]); // [5]
       offset2 = Integer.parseInt(parms[iparm ++]); // [6]
     } catch (Exception exc) {
@@ -489,7 +489,8 @@ public class HolonomicRecurrenceTest {
 
     } else if (callCode.startsWith("holos")) { // getTermList
       mHolRec = new HolonomicRecurrence(mOffset1, mPolyString, mInitString, mNDist); // instance to be tested
-      System.out.println(aseqno + "\t" + callCode + "1" + "\t" + mOffset1 + "\t" + getDataList(mHolRec, numTerms));
+      System.out.println(aseqno + "\t" + callCode + "1" + "\t" + mOffset1 + "\t" 
+          + getDataList(mHolRec, numTerms) + "\t" + mPolyString);
 
     } else {
       reproduce();
@@ -593,7 +594,7 @@ public class HolonomicRecurrenceTest {
         } else if (opt.equals    ("-n")     ) {
           holTest.numTerms = Integer.parseInt(args[iarg ++]);
         } else if (opt.equals    ("-o")     ) {
-          holTest.mOffset1  = Integer.parseInt(args[iarg ++]);
+          holTest.mOffset1 = Integer.parseInt(args[iarg ++]);
         } else if (opt.equals    ("-p")     ) {
           polyList = args[iarg ++];
 

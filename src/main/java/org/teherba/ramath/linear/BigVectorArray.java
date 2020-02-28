@@ -83,7 +83,9 @@ public class BigVectorArray implements Cloneable, Serializable {
      */
     public BigVectorArray(String arrExpr) {
         this();
-        String[] rows = arrExpr.replaceAll("\\s", "").split("\\],\\[");
+        String[] rows = arrExpr.replaceAll("\\s", "")
+                .replaceAll("[\\{\\(]", "[").replaceAll("[\\}\\)]", "]")
+                .split("\\],\\[");
         int irow = 0;
         while (irow < rows.length) {
             varr.add(new BigVector(rows[irow]));
