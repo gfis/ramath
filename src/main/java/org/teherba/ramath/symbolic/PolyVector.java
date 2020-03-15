@@ -147,7 +147,7 @@ public class PolyVector implements Cloneable, Serializable {
     public PolyVector(String vectExpr) {
         String[] values = vectExpr
                 .replaceAll("\\s", "")
-                .replaceAll("[\\[\\]\\{\\}\\,\\;]", " ")
+                .replaceAll("[\\[\\]\\{\\}\\,\\;]", " ").trim()
                 .replaceAll("\\=0\\Z", "") // from Polynomial.toString(1)
                 .split(" ");
         this.vecLen = values.length;

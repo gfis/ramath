@@ -103,13 +103,15 @@ public class JoeisPreparer
      *  whether it should be written to the output.
      *  The following <code>callCode</code>s are processed:
      *  <ul>
-     *  <li><code>coxf</code>  </li>
-     *  <li><code>delta</code> </li>
+     *  <li><code>bva   </code></li>
+     *  <li><code>coxf  </code></li>
+     *  <li><code>dhd   </code></li>
      *  <li><code>fract1</code></li>
      *  <li><code>fract2</code></li>
-     *  <li><code>fract</code></li>
+     *  <li><code>fract </code></li>
+     *  <li><code>holo  </code></li>
      *  <li><code>rioarr</code></li>
-     *  <li><code>sage</code></li>
+     *  <li><code>sage  </code></li>
      *  </ul>
      *  The following parameters are already consumed: <em>aseqno, callCode, offset1</em>.
      */
@@ -180,13 +182,15 @@ public class JoeisPreparer
                         + "\t??" + parms[iparm ++]
                         );
  
-        } else if (callCode.equals("holo")) { // OEIS-mat/linrec/makefile.rectab
-            parms[1] = "holos";
+        } else if (callCode.equals("holo")) { // OEIS-mat/holrec/makefile.rectab
+            callCode = "holos";
+            String parm = parms[iparm];
             try {
                 PolyVector pvect = new PolyVector(parms[iparm]);
                 parms[iparm] = pvect.getBigVectorArray().toString();
                 reproduce();
             } catch (Exception exc) {
+                System.err.println("# " + aseqno + " JoeisPreparer.holo(\"" + parm + "\") failed:: " + exc.getMessage());
             }
             
         } else if (callCode.equals("rioarr")) {
@@ -197,7 +201,7 @@ public class JoeisPreparer
                     .toString().replaceAll("[\\[\\]]", ""));
 
         } else if (callCode.equals("sage")) {
-              iparm --; // no offset1
+            iparm --; // no offset1
             Polynomial num = Polynomial.parse(parms[iparm ++]);
             Polynomial den = Polynomial.parse(parms[iparm ++]);
             pfr1 = new PolyFraction(num, den);
