@@ -400,19 +400,6 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
         return result;
     } // isMonotone
 
-    /** Whether the elements of the {@link Vector} are equal to their index
-     *  @return whether the Vector is of the form [0, 1, 2, 3, ...]
-     */
-    public boolean isNatural() {
-        boolean result = true;
-        int ielem = 0;
-        while (result && ielem < this.vecLen) {
-            result = ielem == this.vector[ielem];
-            ielem ++;
-        } // while ielem
-        return result;
-    } // isNatural
-
     /** Whether there is any zero element in the Vector
      *  @return false if all elements are non-zero
      */
@@ -475,7 +462,7 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
     } // isConstant
 
     /** Determines whether the Vector has a single non-zero element
-     *  @return the index of that element &gt;= 0, if it exists, or &lt; otherwise
+     *  @return the index of that element &gt;= 0, if it exists, or &lt; -1 otherwise
      */
     public int getSingleIndex() {
         int result = -1;

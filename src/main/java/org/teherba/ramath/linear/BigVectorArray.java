@@ -57,7 +57,7 @@ public class BigVectorArray implements Cloneable, Serializable {
     protected ArrayList<BigVector> varr;
     /*-------------- construction -----------------------------*/
 
-    /** No-args Constructor: an empty, square RationalMatrix of size 3
+    /** No-args Constructor: an empty array 
      */
     public BigVectorArray() {
         varr = new ArrayList<BigVector>(16);
@@ -404,6 +404,34 @@ public class BigVectorArray implements Cloneable, Serializable {
     } // equals
 
     /*-------------- arithmetic operations -------------------------*/
+    /** Reduce 2 or more rows by dividing them by their greatest common divisor
+     *  @param rsel selection of at least 2 rows 
+     *  to be divided by their greatest common divisor (starting at 0)
+     */
+    public void reduce(int[] rsel) {
+    /* nyi
+        BigVector vect0 = getRow(rsel[0]);
+        int isel = 1;
+        while (isel < rsel.length) {
+            BigVector vect1 = getRow(rsel[isel]);
+            BigVector vgcd  = vect0.gcd(vect1);
+            [] quotRemd = null;
+            isel ++;
+        } // while isel
+    
+        while (! remd.isZero()) {
+            quotRemd = quot.divideAndRemainder(remd);
+            if (debug >= 1) {
+                System.out.println("gcd: " + quot.toString() + " / " + remd.toString() 
+                        + " -> " + quotRemd[0] + " rest " + quotRemd[1]);
+            }
+            quot = remd;
+            remd = quotRemd[1];
+        } // while > 0
+        return quotRemd[0];
+    */    
+    } // gcd(BigVector)
+
 
 
     /*-------------------- Test Driver --------------------*/

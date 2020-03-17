@@ -1,5 +1,6 @@
 /*  BigRational: a fraction as a pair of BigIntegers
  *  @(#) $Id: BigRational.java 231 2009-08-25 08:47:16Z gfis $
+ *  2929-03-16: implements Comparator
  *  2019-08-27: MINUS_ONE
  *  2017-05-28: javadoc 1.8
  *  2015-11-14: numerator -&gt; num, denominator -&gt; den (again)
@@ -33,13 +34,14 @@ import  java.math.BigDecimal;
 import  java.math.BigInteger;
 import  java.math.MathContext;
 import  java.math.RoundingMode;
+import  java.util.Comparator;
 
 /** BigRational - a fraction as a pair of {@link BigInteger}s, and functions for them.
  *  @author Dr. Georg Fischer
  */
 public class BigRational
         extends BigInteger
-        implements Cloneable, Serializable
+        implements Cloneable, Serializable, Comparator<BigRational>
         {
     private static final long serialVersionUID = 1L;
     public final static String CVSID = "@(#) $Id: BigRational.java 231 2009-08-25 08:47:16Z gfis $";
@@ -431,6 +433,7 @@ public class BigRational
     /** Returns the BigRational with inverted sign.
      *  @return a copy of the object with the opposite sign
      */
+    @Override
     public BigRational negate() {
         return (BigRational.valueOf(num.negate(), den)).simplify();
     } // negate
@@ -449,6 +452,15 @@ public class BigRational
         return this.num.multiply(num2.getDen()).compareTo(this.den.multiply(num2.getNum()));
     } // compareTo
 
+    /** Compares two BigRationals (Comparator interface).
+     *  @return -1, 0 or 1 as num is numerically
+     *  less than, equal to, or greater than <em>num2</em>.
+     */
+    @Override
+    public int compare(BigRational num1, BigRational num2) {
+        return num1.multiply(num2.getDen()).compareTo(num1.multiply(num2.getNum()));
+    } // compare
+
     /** Compares this BigRational with the specified BigInteger.
      *  This method is provided in preference to individual methods
      *  for each of the six boolean comparison operators (&lt;, ==, &gt;, &gt;=, !=, &lt;=).
@@ -459,6 +471,7 @@ public class BigRational
      *  @return -1, 0 or 1 as this BigRational is numerically
      *  less than, equal to, or greater than <em>num2</em>.
      */
+    @Override
     public int compareTo(BigInteger num2) {
         return this.num.compareTo(this.den.multiply(num2));
     } // compareTo

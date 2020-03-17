@@ -25,14 +25,16 @@ import  org.teherba.ramath.linear.Vector;
 import  java.math.BigInteger;
 import  java.io.Serializable;
 
-/** Class RationalVector is used in conjunction with {@link RationalMatrix} to
+/** Class RationalVector is used to
  *  implement some simple linear algebraic operations on vectors
- *  and arrays of vectors of {@link BigRational} numbers.
+ *  of {@link BigRational} numbers.
  *  When the indices are interpreted as exponents of x, a RationalVector
- +  represents a univariate polynomial with rational coefficients.
+ *  represents a univariate polynomial with BigRational coefficients.
  *  It is maintained that the highest element of every vector is never zero,
  *  except for element [0].
- *  Both [0] and an empty vector represent a zero.
+ *  The vectors are represented by tuples "[an/ad,bn/bd...]", with the 
+ *  leftmost element representing exponent 0 of x.
+ *  Both [0] and an empty vector represent a zero (polynomial).
  *  @author Dr. Georg Fischer
  */
 public class RationalVector extends Vector implements Cloneable, Serializable {
@@ -512,30 +514,28 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
         return new RationalVector[] { quot, remd };
     } // divideAndRemainder(RationalVector)
 
-    /** Repetitively divide <em>this</em>
+    /** Euclidian algorithm: Repetitively divide <em>this</em>
      *  by a second {@link RationalVector}, 
-     *  then the divisor by the rest and so on.
+     *  then the divisor by the rest, until there is no rest.
      *  @param vect2 the divisor
-     *  @return the result of the EUclidian algorithm which 
-     *  repetitively divides the divisor by the rest.
+     *  @return the last divisor which yields no rest, 
+     *  that is the greatest common divisor.
      */
-    public RationalVector reduce(RationalVector vect2) {
+    public RationalVector gcd(RationalVector vect2) {
         RationalVector quot = this ;
         RationalVector remd = vect2;
+        RationalVector[] quotRemd = null;
         while (! remd.isZero()) {
-            RationalVector[] quotRemd = quot.divideAndRemainder(remd);
+            quotRemd = quot.divideAndRemainder(remd);
             if (debug >= 1) {
-                System.out.println("reduce: " + quot.toString() + " / " + remd.toString() 
+                System.out.println("gcd: " + quot.toString() + " / " + remd.toString() 
                         + " -> " + quotRemd[0] + " rest " + quotRemd[1]);
             }
             quot = remd;
             remd = quotRemd[1];
         } // while > 0
-        if (debug >= 1) {
-            System.out.println("reduced: " + quot.toString());
-        }
-        return quot;
-    } // reduce(RationalVector)
+        return quotRemd[0];
+  } // gcd(RationalVector)
 
     /*-------------------- Test Driver --------------------*/
 
@@ -607,7 +607,7 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
                                      + quotRemd[1].toString() );
                 } else if (oper.equals("|")) { // repetitively divide
                     System.out.println();
-                    vectq = vect1.reduce(vect2);
+                    vectq = vect1.gcd(vect2);
                     System.out.println("result: " + vectq.toString());
                 } // if oper
             } // more than 1 argument

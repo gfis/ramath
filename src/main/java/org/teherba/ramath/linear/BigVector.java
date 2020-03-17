@@ -33,8 +33,12 @@ import  java.util.regex.Pattern;
 /** Class BigVector is used to
  *  implement some simple linear algebra operations
  *  on vectors of BigInteger numbers.
- *  The elements of the vector are indexed starting with 0,
- *  Both [0] and an empty vector represent a zero.
+ *  It is maintained that the highest element of every vector is never zero,
+ *  except for element [0].
+ *  The vectors are represented by tuples "[a0,a1,a2...]", with the 
+ *  leftmost element representing exponent 0 of x.
+ *  Both [0] and an empty vector represent a zero (polynomial).
+ *  The elements of the vector are indexed starting with 0.
  *  @author Dr. Georg Fischer
  */
 public class BigVector extends Vector implements Cloneable, Serializable {
@@ -870,7 +874,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
             quot = quot.subtract(div2);
         }
         return new BigVector[] { quot.shrink(), rem1.shrink() };
-    } // divisideAndRemainder(BigVector)
+    } // divideAndRemainder(BigVector)
 
     /** Determines the quotient of the first elements of <em>this</em> (numerator of the g.f.)
      *  and <em>vect2</em> (the division may not have a rest, and the first element of vect2 must be ONE),
@@ -932,6 +936,29 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         this.vecLen = this.vector.length;
         return result;
     } // divisionStep(BigVector)
+
+    /** Euclidian algorithm: Repetitively divide <em>this</em>
+     *  by a second {@link RationalVector}, 
+     *  then the divisor by the rest, until there is no rest.
+     *  @param vect2 the divisor
+     *  @return the last divisor which yields no rest, 
+     *  that is the greatest common divisor.
+     */
+    public BigVector gcd(BigVector vect2) {
+        BigVector quot = this ;
+        BigVector remd = vect2;
+        BigVector[] quotRemd = null;
+        while (! remd.isZero()) {
+            quotRemd = quot.divideAndRemainder(remd);
+            if (debug >= 1) {
+                System.out.println("gcd: " + quot.toString() + " / " + remd.toString() 
+                        + " -> " + quotRemd[0] + " rest " + quotRemd[1]);
+            }
+            quot = remd;
+            remd = quotRemd[1];
+        } // while > 0
+        return quotRemd[0];
+    } // gcd(BigVector)
 
     /** Test whether <em>this</em> Vector contains a sum of like powers.
      *  Usual combinations of the parameters are:
@@ -1019,6 +1046,10 @@ public class BigVector extends Vector implements Cloneable, Serializable {
                 BigVector[] quotRemd = vect1.divideAndRemainder(vect2);
                 System.out.println(quotRemd[0].toString() + ", remainder = " + quotRemd[1].toString());
                 System.out.println(", original = " + quotRemd[0].multiply(vect2).add(quotRemd[1]));
+            } else if (oper.equals("|")) { // repetitively divide
+                System.out.println();
+                vectr = vect1.gcd(vect2);
+                System.out.println("gcd: " + vectr.toString());
             } // if oper
         } // more than 1 argument
     } // main

@@ -2109,7 +2109,7 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=&gt; - 2*y + 4*z
      *  @param order order n of derivation: first, second etc.
      *  @return a new Polynomial, the nth order derivative.
      *  For <em>order = 0</em>, a copy of <em>this</em> Polynomial is returned.
-     *  For <em>x^3+x^2</em> the 1st order derivative is <em>3x^2+2x</em>,
+     *  For example, for <em>x^3+x^2</em> the 1st order derivative is <em>3x^2+2x</em>,
      *  and the 2nd order derivative is <em>6x</em>.
      */
     public Polynomial derivative(String varx, int order) {

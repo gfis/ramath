@@ -74,7 +74,7 @@
     <property name="test.home"          value="${basedir}/test" />
     <property name="javac.debug"        value="on" />
     <property name="javac.debuglevel"   value="lines,vars,source" />
-    <property name="jdk.version"        value="1.6" />
+    <property name="jdk.version"        value="1.8" />
 
     <path id="compile.classpath">
         <fileset dir="${dist.home}">
