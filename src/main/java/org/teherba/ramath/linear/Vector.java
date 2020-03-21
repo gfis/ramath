@@ -1,5 +1,6 @@
 /*  Vector: a simple, short vector of small numbers
  *  @(#) $Id: Vector.java 744 2011-07-26 06:29:20Z gfis $
+ *  2020-03-20: ZERO
  *  2019-10-29: isZero(emptyVector)
  *  2018-01-22: more /+Type+/
  *  2017-05-28: javadoc 1.8
@@ -54,6 +55,9 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
     /** number of elements in <em>vector</em> */
     protected int vecLen;
 
+    /** Constant zero */
+    protected final static int ZERO = 0;
+    
     /*-------------- construction -----------------------------*/
     /** No-args Constructor
      */
@@ -264,6 +268,42 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
         return vector;
     } // getValues
 
+    /** Returns the number of (complete) rows of a triangle.
+     *  @return rowSize such that size = (rowNo + 1) * rowNo / 2
+     */
+    public int getRowSize() {
+        int len = 1;
+        int irow = 0;
+        while (len < size()) {
+            irow ++;
+            len += irow + 1;
+        }
+        return irow + 1;
+    } // getRowSize
+
+    /** Returns the linearized index of a triangle's element
+     *  @param irow row    number (x exponent) of the element (zero based)
+     *  @param icol column number (y exponent) of the element (zero based)
+     *  @return rowSize such that size = (rowNo + 1) * rowNo / 2
+     */
+    public static int linearIndex(int irow, int icol) {
+        return (irow + 1) * irow / 2 + icol;
+    } // linearIndex
+
+    /** Returns the row and column number from a linearized index of a triangle's element
+     *  @param ielem linear index of the element
+     *  @return [row, column] of the element (zero based)
+     */
+    public static int[] triangleIndex(int ielem) {
+        int len = 1;
+        int irow = 1;
+        while (len <= ielem) {
+            irow ++;
+            len += irow;
+        } // while len
+        return new int[] { irow - 1, ielem - (len - irow) };
+    } // indexTriangle
+
     /*-------------- lightweight derived methods -----------------------------*/
 
     /** Computes some power of an integer
@@ -407,7 +447,7 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
         boolean result = false;
         int ielem = 0;
         while (! result && ielem < this.vecLen) {
-            result = this.vector[ielem] == 0;
+            result = vector[ielem] == ZERO;
             ielem ++;
         } // while ielem
         return result;
@@ -420,7 +460,7 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
         boolean result = false;
         int ielem = 0;
         while (! result && ielem < this.vecLen) {
-            result = this.vector[ielem] < 0;
+            result = vector[ielem] < ZERO;
             ielem ++;
         } // while ielem
         return result;
@@ -431,7 +471,7 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
      */
     public boolean isZero() {
         int len = size();
-        return len == 0 || (len == 1 && get(0) == 0);
+        return len == 0 || (len == 1 && get(0) == ZERO);
     } // isZero
 
     /** Whether all elements of the vector are &lt;= 0
@@ -441,7 +481,7 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
         boolean result = true;
         int ielem = 0;
         while (result && ielem < this.vecLen) {
-            result = this.vector[ielem] <= 0;
+            result = this.vector[ielem] <= ZERO;
             ielem ++;
         } // while ielem
         return result;
@@ -468,7 +508,7 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
         int result = -1;
         int ielem = 0;
         while (ielem < this.vecLen) {
-            if (this.vector[ielem] != 0) {
+            if (this.vector[ielem] != ZERO) {
                 if (result == -1) {
                     result = ielem;
                 } else { // a 2nd: not valid
@@ -493,7 +533,7 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
         if (result != 1) {
             int p = result;
             int q = Math.abs(b);
-            while (q != 0) {
+            while (q != ZERO) {
                 int temp = q;
                 q = p % q;
                 p = temp;
@@ -521,7 +561,7 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
         while (result != 1 && ielem < vlen) {
             int p = result;
             int q = Math.abs(vect[ielem]);
-            while (q != 0) {
+            while (q != ZERO) {
                 int temp = q;
                 q = p % q;
                 p = temp;
@@ -539,8 +579,8 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
      */
     public static int lcm(int a, int b) {
         int divisor = gcd(a, b);
-        int result = 0;
-        if (divisor != 0) {
+        int result = ZERO;
+        if (divisor != ZERO) {
             result = Math.abs(a * b) / divisor;
         }
         return result;
@@ -598,10 +638,10 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
      *  @return true if they are coprime, false otherwise
      */
     public boolean isCoprime() {
-        boolean result = this.vector[0] != 0; // assume success
+        boolean result = this.vector[0] != ZERO; // assume success
         int ielem = 1;
         while (result && ielem < this.vecLen) {
-            result = this.vector[ielem] != 0;
+            result = this.vector[ielem] != ZERO;
             int kelem = 0;
             while (result && kelem < ielem) {
                 result = gcd(this.vector[ielem], this.vector[kelem]) <= 1;
@@ -617,10 +657,10 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
      *  @return true if the Vector is trivial, false otherwise
      */
     public boolean isTrivial() {
-        boolean result = vector[0] != 0; // the final result is negated
+        boolean result = vector[0] != ZERO; // the final result is negated
         int ielem = 1;
         while (result && ielem < this.vecLen) {
-            result = this.vector[ielem] != 0;
+            result = this.vector[ielem] != ZERO;
             int kelem = 0;
             while (result && kelem < ielem) {
                 result = this.vector[ielem] != this.vector[kelem];
@@ -928,7 +968,7 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
      *  that is the sum of the products of corresponding elements
      */
     public /*Type*/int multiply(Vector vect2) {
-        /*Type*/int result = 0;
+        /*Type*/int result = ZERO;
         if (vect2.size() == this.vecLen) {
             int ielem = 0;
             while (ielem < this.vecLen) {

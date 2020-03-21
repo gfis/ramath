@@ -492,7 +492,7 @@ public class PolyFraction
         BigVector vnum   = polynomials[0].getBigVector();
         BigVector vden   = polynomials[1].getBigVector();
         BigVector result = new BigVector(numTerms);
-        vnum.setDebug(debug);
+        // vnum.setDebug(debug);
         int iterm = 0;
         boolean busy = true;
         while (busy && iterm < numTerms) {

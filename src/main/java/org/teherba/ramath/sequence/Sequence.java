@@ -86,7 +86,7 @@ public class Sequence extends BigVector
         super();
     } // no-args constructor
 
-    /** Construct for a known nummber of terms
+    /** Construct for a known number of terms
      *  @param termNo number of terms
      */
     public Sequence(int termNo) {
@@ -137,7 +137,7 @@ public class Sequence extends BigVector
             if (iterm > 0) {
                 result.append(",");
             }
-            result.append(vector[iterm ++]);
+            result.append(getBig(iterm ++));
             if (iterm >= termNo) {
                 iterm = size(); // break loop
             }

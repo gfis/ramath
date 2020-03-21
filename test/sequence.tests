@@ -49,7 +49,18 @@ DATA
  A222222 2,2,3,4,5,6,7,8,9,0,1
  A333333 3,2,3,4,5,6,7,8,9,0,1
 CALL SequenceReader -m 4 -f $(DATA)
+#-------------------------------
+# Triangle
+TEST TRA1 Triangle toTriangle
 
+DATA
+ A007318
+ A029653
+ A130595
+ A135278
+CALL Triangle -d 0 -eval -b ../OEIS-mat/common/bfile -f $(DATA) -m 21
+
+#-------------------------------
 # LinearRecurrence
 
 TEST LIR1 LinearRecurrence -comp
@@ -166,11 +177,11 @@ CALL TriangleRecurrence -d 1 -find  $(DATA)
 
 TEST TRI6 TriangleRecurrence eval 4
 DATA
- A007318 1
- A029653 2
- A130595 3
- A135278 4
-CALL TriangleRecurrence -d 0 -eval -b ../OEIS-mat/common/bfile -f $(DATA) -m 15
+ A007318
+ A029653
+ A130595
+ A135278
+CALL TriangleRecurrence -d 0 -eval -b ../OEIS-mat/common/bfile -f $(DATA) -m 21
 
 # TEST TRI7 all keyword:tabl
 # CALL TriangleRecurrence -d 0 -eval -b ../OEIS-mat/common/bfile -f tabl.lst.tmp -m 15

@@ -253,8 +253,8 @@ public class SequenceReader {
     /** Parse a list of terms and return them as a {@link Sequence}..
      *  @param dataLine list of numbers, maybe negative, separated by non-digits,
      *  and possibly prepended by the A-number and a space.
-     *  @param fromBfile whether the terms are to be read from the <em>dataLine</em>,
-     *  or from the b-file.
+     *  @param fromBfile true if the terms are to be read from the b-file,
+     *  false for reading from the <em>dataLine</em>.
      */
     private Sequence parse(String dataLine, boolean fromBfile) {
         Sequence result = null;

@@ -227,6 +227,8 @@
                 source="${jdk.version}" target="${jdk.version}"
                 debug="${javac.debug}" debuglevel="${javac.debuglevel}">
             <compilerarg line="-Xlint:unchecked -Xlint:deprecation" />
+        <!--
+        -->
             <classpath>
                 <path refid="compile.classpath"/>
             </classpath>

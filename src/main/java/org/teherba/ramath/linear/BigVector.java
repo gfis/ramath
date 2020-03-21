@@ -216,10 +216,11 @@ public class BigVector extends Vector implements Cloneable, Serializable {
     /** Sets the debugging level
      *  @param debug 0 = none, 1 = some , 2 = more
      */
+/*
     public void setDebug(int debug) {
         this.debug = debug;
     } // setDebug
-
+*/
     /** Returns the common denominator
      *  @return a number &gt;= 1
      */
@@ -883,7 +884,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
      *  removes the first element of <em>this</em> (this is zero then),
      *  and returns the quotient.
      *  @param vect2 the divisor (denominator of the g.f.)
-     *  @return quotient, coefficient of the Taylor series
+     *  @return quotient, coefficient of the series expansion	
      */
     public BigInteger divisionStep(BigVector vect2) {
         BigInteger divisor    = vect2.getBig(0);

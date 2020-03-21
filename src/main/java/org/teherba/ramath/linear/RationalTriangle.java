@@ -154,10 +154,11 @@ public class RationalTriangle extends RationalVector implements Cloneable, Seria
     /** Sets the debugging level
      *  @param level 0 = none, 1 = some , 2 = more
      */
+/*
     public static void setDebug(int level) {
         debug = level;
     } // setDebug
-
+*/
     // getRat(int icol) is inherited
     // set(int icol, BigRational value) is inherited
     // getRationalValues() is inherited
@@ -165,42 +166,6 @@ public class RationalTriangle extends RationalVector implements Cloneable, Seria
     // hasZero is inherited
     // indexOf is inherited
     // contains is inherited
-
-    /** Returns the number of (complete) rows of the triangle.
-     *  @return rowSize such that size = (rowNo + 1) * rowNo / 2
-     */
-    public int getRowSize() {
-        int len = 1;
-        int irow = 0;
-        while (len < size()) {
-            irow ++;
-            len += irow + 1;
-        }
-        return irow + 1;
-    } // getRowSize
-
-    /** Returns the linearized index of a triangle's element
-     *  @param irow row    number (x exponent) of the element (zero based)
-     *  @param icol column number (y exponent) of the element (zero based)
-     *  @return rowSize such that size = (rowNo + 1) * rowNo / 2
-     */
-    public static int linearIndex(int irow, int icol) {
-        return (irow + 1) * irow / 2 + icol;
-    } // linearIndex
-
-    /** Returns the row and column number from a linearized index of a triangle's element
-     *  @param ielem linear index of the element
-     *  @return [row, column] of the element (zero based)
-     */
-    public static int[] triangleIndex(int ielem) {
-        int len = 1;
-        int irow = 1;
-        while (len <= ielem) {
-            irow ++;
-            len += irow;
-        } // while len
-        return new int[] { irow - 1, ielem - (len - irow) };
-    } // indexTriangle
 
     /** Returns an element of the triangle.
      *  @param irow row    number (x exponent) of the element (zero based)
@@ -490,12 +455,12 @@ public class RationalTriangle extends RationalVector implements Cloneable, Seria
 
     /*-------------------- Test Driver --------------------*/
 
-    /** Test method, shows some fixed matrices with no arguments, or the
-     *  matrix resulting from the input formula.
+    /** Test method, shows some fixed vectors with no arguments, or the
+     *  vector resulting from the input formula.
      *  @param args command line arguments: [vect1] oper [vect2] (cf. test/linear.tests)
      */
     public static void main(String[] args) {
-        RationalTriangle.setDebug(1);
+        debug = 1;
         int iarg = 0;
         RationalTriangle vect1 = new RationalTriangle();
         RationalTriangle vect2 = new RationalTriangle();
@@ -512,9 +477,8 @@ public class RationalTriangle extends RationalVector implements Cloneable, Seria
                 if (expr.equals("-d")) {
                     expr = args[iarg ++];
                     try {
-                        int debug = Integer.parseInt(expr);
-                        RationalVector  .setDebug(debug);
-                        RationalTriangle.setDebug(debug);
+                        debug = Integer.parseInt(expr);
+                        RationalVector.debug = debug;
                     } catch (Exception exc) {
                     }
                     expr = args[iarg ++];

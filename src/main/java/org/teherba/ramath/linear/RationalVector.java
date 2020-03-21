@@ -1,5 +1,6 @@
 /*  RationalVector: a simple, short vector of BigRational numbers
  *  @(#) $Id: RationalVector.java 744 2011-07-26 06:29:20Z gfis $
+ *  2020-03-20: extends Vector -> BigVector
  *  2019-10-29: isZero(emptyVector); reduce
  *  2019-10-04: shifted multiplication
  *  2019-08-27, Georg Fischer: copied from BigVector
@@ -21,7 +22,7 @@
  */
 package org.teherba.ramath.linear;
 import  org.teherba.ramath.BigRational;
-import  org.teherba.ramath.linear.Vector;
+import  org.teherba.ramath.linear.BigVector;
 import  java.math.BigInteger;
 import  java.io.Serializable;
 
@@ -37,14 +38,17 @@ import  java.io.Serializable;
  *  Both [0] and an empty vector represent a zero (polynomial).
  *  @author Dr. Georg Fischer
  */
-public class RationalVector extends Vector implements Cloneable, Serializable {
+public class RationalVector extends BigVector implements Cloneable, Serializable {
     private static final long serialVersionUID = 1L;
     public final static String CVSID = "@(#) $Id: RationalVector.java 744 2011-07-26 06:29:20Z gfis $";
 
     /*-------------- class properties -----------------------------*/
+    /** Debugging level: 0 = none, 1 = moderate, 2 = more, 3 = most */
+    public static int debug = 0;
 
     /** a one-dimensional array of numbers */
     protected BigRational[] vector;
+
     /** number of elements in <em>vector</em> */
     // inherited: protected int vecLen;
 
@@ -95,8 +99,8 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
         } // while icol
     } // Constructor(int[])
 
-    /** Constructor for a RationalVector from a {@link Vector} of integers
-     *  @param tuple Vector
+    /** Constructor for a RationalVector from a {@link BigVector} of BigIntegers
+     *  @param tuple BigVector of BigIntegers
      */
     public RationalVector(BigVector tuple) {
         this(tuple.size());
@@ -140,7 +144,7 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
     } // Constructor(3)
 
     /** Deep copy of the RationalVector and its properties.
-     *  @return independant copy of the Vector
+     *  @return independant copy of the vector
      */
     public RationalVector clone() {
         RationalVector result = new RationalVector(size());
@@ -154,17 +158,14 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
 
     /*-------------- bean methods, setters and getters -----------------------------*/
 
-    /** Debugging level: 0 = none, 1 = moderate, 2 = more, 3 = most */
-    private static int debug = 0;
-
-    /** Sets the debugging level
-     *  @param level 0 = none, 1 = some , 2 = more
+    /** Returns the number of elements
+     *  @return a small number
      */
-    public static void setDebug(int level) {
-        debug = level;
-    } // setDebug
+    public int size() {
+        return this.vector.length;
+    } // size
 
-    /** Returns an element of the Vector
+    /** Returns an element of the vector
      *  @param icol number of the element (zero based)
      *  @return a number
      */
@@ -172,7 +173,7 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
         return icol < vecLen ? vector[icol] : BigRational.ZERO;
     } // getRat
 
-    /** Returns an element of the Vector
+    /** Returns an element of the vector
      *  @param icol number of the element (zero based)
      *  @return a number
      */
@@ -544,7 +545,7 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
      *  @param args command line arguments: [vect1] oper [vect2] (cf. test/linear.tests)
      */
     public static void main(String[] args) {
-        RationalVector.setDebug(0);
+        debug = 0;
         int iarg = 0;
         RationalVector vect1 = new RationalVector();
         RationalVector vect2 = new RationalVector();
@@ -552,7 +553,7 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
         RationalVector vectr = new RationalVector();
         RationalVector[] quotRemd = null;
         try {
-            if (args.length == 0) {
+            if (iarg >= args.length) {
                 System.out.println("usage: java -cp dist/ramath.jar org.teherba.ramath.linear.RationalVector \"[vect1] oper [vect2]\"");
                 System.out.println("    oper= + - * / |");
             } else { // arguments
@@ -560,10 +561,14 @@ public class RationalVector extends Vector implements Cloneable, Serializable {
                 if (expr.equals("-d")) {
                     expr = args[iarg ++];
                     try {
-                        RationalVector.setDebug(Integer.parseInt(expr));
+                        debug = Integer.parseInt(expr);
                     } catch (Exception exc) {
                     }
-                    expr = args[iarg ++];
+                    if (iarg < args.length) {
+                    	expr = args[iarg ++];
+                    } else {
+                    	expr = "[1,2] + [3,2]";
+                    }
                 } // -d
                 String[] parts = expr.split("\\s+"); // [vect1] oper [vect2]
                 vect1 = new RationalVector(parts        [0]);
