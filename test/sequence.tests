@@ -52,13 +52,16 @@ CALL SequenceReader -m 4 -f $(DATA)
 #-------------------------------
 # Triangle
 TEST TRA1 Triangle toTriangle
-
 DATA
  A007318
  A029653
  A130595
  A135278
-CALL Triangle -d 0 -eval -b ../OEIS-mat/common/bfile -f $(DATA) -m 21
+ A271703
+CALL Triangle -d 0 -eval  -b ../OEIS-mat/common/bfile -f $(DATA) -m 37
+
+TEST TRA2 Triangle TraitCards
+CALL Triangle -d 0 -trait -b ../OEIS-mat/common/bfile -f test/TRA1.data.tmp -m 37
 
 #-------------------------------
 # LinearRecurrence
