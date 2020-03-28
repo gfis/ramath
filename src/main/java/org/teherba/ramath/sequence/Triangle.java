@@ -21,6 +21,7 @@ package org.teherba.ramath.sequence;
 import  org.teherba.ramath.sequence.Sequence;
 import  org.teherba.ramath.sequence.SequenceReader;
 import  org.teherba.ramath.linear.BigVector;
+import  org.teherba.ramath.util.BigIntegerUtil;
 import  java.io.Serializable;
 import  java.math.BigInteger;
 import  java.util.ArrayList;
@@ -122,6 +123,29 @@ public class Triangle extends Sequence
       0, 720, 1800, 1200, 300, 30, 1;
       0, 5040, 15120, 12600, 4200, 630, 42, 1;
     */
+    
+    /** Transform a source {@link Sequence} by <em>this</em> Triangle.
+     *  @param source source Sequence
+     *  @return target sequence
+     */
+    protected Sequence transform(Sequence source) {
+        int rowNo = getRowSize();
+        Sequence target = new Sequence(rowNo);
+        target.setOffset(source.getOffset());
+        
+        int irow = 0;
+        while (irow < rowNo) {
+            BigInteger sum = BigInteger.ZERO;
+            int icol = 0;
+            while (icol < rowNo) {
+                sum = sum.add(getBig(linearIndex(irow, icol)).multiply(source.getBig(icol)));
+                icol ++;
+            } // while icol
+            target.setBig(irow, sum);
+            irow ++;
+        } // while irow
+        return target;
+    } // transform
     
     /** This pseudo-abstract class computes some characteristic sequence 
      *  from <em>this</em> triangular sequence. 
@@ -276,7 +300,7 @@ public class Triangle extends Sequence
         } 
     } // PosHalfTrait
 
-    /** Polynomials evaluated at +1/2.
+    /** Polynomials evaluated at -1/2.
      */
     private class NegHalfTrait extends Trait {
         protected BigInteger sum;
@@ -296,6 +320,38 @@ public class Triangle extends Sequence
         } 
     } // NegHalfTrait
 
+    /** Transform of the natural numbers >= 0
+     */
+    private class N0TSTrait extends Trait {
+        protected BigInteger sum;
+        public void initRow(int irow) { // at the start of a row
+        	sum = BigInteger.ZERO;
+        }
+        public void termRow(int irow) { // after the end of a row
+        	list.add(sum);
+        } 
+        public void column (int irow, int icol) { // for a column / term
+        	sum = sum.add(getBig(linearIndex(irow, icol)).multiply(BigInteger.valueOf(icol + 0)));
+        	iflat ++;
+        }
+    } // N0TSTrait
+
+    /** Transform of the natural numbers >= 1
+     */
+    private class NATSTrait extends Trait {
+        protected BigInteger sum;
+        public void initRow(int irow) { // at the start of a row
+        	sum = BigInteger.ZERO;
+        }
+        public void termRow(int irow) { // after the end of a row
+        	list.add(sum);
+        } 
+        public void column (int irow, int icol) { // for a column / term
+        	sum = sum.add(getBig(linearIndex(irow, icol)).multiply(BigInteger.valueOf(icol + 1)));
+        	iflat ++;
+        }
+    } // NATSTrait
+
     //--------------------------------
     /** Print a set of derived, characteristic sequences for a Triangle
      *  @param rowNo number of rows to be appended
@@ -312,6 +368,8 @@ public class Triangle extends Sequence
         System.out.println(get1Trait(rowNo, new RightSideTrait  ()));
         System.out.println(get1Trait(rowNo, new PosHalfTrait    ()));
         System.out.println(get1Trait(rowNo, new NegHalfTrait    ()));
+        System.out.println(get1Trait(rowNo, new N0TSTrait       ()));
+        System.out.println(get1Trait(rowNo, new NATSTrait       ()));
     } // printTraitCard
  
      /** Gets a triangular array of lines with comma-separated terms.

@@ -104,6 +104,17 @@ public class Sequence extends BigVector
         bfimax = vector.length - 1;
     } // Constructor(BigInteger[])
 
+    /** Clone <em>this</em> Sequence.
+     *  @return a deep copy 
+     */
+    public Sequence clone() {
+        Sequence result = new Sequence(super.vector);
+        result.setANumber(getANumber());
+        result.setOffset (getOffset ());
+        result.setBfimax (getBfimax ());
+        return result;
+    } // clone()
+
     //--------------------------------------
     /** Prints the sequence in b-file format.
      */
