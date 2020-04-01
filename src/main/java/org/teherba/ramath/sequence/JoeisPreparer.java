@@ -1,5 +1,6 @@
 /*  JoeisPreparer: prepare *.gen files for joeis-lite
  *  @(#) $Id$
+ *  2020-04-01: ShuntingYard for dex
  *  2020-02-11: -bva
  *  2019-12-08: reproduce^; offset1 is always read
  *  2019-12-04: Georg Fischer: copied from PolyFraction.java
@@ -23,6 +24,7 @@ import  org.teherba.ramath.linear.BigVectorArray;
 import  org.teherba.ramath.symbolic.PolyFraction;
 import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.PolyVector;
+import  org.teherba.ramath.symbolic.ShuntingYard;
 import  java.io.BufferedReader;
 import  java.io.FileInputStream;
 import  java.io.InputStreamReader;
@@ -30,6 +32,7 @@ import  java.io.Serializable;
 import  java.nio.channels.Channels;
 import  java.nio.channels.ReadableByteChannel;
 import  java.math.BigInteger;
+import  java.util.ArrayList;
 import  org.apache.log4j.Logger;
 
 /** This class implements several filters for *.gen files to be
@@ -113,7 +116,9 @@ public class JoeisPreparer
      *  <li><code>rioarr</code></li>
      *  <li><code>sage  </code></li>
      *  </ul>
-     *  The following parameters are already consumed: <em>aseqno, callCode, offset1</em>.
+     *  The following parameters are already consumed: 
+     *  aseqno=parms[0], callCode=parms[1], offset1=parms[2]; iparm=3..
+     * 
      */
     private void processRecord() {
         PolyFraction pfr1 = null;
@@ -136,6 +141,16 @@ public class JoeisPreparer
                     + "\t" + pfr1.getSeriesCoefficients(numTerms)
                     .toString().replaceAll("[\\[\\]]", "")
                     );
+
+        } else if (callCode.equals("dex")) { 
+        	String dummy   = parms[iparm + 0];
+        	String formula = parms[iparm + 1];
+            ShuntingYard parser = new ShuntingYard("\\w+");
+            // parser.debug = 2;
+            ArrayList<String> postfix = parser.convertToPostfix(formula);
+            // possibly modify operators here
+            parms[iparm] = postfix.toString().replaceAll("[\\[\\] ]","");
+            reproduce();
 
         } else if (callCode.equals("dhd")) { // pfract, 
             pfr1 = PolyFraction.parse(parms[iparm]).normalize();

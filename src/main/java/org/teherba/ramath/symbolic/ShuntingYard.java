@@ -577,35 +577,6 @@ public class ShuntingYard {
         return postfix;
     } // convertToPostfix
 
-    private static void convertToJOEIS(String fileName) {
-        BufferedReader lineReader; // Reader for the input file
-        String srcEncoding = "UTF-8"; // Encoding of the input file
-        String line = null; // current line from text file
-        try {
-            if (fileName == null || fileName.length() <= 0 || fileName.equals("-")) {
-                lineReader = new BufferedReader(new InputStreamReader(System.in, srcEncoding));
-            } else {
-                ReadableByteChannel lineChannel = (new FileInputStream(fileName)).getChannel();
-                lineReader = new BufferedReader(Channels.newReader(lineChannel , srcEncoding));
-            }
-            while ((line = lineReader.readLine()) != null) { // read and process lines
-                if (! line.matches("\\s*#.*")) { // is not a comment
-                    String parms[] = line.split("\\s+");
-                    int iparm = 0;
-                    String aseqno  = parms[iparm ++];
-                    String formula = parms[iparm ++];
-                    ShuntingYard parser = new ShuntingYard("\\w+");
-                    ArrayList<String> postfix = parser.convertToPostfix(formula);
-                    System.out.println(aseqno + "\t" + postfix + "\t" + formula);
-                } // is not a comment
-            } // while ! eof
-            lineReader.close();
-        } catch (Exception exc) {
-            System.err.println(exc.getMessage());
-        } // try
-        // -f
-    } // convertToJOEIS
-
     /** Test method, with no arguments shows a fixed postfix expression,
      *  otherwise the postfix expression resulting from the argument string.
      *  @param args command line arguments: [funcPat] expression
@@ -626,8 +597,6 @@ public class ShuntingYard {
             parser.setFunctionPattern(funcPat);
             postfix = parser.convertToPostfix(args[1]);
             System.out.println(postfix);
-        } else if (args.length == 3 && args[0].equals("joeis") && args[1].equals("-f")) { // -joeis -f dexexp_extr.tmp
-            convertToJOEIS(args[2]);
         } // with args
     } // main
 

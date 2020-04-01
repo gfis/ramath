@@ -381,6 +381,7 @@ DATA
 -( -2*a +   1*b +   3*c)^2
 CALL Polynomial -var "a,b,c,d" $(DATA)
 
+#--------
 TEST P16 Polynomial parsing
 CALL ShuntingYard
 
@@ -396,6 +397,13 @@ CALL ShuntingYard "1-4x(1+x)^2"
 TEST SH5 ShuntingYard function a() in A064063: 2*n*a(n) +(-23*n+36)*a(n-1) +6*(-2*n+3)*a(n-2)=0
 CALL ShuntingYard "a" "2*n*a(n) +(-23*n+36)*a(n-1) +6*(-2*n+3)*a(n-2)=0"
 
+TEST SH6 ShuntingYard joeis
+DATA
+ A074916	dex	1		(pi + e)/2
+ A074921	dex	0		(pi + e)/2 - sqrt(pi*e)
+ A075549	dex	0		9 - 12*log(2)
+CALL ShuntingYard joeis -f $(DATA)
+#--------
 TEST P17 Polynomial with GT_0
 CALL Polynomial "(a + b) > 0"
 
