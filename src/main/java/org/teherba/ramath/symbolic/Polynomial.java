@@ -193,16 +193,16 @@ public class Polynomial implements Cloneable, Serializable {
     public static Polynomial parse(String input) {
         ShuntingYard shy = new ShuntingYard(debug);
         ArrayList<String> postfix = shy.getPostfixArray("(" + input + ")");
-        return build(postfix);
+        return buildPolynomial(postfix);
     } // parse
 
     /** Returns a new Polynomial constructed from a polish postfix array of Strings
      *  @param postfix list of operands and operators in polish postfix notation
      *  @return a reference to a new Polynomial
      */
-    public static Polynomial build(ArrayList<String> postfix) {
-    	return build(postfix, 0, postfix.size());
-    } // build(ArrayList)
+    public static Polynomial buildPolynomial(ArrayList<String> postfix) {
+    	return buildPolynomial(postfix, 0, postfix.size());
+    } // buildPolynomial(ArrayList)
 
     /** Returns a new Polynomial constructed from a polish postfix array of Strings
      *  @param postfix list of operands and operators in polish postfix notation
@@ -210,7 +210,7 @@ public class Polynomial implements Cloneable, Serializable {
      *  @param toIndex   (exclusive) behind end of list
      *  @return a reference to a new Polynomial
      */
-    public static Polynomial build(ArrayList<String> postfix, int fromIndex, int toIndex) {
+    public static Polynomial buildPolynomial(ArrayList<String> postfix, int fromIndex, int toIndex) {
         Stack<Polynomial> polyStack = new Stack<Polynomial>();
         // polyStack contains: ... poly1 poly2 <operator>
         Polynomial poly1 = null;
@@ -341,7 +341,7 @@ public class Polynomial implements Cloneable, Serializable {
             /* error */ poly2 = null; ipfix = postfix.size();
         }
         return poly2;
-    } // build(ArrayList, int, int)
+    } // buildPolynomial(ArrayList, int, int)
 
     /*-------------- bean methods, setters and getters -----------------------------*/
 

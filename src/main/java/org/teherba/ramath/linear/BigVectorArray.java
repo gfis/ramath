@@ -210,7 +210,7 @@ public class BigVectorArray implements Cloneable, Serializable {
         if (input.endsWith("=0")) {
             input = input.substring(0, input.length() - 2);
         }
-        shy.setFunctionPattern("[a-h]");
+        shy.setFunctionPattern("[a-h]"); // a-h may be recurrence element names
         ArrayList<String> postfix = shy.getPostfixArray("(" + input + ")");
         if (debug >= 2) {
             System.out.println("postfix=" + postfix);
@@ -233,10 +233,10 @@ public class BigVectorArray implements Cloneable, Serializable {
                 System.out.println("postfix[" + ipfix + "] = \"" + elem + "\"");
             }
             if (false) {
-            } else if (elem.endsWith("()")) { // "a()"
+            } else if (elem.endsWith("(")) { // "a("
                 coeffPoly = start == ipfix 
                         ? new Polynomial("1")
-                        : Polynomial.build(postfix, start, ipfix);
+                        : Polynomial.buildPolynomial(postfix, start, ipfix);
                 if (debug >= 2) {
                     System.out.println("start=" + start + ", ipfix=" + ipfix
                             + ", equalFactor=" + equalFactor + ", signFactor="  + signFactor
@@ -254,8 +254,8 @@ public class BigVectorArray implements Cloneable, Serializable {
                     } // differs
                 }
                 start = ipfix + 1;
-            } else if (elem.equals(ShuntingYard.FUNCT)) { // "funct"
-                Polynomial indexPoly = Polynomial.build(postfix, start, ipfix);
+            } else if (elem.endsWith(")")) { // "a)"
+                Polynomial indexPoly = Polynomial.buildPolynomial(postfix, start, ipfix);
                 if (debug >= 2) {
                     System.out.println("start=" + start + ", ipfix=" + ipfix
                             + ", indexPoly= " + indexPoly);

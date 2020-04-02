@@ -1,26 +1,26 @@
-postfix=[a(), n, funct, n, a(), n, 1, -, funct, *, -, n, 1, -, a(), n, 2, -, funct, *, +, n, 1, -, n, 2, -, *, a(), n, 3, -, funct, *, -]
-postfix[0] = "a()"
+postfix=[a(, n, a), n, a(, n, 1, -, a), *, -, n, 1, -, a(, n, 2, -, a), *, +, n, 1, -, n, 2, -, *, a(, n, 3, -, a), *, -]
+postfix[0] = "a("
 start=0, ipfix=0, equalFactor=1, signFactor=1, coeffPoly= 1
 postfix[1] = "n"
-postfix[2] = "funct"
+postfix[2] = "a)"
 start=1, ipfix=2, indexPoly= n
 postfix[3] = "n"
-postfix[4] = "a()"
+postfix[4] = "a("
 start=3, ipfix=4, equalFactor=1, signFactor=1, coeffPoly= n
 postfix[5] = "n"
 postfix[6] = "1"
 postfix[7] = "-"
-postfix[8] = "funct"
+postfix[8] = "a)"
 start=5, ipfix=8, indexPoly= n - 1
 postfix[11] = "n"
 postfix[12] = "1"
 postfix[13] = "-"
-postfix[14] = "a()"
+postfix[14] = "a("
 start=11, ipfix=14, equalFactor=1, signFactor=-1, coeffPoly= n - 1
 postfix[15] = "n"
 postfix[16] = "2"
 postfix[17] = "-"
-postfix[18] = "funct"
+postfix[18] = "a)"
 start=15, ipfix=18, indexPoly= n - 2
 postfix[21] = "n"
 postfix[22] = "1"
@@ -29,12 +29,12 @@ postfix[24] = "n"
 postfix[25] = "2"
 postfix[26] = "-"
 postfix[27] = "*"
-postfix[28] = "a()"
+postfix[28] = "a("
 start=21, ipfix=28, equalFactor=1, signFactor=1, coeffPoly=  - 3*n + n^2 + 2
 postfix[29] = "n"
 postfix[30] = "3"
 postfix[31] = "-"
-postfix[32] = "funct"
+postfix[32] = "a)"
 start=29, ipfix=32, indexPoly= n - 3
 parseRecurrence: a(n)-n*a(n-1)+(n-1)*a(n-2)-(n-1)*(n-2)*a(n-3)
 a(-3):  - 3*n + n^2 + 2

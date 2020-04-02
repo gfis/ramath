@@ -287,7 +287,7 @@ public class ShuntingYard {
                                     if (elem.charAt(1) == '(') {
                                         busy = false;
                                         if (elem.charAt(0) == 'z') { // function call
-                                            postfixAppend(funcStack.pop() + "()");
+                                            postfixAppend(funcStack.pop() + ")");
                                             // postfixAppend(FUNCT);
                                         } // function call
                                     } else { // other operation
@@ -328,10 +328,7 @@ public class ShuntingYard {
                             String  name = buffer.toString();
                             Matcher matcher = functionPattern.matcher(name);
                             if (matcher.matches()) { // is a function name
-                            /*
-                                name += "(";
-                                postfixAppend(name);
-                            */
+                                postfixAppend(name + "(");
                                 funcStack.push(name);
                                 pushOper("z("); // higher than all other precedences
                                 readOff = true;
@@ -618,10 +615,10 @@ public class ShuntingYard {
         StringBuffer result = new StringBuffer(128);
         getPostfixArray(parmInput); // global: postfix
         int len = postfix.size();
-        for (int ipost = 0; ipost < len; ipost ++) {
+        for (int ipfix = 0; ipfix < len; ipfix ++) {
         	result.append(sep);
-        	result.append(postfix.get(ipost));
-        } // for ipost
+        	result.append(postfix.get(ipfix));
+        } // for ipfix
         return result.toString();
     } // getPostfixString(String, String)
 
