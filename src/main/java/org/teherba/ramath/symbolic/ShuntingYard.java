@@ -1,5 +1,6 @@
 /*  ShuntingYard: parser for the recognition of arithmetic and boolean expressions
  *  @(#) $Id: ShuntingYard.java 522 2010-07-26 07:14:48Z gfis $
+ *  2020-04-02: functions, with ",", as brackets: log( .... )log
  *  2019-05-23: + functionPattern
  *  2019-05-12: unary -, renaming; extracted from PolynomialParser
  *  2009-07-01, Georg Fischer: copied from Polynomial
@@ -67,6 +68,8 @@ public class ShuntingYard {
             };
     public static String FUNCT = "funct";
 
+    /** pushdown stack for function names */
+    private Stack    <String> funcStack;
     /** pushdown stack for operators and parentheses */
     private Stack    <String> operStack;
     /** append the operands and postfix operators to this list */
@@ -76,10 +79,10 @@ public class ShuntingYard {
      */
     private Pattern functionPattern;
 
-    /** No-args Constructor with defautl funciton pattern
+    /** No-args Constructor with default function pattern
      */
     public ShuntingYard() {
-        this("\\W"); // no word character - no name is function name
+        this("\\W", 0); // no word character - not any name is a function name
     } // no-args Constructor
 
     /** Constructor with function pattern
@@ -87,16 +90,33 @@ public class ShuntingYard {
      *  for which no "*" is inserted before a "(".
      */
     public ShuntingYard(String funcPat) {
+    	this(funcPat, 0);
+    } // Constructor(String)
+
+    /** Constructor with debugging mode
+     *  @param debugMode 0=none, 1=some, 2=more
+     */
+    public ShuntingYard(int debugMode) {
+    	this("\\W", debugMode);
+    } // Constructor(String)
+
+    /** Constructor with function pattern and debugging mode
+     *  @param funcPat a regular expression denoting the names
+     *  for which no "*" is inserted before a "(".
+     *  @param debugMode 0=none, 1=some, 2=more
+     */
+    public ShuntingYard(String funcPat, int debugMode) {
         postfix   = new ArrayList<String>(256);
         operStack = new Stack    <String>();
         setFunctionPattern(funcPat);
+        setDebug(debugMode);
     } // Constructor(String)
 
     /** Sets the debugging flag
-     *  @param mode 0=no debugging output, 1=some, 2=more
+     *  @param debugMode 0=no debugging output, 1=some, 2=more
      */
-    public void setDebug(int mode) {
-        debug = mode;
+    public void setDebug(int debugMode) {
+        debug = debugMode;
     } // setDebug
 
     /** Sets the function pattern
@@ -146,27 +166,30 @@ public class ShuntingYard {
      *  The railroad shunting yard algorithm is that of Edsger Dijkstra (1961) as described in
      *  <a href="http://en.wikipedia.org/wiki/Shunting-yard_algorithm">Wikipedia</a>.
      *  @param parmInput the input string, with whitespace, for example " + 17*a0^2*a1 + a2^2*a3^3 - 4*b4"
+     *  @return array of Strings with operators, operands and function symbols
      *  <p>
      *  The precedence of operators (in <em>precOper, operStack</em>) is indicated
      *  by the ASCII order of lowercase letters according to the following table:
      *  <table><caption>Operator Precedence and corresponding Codes</caption>
-     *  <tr><td>||                  </td><td>j</td></tr>
-     *  <tr><td>&amp;&amp;          </td><td>k</td></tr>
+     *  <tr><td>,                            </td><td>i</td></tr>
+     *  <tr><td>||                           </td><td>j</td></tr>
+     *  <tr><td>&amp;&amp;                   </td><td>k</td></tr>
      *  <tr><td>&lt;= &gt;= == != &gt; &lt;  </td><td>l</td></tr>
-     *  <tr><td>+ -                 </td><td>m</td></tr>
-     *  <tr><td>* /                 </td><td>p</td></tr>
-     *  <tr><td>^                   </td><td>q</td></tr>
-     *  <tr><td>-. (unary) !        </td><td>x</td></tr>
-     *  <tr><td>(                   </td><td>y</td></tr>
+     *  <tr><td>+ -                          </td><td>m</td></tr>
+     *  <tr><td>* /                          </td><td>p</td></tr>
+     *  <tr><td>^                            </td><td>q</td></tr>
+     *  <tr><td>-. (unary) !                 </td><td>x</td></tr>
+     *  <tr><td>(                            </td><td>y</td></tr>
      *  </table>
      */
-    public ArrayList<String> convertToPostfix(String parmInput) {
+    public ArrayList<String> getPostfixArray(String parmInput) {
         String input = "(" + (parmInput.trim().startsWith("-") ? "0" : "") + parmInput + ")";
         StringBuffer buffer = new StringBuffer(16); //accumulate variable names, numbers and operators here
         String elem = null; // next element on stack / in postfix list
         char ch = ' ';
         boolean busy = false;
         boolean readOff = true;
+        funcStack = new Stack<String>();
         operStack = new Stack<String>();
         int ipos = 0; // position in input string
         State state = State.IN_START;
@@ -183,6 +206,9 @@ public class ShuntingYard {
                 switch (state) {
                     case IN_START:
                         switch (ch) {
+                            case ',':
+                                popLowerSameAndPush("i,");
+                                break;
                             case '<':
                             case '>':
                             case '=':
@@ -195,7 +221,6 @@ public class ShuntingYard {
                                 state = State.IN_OPTOR;
                                 break;
                             case '%':
-                                int ich = 32; // ' '
                                 if (ipos < input.length() - 2 && Character.isLetterOrDigit(input.charAt(ipos + 1))) { // hex pair follows
                                     try {
                                         ch = (char) Integer.parseInt(input.substring(ipos + 1, ipos + 3), 16);
@@ -262,7 +287,8 @@ public class ShuntingYard {
                                     if (elem.charAt(1) == '(') {
                                         busy = false;
                                         if (elem.charAt(0) == 'z') { // function call
-                                        	postfixAppend(FUNCT);
+                                            postfixAppend(funcStack.pop() + "()");
+                                            // postfixAppend(FUNCT);
                                         } // function call
                                     } else { // other operation
                                         postfixAppend(elem.substring(1));
@@ -302,8 +328,11 @@ public class ShuntingYard {
                             String  name = buffer.toString();
                             Matcher matcher = functionPattern.matcher(name);
                             if (matcher.matches()) { // is a function name
-                                name += "()";
+                            /*
+                                name += "(";
                                 postfixAppend(name);
+                            */
+                                funcStack.push(name);
                                 pushOper("z("); // higher than all other precedences
                                 readOff = true;
                                 state = State.IN_START;
@@ -575,28 +604,56 @@ public class ShuntingYard {
             System.out.println("result postfix=" + postfix);
         }
         return postfix;
-    } // convertToPostfix
+    } // getPostfixArray
+
+    /** Reads an input string containing an arithmetic expression with infix notation
+     *  and fills a list of output symbols representing the same expression in 
+     *  postfix notation (reverse polish notation).
+     *  @param parmInput the input string, with whitespace, for example " + 17*a0^2*a1 + a2^2*a3^3 - 4*b4"
+     *  @param sep separator for operators and operands, presumably some whitespace character
+     *  @return String with operators, operands and function symbols separated by <em>sep</em>; 
+     *  the first character is the separator, which should be skipped for any <em>split</em> operation.
+     */
+    public String getPostfixString(String sep, String parmInput) {
+        StringBuffer result = new StringBuffer(128);
+        getPostfixArray(parmInput); // global: postfix
+        int len = postfix.size();
+        for (int ipost = 0; ipost < len; ipost ++) {
+        	result.append(sep);
+        	result.append(postfix.get(ipost));
+        } // for ipost
+        return result.toString();
+    } // getPostfixString(String, String)
+
+    /** Reads an input string containing an arithmetic expression with infix notation
+     *  and fills a list of output symbols representing the same expression in 
+     *  postfix notation (reverse polish notation).
+     *  @param parmInput the input string, with whitespace, for example " + 17*a0^2*a1 + a2^2*a3^3 - 4*b4"
+     *  @return String with operators, operands and function symbols separated by a space; 
+     *  the first character is the separator, which should be skipped for any <em>split</em> operation.
+     */
+    public String getPostfixString(String parmInput) {
+    	return getPostfixString(" ", parmInput);
+    } // getPostfixString(String)
 
     /** Test method, with no arguments shows a fixed postfix expression,
      *  otherwise the postfix expression resulting from the argument string.
      *  @param args command line arguments: [funcPat] expression
      */
     public static void main(String[] args) {
-        ShuntingYard parser = new ShuntingYard();
-        parser.debug = 2;
-        ArrayList<String> postfix = new ArrayList<String>(64);
+        ShuntingYard parser = new ShuntingYard(2);
+        ArrayList<String> postfix = null;
         if (false) {
         } else if (args.length == 0) { // default expression
-            postfix = parser.convertToPostfix("(3*a²+b^2)-3*(c²+d^2)+0*e");
+            postfix = parser.getPostfixArray("(3*a²+b^2)-3*(c²+d^2)+0*e");
             System.out.println(postfix);
         } else if (args.length == 1) { // expression only
-            postfix = parser.convertToPostfix(args[0]);
+            postfix = parser.getPostfixArray(args[0]);
             System.out.println(postfix);
         } else if (args.length == 2) { // funcPat expression
             String funcPat = args[0];
             parser.setFunctionPattern(funcPat);
-            postfix = parser.convertToPostfix(args[1]);
-            System.out.println(postfix);
+            System.out.println(parser.getPostfixString(";", args[1]));
         } // with args
     } // main
 

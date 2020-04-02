@@ -146,10 +146,10 @@ public class JoeisPreparer
         	String dummy   = parms[iparm + 0];
         	String formula = parms[iparm + 1];
             ShuntingYard parser = new ShuntingYard("\\w+");
-            // parser.debug = 2;
-            ArrayList<String> postfix = parser.convertToPostfix(formula);
+            parser.setDebug(debug);
+            String postfix = parser.getPostfixString(";", formula);
             // possibly modify operators here
-            parms[iparm] = postfix.toString().replaceAll("[\\[\\] ]","");
+            parms[iparm] = postfix;
             reproduce();
 
         } else if (callCode.equals("dhd")) { // pfract, 

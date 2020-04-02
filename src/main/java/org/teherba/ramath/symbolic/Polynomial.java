@@ -191,9 +191,8 @@ public class Polynomial implements Cloneable, Serializable {
      *  @return a reference to a new Polynomial
      */
     public static Polynomial parse(String input) {
-        ShuntingYard shy = new ShuntingYard();
-        shy.setDebug(debug);
-        ArrayList<String> postfix = shy.convertToPostfix("(" + input + ")");
+        ShuntingYard shy = new ShuntingYard(debug);
+        ArrayList<String> postfix = shy.getPostfixArray("(" + input + ")");
         return build(postfix);
     } // parse
 

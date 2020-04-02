@@ -178,7 +178,7 @@ DATA
  A900002  fract1 1 10+9x/(1+x^2)
  A900010  fract1 1 1/(1-x)
  A900002  fract1 0 2+3x+4x^2/(1-x)
-CALL PolyFraction -f $(DATA)
+CALL PolyFraction -d 0 -f $(DATA)
 
 TEST PF8 PolyFraction parse and shorten
 CALL PolyFraction  -d 1 -parse "(32x+64x*y)/(32*y - 128*x*y)"
@@ -397,13 +397,9 @@ CALL ShuntingYard "1-4x(1+x)^2"
 TEST SH5 ShuntingYard function a() in A064063: 2*n*a(n) +(-23*n+36)*a(n-1) +6*(-2*n+3)*a(n-2)=0
 CALL ShuntingYard "a" "2*n*a(n) +(-23*n+36)*a(n-1) +6*(-2*n+3)*a(n-2)=0"
 
-TEST SH6 ShuntingYard joeis
-DATA
- A074916	dex	1		(pi + e)/2
- A074921	dex	0		(pi + e)/2 - sqrt(pi*e)
- A075549	dex	0		9 - 12*log(2)
-CALL ShuntingYard joeis -f $(DATA)
-#--------
+TEST SH6 ShuntingYard function mod(a,b)
+CALL ShuntingYard "mod" "mod(17,5) + 2mod(18,10)"
+
 TEST P17 Polynomial with GT_0
 CALL Polynomial "(a + b) > 0"
 

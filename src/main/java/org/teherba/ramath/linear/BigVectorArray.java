@@ -200,8 +200,7 @@ public class BigVectorArray implements Cloneable, Serializable {
      *  the input could not properly be parsed
      */
     public static BigVectorArray parseRecurrence(String input) {
-        ShuntingYard shy = new ShuntingYard();
-        // shy.setDebug(debug);
+        ShuntingYard shy = new ShuntingYard(0); // debug?
         input = input
                 .replaceAll("\\s", "")
                 .replaceAll("\\=\\=","=")
@@ -212,7 +211,7 @@ public class BigVectorArray implements Cloneable, Serializable {
             input = input.substring(0, input.length() - 2);
         }
         shy.setFunctionPattern("[a-h]");
-        ArrayList<String> postfix = shy.convertToPostfix("(" + input + ")");
+        ArrayList<String> postfix = shy.getPostfixArray("(" + input + ")");
         if (debug >= 2) {
             System.out.println("postfix=" + postfix);
         }
