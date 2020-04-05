@@ -1,32 +1,6 @@
-old IN_START'(' 	OS=[]	PF=[]
-old IN_START'm' 	OS=[y(]	PF=[]
-old IN_VNAME'o' 	OS=[y(]	PF=[]
-old IN_VNAME'd' 	OS=[y(]	PF=[]
-old IN_VNAME'(' 	OS=[y(]	PF=[]
-old IN_START'1' 	OS=[y(, z(]	PF=[mod(]
-old IN_NUMBR'7' 	OS=[y(, z(]	PF=[mod(]
-old IN_NUMBR',' 	OS=[y(, z(]	PF=[mod(]
-old IN_START',' 	OS=[y(, z(]	PF=[mod(, 17]
-old IN_START'5' 	OS=[y(, z(, i,]	PF=[mod(, 17]
-old IN_NUMBR')' 	OS=[y(, z(, i,]	PF=[mod(, 17]
-old IN_START')' 	OS=[y(, z(, i,]	PF=[mod(, 17, 5]
-old IN_CLOSE'+' 	OS=[y(]	PF=[mod(, 17, 5, ,, mod)]
-old IN_START'+' 	OS=[y(]	PF=[mod(, 17, 5, ,, mod)]
-old IN_START'2' 	OS=[y(, m+]	PF=[mod(, 17, 5, ,, mod)]
-old IN_NUMBR'm' 	OS=[y(, m+]	PF=[mod(, 17, 5, ,, mod)]
-old IN_START'm' 	OS=[y(, m+, p*]	PF=[mod(, 17, 5, ,, mod), 2]
-old IN_VNAME'o' 	OS=[y(, m+, p*]	PF=[mod(, 17, 5, ,, mod), 2]
-old IN_VNAME'd' 	OS=[y(, m+, p*]	PF=[mod(, 17, 5, ,, mod), 2]
-old IN_VNAME'(' 	OS=[y(, m+, p*]	PF=[mod(, 17, 5, ,, mod), 2]
-old IN_START'1' 	OS=[y(, m+, p*, z(]	PF=[mod(, 17, 5, ,, mod), 2, mod(]
-old IN_NUMBR'8' 	OS=[y(, m+, p*, z(]	PF=[mod(, 17, 5, ,, mod), 2, mod(]
-old IN_NUMBR',' 	OS=[y(, m+, p*, z(]	PF=[mod(, 17, 5, ,, mod), 2, mod(]
-old IN_START',' 	OS=[y(, m+, p*, z(]	PF=[mod(, 17, 5, ,, mod), 2, mod(, 18]
-old IN_START'1' 	OS=[y(, m+, p*, z(, i,]	PF=[mod(, 17, 5, ,, mod), 2, mod(, 18]
-old IN_NUMBR'0' 	OS=[y(, m+, p*, z(, i,]	PF=[mod(, 17, 5, ,, mod), 2, mod(, 18]
-old IN_NUMBR')' 	OS=[y(, m+, p*, z(, i,]	PF=[mod(, 17, 5, ,, mod), 2, mod(, 18]
-old IN_START')' 	OS=[y(, m+, p*, z(, i,]	PF=[mod(, 17, 5, ,, mod), 2, mod(, 18, 10]
-old IN_CLOSE')' 	OS=[y(, m+, p*]	PF=[mod(, 17, 5, ,, mod), 2, mod(, 18, 10, ,, mod)]
-old IN_START')' 	OS=[y(, m+, p*]	PF=[mod(, 17, 5, ,, mod), 2, mod(, 18, 10, ,, mod)]
-result postfix=[mod(, 17, 5, ,, mod), 2, mod(, 18, 10, ,, mod), *, +]
-;mod(;17;5;,;mod);2;mod(;18;10;,;mod);*;+
+expression:	mod(17,5) + 2mod(18,10)
+postfix1:	;mod(;17;5;,;mod);2;mod(;18;10;,;mod);*;+
+rebuilt1:	(mod(17,5))+((2)*(mod(18,10)))
+postfix2:	;mod(;17;5;,;mod);2;mod(;18;10;,;mod);*;+
+rebuilt2:	(mod(17,5))+((2)*(mod(18,10)))
+same

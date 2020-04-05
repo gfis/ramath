@@ -90,14 +90,14 @@ public class ShuntingYard {
      *  for which no "*" is inserted before a "(".
      */
     public ShuntingYard(String funcPat) {
-    	this(funcPat, 0);
+        this(funcPat, 0);
     } // Constructor(String)
 
     /** Constructor with debugging mode
      *  @param debugMode 0=none, 1=some, 2=more
      */
     public ShuntingYard(int debugMode) {
-    	this("\\W", debugMode);
+        this("\\W", debugMode);
     } // Constructor(String)
 
     /** Constructor with function pattern and debugging mode
@@ -184,6 +184,7 @@ public class ShuntingYard {
      */
     public ArrayList<String> getPostfixArray(String parmInput) {
         String input = "(" + (parmInput.trim().startsWith("-") ? "0" : "") + parmInput + ")";
+        postfix = new ArrayList<String>(256);
         StringBuffer buffer = new StringBuffer(16); //accumulate variable names, numbers and operators here
         String elem = null; // next element on stack / in postfix list
         char ch = ' ';
@@ -616,8 +617,8 @@ public class ShuntingYard {
         getPostfixArray(parmInput); // global: postfix
         int len = postfix.size();
         for (int ipfix = 0; ipfix < len; ipfix ++) {
-        	result.append(sep);
-        	result.append(postfix.get(ipfix));
+            result.append(sep);
+            result.append(postfix.get(ipfix));
         } // for ipfix
         return result.toString();
     } // getPostfixString(String, String)
@@ -630,8 +631,141 @@ public class ShuntingYard {
      *  the first character is the separator, which should be skipped for any <em>split</em> operation.
      */
     public String getPostfixString(String parmInput) {
-    	return getPostfixString(" ", parmInput);
+        return getPostfixString(" ", parmInput);
     } // getPostfixString(String)
+
+    /** Builds an infix arithmetic expression from the internal postfix list
+     *  of operators, function symbols and operands (variables, numbers).
+     *  @return expression as String.
+     */
+    public String buildInfixExpression() {
+        return buildInfixExpression(0, postfix.size());
+    } // buildInfixExpression()
+
+    /** Builds an infix arithmetic expression from the internal postfix list
+     *  of operators, function symbols and operands (variables, numbers).
+     *  @param fromIndex (inclusive) at start of list
+     *  @param toIndex   (exclusive) behind end of list
+     *  @return expression as String.
+     */
+    public String buildInfixExpression(int fromIndex, int toIndex) {
+        String result = null;
+        Stack<String> operandStack = new Stack<String>();
+        // operandStack contains: ... operand1 operand2 <operator>
+        String operand1 = null;
+        String operand2 = null;
+        String elem     = null;
+        int exponent = 1;
+        int ipfix = fromIndex;
+        try {
+            while (ipfix < toIndex) {
+                elem = postfix.get(ipfix);
+                char ch = elem.charAt(0);
+                switch (ch) {
+                /*
+                    // relations
+                    case '=':
+                        operand2 = operandStack.pop();
+                        operand1 = operandStack.pop();
+                        if (false) {
+                        } else {
+                            operand1.setRelation(Relator.EQ_0);
+                        }
+                        operandStack.push(operand1);
+                        break;
+                    case '!':
+                        operand2 = operandStack.pop();
+                        operand1 = operandStack.pop().subtract(operand2);
+                        if (false) {
+                        } else if (elem.equals("!=")) {
+                            operand1.setRelation(Relator.NE_0);
+                        } else {
+                            System.err.println("PolynomialParser.parse: invalid relation \"" + elem + "\"");
+                            operand2 = null; // error
+                            ipfix = postfix.size(); // break loop
+                        }
+                        operandStack.push(operand1);
+                        break;
+                    case '>':
+                        operand2 = operandStack.pop();
+                        operand1 = operandStack.pop().subtract(operand2);
+                        if (false) {
+                        } else if (elem.equals(">")) {
+                            operand1.setRelation(Relator.GT_0);
+                        } else if (elem.equals(">=")) {
+                            operand1.setRelation(Relator.GE_0);
+                        } else {
+                            System.err.println("PolynomialParser.parse: invalid relation \"" + elem + "\"");
+                            operand2 = null; // error
+                            ipfix = postfix.size(); // break loop
+                        }
+                        operandStack.push(operand1);
+                        break;
+                    case '<':
+                        operand2 = operandStack.pop();
+                        operand1 = operandStack.pop().subtract(operand2).negativeOf(); // 1 < 2 ... 1 - 2 < 0 ... -1 + 2 > 0
+                        if (false) {
+                        } else if (elem.equals("<")) {
+                            operand1.setRelation(Relator.GT_0);
+                        } else if (elem.equals("<=")) {
+                            operand1.setRelation(Relator.GE_0);
+                        } else {
+                            System.err.println("PolynomialParser.parse: invalid relation \"" + elem + "\"");
+                            operand2 = null; // error
+                            ipfix = postfix.size(); // break loop
+                        }
+                        operandStack.push(operand1);
+                        break;
+                */
+                    // operators + - * / 
+                    case '+':
+                    case '-':
+                    case '*':
+                    case '%':
+                    case '/':
+                    case '^':
+                    case '=':
+                    case '<':
+                    case '>':
+                        operand2 = operandStack.pop();
+                        operand1 = operandStack.pop();
+                        operandStack.push("(" + operand1 + ")" + elem + "(" + operand2 + ")");
+                        break;
+                    case ',':
+                        operand2 = operandStack.pop();
+                        operand1 = operandStack.pop();
+                        operandStack.push(operand1 + "," + operand2); // join all funciton arguments
+                        break;
+                    default:
+                        if (false) {
+                        } else if (Character.isJavaIdentifierStart(ch)) {
+                            if (false) {
+                            } else if (elem.endsWith("(")) { // start of function call
+                                // ignore
+                            } else if (elem.endsWith(")")) { // end of function call
+                                operand1 = operandStack.pop();
+                                operandStack.push(elem.substring(0, elem.length() - 1) + "(" + operand1 + ")");
+                            } else { // normal variable name
+                                operandStack.push(elem);
+                            }
+                        } else if (Character.isDigit(ch)) { // number
+                            operandStack.push(elem);
+                        } else { // strange character
+                            // ignore
+                        }
+                        break;
+                } // switch ch
+                ipfix ++;
+            } // while ipfix
+            result = operandStack.pop(); // should be the single remaining stack element
+        } catch (java.util.EmptyStackException exc) {
+            result = null; // error
+        }
+        if (operandStack.size() != 0) {
+            result = null; // error
+        }
+        return result;
+    } // buildInfixExpression(int,int)
 
     /** Test method, with no arguments shows a fixed postfix expression,
      *  otherwise the postfix expression resulting from the argument string.
@@ -650,7 +784,18 @@ public class ShuntingYard {
         } else if (args.length == 2) { // funcPat expression
             String funcPat = args[0];
             parser.setFunctionPattern(funcPat);
-            System.out.println(parser.getPostfixString(";", args[1]));
+            parser.setDebug(0);
+            String expr    = args[1];
+            System.out.println("expression:\t" + expr);
+            String postfix1 = parser.getPostfixString(";", expr);
+            System.out.println("postfix1:\t"   + postfix1);
+            String rebuilt1 = parser.buildInfixExpression();
+            System.out.println("rebuilt1:\t"   + rebuilt1);
+            String postfix2 = parser.getPostfixString(";", rebuilt1);
+            System.out.println("postfix2:\t"   + postfix2);
+            String rebuilt2 = parser.buildInfixExpression();
+            System.out.println("rebuilt2:\t"   + rebuilt2);
+            System.out.println((! rebuilt1.equals(rebuilt2)) ? "** differ" : "same");
         } // with args
     } // main
 
