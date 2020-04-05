@@ -144,7 +144,9 @@ public class JoeisPreparer
 
         } else if (callCode.equals("dex")) { 
         	String dummy   = parms[iparm + 0];
-        	String formula = parms[iparm + 1];
+        	String keep0   = parms[iparm + 1];
+        	String base    = parms[iparm + 2];
+        	String formula = parms[iparm + 3];
             ShuntingYard parser = new ShuntingYard("\\w+");
             parser.setDebug(debug);
             String postfix = parser.getPostfixString(";", formula);
