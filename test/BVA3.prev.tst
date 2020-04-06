@@ -1,4 +1,4 @@
-postfix=[2, n, *, a(, n, a), *, 23, n, *, 36, -, a(, n, 1, -, a), *, 6, 0, 2, n, *, -, 3, +, *, a(, n, 2, -, a), *, -, =]
+postfix=[2, n, *, a(, n, a), *, 23, n, *, 36, -, a(, n, 1, -, a), *, 6, 2, -., n, *, 3, +, *, a(, n, 2, -, a), *, -, =]
 postfix[0] = "2"
 postfix[1] = "n"
 postfix[2] = "*"
@@ -20,22 +20,21 @@ postfix[15] = "-"
 postfix[16] = "a)"
 start=13, ipfix=16, indexPoly= n - 1
 postfix[18] = "6"
-postfix[19] = "0"
-postfix[20] = "2"
+postfix[19] = "2"
+postfix[20] = "-."
 postfix[21] = "n"
 postfix[22] = "*"
-postfix[23] = "-"
-postfix[24] = "3"
-postfix[25] = "+"
-postfix[26] = "*"
-postfix[27] = "a("
-start=18, ipfix=27, equalFactor=1, signFactor=1, coeffPoly=  - 12*n + 18
-postfix[28] = "n"
-postfix[29] = "2"
-postfix[30] = "-"
-postfix[31] = "a)"
-start=28, ipfix=31, indexPoly= n - 2
-postfix[34] = "="
+postfix[23] = "3"
+postfix[24] = "+"
+postfix[25] = "*"
+postfix[26] = "a("
+start=18, ipfix=26, equalFactor=1, signFactor=1, coeffPoly=  - 12*n + 18
+postfix[27] = "n"
+postfix[28] = "2"
+postfix[29] = "-"
+postfix[30] = "a)"
+start=27, ipfix=30, indexPoly= n - 2
+postfix[33] = "="
 ** parseRecurrence: "=" at the end only
 parseRecurrence: 2*n*a(n)=(23*n-36)*a(n-1)-6*(-2*n+3)*a(n-2)
 a(-2):  - 12*n + 18

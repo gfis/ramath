@@ -1,6 +1,7 @@
 /*  Polynomial: a symbolic, multivariate Polynomial with addition, multiplication,
  *  exponentiation, comparision and other operations
  *  @(#) $Id: Polynomial.java 744 2011-07-26 06:29:20Z gfis $
+ *  2020-04-06: parse/build unary - ("x-.")
  *  2020-02-10: parse returns null for bad expressions and funciton calls
  *  2019-06-06: toTriangleList
  *  2019-05-17: PolynomialParser replaced (partly) by ShuntingYard
@@ -192,7 +193,9 @@ public class Polynomial implements Cloneable, Serializable {
      */
     public static Polynomial parse(String input) {
         ShuntingYard shy = new ShuntingYard(debug);
-        ArrayList<String> postfix = shy.getPostfixList("(" + input + ")");
+        ArrayList<String> postfix = shy.getPostfixList
+                ( (input.trim().startsWith("-") ? "0" : "") 
+        		+ input);
         return buildPolynomial(postfix);
     } // parse
 
@@ -211,107 +214,113 @@ public class Polynomial implements Cloneable, Serializable {
      *  @return a reference to a new Polynomial
      */
     public static Polynomial buildPolynomial(ArrayList<String> postfix, int fromIndex, int toIndex) {
-        Stack<Polynomial> polyStack = new Stack<Polynomial>();
-        // polyStack contains: ... poly1 poly2 <operator>
-        Polynomial poly1 = null;
-        Polynomial poly2 = null;
+        Stack<Polynomial> opdStack = new Stack<Polynomial>();
+        // opdStack contains: ... poly1 poly2 <operator>
+        Polynomial opd1 = null;
+        Polynomial opd2 = null;
         String elem = null;
         int exponent = 1;
         int ipfix = fromIndex;
         try {
             while (ipfix < toIndex) {
                 elem = postfix.get(ipfix);
-                char ch = elem.charAt(0);
+                char ch = elem.charAt(elem.length() - 1); // because of "!="; beware of unary minus "-."
                 if (debug >= 2) {
-                    System.out.println("elem: " + elem + ", " + polyStack);
+                    System.out.println("elem: " + elem + ", " + opdStack);
                 }
                 switch (ch) {
                     // relations
                     case '=':
-                        poly2 = polyStack.pop();
-                        poly1 = polyStack.pop().subtract(poly2);
+                        opd2 = opdStack.pop();
+                        opd1 = opdStack.pop().subtract(opd2);
                         if (false) {
-                        } else {
-                            poly1.setRelation(Relator.EQ_0);
+                        } else if (elem.equals("=")) {
+                            opd1.setRelation(Relator.EQ_0);
+                        } else if (elem.equals("!=")) {
+                            opd1.setRelation(Relator.NE_0);
+                        } else if (elem.equals(">=")) {
+                            opd1.setRelation(Relator.GE_0);
                         }
-                        polyStack.push(poly1);
+                        opdStack.push(opd1);
                         break;
                     case '!':
-                        poly2 = polyStack.pop();
-                        poly1 = polyStack.pop().subtract(poly2);
+                        opd2 = opdStack.pop();
+                        opd1 = opdStack.pop().subtract(opd2);
                         if (false) {
                         } else if (elem.equals("!=")) {
-                            poly1.setRelation(Relator.NE_0);
+                            opd1.setRelation(Relator.NE_0);
                         } else {
                             System.err.println("PolynomialParser.parse: invalid relation \"" + elem + "\"");
-                            /* error */ poly2 = null; ipfix = postfix.size();
+                            /* error */ opd2 = null; ipfix = postfix.size();
                         }
-                        polyStack.push(poly1);
+                        opdStack.push(opd1);
                         break;
                     case '>':
-                        poly2 = polyStack.pop();
-                        poly1 = polyStack.pop().subtract(poly2);
+                        opd2 = opdStack.pop();
+                        opd1 = opdStack.pop().subtract(opd2);
                         if (false) {
                         } else if (elem.equals(">")) {
-                            poly1.setRelation(Relator.GT_0);
+                            opd1.setRelation(Relator.GT_0);
                         } else if (elem.equals(">=")) {
-                            poly1.setRelation(Relator.GE_0);
+                            opd1.setRelation(Relator.GE_0);
                         } else {
                             System.err.println("PolynomialParser.parse: invalid relation \"" + elem + "\"");
-                            /* error */ poly2 = null; ipfix = postfix.size();
+                            /* error */ opd2 = null; ipfix = postfix.size();
                         }
-                        polyStack.push(poly1);
+                        opdStack.push(opd1);
                         break;
                     case '<':
-                        poly2 = polyStack.pop();
-                        poly1 = polyStack.pop().subtract(poly2).negativeOf(); // 1 < 2 ... 1 - 2 < 0 ... -1 + 2 > 0
+                        opd2 = opdStack.pop();
+                        opd1 = opdStack.pop().subtract(opd2).negativeOf(); // 1 < 2 ... 1 - 2 < 0 ... -1 + 2 > 0
                         if (false) {
                         } else if (elem.equals("<")) {
-                            poly1.setRelation(Relator.GT_0);
+                            opd1.setRelation(Relator.GT_0);
                         } else if (elem.equals("<=")) {
-                            poly1.setRelation(Relator.GE_0);
+                            opd1.setRelation(Relator.GE_0);
                         } else {
                             System.err.println("PolynomialParser.parse: invalid relation \"" + elem + "\"");
-                            /* error */ poly2 = null; ipfix = postfix.size();
+                            /* error */ opd2 = null; ipfix = postfix.size();
                         }
-                        polyStack.push(poly1);
+                        opdStack.push(opd1);
                         break;
 
                     // additive operators
                     case '+':
-                        poly2 = polyStack.pop();
-                        polyStack.push(polyStack.pop().add     (poly2));
+                        opd2 = opdStack.pop();
+                        opdStack.push(opdStack.pop().add     (opd2));
                         break;
+                    case '.':  // unary -
                     case '-':
-                        poly2 = polyStack.pop();
+                        opd2 = opdStack.pop();
                         if (false) {
                         } else if (elem.equals("-.")) { // unary -
-                            polyStack.push(poly2.negativeOf());
+                        	opdStack.push(opd2.negate());
+                            // opdStack.push((new Polynomial("0")).subtract(opd2));
                         } else if (elem.equals("-")) {
-                            polyStack.push(polyStack.pop().subtract(poly2));
+                            opdStack.push(opdStack.pop().subtract(opd2));
                         }
                         break;
 
                     // multiplicative operators
                     case '*':
-                        poly2 = polyStack.pop();
-                        polyStack.push(polyStack.pop().multiply(poly2));
+                        opd2 = opdStack.pop();
+                        opdStack.push(opdStack.pop().multiply(opd2));
                         break;
                     case '/':
-                        poly2 = polyStack.pop();
-                        polyStack.push(polyStack.pop().divide  (poly2));
+                        opd2 = opdStack.pop();
+                        opdStack.push(opdStack.pop().divide  (opd2));
                         break;
                     // exponentiation
                     case '^':
-                        poly2 = polyStack.pop();
-                        if (poly2.isConstant()) {
-                            BigInteger brexp = poly2.getConstant();
+                        opd2 = opdStack.pop();
+                        if (opd2.isConstant()) {
+                            BigInteger brexp = opd2.getConstant();
                             exponent = brexp.intValue();
-                            polyStack.push(polyStack.pop().pow(exponent));
+                            opdStack.push(opdStack.pop().pow(exponent));
                         } else {
                             System.err.println("PolynomialParser.parse:"
-                                    + " exponent must be single natural number instead of \"" + poly2.toString() + "\"");
-                            /* error */ poly2 = null; ipfix = postfix.size();
+                                    + " exponent must be single natural number instead of \"" + opd2.toString() + "\"");
+                            /* error */ opd2 = null; ipfix = postfix.size();
                         }
                         break;
                     default:
@@ -319,28 +328,28 @@ public class Polynomial implements Cloneable, Serializable {
                         } else if (Character.isJavaIdentifierStart(ch)) {
                             if (elem.endsWith(")") || elem.equals("funct")) { // function name, call
                                 System.err.println("PolynomialParser.parse: function call \"" + elem + "\"");
-                                /* error */ poly2 = null; ipfix = postfix.size();
+                                /* error */ opd2 = null; ipfix = postfix.size();
                             } else {
-                                polyStack.push(new Polynomial(new Monomial(elem)));
+                                opdStack.push(new Polynomial(new Monomial(elem)));
                             }
                         } else if (Character.isDigit              (ch)) {
-                            polyStack.push(new Polynomial(new Monomial(elem)));
+                            opdStack.push(new Polynomial(new Monomial(elem)));
                         } else { // strange character
                             System.err.println("PolynomialParser.parse: strange operand \"" + elem + "\"");
-                            /* error */ poly2 = null; ipfix = postfix.size();
+                            /* error */ opd2 = null; ipfix = postfix.size();
                         }
                         break;
                 } // switch ch
                 ipfix ++;
             } // while ipfix
-            poly2 = polyStack.pop();
+            opd2 = opdStack.pop();
         } catch (java.util.EmptyStackException exc) {
-            /* error */ poly2 = null; ipfix = postfix.size();
+            /* error */ opd2 = null; ipfix = postfix.size();
         }
-        if (polyStack.size() != 0) {
-            /* error */ poly2 = null; ipfix = postfix.size();
+        if (opdStack.size() != 0) {
+            /* error */ opd2 = null; ipfix = postfix.size();
         }
-        return poly2;
+        return opd2;
     } // buildPolynomial(ArrayList, int, int)
 
     /*-------------- bean methods, setters and getters -----------------------------*/
@@ -823,6 +832,14 @@ public class Polynomial implements Cloneable, Serializable {
         } // while titer
         return this;
     } // negativeOf
+
+    /** Inverts the signs of the monomials of <em>this</em> {@link Polynomial}.
+     *  @return a new Polynomial
+     */
+    public Polynomial negate() {
+        Polynomial result = this.clone().negativeOf();
+        return result;
+    } // negate
 
     /** Clone and subtract all monomials of another Polynomial from this Polynomial.
      *  @param poly2 subtract this Polynomial

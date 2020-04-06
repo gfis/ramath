@@ -1,5 +1,6 @@
 /*  ShuntingYard: parser for the recognition of arithmetic and boolean expressions
  *  @(#) $Id: ShuntingYard.java 522 2010-07-26 07:14:48Z gfis $
+ *  2020-04-06: unary - => x-.
  *  2020-04-02: functions, with ",", as brackets: log( .... )log
  *  2019-05-23: + functionPattern
  *  2019-05-12: unary -, renaming; extracted from PolynomialParser
@@ -183,7 +184,9 @@ public class ShuntingYard {
      *  </table>
      */
     public ArrayList<String> getPostfixList(String parmInput) {
-        String input = "(" + (parmInput.trim().startsWith("-") ? "0" : "") + parmInput + ")";
+        String input = "(" 
+                // + (parmInput.trim().startsWith("-") ? "0" : "") 
+                + parmInput + ")";
         postfix = new ArrayList<String>(256);
         StringBuffer buffer = new StringBuffer(16); //accumulate variable names, numbers and operators here
         String elem = null; // next element on stack / in postfix list
@@ -240,13 +243,22 @@ public class ShuntingYard {
                                 }
                                 break;
                             case '-':
-                                if (   prev == '('
-                                    || prev == '='
-                                    || prev == '<'
-                                    || prev == '>'
+                                if (false) {
+                                } else if (prev == '('
+                                        || prev == '='
+                                        || prev == '<'
+                                        || prev == '>'
+                                        || prev == '|'
+                                        || prev == '&'
+                                        || prev == '!'
+                                        || prev == '*'
+                                        || prev == '/'
                                         ) {
+                                /*
                                     postfixAppend("0"); // a zero is inserted before an unary "-"
                                     popLowerSameAndPush("m-"); // binary "-"
+                                */
+                                    popLowerSameAndPush("x-."); // unary "-"
                                 } else if (prev == '*' || prev == '/') {
                                     popLowerSameAndPush("x-."); // unary "-"
                                 } else {
@@ -472,29 +484,38 @@ public class ShuntingYard {
                                     case '>':
                                     case '=':
                                         popLowerSameAndPush("l" + buffer.substring(0, 1));
+                                    /*
                                         postfixAppend("0"); // a zero is inserted before an unary "-"
                                         popLowerSameAndPush("m-");
+                                    */
+                                        popLowerSameAndPush("x-."); // unary -
                                         break;
                                     case '!': // maybe supported later?
                                         break;
                                     case '*':
                                         popLowerSameAndPush("p*");
-                                        popLowerSameAndPush("x-."); // unary "-", negate
+                                        popLowerSameAndPush("x-."); // unary -
                                         break;
                                     case '/':
                                         popLowerSameAndPush("p/");
-                                        popLowerSameAndPush("x-."); // unary "-", negate
+                                        popLowerSameAndPush("x-."); // unary -
                                         break;
                                     case '&':
                                         popLowerSameAndPush("k" + buffer.substring(0, 1));
+                                    /*
                                         postfixAppend("0"); // a zero is inserted before an unary "-"
                                         popLowerSameAndPush("m-");
+                                    */
+                                        popLowerSameAndPush("x-."); // unary -
                                         break;
                                     case '|': // maybe supported later?
                                         popLowerSameAndPush("j" + buffer.substring(0, 1));
+                                    /*
                                         postfixAppend("0"); // a zero is inserted before an unary "-"
                                         popLowerSameAndPush("m-");
-                                      break;
+                                    */
+                                        popLowerSameAndPush("x-."); // unary -
+                                        break;
                                     default: // should never happen
                                         break;
                                 } // switch 2nd ch
@@ -666,7 +687,9 @@ public class ShuntingYard {
         Stack<String> opdStack = new Stack<String>(); // first character is precedence code 
         // opdStack contains: ... opd1 opd2 <operator>
         String opd1 = null;
+        char   opc1 = 'z';
         String opd2 = null;
+        char   opc2 = 'z';
         String elem = null;
         int exponent = 1;
         int ipfix = fromIndex;
@@ -683,6 +706,7 @@ public class ShuntingYard {
                 } else if (ch == '&'                           ) { prec = OPC_AND   ;
                 } else if (ch == '|'                           ) { prec = OPC_OR    ;
                 } else if (ch == ','                           ) { prec = OPC_COMMA ;
+                } else if (elem.equals("-.")                   ) { prec = OPC_MINUS  ;
                 } else if (ch == ')'                           ) { prec = OPC_OPEN  ;
                 } else                                           { // prec = OPC_PRIM  ;
                 }
@@ -710,7 +734,8 @@ public class ShuntingYard {
                             buffer.append(opd1.substring(1));
                         }
                         buffer.append(ch);
-                        if (opd2.charAt(0) < prec) {
+                        opc2 = opd2.charAt(0);
+                        if (opc2 < prec || (opc2 == OPC_MINUS && prec >= OPC_MULT && prec <= OPC_MINUS)) {
                             buffer.append('(');
                             buffer.append(opd2.substring(1));
                             buffer.append(')');
@@ -719,13 +744,19 @@ public class ShuntingYard {
                         }
                         opdStack.push(buffer.toString());
                         break;
-                    case ';': // right-associative
-                        opd2 = opdStack.pop();
+                    case '.': // unary - ?
+                        if (elem.equals("-.")) {
                         opd1 = opdStack.pop();
-                        buffer.append(opd1.substring(1));
-                        buffer.append(ch);
-                        buffer.append(opd2.substring(1));
+                        buffer.append("-");
+                        if (opd1.charAt(0) < prec) {
+                            buffer.append('(');
+                            buffer.append(opd1.substring(1));
+                            buffer.append(')');
+                        } else {
+                            buffer.append(opd1.substring(1));
+                        }
                         opdStack.push(buffer.toString());
+                        } // unary -
                         break;
                     case '(':
                         // ignore start of function call

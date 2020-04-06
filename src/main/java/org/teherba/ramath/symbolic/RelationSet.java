@@ -873,7 +873,8 @@ public class RelationSet
                     System.out.println("substitute by Polynomial: " + polyi.toString());
                 } // debug
                 VariableMap vmap = new VariableMap();
-                vmap.put(vname, "(" + polyi.toString() + ")");
+                String input = polyi.toString().trim();
+                vmap.put(vname, "(" + (input.startsWith("-") ? "0" : "") + input + ")");
                 ipoly = this.size();
                 while (ipoly > 0) {
                     ipoly --;
