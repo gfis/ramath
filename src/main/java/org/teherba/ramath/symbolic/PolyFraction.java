@@ -131,7 +131,7 @@ public class PolyFraction
     public static PolyFraction parse(String input) {
         PolyFraction result = null; // assume failure
         ShuntingYard parser = new ShuntingYard(debug);
-        ArrayList<String> postfix = parser.getPostfixArray("(" + input + ")");
+        ArrayList<String> postfix = parser.getPostfixList("(" + input + ")");
         Stack<PolyFraction> pfrStack = new Stack<PolyFraction>();
         PolyFraction pfr1 = null;
         PolyFraction pfr2 = null;

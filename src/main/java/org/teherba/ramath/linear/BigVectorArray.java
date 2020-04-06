@@ -211,7 +211,7 @@ public class BigVectorArray implements Cloneable, Serializable {
             input = input.substring(0, input.length() - 2);
         }
         shy.setFunctionPattern("[a-h]"); // a-h may be recurrence element names
-        ArrayList<String> postfix = shy.getPostfixArray("(" + input + ")");
+        ArrayList<String> postfix = shy.getPostfixList("(" + input + ")");
         if (debug >= 2) {
             System.out.println("postfix=" + postfix);
         }

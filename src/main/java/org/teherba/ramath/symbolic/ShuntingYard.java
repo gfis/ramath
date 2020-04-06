@@ -160,7 +160,7 @@ public class ShuntingYard {
         } // while
         pushOper(precOper);
     } // popLowerSameAndPush
-
+    
     /** Reads an input string containing an arithmetic expression with infix notation
      *  and fills a list of output symbols representing the same expression in postfix notation (reverse polish notation).
      *  The railroad shunting yard algorithm is that of Edsger Dijkstra (1961) as described in
@@ -182,7 +182,7 @@ public class ShuntingYard {
      *  <tr><td>(                            </td><td>y</td></tr>
      *  </table>
      */
-    public ArrayList<String> getPostfixArray(String parmInput) {
+    public ArrayList<String> getPostfixList(String parmInput) {
         String input = "(" + (parmInput.trim().startsWith("-") ? "0" : "") + parmInput + ")";
         postfix = new ArrayList<String>(256);
         StringBuffer buffer = new StringBuffer(16); //accumulate variable names, numbers and operators here
@@ -248,7 +248,7 @@ public class ShuntingYard {
                                     postfixAppend("0"); // a zero is inserted before an unary "-"
                                     popLowerSameAndPush("m-"); // binary "-"
                                 } else if (prev == '*' || prev == '/') {
-                                    popLowerSameAndPush("x--"); // unary "-"
+                                    popLowerSameAndPush("x-."); // unary "-"
                                 } else {
                                     popLowerSameAndPush("m-"); // binary "-"
                                 }
@@ -602,7 +602,7 @@ public class ShuntingYard {
             System.out.println("result postfix=" + postfix);
         }
         return postfix;
-    } // getPostfixArray
+    } // getPostfixList
 
     /** Reads an input string containing an arithmetic expression with infix notation
      *  and fills a list of output symbols representing the same expression in 
@@ -614,7 +614,7 @@ public class ShuntingYard {
      */
     public String getPostfixString(String sep, String parmInput) {
         StringBuffer result = new StringBuffer(128);
-        getPostfixArray(parmInput); // global: postfix
+        getPostfixList(parmInput); // global: postfix
         int len = postfix.size();
         for (int ipfix = 0; ipfix < len; ipfix ++) {
             result.append(sep);
@@ -642,6 +642,18 @@ public class ShuntingYard {
         return buildInfixExpression(0, postfix.size());
     } // buildInfixExpression()
 
+    // operator precedence codes
+    private static final char OPC_COMMA  = 'i';
+    private static final char OPC_OR     = 'j';
+    private static final char OPC_AND    = 'k';
+    private static final char OPC_RELAT  = 'l';
+    private static final char OPC_ADD    = 'm';
+    private static final char OPC_MULT   = 'p';
+    private static final char OPC_POW    = 'q';
+    private static final char OPC_MINUS  = 'x';
+    private static final char OPC_OPEN   = 'y';
+    private static final char OPC_PRIM   = 'z';
+
     /** Builds an infix arithmetic expression from the internal postfix list
      *  of operators, function symbols and operands (variables, numbers).
      *  @param fromIndex (inclusive) at start of list
@@ -650,73 +662,33 @@ public class ShuntingYard {
      */
     public String buildInfixExpression(int fromIndex, int toIndex) {
         String result = null;
-        Stack<String> operandStack = new Stack<String>();
-        // operandStack contains: ... operand1 operand2 <operator>
-        String operand1 = null;
-        String operand2 = null;
-        String elem     = null;
+        StringBuffer buffer = new StringBuffer(128);
+        Stack<String> opdStack = new Stack<String>(); // first character is precedence code 
+        // opdStack contains: ... opd1 opd2 <operator>
+        String opd1 = null;
+        String opd2 = null;
+        String elem = null;
         int exponent = 1;
         int ipfix = fromIndex;
         try {
             while (ipfix < toIndex) {
                 elem = postfix.get(ipfix);
-                char ch = elem.charAt(0);
+                char ch = elem.charAt(elem.length() - 1); // because of "!="; beware of unary minus "-."
+                char prec = OPC_PRIM;
+                if (false) {
+                } else if (ch == '^'                           ) { prec = OPC_POW   ;
+                } else if (ch == '*' || ch == '/'              ) { prec = OPC_MULT  ;
+                } else if (ch == '+' || ch == '-'              ) { prec = OPC_ADD   ;
+                } else if (ch == '<' || ch == '>' || ch == '=' ) { prec = OPC_RELAT ;
+                } else if (ch == '&'                           ) { prec = OPC_AND   ;
+                } else if (ch == '|'                           ) { prec = OPC_OR    ;
+                } else if (ch == ','                           ) { prec = OPC_COMMA ;
+                } else if (ch == ')'                           ) { prec = OPC_OPEN  ;
+                } else                                           { // prec = OPC_PRIM  ;
+                }
+                buffer.setLength(0);
+                buffer.append(prec);
                 switch (ch) {
-                /*
-                    // relations
-                    case '=':
-                        operand2 = operandStack.pop();
-                        operand1 = operandStack.pop();
-                        if (false) {
-                        } else {
-                            operand1.setRelation(Relator.EQ_0);
-                        }
-                        operandStack.push(operand1);
-                        break;
-                    case '!':
-                        operand2 = operandStack.pop();
-                        operand1 = operandStack.pop().subtract(operand2);
-                        if (false) {
-                        } else if (elem.equals("!=")) {
-                            operand1.setRelation(Relator.NE_0);
-                        } else {
-                            System.err.println("PolynomialParser.parse: invalid relation \"" + elem + "\"");
-                            operand2 = null; // error
-                            ipfix = postfix.size(); // break loop
-                        }
-                        operandStack.push(operand1);
-                        break;
-                    case '>':
-                        operand2 = operandStack.pop();
-                        operand1 = operandStack.pop().subtract(operand2);
-                        if (false) {
-                        } else if (elem.equals(">")) {
-                            operand1.setRelation(Relator.GT_0);
-                        } else if (elem.equals(">=")) {
-                            operand1.setRelation(Relator.GE_0);
-                        } else {
-                            System.err.println("PolynomialParser.parse: invalid relation \"" + elem + "\"");
-                            operand2 = null; // error
-                            ipfix = postfix.size(); // break loop
-                        }
-                        operandStack.push(operand1);
-                        break;
-                    case '<':
-                        operand2 = operandStack.pop();
-                        operand1 = operandStack.pop().subtract(operand2).negativeOf(); // 1 < 2 ... 1 - 2 < 0 ... -1 + 2 > 0
-                        if (false) {
-                        } else if (elem.equals("<")) {
-                            operand1.setRelation(Relator.GT_0);
-                        } else if (elem.equals("<=")) {
-                            operand1.setRelation(Relator.GE_0);
-                        } else {
-                            System.err.println("PolynomialParser.parse: invalid relation \"" + elem + "\"");
-                            operand2 = null; // error
-                            ipfix = postfix.size(); // break loop
-                        }
-                        operandStack.push(operand1);
-                        break;
-                */
                     // operators + - * / 
                     case '+':
                     case '-':
@@ -727,29 +699,52 @@ public class ShuntingYard {
                     case '=':
                     case '<':
                     case '>':
-                        operand2 = operandStack.pop();
-                        operand1 = operandStack.pop();
-                        operandStack.push("(" + operand1 + ")" + elem + "(" + operand2 + ")");
-                        break;
                     case ',':
-                        operand2 = operandStack.pop();
-                        operand1 = operandStack.pop();
-                        operandStack.push(operand1 + "," + operand2); // join all funciton arguments
+                        opd2 = opdStack.pop(); 
+                        opd1 = opdStack.pop();
+                        if (opd1.charAt(0) < prec) {
+                            buffer.append('(');
+                            buffer.append(opd1.substring(1));
+                            buffer.append(')');
+                        } else {
+                            buffer.append(opd1.substring(1));
+                        }
+                        buffer.append(ch);
+                        if (opd2.charAt(0) < prec) {
+                            buffer.append('(');
+                            buffer.append(opd2.substring(1));
+                            buffer.append(')');
+                        } else {
+                            buffer.append(opd2.substring(1));
+                        }
+                        opdStack.push(buffer.toString());
+                        break;
+                    case ';': // right-associative
+                        opd2 = opdStack.pop();
+                        opd1 = opdStack.pop();
+                        buffer.append(opd1.substring(1));
+                        buffer.append(ch);
+                        buffer.append(opd2.substring(1));
+                        opdStack.push(buffer.toString());
+                        break;
+                    case '(':
+                        // ignore start of function call
+                        break;
+                    case ')': // end of function call
+                        opd1 = opdStack.pop();
+                        buffer.append(elem.substring(0, elem.length() - 1));
+                        buffer.append('(');
+                        buffer.append(opd1.substring(1));
+                        buffer.append(')');
+                        opdStack.push(buffer.toString());
                         break;
                     default:
+                        ch = elem.charAt(0); // first
                         if (false) {
                         } else if (Character.isJavaIdentifierStart(ch)) {
-                            if (false) {
-                            } else if (elem.endsWith("(")) { // start of function call
-                                // ignore
-                            } else if (elem.endsWith(")")) { // end of function call
-                                operand1 = operandStack.pop();
-                                operandStack.push(elem.substring(0, elem.length() - 1) + "(" + operand1 + ")");
-                            } else { // normal variable name
-                                operandStack.push(elem);
-                            }
+                            opdStack.push(String.valueOf(OPC_PRIM) + elem);
                         } else if (Character.isDigit(ch)) { // number
-                            operandStack.push(elem);
+                            opdStack.push(String.valueOf(OPC_PRIM) + elem);
                         } else { // strange character
                             // ignore
                         }
@@ -757,11 +752,11 @@ public class ShuntingYard {
                 } // switch ch
                 ipfix ++;
             } // while ipfix
-            result = operandStack.pop(); // should be the single remaining stack element
+            result = opdStack.pop().substring(1); // should be the single remaining stack element
         } catch (java.util.EmptyStackException exc) {
             result = null; // error
         }
-        if (operandStack.size() != 0) {
+        if (opdStack.size() != 0) {
             result = null; // error
         }
         return result;
@@ -776,10 +771,10 @@ public class ShuntingYard {
         ArrayList<String> postfix = null;
         if (false) {
         } else if (args.length == 0) { // default expression
-            postfix = parser.getPostfixArray("(3*a²+b^2)-3*(c²+d^2)+0*e");
+            postfix = parser.getPostfixList("(3*a²+b^2)-3*(c²+d^2)+0*e");
             System.out.println(postfix);
         } else if (args.length == 1) { // expression only
-            postfix = parser.getPostfixArray(args[0]);
+            postfix = parser.getPostfixList(args[0]);
             System.out.println(postfix);
         } else if (args.length == 2) { // funcPat expression
             String funcPat = args[0];

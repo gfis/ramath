@@ -401,7 +401,10 @@ TEST SH6 ShuntingYard function mod(a,b)
 CALL ShuntingYard "mod" "mod(17,5) + 2mod(18,10)"
 
 TEST SH7 ShuntingYard function multicomma
-CALL ShuntingYard "multi" "-multi(a,b,c,d)*(-1/2)"
+CALL ShuntingYard "\w+" "-multi(a,b,c,d)*(-1/2)"
+
+TEST SH8 ShuntingYard function multicomma
+CALL ShuntingYard "\w+" "sin(cos(tan(cot(1))) + e^Pi^i^0"
 
 TEST P17 Polynomial with GT_0
 CALL Polynomial "(a + b) > 0"
