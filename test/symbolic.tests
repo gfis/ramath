@@ -233,6 +233,9 @@ CALL PolyVector -matrix "[0,(-4*n^2-66*n-272),(n^2+18*n+32)]"
 TEST PV4 PolyVector.getBigMatrix A240879 holon
 CALL PolyVector -matrix "[0,8*(n-1)*(2*n-1),-2*n*(4*n-7),(n-2)*n]" 
 
+TEST PV5 PolyVector.getBigMatrix A245391 homgf
+CALL PolyVector -matrix "[0,(8*n^2+28*n+24),(-n^2-4*n-3)]" 
+
 TEST PMA1 PolyMatrix.multiply
 CALL PolyMatrix -mult [[5,5,0,-3],[3,0,5,5],[0,-3,5,5],[5,5,3,0]] [a,b,c,d]
 
@@ -401,10 +404,16 @@ TEST SH6 ShuntingYard function mod(a,b)
 CALL ShuntingYard "mod" "mod(17,5) + 2mod(18,10)"
 
 TEST SH7 ShuntingYard function multicomma, unary -
-CALL ShuntingYard "\w+" "-hypergeom(a,b,c,d)^(-1/2) + hypergeom(a,b,c)/(-1/2)"
+CALL ShuntingYard "\w+" "-hypergeom(a,b,-c,d)^(1/2) + hypergeom(a,b,c)/(-1/2)"
 
 TEST SH8 ShuntingYard function multicomma
 CALL ShuntingYard "\w+" "sin(cos(tan(cot(1))) + e^Pi^i^0"
+
+TEST SH9 ShuntingYard unary minus
+CALL ShuntingYard "\w+" "1/54*(-1+18*x+(-(12*x-1)^3)^(1/2))/x^2"
+
+TEST SH10 ShuntingYard right associativity of "^"
+CALL ShuntingYard "\w+" "a^b^c"
 
 TEST P17 Polynomial with GT_0
 CALL Polynomial "(a + b) > 0"

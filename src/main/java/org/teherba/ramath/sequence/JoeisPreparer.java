@@ -143,15 +143,15 @@ public class JoeisPreparer
                     );
 
         } else if (callCode.equals("dex")) { 
-        	String dummy   = parms[iparm + 0];
-        	String keep0   = parms[iparm + 1];
-        	String base    = parms[iparm + 2];
-        	String formula = parms[iparm + 3];
+            String postfix  = parms[iparm + 0];
+            String keep0   = parms[iparm + 1];
+            String base    = parms[iparm + 2];
+            String formula = parms[iparm + 3];
             ShuntingYard parser = new ShuntingYard("\\w+");
             parser.setDebug(debug);
-            String postfix = parser.getPostfixString(";", formula);
+            postfix = parser.getPostfixString(";", formula);
             // possibly modify operators here
-            parms[iparm] = postfix;
+            parms[iparm + 0] = postfix;
             reproduce();
 
         } else if (callCode.equals("dhd")) { // pfract, 
@@ -207,9 +207,19 @@ public class JoeisPreparer
                 parms[iparm] = pvect.getBigVectorArray().toString();
                 reproduce();
             } catch (Exception exc) {
-                System.err.println("# " + aseqno + " JoeisPreparer.holo(\"" + parm + "\") failed:: " + exc.getMessage());
+                System.err.println("# " + aseqno + " JoeisPreparer.holo(\"" + parm + "\") failed: " + exc.getMessage());
             }
             
+        } else if (callCode.equals("homgf")) { 
+            String gf        = parms[iparm + 0];
+            String gftype    = parms[iparm + 1];
+            ShuntingYard parser = new ShuntingYard("[a-zA-Z]\\w+");
+            parser.setDebug(debug);
+            String postfix   = parser.getPostfixString(";", gf); // not needed
+            parms[iparm + 0] = parser.buildInfixExpression();
+            parms[iparm + 1] = gftype;
+            reproduce();
+
         } else if (callCode.equals("rioarr")) {
             System.out.print(aseqno + "\t");
             pfr1 = PolyFraction.parse(parms[iparm ++]).normalize();

@@ -210,6 +210,9 @@ public class BigVectorArray implements Cloneable, Serializable {
         if (input.endsWith("=0")) {
             input = input.substring(0, input.length() - 2);
         }
+        if (input.startsWith("-")) {
+            input = "(0-1)*" + input.substring(1); 
+        }
         shy.setFunctionPattern("[a-h]"); // a-h may be recurrence element names
         ArrayList<String> postfix = shy.getPostfixList("(" + input + ")");
         if (debug >= 2) {

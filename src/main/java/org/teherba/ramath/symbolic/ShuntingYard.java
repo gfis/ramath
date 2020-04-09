@@ -145,14 +145,15 @@ public class ShuntingYard {
         }
     } // pushOper
 
-    /** Pops all operators with lower precedence, and pushes the parameter operator
+    /** Pops all operators with lower or same precedence, and pushes the parameter operator.
+     *  This gives left associativity.
      *  @param precOper precedence (1 lowercase letter) and operator (1-2 characters)
      */
     private void popLowerSameAndPush(String precOper) {
         boolean busy = true;
         while (busy && ! operStack.empty()) {
             String elem = operStack.peek();
-            if (precOper.charAt(0) <= elem.charAt(0) && elem.charAt(1) != '(') {
+            if (precOper.charAt(0) <= elem.charAt(0) && elem.charAt(1) != '(') { // "<=" instead of "<"
                 elem = operStack.pop();
                 postfixAppend(elem.substring(1));
             } else { // new precedence is higher
@@ -161,7 +162,33 @@ public class ShuntingYard {
         } // while
         pushOper(precOper);
     } // popLowerSameAndPush
-    
+
+    /** Pops all operators with lower precedence only, and pushes the parameter operator.
+     *  This gives right associativity.
+     *  @param precOper precedence (1 lowercase letter) and operator (1-2 characters)
+     */
+    private void popLowerAndPush(String precOper) {
+        boolean busy = true;
+        while (busy && ! operStack.empty()) {
+            String elem = operStack.peek();
+            if (precOper.charAt(0) <  elem.charAt(0) && elem.charAt(1) != '(') { // "<" instead of "<="
+                elem = operStack.pop();
+                postfixAppend(elem.substring(1));
+            } else { // new precedence is higher
+                busy = false;
+            }
+        } // while
+        pushOper(precOper);
+    } // popLowerAndPush
+
+    /** Pops all operators with lower precedence, and pushes a zero (for unary "-") and the parameter operator
+     *  @param precOper precedence (1 lowercase letter) and operator (1-2 characters)
+     */
+    private void popLowerSameAndPushZero(String precOper) {
+        postfixAppend("0"); // a zero is inserted before an unary "-"
+        popLowerSameAndPush(precOper);
+    } // popLowerSameAndPushZero
+
     /** Reads an input string containing an arithmetic expression with infix notation
      *  and fills a list of output symbols representing the same expression in postfix notation (reverse polish notation).
      *  The railroad shunting yard algorithm is that of Edsger Dijkstra (1961) as described in
@@ -184,8 +211,8 @@ public class ShuntingYard {
      *  </table>
      */
     public ArrayList<String> getPostfixList(String parmInput) {
-        String input = "(" 
-                // + (parmInput.trim().startsWith("-") ? "0" : "") 
+        String input = "("
+                + (parmInput.trim().startsWith("-") ? "0" : "")
                 + parmInput + ")";
         postfix = new ArrayList<String>(256);
         StringBuffer buffer = new StringBuffer(16); //accumulate variable names, numbers and operators here
@@ -253,14 +280,10 @@ public class ShuntingYard {
                                         || prev == '!'
                                         || prev == '*'
                                         || prev == '/'
+                                        || prev == ','
                                         ) {
-                                /*
-                                    postfixAppend("0"); // a zero is inserted before an unary "-"
-                                    popLowerSameAndPush("m-"); // binary "-"
-                                */
-                                    popLowerSameAndPush("x-."); // unary "-"
-                                } else if (prev == '*' || prev == '/') {
-                                    popLowerSameAndPush("x-."); // unary "-"
+                                    popLowerSameAndPushZero("m-"); // unary "-"
+                                    // popLowerSameAndPush("x-."); // unary "-"
                                 } else {
                                     popLowerSameAndPush("m-"); // binary "-"
                                 }
@@ -269,22 +292,22 @@ public class ShuntingYard {
                                 popLowerSameAndPush("p/");
                                 break;
                             case '^': // right-associative ???
-                                popLowerSameAndPush("q^");
+                                popLowerAndPush("q^");
                                 break;
                             case '¹': // '\u00b9', super 1
-                                popLowerSameAndPush("q^");
+                                popLowerAndPush("q^");
                                 buffer.setLength(0);
                                 buffer.append('1');
                                 state = State.IN_EXPON;
                                 break;
                             case '²': // '\u00b2', super 2
-                                popLowerSameAndPush("q^");
+                                popLowerAndPush("q^");
                                 buffer.setLength(0);
                                 buffer.append('2');
                                 state = State.IN_EXPON;
                                 break;
                             case '³': // '\u00b3', super 3
-                                popLowerSameAndPush("q^");
+                                popLowerAndPush("q^");
                                 buffer.setLength(0);
                                 buffer.append('3');
                                 state = State.IN_EXPON;
@@ -301,7 +324,6 @@ public class ShuntingYard {
                                         busy = false;
                                         if (elem.charAt(0) == 'z') { // function call
                                             postfixAppend(funcStack.pop() + ")");
-                                            // postfixAppend(FUNCT);
                                         } // function call
                                     } else { // other operation
                                         postfixAppend(elem.substring(1));
@@ -318,7 +340,7 @@ public class ShuntingYard {
                                     buffer.append(ch);
                                     state = State.IN_VNAME;
                                 } else if (ch >= '\u2070' && ch <= '\u2079') {
-                                    popLowerSameAndPush("q^");
+                                    popLowerAndPush("q^");
                                     buffer.setLength(0);
                                     buffer.append(Character.forDigit(ch - 0x2070, 10));
                                     state = State.IN_EXPON;
@@ -472,7 +494,7 @@ public class ShuntingYard {
                                 oper = buffer.toString();
                                 if (false) {
                                 } else if (oper.equals("**")) { // exponentiation
-                                    popLowerSameAndPush("q^");
+                                    popLowerAndPush("q^");
                                 } else {
                                     System.err.println("invalid multiplication operator " + oper);
                                 }
@@ -484,37 +506,23 @@ public class ShuntingYard {
                                     case '>':
                                     case '=':
                                         popLowerSameAndPush("l" + buffer.substring(0, 1));
-                                    /*
-                                        postfixAppend("0"); // a zero is inserted before an unary "-"
-                                        popLowerSameAndPush("m-");
-                                    */
-                                        popLowerSameAndPush("x-."); // unary -
+                                        popLowerSameAndPushZero("m-"); // unary "-"
+                                    //  popLowerSameAndPush("x-."); // unary -
                                         break;
                                     case '!': // maybe supported later?
                                         break;
                                     case '*':
-                                        popLowerSameAndPush("p*");
-                                        popLowerSameAndPush("x-."); // unary -
-                                        break;
                                     case '/':
-                                        popLowerSameAndPush("p/");
-                                        popLowerSameAndPush("x-."); // unary -
+                                        popLowerSameAndPush("p" + buffer.substring(0, 1));
+                                        popLowerSameAndPushZero("m-"); // unary "-"
                                         break;
                                     case '&':
                                         popLowerSameAndPush("k" + buffer.substring(0, 1));
-                                    /*
-                                        postfixAppend("0"); // a zero is inserted before an unary "-"
-                                        popLowerSameAndPush("m-");
-                                    */
-                                        popLowerSameAndPush("x-."); // unary -
+                                        popLowerSameAndPushZero("m-"); // unary "-"
                                         break;
                                     case '|': // maybe supported later?
                                         popLowerSameAndPush("j" + buffer.substring(0, 1));
-                                    /*
-                                        postfixAppend("0"); // a zero is inserted before an unary "-"
-                                        popLowerSameAndPush("m-");
-                                    */
-                                        popLowerSameAndPush("x-."); // unary -
+                                        popLowerSameAndPushZero("m-"); // unary "-"
                                         break;
                                     default: // should never happen
                                         break;
@@ -553,8 +561,6 @@ public class ShuntingYard {
                                     case '!': // maybe supported later?
                                         break;
                                     case '*':
-                                        popLowerSameAndPush("p" + buffer.substring(0, 1));
-                                        break;
                                     case '/':
                                         popLowerSameAndPush("p" + buffer.substring(0, 1));
                                         break;
@@ -626,11 +632,11 @@ public class ShuntingYard {
     } // getPostfixList
 
     /** Reads an input string containing an arithmetic expression with infix notation
-     *  and fills a list of output symbols representing the same expression in 
+     *  and fills a list of output symbols representing the same expression in
      *  postfix notation (reverse polish notation).
      *  @param parmInput the input string, with whitespace, for example " + 17*a0^2*a1 + a2^2*a3^3 - 4*b4"
      *  @param sep separator for operators and operands, presumably some whitespace character
-     *  @return String with operators, operands and function symbols separated by <em>sep</em>; 
+     *  @return String with operators, operands and function symbols separated by <em>sep</em>;
      *  the first character is the separator, which should be skipped for any <em>split</em> operation.
      */
     public String getPostfixString(String sep, String parmInput) {
@@ -645,10 +651,10 @@ public class ShuntingYard {
     } // getPostfixString(String, String)
 
     /** Reads an input string containing an arithmetic expression with infix notation
-     *  and fills a list of output symbols representing the same expression in 
+     *  and fills a list of output symbols representing the same expression in
      *  postfix notation (reverse polish notation).
      *  @param parmInput the input string, with whitespace, for example " + 17*a0^2*a1 + a2^2*a3^3 - 4*b4"
-     *  @return String with operators, operands and function symbols separated by a space; 
+     *  @return String with operators, operands and function symbols separated by a space;
      *  the first character is the separator, which should be skipped for any <em>split</em> operation.
      */
     public String getPostfixString(String parmInput) {
@@ -669,7 +675,8 @@ public class ShuntingYard {
     private static final char OPC_AND    = 'k';
     private static final char OPC_RELAT  = 'l';
     private static final char OPC_ADD    = 'm';
-    private static final char OPC_MULT   = 'p';
+    private static final char OPC_MULT   = 'n';
+    private static final char OPC_DIV    = 'p';
     private static final char OPC_POW    = 'q';
     private static final char OPC_MINUS  = 'x';
     private static final char OPC_OPEN   = 'y';
@@ -684,58 +691,60 @@ public class ShuntingYard {
     public String buildInfixExpression(int fromIndex, int toIndex) {
         String result = null;
         StringBuffer buffer = new StringBuffer(128);
-        Stack<String> opdStack = new Stack<String>(); // first character is precedence code 
+        Stack<String> opdStack = new Stack<String>(); // first character is precedence code
         // opdStack contains: ... opd1 opd2 <operator>
         String opd1 = null;
         char   opc1 = 'z';
         String opd2 = null;
         char   opc2 = 'z';
         String elem = null;
-        int exponent = 1;
         int ipfix = fromIndex;
         try {
             while (ipfix < toIndex) {
                 elem = postfix.get(ipfix);
-                char ch = elem.charAt(elem.length() - 1); // because of "!="; beware of unary minus "-."
-                char prec = OPC_PRIM;
+                char elast = elem.charAt(elem.length() - 1); // last character, because of "!="; beware of unary minus "-."
+                char elec = OPC_PRIM; // precedence of postfix element
                 if (false) {
-                } else if (ch == '^'                           ) { prec = OPC_POW   ;
-                } else if (ch == '*' || ch == '/'              ) { prec = OPC_MULT  ;
-                } else if (ch == '+' || ch == '-'              ) { prec = OPC_ADD   ;
-                } else if (ch == '<' || ch == '>' || ch == '=' ) { prec = OPC_RELAT ;
-                } else if (ch == '&'                           ) { prec = OPC_AND   ;
-                } else if (ch == '|'                           ) { prec = OPC_OR    ;
-                } else if (ch == ','                           ) { prec = OPC_COMMA ;
-                } else if (elem.equals("-.")                   ) { prec = OPC_MINUS  ;
-                } else if (ch == ')'                           ) { prec = OPC_OPEN  ;
-                } else                                           { // prec = OPC_PRIM  ;
+                } else if (elem.equals("-.")           ) { elec = OPC_MINUS ;
+                } else if (elast == '^'                ) { elec = OPC_POW   ;
+                } else if (elast == '/'                ) { elec = OPC_DIV   ;
+                } else if (elast == '*'                ) { elec = OPC_MULT  ;
+                } else if (elast == '+' || elast == '-') { elec = OPC_ADD   ;
+                } else if (elast == '<' || elast == '>' 
+                        || elast == '='                ) { elec = OPC_RELAT ;
+                } else if (elast == '&'                ) { elec = OPC_AND   ;
+                } else if (elast == '|'                ) { elec = OPC_OR    ;
+                } else if (elast == ','                ) { elec = OPC_COMMA ;
+                } else if (elast == ')'                ) { elec = Character.isJavaIdentifierStart(elem.charAt(0)) ? OPC_PRIM : OPC_OPEN; // PRIM = function
+                } else                                   { // elec = OPC_PRIM  ;
                 }
-                buffer.setLength(0);
-                buffer.append(prec);
-                switch (ch) {
-                    // operators + - * / 
-                    case '+':
-                    case '-':
+                buffer.setLength(0); // clear it
+                switch (elast) {
+                    case '^':
                     case '*':
                     case '%':
                     case '/':
-                    case '^':
+                    case '+': 
+                    case '-':
                     case '=':
                     case '<':
                     case '>':
                     case ',':
-                        opd2 = opdStack.pop(); 
+                        // left associative
+                        opd2 = opdStack.pop();
                         opd1 = opdStack.pop();
-                        if (opd1.charAt(0) < prec) {
+                        opc1 = opd1.charAt(0);
+                        buffer.append(elec);
+                        if (opc1 <  elec || (opc1 == OPC_MINUS && elec >= OPC_ADD && elec <= OPC_MINUS)) {
                             buffer.append('(');
                             buffer.append(opd1.substring(1));
                             buffer.append(')');
                         } else {
                             buffer.append(opd1.substring(1));
                         }
-                        buffer.append(ch);
+                        buffer.append(elem);
                         opc2 = opd2.charAt(0);
-                        if (opc2 < prec || (opc2 == OPC_MINUS && prec >= OPC_MULT && prec <= OPC_MINUS)) {
+                        if (opc2 <= elec || (opc2 == OPC_MINUS && elec >= OPC_ADD && elec <= OPC_MINUS)) {
                             buffer.append('(');
                             buffer.append(opd2.substring(1));
                             buffer.append(')');
@@ -744,18 +753,44 @@ public class ShuntingYard {
                         }
                         opdStack.push(buffer.toString());
                         break;
-                    case '.': // unary - ?
-                        if (elem.equals("-.")) {
+                    case 'ß': 
+                        // right associative
+                        opd2 = opdStack.pop();
                         opd1 = opdStack.pop();
-                        buffer.append("-");
-                        if (opd1.charAt(0) < prec) {
+                        opc1 = opd1.charAt(0);
+                        buffer.append(elec);
+                        if (opc1 <= elec || (opc1 == OPC_MINUS && elec >= OPC_ADD && elec <= OPC_MINUS)) {
                             buffer.append('(');
                             buffer.append(opd1.substring(1));
                             buffer.append(')');
                         } else {
                             buffer.append(opd1.substring(1));
                         }
+                        buffer.append(elem);
+                        opc2 = opd2.charAt(0);
+                        if (opc2 <=  elec || (opc2 == OPC_MINUS && elec >= OPC_ADD && elec <= OPC_MINUS)) {
+                            buffer.append('(');
+                            buffer.append(opd2.substring(1));
+                            buffer.append(')');
+                        } else {
+                            buffer.append(opd2.substring(1));
+                        }
                         opdStack.push(buffer.toString());
+                        break;                   
+                    case '.':
+                        if (elec == OPC_MINUS) { // really unary - ?
+                            opd1 = opdStack.pop();
+                            opc1 = opd1.charAt(0);
+                            buffer.append(elec);
+                            buffer.append(elem.charAt(0)); // "-"
+                            if (opc1 != OPC_PRIM) {
+                                buffer.append('(');
+                                buffer.append(opd1.substring(1));
+                                buffer.append(')');
+                            } else {
+                                buffer.append(opd1.substring(1));
+                            }
+                            opdStack.push(buffer.toString());
                         } // unary -
                         break;
                     case '(':
@@ -763,19 +798,23 @@ public class ShuntingYard {
                         break;
                     case ')': // end of function call
                         opd1 = opdStack.pop();
-                        buffer.append(elem.substring(0, elem.length() - 1));
+                        opc1 = opd1.charAt(0);
+                        buffer.append(OPC_PRIM);
+                        buffer.append(elem.substring(0, elem.length() - 1)); // function name
                         buffer.append('(');
                         buffer.append(opd1.substring(1));
                         buffer.append(')');
                         opdStack.push(buffer.toString());
                         break;
                     default:
-                        ch = elem.charAt(0); // first
+                        buffer.append(OPC_PRIM);
+                        buffer.append(elem);
+                        char el0 = elem.charAt(0); // first
                         if (false) {
-                        } else if (Character.isJavaIdentifierStart(ch)) {
-                            opdStack.push(String.valueOf(OPC_PRIM) + elem);
-                        } else if (Character.isDigit(ch)) { // number
-                            opdStack.push(String.valueOf(OPC_PRIM) + elem);
+                        } else if (Character.isJavaIdentifierStart(el0)) {
+                            opdStack.push(buffer.toString());
+                        } else if (Character.isDigit(el0)) { // number
+                            opdStack.push(buffer.toString());
                         } else { // strange character
                             // ignore
                         }
@@ -785,10 +824,16 @@ public class ShuntingYard {
             } // while ipfix
             result = opdStack.pop().substring(1); // should be the single remaining stack element
         } catch (java.util.EmptyStackException exc) {
-            result = null; // error
+            result = " ?stack underflow? "; // error
         }
-        if (opdStack.size() != 0) {
-            result = null; // error
+        while (opdStack.size() != 0) {
+            result += " ?error? " + opdStack.pop(); // error
+        }
+        if (result != null) {
+            result = result.replaceAll("([\\>\\=\\<\\(\\&\\|\\!\\,])0\\-", "$1-");
+            if (result.startsWith("0-")) {
+                result = result.substring(1);
+            }
         }
         return result;
     } // buildInfixExpression(int,int)
