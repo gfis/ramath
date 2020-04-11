@@ -142,7 +142,7 @@ public class JoeisPreparer
                     .toString().replaceAll("[\\[\\]]", "")
                     );
 
-        } else if (callCode.equals("dex")) { 
+        } else if (callCode.startsWith("dex")) { 
             String postfix  = parms[iparm + 0];
             String keep0   = parms[iparm + 1];
             String base    = parms[iparm + 2];
@@ -199,8 +199,8 @@ public class JoeisPreparer
                         + "\t??" + parms[iparm ++]
                         );
  
-        } else if (callCode.equals("holo")) { // OEIS-mat/holrec/makefile.rectab
-            callCode = "holos";
+        } else if (callCode.startsWith("holo")) { // OEIS-mat/holrec/makefile.rectab
+            // callCode = "holos";
             String parm = parms[iparm];
             try {
                 PolyVector pvect = new PolyVector(parms[iparm]);
@@ -210,7 +210,7 @@ public class JoeisPreparer
                 System.err.println("# " + aseqno + " JoeisPreparer.holo(\"" + parm + "\") failed: " + exc.getMessage());
             }
             
-        } else if (callCode.equals("homgf")) { 
+        } else if (callCode.startsWith("homgf")) { 
             String gf        = parms[iparm + 0];
             String gftype    = parms[iparm + 1];
             ShuntingYard parser = new ShuntingYard("[a-zA-Z]\\w+");
