@@ -161,13 +161,13 @@ public class JoeisPreparer
             parms[iparm + 1] = pfr1.getDen().toTriangleList(vars);
             reproduce();
 
-        } else if (callCode.equals("fract1")) {
+        } else if (callCode.startsWith("fract1")) {
             pfr1 = PolyFraction.parse(parms[iparm]);
             if (pfr1 != null) { // parse ok
                 pfr1 = pfr1.normalize();
                 String vects = pfr1.toVectors();
                 if (vects != null) { // is not multivariate
-                    parms[1] = "orgf";
+                    // parms[1] = "orgf";
                     parms[iparm] = vects.replaceAll("\\],\\[", "\t").replaceAll("[\\[\\]]", "");
                     reproduce();
                     System.out.println(aseqno + "\t" + "coef"
@@ -175,7 +175,28 @@ public class JoeisPreparer
                                     .toString().replaceAll("[\\[\\]]", "")
                             );
                 } // not multivariate
-            } // parse ok
+            } else { // parse not ok
+                aseqno = "# " + aseqno;
+                reproduce();
+            }
+            
+        } else if (callCode.startsWith("lingf")) {
+            pfr1 = PolyFraction.parse(parms[iparm]);
+            if (pfr1 != null) { // parse ok
+                pfr1 = pfr1.normalize();
+                String vects = pfr1.toVectors();
+                if (vects != null) { // is not multivariate
+                    parms[iparm + 2] = parms[iparm];
+                    parms[iparm + 0] = vects.replaceAll("\\],\\[", "\t").replaceAll("[\\[\\]]", "");
+                    reproduce();
+                } else { // parse not ok
+                    aseqno = "#2vars " + aseqno;
+                    reproduce();
+                } // not multivariate
+            } else { // parse not ok
+                aseqno = "#1parse " + aseqno;
+                reproduce();
+            }
             
         } else if (callCode.equals("fract2")) {
             pfr1 = PolyFraction.parse(parms[iparm]);
@@ -261,7 +282,7 @@ public class JoeisPreparer
             }
             while ((line = lineReader.readLine()) != null) { // read and process lines
                 if (! line.matches("\\s*#.*")) { // is not a comment
-                    parms = line.split("\\t");
+                    parms = (line + "\t0").split("\\t");
                     if (debug >= 1) {
                         System.out.println(line); // repeat it unchanged
                     }
