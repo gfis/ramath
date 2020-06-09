@@ -86,7 +86,7 @@ public class JoeisPreparer
     protected void reproduce() {
         reproduce(parms.length);
     } // reproduce
-    
+
     /**
      * Reproduces part of the the record with the (maybe modified) parameters.
      * @param num print only so many parameters.
@@ -102,7 +102,7 @@ public class JoeisPreparer
         System.out.println();
     } // reproduce(int)
 
-    /** Process one input line, and determine 
+    /** Process one input line, and determine
      *  whether it should be written to the output.
      *  The following <code>callCode</code>s are processed:
      *  <ul>
@@ -116,9 +116,9 @@ public class JoeisPreparer
      *  <li><code>rioarr</code></li>
      *  <li><code>sage  </code></li>
      *  </ul>
-     *  The following parameters are already consumed: 
+     *  The following parameters are already consumed:
      *  aseqno=parms[0], callCode=parms[1], offset1=parms[2]; iparm=3..
-     * 
+     *
      */
     private void processRecord() {
         PolyFraction pfr1 = null;
@@ -142,8 +142,8 @@ public class JoeisPreparer
                     .toString().replaceAll("[\\[\\]]", "")
                     );
 
-        } else if (callCode.startsWith("dex")) { 
-            String postfix  = parms[iparm + 0];
+        } else if (callCode.startsWith("dex")) {
+            String postfix = parms[iparm + 0];
             String keep0   = parms[iparm + 1];
             String base    = parms[iparm + 2];
             String formula = parms[iparm + 3];
@@ -154,7 +154,7 @@ public class JoeisPreparer
             parms[iparm + 0] = postfix;
             reproduce();
 
-        } else if (callCode.equals("dhd")) { // pfract, 
+        } else if (callCode.equals("dhd")) { // pfract,
             pfr1 = PolyFraction.parse(parms[iparm]).normalize();
             String[] vars = pfr1.getVariables();
             parms[iparm + 0] = pfr1.getNum().toTriangleList(vars);
@@ -179,7 +179,7 @@ public class JoeisPreparer
                 aseqno = "# " + aseqno;
                 reproduce();
             }
-            
+
         } else if (callCode.startsWith("lingf")) {
             pfr1 = PolyFraction.parse(parms[iparm]);
             if (pfr1 != null) { // parse ok
@@ -197,7 +197,7 @@ public class JoeisPreparer
                 aseqno = "#1parse " + aseqno;
                 reproduce();
             }
-            
+
         } else if (callCode.equals("fract2")) {
             pfr1 = PolyFraction.parse(parms[iparm]);
             if (pfr1 != null) {
@@ -213,13 +213,13 @@ public class JoeisPreparer
                 callCode = "fract22"; // with exchanged variables
                 reproduce();
             }
-            
+
         } else if (callCode.startsWith("fract")) {
             System.out.println(aseqno
                         + "\t" + offset1
                         + "\t??" + parms[iparm ++]
                         );
- 
+
         } else if (callCode.startsWith("holo")) { // OEIS-mat/holrec/makefile.rectab
             // callCode = "holos";
             String parm = parms[iparm];
@@ -230,8 +230,8 @@ public class JoeisPreparer
             } catch (Exception exc) {
                 System.err.println("# " + aseqno + " JoeisPreparer.holo(\"" + parm + "\") failed: " + exc.getMessage());
             }
-            
-        } else if (callCode.startsWith("homgf")) { 
+
+        } else if (callCode.startsWith("homgf")) {
             String gf        = parms[iparm + 0];
             String gftype    = parms[iparm + 1];
             ShuntingYard parser = new ShuntingYard("[a-zA-Z]\\w+");

@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 # äöüÄÖÜß
-# Extracts relations from the output of TreeSolver for elliptic equations and prepar SVG generation
+# Extracts relations from the output of TreeSolver for elliptic equations and prepare SVG generation
 # @(#) $Id$
 # Copyright (c) 2017 Dr. Georg Fischer
 # 2017-08-08: copied from fermcay7.pl
@@ -74,17 +74,17 @@ while (<>) { # read output of TreeSolver, c.f. <DATA> below
     $line =~ s/\A\s+//; # leading spaces
     if (0) {
     } elsif ($line =~ m{\A\-\-+\s*level\s+(\d)}) { # new level
-    	if ($count >= 2) { # check symmetry
-    		my $ic = 0;
-    		while ($count - $ic - 1 > $ic) {
-    			if ($mirror[$count - $ic - 1] ne $mirror[$ic]) {
-    				print "<!-- not mirrored: level=$level, ic=$ic -->\n";
-    				$nomirror ++;
-    			}
-    			$ic ++;
-    		} # while checking
-    	} # count > 2
-    	@mirror = ();
+        if ($count >= 2) { # check symmetry
+            my $ic = 0;
+            while ($count - $ic - 1 > $ic) {
+                if ($mirror[$count - $ic - 1] ne $mirror[$ic]) {
+                    print "<!-- not mirrored: level=$level, ic=$ic -->\n";
+                    $nomirror ++;
+                }
+                $ic ++;
+            } # while checking
+        } # count > 2
+        @mirror = ();
         $level = $1;
         $y += $dy;
         $inode = 0;

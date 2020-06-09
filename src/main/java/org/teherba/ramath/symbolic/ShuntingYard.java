@@ -1,5 +1,6 @@
 /*  ShuntingYard: parser for the recognition of arithmetic and boolean expressions
  *  @(#) $Id: ShuntingYard.java 522 2010-07-26 07:14:48Z gfis $
+ *  2020-06-09: no STDERR messages; start them with "# "
  *  2020-04-06: unary - => x-.
  *  2020-04-02: functions, with ",", as brackets: log( .... )log
  *  2019-05-23: + functionPattern
@@ -349,7 +350,7 @@ public class ShuntingYard {
                                     buffer.append(ch);
                                     state = State.IN_NUMBR;
                                 } else { // invalid character
-                                    System.err.println("invalid character in expression: " + input.substring(ipos));
+                                    System.out.println("# invalid character in expression: " + input.substring(ipos));
                                 }
                                 break;
                         } // switch ch
@@ -484,7 +485,7 @@ public class ShuntingYard {
                                 } else if (oper.equals("><")) {
                                     popLowerSameAndPush("l!=");
                                 } else { // >> <<
-                                    System.err.println("invalid relational operator " + oper);
+                                    System.out.println("# invalid relational operator " + oper);
                                 }
                                 break;
                         //  case '!': // not - later?
@@ -496,7 +497,7 @@ public class ShuntingYard {
                                 } else if (oper.equals("**")) { // exponentiation
                                     popLowerAndPush("q^");
                                 } else {
-                                    System.err.println("invalid multiplication operator " + oper);
+                                    System.out.println("# invalid multiplication operator " + oper);
                                 }
                                 break;
                             case '-':
@@ -537,7 +538,7 @@ public class ShuntingYard {
                                 } else if (oper.equals("/+")) { // ignore unary "+"
                                     popLowerSameAndPush("p/");
                                 } else {
-                                    System.err.println("invalid unary plus " + oper);
+                                    System.out.println("# invalid unary plus " + oper);
                                 }
                                 break;
                             case '&':
@@ -547,7 +548,7 @@ public class ShuntingYard {
                                 } else if (oper.equals("&&")) {
                                     popLowerSameAndPush("k&");
                                 } else { // >> <<
-                                    System.err.println("invalid boolean operator " + oper);
+                                    System.out.println("# invalid boolean operator " + oper);
                                 }
                                 break;
                             default:
@@ -598,7 +599,7 @@ public class ShuntingYard {
                         break; // IN_COMMT
 
                     default: // should never be reached
-                        System.err.println("invalid state " + state + " in ShuntingYard.shuntingYardAlgorithm");
+                        System.out.println("# invalid state " + state + " in ShuntingYard.shuntingYardAlgorithm");
                         state = State.IN_START;
                         break;
                 } // switch state
