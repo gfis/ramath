@@ -415,6 +415,9 @@ CALL ShuntingYard "\w+" "1/54*(-1+18*x+(-(12*x-1)^3)^(1/2))/x^2"
 TEST SH10 ShuntingYard right associativity of "^"
 CALL ShuntingYard "\w+" "a^b^c"
 
+TEST SH11 ShuntingYard decimal dot in numbers
+CALL ShuntingYard "\w+" "a+0.001*b + 3.14^2"
+
 TEST P17 Polynomial with GT_0
 CALL Polynomial "(a + b) > 0"
 

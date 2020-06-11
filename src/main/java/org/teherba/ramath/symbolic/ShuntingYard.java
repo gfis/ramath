@@ -1,5 +1,6 @@
 /*  ShuntingYard: parser for the recognition of arithmetic and boolean expressions
  *  @(#) $Id: ShuntingYard.java 522 2010-07-26 07:14:48Z gfis $
+ *  2020-06-11: decimal dot in numbers
  *  2020-06-09: no STDERR messages; start them with "# "
  *  2020-04-06: unary - => x-.
  *  2020-04-02: functions, with ",", as brackets: log( .... )log
@@ -399,11 +400,13 @@ public class ShuntingYard {
                                 break;
                             default:
                                 if (false) {
-                                } else if (ch >= '\u2070' && ch <= '\u2079') {
+                                } else if (ch >= '\u2070' && ch <= '\u2079') { // superscript digits 0..9
                                     postfixAppend(buffer.toString());
                                     readOff = false;
                                     state = State.IN_START;
                                 } else if (ch >= '0' && ch <= '9') { // Character.isDigit(ch)) {
+                                    buffer.append(ch);
+                                } else if (ch == '.') { // decimal dot
                                     buffer.append(ch);
                                 } else if (Character.isLetter(ch)) { // imply a multiplication operator
                                     postfixAppend(buffer.toString());
@@ -438,7 +441,7 @@ public class ShuntingYard {
                                 break;
                             default:
                                 if (false) {
-                                } else if (ch >= '\u2070' && ch <= '\u2079') {
+                                } else if (ch >= '\u2070' && ch <= '\u2079') { // superscript digits 0..9
                                     buffer.append(Character.forDigit(ch - 0x2070, 10));
                                 } else if (ch >= '0' && ch <= '9') { // Character.isDigit(ch)) {
                                     postfixAppend(buffer.toString());
