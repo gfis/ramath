@@ -52,7 +52,7 @@ CALL SequenceReader -m 4 -f $(DATA)
 #-------------------------------
 # JoeisPreparer
 
-TEST JP1 JoeisPreparer joeis
+TEST JP01 JoeisPreparer joeis
 DATA
  A000000	dex	1	postfix	true	10	mod(17,3) + 2 mod(18,10)	A	B
  A074785	dex	0	postfix	true	10	-log(log(2))	A	B
@@ -63,6 +63,11 @@ DATA
  A076668	dex	0	postfix	true	10	sqrt(2/pi)	A	B
  A077453	dex	1	postfix	true	10	1+sqrt(11)*(sqrt(29)+sqrt(5))/24	A	B
 CALL JoeisPreparer -d 0 -f $(DATA)
+
+TEST JP02 JoeisPreparer
+DATA
+ A038126	post	0	~~floor(sqrt(2*Pi)n)()~~floor(n*2^sqrt(2))~~n=17
+CALL JoeisPreparer -f $(DATA)
 #-------------------------------
 # Triangle
 TEST TRA1 Triangle toTriangle
@@ -202,3 +207,4 @@ CALL TriangleRecurrence -d 0 -eval -b ../OEIS-mat/common/bfile -f $(DATA) -m 21
 
 # TEST TRI7 all keyword:tabl
 # CALL TriangleRecurrence -d 0 -eval -b ../OEIS-mat/common/bfile -f tabl.lst.tmp -m 15
+#----

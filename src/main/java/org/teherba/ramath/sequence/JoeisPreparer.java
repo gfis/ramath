@@ -33,6 +33,7 @@ import  java.nio.channels.Channels;
 import  java.nio.channels.ReadableByteChannel;
 import  java.math.BigInteger;
 import  java.util.ArrayList;
+import  java.util.regex.Pattern;
 import  org.apache.log4j.Logger;
 
 /** This class implements several filters for *.gen files to be
@@ -239,6 +240,25 @@ public class JoeisPreparer
             String postfix   = parser.getPostfixString(";", gf); // not needed
             parms[iparm + 0] = parser.buildInfixExpression();
             parms[iparm + 1] = gftype;
+            reproduce();
+
+        } else if (callCode.startsWith("post")) { // general parsing into postfix notation
+            String exprList = parms[iparm + 0]; // $(PARM1) = list of expressions, starting with a String of identical separator character
+            int ind = 0;
+            char ch = exprList.charAt(ind ++);
+            while (ind < exprList.length() && exprList.charAt(ind) == ch) {
+                ind ++;
+            } // while
+            String sep = exprList.substring(0, ind);
+            String [] exprs = exprList.substring(ind).split(Pattern.quote(sep));
+            StringBuffer result = new StringBuffer(1024);
+            for (int iexpr = 0; iexpr < exprs.length; iexpr ++) {
+                ShuntingYard parser = new ShuntingYard("\\w+");
+                parser.setDebug(debug);
+                result.append(sep);
+                result.append(parser.getPostfixString(";", exprs[iexpr]));
+            } // for iexpr
+            parms[iparm + 0] = result.toString();
             reproduce();
 
         } else if (callCode.equals("rioarr")) {
