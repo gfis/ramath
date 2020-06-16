@@ -247,14 +247,14 @@ public class ShuntingYard {
                             case '=':
                             case '!':
                             case '&':
-                            case '*':
                         //  case '|':
+                            case '*':
                                 buffer.setLength(0);
                                 buffer.append(ch);
                                 state = State.IN_OPTOR;
                                 break;
                             case '%':
-                                if (ipos < input.length() - 2 && Character.isLetterOrDigit(input.charAt(ipos + 1))) { // hex pair follows
+                                if (false && ipos < input.length() - 2 && Character.isLetterOrDigit(input.charAt(ipos + 1))) { // hex pair follows
                                     try {
                                         ch = (char) Integer.parseInt(input.substring(ipos + 1, ipos + 3), 16);
                                         ipos += 2;
@@ -262,7 +262,10 @@ public class ShuntingYard {
                                     } catch (Exception exc) { // no digits - continue
                                         // ignore
                                     }
-                                } // hex pair follows
+                                    // hex pair follows
+                                } else { // remainder operator
+                                    popLowerSameAndPush("p%");
+                                }
                                 break;
                             case '+':
                                 if (prev == '(') {
@@ -712,6 +715,7 @@ public class ShuntingYard {
                 } else if (elem.equals("-.")           ) { elec = OPC_MINUS ;
                 } else if (elast == '^'                ) { elec = OPC_POW   ;
                 } else if (elast == '/'                ) { elec = OPC_DIV   ;
+                } else if (elast == '%'                ) { elec = OPC_DIV   ;
                 } else if (elast == '*'                ) { elec = OPC_MULT  ;
                 } else if (elast == '+' || elast == '-') { elec = OPC_ADD   ;
                 } else if (elast == '<' || elast == '>' 
@@ -839,6 +843,7 @@ public class ShuntingYard {
                 result = result.substring(1);
             }
         }
+        // return result.replaceAll("(\\W)\\((\\w+)\\)", "$1$2"); // remove parentheses around single names or numbers
         return result;
     } // buildInfixExpression(int,int)
 

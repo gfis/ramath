@@ -421,6 +421,9 @@ CALL ShuntingYard "\w+" "a+0.001*b + 3.14^2"
 TEST SH12 ShuntingYard "="
 CALL ShuntingYard "\w+" "x=a+log(0.001)*b + floor(3.14^2)"
 
+TEST SH13 ShuntingYard % remainder and %hh
+CALL ShuntingYard "\w+" "x = a % 3 + c %3 %4 * b"
+
 TEST P17 Polynomial with GT_0
 CALL Polynomial "(a + b) > 0"
 
