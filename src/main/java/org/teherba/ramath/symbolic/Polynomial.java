@@ -194,8 +194,8 @@ public class Polynomial implements Cloneable, Serializable {
     public static Polynomial parse(String input) {
         ShuntingYard shy = new ShuntingYard(debug);
         ArrayList<String> postfix = shy.getPostfixList
-                ( (input.trim().startsWith("-") ? "0" : "") 
-        		+ input);
+                ( (input.trim().startsWith("-") ? "0" : "")
+                + input);
         return buildPolynomial(postfix);
     } // parse
 
@@ -204,7 +204,7 @@ public class Polynomial implements Cloneable, Serializable {
      *  @return a reference to a new Polynomial
      */
     public static Polynomial buildPolynomial(ArrayList<String> postfix) {
-    	return buildPolynomial(postfix, 0, postfix.size());
+        return buildPolynomial(postfix, 0, postfix.size());
     } // buildPolynomial(ArrayList)
 
     /** Returns a new Polynomial constructed from a polish postfix array of Strings
@@ -250,7 +250,7 @@ public class Polynomial implements Cloneable, Serializable {
                         } else if (elem.equals("!=")) {
                             opd1.setRelation(Relator.NE_0);
                         } else {
-                            System.err.println("PolynomialParser.parse: invalid relation \"" + elem + "\"");
+                            System.err.println("Polynomial.buildPolynomial: invalid relation \"" + elem + "\"");
                             /* error */ opd2 = null; ipfix = postfix.size();
                         }
                         opdStack.push(opd1);
@@ -264,7 +264,7 @@ public class Polynomial implements Cloneable, Serializable {
                         } else if (elem.equals(">=")) {
                             opd1.setRelation(Relator.GE_0);
                         } else {
-                            System.err.println("PolynomialParser.parse: invalid relation \"" + elem + "\"");
+                            System.err.println("Polynomial.buildPolynomial: invalid relation \"" + elem + "\"");
                             /* error */ opd2 = null; ipfix = postfix.size();
                         }
                         opdStack.push(opd1);
@@ -294,7 +294,7 @@ public class Polynomial implements Cloneable, Serializable {
                         opd2 = opdStack.pop();
                         if (false) {
                         } else if (elem.equals("-.")) { // unary -
-                        	opdStack.push(opd2.negate());
+                            opdStack.push(opd2.negate());
                             // opdStack.push((new Polynomial("0")).subtract(opd2));
                         } else if (elem.equals("-")) {
                             opdStack.push(opdStack.pop().subtract(opd2));
@@ -1006,7 +1006,7 @@ public class Polynomial implements Cloneable, Serializable {
 
     /** Clone and divide a {@link Polynomial} by another Polynomial
      *  assuming that there is no rest.
-     *  This method is needed only for {@link PolynomialParser},
+     *  This method is needed only for parsing,
      *  and <em>poly2</em> must be a {@link Monomial} which divides
      *  evenly in all Monomials of <em>this</em> Polynomial.
      *  @param poly2 divide by this Polynomial

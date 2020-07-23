@@ -217,8 +217,8 @@ public class PolyVector implements Cloneable, Serializable {
         return result;
     } // equals
 
-    /** Returns an array of {@link BigVector}s with increasing exponents 
-     *  @return a one-dimensional array of arrays of varying length 
+    /** Returns a {@link BigVectorArray} with increasing exponents
+     *  @return a one-dimensional array of arrays of varying length
      *  if <em>this</em> PolyVector contains only one variable, or <em>null</em> otherwise.
      */
     public BigVectorArray getBigVectorArray() {

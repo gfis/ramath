@@ -193,7 +193,7 @@ public class SequenceReader {
     } // Constructor(int)
 
     /** Create an iterator over a list of lines which start with A-numbers, possibly followed
-     *  by a comma-separated term list. 
+     *  by a comma-separated term list.
      *  Comment lines starting with whitespace and "#" are ignored.
      */
     private void initialize() {
@@ -245,6 +245,7 @@ public class SequenceReader {
      *  @param dataLine list of numbers, maybe negative, separated by non-digits,
      *  and possibly prepended by the A-number and a space.
      *  No b-file is read by this method.
+     *  @return the sequence
      */
     private Sequence parse(String dataLine) {
         return parse(dataLine, false); // do not read from b-file
@@ -255,6 +256,7 @@ public class SequenceReader {
      *  and possibly prepended by the A-number and a space.
      *  @param fromBfile true if the terms are to be read from the b-file,
      *  false for reading from the <em>dataLine</em>.
+     *  @return the sequence
      */
     private Sequence parse(String dataLine, boolean fromBfile) {
         Sequence result = null;
@@ -267,7 +269,7 @@ public class SequenceReader {
             setANumber(dataLine.substring(0, startPos));
             // System.out.println("dataLine=\"" + dataLine + "\",  startPos=" +  startPos + ", aNumber=\"" + aNumber + "\"");
             // .startsWith("A")
-        } else { 
+        } else {
             startPos = 0;
         }
 
@@ -393,6 +395,7 @@ public class SequenceReader {
      *  <li>-f name of list file</li>
      *  <li>-m maximum number of terms (default: 8)</li>
      *  </ol>
+     *  @return a configured instance
      */
     public static SequenceReader configure(int iarg, String[] args) {
         SequenceReader reader = new SequenceReader();

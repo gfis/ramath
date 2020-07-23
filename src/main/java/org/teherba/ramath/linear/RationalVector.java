@@ -33,7 +33,7 @@ import  java.io.Serializable;
  *  represents a univariate polynomial with BigRational coefficients.
  *  It is maintained that the highest element of every vector is never zero,
  *  except for element [0].
- *  The vectors are represented by tuples "[an/ad,bn/bd...]", with the 
+ *  The vectors are represented by tuples "[an/ad,bn/bd...]", with the
  *  leftmost element representing exponent 0 of x.
  *  Both [0] and an empty vector represent a zero (polynomial).
  *  @author Dr. Georg Fischer
@@ -113,7 +113,6 @@ public class RationalVector extends BigVector implements Cloneable, Serializable
 
     /** Constructor for a RationalVector from a String in vector notation
      *  @param vecNotation String of the form "[1/2,2/3]"
-     *  @param args array of numbers as strings
      */
     public RationalVector(String vecNotation) {
         this();
@@ -173,8 +172,7 @@ public class RationalVector extends BigVector implements Cloneable, Serializable
         return icol < vecLen ? vector[icol] : BigRational.ZERO;
     } // getRat
 
-    /** Returns an element of the vector
-     *  @param icol number of the element (zero based)
+    /** Returns the element of the vector with the highest index
      *  @return a number
      */
     public BigRational getRatLast() {
@@ -516,10 +514,10 @@ public class RationalVector extends BigVector implements Cloneable, Serializable
     } // divideAndRemainder(RationalVector)
 
     /** Euclidian algorithm: Repetitively divide <em>this</em>
-     *  by a second {@link RationalVector}, 
+     *  by a second {@link RationalVector},
      *  then the divisor by the rest, until there is no rest.
      *  @param vect2 the divisor
-     *  @return the last divisor which yields no rest, 
+     *  @return the last divisor which yields no rest,
      *  that is the greatest common divisor.
      */
     public RationalVector gcd(RationalVector vect2) {
@@ -529,7 +527,7 @@ public class RationalVector extends BigVector implements Cloneable, Serializable
         while (! remd.isZero()) {
             quotRemd = quot.divideAndRemainder(remd);
             if (debug >= 1) {
-                System.out.println("gcd: " + quot.toString() + " / " + remd.toString() 
+                System.out.println("gcd: " + quot.toString() + " / " + remd.toString()
                         + " -> " + quotRemd[0] + " rest " + quotRemd[1]);
             }
             quot = remd;
@@ -589,7 +587,7 @@ public class RationalVector extends BigVector implements Cloneable, Serializable
                         }
                     }
                 } catch (Exception exc) { // ignore
-                } 
+                }
                 System.out.print(expr + " = ");
                 if (false) {
                 } else if (oper.equals("+")) {

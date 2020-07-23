@@ -131,7 +131,7 @@ public class ShuntingYard {
     } // setFunctionPattern
 
     /** Appends an operand or operator to the postfix list.
-     *  @param element to be appended
+     *  @param elem element to be appended
      */
     private void postfixAppend(String elem) {
         postfix.add(elem);
@@ -718,7 +718,7 @@ public class ShuntingYard {
                 } else if (elast == '%'                ) { elec = OPC_DIV   ;
                 } else if (elast == '*'                ) { elec = OPC_MULT  ;
                 } else if (elast == '+' || elast == '-') { elec = OPC_ADD   ;
-                } else if (elast == '<' || elast == '>' 
+                } else if (elast == '<' || elast == '>'
                         || elast == '='                ) { elec = OPC_RELAT ;
                 } else if (elast == '&'                ) { elec = OPC_AND   ;
                 } else if (elast == '|'                ) { elec = OPC_OR    ;
@@ -732,7 +732,7 @@ public class ShuntingYard {
                     case '*':
                     case '%':
                     case '/':
-                    case '+': 
+                    case '+':
                     case '-':
                     case '=':
                     case '<':
@@ -761,7 +761,7 @@ public class ShuntingYard {
                         }
                         opdStack.push(buffer.toString());
                         break;
-                    case 'ß': 
+                    case 'ß':
                         // right associative
                         opd2 = opdStack.pop();
                         opd1 = opdStack.pop();
@@ -784,7 +784,7 @@ public class ShuntingYard {
                             buffer.append(opd2.substring(1));
                         }
                         opdStack.push(buffer.toString());
-                        break;                   
+                        break;
                     case '.':
                         if (elec == OPC_MINUS) { // really unary - ?
                             opd1 = opdStack.pop();

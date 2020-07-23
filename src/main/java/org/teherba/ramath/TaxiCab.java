@@ -57,7 +57,7 @@ public class TaxiCab {
     private static final String letters = "abcdn"; // letters denoting Polynomials
 
     /** Reads lines with numbers a, b, c, d such that a^3 + b^3 = c^3 + d^3.
-     *  Assumes that x^3 fits into a long (x <= 1 million).
+     *  Assumes that x^3 fits into a long (x &lt;= 1 million).
      *  The lines are from Wroblewski's files:
      *  <pre>
     a      b      c     d  
@@ -76,6 +76,7 @@ public class TaxiCab {
 100000  99123  41502  -35675
 100002  81109  78678  -27397     
      *  </pre>
+     * @param fileName read lines from this file
      */
     public void process322(String fileName) {
         String line = null; // current line from text file
@@ -143,8 +144,8 @@ public class TaxiCab {
     /** Reads lines from the condensed page at 
      *  <a href="http://euler.free.fr/taxicab.htm">taxicab.htm</a> which starts with either
      *  <ul>
-     *  <li>Taxicab(n) <?= num1</li>
-     *  <li>Cabtaxi(n) <?= num1</li>
+     *  <li>Taxicab(n) &lt;?= num1</li>
+     *  <li>Cabtaxi(n) &lt;?= num1</li>
      *  <li>= num1^3 +- num2^3</li>
      *  </ul>
      *  Appends the prime factorization of the number to the line,

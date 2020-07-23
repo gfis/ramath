@@ -47,7 +47,7 @@ public class Recurrence {
     } // compute
 
     /** Generates a sequence from the recurrence.
-     *  @param noTerms number of terms to be generated
+     *  @param termNo number of terms to be generated
      *  @return {@link Sequence}
      */
     public Sequence generate(int termNo) {

@@ -35,7 +35,7 @@ import  java.util.regex.Pattern;
  *  on vectors of BigInteger numbers.
  *  It is maintained that the highest element of every vector is never zero,
  *  except for element [0].
- *  The vectors are represented by tuples "[a0,a1,a2...]", with the 
+ *  The vectors are represented by tuples "[a0,a1,a2...]", with the
  *  leftmost element representing exponent 0 of x.
  *  Both [0] and an empty vector represent a zero (polynomial).
  *  The elements of the vector are indexed starting with 0.
@@ -379,7 +379,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         return len == 0 || (len == 1 && getBig(0).equals(BigInteger.ZERO));
     } // isZero
 
-    /** Whether this < 0
+    /** Whether <code>this &lt; 0</code>
      *  @return true if the highest element is negative
      */
     public boolean isNegative() {
@@ -884,7 +884,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
      *  removes the first element of <em>this</em> (this is zero then),
      *  and returns the quotient.
      *  @param vect2 the divisor (denominator of the g.f.)
-     *  @return quotient, coefficient of the series expansion	
+     *  @return quotient, coefficient of the series expansion
      */
     public BigInteger divisionStep(BigVector vect2) {
         BigInteger divisor    = vect2.getBig(0);
@@ -939,10 +939,10 @@ public class BigVector extends Vector implements Cloneable, Serializable {
     } // divisionStep(BigVector)
 
     /** Euclidian algorithm: Repetitively divide <em>this</em>
-     *  by a second {@link RationalVector}, 
+     *  by a second {@link RationalVector},
      *  then the divisor by the rest, until there is no rest.
      *  @param vect2 the divisor
-     *  @return the last divisor which yields no rest, 
+     *  @return the last divisor which yields no rest,
      *  that is the greatest common divisor.
      */
     public BigVector gcd(BigVector vect2) {
@@ -952,7 +952,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         while (! remd.isZero()) {
             quotRemd = quot.divideAndRemainder(remd);
             if (debug >= 1) {
-                System.out.println("gcd: " + quot.toString() + " / " + remd.toString() 
+                System.out.println("gcd: " + quot.toString() + " / " + remd.toString()
                         + " -> " + quotRemd[0] + " rest " + quotRemd[1]);
             }
             quot = remd;

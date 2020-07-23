@@ -31,8 +31,8 @@ import  java.io.Serializable;
  *  triangles of {@link BigRational} numbers.
  *  When the indices are interpreted as exponents of two variables x and y,
  *  a RationalTriangle represents a bivariate polynomial with rational coefficients,
- *  where the exponent of y is always <= the exponent of x.
- *  An example for a triangle is {@link https://oeis.org/A118981 A118981} with the
+ *  where the exponent of y is always &lt;= the exponent of x.
+ *  An example for a triangle is <a href="https://oeis.org/A118981" target="_new">A118981</a> with the
  *  generating function: (1 + x^2)/(1-x-x^2 - x*y)  (columns in reverse order)
  *  <pre>
  *  1;                      x^0*y^0
@@ -117,7 +117,6 @@ public class RationalTriangle extends RationalVector implements Cloneable, Seria
 
     /** Constructor for a RationalTriangle from a String in vector notation
      *  @param vecNotation String of the form "[1/2,2/3]"
-     *  @param args array of numbers as strings
      */
     public RationalTriangle(String vecNotation) {
         super(vecNotation);
@@ -429,10 +428,10 @@ public class RationalTriangle extends RationalVector implements Cloneable, Seria
     } // divideAndRemainder(RationalTriangle)
 
     /** Repetitively divide <em>this</em>
-     *  by a second {@link RationalVector}, 
+     *  by a second {@link RationalVector},
      *  then the divisor by the rest and so on.
      *  @param vect2 the divisor
-     *  @return the result of the EUclidian algorithm which 
+     *  @return the result of the EUclidian algorithm which
      *  repetitively divides the divisor by the rest.
      */
     public RationalTriangle reduce(RationalTriangle vect2) {
@@ -441,7 +440,7 @@ public class RationalTriangle extends RationalVector implements Cloneable, Seria
         while (! remd.isZero()) {
             RationalTriangle[] quotRemd = quot.divideAndRemainder(remd);
             if (debug >= 1) {
-                System.out.println("reduce: " + quot.toString() + " / " + remd.toString() 
+                System.out.println("reduce: " + quot.toString() + " / " + remd.toString()
                         + " -> " + quotRemd[0] + " rest " + quotRemd[1]);
             }
             quot = remd;

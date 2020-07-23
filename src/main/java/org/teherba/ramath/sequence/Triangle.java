@@ -28,7 +28,7 @@ import  java.util.ArrayList;
 
 /** General methods and properties of triangular OEIS sequences with keyword "tabl".
  *  A set of derived sequences is assembled in a so-called <em>TraitCard</em> of the triangle.
- *  A triangle is represented by a {@link BigVector} in a linearized form. 
+ *  A triangle is represented by a {@link BigVector} in a linearized form.
  *  For a bivariate generating function in x and y the triangle gives the coefficients of:
  *  <pre>
  *  1;
@@ -86,9 +86,9 @@ public class Triangle extends Sequence
     public String toTriangle() {
         return toTriangle(29061949);
     } // toTriangle()
-    
+
     /** Gets a triangular array of lines with comma-separated terms.
-     *  @rowNo number of rows to be appended
+     *  @param rowNo number of rows to be appended
      *  @return several lines
      */
     public String toTriangle(int rowNo) {
@@ -111,9 +111,9 @@ public class Triangle extends Sequence
         } // while rows
         return result.toString();
     } // toTriangle
-      
+
     /* Cf. http://luschny.de/julia/triangles/TutorialTrianglesPart1.html
-    Lah-Triangle begins: 
+    Lah-Triangle begins:
       1;
       0, 1;
       0, 2, 1;
@@ -123,7 +123,7 @@ public class Triangle extends Sequence
       0, 720, 1800, 1200, 300, 30, 1;
       0, 5040, 15120, 12600, 4200, 630, 42, 1;
     */
-    
+
     /** Transform a source {@link Sequence} by <em>this</em> Triangle.
      *  @param source source Sequence
      *  @return target sequence
@@ -132,7 +132,7 @@ public class Triangle extends Sequence
         int rowNo = getRowSize();
         Sequence target = new Sequence(rowNo);
         target.setOffset(source.getOffset());
-        
+
         int irow = 0;
         while (irow < rowNo) {
             BigInteger sum = BigInteger.ZERO;
@@ -146,29 +146,29 @@ public class Triangle extends Sequence
         } // while irow
         return target;
     } // transform
-    
-    /** This pseudo-abstract class computes some characteristic sequence 
-     *  from <em>this</em> triangular sequence. 
+
+    /** This pseudo-abstract class computes some characteristic sequence
+     *  from <em>this</em> triangular sequence.
      *  It is the superclass for more specific implementations.
      */
     protected class Trait {
         protected ArrayList<BigInteger> list; // build the characteristic sequence here
         protected String derivedName = "abstract"; // name of the trait
         public int iflat; // runs over all terms of the flattened triangle
-        protected Trait() { // No-args constructor 
+        protected Trait() { // No-args constructor
             list = new ArrayList<BigInteger>(16);
             iflat = 0;
             derivedName = this.getClass().getName().replaceAll("Trait", "");
             int dollarPos = derivedName.indexOf('$');
             derivedName = derivedName.substring(dollarPos + 1);
         } // Constructor()
-       
+
         public void initTrait() { // at the beginning of the triangle
         }
         public void initRow(int irow) { // at the start of a row
         }
         public void termRow(int irow) { // after the end of a row
-        } 
+        }
         public void column (int irow, int icol) { // for a column / term
         }
         public String termTrait() { // at the end of the triangle
@@ -177,7 +177,7 @@ public class Triangle extends Sequence
                     .replaceAll("[\\[\\]]",""); // remove square brackets
         }
     } // Trait
-    
+
     /** The triangular sequence itself, flattened.
      */
     private class SequenceTrait extends Trait {
@@ -185,7 +185,7 @@ public class Triangle extends Sequence
             list.add(getBig(iflat ++));
         }
     } // SequenceTrait
-    
+
     /** Alternating row sums: EvenSum - OddSum.
      */
     private class AltSumTrait extends Trait {
@@ -197,7 +197,7 @@ public class Triangle extends Sequence
         }
         public void termRow(int irow) { // after the end of a row
             list.add(evenSum.subtract(oddSum));
-        } 
+        }
         public void column(int irow, int icol) { // for a column / term
             if (icol % 2 == 0) {
                 evenSum = evenSum.add(getBig(iflat));
@@ -213,7 +213,7 @@ public class Triangle extends Sequence
     private class RowSumTrait extends AltSumTrait {
         public void termRow(int irow) { // after the end of a row
             list.add(evenSum.add(oddSum));
-        } 
+        }
     } // RowSumTrait
 
     /** Even row sums: every second, starting with the first element in a row.
@@ -221,17 +221,17 @@ public class Triangle extends Sequence
     private class EvenSumTrait extends AltSumTrait {
         public void termRow(int irow) { // after the end of a row
             list.add(evenSum);
-        } 
+        }
     } // EvenSumTrait
-    
+
     /** Odd row sums: every second, starting with the second element in a row.
      */
     private class OddSumTrait extends AltSumTrait {
         public void termRow(int irow) { // after the end of a row
             list.add(oddSum);
-        } 
+        }
     } // OddSumTrait
-     
+
     /** Sums of antidiagonals, starting from [n,0] and moving right upwards: [n-k, k] until n-k &lt; k.
      */
     private class DiagSumTrait extends Trait {
@@ -244,9 +244,9 @@ public class Triangle extends Sequence
                 icol ++;
             } // while in triangle
             list.add(diagSum);
-        } 
+        }
     } // DiagSumTrait
-    
+
     /** Element in the center (or center - 1) of each row.
      */
     private class CentralTrait extends Trait {
@@ -255,9 +255,9 @@ public class Triangle extends Sequence
             if (irow % 2 == 0 && iflat < size()) {
                 list.add(getBig(iflat));
             }
-        } 
+        }
     } // CentralTrait
-    
+
     /** Left side = first column.
      */
     private class LeftSideTrait extends Trait {
@@ -266,9 +266,9 @@ public class Triangle extends Sequence
             if (iflat < size()) {
                 list.add(getBig(iflat));
             }
-        } 
+        }
     } // LeftSideTrait
-    
+
     /** Right side = (first) diagonal.
      */
     private class RightSideTrait extends Trait {
@@ -277,9 +277,9 @@ public class Triangle extends Sequence
             if (iflat < size()) {
                 list.add(getBig(iflat));
             }
-        } 
+        }
     } // RightSideTrait
-    
+
     /** Polynomials evaluated at +1/2.
      */
     private class PosHalfTrait extends Trait {
@@ -297,7 +297,7 @@ public class Triangle extends Sequence
         }
         public void termRow(int irow) { // after the end of a row
             list.add(sum);
-        } 
+        }
     } // PosHalfTrait
 
     /** Polynomials evaluated at -1/2.
@@ -317,38 +317,38 @@ public class Triangle extends Sequence
         }
         public void termRow(int irow) { // after the end of a row
             list.add(sum);
-        } 
+        }
     } // NegHalfTrait
 
-    /** Transform of the natural numbers >= 0
+    /** Transform of the natural numbers &gt;= 0
      */
     private class N0TSTrait extends Trait {
         protected BigInteger sum;
         public void initRow(int irow) { // at the start of a row
-        	sum = BigInteger.ZERO;
+            sum = BigInteger.ZERO;
         }
         public void termRow(int irow) { // after the end of a row
-        	list.add(sum);
-        } 
+            list.add(sum);
+        }
         public void column (int irow, int icol) { // for a column / term
-        	sum = sum.add(getBig(linearIndex(irow, icol)).multiply(BigInteger.valueOf(icol + 0)));
-        	iflat ++;
+            sum = sum.add(getBig(linearIndex(irow, icol)).multiply(BigInteger.valueOf(icol + 0)));
+            iflat ++;
         }
     } // N0TSTrait
 
-    /** Transform of the natural numbers >= 1
+    /** Transform of the natural numbers &gt;= 1
      */
     private class NATSTrait extends Trait {
         protected BigInteger sum;
         public void initRow(int irow) { // at the start of a row
-        	sum = BigInteger.ZERO;
+            sum = BigInteger.ZERO;
         }
         public void termRow(int irow) { // after the end of a row
-        	list.add(sum);
-        } 
+            list.add(sum);
+        }
         public void column (int irow, int icol) { // for a column / term
-        	sum = sum.add(getBig(linearIndex(irow, icol)).multiply(BigInteger.valueOf(icol + 1)));
-        	iflat ++;
+            sum = sum.add(getBig(linearIndex(irow, icol)).multiply(BigInteger.valueOf(icol + 1)));
+            iflat ++;
         }
     } // NATSTrait
 
@@ -371,7 +371,7 @@ public class Triangle extends Sequence
         System.out.println(get1Trait(rowNo, new N0TSTrait       ()));
         System.out.println(get1Trait(rowNo, new NATSTrait       ()));
     } // printTraitCard
- 
+
      /** Gets a triangular array of lines with comma-separated terms.
      *  @param rowNo number of rows to be appended
      *  @param tr the {@link Trait} class which computes a specific trait
@@ -392,11 +392,11 @@ public class Triangle extends Sequence
         } // while rows
         return tr.termTrait();
     } // get1Trait
-         
-   //----------------------------------------------------------------  
+
+   //----------------------------------------------------------------
     /** Test method.
-     *  @param args command line arguments. 
-     *  See printout with 0 arguments, and arguments for {@link SequenceReader.configure}.
+     *  @param args command line arguments.
+     *  See printout with 0 arguments, and arguments for {@link SequenceReader#configure}.
      */
     public static void main(String[] args) {
         String aNumber = "A000000";
@@ -422,7 +422,7 @@ public class Triangle extends Sequence
                         termNo = reader.getMaxTermNo();
                         while (reader.hasNext()) {
                             tra = new Triangle(reader.next());
-                            System.out.print("eval: " + tra.getANumber() + " " 
+                            System.out.print("eval: " + tra.getANumber() + " "
                                     + tra.toList() + "\n" + tra.toTriangle());
                         } // while hasNext
                         iarg = args.length;

@@ -331,7 +331,7 @@ public class PolyFraction
      *  @return "[2, -1],[1, -1, -1]" for example
      */
     public BigVector[] toVectors() {
-        return new BigVector[] 
+        return new BigVector[]
                 { polynomials[0].getBigVector()
                 , polynomials[1].getBigVector()
                 };
@@ -340,13 +340,13 @@ public class PolyFraction
     /** Returns a String representation of the coefficients
      *  of the numerator and the denominator.
      *  For multivariate Polynomials, the result is somewhat meaningless.
-     *  @return "[2, -1],[1, -1, -1]" for example, 
-     *  or <em>null/em> if one of the Polynomials is multivariate
+     *  @return "[2, -1],[1, -1, -1]" for example,
+     *  or <em>null</em> if one of the Polynomials is multivariate
      */
     public String toVectorString() {
         BigVector num = polynomials[0].getBigVector();
         BigVector den = polynomials[1].getBigVector();
-        return num != null && den != null 
+        return num != null && den != null
                 ? num.toString() + "," + den.toString()
                 : null;
     } // toVectorString()
@@ -517,8 +517,9 @@ public class PolyFraction
         return result;
     } // getSeriesCoefficients
 
-    /** Normalizes the fraction by ensuring that any constant in the denominator
+    /** Normalizes the fraction in place by ensuring that any constant in the denominator
      *  is positive.
+     *  @return the normalized instance
      */
     public PolyFraction normalize() {
         Coefficient cons1 = polynomials[1].getConstant();
@@ -596,7 +597,7 @@ public class PolyFraction
 
     /** Returns a PolyFraction which generates a Coxeter group sequence.
      *  This method corresponds with the Mathematica routine <em>coxG</em>
-     *  defined in OEIS {@link https://oeis.org/A169452 A169452}:
+     *  defined in OEIS <a href="https://oeis.org/A169452" target="_new">A169452</a>:
      * <pre>
      coxG[{pwr_, c1_, c2_, trms_:20}]:=Module[{
      num=Total[2t^Range[pwr-1]]+t^pwr+ 1,
@@ -795,7 +796,7 @@ public class PolyFraction
                                                     + "\t" + pfr1.getSeriesCoefficients(numTerms)
                                                             .toString().replaceAll("[\\[\\]]", "")
                                                     );
-                                        } else { 
+                                        } else {
                                             System.out.println("PolyFraction is not univariate");
                                         }
                                     } else if (mode.equals("fract2")) {

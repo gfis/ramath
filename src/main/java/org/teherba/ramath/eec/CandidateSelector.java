@@ -95,6 +95,8 @@ public class CandidateSelector {
      *  @param exponent exponent of the powersum
      *  @param width number of elements in the powersum or in one tuple
      *  @param base limit for the expansion
+     *  @param left  number of elements in the left  part of the power sum
+     *  @param right number of elements in the right part of the power sum
      */
     public CandidateSelector(int width, int base, int exponent, int left, int right) {
         log = Logger.getLogger(CandidateSelector.class.getName());

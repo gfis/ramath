@@ -38,7 +38,7 @@ import  org.apache.log4j.Logger;
  *  It can be used, for example, to represent:
  *  <ul>
  *  <li>the coefficients of a set of univariate {@link Polynomial}s </li>
- *  <li>a univariate {@link RelationSet}</li>
+ *  <li>a univariate RelationSet</li>
  *  <li>a linear recurrence equation</li>
  *  <li>a linear differential equation</li>
  *  </ul>

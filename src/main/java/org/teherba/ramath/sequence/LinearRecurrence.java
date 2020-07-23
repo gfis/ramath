@@ -1,9 +1,9 @@
 /*  Linear recurrence with constant coefficients
  *  @(#) $Id: LinearRecurrence.java $
- *  2020-07-23: zeroes before initial terms when there are too few; getPolyFraction
+ *  2020-07-23: zeroes before initial terms when there are too few; getGeneratingFunction()
  *  2019-12-10: -o offset -find
  *  2019-08-29: parameter skip
- *  2019-08-27: find with Berlekamp-Massey's algorithm
+ *  2019-08-27: find(seq,n) with Berlekamp-Massey's algorithm
  *  2019-08-25, Georg Fischer: Lunnon's algorithm - failed
  *
  *  Derived from the SageMath code of William Stein <wstein@gmail.com> (2005):
@@ -32,7 +32,6 @@ import  org.teherba.ramath.linear.BigVector;
 import  org.teherba.ramath.linear.RationalVector;
 import  org.teherba.ramath.sequence.Sequence;
 import  org.teherba.ramath.sequence.SequenceReader;
-import  org.teherba.ramath.symbolic.PolyFraction;
 import  java.math.BigInteger;
 import  java.util.ArrayList;
 
@@ -47,7 +46,9 @@ public class LinearRecurrence extends Recurrence {
     /** Debugging level: 0 = none, 1 = some, 2 = more */
     public static int debug = 0;
 
-    /** List of constant coefficients of a(n), a(n-1), a(n-2) and so on.*/
+    /** List of constant coefficients [c1, c2, ck] of <code>a(n) = c1*a(n-1) + c2*a(n-2) + ck*a(n-k)</code>.
+     *
+     */
     protected BigVector signature;
 
     /** No-args Constructor
@@ -56,7 +57,8 @@ public class LinearRecurrence extends Recurrence {
     } // no-args Constructor
 
     /** Constructor with signature and initial terms.
-     *  @param signature list of constant coefficients of a(n), a(n-1), a(n-2) and so on.
+     *  The parameters are the same as in the call <code>LinearRecurrence</code> of Mathematica.
+     *  @param signature of constant coefficients [c1, c2, ck] of <code>a(n) = c1*a(n-1) + c2*a(n-2) + ck*a(n-k)</code>.
      *  @param initTerms list of inital terms
      */
     public LinearRecurrence(BigVector signature, BigVector initTerms) {
@@ -64,7 +66,7 @@ public class LinearRecurrence extends Recurrence {
         super.initTerms = initTerms;
     } // Constructor(,)
 
-    /** Compute one term <em>a(n+1)</em> from the existing terms <em>a(n), a(n-1)</em> and so on.
+    /** Compute one term <em>a(n+1)</em> from the existing terms <em>a(n), a(n-1), a(n-k)</em>.
      *  @param seq {@link Sequence} with existing terms
      *  @param np1 index of a(n+1), the new term to be computed
      */
@@ -85,18 +87,20 @@ public class LinearRecurrence extends Recurrence {
      *  with the Berlekamp-Massey algorithm.
      *  @param seq {@link Sequence} with existing terms
      *  @param termNo include so many terms in the derivation
+     *  @return a signature, if possible
      *  Derived from the SageMath code of William Stein &lt;wstein@gmail.com&gt; (2005):
      *      https://sage.math.leidenuniv.nl/src/matrix/berlekamp_massey.py
      */
     public static RationalVector find(Sequence seq, int termNo) {
         return find(seq, 0, termNo);
     } // find(Sequence, int)
-    
+
     /** Find a signature of constant coefficients from a sequence
      *  with the Berlekamp-Massey algorithm.
      *  @param seq {@link Sequence} with existing terms
      *  @param offset start the terms of <em>seq</em> at some index &gt;= 0.
      *  @param termNo include so many terms in the derivation
+     *  @return a signature, if possible
      *  Derived from the SageMath code of William Stein &lt;wstein@gmail.com&gt; (2005):
      *      https://sage.math.leidenuniv.nl/src/matrix/berlekamp_massey.py
      */
@@ -166,7 +170,7 @@ public class LinearRecurrence extends Recurrence {
     public BigVector getDenominator() {
         final int order = signature.size();
         BigVector result = new BigVector(order + 1);
-        int isig = 0; 
+        int isig = 0;
         result.set(isig ++, BigInteger.ONE);
         while (isig <= order) {
             result.set(isig, signature.getBig(isig - 1).negate());
@@ -175,8 +179,8 @@ public class LinearRecurrence extends Recurrence {
         return result;
     } // getDenominator
 
-    /** Gets an ordinary generating function from <em>this</em> LinearRecurrence, that is a fraction of 
-     *  two polynomials with constant coefficients of the form 
+    /** Gets an ordinary generating function from <em>this</em> LinearRecurrence, that is a fraction of
+     *  two polynomials with constant coefficients of the form
      *  <code>(c0 + c1*x + c2*x^2 + cn*x^n)/(1 + d1*x + d2*x2 + dn*x^n)</code>.
      *  @return [c0,c1,c2,ck], [1,d1,d2,dn]
      *  where the dk correspond with the signature of <em>this</em> LinearRecurrence
@@ -200,7 +204,7 @@ public class LinearRecurrence extends Recurrence {
             } // pivot != 0
             irow ++;
         } // while irow
-        return new BigVector[] {numerator, denominator }; 
+        return new BigVector[] {numerator, denominator };
     } // getGeneratingFunction
 
     /** Gets the signature of the recurrence <code>a(n) = c1*a(n-1) + c2*a(n-2) + ck*a(n-k)</code>.
@@ -256,7 +260,7 @@ public class LinearRecurrence extends Recurrence {
 
                     } else if (oper.startsWith("-den")) {
                         linRec = new LinearRecurrence( new BigVector(args[iarg ++]), new BigVector("[1]"));
-                        System.out.println("getDenominator(" + linRec.getSignature() + ") = " 
+                        System.out.println("getDenominator(" + linRec.getSignature() + ") = "
                                 + linRec.getDenominator());
 
                     } else if (oper.startsWith("-eval")) {
@@ -298,7 +302,7 @@ public class LinearRecurrence extends Recurrence {
                         linRec = new LinearRecurrence(new BigVector(args[iarg]), new BigVector(args[iarg + 1]));
                         iarg += 2;
                         BigVector[] gf = linRec.getGeneratingFunction();
-                        System.out.println("getGeneratingFunction(" + linRec.getSignature() + ", " + linRec.getInitTerms() + ") = " 
+                        System.out.println("getGeneratingFunction(" + linRec.getSignature() + ", " + linRec.getInitTerms() + ") = "
                                 + gf[0] + "/" + gf[1]);
 
                     } else {

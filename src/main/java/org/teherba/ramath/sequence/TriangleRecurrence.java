@@ -78,6 +78,7 @@ public class TriangleRecurrence extends Recurrence {
      *  with the Berlekamp-Massey algorithm.
      *  @param seq {@link Sequence} with existing integer terms in triangular order
      *  @param termNo include so many terms in the derivation
+     *  @return a signature, if possible
      *  Derived from the SageMath code of William Stein &lt;wstein@gmail.com&gt; (2005):
      *      https://github.com/sagemath/sagelib/blob/master/sage/matrix/berlekamp_massey.py
      */
@@ -106,7 +107,7 @@ public class TriangleRecurrence extends Recurrence {
         int m2 = f.get(0).getRowSize();
         RationalTriangle xpow = new RationalTriangle(RationalTriangle.linearIndex(m2, m2) + 1, BigInteger.ZERO);
         xpow.setTri(m2, m2 , BigRational.ONE);
-        int im2  = 0; 
+        int im2  = 0;
         while (im2 <= m2) {
             xpow.setTri(m2, im2, BigRational.ONE);
             im2 ++;
@@ -171,8 +172,8 @@ public class TriangleRecurrence extends Recurrence {
     } // find
 
     /** Test method.
-     *  @param args command line arguments. 
-     *  See printout with 0 arguments, and arguments for {@link SequenceReader.configure}.
+     *  @param args command line arguments.
+     *  See printout with 0 arguments, and arguments for {@link SequenceReader#configure}.
      */
     public static void main(String[] args) {
         TriangleRecurrence.debug = 0;

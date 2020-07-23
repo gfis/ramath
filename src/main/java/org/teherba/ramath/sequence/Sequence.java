@@ -105,7 +105,7 @@ public class Sequence extends BigVector
     } // Constructor(BigInteger[])
 
     /** Clone <em>this</em> Sequence.
-     *  @return a deep copy 
+     *  @return a deep copy
      */
     public Sequence clone() {
         Sequence result = new Sequence(super.vector);
@@ -136,10 +136,10 @@ public class Sequence extends BigVector
     public String toList() {
         return toList(29061947);
     } // toList()
-    
+
     /** Gets a comma separated list of a number of terms
-     *  @termNo number of terms to be concatenated
-     *  @return list with at most <em>termNo</em> elements
+     *  @param termNo number of terms to be concatenated
+     *  @return a list with at most <em>termNo</em> elements
      */
     public String toList(int termNo) {
         StringBuffer result = new StringBuffer(256);

@@ -494,7 +494,7 @@ public class HolonomicRecurrenceTest {
     } else if (callCode.startsWith("holos")) { // getTermList
       mHolRec = new HolonomicRecurrence(mOffset1, mPolyString, mInitString, mNDist); // instance to be tested
       mHolRec.setGfType(mGfType);
-      System.out.println(aseqno + "\t" + callCode + "1" + "\t" + mOffset1 + "\t" 
+      System.out.println(aseqno + "\t" + callCode + "1" + "\t" + mOffset1 + "\t"
           + getDataList(mHolRec, numTerms) + "\t" + mPolyString);
 
     } else {

@@ -29,7 +29,7 @@ import  java.util.regex.Matcher;
 import  java.util.regex.Pattern;
 
 /** Class Vectorial represents a vector of coefficients for a univariate polynomial.
- *  The indices of the vector (0, 1, 2, etc.) correspond with the 
+ *  The indices of the vector (0, 1, 2, etc.) correspond with the
  *  exponents of the polynomial's variable (x).
  *  Arithmetic operations and housekeeping methods for such vectors are defined
  *  independantly from the underlaying number type (BigNumber, BigRational).
@@ -65,11 +65,10 @@ public class Vectorial<BN extends BigNumber> implements Cloneable, Serializable 
         vecLen = numElems;
     } // Constructor(int)
 
-    /** Extracts a Vectorial from a string, relying on the 
+    /** Extracts a Vectorial from a string, relying on the
      *  method <em>BN.valueOf(String)</em>.
      *  @param vectExpr a comma separated of vector elements
      *  consisting of digits and "+", "-" or "/".
-     *  @return extracted Vectorial
      */
     public Vectorial(String vectExpr) {
         String [] terms = vectExpr
@@ -81,7 +80,7 @@ public class Vectorial<BN extends BigNumber> implements Cloneable, Serializable 
             vector.add((BN) (new BigNumber(terms[ires])));
         } // for ires
     } // Constructor(String)
- 
+
     /** Deep copy of the Vectorial and its properties.
      *  @return independant copy of the Vectorial
      */
@@ -104,7 +103,7 @@ public class Vectorial<BN extends BigNumber> implements Cloneable, Serializable 
 
     /** Compute a permutation of <em>this</em> Vectorial
      *  @param meter definition of the permutation, result of {@link org.teherba.ramath.util.Permutator},
-     *  a permutation of the numbers [0 : n-1] defining, for each element, the 
+     *  a permutation of the numbers [0 : n-1] defining, for each element, the
      *  position of the element of <em>this</em> Vectorial to be taken
      *  For example, [0,1,2,3] yields the identical vectorial, and [3,2,1,0] reverses the vectorial.
      *  @return reference to a new Vectorial
@@ -142,14 +141,14 @@ public class Vectorial<BN extends BigNumber> implements Cloneable, Serializable 
         vector.set(icol, value);
     } // set
 
-    /** Returns the element representing the highest exponent 
+    /** Returns the element representing the highest exponent
      *  @return a number
      */
     public BN getHighest() {
         return get(vecLen - 1);
     } // getHighest
 
-    /** Throw element 0, Shift all elements to index - 1 in place, 
+    /** Throw element 0, Shift all elements to index - 1 in place,
      *  and reduce the size by one.
      */
     public void shiftDown() {
@@ -476,7 +475,6 @@ public class Vectorial<BN extends BigNumber> implements Cloneable, Serializable 
     /*-------------- arithmetic operations -------------------------*/
     /** Shrinks <em>this</em> Vectorial, that is removes zeroes at the tail.
      *  By default extract a GCD from the vector and the common denominator.
-     *  @return <em>this</em> shrinked Vectorial
      */
     public void shrinkIt() {
         shrinkIt(true);
@@ -484,7 +482,6 @@ public class Vectorial<BN extends BigNumber> implements Cloneable, Serializable 
 
     /** Shrinks <em>this</em> Vectorial, that is removes zeroes at the tail.
      *  @param reduce whether to remove a GCD from the vector
-     *  @return <em>this</em> shrinked Vectorial
      */
     public void shrinkIt(boolean reduce) {
         int icol = size() - 1;
@@ -499,7 +496,6 @@ public class Vectorial<BN extends BigNumber> implements Cloneable, Serializable 
     } // shrink(boolean)
 
     /** Creates a new Vectorial with any GCD of the nominators and the denominator removed
-     *  @return a new, shortened Vectorial
      */
     public void shortenIt() {
 /* nyi
@@ -651,7 +647,7 @@ public class Vectorial<BN extends BigNumber> implements Cloneable, Serializable 
      */
     public Vectorial<BN> divide(Vectorial<BN> vect2) {
         ArrayList<Vectorial<BN>> result = divideAndRemainder(vect2);
-        return result.get(0); 
+        return result.get(0);
     } // divide(Vectorial)
 
     /** Gets the quotient and the remainder from a division of <em>this</em>
@@ -661,7 +657,7 @@ public class Vectorial<BN extends BigNumber> implements Cloneable, Serializable 
      */
     public ArrayList<Vectorial<BN>> divideAndRemainder(Vectorial<BN> vect2) {
         ArrayList<Vectorial<BN>> result = new ArrayList<Vectorial<BN>>(2);
-        Vectorial<BN> quot  = new Vectorial<BN>(); 
+        Vectorial<BN> quot  = new Vectorial<BN>();
         Vectorial<BN> vect1 = clone();
         int len1 = vect1.size();
         int len2 = vect2.size();
@@ -764,10 +760,10 @@ public class Vectorial<BN extends BigNumber> implements Cloneable, Serializable 
     } // divisionStep(Vectorial)
 
     /** Euclidian algorithm: Repetitively divide <em>this</em>
-     *  by a second {@link RationalVector}, 
+     *  by a second {@link RationalVector},
      *  then the divisor by the rest, until there is no rest.
      *  @param vect2 the divisor
-     *  @return the last divisor which yields no rest, 
+     *  @return the last divisor which yields no rest,
      *  that is the greatest common divisor.
      */
     public Vectorial gcd(Vectorial<BN> vect2) {
@@ -779,7 +775,7 @@ public class Vectorial<BN extends BigNumber> implements Cloneable, Serializable 
         while (! remd.isZero()) {
             quotRemd = quot.divideAndRemainder(remd);
             if (debug >= 1) {
-                System.out.println("gcd: " + quot.toString() + " / " + remd.toString() 
+                System.out.println("gcd: " + quot.toString() + " / " + remd.toString()
                         + " -> " + quotRemd[0] + " rest " + quotRemd[1]);
             }
             quot = remd;
