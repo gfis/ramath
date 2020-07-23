@@ -1,5 +1,6 @@
 /*  Linear recurrence with constant coefficients
  *  @(#) $Id: LinearRecurrence.java $
+ *  2020-07-23: zeroes before initial terms when there are too few; getPolyFraction
  *  2019-12-10: -o offset -find
  *  2019-08-29: parameter skip
  *  2019-08-27: find with Berlekamp-Massey's algorithm
@@ -31,12 +32,14 @@ import  org.teherba.ramath.linear.BigVector;
 import  org.teherba.ramath.linear.RationalVector;
 import  org.teherba.ramath.sequence.Sequence;
 import  org.teherba.ramath.sequence.SequenceReader;
+import  org.teherba.ramath.symbolic.PolyFraction;
 import  java.math.BigInteger;
 import  java.util.ArrayList;
 
 /** Linear recurrence with constant coefficients.
  *  The interface is close to Mathematica's, for example
- *  LinearRecurrence[{1,0,0,9,-9},{1,9,3,15,6},20].
+ *  LinearRecurrence[{1,0,0,9,-9},{1,9,3,15,6},20] gives
+ *  OEIS A309791 Expansion of (1 + 8*x - 6*x^2 + 12*x^3 - 18*x^4)/(1 - x - 9*x^4 + 9*x^5).
  *  @author Dr. Georg Fischer
  */
 public class LinearRecurrence extends Recurrence {
@@ -44,7 +47,7 @@ public class LinearRecurrence extends Recurrence {
     /** Debugging level: 0 = none, 1 = some, 2 = more */
     public static int debug = 0;
 
-    /** List of constant coefficients.*/
+    /** List of constant coefficients of a(n), a(n-1), a(n-2) and so on.*/
     protected BigVector signature;
 
     /** No-args Constructor
@@ -53,7 +56,7 @@ public class LinearRecurrence extends Recurrence {
     } // no-args Constructor
 
     /** Constructor with signature and initial terms.
-     *  @param signature list of constant coefficients
+     *  @param signature list of constant coefficients of a(n), a(n-1), a(n-2) and so on.
      *  @param initTerms list of inital terms
      */
     public LinearRecurrence(BigVector signature, BigVector initTerms) {
@@ -61,21 +64,21 @@ public class LinearRecurrence extends Recurrence {
         super.initTerms = initTerms;
     } // Constructor(,)
 
-    /** Compute one term <em>a(n+1)</em> from the existing terms <em>a(n), a(n-1) ...</em>.
+    /** Compute one term <em>a(n+1)</em> from the existing terms <em>a(n), a(n-1)</em> and so on.
      *  @param seq {@link Sequence} with existing terms
-     *  @param np1 index of the new term to be computed
+     *  @param np1 index of a(n+1), the new term to be computed
      */
     @Override
     public void compute(Sequence seq, int np1) {
-        BigInteger anp1 = BigInteger.ZERO;
+        BigInteger aNp1 = BigInteger.ZERO; // a(n+1)
         int ncur = np1 - 1; // n
         int isig = 0;
         while (isig < signature.size()) {
-            anp1 = anp1.add(signature.getBig(isig).multiply(seq.getBig(ncur)));
+            aNp1 = aNp1.add(signature.getBig(isig).multiply(ncur >= 0 ? seq.getBig(ncur) : BigInteger.ZERO));
             isig ++;
             ncur --;
         } // while isig
-        seq.setBig(np1, anp1);
+        seq.setBig(np1, aNp1);
     } // compute
 
     /** Find a signature of constant coefficients from a sequence
@@ -86,9 +89,9 @@ public class LinearRecurrence extends Recurrence {
      *      https://sage.math.leidenuniv.nl/src/matrix/berlekamp_massey.py
      */
     public static RationalVector find(Sequence seq, int termNo) {
-		return find(seq, 0, termNo);
-	} // find(Sequence, int)
-	
+        return find(seq, 0, termNo);
+    } // find(Sequence, int)
+    
     /** Find a signature of constant coefficients from a sequence
      *  with the Berlekamp-Massey algorithm.
      *  @param seq {@link Sequence} with existing terms
@@ -156,6 +159,57 @@ public class LinearRecurrence extends Recurrence {
         return result.reverse();
     } // find
 
+    /** Negates the coefficients from the signature such that they form an annihilator equation
+     *  <code>1*a(n) + c1*a(n-1) + c2*a(n-2) + ck*a(n-k) = 0</code>.
+     *  @return a {@link BigVector} [c0=1, c1, c2, ck].
+     */
+    public BigVector getDenominator() {
+        final int order = signature.size();
+        BigVector result = new BigVector(order + 1);
+        int isig = 0; 
+        result.set(isig ++, BigInteger.ONE);
+        while (isig <= order) {
+            result.set(isig, signature.getBig(isig - 1).negate());
+            isig ++;
+        } // while isig
+        return result;
+    } // getDenominator
+
+    /** Gets an ordinary generating function from <em>this</em> LinearRecurrence, that is a fraction of 
+     *  two polynomials with constant coefficients of the form 
+     *  <code>(c0 + c1*x + c2*x^2 + cn*x^n)/(1 + d1*x + d2*x2 + dn*x^n)</code>.
+     *  @return [c0,c1,c2,ck], [1,d1,d2,dn]
+     *  where the dk correspond with the signature of <em>this</em> LinearRecurrence
+     */
+    public BigVector[] getGeneratingFunction() {
+        BigVector numerator   = new BigVector(initTerms.size(), BigInteger.ZERO);
+        BigVector denominator = getDenominator();
+        int irow = 0;
+        while (irow < numerator.size()) { // for all initTerms
+            int icol = irow;
+            BigInteger pivot = denominator.getBig(irow);
+            if (! pivot.equals(BigInteger.ZERO)) {
+                while (icol < numerator.size()) {
+                    if (debug >= 1) {
+                        System.out.println("[" + irow + "," + icol + "]: num=" + numerator.getBig(icol)
+                                + " + " + initTerms.getBig(icol - irow) + " * " + pivot);
+                    }
+                    numerator.setBig(icol, numerator.getBig(icol).add(initTerms.getBig(icol - irow).multiply(pivot)));
+                    icol  ++;
+                } // while icol
+            } // pivot != 0
+            irow ++;
+        } // while irow
+        return new BigVector[] {numerator, denominator }; 
+    } // getGeneratingFunction
+
+    /** Gets the signature of the recurrence <code>a(n) = c1*a(n-1) + c2*a(n-2) + ck*a(n-k)</code>.
+     *  @return the {@link BigVector} <code>[c1,c2,ck]</code>.
+     */
+    public BigVector getSignature() {
+        return signature;
+    } // getSignature
+
     /** Test method.
      *  @param args command line arguments: signature init-terms no-of-terms
      *  For example:
@@ -170,12 +224,14 @@ public class LinearRecurrence extends Recurrence {
         String aNumber = "A000000";
         SequenceReader reader = new SequenceReader(15);
         Sequence seq = null;
+        LinearRecurrence linRec = null;
         int offset = 0;
         try {
             if (args.length == 0) {
-                System.out.print("usage:\n"
-                        + "    java org.teherba.ramath.sequence.LinearRecurrence [-d n] -comp signature initTerms noTerms\n"
-                        + "    java org.teherba.ramath.sequence.LinearRecurrence [-d n] -find filename [noterms [start]]\n"
+                System.out.print("usage: java org.teherba.ramath.sequence.LinearRecurrence [options]\n"
+                        + "    -d debug level (0=none, 1=some, 2=more)\n"
+                        + "    -comp signature initterms noterms\n"
+                        + "    -find filename [noterms [start]]\n"
                         );
             } else { // some arguments
                 int termNo = 0;
@@ -191,29 +247,17 @@ public class LinearRecurrence extends Recurrence {
                         offset = Integer.parseInt(args[iarg ++]);
 
                     } else if (oper.startsWith("-comp")) {
-                        LinearRecurrence linRec = new LinearRecurrence
-                                ( new BigVector(args[iarg    ])
-                                , new BigVector(args[iarg + 1]));
+                        linRec = new LinearRecurrence( new BigVector(args[iarg]), new BigVector(args[iarg + 1]));
                         iarg += 2;
                         termNo = Integer.parseInt(args[iarg ++]);
                         seq = linRec.generate(termNo);
                         seq.setANumber(aNumber);
                         seq.printBFile();
 
-                    } else if (oper.startsWith("-find")) {
-                        String fileName = args[iarg ++];
-                        if (iarg < args.length) {
-                            termNo = Integer.parseInt(args[iarg ++]);
-                            int skip = 0;
-                            if (iarg < args.length) {
-                                skip = Integer.parseInt(args[iarg ++]);
-                            }
-                            seq = reader.readBFile(fileName, termNo, skip);
-                        } else {
-                            seq = reader.readBFile(fileName);
-                            termNo = seq.size();
-                        }
-                        System.out.println("found: " + LinearRecurrence.find(seq, offset, termNo - offset).toString());
+                    } else if (oper.startsWith("-den")) {
+                        linRec = new LinearRecurrence( new BigVector(args[iarg ++]), new BigVector("[1]"));
+                        System.out.println("getDenominator(" + linRec.getSignature() + ") = " 
+                                + linRec.getDenominator());
 
                     } else if (oper.startsWith("-eval")) {
                         reader = SequenceReader.configure(iarg, args);
@@ -234,6 +278,28 @@ public class LinearRecurrence extends Recurrence {
                             } // not too short
                          } // while hasNext
                         iarg = args.length;
+
+                    } else if (oper.startsWith("-find")) {
+                        String fileName = args[iarg ++];
+                        if (iarg < args.length) {
+                            termNo = Integer.parseInt(args[iarg ++]);
+                            int skip = 0;
+                            if (iarg < args.length) {
+                                skip = Integer.parseInt(args[iarg ++]);
+                            }
+                            seq = reader.readBFile(fileName, termNo, skip);
+                        } else {
+                            seq = reader.readBFile(fileName);
+                            termNo = seq.size();
+                        }
+                        System.out.println("found: " + LinearRecurrence.find(seq, offset, termNo - offset).toString());
+
+                    } else if (oper.startsWith("-gf")) {
+                        linRec = new LinearRecurrence(new BigVector(args[iarg]), new BigVector(args[iarg + 1]));
+                        iarg += 2;
+                        BigVector[] gf = linRec.getGeneratingFunction();
+                        System.out.println("getGeneratingFunction(" + linRec.getSignature() + ", " + linRec.getInitTerms() + ") = " 
+                                + gf[0] + "/" + gf[1]);
 
                     } else {
                         System.out.println("invalid operation \"" + oper + "\"");

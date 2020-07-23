@@ -64,6 +64,13 @@ public class Recurrence {
         return result;
     } // generate
 
+    /** Gets the initial terms of the recurrence
+     *  @return a {@link BigVector}.
+     */
+    public BigVector getInitTerms() {
+        return initTerms;
+    } // getInitTerms
+
     /** Test method.
      *  @param args command line arguments: none
      */

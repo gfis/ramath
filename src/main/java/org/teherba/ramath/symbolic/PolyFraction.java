@@ -325,21 +325,31 @@ public class PolyFraction
         return toString(0);
     } // toString()
 
+    /** Returns two {@link BigVector}s for the numerator and the denominator.
+     *  For multivariate Polynomials, the result is somewhat meaningless,
+     *  and nullis returned.
+     *  @return "[2, -1],[1, -1, -1]" for example
+     */
+    public BigVector[] toVectors() {
+        return new BigVector[] 
+                { polynomials[0].getBigVector()
+                , polynomials[1].getBigVector()
+                };
+    } // toVectors()
+
     /** Returns a String representation of the coefficients
      *  of the numerator and the denominator.
      *  For multivariate Polynomials, the result is somewhat meaningless.
-     *  @param mode 0 = normal, 1 = full (for substitution), 2 = nice / human legible,
-     *  3 = with prime factors
      *  @return "[2, -1],[1, -1, -1]" for example, 
      *  or <em>null/em> if one of the Polynomials is multivariate
      */
-    public String toVectors() {
+    public String toVectorString() {
         BigVector num = polynomials[0].getBigVector();
         BigVector den = polynomials[1].getBigVector();
         return num != null && den != null 
                 ? num.toString() + "," + den.toString()
                 : null;
-    } // toVectors(int)
+    } // toVectorString()
 
     //----------------------
     // Arithmetic operations
@@ -657,7 +667,7 @@ public class PolyFraction
         } else if (args.length == 0) {
             pfr1 = new PolyFraction("(2-x)", "1-x-x^2"); // Lucas A000032: 2,1,3,4,7,11, ...
             System.out.println(pfr1.toString());
-            System.out.println(pfr1.toVectors());
+            System.out.println(pfr1.toVectorString());
 
         } else if (args.length == 1 && ! args[0].startsWith("-")) {
             pfr1 = new PolyFraction(args[iarg], args[iarg + 1]); iarg += 2;
@@ -683,7 +693,7 @@ public class PolyFraction
                     } catch (Exception exc) {
                     }
                     System.out.println(pfr1.toString());
-                    System.out.println("vectors: "      + pfr1.toVectors());
+                    System.out.println("vectors: "      + pfr1.toVectorString());
                     System.out.println("coefficients: " + pfr1.getSeriesCoefficients(numTerms));
                     // -coeff
 
@@ -709,7 +719,7 @@ public class PolyFraction
                         pfr1 = PolyFraction.getCoxeterFraction(pwr, ngen);
                     }
                     System.out.println(pfr1.toString());
-                    System.out.println("vectors: "      + pfr1.toVectors());
+                    System.out.println("vectors: "      + pfr1.toVectorString());
                     System.out.println("coefficients: " + pfr1.getSeriesCoefficients(numTerms));
                     // -coxg
 
@@ -740,7 +750,7 @@ public class PolyFraction
                                             + "\t" + pfr1.getNum().toString() + "\t" + pfr1.getDen().toString()
                                             );
                                     System.out.println(aseqno + "\t" + "vect"
-                                            + "\t" + pfr1.toVectors()
+                                            + "\t" + pfr1.toVectorString()
                                             );
                                     System.out.println(aseqno + "\t" + "coef"
                                             + "\t" + pfr1.getSeriesCoefficients(numTerms)
@@ -773,7 +783,7 @@ public class PolyFraction
                                     if (pfr1 == null) {
                                         // ignore, bad syntax
                                     } else if (mode.equals("fract1")) {
-                                        String vects = pfr1.toVectors();
+                                        String vects = pfr1.toVectorString();
                                         if (vects != null) {
                                             System.out.println(aseqno + "\t" + "orgf"
                                                     + "\t" + offset1
@@ -847,7 +857,7 @@ public class PolyFraction
                 } else if (opt.equals    ("-vect")  ) {
                     pfr1 = new PolyFraction(args[iarg], args[iarg + 1]); iarg += 2;
                     System.out.println(pfr1.toString());
-                    System.out.println("vectors: "      + pfr1.toVectors());
+                    System.out.println("vectors: "      + pfr1.toVectorString());
                     // -vect
 
                 } else {

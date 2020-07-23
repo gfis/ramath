@@ -1,40 +1,25 @@
-/*  JoeisPreparer: prepare *.gen files for joeis-lite
- *  @(#) $Id$
- *  2020-04-01: ShuntingYard for dex
- *  2020-02-11: -bva
- *  2019-12-08: reproduce^; offset1 is always read
- *  2019-12-04: Georg Fischer: copied from PolyFraction.java
- */
-/*
- * Copyright 2019 Dr. Georg Fischer <dr.georg.fischer at gmail.com>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-package org.teherba.ramath.sequence;
-import  org.teherba.ramath.linear.BigVectorArray;
-import  org.teherba.ramath.symbolic.PolyFraction;
-import  org.teherba.ramath.symbolic.Polynomial;
-import  org.teherba.ramath.symbolic.PolyVector;
-import  org.teherba.ramath.symbolic.ShuntingYard;
-import  java.io.BufferedReader;
-import  java.io.FileInputStream;
-import  java.io.InputStreamReader;
-import  java.io.Serializable;
-import  java.nio.channels.Channels;
-import  java.nio.channels.ReadableByteChannel;
-import  java.math.BigInteger;
-import  java.util.ArrayList;
-import  java.util.regex.Pattern;
-import  org.apache.log4j.Logger;
+/*  JoeisPreparer: prepare *.gen files for joeis-lite *  @(#) $Id$ *  2020-04-
+01: ShuntingYard for dex *  2020-02-11: -bva *  2019-12-08: reproduce^; offset1
+is always read *  2019-12-04: Georg Fischer: copied from PolyFraction.java */ /*
+* Copyright 2019 Dr. Georg Fischer <dr.georg.fischer at gmail.com> * Licensed
+under the Apache License, Version 2.0 (the "License"); * you may not use this
+file except in compliance with the License. * You may obtain a copy of the
+License at * *      http://www.apache.org/licenses/LICENSE-2.0 * * Unless
+required by applicable law or agreed to in writing, software * distributed under
+the License is distributed on an "AS IS" BASIS, * WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. * See the License for the
+specific language governing permissions and * limitations under the License. */
+package org.teherba.ramath.sequence; import
+org.teherba.ramath.linear.BigVectorArray; import
+org.teherba.ramath.symbolic.PolyFraction; import
+org.teherba.ramath.symbolic.Polynomial; import
+org.teherba.ramath.symbolic.PolyVector; import
+org.teherba.ramath.symbolic.ShuntingYard; import  java.io.BufferedReader; import
+java.io.FileInputStream; import  java.io.InputStreamReader; import
+java.io.Serializable; import  java.nio.channels.Channels; import
+java.nio.channels.ReadableByteChannel; import  java.math.BigInteger; import
+java.util.ArrayList; import  java.util.regex.Pattern; import
+org.apache.log4j.Logger;
 
 /** This class implements several filters for *.gen files to be
  *  prepared for project joeis-lite.
@@ -166,7 +151,7 @@ public class JoeisPreparer
             pfr1 = PolyFraction.parse(parms[iparm]);
             if (pfr1 != null) { // parse ok
                 pfr1 = pfr1.normalize();
-                String vects = pfr1.toVectors();
+                String vects = pfr1.toVectorString();
                 if (vects != null) { // is not multivariate
                     // parms[1] = "orgf";
                     parms[iparm] = vects.replaceAll("\\],\\[", "\t").replaceAll("[\\[\\]]", "");
@@ -185,7 +170,7 @@ public class JoeisPreparer
             pfr1 = PolyFraction.parse(parms[iparm]);
             if (pfr1 != null) { // parse ok
                 pfr1 = pfr1.normalize();
-                String vects = pfr1.toVectors();
+                String vects = pfr1.toVectorString();
                 if (vects != null) { // is not multivariate
                     parms[iparm + 2] = parms[iparm];
                     parms[iparm + 0] = vects.replaceAll("\\],\\[", "\t").replaceAll("[\\[\\]]", "");
@@ -277,7 +262,7 @@ public class JoeisPreparer
                     + "\t" + pfr1.getNum().toString() + "\t" + pfr1.getDen().toString()
                     );
             System.out.println(aseqno + "\t" + "vect"
-                    + "\t" + pfr1.toVectors()
+                    + "\t" + pfr1.toVectorString()
                     );
             System.out.println(aseqno + "\t" + "coef"
                     + "\t" + pfr1.getSeriesCoefficients(numTerms)
