@@ -147,7 +147,7 @@ public class Triangle extends Sequence
         return target;
     } // transform
 
-    /** This pseudo-abstract class computes some characteristic sequence
+    /** This pseudo-abstract class computes some characteristic sequences
      *  from <em>this</em> triangular sequence.
      *  It is the superclass for more specific implementations.
      */
