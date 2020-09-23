@@ -1,25 +1,41 @@
-/*  JoeisPreparer: prepare *.gen files for joeis-lite *  @(#) $Id$ *  2020-04-
-01: ShuntingYard for dex *  2020-02-11: -bva *  2019-12-08: reproduce^; offset1
-is always read *  2019-12-04: Georg Fischer: copied from PolyFraction.java */ /*
-* Copyright 2019 Dr. Georg Fischer <dr.georg.fischer at gmail.com> * Licensed
-under the Apache License, Version 2.0 (the "License"); * you may not use this
-file except in compliance with the License. * You may obtain a copy of the
-License at * *      http://www.apache.org/licenses/LICENSE-2.0 * * Unless
-required by applicable law or agreed to in writing, software * distributed under
-the License is distributed on an "AS IS" BASIS, * WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. * See the License for the
-specific language governing permissions and * limitations under the License. */
-package org.teherba.ramath.sequence; import
-org.teherba.ramath.linear.BigVectorArray; import
-org.teherba.ramath.symbolic.PolyFraction; import
-org.teherba.ramath.symbolic.Polynomial; import
-org.teherba.ramath.symbolic.PolyVector; import
-org.teherba.ramath.symbolic.ShuntingYard; import  java.io.BufferedReader; import
-java.io.FileInputStream; import  java.io.InputStreamReader; import
-java.io.Serializable; import  java.nio.channels.Channels; import
-java.nio.channels.ReadableByteChannel; import  java.math.BigInteger; import
-java.util.ArrayList; import  java.util.regex.Pattern; import
-org.apache.log4j.Logger;
+/*  JoeisPreparer: prepare *.gen files for joeis-lite
+ *  @(#) $Id$
+ *  2020-09-23: header was garbled
+ *  2020-04-01: ShuntingYard for dex
+ *  2020-02-11: -bva
+ *  2019-12-08: reproduce; offset1 is always read
+ *  2019-12-04: Georg Fischer: copied from PolyFraction.java
+ */
+/*
+ * Copyright 2019 Dr. Georg Fischer
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.teherba.ramath.sequence;
+import  org.teherba.ramath.linear.BigVectorArray;
+import  org.teherba.ramath.symbolic.PolyFraction;
+import  org.teherba.ramath.symbolic.Polynomial;
+import  org.teherba.ramath.symbolic.PolyVector;
+import  org.teherba.ramath.symbolic.ShuntingYard;
+import  java.io.BufferedReader;
+import  java.io.FileInputStream;
+import  java.io.InputStreamReader;
+import  java.io.Serializable;
+import  java.nio.channels.Channels;
+import  java.nio.channels.ReadableByteChannel;
+import  java.math.BigInteger;
+import  java.util.ArrayList;
+import  java.util.regex.Pattern;
+import  org.apache.log4j.Logger;
 
 /** This class implements several filters for *.gen files to be
  *  prepared for project joeis-lite.
@@ -27,8 +43,7 @@ org.apache.log4j.Logger;
  *  aseqno, callCode, offset1, parm1, parm2 ...
  *  @author Dr. Georg Fischer
  */
-public class JoeisPreparer
-        implements Cloneable, Serializable {
+public class JoeisPreparer implements Cloneable, Serializable {
     private static final long serialVersionUID = 3L;
     public final static String CVSID = "@(#) $Id: JoeisPreparer.java 970 2012-10-25 16:49:32Z  $";
 

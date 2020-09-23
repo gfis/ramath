@@ -417,7 +417,7 @@ public class SequenceReader {
                 } catch (Exception exc) {
                 }
             } else {
-                System.err.println("invalid option \"" + opt + "\"");
+                System.err.println("Sequence reader: invalid option \"" + opt + "\"");
             }
         } // while args
         reader.initialize();
