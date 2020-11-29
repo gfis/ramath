@@ -1,5 +1,6 @@
 /*  PolyFraction: a fraction of two polynomials
  *  @(#) $Id: PolyFraction.java 970 2012-10-25 16:49:32Z  $
+ *  2020-11-29: fractv
  *  2019-11-10: shorten
  *  2019-05-06: -coxg
  *  2019-04-29: Georg Fischer: copied from RelationSet.java
@@ -807,6 +808,18 @@ public class PolyFraction
                                                 + "\t" + pfr1.getDen().toTriangleList(vars)
                                                 + "\t" + vars[0] + "," + vars[1]
                                                 );
+                                    } else if (mode.equals("fractv")) {
+                                        String vects = pfr1.toVectorString();
+                                        if (vects != null) {
+                                            iparm ++;
+                                            System.out.println(aseqno + "\t" + "fractv"
+                                                    + "\t" + offset1
+                                                    + "\t" + vects
+                                                    + "\t" + (iparm >= parms.length ? "" : parms[iparm++])
+                                                    );
+                                        } else {
+                                            System.out.println("# " + aseqno + ": PolyFraction is not univariate");
+                                        }
                                     } else {
                                         System.out.println(aseqno
                                                 + "\t" + offset1

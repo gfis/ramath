@@ -52,20 +52,24 @@ public class CommonFactor {
         BigInteger oldGCD = term.abs();
         BigInteger newGCD = null;
         long bfimax = seq.getBfimax();
-        boolean busy = true;
+        boolean busy = ilast >= 12;
         while (ilast >= 0 && busy) {
             term = seq.getBig(ilast --);
             newGCD = term.gcd(oldGCD);
-            if (newGCD.equals(BigInteger.ONE)) {
+            if (debug >= 1) {
+                System.out.println("# term=" + term.toString() + ", gcd=" + newGCD.toString() 
+                        + ", bare=" + term.divide(newGCD).toString());
+            }
+            if (newGCD.compareTo(BigInteger.ONE) <= 0) {
                 busy = false;
-                if (ilast < 8 && bfimax - ilast >= 16) {
+                if (ilast < 8) {
                     System.out.println(seq.getANumber() + "\t" + oldGCD.toString() + "\t" + ilast + "\t" + seq.getBfimax());
                 }
             } else {
                 oldGCD = newGCD;
             }
-        } // while isig
-        if (busy && bfimax - ilast >= 16) {
+        } // while ilast
+        if (busy) {
                     System.out.println(seq.getANumber() + "\t" + oldGCD.toString() + "\t" + ilast + "\t" + seq.getBfimax());
         }
     } // process
