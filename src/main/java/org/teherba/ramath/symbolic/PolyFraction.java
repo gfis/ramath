@@ -809,14 +809,17 @@ public class PolyFraction
                                                 + "\t" + vars[0] + "," + vars[1]
                                                 );
                                     } else if (mode.equals("fractv")) {
-                                        String vects = pfr1.toVectorString();
-                                        if (vects != null) {
-                                            iparm ++;
-                                            System.out.println(aseqno + "\t" + "fractv"
-                                                    + "\t" + offset1
-                                                    + "\t" + vects
-                                                    + "\t" + (iparm >= parms.length ? "" : parms[iparm++])
+                                        BigVector[] bvecs = pfr1.toVectors();
+                                        if (bvecs != null) {
+                                            System.out.print(aseqno + "\t" + "fractv" + "\t" + offset1
+                                                    + "\t\"" + bvecs[0].toString() + "\",\"" + bvecs[1].toString() + "\""
+                                                    + "\t" + String.valueOf(bvecs[1].size())
+                                                    + "\t" + parms[iparm] 
                                                     );
+                                            while (++ iparm < parms.length) {
+                                                System.out.print("\t" + parms[iparm]);
+                                            } // while rest of parameters
+                                            System.out.println();
                                         } else {
                                             System.out.println("# " + aseqno + ": PolyFraction is not univariate");
                                         }

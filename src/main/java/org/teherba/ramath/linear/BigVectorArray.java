@@ -194,6 +194,7 @@ public class BigVectorArray implements Cloneable, Serializable {
 
     /** Returns a new BigVectorArray constructed from a String representation
      *  of a recurrence equation.
+     *  Caution, the recurrence may not have a constant term!
      *  @param input the input string, for example
      *  <code>"2*n*a(n) +(-23*n+36)*a(n-1) +6*(-2*n+3)*a(n-2)=0"</code>
      *  @return a reference to a new BigVectorArray, or null if
@@ -246,7 +247,7 @@ public class BigVectorArray implements Cloneable, Serializable {
                             + ", coeffPoly= "  + coeffPoly);
                 }
                 if (equalFactor * signFactor == -1) {
-                    coeffPoly.negativeOf();
+                    // coeffPoly.negativeOf();
                 }
                 if (recurVar == null) { // first
                     recurVar =      elem.substring(0, elem.length() - 2);
