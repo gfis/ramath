@@ -1,5 +1,6 @@
 # Collection of simple testcases for Ramath
 # @(#) $Id: all.tests 955 2012-06-05 07:22:59Z gfis $
+# 2021-01-19: SHY -parec
 # 2019-06-12: class was not found
 # 2019-05-06: PolyFraction
 # 2016-07-10: SI% = simplify tests
@@ -203,7 +204,7 @@ DATA
  A299989  fract2 0  y/(1-x*(y^2+4*y+3))
 CALL PolyFraction -d 1 -f $(DATA)
 #-------------------------------
-# SymBVbolic Matrix Algebra
+# Symbolic Matrix Algebra
 PACKAGE=org.teherba.ramath.symbolic
 
 TEST S00 PolyVector from expression
@@ -423,6 +424,9 @@ CALL ShuntingYard "\w+" "x=a+log(0.001)*b + floor(3.14^2)"
 
 TEST SH13 ShuntingYard % remainder and %hh
 CALL ShuntingYard "\w+" "x = a % 3 + c %3 %4 * b"
+
+TEST SH14 ShuntingYard parseRecurrence
+CALL ShuntingYard "-parec" "2*n*a(n) +(-23*n+36)*a(n-1) +6*(-2*n+3)*a(n-2)=0"
 
 TEST P17 Polynomial with GT_0
 CALL Polynomial "(a + b) > 0"

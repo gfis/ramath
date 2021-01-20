@@ -970,7 +970,7 @@ public class Polynomial implements Cloneable, Serializable {
      *  @param mono2 divide by this monomial
      *  @return reference to <em>this</em> Polynomial which was modified
      */
-    protected Polynomial divideBy(Monomial mono2) {
+    public Polynomial divideBy(Monomial mono2) {
         if (mono2.isZero()) {
             throw new ArithmeticException();
         } else {
@@ -993,7 +993,7 @@ public class Polynomial implements Cloneable, Serializable {
      *  @param number multiply with this BigInteger
      *  @return reference to <em>this</em> Polynomial which was modified
      */
-    protected Polynomial divideBy(BigInteger number) {
+    public Polynomial divideBy(BigInteger number) {
         if (! number.equals(BigInteger.ONE)) {
             Iterator<Signature> iter = monomials.keySet().iterator();
             while (iter.hasNext()) {
@@ -1472,7 +1472,11 @@ public class Polynomial implements Cloneable, Serializable {
                 }
                 exp1 --;
             } // while uncovered
-        } // if univariate
+            // if univariate
+        } else {
+            System.err.println("** Polynomial.getBigVector(" + this.toString() + "): not univariate");
+            result = new BigVector();
+        }
         return result;
     } // getBigVector
 

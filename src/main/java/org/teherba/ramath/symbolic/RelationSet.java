@@ -561,7 +561,7 @@ public class RelationSet
      *  @param number divide by this BigInteger
      *  @return reference to <em>this</em> RelationSet which was modified
      */
-    protected RelationSet divideBy(BigInteger number) {
+    public RelationSet divideBy(BigInteger number) {
         int ipoly = this.polynomials.size() - 1;
         while (ipoly >= 0) {
             this.get(ipoly).divideBy(number);

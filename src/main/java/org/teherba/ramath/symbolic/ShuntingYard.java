@@ -68,6 +68,10 @@ public class ShuntingYard {
             , IN_OPTOR      // after first character of a relational or boolean operator, or after '%'
             , IN_CLOSE      // after ')' - eventually insert '*'
             , IN_COMMT      // after '#' - ignore all up to "\n" or end of string
+            // for parseRecurrence:
+            , IN_AELEM      // after "a", before "("
+            , IN_INDEX      // after "a(", 'n' not yet seen
+            , IN_INDEN      // after "a(", 'n' seen
             };
     public static String FUNCT = "funct";
 
@@ -129,6 +133,32 @@ public class ShuntingYard {
     public void setFunctionPattern(String funcPat) {
         functionPattern = Pattern.compile(funcPat);
     } // setFunctionPattern
+
+    /** Encodes a variable for a recurrence element
+     *  @param k relative index of the recurrence element
+     *  @return variable name: "a_k" for "a(n-k)", "a__k" for "a(n+k)"
+     */
+    public String encodeRVar(int k) {
+        return k <= 0 ? ("a_"  + String.valueOf(-k)) 
+                      : ("a__" + String.valueOf( k));
+    } // encodeRVar
+
+    /** Decodes a variable for a recurrence element
+     *  @param variable name: "a_k" for "a(n-k)", "a__k" for "a(n+k)"
+     *  @return +/- k
+     */
+    public int    decodeRVar(String vname) {
+        int result = 0;
+        try {
+            if (vname.startsWith("a__")) {
+                result =   Integer.parseInt(vname.substring(3));
+            } else {         //  "a_"
+                result = - Integer.parseInt(vname.substring(2));
+            }
+        } catch (Exception exc) { // ignore
+        }
+        return result;
+    } // decodeRVar
 
     /** Appends an operand or operator to the postfix list.
      *  @param elem element to be appended
@@ -845,6 +875,114 @@ public class ShuntingYard {
         return result;
     } // buildInfixExpression(int,int)
 
+    /** Convert a recurrence equation into a string representation of a polynomial.
+     *  The recurrence elements are encoded into a_k (for "a(n-k)") and a__k (for "a(n+k)").
+     *  a(-k+n), a(k+n) are also accepted.
+     *  @param input the input string, for example
+     *  <code>"2*n*a(n) +(-23*n+36)*a(n-1) +6*(-2*n+3)*a(n-2)=0"</code>.
+     *  There may only be a unique index variable [i-n], and a unique series variable [a-h].
+     *  @return a string representation of a polynomial in n and encoded variables a_.
+     */
+    public String parseRecurrence(String input) {
+        StringBuffer result = new StringBuffer(512);
+        int  number = 0; // for the displacement in the recurrence element's index
+        char nch  = '.'; // for index, undefined
+        char ach  = '.'; // for sequence, undefined
+        char ch   = ' '; // next input character
+        int sign  = -1;  // in index
+        int ipos  = 0;   // position in input string
+        State state = State.IN_START;
+        while (ipos < input.length()) {
+            ch = input.charAt(ipos ++);
+            if (! Character.isWhitespace(ch)) { // ignore whitespace
+                if (debug >= 2) {
+                    System.out.println("old " + state + "'" + ch + "' \tOS=" + operStack + "\tPF=" + postfix);
+                }
+                switch (state) {
+                    case IN_START:
+                        if (false) {
+                        } else if (ch >= 'a' && ch <= 'h') { // sequence name, unified to 'a'
+                            if (ach == '.') {
+                                ach = ch;
+                            } else if (ch != ach) {
+                                result.append("?avar?"); // sequence variable not unique
+                            }
+                            state = State.IN_AELEM;
+                        } else if (ch >= 'i' && ch <= 'n') { // index letter, unified to 'n'
+                            if (nch == '.') {
+                                nch = ch;
+                            } else if (ch != nch) {
+                                result.append("?nvar?"); // index    variable not unique
+                            }
+                            result.append('n');
+                        } else { // digit, operator, parentheses
+                            result.append(ch);
+                        }
+                        break;
+                    case IN_AELEM: // 'a' seen
+                        if (ch == '(' || ch == '[') {
+                            number = 0;
+                            sign   = -1;
+                            state = State.IN_INDEX;
+                        } else {
+                            result.append("?aopn?");
+                            result.append(ach);
+                            state = State.IN_START;
+                        }
+                        break;
+                    case IN_INDEX: // "a(" and 'n' not yet seen
+                        if (false) {
+                        } else if (ch >= 'i' && ch <= 'n') {
+                            if (nch == '.') {
+                                nch = ch;
+                            } else if (ch != nch) {
+                                result.append("?nvar?"); // index    variable not unique
+                            }
+                            state = State.IN_INDEN;
+                        } else if (ch >= '0' && ch <= '9') { // digit
+                            number = number * 10 + Character.digit(ch, 10);
+                        } else if (ch == '-') { 
+                            sign = -1;
+                        } else if (ch == '+') { 
+                            sign = +1;
+                        } else if (ch == ')' || ch == ']') { // end of index
+                            result.append(encodeRVar(sign * number));
+                            result.append("?no_n?");
+                            state = State.IN_START;
+                        }
+                        break;
+                    case IN_INDEN: // "a(" and 'n' seen
+                        if (false) {
+                        } else if (ch >= 'i' && ch <= 'n') {
+                            result.append(encodeRVar(sign * number));
+                            result.append("?twin?");
+                            state = State.IN_START;
+                        } else if (ch >= '0' && ch <= '9') { // digit
+                            number = number * 10 + Character.digit(ch, 10);
+                        } else if (ch == '-') { 
+                            sign = -1;
+                        } else if (ch == '+') { 
+                            sign = +1;
+                        } else if (ch == ')' || ch == ']') { // digit
+                            result.append(encodeRVar(sign * number));
+                            state = State.IN_START;
+                        }
+                        break;
+                    default: // should never be reached
+                        System.out.println("# invalid state " + state + " in ShuntingYard.parseRecurrence");
+                        state = State.IN_START;
+                        break;
+                } // switch state
+                // if not whitespace
+            }
+            if (debug >= 3) {
+                System.out.println("new " + state + "'" + ch + "' \tOS=" + operStack + "\tPF=" + postfix);
+                System.out.println("----------------");
+            }
+        } // while ipos
+        return result.toString();
+    } // parseRecurrence
+
     /** Test method, with no arguments shows a fixed postfix expression,
      *  otherwise the postfix expression resulting from the argument string.
      *  @param args command line arguments: [funcPat] expression
@@ -860,20 +998,25 @@ public class ShuntingYard {
             postfix = parser.getPostfixList(args[0]);
             System.out.println(postfix);
         } else if (args.length == 2) { // funcPat expression
-            String funcPat = args[0];
-            parser.setFunctionPattern(funcPat);
-            parser.setDebug(0);
-            String expr    = args[1];
-            System.out.println("expression:\t" + expr);
-            String postfix1 = parser.getPostfixString(";", expr);
-            System.out.println("postfix1:\t"   + postfix1);
-            String rebuilt1 = parser.buildInfixExpression();
-            System.out.println("rebuilt1:\t"   + rebuilt1);
-            String postfix2 = parser.getPostfixString(";", rebuilt1);
-            System.out.println("postfix2:\t"   + postfix2);
-            String rebuilt2 = parser.buildInfixExpression();
-            System.out.println("rebuilt2:\t"   + rebuilt2);
-            System.out.println((! rebuilt1.equals(rebuilt2)) ? "** differ" : "same");
+            String opt = args[0];
+            if (! opt.startsWith("-")) {
+                parser.setFunctionPattern(opt);
+                parser.setDebug(0);
+                String expr    = args[1];
+                System.out.println("expression:\t" + expr);
+                String postfix1 = parser.getPostfixString(";", expr);
+                System.out.println("postfix1:\t"   + postfix1);
+                String rebuilt1 = parser.buildInfixExpression();
+                System.out.println("rebuilt1:\t"   + rebuilt1);
+                String postfix2 = parser.getPostfixString(";", rebuilt1);
+                System.out.println("postfix2:\t"   + postfix2);
+                String rebuilt2 = parser.buildInfixExpression();
+                System.out.println("rebuilt2:\t"   + rebuilt2);
+                System.out.println((! rebuilt1.equals(rebuilt2)) ? "** differ" : "same");
+            } else if (opt.equals("-parec")) {
+                parser.setDebug(0);
+                System.out.println("parseRecurrence(\"" + args[1]  + "\") -> \"" + parser.parseRecurrence(args[1]));
+            }
         } // with args
     } // main
 
