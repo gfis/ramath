@@ -1,6 +1,7 @@
 /*  Polynomial: a symbolic, multivariate Polynomial with addition, multiplication,
  *  exponentiation, comparision and other operations
  *  @(#) $Id: Polynomial.java 744 2011-07-26 06:29:20Z gfis $
+ *  2021-01-25: disempower
  *  2020-04-06: parse/build unary - ("x-.")
  *  2020-02-10: parse returns null for bad expressions and funciton calls
  *  2019-06-06: toTriangleList
@@ -1021,6 +1022,23 @@ public class Polynomial implements Cloneable, Serializable {
         }
         return result;
     } // divide(Polynomial)
+
+    /** For <em>this</em> univariate {@link Polynomial},
+     *  divide all exponents by a number
+     *  The division must be possible without rest.
+     *  @param number divide by this number &gt;= 1
+     *  @return reference to <em>this</em> Polynomial which was modified
+     */
+    public Polynomial disempowerBy(int number) {
+        if (number >= 1) {
+            Iterator<Signature> iter = monomials.keySet().iterator();
+            while (iter.hasNext()) {
+                Signature sig1 = iter.next();
+                monomials.get(sig1).disempowerBy(number);
+            } // while iter
+        } // != 1
+        return this;
+    } // disempowerBy(number)
 
     /** Determines whether the parameter {@link BigRational} is a
      *  rational solution (root) of <em>this</em> univariate {@link Polynomial}.

@@ -1,5 +1,6 @@
 /*  PolyFraction: a fraction of two polynomials
  *  @(#) $Id: PolyFraction.java 970 2012-10-25 16:49:32Z  $
+ *  2021-01-25: -parse shows vectors and coefficients; -r => disempower
  *  2020-11-29: fractv
  *  2019-11-10: shorten
  *  2019-05-06: -coxg
@@ -328,7 +329,7 @@ public class PolyFraction
 
     /** Returns two {@link BigVector}s for the numerator and the denominator.
      *  For multivariate Polynomials, the result is somewhat meaningless,
-     *  and nullis returned.
+     *  and null is returned.
      *  @return "[2, -1],[1, -1, -1]" for example
      */
     public BigVector[] toVectors() {
@@ -351,6 +352,19 @@ public class PolyFraction
                 ? num.toString() + "," + den.toString()
                 : null;
     } // toVectorString()
+
+    /** Determines whether there is exactly one variable in the PolyFraction.
+     *  @return true if there is only one variable, false otherwise
+     */
+    public boolean isUniVariate() {
+        VariableMap numMap = polynomials[0].getVariableMap();
+        VariableMap denMap = polynomials[1].getVariableMap();
+        int sum  = numMap.size() + denMap.size();
+        return     numMap.size() + denMap.size() <= 1 
+                || numMap.size() == 1 
+                && denMap.size() == 1 
+                && numMap.firstEntry().getValue().equals(denMap.firstEntry().getValue());
+    } // isUniVariate
 
     //----------------------
     // Arithmetic operations
@@ -518,6 +532,17 @@ public class PolyFraction
         return result;
     } // getSeriesCoefficients
 
+    /** Disempowers the fraction in place, that is reduces the powers of the variable by a factor &gt;= 1.
+     *  @return the disempowered instance
+     */
+    public PolyFraction disempower(int number) {
+        if (number >= 1) {
+            polynomials[0].disempowerBy(number);
+            polynomials[1].disempowerBy(number);
+        }
+        return this;
+    } // disempower
+
     /** Normalizes the fraction in place by ensuring that any constant in the denominator
      *  is positive.
      *  @return the normalized instance
@@ -664,6 +689,7 @@ public class PolyFraction
         int iarg = 0;
         PolyFraction pfr1 = new PolyFraction();
         int numTerms = 16;
+        int disempow = 1;
 
         if (false) {
         } else if (args.length == 0) {
@@ -847,10 +873,6 @@ public class PolyFraction
                     } // try
                     // -f
 
-                } else if (opt.equals    ("-parse")) {
-                    pfr1 = PolyFraction.parse(args[iarg ++]);
-                    System.out.println(pfr1.toString());
-
                 } else if (opt.equals    ("-n")     ) {
                     numTerms = 16;
                     try {
@@ -858,6 +880,26 @@ public class PolyFraction
                     } catch (Exception exc) { // take default
                     }
                     // -n
+
+                } else if (opt.equals    ("-parse")) {
+                    pfr1 = PolyFraction.parse(args[iarg ++]);
+                    if (disempow > 1) {
+                        pfr1.disempower(disempow);
+                    }
+                    System.out.println(pfr1.toString());
+                    if (pfr1.isUniVariate()) {
+                        System.out.println("vectors: "      + pfr1.toVectorString());
+                        System.out.println("coefficients: " + pfr1.getSeriesCoefficients(numTerms));
+                    }
+                    // -parse
+
+                } else if (opt.equals    ("-r")     ) { // must be set before -parse
+                    disempow = 1;
+                    try {
+                        disempow = Integer.parseInt(args[iarg ++]);
+                    } catch (Exception exc) { // take default
+                    }
+                    // -r
 
                 } else if (opt.startsWith("-tria")  ) {
                     numTerms = 16;

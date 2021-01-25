@@ -249,7 +249,7 @@ public class HolonomicRecurrenceTest {
 
   /**
    * Evaluate a HolonomicRecurrence and gets a list
-   * 22of the resulting data terms.
+   * of the resulting data terms.
    * @param holRec instance to be evaluated
    * @param numTerms how many terms should be returned
    * @return a list of terms of the form "0,1,1,2,3,5,8".
@@ -271,28 +271,6 @@ public class HolonomicRecurrenceTest {
     } // while n
     return result.substring(1); // without leading comma
   } // getDataList
-
-/*
-  public CoxeterSequence(final int pwr, final Z c1, final Z c2) {
-    super();
-    mNum = new Z[pwr + 1];
-    mDen = new Z[pwr + 1];
-    mNum[pwr] = Z.ONE;
-    mNum[0] = Z.ONE;
-    mDen[pwr] = c1;
-    mDen[0] = Z.ONE;
-    int ipwr = pwr - 1;
-    while (ipwr > 0) {
-      mNum[ipwr] = Z.TWO;
-      mDen[ipwr] = c2;
-      --ipwr;
-    } // while ipwr
-  }
-
-  public CoxeterSequence(final int pwr, final int ngen) {
-    this(pwr, Z.valueOf(ngen - 2).multiply(ngen - 1).divide2(), Z.valueOf(2 - ngen));
-  }
-*/
 
   /**
    * Compute the initial terms of an ordinary (rational) generating function.
@@ -405,6 +383,7 @@ public class HolonomicRecurrenceTest {
    * <ul>
    * <li><code>holgf</code> - GeneratingFunction parameters -&gt; HolonomicRecurrence</li>
    * <li><code>holog</code> - determine the prefixed initial terms</li>
+   * <li><code>holop</code> - return the parameters of the sequence (below in {@link #processFile})<li>
    * <li><code>holor</code> - try to evaluate the recurrence backwards</li>
    * <li><code>holos</code> - evaluate the recurrence <code>numTerms</code> times</li>
    * </ul>
@@ -525,6 +504,16 @@ public class HolonomicRecurrenceTest {
   } // reproduce(int)
 
   /**
+   * Gets the parameters if the sequence: offset, matrix, init, dist, gftype
+   * and writes them into the record
+   * @param aseqno A-number of the sequence
+   */
+  protected void getParameters(String aseqno) {
+
+    reproduce();
+  } // reproduce(int)
+
+  /**
    * Filters a file and writes the modified output lines.
    * @param fileName name of the input file, or "-" for STDIN
    */
@@ -553,7 +542,11 @@ public class HolonomicRecurrenceTest {
             mOffset1 = Integer.parseInt(parms[iparm ++]);
           } catch (Exception exc) {
           }
-          processRecord();
+          if (callCode.equals("holop")) {
+          	getParameters(aseqno);
+          } else {
+            processRecord();
+          }
         } // is not a comment
       } // while ! eof
       lineReader.close();

@@ -191,6 +191,9 @@ CALL PolyFraction  -d 1 -parse "(1/(1-x)^8-3/(1-x)^4/(1-x^2)^2+2/(1-x)^2/(1-x^3)
 # x='x+O('x^200); Vec((1/(1-x)^8-3/(1-x)^4/(1-x^2)^2+2/(1-x)^2/(1-x^3)^2)/6)
 # A055536[1000]: 34004359531403908, 34242154383851956}
 
+TEST PF10 PolyFraction disempower by 4
+CALL PolyFraction  -d 1 -r 4 -parse "(1+x^4-5*x^8)/(1-x^4)^2" 
+
 TEST PFT1 Expansion of Pascal's triangle A007318
 CALL PolyFraction -trian 32 1 1-x-x*y
 

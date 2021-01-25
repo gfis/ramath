@@ -1,5 +1,6 @@
 /*  Monomial: a product with a signed numeric coefficient and optional exponentiated variable(s)
  *  @(#) $Id: Monomial.java 522 2010-07-26 07:14:48Z gfis $
+ *  2021-01-25: disempower
  *  2019-05-01: degree of a constant
  *  2017-05-28: javadoc 1.8
  *  2016-07-09: Signature
@@ -695,6 +696,29 @@ public class Monomial implements Cloneable, Serializable {
                 .divide(number)));
         return result;
     } // divideBy(number)
+
+    /** For <em>this</em> {@link Monomial},
+     *  divide all exponents by a number &gt;= 1.
+     *  The monomial should be univariate.
+     *  The division must be possible without rest.
+     *  @param number divide by this number &gt;= 1
+     *  @return reference to <em>this</em> Monomial which was modified
+     */
+    public Monomial disempowerBy(int number) {
+        if (number >= 1) {
+            Iterator<String> iter = vars.keySet().iterator();
+            while (iter.hasNext()) {
+                String name = iter.next();
+                int exp = this.getExponent(name);
+                if (exp % number == 0) {
+                    vars.put(name, new Integer(exp / number));
+                } else {
+                    System.err.println("assertion in Monomial (" + this.toString() + ").disempowerBy(" + number + ")");
+                }
+            } // while iter
+        } // >= 1
+        return this;
+    } // disempowerBy(number)
 
     /** Divides <em>this</em> {@link Monomial} by another one
      *  by dividing it with each factor of the parameter monomial.
