@@ -1,5 +1,6 @@
 /*  BigVector: a simple, short vector of big numbers
  *  @(#) $Id: BigVector.java 744 2011-07-26 06:29:20Z gfis $
+ *  2021-01-28: shift
  *  2019-12-10: getBigValues(offset)
  *  2019-10-29: isZero(emptyVector)
  *  2018-01-22, Georg Fischer: copied from Vector
@@ -627,6 +628,55 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         return result;
     } // shorten
 
+    /** When the elements are interpreted as coefficients of a Polynomial in <em>n</em>
+     *  (where the vector indices <em>k = 0, 1, 2</em> and so on are the exponents of <em>n</em>), then
+     *  the result has the coeffients after the mapping <em>x</em> to <em>n + dist</em>.
+     *  @return a new, shifted BigVector
+     */
+    public BigVector shift(BigInteger bdist) {
+        int len = size();
+        // BigInteger bdist = BigInteger.valueOf(dist);
+        BigVector result = new BigVector(len, BigInteger.ZERO);
+        BigVector dipows = new BigVector(len);
+        BigVector binoms = new BigVector(len, BigInteger.ONE);
+        for (int irow = 0; irow < len; irow ++) {
+            if (irow == 0) {
+                dipows.set(0, BigInteger.ONE);
+            } else {
+                dipows.set(irow, dipows.getBig(irow - 1).multiply(bdist));
+            }
+            BigInteger sum = getBig(irow); // a[i]*d^0
+            for (int icol = irow; icol < len; icol ++) {
+                sum = sum.add(getBig(icol).multiply(dipows.getBig(icol - irow)).multiply(binoms.getBig(icol - irow)));
+            } // for icol
+            result.set(irow, sum);
+            if (irow == 0) {
+                binoms.set(0, BigInteger.ONE);
+            } else {
+                binoms.set(irow, binoms.getBig(irow - 1).add(binoms.getBig(irow)));
+            }
+            if (debug >= 1) {
+                System.out.print("\nrow " + irow 
+                        + " dipows=" + dipows.toString() 
+                        + " binoms=" + dipows.toString() 
+                        + " result=" + dipows.toString() + "    ");
+            }
+        } // for irow
+        return result;
+    } // shift
+
+/*
+    a0*d^0 + a1*n^1     + a2*n^2     + a3*n^3     + a4*n^4
+    a0*d^0 + a1*(n+d)^1 + a2*(n+d)^2 + a3*(n+d)^3 + a4*(n+d)^4
+
+    a0*(1*d^0)
+    a1*(1*d^1 + 1*d^0*n^1)
+    a2*(1*d^2 + 2*d^1*n^1 + 1*d^0*n^2)
+    a3*(1*d^3 + 3*d^2*n^1 + 3*d^1*n^2 + 1*d^0*n^3)
+    a4*(1*d^4 + 4*d^3*n^1 + 6*d^2*n^2 + 4*d^1*n^3 + 1*d^0*n^4)
+        unit    num         trian
+*/
+
     /** Gets a new BigVector which is the sum of <em>this</em> and a second
      *  BigVector, which may have a differing length.
      *  @param vect2 the BigVector to be added to <em>this</em>.
@@ -1021,9 +1071,11 @@ public class BigVector extends Vector implements Cloneable, Serializable {
             }
             System.out.print(expr + " = ");
             if (false) {
+
             } else if (oper.equals("+")) {
                     vectr = vect1.add     (vect2);
                     System.out.println(vectr + ", original = " + vectr.subtract(vect2));
+
             } else if (oper.equals("-")) {
                 if (parts.length == 2) { // unary minus
                     System.out.println(vect1.negate  (     ).toString());
@@ -1031,6 +1083,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
                     vectr = vect1.subtract(vect2);
                     System.out.println(vectr + ", original = " + vectr.add(vect2));
                 }
+
             } else if (oper.equals("*")) {
                 if (parts[2].startsWith("[")) {
                     vectr = vect1.multiply(vect2);
@@ -1043,14 +1096,24 @@ public class BigVector extends Vector implements Cloneable, Serializable {
                     vectr = vect1.multiply(big2);
                     System.out.println(vectr + ", original = " + vectr.divide(big2));
                 }
+
             } else if (oper.startsWith("/")) {
                 BigVector[] quotRemd = vect1.divideAndRemainder(vect2);
                 System.out.println(quotRemd[0].toString() + ", remainder = " + quotRemd[1].toString());
                 System.out.println(", original = " + quotRemd[0].multiply(vect2).add(quotRemd[1]));
+
             } else if (oper.equals("|")) { // repetitively divide
                 System.out.println();
                 vectr = vect1.gcd(vect2);
                 System.out.println("gcd: " + vectr.toString());
+
+            } else if (oper.equals(">>")) { // shift right (decrease n)
+                vectr = vect1.shift(big2.negate());
+                System.out.println(vectr.toString());
+
+            } else if (oper.equals("<<")) { // shift left  (increase n)
+                vectr = vect1.shift(big2);
+                System.out.println(vectr.toString());
             } // if oper
         } // more than 1 argument
     } // main

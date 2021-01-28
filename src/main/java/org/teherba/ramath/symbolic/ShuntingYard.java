@@ -1,5 +1,6 @@
 /*  ShuntingYard: parser for the recognition of arithmetic and boolean expressions
  *  @(#) $Id: ShuntingYard.java 522 2010-07-26 07:14:48Z gfis $
+ *  2021-01-20: parseRecurrence
  *  2020-06-11: decimal dot in numbers
  *  2020-06-09: no STDERR messages; start them with "# "
  *  2020-04-06: unary - => x-.
@@ -901,7 +902,7 @@ public class ShuntingYard {
                 switch (state) {
                     case IN_START:
                         if (false) {
-                        } else if (ch >= 'a' && ch <= 'h') { // sequence name, unified to 'a'
+                        } else if (ch >= 'a' && ch <= 'h') { // sequence letter, unified to 'a'
                             if (ach == '.') {
                                 ach = ch;
                             } else if (ch != ach) {

@@ -98,6 +98,11 @@ rmbak:
 ltgt:
 	find src -iname "*.java" | xargs -l -iqqq perl -i.bak ../numword/etc/ltgt.pl qqq
 #---------------------------------------------------
+D=0
+RE="n*a(n-1)-a(n)"
+recur:
+	$(JAVA) org.teherba.ramath.linear.BigVectorArray -d $(D) -recur "$(RE)"
+#---------------------------------------------------
 lr:
 	make symbolic TEST=LR%
 lrh:
