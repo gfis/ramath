@@ -166,7 +166,8 @@ public class BigVectorArray implements Cloneable, Serializable {
         varr.set(rowNo, vect1);
     } // setBigVector
 
-     /** Sets a row from a {@link BigVector}.
+    /** Sets a row from a {@link BigVector}.
+     *  The array is extended with empty rows as necessary.
      *  @param rowNo number of the row, zero based
      *  @param vect1 BigVector containing the elements of the array's row
      */
@@ -228,33 +229,13 @@ public class BigVectorArray implements Cloneable, Serializable {
             }
         } // while vmap
         
-        if (kmax != 0 ) { // shift the recurrence down or up to a(n-0) = a(n-1) + a(n-2) ... + a(n-k)
-            RefiningMap rmap = poly.getRefiningMap("x"); 
-            viter = rmap.keySet().iterator();
-            while (viter.hasNext()) {
-                String vname = viter.next();
-                if (! vname.startsWith("a_")) { // n
-                    rmap.put(vname, kmax > 0 
-                            ? ("n-" + String.valueOf(kmax)) 
-                            : ("n+" + String.valueOf(-kmax)) );
-                } else { // "a_"
-                    int k = parser.decodeRVar(vname);
-                    // a__3 = a(n+3), kmax=5  -> a(n-2) 
-                    // a_3  = a(n-3), kmax=-1 -> a(n-2)
-                    rmap.put(vname, parser.encodeRVar((kmax > 0 ? kmax : - kmax) - k));
-                } // "a_"
-            } // while rmap
-            poly = poly.substitute(rmap);
-            if (debug >= 2) {
-                System.out.println("after shift: kmax=" + kmax + ", poly=" + poly.toString());
-            }
-        } // shift down
-        
+        int dist = -kmax; // positive kmax must be shifted down by dist
         vmap = poly.getVariableMap(); // recompute it
-        int klen = kmax - kmin + 1;
+        int klen = kmax - kmin + 1 + 1; // +1 for constant
         BigVectorArray result = new BigVectorArray(); // +1 for constant in recurrence
         if (debug >= 2) {
-            System.out.println("create bva[" + String.valueOf(klen + 1) + "]");
+            System.out.println("shift by " + dist);
+            System.out.println("create bva[" + String.valueOf(klen) + "]");
         }
         viter = vmap.keySet().iterator();
         while (viter.hasNext()) {
@@ -262,14 +243,15 @@ public class BigVectorArray implements Cloneable, Serializable {
             if (! vname.startsWith("a_")) {
                 // n - ignore
             } else { // a_1 = a(n-1)
-                int k = parser.decodeRVar(vname);
+                int kold = parser.decodeRVar(vname);
+                int knew = kold - kmin + 1; // [0] reserved for constant
                 Polynomial subPoly = poly.getSubPolynomial(vname);
                 poly = poly.subtract(subPoly);
                 subPoly.divideBy(new Monomial(vname));
-                result.set(klen + k, subPoly.getBigVector());
+                result.set(knew, subPoly.getBigVector().shift(dist));
                 if (debug >= 2) {
-                    System.out.println("bva[" + (klen + k) + "]=" + subPoly.toString()
-                             + ", vector=" + subPoly.getBigVector() + ", poly=" + poly.toString());
+                    System.out.println("bva[" + (knew) + "]=" + subPoly.toString()
+                             + ", vector=" + result.get(knew) + ", poly=" + poly.toString());
                 }
             }
         } // while
@@ -279,92 +261,6 @@ public class BigVectorArray implements Cloneable, Serializable {
         result.set(0, poly.getBigVector()); // [0] = remaining constant polynomial in n
         return result;
     } // parseRecurrence
-
-    /** Returns a new BigVectorArray constructed from a String representation
-     *  of a recurrence equation. This array is suitable as matrix parameter for HolonomicRecurrence.
-     *  @param input the input string, for example
-     *  <code>"2*n*a(n) +(-23*n+36)*a(n-1) +6*(-2*n+3)*a(n-2)=0"</code>.
-     *  {@link ShuntingYard} normalizes the names to "a" and "n".
-     *  There may be a single index variable [i-n], and a single series variable [a-h].
-     *  @return a reference to a new BigVectorArray, or null if
-     *  the input could not properly be parsed
-     */
-    public void shiftRecurrence(int dist) {
-    	String input = "";
-        if (debug >= 1) {
-            System.out.println("BigVectorArray.parseRecurrence(\"" + input + "\")");
-        }
-        ShuntingYard parser = new ShuntingYard();
-        Polynomial poly = new Polynomial(parser.parseRecurrence(input.replaceAll("\\=\\=","=")));
-        VariableMap vmap = poly.getVariableMap(); // size is 1 (for n) + number of a_* variables
-        int kmin = 1;
-        int kmax = 0;
-        Iterator<String> 
-        viter = vmap.keySet().iterator();
-        while (viter.hasNext()) {
-            String vname = viter.next();
-            if (! vname.startsWith("a_")) { // must be "n" - ignore
-            } else {
-                int k = parser.decodeRVar(vname);
-                kmin = k < kmin ? k : kmin;
-                kmax = k > kmax ? k : kmax;
-                if (debug >= 2) {
-                    System.out.println("vname=" + vname + ", k=" + k + ", kmax=" + kmax + ", kmin=" + kmin + ", poly=" + poly.toString());
-                }
-            }
-        } // while vmap
-        
-        if (kmax != 0 ) { // shift the recurrence down or up to a(n-0) = a(n-1) + a(n-2) ... + a(n-k)
-            RefiningMap rmap = poly.getRefiningMap("x"); 
-            viter = rmap.keySet().iterator();
-            while (viter.hasNext()) {
-                String vname = viter.next();
-                if (! vname.startsWith("a_")) { // n
-                    rmap.put(vname, kmax > 0 
-                            ? ("n-" + String.valueOf(kmax)) 
-                            : ("n+" + String.valueOf(-kmax)) );
-                } else { // "a_"
-                    int k = parser.decodeRVar(vname);
-                    // a__3 = a(n+3), kmax=5  -> a(n-2) 
-                    // a_3  = a(n-3), kmax=-1 -> a(n-2)
-                    rmap.put(vname, parser.encodeRVar((kmax > 0 ? kmax : - kmax) - k));
-                } // "a_"
-            } // while rmap
-            poly = poly.substitute(rmap);
-            if (debug >= 2) {
-                System.out.println("after shift: kmax=" + kmax + ", poly=" + poly.toString());
-            }
-        } // shift down
-        
-        vmap = poly.getVariableMap(); // recompute it
-        int klen = kmax - kmin + 1;
-        BigVectorArray result = new BigVectorArray(); // +1 for constant in recurrence
-        if (debug >= 2) {
-            System.out.println("create bva[" + String.valueOf(klen + 1) + "]");
-        }
-        viter = vmap.keySet().iterator();
-        while (viter.hasNext()) {
-            String vname = viter.next();
-            if (! vname.startsWith("a_")) {
-                // n - ignore
-            } else { // a_1 = a(n-1)
-                int k = parser.decodeRVar(vname);
-                Polynomial subPoly = poly.getSubPolynomial(vname);
-                poly = poly.subtract(subPoly);
-                subPoly.divideBy(new Monomial(vname));
-                result.set(klen + k, subPoly.getBigVector());
-                if (debug >= 2) {
-                    System.out.println("bva[" + (klen + k) + "]=" + subPoly.toString()
-                             + ", vector=" + subPoly.getBigVector() + ", poly=" + poly.toString());
-                }
-            }
-        } // while
-        if (debug >= 2) {
-            System.out.println("bva[0]=" + poly.toString());
-        }
-        result.set(0, poly.getBigVector()); // [0] = remaining constant polynomial in n
-        // return result;
-    } // shiftRecurrence
 
     /*-------------- lightweight derived methods -----------------------------*/
 

@@ -631,40 +631,18 @@ public class BigVector extends Vector implements Cloneable, Serializable {
     /** When the elements are interpreted as coefficients of a Polynomial in <em>n</em>
      *  (where the vector indices <em>k = 0, 1, 2</em> and so on are the exponents of <em>n</em>), then
      *  the result has the coeffients after the mapping <em>x</em> to <em>n + dist</em>.
+     *  @param dist shift n -&gt; n + dist (may be negative)
      *  @return a new, shifted BigVector
      */
-    public BigVector shift(BigInteger bdist) {
+    public BigVector shift(int dist) {
+        BigInteger bdist = BigInteger.valueOf(dist);
         int len = size();
-        // BigInteger bdist = BigInteger.valueOf(dist);
         BigVector result = new BigVector(len, BigInteger.ZERO);
         BigVector dipows = new BigVector(len);
         BigVector binoms = new BigVector(len, BigInteger.ONE);
-        for (int irow = 0; irow < len; irow ++) {
-            if (irow == 0) {
-                dipows.set(0, BigInteger.ONE);
-            } else {
-                dipows.set(irow, dipows.getBig(irow - 1).multiply(bdist));
-            }
-            BigInteger sum = getBig(irow); // a[i]*d^0
-            for (int icol = irow; icol < len; icol ++) {
-                sum = sum.add(getBig(icol).multiply(dipows.getBig(icol - irow)).multiply(binoms.getBig(icol - irow)));
-            } // for icol
-            result.set(irow, sum);
-            if (irow == 0) {
-                binoms.set(0, BigInteger.ONE);
-            } else {
-                binoms.set(irow, binoms.getBig(irow - 1).add(binoms.getBig(irow)));
-            }
-            if (debug >= 1) {
-                System.out.print("\nrow " + irow 
-                        + " dipows=" + dipows.toString() 
-                        + " binoms=" + dipows.toString() 
-                        + " result=" + dipows.toString() + "    ");
-            }
-        } // for irow
-        return result;
-    } // shift
-
+        if (debug >= 1) {
+            System.out.println("\nshift by " + bdist);
+        } 
 /*
     a0*d^0 + a1*n^1     + a2*n^2     + a3*n^3     + a4*n^4
     a0*d^0 + a1*(n+d)^1 + a2*(n+d)^2 + a3*(n+d)^3 + a4*(n+d)^4
@@ -676,6 +654,42 @@ public class BigVector extends Vector implements Cloneable, Serializable {
     a4*(1*d^4 + 4*d^3*n^1 + 6*d^2*n^2 + 4*d^1*n^3 + 1*d^0*n^4)
         unit    num         trian
 */
+        for (int irow = 0; irow < len; irow ++) {
+            if (irow == 0) {
+                dipows.set(0, BigInteger.ONE);
+            } else {
+                dipows.set(irow, dipows.getBig(irow - 1).multiply(bdist));
+            }
+        } // for irow
+        for (int irow = 0; irow < len; irow ++) {
+            if (irow > 0) {
+                for (int icol = 1; icol < len; icol ++) {
+                    binoms.set(icol, binoms.getBig(icol - 1).add(binoms.getBig(icol)));
+                } // for icol
+            }
+
+            BigInteger sum = BigInteger.ZERO; // a[i]*d^0
+            for (int icol = irow; icol < len; icol ++) {
+                if (debug >= 2) {
+                     System.out.println("  icol=" + icol + "\tsum= " + sum 
+                        + "\t + this(" + icol + ")=" + getBig(icol)
+                        + "\t * dipows(" + String.valueOf(icol - irow) + ")=" + dipows.getBig(icol - irow).toString() 
+                        + "\t * binoms(" + String.valueOf(icol - irow) + ")=" + binoms.getBig(icol - irow).toString() 
+                        );
+                }
+                sum = sum.add(getBig(icol).multiply(dipows.getBig(icol - irow)).multiply(binoms.getBig(icol - irow)));
+            } // for icol
+            result.set(irow, sum);
+            if (debug >= 1) {
+                System.out.println("row " + irow 
+                        + "\t dipows=" + dipows.toString() 
+                        + "\t binoms=" + binoms.toString() 
+                        + "\t result=" + result.toString()
+                        );
+            }
+        } // for irow
+        return result;
+    } // shift
 
     /** Gets a new BigVector which is the sum of <em>this</em> and a second
      *  BigVector, which may have a differing length.
@@ -1108,11 +1122,11 @@ public class BigVector extends Vector implements Cloneable, Serializable {
                 System.out.println("gcd: " + vectr.toString());
 
             } else if (oper.equals(">>")) { // shift right (decrease n)
-                vectr = vect1.shift(big2.negate());
+                vectr = vect1.shift(- big2.intValue());
                 System.out.println(vectr.toString());
 
             } else if (oper.equals("<<")) { // shift left  (increase n)
-                vectr = vect1.shift(big2);
+                vectr = vect1.shift(+ big2.intValue());
                 System.out.println(vectr.toString());
             } // if oper
         } // more than 1 argument
