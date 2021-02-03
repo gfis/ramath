@@ -1,7 +1,9 @@
 /* Holonomic sequences where the recurrence equation for a(n)
  * has polynomials in n as coefficients.
  * @(#) $Id$
- * 2020-07-18, Georg Fischer: public getInitTerms()
+ * 2021-02-03: imply "[1]" for empty initTerms
+ * 2020-09-24: gftype=2, adjunct(n) to be added to the constant term
+ * 2020-07-20, Georg Fischer: public getInitTerms(), protected initialize()
  * 2020-04-13, Sean Irvine: jOEIS conventions
  * 2020-04-10: merge with joeis; gfType "egf"
  * 2020-01-07: preset mBuffer with ZEROes because of problems; also for single/self start
@@ -55,7 +57,7 @@ public class HolonomicRecurrence implements Sequence {
     mOffset = 0;
     mNDist = 0;
     mPolyList = new ArrayList<>(16);
-    mInitTerms = new Z[] {Z.ZERO};
+    mInitTerms = new Z[] { Z.ONE };
     initialize();
   }
 
@@ -71,7 +73,7 @@ public class HolonomicRecurrence implements Sequence {
     mOffset = offset;
     mNDist = nDist;
     mPolyList = polyList;
-    mInitTerms = Arrays.copyOf(initTerms, initTerms.length);
+    mInitTerms = initTerms.length == 0 ? new Z[] { Z.ONE } : Arrays.copyOf(initTerms, initTerms.length);
     initialize();
   } // Constructor
 
@@ -126,7 +128,7 @@ public class HolonomicRecurrence implements Sequence {
         mPolyList.add(ZUtils.toZ(polys[k]));
       } // for k
     }
-    mInitTerms = ZUtils.toZ(initTerms);
+    mInitTerms = (initTerms.isEmpty() || "[]".equals(initTerms)) ? new Z[] { Z.ONE } : ZUtils.toZ(initTerms);
     initialize();
   } // Constructor
 
@@ -178,7 +180,7 @@ public class HolonomicRecurrence implements Sequence {
 
   /** 
    * Get the type of the generating function.
-   * @return code for the type: 0 = ordinary, 1 = exponential
+   * @return code for the type: 0 = ordinary, 1 = exponential, 2 = additional function
    */
   public int getGfType() {
     return mGfType;
@@ -186,7 +188,7 @@ public class HolonomicRecurrence implements Sequence {
   
   /** 
    * Set the type of the generating function.
-   * @param gfType code for the type: 0 = ordinary, 1 = exponential
+   * @param gfType code for the type: 0 = ordinary, 1 = exponential, 2 = additional function
    */
   public void setGfType(final int gfType) {
     mGfType = gfType;
@@ -204,7 +206,7 @@ public class HolonomicRecurrence implements Sequence {
    * Initialize the sequence.
    * This code is common to all constructors.
    */
-  private void initialize() {
+  protected void initialize() {
     mGfType = 0; // normally it is an ordinary g.f.
     mN = mOffset - 1;
     mMaxDegree = 1;
@@ -228,6 +230,17 @@ public class HolonomicRecurrence implements Sequence {
   } // initialize
 
   /**
+   * For <code>gftype=2</code>, add the value of some function of the current index {@link #mN}.
+   * to the constant term in the recurrence equation.
+   * This method is typically overwritten, for example in ComplementaryEquationSequence.
+   * @param n index of the term a(n) to be computed
+   * @return value to be added to the constant term (default: 0).
+   */
+  public Z adjunct(final int n) {
+    return Z.ZERO;
+  }
+  
+  /**
    * Gets the next term of the sequence.
    */
   @Override
@@ -250,12 +263,12 @@ public class HolonomicRecurrence implements Sequence {
         final Z[] poly = mPolyList.get(k);
         // handle the linear case separately
         Z coeffi = poly[0];
-        if (!coeffi.equals(Z.ZERO)) {
+        if (!coeffi.isZero()) {
           pvalk = pvalk.add(coeffi);
         }
         for (int i = 1; i < poly.length; i++) { // possibly holonomic: evaluate polynomial in nd
           coeffi = poly[i];
-          if (coeffi.equals(Z.ZERO)) {
+          if (coeffi.isZero()) {
             // ignore
           } else if (coeffi.equals(Z.ONE)) {
             pvalk = pvalk.add(mNdPowers[i]);
@@ -273,6 +286,9 @@ public class HolonomicRecurrence implements Sequence {
       } // while k - coefficients of the recurrence
       // pvals[0..mOrder] now contain the coefficients of the recurrence equation
       Z sum = pvals[0]; // k=0, the constant term (without a(k)) in the recurrence, mostly ZERO
+      if (mGfType == 2 && mN >= mOrder) {
+        sum = sum.add(adjunct(mN));
+      }
       for (k = 1; k <= mOrder; ++k) { // sum all previous elements of the recurrence
         ibuf = mN - mOrder - 1 + k; // index of previous recurrence element a[n-i]
         while (ibuf < 0) {
@@ -289,12 +305,12 @@ public class HolonomicRecurrence implements Sequence {
           System.out.println("    new_sum=" + sum);
         }
       } // for k - summing
-      if (!pvals[mOrder + 1].equals(Z.ZERO)) {
+      if (!pvals[mOrder + 1].isZero()) {
         if (mGfType == 1 && mN >= 2) { // exponential: multiply by mN 
           sum = sum.multiply(Z.valueOf(mN));
         }
         final Z[] quotRemd = sum.negate().divideAndRemainder(pvals[mOrder + 1]);
-        if (!quotRemd[1].equals(Z.ZERO)) {
+        if (!quotRemd[1].isZero()) {
           if (sDebug >= 1) {
             System.out.println("assertion: division with rest " + quotRemd[1]
                 + " for " + sum.negate() + " / " + pvals[mOrder + 1]);
@@ -380,5 +396,44 @@ public class HolonomicRecurrence implements Sequence {
   public int getDistance() {
     return mNDist;
   }
+
+  /**
+   * Gets a String representation
+   * of the coefficient polynomials.
+   * @return a list of polynomials of the form "[[0,1],[1,2],[1]]".
+   */
+  public String getPolyString() {
+    final StringBuilder result = new StringBuilder(256);
+    final ArrayList<Z[]> polyList = getPolyList();
+    for (int i = 0; i < polyList.size(); ++i) { // polynomials
+      final Z[] poly = polyList.get(i);
+      result.append(i == 0 ? '[' : ',');
+      for (int j = 0; j < poly.length; ++j) {
+        result.append(j == 0 ? '[' : ',');
+        result.append(poly[j]);
+      } // for j
+      result.append(']');
+    } // for i
+    result.append(']');
+    return result.toString();
+  } // getPolyString
+
+  /**
+   * Gets a String representation
+   * of the initial terms.
+   * @return a list of terms of the form "[0,1,1,2,1]".
+   */
+  public String getInitString() {
+    final StringBuilder result = new StringBuilder(256);
+    final Z[] initTerms = getInitTerms();
+    int j = 0;
+    while (j < initTerms.length) {
+      result.append(j == 0 ? '[' : ',');
+      result.append(initTerms[j]);
+      ++j;
+    } // while j
+    result.append(']');
+    return result.toString();
+  } // getInitString()
 
 } // HolonomicRecurrence

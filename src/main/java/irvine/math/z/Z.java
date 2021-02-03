@@ -121,6 +121,14 @@ public class Z extends BigInteger {
   }
 
   /**
+   * Return whether <code>this</code number is zero.
+   * @return true if the number is Z.ZERO, false otherwise
+   */
+  public boolean isZero() {
+    return super.equals(Z.ZERO);
+  }
+
+  /**
    * Return a String representation of this number in base 10.
    * @return for example "123"
    */
