@@ -102,6 +102,16 @@ public class Z extends BigInteger {
   }
 
   /**
+   * Return the quotient of this integer divided by <code>n</code>.
+   * @param n integer to divide by
+   * @return quotient
+   */
+  public Z divide(final Z n) {
+    return divideAndRemainder(n)[0];
+  }
+
+  /**
+  /**
    * Return the product of this integer and <code>n</code>.
    * @param n number to multiply
    * @return product of this and <code>n</code>.

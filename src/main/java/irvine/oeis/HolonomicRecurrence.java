@@ -185,7 +185,7 @@ public class HolonomicRecurrence implements Sequence {
     mN = mOffset - 1; // one before first initial term
     mNPlen = 1;
     mRElen = mPolyList.size() - 1;
-    mRElems = new Z[mRElen];
+    mRElems = new Z[mRElen + (mRElen == 0 ? 1 : 0)]; // ensure that there is at least mRElems[0]; may not use mRElems.length anymore
     Arrays.fill(mRElems, Z.ZERO);
     mOrder = mRElen - 1; /**/ if (sDebug >= 1) { System.out.println("order=" + mOrder); }
     for (int k = mRElen - 1; k >= 0; --k) { // determine mNPlen
@@ -259,14 +259,16 @@ public class HolonomicRecurrence implements Sequence {
    * and offset + length(initTerms) for reversed (decreasing) recurrences.
    */
   private void initRE(final int pos) {
-    mREpos = pos;
-    while (mREpos < 0) {
-      mREpos += mRElen;
+    if (mRElen > 0) {
+      mREpos = pos;
+      while (mREpos < 0) {
+        mREpos += mRElen;
+      }
+      while (mREpos >= mRElen) {
+        mREpos -= mRElen;
+      }
+      // now mREpos inside defined ring buffer range
     }
-    while (mREpos >= mRElen) {
-      mREpos -= mRElen;
-    }
-    // now mREpos inside defined ring buffer range
   } // initRE
 
   /**
@@ -304,9 +306,9 @@ public class HolonomicRecurrence implements Sequence {
         mREpos = 0;
       }
     }
-    /**/ if (sDebug >= 2) { System.out.print  ("    setRE(" + mREpos + "," + an_k.toString() + "): " + showRE()); }
+    /**/ if (sDebug >= 2 && an_k != null) { System.out.print  ("    setRE(" + mREpos + "," + an_k.toString() + "): " + showRE()); }
     mRElems[mREpos] = an_k;
-    /**/ if (sDebug >= 2) { System.out.println(" -> " + showRE()); }
+    /**/ if (sDebug >= 2 && an_k != null) { System.out.println(" -> " + showRE()); }
   } // setRE
 
   /**
@@ -332,8 +334,11 @@ public class HolonomicRecurrence implements Sequence {
    */
   private String showRE() {
     final StringBuilder result = new StringBuilder(256);
+    result.append('[');
     for (int i = 0; i < mRElen; ++i) { // polynomials
-      result.append(i == 0 ? '[' : ',');
+      if (i > 0) {
+        result.append(',');
+      }
       if (i == mREpos) {
         result.append('*');
       }
@@ -399,14 +404,6 @@ public class HolonomicRecurrence implements Sequence {
       }
     }
     if (result != null) { // taken from initial terms
-      if (mExponentialType) { // exponential: multiply buffer by mN
-        final Z zn = Z.valueOf(mN);
-        for (int ire = 0; ire < mRElen; ++ire) {
-          if (mRElems[ire] != null) {
-            mRElems[ire] = mRElems[ire].multiply(zn);
-          }
-        }
-      }
       setRE(result);
     } else { // result == null, not in range of initTerms, must be computed
       final Z[] pvals = evaluatePolynomials(mN - mShift); // coefficients of the recurrence equation
@@ -416,17 +413,19 @@ public class HolonomicRecurrence implements Sequence {
         sum = sum.add(adjunct(mN));
       }
 
+      int ipvaln = 0; // index of polynomial for new recurrence element
       if (mReverseType) { // decreasing
+        ipvaln = 1;
         for (int k = mOrder + 1; k >= 2; --k) { // sum all previous elements of the recurrence
           /**/ if (sDebug >= 1) { System.out.print  ("  sum: " + sum + " (pvals[" + k + "]=" + pvals[k] + ", RE=" + showRE()); }
           sum = sum.add(pvals[k].multiply(getRE()));
           /**/ if (sDebug >= 1) { System.out.println(") -> " + sum + " (pvals[" + k + "]=" + pvals[k] + ", RE=" + showRE()+ ")"); }
         } // for k - summing
-        if (!pvals[1].isZero()) {
+        if (!pvals[ipvaln].isZero()) {
           if (mExponentialType && mN >= 2) { // exponential: multiply by mN
             sum = sum.multiply(Z.valueOf(mN));
           }
-          final Z[] quotRemd = sum.negate().divideAndRemainder(pvals[1]);
+          final Z[] quotRemd = sum.negate().divideAndRemainder(pvals[ipvaln]);
           if (!quotRemd[1].isZero()) {
             /**/ if (sDebug >= 1) { System.out.println("assertion: division with rest " + quotRemd[1] + " for " + sum.negate() + " / " + pvals[mOrder + 1]); }
             result = null; // end of sequence
@@ -440,16 +439,17 @@ public class HolonomicRecurrence implements Sequence {
         setRE(result);
 
       } else { // normal - increasing
+        ipvaln = mOrder + 1;
         for (int k = 1; k <= mOrder; ++k) { // sum all previous elements of the recurrence
           /**/ if (sDebug >= 1) { System.out.print  ("  sum: " + sum + " (pvals[" + k + "]=" + pvals[k] + ", RE=" + showRE()); }
           sum = sum.add(pvals[k].multiply(getRE()));
           /**/ if (sDebug >= 1) { System.out.println(") -> " + sum + " (pvals[" + k + "]=" + pvals[k] + ", RE=" + showRE()+ ")"); }
         } // for k - summing
-        if (!pvals[mOrder + 1].isZero()) {
+        if (!pvals[ipvaln].isZero()) {
           if (mExponentialType && mN >= 2) { // exponential: multiply by mN
             sum = sum.multiply(Z.valueOf(mN));
           }
-          final Z[] quotRemd = sum.negate().divideAndRemainder(pvals[mOrder + 1]);
+          final Z[] quotRemd = sum.negate().divideAndRemainder(pvals[ipvaln]);
           if (!quotRemd[1].isZero()) {
             /**/ if (sDebug >= 1) { System.out.println("assertion: division with rest " + quotRemd[1] + " for " + sum.negate() + " / " + pvals[mOrder + 1]); }
             result = null; // end of sequence
@@ -459,6 +459,14 @@ public class HolonomicRecurrence implements Sequence {
         } else {
           /**/ if (sDebug >= 1) { System.out.println("assertion: division by zero "); }
           result = null; // end of sequence
+        }
+
+        if (mExponentialType) { // exponential: multiply buffer by mN
+          final Z zn = Z.valueOf(mN);
+          for (int ire = 0; ire < mRElen; ++ire) {
+            /**/ if (sDebug >= 1) { System.out.println("  exp: multiply ring=" + showRE() + " by mN=" + mN); }
+            mRElems[ire] = mRElems[ire].multiply(zn);
+          }
         }
         setRE(result);
 

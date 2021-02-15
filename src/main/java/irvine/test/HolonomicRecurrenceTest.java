@@ -588,8 +588,9 @@ public class HolonomicRecurrenceTest {
         } else if (opt.equals    ("-b")     ) {
           bfile = true;
         } else if (opt.equals    ("-d")     ) {
-          sDebug = 1;
+          sDebug = 0;
           sDebug           = Integer.parseInt(args[iarg ++]);
+          HolonomicRecurrence.setDebug(sDebug);
         } else if (opt.equals    ("-dist")  ) {
           dist             = Integer.parseInt(args[iarg ++]);
         } else if (opt.equals    ("-f")     ) {
@@ -615,17 +616,20 @@ public class HolonomicRecurrenceTest {
     } // while args
     if (polyList != null) {
       holTest.mHolRec = new HolonomicRecurrence(holTest.mOffset, polyList, initTerms, dist);
-      holTest.mHolRec.setDebug(sDebug);
       holTest.mHolRec.setGfType(holTest.mGfType);
       if (! bfile) {
         System.out.println(holTest.getDataList(holTest.mHolRec, holTest.numTerms));
       } else {
         int ind = incr > 0 ? holTest.mOffset : holTest.mHolRec.getInitTerms().length - 1;
-        while (holTest.numTerms > 0) {
+        boolean busy = true;
+        while (busy && holTest.numTerms > 0) {
           Z term =  holTest.mHolRec.next();
-          System.out.println(String.valueOf(ind) + " " + term.toString());
-          --holTest.numTerms;
-          ind = ind + incr;
+          busy= term != null;
+          if (busy) {
+            System.out.println(String.valueOf(ind) + " " + term.toString());
+            --holTest.numTerms;
+            ind = ind + incr;
+          } 
         } // while 
       }
     } else {

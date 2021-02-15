@@ -34,6 +34,8 @@ BASE=2
 MAX=32
 
 all: eec
+dist:
+	ant dist
 #-------------------------------------------------------------------
 # Perform a regression test 
 regression: eec ideal linear matrix sandbox simple solver symbolic util \

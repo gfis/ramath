@@ -1,5 +1,6 @@
 # Collection of Testcases for Ramath
 # @(#) $Id: sequence.tests $
+# 2021-02-15: HolonomicRecurrence REVERSE
 # 2019-10-12: TriangleRecurrence
 # 2019-08-29: LinearRecurrence with Berlekamp-Massey
 # 2015-03-23, Dr. Georg Fischer: extracted from linear.tests
@@ -221,4 +222,33 @@ CALL TriangleRecurrence -d 0 -eval -b ../OEIS-mat/common/bfile -f $(DATA) -m 21
 
 # TEST TRI7 all keyword:tabl
 # CALL TriangleRecurrence -d 0 -eval -b ../OEIS-mat/common/bfile -f tabl.lst.tmp -m 15
-#----
+#-------------------------------
+# HolonomicRecurrence
+PACKAGE=irvine.test
+
+TEST HR1 A000045 Fibonacci increasing
+CALL HolonomicRecurrenceTest  -p "[[0],[1],[1],[-1]" -i "[0,1]" -o 0 -d 2 -n 12 -dist 0 -b -t 0
+
+TEST HR2 A000045 Fibonacci decreasing
+CALL HolonomicRecurrenceTest  -p "[[0],[1],[1],[-1]" -i "[0,1]" -o 0 -d 2 -n 12 -dist 0 -b -t 4
+
+TEST HR3 A294119 ordinary with different RE
+CALL HolonomicRecurrenceTest -p "[[0],[-4,4],[4],[-1]]" -i "[1,4]" -o 0 -d 0 -n 10 -dist 0 -t 0
+
+TEST HR4 A294119 exponential
+CALL HolonomicRecurrenceTest -p "[[0],[-4],[-4],[2,1]]" -i "[1,4]" -o 0 -d 2 -n 10 -dist 2 -b -t 1
+
+TEST HR5 A003684 fixed
+CALL HolonomicRecurrenceTest -p "[0]" -i "[4,8,22,84,402,1218,3572,8218,11804]" -d 2 -n 20 -b
+
+TEST HR6 A085110 exp DIST=2
+CALL HolonomicRecurrenceTest -p "[[0],[1],[0,1],[-1,-1]]" -i "[1,4,9,40]" -dist 2 -d 2 -n 10 -t 1 -b
+
+TEST HR7 A085110 exp DIST=0
+CALL HolonomicRecurrenceTest -p "[[0],[-1],[2,-1],[-1,1]]" -i "[1,4,9,40]" -dist 0 -d 2 -n 10 -t 1 -b
+
+# A241929	holos	1	[0,-1,8,-28,56,-70,56,-28,8,-1]	[1,10,60,264,930,2766,7205,16880]	0	0	linea
+TEST HR8 A241929 increasing
+CALL HolonomicRecurrenceTest -p "[0,-1,8,-28,56,-70,56,-28,8,-1]" -i "[1,10,60,264,930,2766,7205,16880]" -dist 0 -d 0 -n 16 -t 0 -b
+TEST HR9 A241929 decreasing
+CALL HolonomicRecurrenceTest -p "[0,-1,8,-28,56,-70,56,-28,8,-1]" -i "[1,10,60,264,930,2766,7205,16880]" -dist 0 -d 0 -n 16 -t 4 -b
