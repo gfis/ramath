@@ -1,5 +1,6 @@
 /* Test class HolonomicRecurrence, determine init terms, run backwards
  * @(#) $Id$
+ * 2021-02-15: with Z in ramath and joeis-lite
  * 2020-04-10: -t gftype
  * 2019-12-12: -p polylist -i initterms
  * 2019-12-08: Georg Fischer
@@ -10,7 +11,6 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
-import java.math.BigInteger;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.ArrayList;

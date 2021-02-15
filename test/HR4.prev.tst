@@ -4,9 +4,15 @@ polys[2]=-4
 polys[3]=2,1
 order=2
 initialize: mN=-1, mRElen=3, mNPlen=1, mOrder=2, mLinit=2
+  exp: multiply ring=[0,0,*0] by mN=0
+  exp: multiply ring=[0,0,*0] by mN=0
+  exp: multiply ring=[0,0,*0] by mN=0
     setRE(0,1): [*0,0,0] -> [*1,0,0]
 result=1, RE=[*1,0,0]
 0 1
+  exp: multiply ring=[*1,0,0] by mN=1
+  exp: multiply ring=[*1,0,0] by mN=1
+  exp: multiply ring=[*1,0,0] by mN=1
     setRE(1,4): [1,*0,0] -> [1,*4,0]
 result=4, RE=[1,*4,0]
 1 4

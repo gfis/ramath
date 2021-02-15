@@ -1,6 +1,6 @@
 /* Holonomic sequences where the recurrence equation for a(n) has polynomials in n as coefficients.
  * @(#) $Id$
- * 2021-02-14: GH=73; complete rewrite b.o. REVERSE 
+ * 2021-02-15: complete rewrite b.o. REVERSE 
  * 2021-02-03: imply "[1]" for empty initTerms
  * 2020-09-24: gftype=2, adjunct(n) to be added to the constant term
  * 2020-07-20, Georg Fischer: public getInitTerms(), protected initialize()
@@ -355,7 +355,7 @@ public class HolonomicRecurrence implements Sequence {
    */
   private Z[] evaluatePolynomials(final int n) {
     mNPowers[1] = Z.valueOf(n); // [0] == 1
-    for (int m = 2; m < mNPlen; ++m) { // fill with powers of nd
+    for (int m = 2; m <= mNPlen; ++m) { // fill with powers of nd
       mNPowers[m] = mNPowers[m - 1].multiply(n);
     } // fill with n^m
 
@@ -404,7 +404,6 @@ public class HolonomicRecurrence implements Sequence {
       }
     }
     if (result != null) { // taken from initial terms
-      setRE(result);
     } else { // result == null, not in range of initTerms, must be computed
       final Z[] pvals = evaluatePolynomials(mN - mShift); // coefficients of the recurrence equation
 
@@ -436,7 +435,6 @@ public class HolonomicRecurrence implements Sequence {
           /**/ if (sDebug >= 1) { System.out.println("assertion: division by zero "); }
           result = null; // end of sequence
         }
-        setRE(result);
 
       } else { // normal - increasing
         ipvaln = mOrder + 1;
@@ -460,18 +458,18 @@ public class HolonomicRecurrence implements Sequence {
           /**/ if (sDebug >= 1) { System.out.println("assertion: division by zero "); }
           result = null; // end of sequence
         }
-
-        if (mExponentialType) { // exponential: multiply buffer by mN
-          final Z zn = Z.valueOf(mN);
-          for (int ire = 0; ire < mRElen; ++ire) {
-            /**/ if (sDebug >= 1) { System.out.println("  exp: multiply ring=" + showRE() + " by mN=" + mN); }
-            mRElems[ire] = mRElems[ire].multiply(zn);
-          }
-        }
-        setRE(result);
-
       }
     }
+
+    if (mExponentialType) { // exponential: multiply buffer by mN
+      final Z zn = Z.valueOf(mN);
+      for (int ire = 0; ire < mRElen; ++ire) {
+        /**/ if (sDebug >= 1) { System.out.println("  exp: multiply ring=" + showRE() + " by mN=" + mN); }
+        mRElems[ire] = mRElems[ire].multiply(zn);
+      }
+    }
+    setRE(result);
+
     /**/ if (sDebug >= 1) { System.out.println("result=" + result + ", RE=" + showRE()); }
     return result;
   } // next
