@@ -100,8 +100,16 @@ ltgt:
 #---------------------------------------------------
 D=0
 RE="n*a(n-1)-a(n)"
+OFFSET=0
+DIST=0
+GFTYPE=0
 recur:
 	$(JAVA) org.teherba.ramath.linear.BigVectorArray -d $(D) -recur "$(RE)"
+#---------------------------------------------------
+runholo:
+	$(JAVA) irvine.test.HolonomicRecurrenceTest -p "$(MATRIX)" -i "$(INIT)" -o $(OFFSET) -d $(D) -n $(NT) -dist $(DIST) -t $(GFTYPE) $(BF)
+runfib:
+	make runholo NT=12 BF=-b D=2 MATRIX="[[0],[1],[1],[-1]" INIT="[0,1]"
 #---------------------------------------------------
 lr:
 	make symbolic TEST=LR%

@@ -56,7 +56,7 @@ public class HolonomicRecurrenceTest {
   private static int numTerms;
 
   /** Offset of the sequence, as String */
-  private int mOffset1;
+  private int mOffset;
 
   /** Distance d > 0 if a(n+d) is the highest and next element to be computed (0 <= d <= k). */
   private int mNDist;
@@ -114,7 +114,7 @@ public class HolonomicRecurrenceTest {
 //      result.append(mInitString[ind]);
 //    } // for ind - initial
 //    result.append("},a,{n,");
-//    result.append(mOffset1);
+//    result.append(mOffset);
 //    result.append(",");
 //    result.append(mNumTerms);
 //    result.append("}]");
@@ -399,7 +399,7 @@ public class HolonomicRecurrenceTest {
     int offset2 = 1;
     iparm = 2;
     try {
-      mOffset1 = Integer.parseInt(parms[iparm ++]); // [2]
+      mOffset = Integer.parseInt(parms[iparm ++]); // [2]
       mPolyString = parms[iparm ++].replaceAll("[\\{\\(]", "[").replaceAll("[\\}\\)]", "]");  // [3]
       mInitString = parms[iparm ++].replaceAll("[\\{\\(]", "[").replaceAll("[\\}\\)]", "]"); // [4]
       mNDist  = Integer.parseInt(parms[iparm ++]); // [5]
@@ -417,7 +417,7 @@ public class HolonomicRecurrenceTest {
       mInitString = temp; // exchange both
       int iparm = 1;
       parms[iparm ++] = callCode + "1";
-      parms[iparm ++] = String.valueOf(mOffset1);
+      parms[iparm ++] = String.valueOf(mOffset);
       parms[iparm ++] = reverse("[" + mPolyString + ",0]");
       String[] terms  = computeInitialTerms(mInitString, mPolyString); // nums, dens
       parms[iparm ++] = "[" + adjustToOffset2(terms, offset2) + "]"; // nums. densgetInitString (mHolRec);
@@ -425,7 +425,7 @@ public class HolonomicRecurrenceTest {
       reproduce();
 
     } else if (callCode.startsWith("holog")) { // determine the prefixed initial terms
-      mHolRec = new HolonomicRecurrence(mOffset1, mPolyString, mInitString, mNDist); // instance to be tested
+      mHolRec = new HolonomicRecurrence(mOffset, mPolyString, mInitString, mNDist); // instance to be tested
       mHolRec.setGfType(mGfType);
       Z[] sInits = mHolRec.getInitTerms(); // initial terms from 'stripped'
       int termNo = sInits.length;
@@ -461,19 +461,19 @@ public class HolonomicRecurrenceTest {
       reproduce();
 
     } else if (callCode.startsWith("holor")) { // getTermList(reverse)
-      mHolRec = new HolonomicRecurrence(mOffset1, mPolyString, mInitString, mNDist); // instance to be tested
+      mHolRec = new HolonomicRecurrence(mOffset, mPolyString, mInitString, mNDist); // instance to be tested
       mHolRec.setGfType(mGfType);
       HolonomicRecurrence rHolRec = reverse(mHolRec);
       parms[3] = getPolyString (rHolRec);
       parms[4] = getInitString(rHolRec);
       reproduce(6);
-      System.out.println(aseqno + "\t" + callCode + "1" + "\t" + mOffset1 + "\t" + getDataList(rHolRec, numTerms));
+      System.out.println(aseqno + "\t" + callCode + "1" + "\t" + mOffset + "\t" + getDataList(rHolRec, numTerms));
       System.out.println(aseqno + "\t" + "========"); // will remain there even after sort
 
     } else if (callCode.startsWith("holos")) { // getTermList
-      mHolRec = new HolonomicRecurrence(mOffset1, mPolyString, mInitString, mNDist); // instance to be tested
+      mHolRec = new HolonomicRecurrence(mOffset, mPolyString, mInitString, mNDist); // instance to be tested
       mHolRec.setGfType(mGfType);
-      System.out.println(aseqno + "\t" + callCode + "1" + "\t" + mOffset1 + "\t"
+      System.out.println(aseqno + "\t" + callCode + "1" + "\t" + mOffset + "\t"
           + getDataList(mHolRec, numTerms) + "\t" + mPolyString);
 
     } else {
@@ -538,12 +538,12 @@ public class HolonomicRecurrenceTest {
           aseqno   = parms[iparm ++];
           callCode = parms[iparm ++];
           try {
-            mOffset1 = 0;
-            mOffset1 = Integer.parseInt(parms[iparm ++]);
+            mOffset = 0;
+            mOffset = Integer.parseInt(parms[iparm ++]);
           } catch (Exception exc) {
           }
           if (callCode.equals("holop")) {
-          	getParameters(aseqno);
+            getParameters(aseqno);
           } else {
             processRecord();
           }
@@ -560,6 +560,7 @@ public class HolonomicRecurrenceTest {
    * Main method, filters a file and writes the copy to STDOUT.
    * @param args command line arguments:
    * <ul>
+   * <li>-b print in b-file format instead of comma separated list</li>
    * <li>-d level debugging level (default 0=none, 1=some, 2=more)</li>
    * <li>-f filename input file or "-" or none for STDIN</li>
    * <li>-i initTerms initial terms</li>
@@ -571,10 +572,12 @@ public class HolonomicRecurrenceTest {
   public static void main(String[] args) {
     int iarg = 0;
     HolonomicRecurrenceTest holTest = new HolonomicRecurrenceTest();
+    boolean bfile = false;
     holTest.numTerms = 16;
-    holTest.mOffset1 = 0;
+    holTest.mOffset  = 0;
     holTest.mGfType  = 0;
     int dist = 0;
+    int incr = +1; // forwards
     String fileName  = "-"; // assume STDIN
     String polyList  = null;
     String initTerms = null;
@@ -582,6 +585,8 @@ public class HolonomicRecurrenceTest {
       String opt = args[iarg ++];
       try {
         if (false) {
+        } else if (opt.equals    ("-b")     ) {
+          bfile = true;
         } else if (opt.equals    ("-d")     ) {
           sDebug = 1;
           sDebug           = Integer.parseInt(args[iarg ++]);
@@ -594,11 +599,14 @@ public class HolonomicRecurrenceTest {
         } else if (opt.equals    ("-n")     ) {
           holTest.numTerms = Integer.parseInt(args[iarg ++]);
         } else if (opt.equals    ("-o")     ) {
-          holTest.mOffset1 = Integer.parseInt(args[iarg ++]);
+          holTest.mOffset  = Integer.parseInt(args[iarg ++]);
         } else if (opt.equals    ("-p")     ) {
           polyList         = args[iarg ++];
         } else if (opt.equals    ("-t")     ) {
           holTest.mGfType  = Integer.parseInt(args[iarg ++]);
+          if ((holTest.mGfType & 4) == 4) {
+            incr = -1; // backwards
+          }
         } else {
           System.err.println("??? invalid option: \"" + opt + "\"");
         }
@@ -606,10 +614,20 @@ public class HolonomicRecurrenceTest {
       }
     } // while args
     if (polyList != null) {
-      holTest.mHolRec = new HolonomicRecurrence(holTest.mOffset1, polyList, initTerms, dist);
-      holTest.mHolRec.setGfType(holTest.mGfType);
+      holTest.mHolRec = new HolonomicRecurrence(holTest.mOffset, polyList, initTerms, dist);
       holTest.mHolRec.setDebug(sDebug);
-      System.out.println(holTest.getDataList(holTest.mHolRec, holTest.numTerms));
+      holTest.mHolRec.setGfType(holTest.mGfType);
+      if (! bfile) {
+        System.out.println(holTest.getDataList(holTest.mHolRec, holTest.numTerms));
+      } else {
+        int ind = incr > 0 ? holTest.mOffset : holTest.mHolRec.getInitTerms().length - 1;
+        while (holTest.numTerms > 0) {
+          Z term =  holTest.mHolRec.next();
+          System.out.println(String.valueOf(ind) + " " + term.toString());
+          --holTest.numTerms;
+          ind = ind + incr;
+        } // while 
+      }
     } else {
       holTest.processFile(fileName);
     }
