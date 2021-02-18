@@ -577,7 +577,7 @@ public class HolonomicRecurrence implements Sequence {
       int initLen = mInitTerms.length;
       int n = initLen - 1;
       boolean busy = true;
-      while (busy && n >= mOffset && n >= 0) {
+      while (busy && n > 0) { // could be >= 0, but we keep at least 1 initTerm
         final Z term = next(); // starts with last of mInitTerms
         if (term == null) { // end of reversed sequence
           busy = false;
@@ -656,6 +656,7 @@ public class HolonomicRecurrence implements Sequence {
   public void normalize() {
     unshift();
     normalizeSign(1);
+    shorten();
   } // normalize
 
   /**
@@ -699,7 +700,6 @@ public class HolonomicRecurrence implements Sequence {
         result.append(',');
       }
       result.append(initTerms[j]);
-      ++j;
     } // while j
     result.append(']');
     if (result.equals("[]")) {

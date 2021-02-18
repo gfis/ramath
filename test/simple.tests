@@ -153,6 +153,9 @@ CALL ContinuedFraction -eval $(DATA)
 TEST CF9 continued fraction: Pell equation
 CALL ContinuedFraction -pell 109
 
+TEST CF20 produce file sqrt20k.txt with -sqrt2 0 20000
+CALL ContinuedFraction -sqrt2 0 20
+
 TEST CFA continued fraction: sqrt(cube)
 CALL ContinuedFraction -cube 32
 
