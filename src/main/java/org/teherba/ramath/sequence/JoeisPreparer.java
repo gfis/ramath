@@ -1,5 +1,6 @@
 /*  JoeisPreparer: prepare *.gen files for joeis-lite
  *  @(#) $Id$
+ *  2021-04-01: -circdiff
  *  2020-09-23: header was garbled
  *  2020-04-01: ShuntingYard for dex
  *  2020-02-11: -bva
@@ -22,6 +23,8 @@
  */
 package org.teherba.ramath.sequence;
 import  org.teherba.ramath.linear.BigVectorArray;
+import  org.teherba.ramath.linear.Matrix;
+import  org.teherba.ramath.linear.Vector;
 import  org.teherba.ramath.symbolic.PolyFraction;
 import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.symbolic.PolyVector;
@@ -107,15 +110,19 @@ public class JoeisPreparer implements Cloneable, Serializable {
      *  whether it should be written to the output.
      *  The following <code>callCode</code>s are processed:
      *  <ul>
-     *  <li><code>bva   </code></li>
-     *  <li><code>coxf  </code></li>
-     *  <li><code>dhd   </code></li>
-     *  <li><code>fract1</code></li>
-     *  <li><code>fract2</code></li>
-     *  <li><code>fract </code></li>
-     *  <li><code>holo  </code></li>
-     *  <li><code>rioarr</code></li>
-     *  <li><code>sage  </code></li>
+     *  <li><code>bva     </code></li>
+     *  <li><code>circdiff</code></li>
+     *  <li><code>coxf    </code></li>
+     *  <li><code>dhd     </code></li>
+     *  <li><code>fract1  </code></li>
+     *  <li><code>fract2  </code></li>
+     *  <li><code>fract   </code></li>
+     *  <li><code>holo    </code></li>
+     *  <li><code>homgf   </code></li>
+     *  <li><code>lingf   </code></li>
+     *  <li><code>postf   </code></li>
+     *  <li><code>rioarr  </code></li>
+     *  <li><code>sage    </code></li>
      *  </ul>
      *  The following parameters are already consumed:
      *  aseqno=parms[0], callCode=parms[1], offset1=parms[2]; iparm=3..
@@ -125,13 +132,13 @@ public class JoeisPreparer implements Cloneable, Serializable {
         PolyFraction pfr1 = null;
         if (false) {
 
-        } else if (callCode.equals("bva")) { // OEIS-mat/linrec/makefile.rectab
+        } else if (callCode.startsWith("bva")) { // OEIS-mat/linrec/makefile.rectab
             parms[1] = "holos";
             BigVectorArray bva = BigVectorArray.parseRecurrence(parms[iparm]);
             parms[iparm] = bva.toString();
             reproduce();
 
-        } else if (callCode.equals("coxf")) {
+        } else if (callCode.startsWith("coxf")) {
             try {
                 int pwr  = Integer.parseInt(parms[iparm ++]);
                 int ngen = Integer.parseInt(parms[iparm ++]);
@@ -142,6 +149,38 @@ public class JoeisPreparer implements Cloneable, Serializable {
                     + "\t" + pfr1.getSeriesCoefficients(numTerms)
                     .toString().replaceAll("[\\[\\]]", "")
                     );
+
+        } else if (callCode.startsWith("circdiff")) {
+            String matrix = "";
+            int dim  = 4;
+            int diff = 1;
+            try {
+                dim  = Integer.parseInt(parms[iparm ++]);
+                diff = Integer.parseInt(parms[iparm ++]);
+            } catch (Exception exc) {
+            }
+            Vector band = new Vector(2 * diff + 1);
+            for (int k = 0; k <= diff; k ++) {
+                band.set(diff - k, (k & 1) == 0 ? 1 : -1);
+                band.set(diff + k, (k & 1) == 0 ? 1 : -1);
+            }
+            int istart = iparm; // overwrite starts here
+            iparm ++; // skip "matrix"
+            String[] initTerms = parms[iparm ++].split("\\,");
+            if (initTerms.length > dim) {
+                callCode = "circdiff";
+                parms[istart ++] = "[0," + Matrix.band(dim, band.getValues()).characteristicPolynomial().toString(",").substring(1);
+                StringBuilder stb = new StringBuilder(256);
+                for (int i = 0; i <= dim; i ++) {
+                    stb.append(',');
+                    stb.append(initTerms[i]);
+                }
+                parms[istart ++] = "[" + stb.substring(1) + "]";
+                parms[istart ++] = "0";
+            } else {
+                callCode = "tooshort";
+            }
+            reproduce();
 
         } else if (callCode.startsWith("dex")) {
             String postfix = parms[iparm + 0];
@@ -155,7 +194,7 @@ public class JoeisPreparer implements Cloneable, Serializable {
             parms[iparm + 0] = postfix;
             reproduce();
 
-        } else if (callCode.equals("dhd")) { // pfract,
+        } else if (callCode.startsWith("dhd")) { // pfract,
             pfr1 = PolyFraction.parse(parms[iparm]).normalize();
             String[] vars = pfr1.getVariables();
             parms[iparm + 0] = pfr1.getNum().toTriangleList(vars);
@@ -181,25 +220,7 @@ public class JoeisPreparer implements Cloneable, Serializable {
                 reproduce();
             }
 
-        } else if (callCode.startsWith("lingf")) {
-            pfr1 = PolyFraction.parse(parms[iparm]);
-            if (pfr1 != null) { // parse ok
-                pfr1 = pfr1.normalize();
-                String vects = pfr1.toVectorString();
-                if (vects != null) { // is not multivariate
-                    parms[iparm + 2] = parms[iparm];
-                    parms[iparm + 0] = vects.replaceAll("\\],\\[", "\t").replaceAll("[\\[\\]]", "");
-                    reproduce();
-                } else { // parse not ok
-                    aseqno = "#2vars " + aseqno;
-                    reproduce();
-                } // not multivariate
-            } else { // parse not ok
-                aseqno = "#1parse " + aseqno;
-                reproduce();
-            }
-
-        } else if (callCode.equals("fract2")) {
+        } else if (callCode.startsWith("fract2")) {
             pfr1 = PolyFraction.parse(parms[iparm]);
             if (pfr1 != null) {
                 pfr1 = pfr1.normalize();
@@ -242,6 +263,24 @@ public class JoeisPreparer implements Cloneable, Serializable {
             parms[iparm + 1] = gftype;
             reproduce();
 
+        } else if (callCode.startsWith("lingf")) {
+            pfr1 = PolyFraction.parse(parms[iparm]);
+            if (pfr1 != null) { // parse ok
+                pfr1 = pfr1.normalize();
+                String vects = pfr1.toVectorString();
+                if (vects != null) { // is not multivariate
+                    parms[iparm + 2] = parms[iparm];
+                    parms[iparm + 0] = vects.replaceAll("\\],\\[", "\t").replaceAll("[\\[\\]]", "");
+                    reproduce();
+                } else { // parse not ok
+                    aseqno = "#2vars " + aseqno;
+                    reproduce();
+                } // not multivariate
+            } else { // parse not ok
+                aseqno = "#1parse " + aseqno;
+                reproduce();
+            }
+
         } else if (callCode.startsWith("post")) { // general parsing into postfix notation
             String exprList = parms[iparm + 0]; // $(PARM1) = list of expressions, starting with a String of identical separator character
             int ind = 0;
@@ -261,14 +300,14 @@ public class JoeisPreparer implements Cloneable, Serializable {
             parms[iparm + 0] = result.toString();
             reproduce();
 
-        } else if (callCode.equals("rioarr")) {
+        } else if (callCode.startsWith("rioarr")) {
             System.out.print(aseqno + "\t");
             pfr1 = PolyFraction.parse(parms[iparm ++]).normalize();
             System.out.println(pfr1.getCoefficientTriangle(numTerms
                     , new String[] { "x", "y" })
                     .toString().replaceAll("[\\[\\]]", ""));
 
-        } else if (callCode.equals("sage")) {
+        } else if (callCode.startsWith("sage")) {
             iparm --; // no offset1
             Polynomial num = Polynomial.parse(parms[iparm ++]);
             Polynomial den = Polynomial.parse(parms[iparm ++]);

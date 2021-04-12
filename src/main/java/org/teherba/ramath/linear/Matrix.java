@@ -235,9 +235,31 @@ public class Matrix implements Cloneable, Serializable {
         for (int irow = 0; irow < this.rowLen; irow ++) {
             for (int jcol = 0; jcol < this.colLen; jcol ++) {
                 this.matrix[irow][jcol] = (irow == jcol) ? (/*Type*/int) 1 : (/*Type*/int) 0;
-             } // for jcol
+            } // for jcol
         } // for irow
     } // setIdentity
+
+    /** Return a Matrix that has set the main diagonal, one or more secondary diagonals, and 0 elsewhere.
+     *  @param dim dimension of the resulting square matrix
+     *  @param band an odd number of band elements - the center element corresponds with the main diagonal
+     */
+    public static Matrix band(int dim, /*Type*/int[] elems) {
+        Matrix result = new Matrix(dim);
+        int center = elems.length / 2;
+        for (int irow = 0; irow < dim; irow ++) {
+            for (int jcol = 0; jcol < dim; jcol ++) {
+                for (int k = 0; k <= center; k++) {
+                    if (false) {
+                    } else if (jcol == irow - k) {
+                        result.set(irow, jcol, elems[center - k]);
+                    } else if (jcol == irow + k) {
+                        result.set(irow, jcol, elems[center + k]);
+                    }
+                } // for k
+            } // for jcol
+        } // for irow
+        return result;
+    } // bandMatrix
 
     /** Sets <em>this</em> Matrix to an elementary transformation
      *  (column addition, subtraction or identity).
@@ -720,6 +742,33 @@ public class Matrix implements Cloneable, Serializable {
         return rowGCDs.gcd();
     } // gcd()
 
+    /** Compute the sum of the diagonal elements of a square Matrix
+     *  @return a scalar
+     */
+    public /*Type*/int trace() {
+        /*Type*/int result = 0;
+        for (int irow = 0; irow < this.rowLen; irow ++) {
+             result += get(irow, irow);
+        } // for irow
+        return result;
+    } // trace()
+
+    /** Compute the coefficients of the characteristic polynomial of <em>this</em> square Matrix
+     *  See https://en.wikipedia.org/wiki/Faddeev%E2%80%93LeVerrier_algorithm
+     *  @return coefficients in increasing order
+     */
+    public Vector characteristicPolynomial() {
+        int dim = this.size();
+        Matrix bmat = new Matrix(dim); // preset with zeroes
+        Vector cvec = new Vector(dim + 1);
+        cvec.set(dim, 1);
+        for (int k = 1; k <= dim; k++) {
+            bmat = this.multiply(bmat).add(Matrix.band(dim, new int[] { cvec.get(dim - k + 1) }));
+            cvec.set(dim - k, - this.multiply(bmat).trace() / k);
+        } // for irow
+        return cvec;
+    } // characteristicPolynomial()
+
     /** Compute the determinant of <em>this</em> matrix.
      *  For row lengths &gt;= 4, this method is called recursively.
      *  @return integer determinant value
@@ -857,7 +906,7 @@ public class Matrix implements Cloneable, Serializable {
                             for (jcol = 0; jcol < this.colLen; jcol ++) {
                                 lmat.matrix[jrow][jcol] = lmat.matrix[jrow][jcol] * pivot
                                                         - lmat.matrix[irow][jcol] * stone;
-                                rmat.matrix[jrow][jcol] = rmat.matrix[jrow][jcol] * pivot 
+                                rmat.matrix[jrow][jcol] = rmat.matrix[jrow][jcol] * pivot
                                                         - rmat.matrix[irow][jcol] * stone;
                             } // for jcol
                         } // if stone != 0

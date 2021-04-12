@@ -497,6 +497,21 @@ public class MatrixTester implements Serializable {
                     }
                     // opt -f, -queue, -prim
 
+                } else if (opt.equals("-band")) {
+                    int dim = 5;
+                    if (iarg < args.length) {
+                        try {
+                            dim = Integer.parseInt(args[iarg ++]);
+                        } catch (Exception exc) {
+                        }
+                    }
+                    vect1 = new Vector(args[iarg ++]); // may not contain spaces
+                    amat  = Matrix.band(dim, vect1.getValues());
+                    System.out.println("-band "  + amat.toString(",")); 
+                    System.out.println("trace: " + amat.trace()); 
+                    System.out.println("characteristicPolynomial: " + amat.characteristicPolynomial().toString(",")); 
+                    // opt -band
+
                 } else if (opt.equals("-chain")) {
                     amat  = new Matrix(args[iarg ++]); // may not contain spaces
                     vect1 = new Vector(args[iarg ++]); // may not contain spaces

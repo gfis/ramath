@@ -1,5 +1,6 @@
 /*  ContinuedFraction: a continued fraction in an array list of BigIntegers
  *  @(#) $Id: ContinuedFraction.java 738 2011-07-12 15:14:44Z gfis $
+ *  2021-02-18: generates sqrt20k.txt with -sqrt2 0 20000
  *  2019-04-04: commandline documented. joeis output
  *  2017-08-18: -cube
  *  2017-05-28: javadoc 1.8
@@ -501,7 +502,7 @@ public class ContinuedFraction extends ArrayList/*1.5*/<BigRational>/*1.5*/  {
             BigInteger b0 = g;
             int periodIndex  = 0;
             int periodLength = 0;
-            int loopCheck    = 4096; 
+            int loopCheck    = 4096;
             while (loopCheck > 0) {
                 loopCheck --;
                 BigInteger p1 = b0.multiply(q0).subtract(p0);
@@ -615,39 +616,24 @@ public class ContinuedFraction extends ArrayList/*1.5*/<BigRational>/*1.5*/  {
         return result.toString();
     } // toString
 
-    /** Test method.
-     *  @param args command line arguments
-     *  <ul>
-     *  <li>-cf -f $(DATA)</li>
-     *  <li>-const expr</li>
-     *  <li>-cube n</li>
-     *  <li>-e    n</li>
-     *  <li>-eval $(DATA)</li>
-     *  <li>-gamma</li>
-     *  <li>-pell n</li>
-     *  <li>-pi1</li>
-     *  <li>-pi2</li>
-     *  </ul>
-     */
-    public static void main(String[] args) {
-        BigDecimal e = new BigDecimal
+    public final static BigDecimal e = new BigDecimal
                 ( "2.718281828459045235360287471"
                 + "35266249775724709369995957496696762772407"
                 + "663035354759457138217852516642742746639193200305992181741360027482234"
                 + "93348905414085151150263440892702877807403983408368897113419263142110356543"
                 );
-        BigDecimal sqrt114 = new BigDecimal("10."
+    public final static BigDecimal sqrt114 = new BigDecimal("10."
                 + "677078252031311210811523965595710626282287769"
                 + "46058011397810604284900898365140801704064843595778374");
-        BigDecimal gamma = new BigDecimal("0."
+    public final static BigDecimal gamma = new BigDecimal("0."
                 + "5772156649015328606065120900824024310421593359399235988057672348"
                 + "84867726777664670936947063291746749"
                 );
-        BigDecimal khintchine100 = new BigDecimal("2."
+    public final static BigDecimal khintchine100 = new BigDecimal("2."
                 + "685452001065306445309714835481795693820382293994462953051152345"
                 + "55721885953715200280114117493184769799515"
                 );
-        BigDecimal khintchine1024 = new BigDecimal
+    public final static BigDecimal khintchine1024 = new BigDecimal
                 ( "2." // 1024 digits: Pflouffe, http://www.worldwideschool.org/library/books/sci/math/MiscellaneousMathematicalConstants/chap50.html
                 + "685452001065306445309714835481795693820382293994462953051152345"
                 + "5572188595371520028011411749318476979951534659052880900828976777"
@@ -666,7 +652,7 @@ public class ContinuedFraction extends ArrayList/*1.5*/<BigRational>/*1.5*/  {
                 + "7486827656970871631929385128993141995186116737926546205635059513"
                 + "8571376169712687229980532767327871051376395637190231452890030581"
                 );
-        BigDecimal pi = new BigDecimal(("3."
+    public final static BigDecimal pi = new BigDecimal(("3."
                 + "1415926535 8979323846 2643383279 5028841971 6939937510"
                 + "5820974944 5923078164 0628620899 8628034825 3421170679"
                 + "8214808651 3282306647 0938446095 5058223172 5359408128"
@@ -686,47 +672,67 @@ public class ContinuedFraction extends ArrayList/*1.5*/<BigRational>/*1.5*/  {
                 + "5024459455 3469083026 425"
                 ).replaceAll(" ",""));
 
-        class PiElements1 implements BigRationalGenerator {
-            public BigRational get(int index) {
-                BigRational result = BigRational.valueOf(0);
-                switch (index) {
-                    case 0:
-                        result.setNum(3);
-                        result.setDen(1);
-                        break;
-                    case 1:
-                    default:
-                        result.setNum(6);
-                        result.setDen(4 * index * index - 4 * index + 1);
-                        break;
-                } // switch index
-                return result;
-            } // get
-        } // class PiElements1
+    public static class PiElements1 implements BigRationalGenerator {
+        public BigRational get(int index) {
+            BigRational result = BigRational.valueOf(0);
+            switch (index) {
+                case 0:
+                    result.setNum(3);
+                    result.setDen(1);
+                    break;
+                case 1:
+                default:
+                    result.setNum(6);
+                    result.setDen(4 * index * index - 4 * index + 1);
+                    break;
+            } // switch index
+            return result;
+        } // get
+    } // class PiElements1
 
-        class PiElements2 implements BigRationalGenerator {
-            public BigRational get(int index) {
-                BigRational result = BigRational.valueOf(0);
-                switch (index) {
-                    case 0:
-                        result.setNum(2);
-                        result.setDen(1);
-                        break;
-                    case 1:
-                        result.setNum(3);
-                        result.setDen(4);
-                        break;
-                    default:
-                        int term = 2 * index;
-                        result.setNum(4);
-                        result.setDen((term - 3) * (term - 1));
-                        break;
-                } // switch index
-                return result;
-            } // get
-        } // class PiElements2
+    public static class PiElements2 implements BigRationalGenerator {
+        public BigRational get(int index) {
+            BigRational result = BigRational.valueOf(0);
+            switch (index) {
+                case 0:
+                    result.setNum(2);
+                    result.setDen(1);
+                    break;
+                case 1:
+                    result.setNum(3);
+                    result.setDen(4);
+                    break;
+                default:
+                    int term = 2 * index;
+                    result.setNum(4);
+                    result.setDen((term - 3) * (term - 1));
+                    break;
+            } // switch index
+            return result;
+        } // get
+    } // class PiElements2
 
+
+
+    /** Test method.
+     *  @param args command line arguments
+     *  <ul>
+     *  <li>-cf -f $(DATA)      </li>
+     *  <li>-const expr         </li>
+     *  <li>-cube n             </li>
+     *  <li>-e    n             </li>
+     *  <li>-eval $(DATA)       </li>
+     *  <li>-gamma              </li>
+     *  <li>-pell n             </li>
+     *  <li>-pi1                </li>
+     *  <li>-pi2                </li>
+     *  <li>-sqrt n             </li>
+     *  <li>-sqrt2 min max      </li>
+     *  </ul>
+     */
+    public static void main(String[] args) {
         ContinuedFraction cf = new ContinuedFraction();
+        int max = 400;
         int iargs = 0;
         if (false) {
         } else if (args.length == 0) {
@@ -737,13 +743,14 @@ public class ContinuedFraction extends ArrayList/*1.5*/<BigRational>/*1.5*/  {
                 // Christiaan Huygens (17xx): Saturn gear ratio; c.f. de.wikipedia.org/Kettenbruch
             System.out.println("Huygens\' 77708491/2640858 = " + cf.toString());
             System.out.println(cf.getRational().simplify() +  " = " + cf.getDecimal());
+
         } else if (args.length == 1) {
             String bdec = args[iargs ++];
             System.out.println((new ContinuedFraction(new BigDecimal(bdec))).toString());
+
         } else {
             String opt  = args[iargs ++];
             String expr = args[iargs ++];
-            int max = 400;
             if (expr.equals("-f")) {
                 String fileName = args[iargs ++];
                 expr = (new ExpressionReader()).read(fileName);
@@ -754,8 +761,10 @@ public class ContinuedFraction extends ArrayList/*1.5*/<BigRational>/*1.5*/  {
                 }
             }
             if (false) {
+
             } else if (opt.equals("-cf")) {
                 System.out.println((new ContinuedFraction(new BigDecimal(expr))).toString());
+
             } else if (opt.equals("-const")) {
                 BigRational brat = new BigRational((new ExpressionReader()).read(expr));
                 cf = new ContinuedFraction();
@@ -763,6 +772,7 @@ public class ContinuedFraction extends ArrayList/*1.5*/<BigRational>/*1.5*/  {
                 cf.set(brat);
                 System.out.println(cf.toString());
                 System.out.println(cf.getDecimal());
+
             } else if (opt.equals("-cube")) {
                 cf = new ContinuedFraction();
                 cf.setDebuggingLevel(2);
@@ -772,46 +782,55 @@ public class ContinuedFraction extends ArrayList/*1.5*/<BigRational>/*1.5*/  {
                     System.out.print("sqrt(" + num + "^3): ");
                     cf.sqrtOf(BigInteger.valueOf(num3));
                     num ++;
-                } // while num 
+                } // while num
+
             } else if (opt.equals("-e")) {
                 cf = new ContinuedFraction(e);
                 System.out.println(cf.toString());
                 System.out.println(cf.getDecimal().toString());
+
             } else if (opt.equals("-eval")) {
                 cf.set((new BFileReader()).read(expr));
                 System.out.println(cf.toString());
                 System.out.println(cf.getDecimal()); // .multiply(new BigDecimal(2)));
+
+            } else if (opt.equals("-gamma")) {
+                System.out.println((new ContinuedFraction(gamma)).toString());
+
             } else if (opt.equals("-pell")) {
                 // cf.setDebuggingLevel(2);
                 System.out.println(Arrays.asList(cf.solvePellEquation(new BigInteger(expr), 4)).toString());
+
+            } else if (opt.equals("-pi1")) {
+                cf.set(new PiElements1(), max);
+                System.out.println(cf.toString());
+                System.out.println(cf.getDecimal ().toString());
+
+            } else if (opt.equals("-pi2")) {
+                cf.set(new PiElements2(), max);
+                System.out.println(cf.toString());
+                System.out.println(cf.getDecimal ().toString());
+
             } else if (opt.equals("-sqrt2")) {
-            	int min = max; // print cf(sqrt of a range of numbers)
-            	expr = args[iargs ++]; 
+                int min = max; // print cf(sqrt of a range of numbers)
+                expr = args[iargs ++];
                 try {
                     max = Integer.parseInt(expr);
                 } catch (Exception exc) {
                 }
-                int ind = min; 
+                int ind = min;
                 while (ind <= max) { // in range
-                	cf.sqrtOf(BigInteger.valueOf(ind));
-	                System.out.println(ind + "\t" + cf.toString().replaceAll(" 1\\/",""));
-	                ind ++;
-	            } // while in range
+                    cf.sqrtOf(BigInteger.valueOf(ind));
+                    System.out.println(ind + "\t" + cf.toString().replaceAll(" 1\\/",""));
+                    ind ++;
+                } // while in range
+
             } else if (opt.equals("-sqrt")) {
                 cf.setDebuggingLevel(2);
                 cf.sqrtOf(new BigInteger(expr));
                 System.out.println(cf.toString());
                 System.out.println(cf.getRational(32).getDecimal().toString());
-            } else if (opt.equals("-gamma")) {
-                System.out.println((new ContinuedFraction(gamma)).toString());
-            } else if (opt.equals("-pi1")) {
-                cf.set(new PiElements1(), max);
-                System.out.println(cf.toString());
-                System.out.println(cf.getDecimal ().toString());
-            } else if (opt.equals("-pi2")) {
-                cf.set(new PiElements2(), max);
-                System.out.println(cf.toString());
-                System.out.println(cf.getDecimal ().toString());
+
             } else {
                 System.err.println("invalid option \"" + opt + "\"");
             }

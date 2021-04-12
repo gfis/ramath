@@ -341,6 +341,9 @@ CALL TreeSolver -b 3 -l 3 -e "(155 + 2*x)^2 + 2 = (29 + 2*y)^3" -r norm,invall,n
 TEST TECQ Fermat/Carcavi(7) x^2 + 2 = y^3; solution [5,3] 
 CALL TreeSolver -b 2 -l 5 -e "(2*x + 1)^2 + 2 = (4*y+3)^3" -r norm,same
 
+TEST TECW Allan W. x^2 - x + 1 = y^3; solution [19,7] 
+CALL TreeSolver -b 2 -l 8 -e "x^2 - x + 1 = y^3" -r norm,same
+
 TEST TEM22 Mordell 2 squared
 CALL TreeSolver -b 2 -l 4 -e "(x^2 + 2)^2 = y^6" -r norm,invall,no-evenexp,no-same
 
