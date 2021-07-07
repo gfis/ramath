@@ -1,5 +1,6 @@
 /*  JoeisPreparer: prepare *.gen files for joeis-lite
  *  @(#) $Id$
+ *  2021-07-07: JoeisExpressionBuilder
  *  2021-04-01: -circdiff
  *  2020-09-23: header was garbled
  *  2020-04-01: ShuntingYard for dex
@@ -65,14 +66,17 @@ public class JoeisPreparer implements Cloneable, Serializable {
     /** Code for a specific generation process in joeis-lite */
     private String callCode;
 
+    /** Current index for {@link #parms} */
+    private int iparm;
+
+    /** Optional expression builder */
+    private JoeisExpressionBuilder builder;
+
     /** number of terms to be generated */
     private int numTerms;
 
     /** Offset1 of the sequence */
     private int offset1;
-
-    /** Current index for {@link #parms} */
-    private int iparm;
 
     //==================
     // Construction
@@ -82,6 +86,7 @@ public class JoeisPreparer implements Cloneable, Serializable {
      */
     public JoeisPreparer() {
         log = Logger.getLogger(JoeisPreparer.class.getName());
+        builder = null;
     } // Constructor()
 
     /**
@@ -119,6 +124,7 @@ public class JoeisPreparer implements Cloneable, Serializable {
      *  <li><code>fract   </code></li>
      *  <li><code>holo    </code></li>
      *  <li><code>homgf   </code></li>
+     *  <li><code>infix   </code></li>
      *  <li><code>lingf   </code></li>
      *  <li><code>postf   </code></li>
      *  <li><code>rioarr  </code></li>
@@ -263,6 +269,11 @@ public class JoeisPreparer implements Cloneable, Serializable {
             parms[iparm + 1] = gftype;
             reproduce();
 
+        } else if (callCode.startsWith("infix")) {
+            String[] postfix = parms[iparm + 0].split("\\;");
+            parms[iparm + 0] = builder.getInfix(postfix, 0, postfix.length);
+            reproduce();
+
         } else if (callCode.startsWith("lingf")) {
             pfr1 = PolyFraction.parse(parms[iparm]);
             if (pfr1 != null) { // parse ok
@@ -371,6 +382,7 @@ public class JoeisPreparer implements Cloneable, Serializable {
         prep.numTerms = 16;
         prep.offset1  = 0;
         String fileName = "-"; // assume STDIN
+        String patternName = null; // default, in current directory
         while (iarg < args.length) { // consume all arguments
             String opt = args[iarg ++];
             if (false) {
@@ -387,10 +399,14 @@ public class JoeisPreparer implements Cloneable, Serializable {
                     prep.numTerms = Integer.parseInt(args[iarg ++]);
                 } catch (Exception exc) { // take default
                 }
+            } else if (opt.equals    ("-p")     ) {
+                patternName = args[iarg ++];
+                prep.builder = new JoeisExpressionBuilder(patternName);
             } else {
                 System.err.println("??? invalid option: \"" + opt + "\"");
             }
         } // while args
+
         prep.processFile(fileName);
     } // main
 
