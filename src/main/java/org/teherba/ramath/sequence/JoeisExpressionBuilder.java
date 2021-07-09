@@ -48,35 +48,37 @@ public class JoeisExpressionBuilder implements Cloneable, Serializable {
     private Logger log;
 
     /** Mapping table for the build algorithm */
-    private HashMap<String, Entry> map;
+    private HashMap<String, TargetRow> targetTable;
 
     /** Class for a row of the table.
      *  The rows are typically read from a file.
      */
-    private class Entry {
-        String key;    // operand, operator, function
-        String group;  // "num", "name", "op", "fun"
-        int srcCard;   // how many source stack elements are involved: 0 for operands, 1 for unary -, 2 for +*/ 
+    private class TargetRow {
+        String key;    // operand, operator/function/method
+        String group;  // "numb", "name", "meth", "func"
+        int srcCard;   // how many source stack elements are involved: 0 for operands; 1 for abs, unary -; 2 for + * / etc.
         String target; // target expression portion
-        int tarCard;   // how many target stack elements are involved: 0 for operands, 1 for unary -, 2 for +*/ 
+    /*
+        int tarCard;   // how many target stack elements are involved: 0 for operands, 1 for unary -, 2 for + * / etc.
         int oldType;   // old type
         int newType;   // new type
-        
+    */
         /** No-args constructor
          */
-        public Entry() {
+        public TargetRow() {
         }
-        
+
         /** String representation of this object
          */
         public String toString() {
-            return key 
-            + "\t" + group
-            + "\t" + srcCard
-            + "\t" + target
-            + "\t" + tarCard;
+            return key
+            + "|" + group
+            + "|" + srcCard
+            + "|" + target
+        //  + "|" + tarCard
+            ;
         }
-    } // class Entry
+    } // class TargetRow
 
     /** Reads the pattern table from a file
      *  @param fileName name of the input file, or "-" for STDIN
@@ -93,8 +95,9 @@ public class JoeisExpressionBuilder implements Cloneable, Serializable {
                 lineReader = new BufferedReader(Channels.newReader(lineChannel , srcEncoding));
             }
             while ((line = lineReader.readLine()) != null) { // read and process lines
-                if (! line.matches("\\s*#.*")) { // is not a comment
-                    Entry row = new Entry();
+                line = line.replaceAll("\\#.*","").trim(); // remove (trailing) comments
+                if (line.length() > 0) { // not empty
+                    TargetRow row = new TargetRow();
                     String[] parms = (line + "\t0").split("\\t");
                     int iparm = 0;
                     try {
@@ -102,16 +105,16 @@ public class JoeisExpressionBuilder implements Cloneable, Serializable {
                         row.group   = parms[iparm ++];
                         row.srcCard = Integer.parseInt(parms[iparm ++]);
                         row.target  = parms[iparm ++];
-                        row.tarCard = Integer.parseInt(parms[iparm ++]);
                     /*
+                        row.tarCard = Integer.parseInt(parms[iparm ++]);
                         row.oldType = Integer.parseInt(parms[iparm ++]);
                         row.newType = Integer.parseInt(parms[iparm ++]);
                     */
                     } catch (Exception exc) {
                     }
-                    map.put(row.key, row);
-                    if (debug >= 1) {
-                        System.out.println("map: " + row.key + " -> " + row);
+                    targetTable.put(row.key, row);
+                    if (debug >= 2) {
+                        System.out.println("targetTable: " + row.key + " -> " + row);
                     }
                 } // is not a comment
             } // while ! eof
@@ -129,7 +132,7 @@ public class JoeisExpressionBuilder implements Cloneable, Serializable {
      */
     public JoeisExpressionBuilder() {
         log = Logger.getLogger(JoeisExpressionBuilder.class.getName());
-        map = new HashMap<>();
+        targetTable = new HashMap<>();
     } // Constructor()
 
     /** Constructor with pattern file
@@ -139,7 +142,8 @@ public class JoeisExpressionBuilder implements Cloneable, Serializable {
         this();
         readTable(fileName);
     } // Constructor(String)
-    
+
+    /** constant for unknown numbers (must be present in every table */
     private final static String NUM_ESCAPE = "01234567";
 
     /** Convert a sublist of postfix elements and generate the infix expression.
@@ -159,54 +163,86 @@ public class JoeisExpressionBuilder implements Cloneable, Serializable {
         String[] elems = new String[16]; // for function elements: elems[0] elems[1] +
         while (ipost < toIndex) {
             String post = postfix[ipost ++];
-            Entry row = map.get(post); 
+            TargetRow row = targetTable.get(post);
+            if (debug > 0) {
+                System.out.println("# post=" + post);
+            }
             if (row == null) { // no mapping found
                if (false) { // Caution, order of else-if branches matters!
-                } else if (post.matches("\\A\\d")) { // unknown number
+                } else if (post.matches("\\A\\d+\\Z")) { // unknown number
                     if (post.length() >= 10) {
                         post = post + "L"; // int -> long
                     }
-                    row = map.get(NUM_ESCAPE); // must exist
-                    row.target = row.target.replaceAll(NUM_ESCAPE, post);
-                    stack.push(row.target);
+                    row = targetTable.get(NUM_ESCAPE); // must exist
+                    stack.push(row.target.replaceAll(NUM_ESCAPE, post));
                 } else if (post.matches("\\A\\w+\\(\\Z")) { // any function start - nyi
-                } else if (post.matches("\\A(A\\d+_?\\d*)\\)")) { // A-number - nyi
+                } else if (post.matches("\\A(A\\d+_?\\d*)\\)\\Z")) { // A-number - nyi
                     // ...
                 } else if (post.matches("\\A\\w+\\)\\Z")) { // unknown function end
                     post = post.replaceAll("\\)","");
-                    elems[0] = stack.pop();
+                    elems[0] = stack.empty() ? "" : stack.pop();
                     stack.push("<?" + post + "(" + elems[0] + ")?>");
-                } else if (post.matches("\\A[A-Za-z]")) { // unknown name
+                } else if (post.matches("\\A[A-Za-z]+\\Z")) { // unknown name
                     stack.push(post);
                 } else {
                     stack.push("<?post=" + post + "?>");
                 }
             } else { // mapping was found
-                if (false) { // Caution, order of else-if branches matters!
-                } else if (row.group.equals("op") || row.group.equals("fun")) {
-                    String open = "(";
-                    int ielem = row.srcCard - 1;
-                    while (ielem >= 0) {
-                        elems[ielem] = stack.pop();
-                        ielem --;
-                    } // while ielem
-                    if (false) {
-                    } else if (row.tarCard == 0) { // e.g. unary minus -> el0.negate()
-                        stack.push(elems[0] + row.target + open + ")");
-                    } else if (row.tarCard == 1) {
-                        stack.push(elems[0] + row.target + open + elems[1] + ")"); // el0.add(el1)
-                    } else if (row.tarCard == 2) {
-                        stack.push(row.target + open + elems[0] + "," + elems[1] +")"); // .mod(el0,el1)
-                    }
-                    // ope || fun
+               if (debug > 0) {
+                   System.out.println("# row=" + row.toString());
+               }
+               if (false) {
                 } else if (row.group.equals("name")) {
                     stack.push(row.target);
-                } else if (row.group.equals("num")) {
+                } else if (row.group.equals("numb")) {
                     stack.push(row.target);
+                } else if (row.group.equals("func")  // pow(a,b)
+                        || row.group.equals("meth")  // a.add(b)
+                        ) {
+                    int ielem = row.srcCard - 1; // fill from backwards
+                    while (ielem >= 0 && ! stack.empty()) { // pop operands into elems
+                        elems[ielem --] = stack.pop();
+                    } // while popping operands
+                    if (debug > 0) {
+                        System.out.print("# elems, #" + row.srcCard + " ");
+                        String sep = "=";
+                        for (ielem = 0; ielem < row.srcCard; ielem ++) {
+                            System.out.print(sep + elems[ielem]);
+                            sep = ",";
+                        } // for ielem
+                        System.out.println();
+                    }
+                    StringBuilder target = new StringBuilder(64);
+                    if (false) {
+                    } else if (row.group.equals("meth")) { // e.g. unary minus -> el0.negate()
+                        target.append(elems[0]);
+                        target.append(row.target);
+                    } else if (row.group.equals("func")) { // e.g. unary minus -> el0.negate()
+                        target.append(row.target);
+                        target.append(elems[0]);
+                    }
+                    ielem = 1;
+                    while (ielem < row.srcCard) {
+                        if (ielem > 1) {
+                            target.append(",");
+                        }
+                        target.append(elems[ielem]);
+                        ielem ++;
+                    } // while elems[1] ...
+                    target.append(")");
+                    stack.push(target.toString());
+                    // func || meth
                 } else {
                     System.err.println("undefined group=\"" + row.group + "\"");
                 }
             } // mapping found
+            if (debug > 0) {
+                if (stack.empty()) {
+                    System.out.println("# stack empty");
+                } else {
+                    System.out.println("# stack.top=" + stack.peek());
+                }
+            }
         } // while ipost
         if (stack.size() == 1) {
             result.append(stack.pop());
@@ -217,7 +253,7 @@ public class JoeisExpressionBuilder implements Cloneable, Serializable {
     //==================
     // Test method
     //==================
-    
+
     /** Main method, filters a file and writes the copy to STDOUT.
      *  @param args command line arguments: filename, or "-" or none for STDIN
      */

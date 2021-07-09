@@ -70,6 +70,27 @@ DATA
  A038126	post	0	~~floor(sqrt(2*Pi)n)()~~floor(n*2^sqrt(2))~~n=17
 CALL JoeisPreparer -f $(DATA)
 #-------------------------------
+# JoeisExpressionBuilder
+
+TEST JB01 JoeisExpressionBuilder CR.xpat, zeta
+DATA
+ 0	numb	0	CR.ZERO	0
+ 1	numb	0	CR.ONE	0
+ 2	numb	0	CR.TWO	0
+ 01234567	numb	0	CR.valueOf(01234567)	0
+ n	name	0	CR.valueOf(mN)	0
+ +	meth	2	.add(	0
+ -	meth	2	.subtract(	0
+ -.	meth	1	.negate(	0
+ *	meth	2	.multiply(	0
+ /	meth	2	.divide(	0
+ ^	func	2	REALS.pow(	2
+ sqrt)	meth	1	.sqrt(	0
+ cos)	meth	1	.cos(	0
+ sin)	meth	1	.sin(	0
+ zeta)	func	1	Zeta.zeta(	1
+CALL JoeisExpressionBuilder -p $(DATA) "zeta(;2;zeta);zeta(;2;zeta);1;-;/"
+#-------------------------------
 # Triangle
 TEST TRA1 Triangle toTriangle
 DATA
