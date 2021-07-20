@@ -168,22 +168,25 @@ public class JoeisExpressionBuilder implements Cloneable, Serializable {
                 System.out.println("# post=" + post);
             }
             if (row == null) { // no mapping found
-               if (false) { // Caution, order of else-if branches matters!
-                } else if (post.matches("\\A\\d+\\Z")) { // unknown number
+               if (false) { // Caution, order of else-if branches matters here!
+                } else if (post.matches("\\A\\d+\\Z")) {       // unknown number
                     if (post.length() >= 10) {
                         post = post + "L"; // int -> long
                     }
-                    row = targetTable.get(NUM_ESCAPE); // must exist
+                    row = targetTable.get(NUM_ESCAPE); // must exist in the table
                     stack.push(row.target.replaceAll(NUM_ESCAPE, post));
-                } else if (post.matches("\\A\\w+\\(\\Z")) { // any function start - nyi
+                } else if (post.matches("\\A\\w+\\(\\Z")) {   // any function start - ignore
                 } else if (post.matches("\\A(A\\d+_?\\d*)\\)\\Z")) { // A-number - nyi
                     // ...
-                } else if (post.matches("\\A\\w+\\)\\Z")) { // unknown function end
+                } else if (post.matches("\\A\\w+\\)\\Z")) {   // unknown function end
                     post = post.replaceAll("\\)","");
                     elems[0] = stack.empty() ? "" : stack.pop();
                     stack.push("<?" + post + "(" + elems[0] + ")?>");
+                } else if (post.matches("\\A([A-Za-z]+)__(\\d+)\\Z")) { // function(int), shielded, e.g. zeta(3)
+                    stack.push(post.replaceAll("__", "(") + ")"); // unshield
                 } else if (post.matches("\\A[A-Za-z]+\\Z")) { // unknown name
-                    stack.push(post);
+                    stack.push("<?name=" + post + "?>");
+                } else if (post.equals(",")) {                // "," = parameter separator - ignore
                 } else {
                     stack.push("<?post=" + post + "?>");
                 }
@@ -213,17 +216,20 @@ public class JoeisExpressionBuilder implements Cloneable, Serializable {
                         System.out.println();
                     }
                     StringBuilder target = new StringBuilder(64);
+                    int start = 1;
                     if (false) {
                     } else if (row.group.equals("meth")) { // e.g. unary minus -> el0.negate()
                         target.append(elems[0]);
                         target.append(row.target);
+                        start = 2;
                     } else if (row.group.equals("func")) { // e.g. unary minus -> el0.negate()
                         target.append(row.target);
                         target.append(elems[0]);
+                        start = 1;
                     }
                     ielem = 1;
                     while (ielem < row.srcCard) {
-                        if (ielem > 1) {
+                        if (ielem >= start) {
                             target.append(",");
                         }
                         target.append(elems[ielem]);

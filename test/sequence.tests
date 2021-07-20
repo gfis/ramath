@@ -69,6 +69,18 @@ TEST JP02 JoeisPreparer
 DATA
  A038126	post	0	~~floor(sqrt(2*Pi)n)()~~floor(n*2^sqrt(2))~~n=17
 CALL JoeisPreparer -f $(DATA)
+
+TEST JP03 postfix
+DATA
+ A061718	post	0	~~((n+1)*n/2)^n
+CALL JoeisPreparer -f $(DATA)
+# A061718       post    0       ~~;n;n;1;+;*;2;/;n;^    0
+
+TEST JP04 postfix
+DATA
+ A109345	post	0	5^((n-1)*n/2)
+CALL JoeisPreparer -f $(DATA)
+A109345 post    0       5;n;1;-;n;*;2;/;^
 #-------------------------------
 # JoeisExpressionBuilder
 
@@ -85,11 +97,16 @@ DATA
  *	meth	2	.multiply(	0
  /	meth	2	.divide(	0
  ^	func	2	REALS.pow(	2
+ agm)	meth	2	.agm(	0
  sqrt)	meth	1	.sqrt(	0
  cos)	meth	1	.cos(	0
  sin)	meth	1	.sin(	0
  zeta)	func	1	Zeta.zeta(	1
 CALL JoeisExpressionBuilder -p $(DATA) "zeta(;2;zeta);zeta(;2;zeta);1;-;/"
+
+TEST JB02 JoeisExpressionBuilder agm(1,2)
+CALL JoeisExpressionBuilder -p test/JB01.data.tmp "agm(;1;,;2;agm)"
+
 #-------------------------------
 # Triangle
 TEST TRA1 Triangle toTriangle
