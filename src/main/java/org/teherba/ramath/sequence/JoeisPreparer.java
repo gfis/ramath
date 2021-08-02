@@ -1,5 +1,6 @@
 /*  JoeisPreparer: prepare *.gen files for joeis-lite
  *  @(#) $Id$
+ *  2021-07-29: -cc callcode
  *  2021-07-07: JoeisExpressionBuilder
  *  2021-04-01: -circdiff
  *  2020-09-23: header was garbled
@@ -63,7 +64,9 @@ public class JoeisPreparer implements Cloneable, Serializable {
     /** A-number of the OEIS sequence */
     private String aseqno;
 
-    /** Code for a specific generation process in joeis-lite */
+    /** Code for a specific generation process in joeis-lite, given behind commandline option -cc */
+    protected String argsCode;
+    /** Code for a specific generation process in joeis-lite, taken from 2nd column of the input file */
     private String callCode;
 
     /** Current index for {@link #parms} */
@@ -87,6 +90,7 @@ public class JoeisPreparer implements Cloneable, Serializable {
     public JoeisPreparer() {
         log = Logger.getLogger(JoeisPreparer.class.getName());
         builder = null;
+        argsCode = "";
     } // Constructor()
 
     /**
@@ -138,13 +142,15 @@ public class JoeisPreparer implements Cloneable, Serializable {
         PolyFraction pfr1 = null;
         if (false) {
 
-        } else if (callCode.startsWith("bva")) { // OEIS-mat/linrec/makefile.rectab
+        } else if (callCode.startsWith("bva")
+                || argsCode.startsWith("bva")) { // OEIS-mat/linrec/makefile.rectab
             parms[1] = "holos";
             BigVectorArray bva = BigVectorArray.parseRecurrence(parms[iparm]);
             parms[iparm] = bva.toString();
             reproduce();
 
-        } else if (callCode.startsWith("coxf")) {
+        } else if (callCode.startsWith("coxf")
+                || argsCode.startsWith("coxf")) {
             try {
                 int pwr  = Integer.parseInt(parms[iparm ++]);
                 int ngen = Integer.parseInt(parms[iparm ++]);
@@ -156,7 +162,8 @@ public class JoeisPreparer implements Cloneable, Serializable {
                     .toString().replaceAll("[\\[\\]]", "")
                     );
 
-        } else if (callCode.startsWith("circdiff")) {
+        } else if (callCode.startsWith("circdiff")
+                || argsCode.startsWith("circdiff")) {
             String matrix = "";
             int dim  = 4;
             int diff = 1;
@@ -188,7 +195,8 @@ public class JoeisPreparer implements Cloneable, Serializable {
             }
             reproduce();
 
-        } else if (callCode.startsWith("dex")) {
+        } else if (callCode.startsWith("dex")
+                || argsCode.startsWith("dex")) {
             String postfix = parms[iparm + 0];
             String keep0   = parms[iparm + 1];
             String base    = parms[iparm + 2];
@@ -200,14 +208,16 @@ public class JoeisPreparer implements Cloneable, Serializable {
             parms[iparm + 0] = postfix;
             reproduce();
 
-        } else if (callCode.startsWith("dhd")) { // pfract,
+        } else if (callCode.startsWith("dhd")
+                || argsCode.startsWith("dhd")) {
             pfr1 = PolyFraction.parse(parms[iparm]).normalize();
             String[] vars = pfr1.getVariables();
             parms[iparm + 0] = pfr1.getNum().toTriangleList(vars);
             parms[iparm + 1] = pfr1.getDen().toTriangleList(vars);
             reproduce();
 
-        } else if (callCode.startsWith("fract1")) {
+        } else if (callCode.startsWith("fract1")
+                || argsCode.startsWith("fract1")) {
             pfr1 = PolyFraction.parse(parms[iparm]);
             if (pfr1 != null) { // parse ok
                 pfr1 = pfr1.normalize();
@@ -226,7 +236,8 @@ public class JoeisPreparer implements Cloneable, Serializable {
                 reproduce();
             }
 
-        } else if (callCode.startsWith("fract2")) {
+        } else if (callCode.startsWith("fract2")
+                || argsCode.startsWith("fract2")) {
             pfr1 = PolyFraction.parse(parms[iparm]);
             if (pfr1 != null) {
                 pfr1 = pfr1.normalize();
@@ -242,13 +253,15 @@ public class JoeisPreparer implements Cloneable, Serializable {
                 reproduce();
             }
 
-        } else if (callCode.startsWith("fract")) {
+        } else if (callCode.startsWith("fract")
+                || argsCode.startsWith("fract")) {
             System.out.println(aseqno
                         + "\t" + offset1
                         + "\t??" + parms[iparm ++]
                         );
 
-        } else if (callCode.startsWith("holo")) { // OEIS-mat/holrec/makefile.rectab
+        } else if (callCode.startsWith("holo")
+                || argsCode.startsWith("holo")) { // OEIS-mat/holrec/makefile.rectab
             // callCode = "holos";
             String parm = parms[iparm];
             try {
@@ -259,7 +272,8 @@ public class JoeisPreparer implements Cloneable, Serializable {
                 System.err.println("# " + aseqno + " JoeisPreparer.holo(\"" + parm + "\") failed: " + exc.getMessage());
             }
 
-        } else if (callCode.startsWith("homgf")) {
+        } else if (callCode.startsWith("homgf")
+                || argsCode.startsWith("homgf")) {
             String gf        = parms[iparm + 0];
             String gftype    = parms[iparm + 1];
             ShuntingYard parser = new ShuntingYard("[a-zA-Z]\\w+");
@@ -269,12 +283,14 @@ public class JoeisPreparer implements Cloneable, Serializable {
             parms[iparm + 1] = gftype;
             reproduce();
 
-        } else if (callCode.startsWith("infix")) {
+        } else if (callCode.startsWith("infix")
+                || argsCode.startsWith("infix")) {
             String[] postfix = parms[iparm + 0].split("\\;");
             parms[iparm + 0] = builder.getInfix(postfix, 0, postfix.length);
             reproduce();
 
-        } else if (callCode.startsWith("lingf")) {
+        } else if (callCode.startsWith("lingf")
+                || argsCode.startsWith("lingf")) {
             pfr1 = PolyFraction.parse(parms[iparm]);
             if (pfr1 != null) { // parse ok
                 pfr1 = pfr1.normalize();
@@ -292,7 +308,8 @@ public class JoeisPreparer implements Cloneable, Serializable {
                 reproduce();
             }
 
-        } else if (callCode.startsWith("post")) { // general parsing into postfix notation
+        } else if (callCode.startsWith("post")
+                || argsCode.startsWith("post")) { // general parsing into postfix notation
             String exprList = parms[iparm + 0]; // $(PARM1) = list of expressions, starting with a String of identical separator character
             int ind = 0;
             char ch = exprList.charAt(ind ++);
@@ -311,15 +328,17 @@ public class JoeisPreparer implements Cloneable, Serializable {
             parms[iparm + 0] = result.toString();
             reproduce();
 
-        } else if (callCode.startsWith("rioarr")) {
-            System.out.print(aseqno + "\t");
+        } else if (callCode.startsWith("rioarr")
+                || argsCode.startsWith("rioarr")) {
+             System.out.print(aseqno + "\t");
             pfr1 = PolyFraction.parse(parms[iparm ++]).normalize();
             System.out.println(pfr1.getCoefficientTriangle(numTerms
                     , new String[] { "x", "y" })
                     .toString().replaceAll("[\\[\\]]", ""));
 
-        } else if (callCode.startsWith("sage")) {
-            iparm --; // no offset1
+        } else if (callCode.startsWith("sage")
+                || argsCode.startsWith("sage")) {
+             iparm --; // no offset1
             Polynomial num = Polynomial.parse(parms[iparm ++]);
             Polynomial den = Polynomial.parse(parms[iparm ++]);
             pfr1 = new PolyFraction(num, den);
@@ -378,14 +397,17 @@ public class JoeisPreparer implements Cloneable, Serializable {
      */
     public static void main(String[] args) {
         int iarg = 0;
-        JoeisPreparer prep = new JoeisPreparer();
-        prep.numTerms = 16;
-        prep.offset1  = 0;
+        JoeisPreparer jprep = new JoeisPreparer();
+        jprep.numTerms = 16;
+        jprep.offset1  = 0;
+        jprep.argsCode = ""; // take the cc from the 2nd column of the input file
         String fileName = "-"; // assume STDIN
         String patternName = null; // default, in current directory
         while (iarg < args.length) { // consume all arguments
             String opt = args[iarg ++];
             if (false) {
+            } else if (opt.equals    ("-cc")     ) {
+                jprep.argsCode = args[iarg ++]; // select a specific cc
             } else if (opt.equals    ("-d")     ) {
                 debug = 1;
                 try {
@@ -396,18 +418,18 @@ public class JoeisPreparer implements Cloneable, Serializable {
                 fileName = args[iarg ++];
             } else if (opt.equals    ("-n")     ) {
                 try {
-                    prep.numTerms = Integer.parseInt(args[iarg ++]);
+                    jprep.numTerms = Integer.parseInt(args[iarg ++]);
                 } catch (Exception exc) { // take default
                 }
             } else if (opt.equals    ("-p")     ) {
                 patternName = args[iarg ++];
-                prep.builder = new JoeisExpressionBuilder(patternName);
+                jprep.builder = new JoeisExpressionBuilder(patternName);
             } else {
                 System.err.println("??? invalid option: \"" + opt + "\"");
             }
         } // while args
 
-        prep.processFile(fileName);
+        jprep.processFile(fileName);
     } // main
 
 } // JoeisPreparer
