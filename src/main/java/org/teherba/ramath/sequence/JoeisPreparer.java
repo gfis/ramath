@@ -1,5 +1,6 @@
 /*  JoeisPreparer: prepare *.gen files for joeis-lite
  *  @(#) $Id$
+ *  2021-08-22: -cc post: "~~" is optional
  *  2021-07-29: -cc callcode
  *  2021-07-07: JoeisExpressionBuilder
  *  2021-04-01: -circdiff
@@ -316,8 +317,10 @@ public class JoeisPreparer implements Cloneable, Serializable {
             while (ind < exprList.length() && exprList.charAt(ind) == ch) {
                 ind ++;
             } // while
-            String sep = exprList.substring(0, ind);
-            String [] exprs = exprList.substring(ind).split(Pattern.quote(sep));
+            String sep = exprList.substring(0, ind); // only if there are at least 2 identical characters != '('
+            String [] exprs = ind > 1 && ch != '(' 
+                ? exprList.substring(ind).split(Pattern.quote(sep)) 
+                : new String[] { exprList }; // "~~" was omitted here
             StringBuffer result = new StringBuffer(1024);
             for (int iexpr = 0; iexpr < exprs.length; iexpr ++) {
                 ShuntingYard parser = new ShuntingYard("\\w+");
