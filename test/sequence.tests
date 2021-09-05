@@ -80,7 +80,25 @@ TEST JP04 postfix
 DATA
  A109345	post	0	5^((n-1)*n/2)
 CALL JoeisPreparer -f $(DATA)
-A109345 post    0       5;n;1;-;n;*;2;/;^
+A109345 post    0      ;5;n;1;-;n;*;2;/;^
+
+TEST JP05 create xpat table
+DATA
+ 01234567	numb	0	CR.valueOf(01234567)	0
+ n	name	0	n	0
+ +	meth	2	.add(	0
+ -	meth	2	.subtract(	0
+ -.	meth	1	.negate(	0
+ *	meth	2	.multiply(	0
+ /	meth	2	.divide(	0
+ ^	meth	2	.pow(	0
+CALL Recurrence
+
+TEST JP06 infix
+DATA
+ A109345	infix	0	~~;5;n;1;-;n;*;2;/;^
+CALL JoeisPreparer -p test/JP05.data.tmp -f $(DATA)
+A109345 post    0      5^((n-1)*n/2)
 #-------------------------------
 # JoeisExpressionBuilder
 

@@ -76,6 +76,7 @@ public class Recurrence {
      */
     public static void main(String[] args) {
         try {
+            System.out.println("Recurrence.main()");
         } catch (Exception exc) {
             System.err.println(exc.getMessage());
             exc.printStackTrace();

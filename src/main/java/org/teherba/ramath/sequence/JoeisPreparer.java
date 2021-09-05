@@ -308,7 +308,7 @@ public class JoeisPreparer implements Cloneable, Serializable {
                 aseqno = "#1parse " + aseqno;
                 reproduce();
             }
-
+/*
         } else if (callCode.startsWith("post")
                 || argsCode.startsWith("post")) { // general parsing into postfix notation
             String exprList = parms[iparm + 0]; // $(PARM1) = list of expressions, starting with a String of identical separator character
@@ -318,9 +318,33 @@ public class JoeisPreparer implements Cloneable, Serializable {
                 ind ++;
             } // while
             String sep = exprList.substring(0, ind); // only if there are at least 2 identical characters != '('
-            String [] exprs = ind > 1 && ch != '(' 
-                ? exprList.substring(ind).split(Pattern.quote(sep)) 
-                : new String[] { exprList }; // "~~" was omitted here
+            String [] exprs;
+            if (ind > 1 && ch != '(') {
+                exprs = exprList.substring(ind).split(Pattern.quote(sep));
+            } else {
+                exprs = new String[] { exprList }; // "~~" was omitted here
+                sep = "";
+            }
+            StringBuffer result = new StringBuffer(1024);
+            for (int iexpr = 0; iexpr < exprs.length; iexpr ++) {
+                ShuntingYard parser = new ShuntingYard("\\w+");
+                parser.setDebug(debug);
+                result.append(sep);
+                result.append(parser.getPostfixString(";", exprs[iexpr]));
+            } // for iexpr
+            parms[iparm + 0] = result.toString();
+            reproduce();
+*/
+        } else if (callCode.startsWith("post")
+                || argsCode.startsWith("post")) { // general parsing into postfix notation
+            String exprList = parms[iparm + 0]; // $(PARM1) = list of expressions, starting with a String of identical separator character
+            int ind = 0;
+            char ch = exprList.charAt(ind ++);
+            while (ind < exprList.length() && exprList.charAt(ind) == ch) {
+                ind ++;
+            } // while
+            String sep = exprList.substring(0, ind);
+            String [] exprs = exprList.substring(ind).split(Pattern.quote(sep));
             StringBuffer result = new StringBuffer(1024);
             for (int iexpr = 0; iexpr < exprs.length; iexpr ++) {
                 ShuntingYard parser = new ShuntingYard("\\w+");
@@ -333,7 +357,7 @@ public class JoeisPreparer implements Cloneable, Serializable {
 
         } else if (callCode.startsWith("rioarr")
                 || argsCode.startsWith("rioarr")) {
-             System.out.print(aseqno + "\t");
+            System.out.print(aseqno + "\t");
             pfr1 = PolyFraction.parse(parms[iparm ++]).normalize();
             System.out.println(pfr1.getCoefficientTriangle(numTerms
                     , new String[] { "x", "y" })
@@ -341,7 +365,7 @@ public class JoeisPreparer implements Cloneable, Serializable {
 
         } else if (callCode.startsWith("sage")
                 || argsCode.startsWith("sage")) {
-             iparm --; // no offset1
+            iparm --; // no offset1
             Polynomial num = Polynomial.parse(parms[iparm ++]);
             Polynomial den = Polynomial.parse(parms[iparm ++]);
             pfr1 = new PolyFraction(num, den);
@@ -354,6 +378,16 @@ public class JoeisPreparer implements Cloneable, Serializable {
             System.out.println(aseqno + "\t" + "coef"
                     + "\t" + pfr1.getSeriesCoefficients(numTerms)
                     );
+
+        } else if (callCode.startsWith("vect")
+                || argsCode.startsWith("vect")) {
+            Polynomial poly = Polynomial.parse(parms[iparm]);
+            if (poly != null) {
+                parms[iparm] = poly.getBigVector().toString();
+                reproduce();
+            } else {
+                System.err.println("# " + aseqno + " error in JoeisPreparer.vect: " + parms[iparm]);
+            }
 
         } // switch callCode
     } // processRecord
