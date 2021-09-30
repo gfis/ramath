@@ -1,5 +1,6 @@
 /*  General methods and properties of OEIS triangular sequences
  *  @(#) $Id: Triangle.java $
+ *  2021-09-30: PascalTrait; AH=79
  *  2020-03-17, Georg Fischer: copied from Sequence
  */
 /*
@@ -352,7 +353,66 @@ public class Triangle extends Sequence
         }
     } // NATSTrait
 
+    /** Constants in generalized Pascal's rule.
+     *  The elements are (0,0); (1,0),(1,1); (2,0),(2,1),(2,2); (3,0),(3,1)-,(3,2)-,(3,3); (4,0),(4,1),(4,2)+,(4,3);,
+     *  and the first trait element is -(3,1) - (3,2) + (4,2).
+     */
+    private class PascalTrait extends Trait {
+        private final BigInteger undefDiff = BigInteger.valueOf(-29);
+        protected BigInteger diff;
+        protected BigInteger[] oldRow;
+        protected BigInteger[] newRow;
+
+        public void initRow(int irow) { // at the start of a row
+            newRow = new BigInteger[irow + 1]; 
+            diff = undefDiff;
+        }
+        public void termRow(int irow) { // after the end of a row
+            if (! diff.equals(undefDiff)) {
+                list.add(diff);
+            }
+            oldRow = newRow;
+        }
+        public void column (int irow, int icol) { // for a column / term
+            BigInteger newElem = getBig(linearIndex(irow, icol));
+            newRow[icol] = newElem;
+            if (icol <= irow - 2) {
+                if (false) {
+                } else if (icol == 2) { // first relevant column: initialize diff
+                    diff =            newElem.subtract(oldRow[icol - 1]).subtract(oldRow[icol]);
+                } else if (icol >  2) { // following relevant columns: compare with diff
+                    if (! diff.equals(newElem.subtract(oldRow[icol - 1]).subtract(oldRow[icol]) )) {
+                        diff = undefDiff;
+                    }
+                }
+            }
+            iflat ++;
+        }
+    } // PascalTrait
+
     //--------------------------------
+    /** If the PascalTrait has a minimal number of elements, 
+     *  print it together with the LeftSideTrait and the RightSideTrait.
+     *  @param rowNo number of rows to be appended
+     */
+    public void printPascalCard (int rowNo) {
+    	try {
+            String pascalList    =  get1Trait(rowNo, new PascalTrait     ());
+            String[] 
+            parts = pascalList  .split("\t");
+            int pascalSize       = Integer.parseInt(parts[2]);
+            String leftSideList  =  get1Trait(rowNo, new LeftSideTrait   ());
+            parts = leftSideList.split("\t");
+            int leftSideSize     = Integer.parseInt(parts[2]);
+            if (pascalSize + 4 >= leftSideSize && pascalSize >= 4) {
+                System.out.println(leftSideList);
+                System.out.println(get1Trait(rowNo, new RightSideTrait  ()));
+                System.out.println(pascalList);
+            }
+        } catch (Exception exc) {
+        }
+    } // printTraitCard
+
     /** Print a set of derived, characteristic sequences for a Triangle
      *  @param rowNo number of rows to be appended
      */
@@ -370,6 +430,7 @@ public class Triangle extends Sequence
         System.out.println(get1Trait(rowNo, new NegHalfTrait    ()));
         System.out.println(get1Trait(rowNo, new N0TSTrait       ()));
         System.out.println(get1Trait(rowNo, new NATSTrait       ()));
+        System.out.println(get1Trait(rowNo, new PascalTrait     ()));
     } // printTraitCard
 
      /** Gets a triangular array of lines with comma-separated terms.
@@ -427,6 +488,15 @@ public class Triangle extends Sequence
                         } // while hasNext
                         iarg = args.length;
 
+                    } else if (oper.startsWith("-pascal")) {
+                        reader = SequenceReader.configure(iarg, args);
+                        termNo = reader.getMaxTermNo();
+                        while (reader.hasNext()) {
+                            tra = new Triangle(reader.next());
+                            tra.printPascalCard(tra.getRowSize());
+                        } // while hasNext
+                        iarg = args.length;
+
                     } else if (oper.startsWith("-trait")) {
                         reader = SequenceReader.configure(iarg, args);
                         termNo = reader.getMaxTermNo();
@@ -435,7 +505,6 @@ public class Triangle extends Sequence
                             tra.printTraitCard(tra.getRowSize());
                         } // while hasNext
                         iarg = args.length;
-
                     } else {
                         System.out.println("invalid operation \"" + oper + "\"");
                     }
