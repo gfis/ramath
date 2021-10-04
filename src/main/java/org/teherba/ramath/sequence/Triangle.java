@@ -133,7 +133,6 @@ public class Triangle extends Sequence
         int rowNo = getRowSize();
         Sequence target = new Sequence(rowNo);
         target.setOffset(source.getOffset());
-
         int irow = 0;
         while (irow < rowNo) {
             BigInteger sum = BigInteger.ZERO;
@@ -353,22 +352,59 @@ public class Triangle extends Sequence
         }
     } // NATSTrait
 
+    /** Check whether the inner (non-border) elements are all the same in a row.
+     *  T(n,k) = T(n,k-1) for k=2..n-1.
+     */
+    private class ConstantTrait extends Trait {
+        protected BigInteger diff;
+        private final int BORDER = 1;
+        private boolean followsRule = true;
+
+        public void initRow(int irow) { // at the start of a row
+        }
+        public void termRow(int irow) { // after the end of a row
+            if (irow >= 2) {
+                list.add(diff);
+            }
+        }
+        public void column (int irow, int icol) { // for a column / term
+            BigInteger newElem = getBig(linearIndex(irow, icol));
+            if (icol <= irow - BORDER) {
+                if (false) {
+                } else if (icol == BORDER) { // first relevant column: initialize diff
+                    diff =            newElem;
+                } else if (icol >  BORDER) { // following relevant columns: compare with diff
+                    if (! diff.equals(newElem)) {
+                        followsRule = false;
+                    }
+                }
+            }
+            iflat ++;
+        }
+        public String termTrait() { // at the end of the triangle
+            if (! followsRule) {
+                list.clear();
+            }
+            return super.termTrait();
+        }
+    } // ConstantTrait
+
     /** Constants in generalized Pascal's rule.
      *  The elements are (0,0); (1,0),(1,1); (2,0),(2,1),(2,2); (3,0),(3,1)-,(3,2)-,(3,3); (4,0),(4,1),(4,2)+,(4,3);,
      *  and the first trait element is -(3,1) - (3,2) + (4,2).
      */
     private class PascalTrait extends Trait {
-        private final BigInteger undefDiff = BigInteger.valueOf(-29);
         protected BigInteger diff;
         protected BigInteger[] oldRow;
         protected BigInteger[] newRow;
+        private final int BORDER = 1;
+        private boolean followsRule = true;
 
         public void initRow(int irow) { // at the start of a row
             newRow = new BigInteger[irow + 1]; 
-            diff = undefDiff;
         }
         public void termRow(int irow) { // after the end of a row
-            if (! diff.equals(undefDiff)) {
+            if (irow >= 2) {
                 list.add(diff);
             }
             oldRow = newRow;
@@ -376,61 +412,93 @@ public class Triangle extends Sequence
         public void column (int irow, int icol) { // for a column / term
             BigInteger newElem = getBig(linearIndex(irow, icol));
             newRow[icol] = newElem;
-            if (icol <= irow - 2) {
+            if (icol <= irow - BORDER) {
                 if (false) {
-                } else if (icol == 2) { // first relevant column: initialize diff
+                } else if (icol == BORDER) { // first relevant column: initialize diff
                     diff =            newElem.subtract(oldRow[icol - 1]).subtract(oldRow[icol]);
-                } else if (icol >  2) { // following relevant columns: compare with diff
+                } else if (icol >  BORDER) { // following relevant columns: compare with diff
                     if (! diff.equals(newElem.subtract(oldRow[icol - 1]).subtract(oldRow[icol]) )) {
-                        diff = undefDiff;
+                        followsRule = false;
                     }
                 }
             }
             iflat ++;
         }
+        public String termTrait() { // at the end of the triangle
+            if (! followsRule) {
+                list.clear();
+            }
+            return super.termTrait();
+        }
     } // PascalTrait
-
+    
     //--------------------------------
-    /** If the PascalTrait has a minimal number of elements, 
+    /** If the ConstantTrait has a sufficient number of elements, 
      *  print it together with the LeftSideTrait and the RightSideTrait.
+     *  @param traitSize maximum number of elements in the trait
      *  @param rowNo number of rows to be appended
      */
-    public void printPascalCard (int rowNo) {
-    	try {
-            String pascalList    =  get1Trait(rowNo, new PascalTrait     ());
+    public void printConstantCard (int traitSize, int rowNo) {
+        try {
+            String constantList =  get1Trait(traitSize, rowNo, new ConstantTrait   ());
             String[] 
-            parts = pascalList  .split("\t");
-            int pascalSize       = Integer.parseInt(parts[2]);
-            String leftSideList  =  get1Trait(rowNo, new LeftSideTrait   ());
+            parts = constantList .split("\t");
+            int constantSize    = Integer.parseInt(parts[2]);
+            String leftSideList =  get1Trait(traitSize, rowNo, new LeftSideTrait   ());
             parts = leftSideList.split("\t");
-            int leftSideSize     = Integer.parseInt(parts[2]);
-            if (pascalSize + 4 >= leftSideSize && pascalSize >= 4) {
+            int leftSideSize    = Integer.parseInt(parts[2]);
+            if (constantSize + 2 >= leftSideSize) {
                 System.out.println(leftSideList);
-                System.out.println(get1Trait(rowNo, new RightSideTrait  ()));
-                System.out.println(pascalList);
+                System.out.println(get1Trait(traitSize, rowNo, new RightSideTrait  ()));
+                System.out.println(constantList);
             }
         } catch (Exception exc) {
         }
     } // printTraitCard
 
-    /** Print a set of derived, characteristic sequences for a Triangle
+    //--------------------------------
+    /** If the PascalTrait has a sufficient number of elements, 
+     *  print it together with the LeftSideTrait and the RightSideTrait.
+     *  @param traitSize maximum number of elements in the trait
      *  @param rowNo number of rows to be appended
      */
-    public void printTraitCard (int rowNo) {
-        System.out.println(get1Trait(rowNo, new SequenceTrait   ()));
-        System.out.println(get1Trait(rowNo, new RowSumTrait     ()));
-        System.out.println(get1Trait(rowNo, new EvenSumTrait    ()));
-        System.out.println(get1Trait(rowNo, new OddSumTrait     ()));
-        System.out.println(get1Trait(rowNo, new AltSumTrait     ()));
-        System.out.println(get1Trait(rowNo, new DiagSumTrait    ()));
-        System.out.println(get1Trait(rowNo, new CentralTrait    ()));
-        System.out.println(get1Trait(rowNo, new LeftSideTrait   ()));
-        System.out.println(get1Trait(rowNo, new RightSideTrait  ()));
-        System.out.println(get1Trait(rowNo, new PosHalfTrait    ()));
-        System.out.println(get1Trait(rowNo, new NegHalfTrait    ()));
-        System.out.println(get1Trait(rowNo, new N0TSTrait       ()));
-        System.out.println(get1Trait(rowNo, new NATSTrait       ()));
-        System.out.println(get1Trait(rowNo, new PascalTrait     ()));
+    public void printPascalCard (int traitSize, int rowNo) {
+        try {
+            String pascalList   =  get1Trait(traitSize, rowNo, new PascalTrait     ());
+            String[] 
+            parts = pascalList .split("\t");
+            int pascalSize      = Integer.parseInt(parts[2]);
+            String leftSideList =  get1Trait(traitSize, rowNo, new LeftSideTrait   ());
+            parts = leftSideList.split("\t");
+            int leftSideSize    = Integer.parseInt(parts[2]);
+            if (pascalSize + 2 >= leftSideSize) {
+                System.out.println(leftSideList);
+                System.out.println(get1Trait(traitSize, rowNo, new RightSideTrait  ()));
+                System.out.println(pascalList);
+            }
+        } catch (Exception exc) {
+        }
+    } // printPascalCard
+
+    /** Print a set of derived, characteristic sequences for a Triangle
+     *  @param traitSize maximum number of elements in the trait
+     *  @param rowNo number of rows to be appended
+     */
+    public void printTraitCard (int traitSize, int rowNo) {
+        System.out.println(get1Trait(traitSize, rowNo, new SequenceTrait   ()));
+        System.out.println(get1Trait(traitSize, rowNo, new RowSumTrait     ()));
+        System.out.println(get1Trait(traitSize, rowNo, new EvenSumTrait    ()));
+        System.out.println(get1Trait(traitSize, rowNo, new OddSumTrait     ()));
+        System.out.println(get1Trait(traitSize, rowNo, new AltSumTrait     ()));
+        System.out.println(get1Trait(traitSize, rowNo, new DiagSumTrait    ()));
+        System.out.println(get1Trait(traitSize, rowNo, new CentralTrait    ()));
+        System.out.println(get1Trait(traitSize, rowNo, new LeftSideTrait   ()));
+        System.out.println(get1Trait(traitSize, rowNo, new RightSideTrait  ()));
+        System.out.println(get1Trait(traitSize, rowNo, new PosHalfTrait    ()));
+        System.out.println(get1Trait(traitSize, rowNo, new NegHalfTrait    ()));
+        System.out.println(get1Trait(traitSize, rowNo, new N0TSTrait       ()));
+        System.out.println(get1Trait(traitSize, rowNo, new NATSTrait       ()));
+        System.out.println(get1Trait(traitSize, rowNo, new PascalTrait     ()));
     } // printTraitCard
 
      /** Gets a triangular array of lines with comma-separated terms.
@@ -438,13 +506,13 @@ public class Triangle extends Sequence
      *  @param tr the {@link Trait} class which computes a specific trait
      *  @return several lines
      */
-    public String get1Trait(int rowNo, Trait tr) {
+    public String get1Trait(int traitSize, int rowNo, Trait tr) {
         tr.initTrait();
         int irow = 0;
         while (irow < rowNo && tr.iflat < size()) {
             tr.initRow(irow);
             int icol = 0;
-            while (icol <= irow && tr.iflat < size()) {
+            while (icol <= irow && tr.iflat < traitSize && tr.iflat < size()) {
                 tr.column(irow, icol);
                 icol ++;
             } // while icol
@@ -457,10 +525,19 @@ public class Triangle extends Sequence
    //----------------------------------------------------------------
     /** Test method.
      *  @param args command line arguments.
+     *  <pre>
+     *  -d      debug mode: 0 = none (default), 1 = some, 2 = more
+     *  -const  print Constant trait card
+     *  -eval   pretty-print the triangle
+     *  -pascal print Pascal trait card
+     *  -trait  print full trait card
+     *  -ts     trait size (default 16)
+     *  </pre>
      *  See printout with 0 arguments, and arguments for {@link SequenceReader#configure}.
      */
     public static void main(String[] args) {
         String aNumber = "A000000";
+        int traitSize = 16; // default
         SequenceReader reader = new SequenceReader(64);
         Triangle tra = null;
         try {
@@ -478,6 +555,15 @@ public class Triangle extends Sequence
                     } else if (oper.equals    ("-d")) {
                         debug = Integer.parseInt(args[iarg ++]);
 
+                    } else if (oper.startsWith("-const")) {
+                        reader = SequenceReader.configure(iarg, args);
+                        termNo = reader.getMaxTermNo();
+                        while (reader.hasNext()) {
+                            tra = new Triangle(reader.next());
+                            tra.printConstantCard(traitSize, tra.getRowSize());
+                        } // while hasNext
+                        iarg = args.length;
+
                     } else if (oper.startsWith("-eval")) {
                         reader = SequenceReader.configure(iarg, args);
                         termNo = reader.getMaxTermNo();
@@ -493,7 +579,7 @@ public class Triangle extends Sequence
                         termNo = reader.getMaxTermNo();
                         while (reader.hasNext()) {
                             tra = new Triangle(reader.next());
-                            tra.printPascalCard(tra.getRowSize());
+                            tra.printPascalCard(traitSize, tra.getRowSize());
                         } // while hasNext
                         iarg = args.length;
 
@@ -502,9 +588,13 @@ public class Triangle extends Sequence
                         termNo = reader.getMaxTermNo();
                         while (reader.hasNext()) {
                             tra = new Triangle(reader.next());
-                            tra.printTraitCard(tra.getRowSize());
+                            tra.printTraitCard(traitSize, tra.getRowSize());
                         } // while hasNext
                         iarg = args.length;
+
+                    } else if (oper.equals    ("-ts")) {
+                        traitSize = Integer.parseInt(args[iarg ++]);
+
                     } else {
                         System.out.println("invalid operation \"" + oper + "\"");
                     }
