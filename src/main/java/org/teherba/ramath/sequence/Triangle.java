@@ -81,6 +81,15 @@ public class Triangle extends Sequence
 
     //--------------------------------------
 
+    /** Gets an element of the triangle.
+     *  @param n row number
+     *  @param k column number
+     *  @return T(n,k), or 0 for k &lt; 0 or k &gt; n.
+     */
+    protected BigInteger get(int n, int k) {
+        return (k < 0 || k > n) ? BigInteger.ZERO : getBig(linearIndex(n, k));
+    }
+
     /** Gets a triangular array of lines with comma-separated terms.
      *  @return several lines
      */
@@ -155,13 +164,14 @@ public class Triangle extends Sequence
         protected ArrayList<BigInteger> list; // build the characteristic sequence here
         protected String derivedName = "abstract"; // name of the trait
         public int iflat; // runs over all terms of the flattened triangle
+        
         protected Trait() { // No-args constructor
-            list = new ArrayList<BigInteger>(16);
+            list = new ArrayList<BigInteger>(256);
             iflat = 0;
             derivedName = this.getClass().getName().replaceAll("Trait", "");
             int dollarPos = derivedName.indexOf('$');
             derivedName = derivedName.substring(dollarPos + 1);
-        } // Constructor()
+        } // Trait()
 
         public void initTrait() { // at the beginning of the triangle
         }
@@ -352,48 +362,16 @@ public class Triangle extends Sequence
         }
     } // NATSTrait
 
-    /** Check whether the inner (non-border) elements are all the same in a row.
-     *  T(n,k) = T(n,k-1) for k=2..n-1.
-     */
-    private class ConstantTrait extends Trait {
-        protected BigInteger diff;
-        private final int BORDER = 1;
-        private boolean followsRule = true;
+    /*================================
+        Traits for constructive properties
+    */
+    private static final in MAX_INIT = 16;
 
-        public void initRow(int irow) { // at the start of a row
-        }
-        public void termRow(int irow) { // after the end of a row
-            if (irow >= 2) {
-                list.add(diff);
-            }
-        }
-        public void column (int irow, int icol) { // for a column / term
-            BigInteger newElem = getBig(linearIndex(irow, icol));
-            if (icol <= irow - BORDER) {
-                if (false) {
-                } else if (icol == BORDER) { // first relevant column: initialize diff
-                    diff =            newElem;
-                } else if (icol >  BORDER) { // following relevant columns: compare with diff
-                    if (! diff.equals(newElem)) {
-                        followsRule = false;
-                    }
-                }
-            }
-            iflat ++;
-        }
-        public String termTrait() { // at the end of the triangle
-            if (! followsRule) {
-                list.clear();
-            }
-            return super.termTrait();
-        }
-    } // ConstantTrait
-
-    /** Constants in generalized Pascal's rule.
+    /** Check whether the inner (non-border) elements follow Pascal's rule plus a constant per row.
      *  The elements are (0,0); (1,0),(1,1); (2,0),(2,1),(2,2); (3,0),(3,1)-,(3,2)-,(3,3); (4,0),(4,1),(4,2)+,(4,3);,
      *  and the first trait element is -(3,1) - (3,2) + (4,2).
      */
-    private class PascalTrait extends Trait {
+    private class BorderTrait extends Trait {
         protected BigInteger diff;
         protected BigInteger[] oldRow;
         protected BigInteger[] newRow;
@@ -409,7 +387,7 @@ public class Triangle extends Sequence
             }
             oldRow = newRow;
         }
-        public void column (int irow, int icol) { // for a column / term
+        public void column(int irow, int icol) { // for a column / term
             BigInteger newElem = getBig(linearIndex(irow, icol));
             newRow[icol] = newElem;
             if (icol <= irow - BORDER) {
@@ -430,55 +408,144 @@ public class Triangle extends Sequence
             }
             return super.termTrait();
         }
+    } // BorderTrait
+    
+    /** Check whether the elements are all the same in a row.
+     *  T(n,k) = T(n,k-1) for k=1..n-1.
+     */
+    private class ConstantTrait extends Trait {
+        private int lastNotOk; // linear index of last element that did not follow the rule
+        private BigInteger tn0; // first element in the row
+
+        public void initTrait() { // at the beginning of the triangle
+            lastNotOk = 0;
+        }
+        public void column(int irow, int icol) { // for a column / term
+            if (icol == 0) {
+                tn0 = getBig(iflat);
+            } else if (! getBig(iflat).equals(tn0)) {
+                lastNotOk = iflat;
+            }
+            iflat ++;
+        }
+        public String termTrait() { // at the end of the triangle
+            if (lastNotOk < MAX_INIT && lastNotOk < size() / 2) {
+                for (int i = 0; i <= lastNotOk; i ++) {
+                    list.add(getBig(i));
+                }
+            } else { 
+                // failed - empty list
+            }
+            return super.termTrait();
+        }
+    } // ConstantTrait
+
+    /** Check whether the inner (non-border) elements are all the same in a row.
+     *  T(n,k) = T(n,k-1) for k=2..n-1.
+     */
+    private class InnerConstantTrait extends Trait {
+        protected BigInteger diff;
+        private final int BORDER = 1;
+        private boolean followsRule = true;
+
+        public void initRow(int irow) { // at the start of a row
+        }
+        public void termRow(int irow) { // after the end of a row
+            if (irow >= 2) {
+                list.add(diff);
+            }
+        }
+        public void column(int irow, int icol) { // for a column / term
+            BigInteger newElem = getBig(linearIndex(irow, icol));
+            if (icol <= irow - BORDER) {
+                if (false) {
+                } else if (icol == BORDER) { // first relevant column: initialize diff
+                    diff =            newElem;
+                } else if (icol >  BORDER) { // following relevant columns: compare with diff
+                    if (! diff.equals(newElem)) {
+                        followsRule = false;
+                    }
+                }
+            }
+            iflat ++;
+        }
+        public String termTrait() { // at the end of the triangle
+            if (! followsRule) {
+                list.clear();
+            }
+            return super.termTrait();
+        }
+    } // InnerConstantTrait
+
+    /** Assume that Pascal's rule is followed for most of the rows, 
+     *  and return the number of elements of the initial rows that did not follow that rule.
+     */
+    private class PascalTrait extends Trait {
+        private int lastNotOk; // linear index of last element that did not follow Pascal's rule
+
+        public void initTrait() { // at the beginning of the triangle
+            lastNotOk = 0;
+        }
+        public void column(int irow, int icol) { // for a column / term
+            if (! getBig(iflat).equals(get(irow - 1, icol - 1).add(get(irow - 1, icol)))) {
+                lastNotOk = iflat;
+            }
+            iflat ++;
+        }
+        public String termTrait() { // at the end of the triangle
+            if (lastNotOk < MAX_INIT && lastNotOk < size() / 2) {
+                for (int i = 0; i <= lastNotOk; i ++) {
+                    list.add(getBig(i));
+                }
+            } else { 
+                // failed - empty list
+            }
+            return super.termTrait();
+        }
     } // PascalTrait
     
-    //--------------------------------
-    /** If the ConstantTrait has a sufficient number of elements, 
-     *  print it together with the LeftSideTrait and the RightSideTrait.
-     *  @param traitSize maximum number of elements in the trait
-     *  @param rowNo number of rows to be appended
+    /** Assume that Pascal's rule is followed in most of the rows, not including the border elements.
+     *  and return the number of elements of the initial rows that did not follow that rule.
      */
-    public void printConstantCard (int traitSize, int rowNo) {
-        try {
-            String constantList =  get1Trait(traitSize, rowNo, new ConstantTrait   ());
-            String[] 
-            parts = constantList .split("\t");
-            int constantSize    = Integer.parseInt(parts[2]);
-            String leftSideList =  get1Trait(traitSize, rowNo, new LeftSideTrait   ());
-            parts = leftSideList.split("\t");
-            int leftSideSize    = Integer.parseInt(parts[2]);
-            if (constantSize + 2 >= leftSideSize) {
-                System.out.println(leftSideList);
-                System.out.println(get1Trait(traitSize, rowNo, new RightSideTrait  ()));
-                System.out.println(constantList);
-            }
-        } catch (Exception exc) {
-        }
-    } // printTraitCard
+    private class InnerPascalTrait extends Trait {
+        private int lastNotOk; // linear index of last element that did not follow Pascal's rule
 
+        public void initTrait() { // at the beginning of the triangle
+            lastNotOk = 0;
+        }
+        public void column(int irow, int icol) { // for a column / term
+            if (icol > 0 && icol < irow) { // inner
+                if (! getBig(iflat).equals(get(irow - 1, icol - 1).add(get(irow - 1, icol)))) {
+                    lastNotOk = iflat;
+                }
+            }
+            iflat ++;
+        }
+        public String termTrait() { // at the end of the triangle
+            if (lastNotOk < MAX_INIT && lastNotOk < size() / 2) {
+                for (int i = 0; i <= lastNotOk; i ++) {
+                    list.add(getBig(i));
+                }
+            } else { 
+                // failed - empty list
+            }
+            return super.termTrait();
+        }
+    } // InnerPascalTrait
+    
     //--------------------------------
-    /** If the PascalTrait has a sufficient number of elements, 
-     *  print it together with the LeftSideTrait and the RightSideTrait.
+    /** Print a subset of the traits
      *  @param traitSize maximum number of elements in the trait
      *  @param rowNo number of rows to be appended
      */
-    public void printPascalCard (int traitSize, int rowNo) {
-        try {
-            String pascalList   =  get1Trait(traitSize, rowNo, new PascalTrait     ());
-            String[] 
-            parts = pascalList .split("\t");
-            int pascalSize      = Integer.parseInt(parts[2]);
-            String leftSideList =  get1Trait(traitSize, rowNo, new LeftSideTrait   ());
-            parts = leftSideList.split("\t");
-            int leftSideSize    = Integer.parseInt(parts[2]);
-            if (pascalSize + 2 >= leftSideSize) {
-                System.out.println(leftSideList);
-                System.out.println(get1Trait(traitSize, rowNo, new RightSideTrait  ()));
-                System.out.println(pascalList);
-            }
-        } catch (Exception exc) {
-        }
-    } // printPascalCard
+    public void printBorderCard (int traitSize, int rowNo) {
+        System.out.println(get1Trait(traitSize, rowNo, new LeftSideTrait   ()));
+        System.out.println(get1Trait(traitSize, rowNo, new RightSideTrait  ()));
+        System.out.println(get1Trait(traitSize, rowNo, new BorderTrait     ()));
+        System.out.println(get1Trait(traitSize, rowNo, new ConstantTrait   ()));
+        System.out.println(get1Trait(traitSize, rowNo, new PascalTrait     ()));
+        System.out.println(get1Trait(traitSize, rowNo, new InnerPascalTrait()));
+    } // printBorderCard
 
     /** Print a set of derived, characteristic sequences for a Triangle
      *  @param traitSize maximum number of elements in the trait
@@ -498,7 +565,6 @@ public class Triangle extends Sequence
         System.out.println(get1Trait(traitSize, rowNo, new NegHalfTrait    ()));
         System.out.println(get1Trait(traitSize, rowNo, new N0TSTrait       ()));
         System.out.println(get1Trait(traitSize, rowNo, new NATSTrait       ()));
-        System.out.println(get1Trait(traitSize, rowNo, new PascalTrait     ()));
     } // printTraitCard
 
      /** Gets a triangular array of lines with comma-separated terms.
@@ -527,9 +593,8 @@ public class Triangle extends Sequence
      *  @param args command line arguments.
      *  <pre>
      *  -d      debug mode: 0 = none (default), 1 = some, 2 = more
-     *  -const  print Constant trait card
      *  -eval   pretty-print the triangle
-     *  -pascal print Pascal trait card
+     *  -border print Border, LeftSide, RightSide, Constant and Pascal trait card
      *  -trait  print full trait card
      *  -ts     trait size (default 16)
      *  </pre>
@@ -537,7 +602,6 @@ public class Triangle extends Sequence
      */
     public static void main(String[] args) {
         String aNumber = "A000000";
-        int traitSize = 16; // default
         SequenceReader reader = new SequenceReader(64);
         Triangle tra = null;
         try {
@@ -555,15 +619,6 @@ public class Triangle extends Sequence
                     } else if (oper.equals    ("-d")) {
                         debug = Integer.parseInt(args[iarg ++]);
 
-                    } else if (oper.startsWith("-const")) {
-                        reader = SequenceReader.configure(iarg, args);
-                        termNo = reader.getMaxTermNo();
-                        while (reader.hasNext()) {
-                            tra = new Triangle(reader.next());
-                            tra.printConstantCard(traitSize, tra.getRowSize());
-                        } // while hasNext
-                        iarg = args.length;
-
                     } else if (oper.startsWith("-eval")) {
                         reader = SequenceReader.configure(iarg, args);
                         termNo = reader.getMaxTermNo();
@@ -574,12 +629,12 @@ public class Triangle extends Sequence
                         } // while hasNext
                         iarg = args.length;
 
-                    } else if (oper.startsWith("-pascal")) {
+                    } else if (oper.startsWith("-border")) {
                         reader = SequenceReader.configure(iarg, args);
                         termNo = reader.getMaxTermNo();
                         while (reader.hasNext()) {
                             tra = new Triangle(reader.next());
-                            tra.printPascalCard(traitSize, tra.getRowSize());
+                            tra.printBorderCard(reader.getMaxTermNo(), tra.getRowSize());
                         } // while hasNext
                         iarg = args.length;
 
@@ -588,12 +643,9 @@ public class Triangle extends Sequence
                         termNo = reader.getMaxTermNo();
                         while (reader.hasNext()) {
                             tra = new Triangle(reader.next());
-                            tra.printTraitCard(traitSize, tra.getRowSize());
+                            tra.printTraitCard(reader.getMaxTermNo(), tra.getRowSize());
                         } // while hasNext
                         iarg = args.length;
-
-                    } else if (oper.equals    ("-ts")) {
-                        traitSize = Integer.parseInt(args[iarg ++]);
 
                     } else {
                         System.out.println("invalid operation \"" + oper + "\"");

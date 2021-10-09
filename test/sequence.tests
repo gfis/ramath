@@ -139,8 +139,8 @@ CALL Triangle -d 0 -eval   -b ../OEIS-mat/common/bfile -f $(DATA) -m 36
 TEST TRA2 Triangle TraitCards
 CALL Triangle -d 0 -trait  -b ../OEIS-mat/common/bfile -f test/TRA1.data.tmp -m 36
 
-TEST TRA3 Triangle PascalCards
-CALL Triangle -d 0 -pascal -b ../OEIS-mat/common/bfile -f test/TRA1.data.tmp -m 136
+TEST TRA3 Triangle BorderCards
+CALL Triangle -d 0 -border -b ../OEIS-mat/common/bfile -f test/TRA1.data.tmp -m 136
 
 #-------------------------------
 # LinearRecurrence
