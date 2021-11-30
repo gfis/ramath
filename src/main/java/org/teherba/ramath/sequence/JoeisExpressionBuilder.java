@@ -1,5 +1,6 @@
 /*  JoeisExpressionBuilder: build jOEIS expressions (with Z, CR) from a postfix list
  *  @(#) $Id$
+ *  2021-11-30: translate(), like getInfix, but with $1, $2 placeholders
  *  2021-07-07: Georg Fischer: copied from JoeisPreparer.java
  */
 /*
@@ -33,7 +34,6 @@ import  org.apache.log4j.Logger;
  *  <li>various operands: numbers, variables</li>
  *  <li>operators and their precedence</li>
  *  <li>function calls</li>
- *  <li>a type of the infix expression built so far (int, Z, CR)</li>
  *  </ul>
  *  @author Dr. Georg Fischer
  */
@@ -48,7 +48,10 @@ public class JoeisExpressionBuilder implements Cloneable, Serializable {
     private Logger log;
 
     /** Mapping table for the build algorithm */
-    private HashMap<String, TargetRow> targetTable;
+    private HashMap<String, TargetRow> table;
+
+    /** Type of the translation table: 1=xpat, 2=ttab (with $1, $2, $3) */
+    private int tableType;
 
     /** Class for a row of the table.
      *  The rows are typically read from a file.
@@ -56,12 +59,10 @@ public class JoeisExpressionBuilder implements Cloneable, Serializable {
     private class TargetRow {
         String key;    // operand, operator/function/method
         String group;  // "numb", "name", "meth", "func"
-        int srcCard;   // how many source stack elements are involved: 0 for operands; 1 for abs, unary -; 2 for + * / etc.
+        int    card;   // how many source stack elements are involved: 0 for operands; 1 for abs, unary -; 2 for + * / etc.
         String target; // target expression portion
     /*
-        int tarCard;   // how many target stack elements are involved: 0 for operands, 1 for unary -, 2 for + * / etc.
-        int oldType;   // old type
-        int newType;   // new type
+        int tarType;   // new type
     */
         /** No-args constructor
          */
@@ -73,9 +74,8 @@ public class JoeisExpressionBuilder implements Cloneable, Serializable {
         public String toString() {
             return key
             + "|" + group
-            + "|" + srcCard
+            + "|" + card
             + "|" + target
-        //  + "|" + tarCard
             ;
         }
     } // class TargetRow
@@ -87,6 +87,12 @@ public class JoeisExpressionBuilder implements Cloneable, Serializable {
         BufferedReader lineReader; // Reader for the input file
         String srcEncoding = "UTF-8"; // Encoding of the input file
         String line = null; // current line from text file
+        if (false) {
+        } else if (fileName.endsWith(".xpat")) {
+            tableType = 1;
+        } else if (fileName.endsWith(".ttab")) {
+            tableType = 2;
+        }
         try {
             if (fileName == null || fileName.length() <= 0 || fileName.equals("-")) {
                 lineReader = new BufferedReader(new InputStreamReader(System.in, srcEncoding));
@@ -103,18 +109,16 @@ public class JoeisExpressionBuilder implements Cloneable, Serializable {
                     try {
                         row.key     = parms[iparm ++];
                         row.group   = parms[iparm ++];
-                        row.srcCard = Integer.parseInt(parms[iparm ++]);
+                        row.card    = Integer.parseInt(parms[iparm ++]);
                         row.target  = parms[iparm ++];
                     /*
-                        row.tarCard = Integer.parseInt(parms[iparm ++]);
-                        row.oldType = Integer.parseInt(parms[iparm ++]);
-                        row.newType = Integer.parseInt(parms[iparm ++]);
+                        row.tarType = Integer.parseInt(parms[iparm ++]);
                     */
                     } catch (Exception exc) {
                     }
-                    targetTable.put(row.key, row);
+                    table.put(row.key, row);
                     if (debug >= 2) {
-                        System.out.println("targetTable: " + row.key + " -> " + row);
+                        System.out.println("table: " + row.key + " -> " + row);
                     }
                 } // is not a comment
             } // while ! eof
@@ -132,7 +136,7 @@ public class JoeisExpressionBuilder implements Cloneable, Serializable {
      */
     public JoeisExpressionBuilder() {
         log = Logger.getLogger(JoeisExpressionBuilder.class.getName());
-        targetTable = new HashMap<>();
+        table = new HashMap<>();
     } // Constructor()
 
     /** Constructor with pattern file
@@ -163,7 +167,7 @@ public class JoeisExpressionBuilder implements Cloneable, Serializable {
         String[] elems = new String[16]; // for function elements: elems[0] elems[1] +
         while (ipost < toIndex) {
             String post = postfix[ipost ++];
-            TargetRow row = targetTable.get(post);
+            TargetRow row = table.get(post);
             if (debug > 0) {
                 System.out.println("# post=" + post);
             }
@@ -173,7 +177,7 @@ public class JoeisExpressionBuilder implements Cloneable, Serializable {
                     if (post.length() >= 10) {
                         post = post + "L"; // int -> long
                     }
-                    row = targetTable.get(NUM_ESCAPE); // must exist in the table
+                    row = table.get(NUM_ESCAPE); // must exist in the table
                     stack.push(row.target.replaceAll(NUM_ESCAPE, post));
                 } else if (post.matches("\\A\\w+\\(\\Z")) {   // any function start - ignore
                 } else if (post.matches("\\A(A\\d+_?\\d*)\\)\\Z")) { // A-number - nyi
@@ -195,21 +199,21 @@ public class JoeisExpressionBuilder implements Cloneable, Serializable {
                    System.out.println("# row=" + row.toString());
                }
                if (false) {
-                } else if (row.group.equals("name")) {
+                } else if (row.group.startsWith("nam")) {
                     stack.push(row.target);
-                } else if (row.group.equals("numb")) {
+                } else if (row.group.startsWith("num")) {
                     stack.push(row.target);
-                } else if (row.group.equals("func")  // pow(a,b)
-                        || row.group.equals("meth")  // a.add(b)
+                } else if (row.group.startsWith("fun")  // pow(a,b)
+                        || row.group.startsWith("met")  // a.add(b)
                         ) {
-                    int ielem = row.srcCard - 1; // fill from backwards
+                    int ielem = row.card - 1; // fill from backwards
                     while (ielem >= 0 && ! stack.empty()) { // pop operands into elems
                         elems[ielem --] = stack.pop();
                     } // while popping operands
                     if (debug > 0) {
-                        System.out.print("# elems, #" + row.srcCard + " ");
+                        System.out.print("# elems, #" + row.card + " ");
                         String sep = "=";
-                        for (ielem = 0; ielem < row.srcCard; ielem ++) {
+                        for (ielem = 0; ielem < row.card; ielem ++) {
                             System.out.print(sep + elems[ielem]);
                             sep = ",";
                         } // for ielem
@@ -218,17 +222,17 @@ public class JoeisExpressionBuilder implements Cloneable, Serializable {
                     StringBuilder target = new StringBuilder(64);
                     int start = 1;
                     if (false) {
-                    } else if (row.group.equals("meth")) { // e.g. unary minus -> el0.negate()
+                    } else if (row.group.startsWith("met")) { // e.g. unary minus -> el0.negate()
                         target.append(elems[0]);
                         target.append(row.target);
                         start = 2;
-                    } else if (row.group.equals("func")) { // e.g. unary minus -> el0.negate()
+                    } else if (row.group.startsWith("fun")) { // e.g. unary minus -> el0.negate()
                         target.append(row.target);
                         target.append(elems[0]);
                         start = 1;
                     }
                     ielem = 1;
-                    while (ielem < row.srcCard) {
+                    while (ielem < row.card) {
                         if (ielem >= start) {
                             target.append(",");
                         }
@@ -256,6 +260,84 @@ public class JoeisExpressionBuilder implements Cloneable, Serializable {
         return result.toString();
     } // getInfix
 
+    /** Convert a sublist of postfix elements and generate the target expression.
+     *  Similar to {@link #getInfix}, but with $1, $2 placeholders
+     *  @param postfix array of Strings for operands and operators
+     *  @param fromIndex index of first element to be processed
+     *  @param toIndex index of last element + 1
+     *  @return generated target expression
+     */
+    public String translate(String[] postfix, int fromIndex, int toIndex) {
+        StringBuilder result = new StringBuilder(128);
+        Stack<String> stack = new Stack<>();
+        int ipost = fromIndex;
+        String[] elems = new String[16]; // for function elements: elems[0] elems[1] +
+        while (ipost < toIndex) {
+            String post = postfix[ipost ++];
+            TargetRow row = table.get(post);
+            if (debug > 0) {
+                System.out.println("# post=" + post);
+            }
+            if (row == null) { // no mapping found
+               if (false) { // Caution, order of else-if branches matters here!
+                } else if (post.matches("\\A\\d+\\Z")) {       // unknown number
+                    if (post.length() >= 10) {
+                        post = post + "L"; // int -> long
+                    }
+                    row = table.get(NUM_ESCAPE); // must exist in the table
+                    stack.push(row.target.replaceAll("op1", post));
+                } else if (post.matches("\\A\\w+\\(\\Z")) {   // any function start - ignore
+                } else if (post.matches("\\A(A\\d+_?\\d*)\\)\\Z")) { // A-number - nyi
+                    // ...
+                } else if (post.matches("\\A\\w+\\)\\Z")) {   // unknown function end
+                    post = post.replaceAll("\\)","");
+                    elems[0] = stack.empty() ? "" : stack.pop();
+                    stack.push("<?" + post + "(" + elems[0] + ")?>");
+                } else if (post.matches("\\A[A-Za-z]+\\Z")) { // unknown name
+                    stack.push("<?name=" + post + "?>");
+                } else if (post.equals(",")) {                // "," = parameter separator - ignore
+                } else {
+                    stack.push("<?post=" + post + "?>");
+                }
+            } else { // mapping was found
+               if (debug > 0) {
+                   System.out.println("# row=" + row.toString());
+               }
+               if (false) {
+                } else if (row.group.startsWith("nam")) { // a specific name like "x" - RING.x()
+                    stack.push(row.target);
+                } else if (row.group.startsWith("num")) { // a specific number like "1" -> Q.ONE
+                    stack.push(row.target);
+                } else if (row.group.startsWith("fun")  // pow(a,b)
+                        || row.group.startsWith("met")  // a.add(b)
+                        ) {
+                    String part = row.target;
+                    int ielem = row.card - 1; // fill from backwards
+                    while (ielem >= 0 && ! stack.empty()) { // pop operands into elems
+                        String repl = stack.pop();
+                        part = part.replaceAll("op" + String.valueOf(ielem + 1), repl);
+                        ielem --;
+                    } // while popping operands
+                    stack.push(part);
+                    // func || meth
+                } else {
+                    System.err.println("undefined group=\"" + row.group + "\"");
+                }
+            } // mapping found
+            if (debug > 0) {
+                if (stack.empty()) {
+                    System.out.println("# stack empty");
+                } else {
+                    System.out.println("# stack.top=" + stack.peek());
+                }
+            }
+        } // while ipost
+        if (stack.size() == 1) {
+            result.append(stack.pop());
+        }
+        return result.toString();
+    } // translate
+
     //==================
     // Test method
     //==================
@@ -267,6 +349,7 @@ public class JoeisExpressionBuilder implements Cloneable, Serializable {
         int iarg = 0;
         JoeisExpressionBuilder builder = new JoeisExpressionBuilder();
         String fileName = "-"; // assume STDIN
+        String[] postfix = null;
         while (iarg < args.length) { // consume all arguments
             String opt = args[iarg ++];
             if (false) {
@@ -279,9 +362,15 @@ public class JoeisExpressionBuilder implements Cloneable, Serializable {
             } else if (opt.equals    ("-p")     ) {
                 fileName = args[iarg ++];
                 builder.readTable(fileName);
+                postfix = args[iarg ++].split("\\;");
+                System.out.println("-> " + builder.getInfix (postfix, 0, postfix.length));
+            } else if (opt.equals    ("-t")     ) {
+                fileName = args[iarg ++];
+                builder.readTable(fileName);
+                postfix = args[iarg ++].split("\\;");
+                System.out.println("-> " + builder.translate(postfix, 0, postfix.length));
             } else {
-                String[] postfix = opt.split("\\;");
-                System.out.println("-> " + builder.getInfix(postfix, 0, postfix.length));
+                System.err.println("invalid option \"" + opt + "\"");
             }
         } // while args
     } // main

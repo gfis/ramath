@@ -125,6 +125,27 @@ CALL JoeisExpressionBuilder -p $(DATA) "zeta(;2;zeta);zeta(;2;zeta);1;-;/"
 TEST JB02 JoeisExpressionBuilder agm(1,2)
 CALL JoeisExpressionBuilder -p test/JB01.data.tmp "agm(;1;,;2;agm)"
 
+TEST JBT1 JoeisExpressionBuilder RING.ttab
+DATA
+ 0	numb	0	RING.zero()	0
+ 1	numb	0	RING.one()	0
+ 01234567	numb	0	RING.monomial(new Q(op1), 0)	0
+ x	name	0	RING.x()	0
+ 
+ +	meth	2	RING.add(op1, op2)	0
+ -	meth	2	RING.subtract(op1, op2)	0
+ -.	meth	1	RING.negate(op1)	0
+ *	meth	2	RING.multiply(op1, op2, mN)	0
+ /	meth	2	RING.series(op1, op2, mN)	0
+ ^	meth	2	RING.exp(RING.multiply(RING.log(op1, mN), op2), mN), mN)	1
+ 
+ exp)	func	1	RING.exp(op1, mN)	0
+ log)	func	1	RING.log(op1, mN)	0
+ sqrt)	func	1	RING.sqrt(op1, mN)	0
+CALL JoeisExpressionBuilder -d 1 -t $(DATA) "exp(;x;4;+;exp);sqrt(;2;sqrt);/"
+
+TEST JBT2 JoeisExpressionBuilder A052882	egf	0	x/(2-exp(x))
+CALL JoeisExpressionBuilder -t test/JBT1.data.tmp "x;2;exp(;x;exp);-;/"
 #-------------------------------
 # Triangle
 TEST TRA1 Triangle toTriangle

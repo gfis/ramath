@@ -284,6 +284,12 @@ public class JoeisPreparer implements Cloneable, Serializable {
             parms[iparm + 1] = gftype;
             reproduce();
 
+        } else if (callCode.startsWith("trans")
+                || argsCode.startsWith("trans")) { // translate into target expression with a *.ttab
+            String[] postfix = parms[iparm + 0].split("\\;");
+            parms[iparm + 0] = builder.translate(postfix, 0, postfix.length);
+            reproduce();
+
         } else if (callCode.startsWith("infix")
                 || argsCode.startsWith("infix")) {
             String[] postfix = parms[iparm + 0].split("\\;");
@@ -308,33 +314,7 @@ public class JoeisPreparer implements Cloneable, Serializable {
                 aseqno = "#1parse " + aseqno;
                 reproduce();
             }
-/*
-        } else if (callCode.startsWith("post")
-                || argsCode.startsWith("post")) { // general parsing into postfix notation
-            String exprList = parms[iparm + 0]; // $(PARM1) = list of expressions, starting with a String of identical separator character
-            int ind = 0;
-            char ch = exprList.charAt(ind ++);
-            while (ind < exprList.length() && exprList.charAt(ind) == ch) {
-                ind ++;
-            } // while
-            String sep = exprList.substring(0, ind); // only if there are at least 2 identical characters != '('
-            String [] exprs;
-            if (ind > 1 && ch != '(') {
-                exprs = exprList.substring(ind).split(Pattern.quote(sep));
-            } else {
-                exprs = new String[] { exprList }; // "~~" was omitted here
-                sep = "";
-            }
-            StringBuffer result = new StringBuffer(1024);
-            for (int iexpr = 0; iexpr < exprs.length; iexpr ++) {
-                ShuntingYard parser = new ShuntingYard("\\w+");
-                parser.setDebug(debug);
-                result.append(sep);
-                result.append(parser.getPostfixString(";", exprs[iexpr]));
-            } // for iexpr
-            parms[iparm + 0] = result.toString();
-            reproduce();
-*/
+
         } else if (callCode.startsWith("post")
                 || argsCode.startsWith("post")) { // general parsing into postfix notation
             String exprList = parms[iparm + 0]; // $(PARM1) = list of expressions, starting with a String of identical separator character
@@ -458,7 +438,7 @@ public class JoeisPreparer implements Cloneable, Serializable {
                     jprep.numTerms = Integer.parseInt(args[iarg ++]);
                 } catch (Exception exc) { // take default
                 }
-            } else if (opt.equals    ("-p")     ) {
+            } else if (opt.equals    ("-p")     ) { // table type *.xpat or *.ttab
                 patternName = args[iarg ++];
                 jprep.builder = new JoeisExpressionBuilder(patternName);
             } else {
