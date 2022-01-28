@@ -29,7 +29,8 @@ import  java.io.Serializable;
 import  java.util.ArrayList;
 import  java.util.regex.Matcher;
 import  java.util.regex.Pattern;
-import  org.apache.log4j.Logger;
+import  org.apache.logging.log4j.Logger;
+import  org.apache.logging.log4j.LogManager;
 
 /** Class Options stores the command line arguments,
  *  and implements utility method to access the arguments.
@@ -70,7 +71,7 @@ public class Options {
     public Options(String[] args, int iarg) {
         this.args = args;
         this.iarg = iarg;
-        log = Logger.getLogger(Options.class.getName());
+        log = LogManager.getLogger(Options.class.getName());
     } // Constructor(args, iarg)
 
     /*-------------- simple access methods -----------------------------*/

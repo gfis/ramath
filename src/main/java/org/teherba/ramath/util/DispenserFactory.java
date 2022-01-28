@@ -23,7 +23,8 @@ package org.teherba.ramath.util;
 import  org.teherba.ramath.util.Dispenser;
 import  java.util.Iterator;
 import  java.util.LinkedHashMap;
-import  org.apache.log4j.Logger;
+import  org.apache.logging.log4j.Logger;
+import  org.apache.logging.log4j.LogManager;
 
 /** Selects a specific dispenser.
  *  Initially, a list of all available dispensers is built, and classes
@@ -56,7 +57,7 @@ public class DispenserFactory {
      *  The order of the languages here defines the order in the user interfaces.
      */
     public DispenserFactory() {
-        log = Logger.getLogger(DispenserFactory.class.getName());
+        log = LogManager.getLogger(DispenserFactory.class.getName());
         dispensers = new LinkedHashMap<String, Dispenser>();
         addDispenser("exp"      , "Expander"            );
         addDispenser("intexp"   , "IntegerExpander"     );

@@ -1,5 +1,6 @@
 /*  JoeisPreparer: prepare *.gen files for joeis-lite
  *  @(#) $Id$
+ *  2021-11-30: -cc trans, like infix, but with op1, op2 placeholders
  *  2021-08-22: -cc post: "~~" is optional
  *  2021-07-29: -cc callcode
  *  2021-07-07: JoeisExpressionBuilder
@@ -41,7 +42,8 @@ import  java.nio.channels.ReadableByteChannel;
 import  java.math.BigInteger;
 import  java.util.ArrayList;
 import  java.util.regex.Pattern;
-import  org.apache.log4j.Logger;
+import  org.apache.logging.log4j.Logger;
+import  org.apache.logging.log4j.LogManager;
 
 /** This class implements several filters for *.gen files to be
  *  prepared for project joeis-lite.
@@ -89,7 +91,7 @@ public class JoeisPreparer implements Cloneable, Serializable {
     /** No-args constructor for an empty JoeisPreparer.
      */
     public JoeisPreparer() {
-        log = Logger.getLogger(JoeisPreparer.class.getName());
+        log = LogManager.getLogger(JoeisPreparer.class.getName());
         builder = null;
         argsCode = "";
     } // Constructor()
@@ -134,9 +136,10 @@ public class JoeisPreparer implements Cloneable, Serializable {
      *  <li><code>postf   </code></li>
      *  <li><code>rioarr  </code></li>
      *  <li><code>sage    </code></li>
+     *  <li><code>trans   </code></li>
      *  </ul>
      *  The following parameters are already consumed:
-     *  aseqno=parms[0], callCode=parms[1], offset1=parms[2]; iparm=3..
+     *  aseqno=parms[0], callCode=parms[1], offset1=parms[2]; start with iparm=3..
      *
      */
     private void processRecord() {
@@ -285,13 +288,22 @@ public class JoeisPreparer implements Cloneable, Serializable {
             reproduce();
 
         } else if (callCode.startsWith("trans")
-                || argsCode.startsWith("trans")) { // translate into target expression with a *.ttab
+                || argsCode.startsWith("trans"))    { // translate from postfix to target expression with a *.ttab table
             String[] postfix = parms[iparm + 0].split("\\;");
             parms[iparm + 0] = builder.translate(postfix, 0, postfix.length);
             reproduce();
 
+        } else if (callCode.startsWith("postrans")
+                || argsCode.startsWith("postrans")) { // translate infix to postfix to target expression with a *.ttab table
+            ShuntingYard parser = new ShuntingYard("\\w+");
+            parser.setDebug(debug);
+            String result = parser.getPostfixString(";", parms[iparm + 0]);
+            String[] postfix = result.split("\\;");
+            parms[iparm + 0] = builder.translate(postfix, 0, postfix.length);
+            reproduce();
+
         } else if (callCode.startsWith("infix")
-                || argsCode.startsWith("infix")) {
+                || argsCode.startsWith("infix"))    { // translate from infix to postfix to target expression with a *.xpat table
             String[] postfix = parms[iparm + 0].split("\\;");
             parms[iparm + 0] = builder.getInfix(postfix, 0, postfix.length);
             reproduce();
@@ -315,9 +327,17 @@ public class JoeisPreparer implements Cloneable, Serializable {
                 reproduce();
             }
 
+        } else if (callCode.startsWith("post1")
+                || argsCode.startsWith("post1")) { // translate a single infix expression to postfix
+            ShuntingYard parser = new ShuntingYard("\\w+");
+            parser.setDebug(debug);
+            String result = parser.getPostfixString(";", parms[iparm + 0]);
+            parms[iparm + 0] = result;
+            reproduce();
+
         } else if (callCode.startsWith("post")
                 || argsCode.startsWith("post")) { // general parsing into postfix notation
-            String exprList = parms[iparm + 0]; // $(PARM1) = list of expressions, starting with a String of identical separator character
+            String exprList = parms[iparm + 0]; // $(PARM1) = list of expressions, starting with a String of identical separator characters
             int ind = 0;
             char ch = exprList.charAt(ind ++);
             while (ind < exprList.length() && exprList.charAt(ind) == ch) {
@@ -441,6 +461,7 @@ public class JoeisPreparer implements Cloneable, Serializable {
             } else if (opt.equals    ("-p")     ) { // table type *.xpat or *.ttab
                 patternName = args[iarg ++];
                 jprep.builder = new JoeisExpressionBuilder(patternName);
+                jprep.builder.setDebug(debug);
             } else {
                 System.err.println("??? invalid option: \"" + opt + "\"");
             }

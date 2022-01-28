@@ -37,7 +37,8 @@ import  java.math.BigInteger;
 import  java.util.ArrayList;
 import  java.util.Iterator;
 import  java.util.Stack;
-import  org.apache.log4j.Logger;
+import  org.apache.logging.log4j.Logger;
+import  org.apache.logging.log4j.LogManager;
 
 /** A PolyFraction is a pair of {@link Polynomial}s which represent
  *  the numerator and the denominator of the fraction.
@@ -90,7 +91,7 @@ public class PolyFraction
     public PolyFraction(Polynomial num, Polynomial den) {
         polynomials = new Polynomial[] { num, den };
         shorten();
-        log = Logger.getLogger(PolyFraction.class.getName());
+        log = LogManager.getLogger(PolyFraction.class.getName());
     } // Constructor(Polynomial, Polynomial)
 
     /** Construct from a pair of Strings.

@@ -41,7 +41,8 @@ import  javax.servlet.ServletException;
 import  javax.servlet.http.HttpServlet;
 import  javax.servlet.http.HttpServletRequest;
 import  javax.servlet.http.HttpServletResponse;
-import  org.apache.log4j.Logger;
+import  org.apache.logging.log4j.Logger;
+import  org.apache.logging.log4j.LogManager;
 
 /** Rational and Symbolic Mathematics
  *  <ul>
@@ -71,7 +72,7 @@ public class RaMathServlet extends HttpServlet {
      */
     public void init(ServletConfig config) throws ServletException {
         super.init(config); // ???
-        log = Logger.getLogger(RaMathServlet.class.getName());
+        log = LogManager.getLogger(RaMathServlet.class.getName());
         basePage = new BasePage(APP_NAME);
         Messages.addMessageTexts(basePage);
     } // init

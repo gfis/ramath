@@ -45,7 +45,8 @@ import  java.util.Iterator;
 import  java.util.Stack; // was java.util.Vector;  essentially a java.util.Queue (Java 1.6)
 import  java.util.regex.Matcher;
 import  java.util.regex.Pattern;
-import  org.apache.log4j.Logger;
+import  org.apache.logging.log4j.Logger;
+import  org.apache.logging.log4j.LogManager;
 
 /** Superclass for solvers for Diophantine {@link RelationSet}s,
  *  with bean properties and commandline arguments processing.
@@ -638,7 +639,7 @@ public class BaseSolver extends Stack<RelationSet> {
      *  @param args command line arguments, see {@link BaseSolver#getArguments}.
      */
     public static void main(String[] args) {
-        log = Logger.getLogger(TreeSolver.class.getName());
+        log = LogManager.getLogger(TreeSolver.class.getName());
         BaseSolver solver = new BaseSolver();
         String expr = solver.getArguments(0, args);
         try {

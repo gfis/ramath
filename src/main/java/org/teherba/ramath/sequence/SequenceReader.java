@@ -29,7 +29,8 @@ import  java.math.BigInteger;
 import  java.nio.channels.Channels;
 import  java.nio.channels.ReadableByteChannel;
 import  java.util.ArrayList;
-import  org.apache.log4j.Logger;
+import  org.apache.logging.log4j.Logger;
+import  org.apache.logging.log4j.LogManager;
 
 /** Reads the terms of a {@link Sequence} from the parameters or
  *  from a file containing either
@@ -173,7 +174,7 @@ public class SequenceReader {
     /** No-args Constructor
      */
     public SequenceReader() {
-        log = Logger.getLogger(SequenceReader.class.getName());
+        log = LogManager.getLogger(SequenceReader.class.getName());
         oldLine        = null;
         srcEncoding    = "UTF-8";
         setANumber      ("A000000");

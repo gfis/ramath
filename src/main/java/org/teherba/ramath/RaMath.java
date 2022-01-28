@@ -25,7 +25,8 @@ import  org.teherba.ramath.BigRational;
 import  org.teherba.ramath.util.ExpressionReader;
 import  java.io.Serializable;
 import  java.util.regex.Pattern;
-import  org.apache.log4j.Logger;
+import  org.apache.logging.log4j.Logger;
+import  org.apache.logging.log4j.LogManager;
 
 /** Mathematics with Rational Numbers - commandline interface
  *  @author Dr. Georg Fischer
@@ -39,7 +40,7 @@ public class RaMath implements Serializable {
     /** No-args Constructor
      */
     public RaMath() {
-        log = Logger.getLogger(RaMath.class.getName());
+        log = LogManager.getLogger(RaMath.class.getName());
     } // Constructor
 
     /** Initializes the class for a 2nd call of <em>process</em>
@@ -172,7 +173,7 @@ public class RaMath implements Serializable {
      *  @param args command line arguments: options, numbers or filenames
      */
     public static void main(String[] args) {
-        Logger log = Logger.getLogger(RaMath.class.getName());
+        Logger log = LogManager.getLogger(RaMath.class.getName());
         try {
             RaMath ram = new RaMath();
             ram.initialize();

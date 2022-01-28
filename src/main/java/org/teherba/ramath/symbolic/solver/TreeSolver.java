@@ -35,7 +35,8 @@ import  org.teherba.ramath.util.ModoMeter;
 import  java.io.PrintStream;
 import  java.math.BigInteger;
 import  java.util.Iterator;
-import  org.apache.log4j.Logger;
+import  org.apache.logging.log4j.Logger;
+import  org.apache.logging.log4j.LogManager;
 
 /** Tries to solve a set of Diophantine equations
  *  ("single", "double" or generally a {@link RelationSet})
@@ -111,7 +112,7 @@ public class TreeSolver extends BaseSolver {
      *  @param args command line arguments, see {@link BaseSolver#getArguments}.
      */
     public static void main(String[] args) {
-        log = Logger.getLogger(TreeSolver.class.getName());
+        log = LogManager.getLogger(TreeSolver.class.getName());
         try {
             BaseSolver solver = new TreeSolver();
             String expr = solver.getArguments(0, args);

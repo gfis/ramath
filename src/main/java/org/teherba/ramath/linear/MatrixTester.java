@@ -34,7 +34,8 @@ import  java.io.InputStreamReader;
 import  java.io.Serializable;
 import  java.util.ArrayList;
 import  java.util.HashMap;
-import  org.apache.log4j.Logger;
+import  org.apache.logging.log4j.Logger;
+import  org.apache.logging.log4j.LogManager;
 
 /** Class MatrixTester implements a series of test methods
  *  for {@link Matrix} which can be called from the command line.
@@ -46,7 +47,7 @@ public class MatrixTester implements Serializable {
     public final static String CVSID = "@(#) $Id: MatrixTester.java 744 2011-07-26 06:29:20Z gfis $";
 
     /** Local logger for exceptions */
-    private static Logger log = Logger.getLogger(MatrixTester.class.getName());
+    private static Logger log = LogManager.getLogger(MatrixTester.class.getName());
 
     /** Debugging switch: 0 = no, 1 = moderate, 2 = more, 3 = extreme verbosity */
     public static int debug = 0;

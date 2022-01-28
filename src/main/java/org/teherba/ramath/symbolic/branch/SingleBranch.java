@@ -25,7 +25,8 @@ import  org.teherba.ramath.symbolic.solver.BaseSolver;
 import  org.teherba.ramath.util.Dispenser;
 import  org.teherba.ramath.util.ModoMeter;
 import  java.math.BigInteger;
-import  org.apache.log4j.Logger;
+import  org.apache.logging.log4j.Logger;
+import  org.apache.logging.log4j.LogManager;
 
 /** This class adds a single child node if a variable can be 
  *  expanded in a unique way.

@@ -33,7 +33,8 @@ import  java.util.ArrayList;
 import  java.util.TreeMap;
 import  java.util.Iterator;
 import  java.util.TreeSet;
-import  org.apache.log4j.Logger;
+import  org.apache.logging.log4j.Logger;
+import  org.apache.logging.log4j.LogManager;
 
 /** Finds candidate rows for matrices which
  *  maintain the <em>equal sum of like powers</em> property of tuples.
@@ -99,7 +100,7 @@ public class CandidateSelector {
      *  @param right number of elements in the right part of the power sum
      */
     public CandidateSelector(int width, int base, int exponent, int left, int right) {
-        log = Logger.getLogger(CandidateSelector.class.getName());
+        log = LogManager.getLogger(CandidateSelector.class.getName());
         this.width    = width;
         this.base     = base;
         this.exponent = exponent;

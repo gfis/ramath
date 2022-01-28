@@ -36,7 +36,8 @@ import  java.io.FileReader;
 import  java.io.InputStreamReader;
 import  java.io.Serializable;
 import  java.util.ArrayList;
-import  org.apache.log4j.Logger;
+import  org.apache.logging.log4j.Logger;
+import  org.apache.logging.log4j.LogManager;
 
 /** Class PolyMatrix implements some simple linear algebra operations
  *  on square matrices of {@link Polynomial}s.
@@ -630,7 +631,7 @@ public class PolyMatrix implements Cloneable, Serializable {
      *  @param args command line arguments
      */
     public static void main(String[] args) {
-        Logger log = Logger.getLogger(PolyMatrix.class.getName());
+        Logger log = LogManager.getLogger(PolyMatrix.class.getName());
         int iarg = 0;
         int alen = 0; // size of amat
         PolyMatrix amat  = null; // matrix to be tested

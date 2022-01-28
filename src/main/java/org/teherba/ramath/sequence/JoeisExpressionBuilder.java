@@ -1,6 +1,6 @@
 /*  JoeisExpressionBuilder: build jOEIS expressions (with Z, CR) from a postfix list
  *  @(#) $Id$
- *  2021-11-30: translate(), like getInfix, but with $1, $2 placeholders
+ *  2021-11-30: translate(), like getInfix, but with op1, op2 placeholders
  *  2021-07-07: Georg Fischer: copied from JoeisPreparer.java
  */
 /*
@@ -26,7 +26,8 @@ import  java.nio.channels.Channels;
 import  java.nio.channels.ReadableByteChannel;
 import  java.util.HashMap;
 import  java.util.Stack;
-import  org.apache.log4j.Logger;
+import  org.apache.logging.log4j.Logger;
+import  org.apache.logging.log4j.LogManager;
 
 /** This class implements a general converter from postfix to infix notation.
  *  The algorithm is driven by a table that handles:
@@ -44,6 +45,13 @@ public class JoeisExpressionBuilder implements Cloneable, Serializable {
     /** Debugging switch */
     public static int debug = 0;
 
+    /** Set the debugging mode *
+     *  @param debug mode: 0=none, 1=some, 2=more
+     */
+    public void setDebug(int debug) {
+        this.debug = debug;
+    }
+    
     /** log4j logger (category) */
     private Logger log;
 
@@ -135,7 +143,7 @@ public class JoeisExpressionBuilder implements Cloneable, Serializable {
     /** No-args constructor for an empty JoeisExpressionBuilder.
      */
     public JoeisExpressionBuilder() {
-        log = Logger.getLogger(JoeisExpressionBuilder.class.getName());
+        log = LogManager.getLogger(JoeisExpressionBuilder.class.getName());
         table = new HashMap<>();
     } // Constructor()
 
@@ -261,7 +269,7 @@ public class JoeisExpressionBuilder implements Cloneable, Serializable {
     } // getInfix
 
     /** Convert a sublist of postfix elements and generate the target expression.
-     *  Similar to {@link #getInfix}, but with $1, $2 placeholders
+     *  Similar to {@link #getInfix}, but with op1, op2 placeholders
      *  @param postfix array of Strings for operands and operators
      *  @param fromIndex index of first element to be processed
      *  @param toIndex index of last element + 1
@@ -280,6 +288,8 @@ public class JoeisExpressionBuilder implements Cloneable, Serializable {
             }
             if (row == null) { // no mapping found
                if (false) { // Caution, order of else-if branches matters here!
+                } else if (post.startsWith(".")) {             // from improvements - remove the dot and pass it unchecked/unchanged
+                    stack.push(post.substring(1));
                 } else if (post.matches("\\A\\d+\\Z")) {       // unknown number
                     if (post.length() >= 10) {
                         post = post + "L"; // int -> long
@@ -328,14 +338,17 @@ public class JoeisExpressionBuilder implements Cloneable, Serializable {
                 if (stack.empty()) {
                     System.out.println("# stack empty");
                 } else {
-                    System.out.println("# stack.top=" + stack.peek());
+                    System.out.println("# stack[" + stack.size() + "]=top=" + stack.peek());
                 }
             }
         } // while ipost
+    /*
         if (stack.size() == 1) {
             result.append(stack.pop());
         }
         return result.toString();
+    */
+        return stack.pop();
     } // translate
 
     //==================

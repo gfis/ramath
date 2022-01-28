@@ -23,7 +23,8 @@ import  java.io.BufferedReader;
 import  java.io.FileReader;
 import  java.io.InputStreamReader;
 import  java.util.Arrays;
-import  org.apache.log4j.Logger;
+import  org.apache.logging.log4j.Logger;
+import  org.apache.logging.log4j.LogManager;
 
 /** Take the coefficients of a power sum generating formula and generate tuples
  *  by inserting increasing variable values obtained from an {@link IntegerExpander}.
@@ -39,7 +40,7 @@ public class PowerSumGenerator {
     /** No-args Constructor
      */
     public PowerSumGenerator() {
-        log = Logger.getLogger(PowerSumGenerator.class.getName());
+        log = LogManager.getLogger(PowerSumGenerator.class.getName());
     } // no-args Constructor
 
     //===========================

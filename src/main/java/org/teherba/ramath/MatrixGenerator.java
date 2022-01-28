@@ -24,7 +24,8 @@ import  java.io.BufferedReader;
 import  java.io.FileReader;
 import  java.io.InputStreamReader;
 import  java.util.Arrays;
-import  org.apache.log4j.Logger;
+import  org.apache.logging.log4j.Logger;
+import  org.apache.logging.log4j.LogManager;
 
 /** Take the coefficients of a power sum generating formula and generate tuples
  *  by inserting increasing variable values obtained from an {@link IntegerExpander}.
@@ -40,7 +41,7 @@ public class MatrixGenerator {
     /** No-args Constructor
      */
     public MatrixGenerator() {
-        log = Logger.getLogger(MatrixGenerator.class.getName());
+        log = LogManager.getLogger(MatrixGenerator.class.getName());
     } // no-args Constructor
 
     //===========================

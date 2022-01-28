@@ -80,7 +80,7 @@ TEST JP04 postfix
 DATA
  A109345	post	0	5^((n-1)*n/2)
 CALL JoeisPreparer -f $(DATA)
-A109345 post    0      ;5;n;1;-;n;*;2;/;^
+# A109345 post    0      ;5;n;1;-;n;*;2;/;^
 
 TEST JP05 create xpat table
 DATA
@@ -98,7 +98,6 @@ TEST JP06 infix
 DATA
  A109345	infix	0	~~;5;n;1;-;n;*;2;/;^
 CALL JoeisPreparer -p test/JP05.data.tmp -f $(DATA)
-A109345 post    0      5^((n-1)*n/2)
 #-------------------------------
 # JoeisExpressionBuilder
 
@@ -142,10 +141,29 @@ DATA
  exp)	func	1	RING.exp(op1, mN)	0
  log)	func	1	RING.log(op1, mN)	0
  sqrt)	func	1	RING.sqrt(op1, mN)	0
+ sinh)	func	1	RING.sinh(op1, mN)	0
 CALL JoeisExpressionBuilder -d 1 -t $(DATA) "exp(;x;4;+;exp);sqrt(;2;sqrt);/"
 
 TEST JBT2 JoeisExpressionBuilder A052882	egf	0	x/(2-exp(x))
 CALL JoeisExpressionBuilder -t test/JBT1.data.tmp "x;2;exp(;x;exp);-;/"
+
+TEST JBT3 JoeisPreparer -cc postrans
+DATA
+ A052882	egf	0	x/(2-exp(x))
+ A053488	egf	0	exp(exp(sinh(x))-1)-1
+CALL JoeisPreparer -d 1 -p test/JBT1.data.tmp -f $(DATA) -cc postrans
+
+TEST JBT4 JoeisPreparer -cc post1
+DATA
+ A052882	egf	0	x/(2-exp(x))
+ A053488	egf	0	exp(exp(sinh(x))-1)-1
+CALL JoeisPreparer -d 0 -p test/JBT1.data.tmp -f $(DATA) -cc post1
+
+TEST JBT5 JoeisPreparer -cc trans
+DATA
+ A052882	egf	0	;x;2;exp(;x;exp);-;/	0
+ A053488	egf	0	;exp(;exp(;sinh(;x;sinh);exp);1;-;exp);1;-	0
+CALL JoeisPreparer -d 0 -p test/JBT1.data.tmp -f $(DATA) -cc trans
 #-------------------------------
 # Triangle
 TEST TRA1 Triangle toTriangle

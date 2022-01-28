@@ -25,7 +25,8 @@ import  org.teherba.ramath.symbolic.RefiningMap;
 import  org.teherba.ramath.symbolic.VariableMap;
 import  org.teherba.ramath.symbolic.reason.ReasonFactory;
 import  org.teherba.ramath.symbolic.solver.BaseSolver;
-import  org.apache.log4j.Logger;
+import  org.apache.logging.log4j.Logger;
+import  org.apache.logging.log4j.LogManager;
 
 /** Checks some reason why a node (a {@link RelationSet} <em>rset2</em>) in the tree expansion
  *  of a {@link BaseSolver} needs not to be investigated any further.
@@ -200,7 +201,7 @@ public class BaseReason {
      *  </pre>
      */
     public static void main(String[] args) {
-        log = Logger.getLogger(BaseReason.class.getName());
+        log = LogManager.getLogger(BaseReason.class.getName());
         try {
             RelationSet rset0 = new RelationSet("0");
             RelationSet rset1 = new RelationSet("0");

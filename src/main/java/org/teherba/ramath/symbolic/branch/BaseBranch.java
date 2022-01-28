@@ -25,7 +25,8 @@ import  org.teherba.ramath.symbolic.solver.BaseSolver;
 import  org.teherba.ramath.util.Dispenser;
 import  org.teherba.ramath.util.ModoMeter;
 import  java.math.BigInteger;
-import  org.apache.log4j.Logger;
+import  org.apache.logging.log4j.Logger;
+import  org.apache.logging.log4j.LogManager;
 
 /** For a node which cannot be decided, a branch class determines and queues one or
  *  more following node(s) which subsequently need(s) to be investigated.
@@ -248,7 +249,7 @@ public class BaseBranch {
      *  @param args command line arguments
      */
     public static void main(String[] args) {
-        log = Logger.getLogger(BaseBranch.class.getName());
+        log = LogManager.getLogger(BaseBranch.class.getName());
         try {
         } catch (Exception exc) {
             log.error(exc.getMessage(), exc);

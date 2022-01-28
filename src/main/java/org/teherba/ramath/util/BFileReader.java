@@ -23,7 +23,8 @@ import  java.io.FileReader;
 import  java.io.InputStreamReader;
 import  java.math.BigInteger;
 import  java.util.ArrayList;
-import  org.apache.log4j.Logger;
+import  org.apache.logging.log4j.Logger;
+import  org.apache.logging.log4j.LogManager;
 
 /** Reads an OEIS "b-file" which has lines with two numbers:
  *  a sequential index and the number of the sequence, for example

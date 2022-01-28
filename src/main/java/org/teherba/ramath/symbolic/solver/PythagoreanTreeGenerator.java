@@ -34,7 +34,8 @@ import  java.io.Serializable;
 import  java.math.BigInteger;
 import  java.util.ArrayList;
 import  java.util.Iterator;
-import  org.apache.log4j.Logger;
+import  org.apache.logging.log4j.Logger;
+import  org.apache.logging.log4j.LogManager;
 
 /** Class PythagoreanTreeGenerator implements the generation of a tree
  *  of Pythagorean triples by the aid of 3 linear 3x3 matrixes, as described in
@@ -265,7 +266,7 @@ X132 [207,224,305]
      *  @param args command line arguments
      */
     public static void main(String[] args) {
-        Logger log = Logger.getLogger(PythagoreanTreeGenerator.class.getName()); // log4j
+        Logger log = LogManager.getLogger(PythagoreanTreeGenerator.class.getName()); // log4j
         try {
             if (args.length == 0) {
                 PythagoreanTreeGenerator generator = new PythagoreanTreeGenerator();

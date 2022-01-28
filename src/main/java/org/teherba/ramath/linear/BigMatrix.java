@@ -26,7 +26,8 @@ import  org.teherba.ramath.util.Permutator;
 import  java.io.Serializable;
 import  java.math.BigInteger;
 import  java.util.ArrayList;
-import  org.apache.log4j.Logger;
+import  org.apache.logging.log4j.Logger;
+import  org.apache.logging.log4j.LogManager;
 
 /** Class BigMatrix implements some simple linear algebra operations
  *  on square matrices of BigInteger numbers.
@@ -647,7 +648,7 @@ public class BigMatrix extends Matrix implements Cloneable, Serializable {
     /*-------------------- Test Driver --------------------*/
 
     /** Local logger for exceptions */
-    private static Logger log = Logger.getLogger(BigMatrix.class.getName());
+    private static Logger log = LogManager.getLogger(BigMatrix.class.getName());
 
     /** Test method, shows some fixed matrices with no arguments, or the
      *  matrix resulting from the input formula.

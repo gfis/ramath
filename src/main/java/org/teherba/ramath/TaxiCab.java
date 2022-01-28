@@ -24,7 +24,8 @@ import  java.io.BufferedReader;
 import  java.io.FileReader;
 import  java.io.InputStreamReader;
 import  java.math.BigInteger;
-import  org.apache.log4j.Logger;
+import  org.apache.logging.log4j.Logger;
+import  org.apache.logging.log4j.LogManager;
 
 /** Collection of several experimental methods, see {@link #main}.
  *  C.f.  OEIS A011541:
@@ -46,7 +47,7 @@ public class TaxiCab {
     /** No-args Constructor
      */
     public TaxiCab() {
-        log = Logger.getLogger(TaxiCab.class.getName());
+        log = LogManager.getLogger(TaxiCab.class.getName());
     } // no-args Constructor
 
     //===========================

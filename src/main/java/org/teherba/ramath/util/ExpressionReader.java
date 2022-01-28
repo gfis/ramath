@@ -30,7 +30,8 @@ import  java.io.InputStreamReader;
 import  java.nio.channels.Channels;
 import  java.nio.channels.ReadableByteChannel;
 import  java.util.ArrayList;
-import  org.apache.log4j.Logger;
+import  org.apache.logging.log4j.Logger;
+import  org.apache.logging.log4j.LogManager;
 
 /** Reads an expression from a text file (maybe with several lines) and returns a string
  *  of digits, operators and variable names.
@@ -76,7 +77,7 @@ public class ExpressionReader {
      *  @param withLineEnd Whether to keep line ends as "\n"
      */
     public ExpressionReader(String srcEncoding, boolean withLineEnd) {
-        log = Logger.getLogger(ExpressionReader.class.getName());
+        log = LogManager.getLogger(ExpressionReader.class.getName());
         this.srcEncoding = srcEncoding;
         this.withLineEnd = withLineEnd;
         lineReader = null;

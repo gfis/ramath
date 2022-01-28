@@ -33,7 +33,8 @@ import  org.teherba.ramath.util.ModoMeter;
 import  org.teherba.ramath.util.Permutator;
 import  java.io.Serializable;
 import  java.util.ArrayList;
-import  org.apache.log4j.Logger;
+import  org.apache.logging.log4j.Logger;
+import  org.apache.logging.log4j.LogManager;
 
 /** Class Matrix implements some simple linear algebra operations
  *  on square matrices of small integer numbers (Java <em>int</em>s).
