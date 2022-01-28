@@ -534,6 +534,7 @@ public class PolyFraction
     } // getSeriesCoefficients
 
     /** Disempowers the fraction in place, that is reduces the powers of the variable by a factor &gt;= 1.
+     *  @param number factor for the reduction
      *  @return the disempowered instance
      */
     public PolyFraction disempower(int number) {

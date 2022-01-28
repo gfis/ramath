@@ -163,7 +163,7 @@ public class JoeisExpressionBuilder implements Cloneable, Serializable {
      *  @param fromIndex index of first element to be processed
      *  @param toIndex index of last element + 1
      *  @return generated infix expression
-     *  Example:<br />
+     *  Example:
      *  <code>
      *  A145516 03  12  ((1+n)*(8+6/2))^(1+n)   1;n;+;8;6;2;/;+;*;1;n;+;^
      *  </code>

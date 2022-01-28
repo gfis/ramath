@@ -44,7 +44,6 @@ public class CommonFactor {
 
     /** Compute one term <em>a(n+1)</em> from the existing terms <em>a(n), a(n-1), a(n-k)</em>.
      *  @param seq {@link Sequence} with existing terms
-     *  @param np1 index of a(n+1), the new term to be computed
      */
     public static void process(Sequence seq) {
         int ilast = seq.size() - 1;

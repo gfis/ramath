@@ -651,7 +651,8 @@ public class Triangle extends Sequence
         System.out.println(get1Trait(traitSize, rowNo, new NATSTrait       ()));
     } // printTraitCard
 
-     /** Gets a triangular array of lines with comma-separated terms.
+    /** Gets a triangular array of lines with comma-separated terms.
+     *  @param traitSize maximum number of elements in the trait
      *  @param rowNo number of rows to be appended
      *  @param tr the {@link Trait} class which computes a specific trait
      *  @return several lines

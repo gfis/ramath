@@ -146,7 +146,7 @@ public class ShuntingYard {
     } // encodeRVar
 
     /** Decodes a variable for a recurrence element
-     *  @param variable name: "a_k" for "a(n-k)", "a__k" for "a(n+k)"
+     *  @param vname variable name: "a_k" for "a(n-k)", "a__k" for "a(n+k)"
      *  @return +/- k
      */
     public int    decodeRVar(String vname) {

@@ -242,7 +242,8 @@ public class Matrix implements Cloneable, Serializable {
 
     /** Return a Matrix that has set the main diagonal, one or more secondary diagonals, and 0 elsewhere.
      *  @param dim dimension of the resulting square matrix
-     *  @param band an odd number of band elements - the center element corresponds with the main diagonal
+     *  @param elems an odd number of band elements - the center element corresponds with the main diagonal
+     *  @return the resulting band matrix
      */
     public static Matrix band(int dim, /*Type*/int[] elems) {
         Matrix result = new Matrix(dim);
