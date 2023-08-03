@@ -5,7 +5,7 @@
  *  2016-08-28: Dr. Georg Fischer: copied from Dbat
  */
 /*
- * Copyright 2016 Dr. Georg Fischer <punctum at punctum dot kom>
+ * Copyright 2016 Dr. Georg Fischer <dr dot georg dot fischer at gmail dot kom>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -179,17 +179,5 @@ public class IndexPage implements Serializable {
         }
     */
     } // dialog
-
-    //================
-    // Main method
-    //================
-
-    /** Test driver
-     *  @param args language code: "en", "de"
-     */
-    public static void main(String[] args) {
-        IndexPage help = new IndexPage();
-        System.out.println("no messages");
-    } // main
 
 } // IndexPage

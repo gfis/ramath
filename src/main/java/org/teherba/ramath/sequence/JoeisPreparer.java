@@ -72,6 +72,9 @@ public class JoeisPreparer implements Cloneable, Serializable {
     /** Code for a specific generation process in joeis-lite, taken from 2nd column of the input file */
     private String callCode;
 
+    /** Whether the class is intantiated from a servlet */
+    private boolean webCall;
+
     /** Current index for {@link #parms} */
     private int iparm;
 
@@ -94,32 +97,49 @@ public class JoeisPreparer implements Cloneable, Serializable {
         log = LogManager.getLogger(JoeisPreparer.class.getName());
         builder = null;
         argsCode = "";
+        webCall = false;
+    } // Constructor()
+
+    /** 
+     * Constructor with call type parameter
+     * @param webCall whether the class is intantiated from a servlet
+     */
+    public JoeisPreparer(boolean webCall) {
+        log = LogManager.getLogger(JoeisPreparer.class.getName());
+        builder = null;
+        argsCode = "";
+        this.webCall = webCall;
     } // Constructor()
 
     /**
      * Reproduces the record with the (maybe modified) parameters.
+     * @param parms array of parameter Strings: aseqno, callcode, offset1, parm1, parm2 
      */
-    protected void reproduce() {
-        reproduce(parms.length);
+    protected void reproduce(String[] parms) {
+        reproduce(parms.length, parms);
     } // reproduce
 
     /**
      * Reproduces part of the the record with the (maybe modified) parameters.
      * @param num print only so many parameters.
+     * @param parms array of parameter Strings: aseqno, callcode, offset1, parm1, parm2 
      */
-    protected void reproduce(int num) {
-        parms[1] = callCode;
-        int j = 0;
-        while (j < num && j < parms.length) {
-            System.out.print(j == 0 ? "" : "\t");
-            System.out.print(parms[j]);
-            j ++;
-        } // for j
-        System.out.println();
+    protected void reproduce(int num, String[] parms) {
+        if (! webCall) {
+            parms[1] = callCode;
+            int j = 0;
+            while (j < num && j < parms.length) {
+                if (j > 0) {
+                    System.out.print("\t");
+                }
+                System.out.print(parms[j]);
+                j ++;
+            } // for j
+            System.out.println();
+        }
     } // reproduce(int)
 
-    /** Process one input line, and determine
-     *  whether it should be written to the output.
+    /** Process one input line, and determine whether it should be written to the output.
      *  The following <code>callCode</code>s are processed:
      *  <ul>
      *  <li><code>bva     </code></li>
@@ -138,11 +158,14 @@ public class JoeisPreparer implements Cloneable, Serializable {
      *  <li><code>sage    </code></li>
      *  <li><code>trans   </code></li>
      *  </ul>
-     *  The following parameters are already consumed:
-     *  aseqno=parms[0], callCode=parms[1], offset1=parms[2]; start with iparm=3..
+     *  @param iparm first parameter string to be consumed
+     *  @param parms array of string parameters;
+     *  the following parameters are already consumed:
+     *  <code>aseqno=parms[0], callCode=parms[1], offset1=parms[2]</code>; start with <code>iparm=3</code>.
+     *  @return new value of <code>iparm</code>
      *
      */
-    private void processRecord() {
+    public int processRecord(String callCode, int iparm, String[] parms) {
         PolyFraction pfr1 = null;
         if (false) {
 
@@ -151,7 +174,7 @@ public class JoeisPreparer implements Cloneable, Serializable {
             parms[1] = "holos";
             BigVectorArray bva = BigVectorArray.parseRecurrence(parms[iparm]);
             parms[iparm] = bva.toString();
-            reproduce();
+            reproduce(parms);
 
         } else if (callCode.startsWith("coxf")
                 || argsCode.startsWith("coxf")) {
@@ -197,7 +220,8 @@ public class JoeisPreparer implements Cloneable, Serializable {
             } else {
                 callCode = "tooshort";
             }
-            reproduce();
+            parms[1] = callCode;
+            reproduce(parms);
 
         } else if (callCode.startsWith("dex")
                 || argsCode.startsWith("dex")) {
@@ -210,7 +234,7 @@ public class JoeisPreparer implements Cloneable, Serializable {
             postfix = parser.getPostfixString(";", formula);
             // possibly modify operators here
             parms[iparm + 0] = postfix;
-            reproduce();
+            reproduce(parms);
 
         } else if (callCode.startsWith("dhd")
                 || argsCode.startsWith("dhd")) {
@@ -218,7 +242,7 @@ public class JoeisPreparer implements Cloneable, Serializable {
             String[] vars = pfr1.getVariables();
             parms[iparm + 0] = pfr1.getNum().toTriangleList(vars);
             parms[iparm + 1] = pfr1.getDen().toTriangleList(vars);
-            reproduce();
+            reproduce(parms);
 
         } else if (callCode.startsWith("fract1")
                 || argsCode.startsWith("fract1")) {
@@ -229,7 +253,7 @@ public class JoeisPreparer implements Cloneable, Serializable {
                 if (vects != null) { // is not multivariate
                     // parms[1] = "orgf";
                     parms[iparm] = vects.replaceAll("\\],\\[", "\t").replaceAll("[\\[\\]]", "");
-                    reproduce();
+                    reproduce(parms);
                     System.out.println(aseqno + "\t" + "coef"
                             + "\t" + pfr1.getSeriesCoefficients(numTerms)
                                     .toString().replaceAll("[\\[\\]]", "")
@@ -237,7 +261,7 @@ public class JoeisPreparer implements Cloneable, Serializable {
                 } // not multivariate
             } else { // parse not ok
                 aseqno = "# " + aseqno;
-                reproduce();
+                reproduce(parms);
             }
 
         } else if (callCode.startsWith("fract2")
@@ -248,13 +272,14 @@ public class JoeisPreparer implements Cloneable, Serializable {
                 String[] vars = pfr1.getVariables();
                 parms[iparm + 0] = pfr1.getNum().toTriangleList(vars);
                 parms[iparm + 1] = pfr1.getDen().toTriangleList(vars);
-                callCode = "fract21"; // with lexicographically ordered variables
-                reproduce();
+                parms[1] = "fract21"; // with lexicographically ordered variables
+                
+                reproduce(parms);
                 String temp = vars[0]; vars[0] = vars[1]; vars[1] = temp;
                 parms[iparm + 0] = pfr1.getNum().toTriangleList(vars);
                 parms[iparm + 1] = pfr1.getDen().toTriangleList(vars);
-                callCode = "fract22"; // with exchanged variables
-                reproduce();
+                parms[1] = "fract22"; // with exchanged variables
+                reproduce(parms);
             }
 
         } else if (callCode.startsWith("fract")
@@ -271,7 +296,7 @@ public class JoeisPreparer implements Cloneable, Serializable {
             try {
                 PolyVector pvect = new PolyVector(parms[iparm]);
                 parms[iparm] = pvect.getBigVectorArray().toString();
-                reproduce();
+                reproduce(parms);
             } catch (Exception exc) {
                 System.err.println("# " + aseqno + " JoeisPreparer.holo(\"" + parm + "\") failed: " + exc.getMessage());
             }
@@ -285,13 +310,13 @@ public class JoeisPreparer implements Cloneable, Serializable {
             String postfix   = parser.getPostfixString(";", gf); // not needed
             parms[iparm + 0] = parser.buildInfixExpression();
             parms[iparm + 1] = gftype;
-            reproduce();
+            reproduce(parms);
 
         } else if (callCode.startsWith("trans")
                 || argsCode.startsWith("trans"))    { // translate from postfix to target expression with a *.ttab table
             String[] postfix = parms[iparm + 0].split("\\;");
             parms[iparm + 0] = builder.translate(postfix, 0, postfix.length);
-            reproduce();
+            reproduce(parms);
 
         } else if (callCode.startsWith("postrans")
                 || argsCode.startsWith("postrans")) { // translate infix to postfix to target expression with a *.ttab table
@@ -300,13 +325,13 @@ public class JoeisPreparer implements Cloneable, Serializable {
             String result = parser.getPostfixString(";", parms[iparm + 0]);
             String[] postfix = result.split("\\;");
             parms[iparm + 0] = builder.translate(postfix, 0, postfix.length);
-            reproduce();
+            reproduce(parms);
 
         } else if (callCode.startsWith("infix")
                 || argsCode.startsWith("infix"))    { // translate from infix to postfix to target expression with a *.xpat table
             String[] postfix = parms[iparm + 0].split("\\;");
             parms[iparm + 0] = builder.getInfix(postfix, 0, postfix.length);
-            reproduce();
+            reproduce(parms);
 
         } else if (callCode.startsWith("lingf")
                 || argsCode.startsWith("lingf")) {
@@ -317,14 +342,14 @@ public class JoeisPreparer implements Cloneable, Serializable {
                 if (vects != null) { // is not multivariate
                     parms[iparm + 2] = parms[iparm];
                     parms[iparm + 0] = vects.replaceAll("\\],\\[", "\t").replaceAll("[\\[\\]]", "");
-                    reproduce();
+                    reproduce(parms);
                 } else { // parse not ok
                     aseqno = "#2vars " + aseqno;
-                    reproduce();
+                    reproduce(parms);
                 } // not multivariate
             } else { // parse not ok
                 aseqno = "#1parse " + aseqno;
-                reproduce();
+                reproduce(parms);
             }
 
         } else if (callCode.startsWith("post1")
@@ -333,7 +358,7 @@ public class JoeisPreparer implements Cloneable, Serializable {
             parser.setDebug(debug);
             String result = parser.getPostfixString(";", parms[iparm + 0]);
             parms[iparm + 0] = result;
-            reproduce();
+            reproduce(parms);
 
         } else if (callCode.startsWith("post")
                 || argsCode.startsWith("post")) { // general parsing into postfix notation
@@ -353,7 +378,7 @@ public class JoeisPreparer implements Cloneable, Serializable {
                 result.append(parser.getPostfixString(";", exprs[iexpr]));
             } // for iexpr
             parms[iparm + 0] = result.toString();
-            reproduce();
+            reproduce(parms);
 
         } else if (callCode.startsWith("rioarr")
                 || argsCode.startsWith("rioarr")) {
@@ -384,12 +409,13 @@ public class JoeisPreparer implements Cloneable, Serializable {
             Polynomial poly = Polynomial.parse(parms[iparm]);
             if (poly != null) {
                 parms[iparm] = poly.getBigVector().toString();
-                reproduce();
+                reproduce(parms);
             } else {
                 System.err.println("# " + aseqno + " error in JoeisPreparer.vect: " + parms[iparm]);
             }
 
         } // switch callCode
+        return iparm;
     } // processRecord
 
     /** Filters a file and writes the modified output lines.
@@ -420,7 +446,7 @@ public class JoeisPreparer implements Cloneable, Serializable {
                         offset1 = Integer.parseInt(parms[iparm ++]);
                     } catch (Exception exc) {
                     }
-                    processRecord();
+                    processRecord(callCode, iparm, parms);
                 } // is not a comment
             } // while ! eof
             lineReader.close();

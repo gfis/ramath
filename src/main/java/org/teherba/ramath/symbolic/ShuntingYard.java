@@ -1,5 +1,6 @@
 /*  ShuntingYard: parser for the recognition of arithmetic and boolean expressions
  *  @(#) $Id: ShuntingYard.java gfis $
+ *  2022-04-03: "!" -> factorial() or "!="
  *  2021-12-03: appendError
  *  2021-01-20: parseRecurrence
  *  2020-06-11: decimal dot in numbers
@@ -65,11 +66,12 @@ public class ShuntingYard {
     private enum State
             { IN_START      // at the beginning of the input string
             , IN_VNAME      // after the first letter of a name
-            , IN_NUMBR      // after the first digit of a number
-            , IN_EXPON      // after the first superscripted digit
-            , IN_OPTOR      // after first character of a relational or boolean operator, or after '%'
+            , IN_NUMBER     // after the first digit of a number
+            , IN_EXPONENT   // after the first superscripted digit
+            , IN_EXCLAM     // after the first superscripted digit
+            , IN_RELOP      // after first character of a relational or boolean operator, or after '%'
             , IN_CLOSE      // after ')' - eventually insert '*'
-            , IN_COMMT      // after '#' - ignore all up to "\n" or end of string
+            , IN_COMMENT    // after '#' - ignore all up to "\n" or end of string
             // for parseRecurrence:
             , IN_AELEM      // after "a", before "("
             , IN_INDEX      // after "a(", 'n' not yet seen
@@ -248,7 +250,8 @@ public class ShuntingYard {
      *  <tr><td>+ -                          </td><td>m</td></tr>
      *  <tr><td>* /                          </td><td>p</td></tr>
      *  <tr><td>^                            </td><td>q</td></tr>
-     *  <tr><td>-. (unary) !                 </td><td>x</td></tr>
+     *  <tr><td>! (factorial)                </td><td>r</td></tr>
+     *  <tr><td>-. (unary)                   </td><td>x</td></tr>
      *  <tr><td>(                            </td><td>y</td></tr>
      *  </table>
      */
@@ -283,13 +286,17 @@ public class ShuntingYard {
                             case '<':
                             case '>':
                             case '=':
-                            case '!':
                             case '&':
                         //  case '|':
                             case '*':
                                 buffer.setLength(0);
                                 buffer.append(ch);
-                                state = State.IN_OPTOR;
+                                state = State.IN_RELOP;
+                                break;
+                            case '!':
+                                buffer.setLength(0);
+                                buffer.append(ch);
+                                state = State.IN_EXCLAM;
                                 break;
                             case '%':
                                 if (false && ipos < input.length() - 2 && Character.isLetterOrDigit(input.charAt(ipos + 1))) { // hex pair follows
@@ -341,19 +348,19 @@ public class ShuntingYard {
                                 popLowerAndPush("q^");
                                 buffer.setLength(0);
                                 buffer.append('1');
-                                state = State.IN_EXPON;
+                                state = State.IN_EXPONENT;
                                 break;
                             case '²': // '\u00b2', super 2
                                 popLowerAndPush("q^");
                                 buffer.setLength(0);
                                 buffer.append('2');
-                                state = State.IN_EXPON;
+                                state = State.IN_EXPONENT;
                                 break;
                             case '³': // '\u00b3', super 3
                                 popLowerAndPush("q^");
                                 buffer.setLength(0);
                                 buffer.append('3');
-                                state = State.IN_EXPON;
+                                state = State.IN_EXPONENT;
                                 break;
                             case '(':
                                 pushOper("y("); // higher than all other precedences
@@ -374,7 +381,7 @@ public class ShuntingYard {
                                 } // while
                                 break;
                             case '#':
-                                state = State.IN_COMMT;
+                                state = State.IN_COMMENT;
                                 break;
                             default:
                                 if (false) {
@@ -386,11 +393,11 @@ public class ShuntingYard {
                                     popLowerAndPush("q^");
                                     buffer.setLength(0);
                                     buffer.append(Character.forDigit(ch - 0x2070, 10));
-                                    state = State.IN_EXPON;
+                                    state = State.IN_EXPONENT;
                                 } else if (Character.isDigit(ch)) {
                                     buffer.setLength(0);
                                     buffer.append(ch);
-                                    state = State.IN_NUMBR;
+                                    state = State.IN_NUMBER;
                                 } else { // invalid character
                                     appendError("char", input.substring(ipos));
                                 }
@@ -424,7 +431,7 @@ public class ShuntingYard {
                         }
                         break; // IN_VNAME
 
-                    case IN_NUMBR:
+                    case IN_NUMBER:
                         switch (ch) {
                             case '(':
                                 postfixAppend(buffer.toString());
@@ -461,9 +468,9 @@ public class ShuntingYard {
                                 }
                                 break;
                         } // switch ch
-                        break; // IN_NUMBR
+                        break; // IN_NUMBER
 
-                    case IN_EXPON: // similiar to, but not identical with IN_NUMBR
+                    case IN_EXPONENT: // similiar to, but not identical with IN_NUMBER
                         switch (ch) {
                             case '(':
                                 postfixAppend(buffer.toString());
@@ -501,9 +508,9 @@ public class ShuntingYard {
                                 }
                                 break;
                         } // switch ch
-                        break; // IN_NUMBR
+                        break; // IN_NUMBER
 
-                    case IN_OPTOR:
+                    case IN_RELOP:
                         String oper = null;
                         switch (ch) {
                             case '<':
@@ -532,7 +539,6 @@ public class ShuntingYard {
                                     appendError("relop", oper);
                                 }
                                 break;
-                        //  case '!': // not - later?
                         //  case '|': // or  - later?
                             case '*':
                                 buffer.append(ch);
@@ -603,8 +609,6 @@ public class ShuntingYard {
                                     case '=':
                                         popLowerSameAndPush("l" + buffer.substring(0, 1));
                                         break;
-                                    case '!': // maybe supported later?
-                                        break;
                                     case '*':
                                     case '/':
                                         popLowerSameAndPush("p" + buffer.substring(0, 1));
@@ -622,7 +626,23 @@ public class ShuntingYard {
                                 break;
                         } // switch 1st ch
                         state = State.IN_START;
-                        break; // IN_OPTOR
+                        break; // IN_RELOP
+
+                    case IN_EXCLAM: // after '!'
+                        switch (ch) {
+                            case '=':
+                                buffer.append(ch);
+                                if (buffer.toString().equals("!=")) {
+                                    popLowerSameAndPush("l!=");
+                                }
+                                break;
+                            default:
+                                postfixAppend(buffer.toString());
+                                readOff = false;
+                                break;
+                        } // switch 1st ch
+                        state = State.IN_START;
+                        break; // IN_EXCLAM
 
                     case IN_CLOSE: // after ')' - eventually insert a '*'
                         if (false) {
@@ -635,12 +655,12 @@ public class ShuntingYard {
                         state = State.IN_START;
                         break; // IN_CLOSE
 
-                    case IN_COMMT: // after '#' - skip until "\n" or EOS
+                    case IN_COMMENT: // after '#' - skip until "\n" or EOS
                         if (false) {
                         } else if (ch == '\n') {
                             state = State.IN_START;
                         }
-                        break; // IN_COMMT
+                        break; // IN_COMMENT
 
                     default: // should never be reached
                         appendError("state", "");
@@ -723,6 +743,7 @@ public class ShuntingYard {
     private static final char OPC_MULT   = 'n';
     private static final char OPC_DIV    = 'p';
     private static final char OPC_POW    = 'q';
+    private static final char OPC_FACT   = 'r';
     private static final char OPC_MINUS  = 'x';
     private static final char OPC_OPEN   = 'y';
     private static final char OPC_PRIM   = 'z';
@@ -751,6 +772,7 @@ public class ShuntingYard {
                 char elec = OPC_PRIM; // precedence of postfix element
                 if (false) {
                 } else if (elem.equals("-.")           ) { elec = OPC_MINUS ;
+                } else if (elast == '!'                ) { elec = OPC_FACT  ;
                 } else if (elast == '^'                ) { elec = OPC_POW   ;
                 } else if (elast == '/'                ) { elec = OPC_DIV   ;
                 } else if (elast == '%'                ) { elec = OPC_DIV   ;
@@ -822,6 +844,18 @@ public class ShuntingYard {
                             buffer.append(opd2.substring(1));
                         }
                         opdStack.push(buffer.toString());
+                        break;
+                    case '!':
+                        if (elec == OPC_FACT) { // factorial
+                            opd1 = opdStack.pop();
+                            opc1 = opd1.charAt(0);
+                        //  buffer.append(elec);
+                            buffer.append(OPC_PRIM);
+                            buffer.append("factorial(");
+                            buffer.append(opd1.substring(1));
+                            buffer.append(')');
+                            opdStack.push(buffer.toString());
+                        } // factorial
                         break;
                     case '.':
                         if (elec == OPC_MINUS) { // really unary - ?

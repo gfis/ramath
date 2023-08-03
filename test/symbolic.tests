@@ -431,6 +431,12 @@ CALL ShuntingYard "\w+" "x = a % 3 + c %3 %4 * b"
 TEST SH14 ShuntingYard parseRecurrence
 CALL ShuntingYard "-parec" "2*n*a(n) +(-23*n+36)*a(n-1) +6*(-2*n+3)*a(n-2)=0"
 
+TEST SH21 ShuntingYard factorial
+CALL ShuntingYard "\w+" "p!"
+
+TEST SH22 ShuntingYard factorial
+CALL ShuntingYard "\w+" "(p+2)!*(p+1)"
+
 TEST P17 Polynomial with GT_0
 CALL Polynomial "(a + b) > 0"
 

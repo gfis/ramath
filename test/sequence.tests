@@ -165,6 +165,59 @@ DATA
  A053488	egf	0	;exp(;exp(;sinh(;x;sinh);exp);1;-;exp);1;-	0
 CALL JoeisPreparer -d 0 -p test/JBT1.data.tmp -f $(DATA) -cc trans
 #-------------------------------
+# simple expression translation for Z
+
+TEST JBZ1 JoeisExpressionBuilder Z.ttab
+DATA
+ 0	numb	0	Z.ZERO	0
+ 1	numb	0	Z.ONE	0
+ 2	numb	0	Z.TWO	0
+ 3	numb	0	Z.THREE	0
+ 4	numb	0	Z.FOUR	0
+ 5	numb	0	Z.FIVE	0
+ 6	numb	0	Z.SIX	0
+ 7	numb	0	Z.SEVEN	0
+ 8	numb	0	Z.EIGHT	0
+ 9	numb	0	Z.NINE	0
+ 10	numb	0	Z.TEN	0
+ 01234567	numb	0	Z.valueOf(op1)	0
+ n	name	0	Z.valueOf(mN)	0
+ p	name	0	Z.valueOf(p)	0
+ 
+ +	meth	2	op1.add(op2)	0
+ -	meth	2	op1.subtract(op2)	0
+ -.	meth	1	op1.negate()	0
+ *	meth	2	op1.multiply(op2)	0
+ /	meth	2	op1.divide(op2)	0
+ %	meth	2	op1.mod(op2)	0
+ ^	meth	2	op1.pow(op2)	0
+ !	func	1	MemoryFactorial.SINGLETON.factorial(op1)	0
+ 
+ binomial)	func	2	Binomial.binomial(op1, op2)	0
+ floor)	func	1	op1	0
+ gcd)	func	2	op1.gcd(op2)	0
+ factorial)	func	1	MemoryFactorial.SINGLETON.factorial(op1)	0
+CALL JoeisExpressionBuilder -d 1 -t $(DATA) "n;2;^;1;+"
+
+TEST JBZ2 JoeisPreparer -cc postrans
+DATA
+ A222963	primes	1	(p-3)*(p+3)/4			a(n) = (p-3)*(p+3)/4
+ A161720	primen	1	(p-7)/2			a(n) = (P - 7)/2.
+ A245035	primen	1	(p-7)^2*(4*p-1)			a(n) = (P - 7)^2 * (4*P - 1).
+ A098741	primes	1	(p^2*(p+1)*(p+2))/6			a(n) = (p^2*(p+1)*(p+2))/6
+ A066885	primen	1	(p^2+1)/2			a(n) = (P^2 + 1)/2.
+ A109255	primes	1	(p^2-1)/12			a(n) = (p^2 - 1) / 12
+CALL JoeisPreparer -d 0 -p test/JBZ1.data.tmp -f $(DATA) -cc postrans
+
+TEST JBZ3 JoeisPreparer -cc postrans
+DATA
+ A060371	primenp	1	(p-1)!+1			a(n) = (P - 1)! + 1.
+ A061024	primenp	1	(p!)^2			a(n) = (P!)^2.
+ A066885	primenp	1	(p^2+1)/2			a(n) = (P^2 + 1)/2.
+ A067362	primenp	1	p-n!^2			a(n) = p - n!^2
+CALL JoeisPreparer -d 0 -p test/JBZ1.data.tmp -f $(DATA) -cc postrans
+
+#-------------------------------
 # Triangle
 TEST TRA1 Triangle toTriangle
 DATA
