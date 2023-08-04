@@ -1,4 +1,4 @@
-/*  JoeisPage.java - translations for jOEIS
+/*  JoeisDialog.java - translations for jOEIS
  *  @(#) $Id$
  *  2023-08-03: Dr. Georg Fischer: copied from IndexPage
  */
@@ -18,10 +18,7 @@
  * limitations under the License.
  */
 package org.teherba.ramath.web;
-import  org.teherba.ramath.ContinuedFraction;
 import  org.teherba.ramath.sequence.JoeisPreparer;
-import  org.teherba.ramath.symbolic.Polynomial;
-import  org.teherba.ramath.symbolic.VariableMap;
 import  org.teherba.common.web.BasePage;
 import  java.io.IOException;
 import  java.io.PrintWriter;
@@ -36,7 +33,7 @@ import  org.apache.logging.log4j.LogManager;
 /** RaMath translations for jOEIS
  *  @author Dr. Georg Fischer
  */
-public class JoeisPage implements Serializable {
+public class JoeisDialog implements Serializable {
     public final static String CVSID = "@(#) $Id: 57d01d0860aef0c2f2783647be70c3c381710c86 $";
     public final static long serialVersionUID = 19470629;
 
@@ -48,8 +45,8 @@ public class JoeisPage implements Serializable {
 
     /** No-args Constructor
      */
-    public JoeisPage() {
-        log = LogManager.getLogger(JoeisPage.class.getName());
+    public JoeisDialog() {
+        log = LogManager.getLogger(JoeisDialog.class.getName());
         joeisPrep = new JoeisPreparer(true); // is called from a servlet
     } // Constructor
 
@@ -178,4 +175,4 @@ public class JoeisPage implements Serializable {
     */
     } // dialog
 
-} // JoeisPage
+} // JoeisDialog

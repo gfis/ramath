@@ -38,6 +38,7 @@ import  org.teherba.ramath.web.Messages;
 import  org.teherba.common.web.BasePage;
 import  org.teherba.common.web.MetaInfPage;
 import  java.io.IOException;
+import  java.io.PrintWriter;
 import  javax.servlet.ServletConfig;
 import  javax.servlet.ServletContext;
 import  javax.servlet.ServletException;
@@ -67,8 +68,8 @@ public class RaMathServlet extends HttpServlet {
     private BasePage basePage;
     /** name of this application */
     private static final String APP_NAME = "RaMath";
-    /** page for jOEIS parameter mappings */
-    private JoeisPage joeisPage = new JoeisPage();
+    /** service page for jOEIS parameter mappings */
+    private joeisWorker JoeisWorker = new JoeisWorker();
 
     /** Called by the servlet container to indicate to a servlet
      *  that the servlet is being placed into service.
@@ -109,13 +110,8 @@ public class RaMathServlet extends HttpServlet {
      */
     public void generateResponse(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String view     = BasePage.getInputField(request, "view"  , "");
-        String language = "en";
-        RelationSet rset = null;
-        RefiningMap rmap = null;
-        int index = 0;
-        boolean found = false;
-        int mode = 3; // with PrimeFactorization and HTML coloring
-        String newPage = null;
+        String language = "en";    
+        String encoding = "UTF-8";
         try {
             if (false) {
             } else if (view.equals("upper")
@@ -127,12 +123,13 @@ public class RaMathServlet extends HttpServlet {
                 String form1    = BasePage.getInputField(request, "form1" , "(a-b)^3");
                 String form2    = BasePage.getInputField(request, "form2" , "");
                 String form2c   = BasePage.getInputField(request, "form2c", ""); // HTML colored
+                int mode = 3; // with PrimeFactorization and HTML coloring
                 if (false) {
                 } else if (area.equals("rset")) {
-                    rset = RelationSet.parse(view.equals("lower") ? form2 : form1);
-                    rmap = rset.getRefiningMap("x"); // maps x -> name
-                    index = 0;
-                    found = true;
+                    RelationSet rset = RelationSet.parse(view.equals("lower") ? form2 : form1);
+                    RefiningMap rmap = rset.getRefiningMap("x"); // maps x -> name
+                    int index = 0;
+                    boolean found = true;
                     while (found) {
                         String key   = request.getParameter("key" + String.valueOf(index));
                         String value = request.getParameter("val" + String.valueOf(index));
@@ -164,6 +161,7 @@ public class RaMathServlet extends HttpServlet {
                 int parmNo = 7;
                 String[] parmsIn = new String[parmNo];
                 int iparm = 0; // parm1-4
+                String mode       = BasePage.getInputField(request, "mode"    , "seq4");
                 parmsIn[iparm ++] = BasePage.getInputField(request, "aseqno"  , "A");
                 parmsIn[iparm ++] = BasePage.getInputField(request, "callcode", "bva");
                 parmsIn[iparm ++] = BasePage.getInputField(request, "offset1" , "0");
@@ -172,7 +170,14 @@ public class RaMathServlet extends HttpServlet {
                     parmsIn[iparm]= BasePage.getInputField(request, "parm" + String.valueOf(iparm - istart + 1), "");
                     iparm ++;
                 }
-                joeisPage.dialog(request, response, basePage, language, parmsIn);
+                if (false) {
+                } else if (mode.equals("html")) {
+                    (new JoeisDialog()).dialog(request, response, basePage, language, parmsIn);
+                } else if (mode.equals("seq4")) {
+                    joeisWorker.dialog(request, response, parmsIn);
+                } else {
+                    basePage.writeMessage(request, response, language, new String[] { "401", "mode", mode });
+                }
 
             } else if (view.equals("license")
                     || view.equals("manifest")
@@ -185,7 +190,7 @@ public class RaMathServlet extends HttpServlet {
             }
         } catch (IOException exc) {
             log.error(exc.getMessage(), exc);
-        	throw exc;
+            throw exc;
         }
     } // generateResponse
 
