@@ -69,7 +69,7 @@ public class RaMathServlet extends HttpServlet {
     /** name of this application */
     private static final String APP_NAME = "RaMath";
     /** service page for jOEIS parameter mappings */
-    private joeisWorker JoeisWorker = new JoeisWorker();
+    private JoeisWorker joeisWorker = new JoeisWorker();
 
     /** Called by the servlet container to indicate to a servlet
      *  that the servlet is being placed into service.
