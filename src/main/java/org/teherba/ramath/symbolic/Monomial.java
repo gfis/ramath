@@ -16,7 +16,7 @@
  *  2009-07-01, Georg Fischer: copied from ContinuedFraction
  */
 /*
- * Copyright 2009 Dr. Georg Fischer <punctum at punctum dot kom>
+ * Copyright 2009 Dr. Georg Fischer <dr dot georg dot fischer at gmail dot kom>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.Name of the variable, or value of integer constant
@@ -125,6 +125,51 @@ public class Monomial implements Cloneable, Serializable {
         this(name, 1);
     } // Constructor(name)
 
+    /** Return a new Monomial constructed from a String representation.
+     *  @param input the input string, with whitespace, +/-number [* name[^expo]]+for example " - 17*a0^2*a1"
+     *  @return a reference to a new Monomial
+     */
+    public static Monomial parse(String input) {
+        input = input.replaceAll(" ","");
+        int pos = 0;
+        StringBuilder cosBuf = new StringBuilder();
+        char ch = input.charAt(pos);
+        while (ch == '+' || ch == '-' || Character.isDigit(ch) || ch == '*') { // first cut off the coefficient
+            if (ch != '*') {
+                cosBuf.append(ch);
+            }
+            if (++ pos < input.length()) {
+                ch = input.charAt(pos);
+            } else {
+                ch = '?';
+            }
+        } // while cutting off
+        String coeff = cosBuf.toString();
+        if (coeff.equals("+") || coeff.equals("-")) {
+            coeff += "1";
+        }
+        String[] parts = input.substring(pos).split("\\*");
+        int plen = parts.length;
+        String[] names = new String[plen];
+        int[]    expos = new int   [plen];
+        for (int ip = 0; ip < plen; ip ++) {
+            String[] pair = parts[ip].split("\\^");
+            names[ip] = pair[0];
+            expos[ip] = 1;
+            if (pair.length > 1) {
+                try {
+                    expos[ip] = Integer.parseInt(pair[1]);
+                } catch (Exception exc) {
+                    System.err.println("Monomial.parse: invalid exponent " + pair[1]);
+                }
+            }
+        } // for ip
+        Monomial result = new Monomial(names, expos);
+        result.setCoefficient(new Coefficient(coeff));
+        return result;
+    } // parse
+
+
     /** Constructs from variable names; the result is 
      *  the product of the variables with coefficient +1 and exponents 1
      *  @param names variable names
@@ -142,7 +187,7 @@ public class Monomial implements Cloneable, Serializable {
     /** Constructs from variable names; the result is 
      *  the product of the variables with coefficient +1 and the specified exponents
      *  @param names variable names
-     *  @param expos exponents of the variables
+     *  @param expos exponents of the variables, &gt;= 0
      */
     public Monomial(String[] names, int[] expos) {
         setCoefficient(1);
@@ -174,7 +219,7 @@ public class Monomial implements Cloneable, Serializable {
         Iterator<String> iter = vars.keySet().iterator();
         while (iter.hasNext()) {
             String name = iter.next();
-            resultVars.put(name, new Integer(this.getExponent(name)));
+            resultVars.put(name, Integer.valueOf(this.getExponent(name)));
         } // while iter
         result.setMap(resultVars);
         return result;
@@ -245,7 +290,7 @@ public class Monomial implements Cloneable, Serializable {
 
     /** Gets the exponent of a variable.
      *  @param name variable's name
-     *  @return exponent of the variable
+     *  @return exponent of the variable, or 0 if the variable is not present
      */
     public int getExponent(String name) {
         int result = 0; // if the variable is not present
@@ -265,7 +310,7 @@ public class Monomial implements Cloneable, Serializable {
      */
     protected void putExponent(String name, int exponent) {
         if (exponent > 0) {
-            vars.put(name, new Integer(exponent));
+            vars.put(name, Integer.valueOf(exponent));
         } else if (exponent == 0) {
             vars.remove(name);
         } else {
@@ -550,9 +595,9 @@ public class Monomial implements Cloneable, Serializable {
             // result.clear();
         } else {
             if (result.getExponent(name2) != 0) {
-                result.putExponent(name2, new Integer(result.getExponent(name2) + exp2));
+                result.putExponent(name2, Integer.valueOf(result.getExponent(name2) + exp2));
             } else {
-                result.putExponent(name2, new Integer(exp2));
+                result.putExponent(name2, Integer.valueOf(exp2));
             }
         }
         return result;
@@ -660,7 +705,7 @@ public class Monomial implements Cloneable, Serializable {
                 if (exp1 != 0) {
                     int exp = exp1 - exp2;
                     if (exp >= 1) {
-                        result.putExponent(name2, new Integer(exp));
+                        result.putExponent(name2, Integer.valueOf(exp));
                     } else if (exp == 0) {
                         result.vars.remove(name2);
                     } else {
@@ -711,7 +756,7 @@ public class Monomial implements Cloneable, Serializable {
                 String name = iter.next();
                 int exp = this.getExponent(name);
                 if (exp % number == 0) {
-                    vars.put(name, new Integer(exp / number));
+                    vars.put(name, Integer.valueOf(exp / number));
                 } else {
                     System.err.println("assertion in Monomial (" + this.toString() + ").disempowerBy(" + number + ")");
                 }
@@ -1067,9 +1112,10 @@ lcm( + 24*a^6*b^6*c*x4^8, + 100*a^5*b^4) =  + 600*a^6*b^6*c*x4^8
      *  </pre>
      */
     public static void main(String[] args) {
-        try {
+        Monomial mono1 = null;
+        if (args.length == 0) {
             orderTest();
-            Monomial mono1 = new Monomial("4", 3);
+            mono1 = new Monomial("4", 3);
             System.out.println(mono1.toString());
             mono1 = mono1.negate();
             System.out.println(mono1.toString());
@@ -1084,13 +1130,12 @@ lcm( + 24*a^6*b^6*c*x4^8, + 100*a^5*b^4) =  + 600*a^6*b^6*c*x4^8
             mono1 = mono1.pow(2);
             System.out.println(mono1.toString());
             System.out.println("signature="      + mono1.signature     ());
-        //  System.out.println("characteristic()=" + mono1.characteristic());
             System.out.println("characteristic(false,true )=" + mono1.characteristic(false, true ));
             System.out.println("characteristic(true ,false)=" + mono1.characteristic(true , false));
             System.out.println("characteristic(true, true )=" + mono1.characteristic(true , true ));
             System.out.println("SIGNATURE=" + Signature.CONSTANT);
 
-            Monomial mono4 = new Monomial(new String[] { "a", "b" });
+            Monomial mono4 =  new Monomial(new String[] { "a", "b" });
             Monomial mono5 = (new Monomial("a", 4))
                     .multiply(new Monomial("b", 2));
             System.out.println("getFactorOf(" + mono5.toString() + ") = "       + mono1.getFactorOf      (mono5).toString());
@@ -1109,9 +1154,13 @@ lcm( + 24*a^6*b^6*c*x4^8, + 100*a^5*b^4) =  + 600*a^6*b^6*c*x4^8
             mono1 = new Monomial(32, "x", 2);
             BigInteger root1 = mono1.reducePowerCoefficient("x");
             System.out.println("(32*x^2).reducePowerCoefficient(\"x\") = " + root1.toString() + ", " + mono1.toString());
-        } catch (Exception exc) {
-            System.out.println(exc.getMessage());
-            exc.printStackTrace();
+        } else {
+            int iarg = 0;
+            while (iarg < args.length) {
+                String arg = args[iarg ++];
+                mono1 = Monomial.parse(arg);
+                System.out.println(arg + " -> " + mono1.toString());
+            }
         }
     } // main
 

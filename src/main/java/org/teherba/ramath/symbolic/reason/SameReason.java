@@ -75,7 +75,7 @@ public class SameReason extends BaseReason {
      */
     private void joinMaxBasePowers(TreeMap<String, Integer> maxBasePowers, Polynomial poly2) {
         Iterator <Signature> miter = poly2.keySet().iterator();
-        Integer ZERO = new Integer(1);
+        Integer ZERO = Integer.valueOf(1);
         while (miter.hasNext()) { // over all signatures of monomials
             Monomial mono1 = poly2.get(miter.next());
             BigInteger coef1 = mono1.getCoefficient().bigIntegerValue(); // assume that all coefficients are integral
@@ -95,10 +95,10 @@ public class SameReason extends BaseReason {
                             
                     Integer oldValue = maxBasePowers.get(vname);
                     if (oldValue == null) { // did not occur so far
-                        maxBasePowers.put(vname, new Integer(root));
+                        maxBasePowers.put(vname, Integer.valueOf(root));
                     } else { // previous value
                         int old = oldValue.intValue();
-                        maxBasePowers.put(vname, new Integer(root < old ? root : old)); // the minimum
+                        maxBasePowers.put(vname, Integer.valueOf(root < old ? root : old)); // the minimum
                     }
                 } // if upperSubst
             } // while viter

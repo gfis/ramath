@@ -676,7 +676,7 @@ public class RelationSet
         TreeMap<String, Integer> namind = new TreeMap<String, Integer>();
         int iname = 0;
         while (iname < nlen) {
-            namind.put(indnam[iname], new Integer(iname));
+            namind.put(indnam[iname], Integer.valueOf(iname));
             iname ++;
         } // while iname
 

@@ -1,6 +1,7 @@
 /*  Polynomial: a symbolic, multivariate Polynomial with addition, multiplication,
  *  exponentiation, comparision and other operations
  *  @(#) $Id: Polynomial.java 744 2011-07-26 06:29:20Z gfis $
+ *  2023-10-09: test -group 
  *  2021-01-25: disempower
  *  2020-04-06: parse/build unary - ("x-.")
  *  2020-02-10: parse returns null for bad expressions and funciton calls
@@ -31,7 +32,7 @@
  *  2009-07-01, Georg Fischer: copied from ContinuedFraction
  */
 /*
- * Copyright 2009 Dr. Georg Fischer <dr.georg.fischer(at)gmail.com>
+ * Copyright 2009 Dr. Georg Fischer <dr dot georg dot fischer at gmail dot kom>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -559,6 +560,28 @@ public class Polynomial implements Cloneable, Serializable {
         return result.substring(result.startsWith(" + ") ? 3 : 0);
     } // toFactoredString()
 
+    /** Return a Polynomial suitable for the denominator of the generating function
+     *  of a triangle. The variable names contain the exponents.
+     *  @param rowLen number of rows to be generated
+     *  @return "a0_0 + a1_0*x + a1_1*x*y + a2_0*x^2 + a2_1*x^2*y + a2_2*x^2*y^2 + a3_0*x^3 ...
+     */
+    public static Polynomial getTriangleAnsatz(int rowLen) {
+        StringBuilder polys = new StringBuilder(128);
+        for (int row = 0; row < rowLen; row ++) {
+            for (int col = 0; col <= row; col ++) {
+                polys.append("+a");
+                polys.append(row);
+                polys.append('_');
+                polys.append(col);
+                polys.append("*x^");
+                polys.append(row);
+                polys.append("*y^");
+                polys.append(col);
+            } // for col
+        } // for row
+        return parse(polys.toString());
+    } // getTriangleAnsatz
+
     /** Returns an array of the coefficients in the Polynomial
      *  in "triangle" order, with rows for the independant variable ("x")
      *  and columns for the dependant variable ("y"),
@@ -1024,7 +1047,7 @@ public class Polynomial implements Cloneable, Serializable {
     } // divide(Polynomial)
 
     /** For <em>this</em> univariate {@link Polynomial},
-     *  divide all exponents by a number
+     *  divide all exponents by a number.
      *  The division must be possible without rest.
      *  @param number divide by this number &gt;= 1
      *  @return reference to <em>this</em> Polynomial which was modified
@@ -1147,8 +1170,8 @@ public class Polynomial implements Cloneable, Serializable {
     } // getVariableMap(String, boolean)
 
     /** Gets a map from all variable names (key) in <em>this</em> Polynomial
-     *  to the variable names in another Polynomial. Both sets of
-     *  variables must have the same size and order.
+     *  to the variable names in another Polynomial. 
+     *  Both sets of variables must have the same size and order.
      *  @param factor linear factor for <em>var2</em>
      *  @param poly2 the variable names in that Polynomial are the new values to be substituted
      *  @return map of variable names mapped to the variable names of <em>poly2</em>
@@ -1173,8 +1196,7 @@ public class Polynomial implements Cloneable, Serializable {
     /** Gets a map from all variable names in <em>this</em> Polynomial (the key)
      *  to an expression involving this variable.
      *  @param value expression with literal "x" as placeholder for the variable names
-     *  @param upperSubst whether uppercase variables should be returned in the map
-     *  (default: true)
+     *  @param upperSubst whether uppercase variables should be returned in the map (default: true)
      *  @return map of variable names mapped to an expression string
      */
     public RefiningMap getRefiningMap(String value, boolean upperSubst) {
@@ -1516,6 +1538,37 @@ public class Polynomial implements Cloneable, Serializable {
         return result;
     } // getSubPolynomial
 
+    /** Extracts a new {@link Polynomial} consisting of all {@link Monomial}s
+     *  that involve the variables in <em>varList</em> with corresponding exponents in <em>expos</em>.
+     *  @param varList comma-separated list of variable names (usually "x,y" for generating functions of triangles)
+     *  @param expos exponents &gt;= 0 of such variables
+     *  @return subset Polynomial with Monomials from <em>this</em> Polynomial, divided by the powered variables
+     */
+    public Polynomial extractTuple(String varList, int... expos) {
+        String[] names = varList.replaceAll(" ", "").split("\\W");
+        Monomial mono2 = new Monomial(names, expos);
+        int vlen = names.length;
+        assert expos.length == vlen;
+        Polynomial result = new Polynomial();
+        Iterator <Signature> titer = this.monomials.keySet().iterator(); // signatures of Monomials
+        while (titer.hasNext()) { // over all monomials in this Polynomial
+            Signature tsig = titer.next();
+            Monomial mono = this.monomials.get(tsig);
+            boolean busy = true; // assume that all variables occur
+            int ivar = 0;
+            while (busy && ivar < vlen) { // check for proper exponents of all variable names in mono2
+                if (mono.getExponent(names[ivar]) != expos[ivar]) { // exponent differs
+                    busy = false;
+                }
+                ivar ++;
+            } // while checking
+            if (busy) { // all variables occurred
+                result.put(tsig, mono.divide(mono2));
+            }
+        } // while titer
+        return result;
+    } // extract
+
     // Elimination of lower power terms
 
     /** Modifies <em>this</em> {@link Polynomial} such that
@@ -1811,7 +1864,7 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=&gt; - 2*y + 4*z
         return resultMap;
     } // characterize
 
-    /** Deflates the {@link Coefficient}s of the {@link Monomial}s in place
+    /** Remove a common factor from the {@link Coefficient}s of the {@link Monomial}s in place
      *  (and also returns <em>this</em> - modified - Polynomial).
      *  @return reference to <em>this</em> - modified - Polynomial
      */
@@ -1823,7 +1876,7 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=&gt; - 2*y + 4*z
         return this;
     } // deflateIt
 
-    /** Deflates the {@link Coefficient}s of the {@link Monomial}s
+    /** Remove a common factor from the {@link Coefficient}s of the {@link Monomial}s
      *  and returns the modified Polynomial.
      *  @return reference to the modified Polynomial
      */
@@ -2390,6 +2443,18 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=&gt; - 2*y + 4*z
                         }
                         // -d
 
+                    } else if (opt.startsWith("-ansatz")) {
+                        int rowLen = 4;
+                        if (args.length > 0) {
+                            try {
+                                rowLen = Integer.parseInt(args[iarg ++]);
+                            } catch (Exception exc) {
+                            }
+                        }
+                        System.out.println("getTriangleAnsatz(" + rowLen + ") = " + getTriangleAnsatz(rowLen).toString());
+                        // -ansatz
+
+
                     } else if (opt.startsWith("-degree")) {
                         poly1 = Polynomial.parse(args[iarg ++]);
                         System.out.println("(" + poly1.toString() + ").degree()      = " + poly1.degree()     );
@@ -2424,6 +2489,22 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=&gt; - 2*y + 4*z
                         System.out.println(poly1.toString() + " <"
                                 + (poly1.isEquivalent(poly2) ? "equiv" : "notequiv") + "> " + poly2);
                         // -equiv
+
+                    } else if (opt.startsWith("-extract")) {
+                        poly1 = Polynomial.parse(args[iarg ++]);
+                        String varList   = args[iarg ++];
+                        String[] expoArr = args[iarg ++].split("\\, *"); 
+                        int elen = expoArr.length;
+                        int[] expos = new int[elen];
+                        for (int iexp = 0; iexp < elen; iexp ++) {
+                            try {
+                                expos[iexp] = Integer.parseInt(expoArr[iexp]);
+                            } catch (Exception exc) {
+                            }
+                        } // for iexp
+                        poly2 = poly1.extractTuple(varList, expos);
+                        System.out.print("(\"" + poly1.toString() + "\").extractTuple(\"" + varList + "\"," + args[iarg - 1] + "\") = " + poly2.toString());
+                        // -extract
 
                     } else if (opt.startsWith("-f")) {
                         poly1 = Polynomial.parse(ereader.read(args[iarg ++]));

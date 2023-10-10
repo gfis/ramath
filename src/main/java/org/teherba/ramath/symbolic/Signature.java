@@ -3,7 +3,7 @@
  *  2016-07-09, Georg Fischer: copied from VariableMap
  */
 /*
- * Copyright 2016 Dr. Georg Fischer <punctum at punctum dot kom>
+ * Copyright 2016 Dr. Georg Fischer <dr dot georg dot fischer at gmail dot kom>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,9 +23,16 @@ import  org.teherba.ramath.symbolic.Polynomial;
 import  java.io.Serializable;
 import  java.util.Iterator;
 
-/** Type of the Key for a specifc {@link Monomial} in a {@link Polynomial}.
+/** Type for the key of a specifc {@link Monomial} in a {@link Polynomial}.
  *  The Signature is a String, resulting from {@link Monomial#signature} or
- *  {@link Monomial#characteristic}.
+ *  {@link Monomial#characteristic}. It is the concatenation of:
+ *  <ul>
+ *  <li>a list of elements: "/" variable name "." exponent, 
+ *    sorted by the reverse lexicographical order of the names
+ *  </li>
+ *  </ul>
+ *  The signature defines the monomial order in a {@link Polynomial}.
+ *  For example "/x4.08/b.02/a.04" is the Signature of the monomial "16384*a^4*b^2*x4^8"
  *  @author Dr. Georg Fischer
  */
 public class Signature implements Cloneable, Comparable<Signature>, Serializable {

@@ -151,7 +151,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
     private void addBranch(String code, String className) {
         BaseBranch result = null; // assume that class is not found
         try {
-            result = (BaseBranch) Class.forName("org.teherba.ramath.symbolic.branch." + className).newInstance();
+            result = (BaseBranch) Class.forName("org.teherba.ramath.symbolic.branch." + className).getDeclaredConstructor().newInstance();
             if (result != null) { // known branch
                 result.initialize(getSolver());
                 result.setCode(code);
@@ -170,7 +170,7 @@ public class ReasonFactory extends ArrayList<BaseReason> {
     private void addReason(String code, String className) {
         BaseReason result = null; // assume that class is not found
         try {
-            result = (BaseReason) Class.forName("org.teherba.ramath.symbolic.reason." + className).newInstance();
+            result = (BaseReason) Class.forName("org.teherba.ramath.symbolic.reason." + className).getDeclaredConstructor().newInstance();
             if (result != null) { // known reason
                 result.initialize(getSolver(), getStartNode());
                 if (result.isConsiderable()) {

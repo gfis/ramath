@@ -110,9 +110,9 @@ public class EvenExponentReason extends BaseReason {
                 int    vexp  = mono1.getExponent(vname);
                 Integer rexp = expGCDs.get(vname);
                 if (rexp == null) {
-                    expGCDs.put(vname, new Integer(vexp));
+                    expGCDs.put(vname, Integer.valueOf(vexp));
                 } else {
-                    expGCDs.put(vname, new Integer(Vector.gcd(rexp.intValue(), vexp)));
+                    expGCDs.put(vname, Integer.valueOf(Vector.gcd(rexp.intValue(), vexp)));
                 }
             } // while viter
         } // while miter

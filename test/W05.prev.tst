@@ -12,8 +12,8 @@
 <body>
 <!-- area="rset", opt=""
     form1="%28a%2Bb%29%5E6"
-    form2="a⁶ + 2¹3a⁵*b + 3¹5a⁴*b² + 2²5a³*b³ + 3¹5a²*b⁴ + 2¹3a*b⁵ + b⁶"
-    rmap="{a=>a,b=>b}"
+    form2="2²7"
+    rmap="{}"
 -->
 <h2>ramath - Rational and Symbolic Mathematics</h2>
 <form action="servlet" method="get">
@@ -33,8 +33,6 @@
             </td>
             <td><strong>Variable Substitutions:</strong><br />
                 <table cellpadding="0" border="0">
-<tr><td><input name="key0" type="hidden" value="a" />a-&gt;</td><td><input name="val0" size="20" maxsize="160" value="a" /></td></tr>
-<tr><td><input name="key1" type="hidden" value="b" />b-&gt;</td><td><input name="val1" size="20" maxsize="160" value="b" /></td></tr>
                 </table>
             </td>
         </tr>
@@ -54,10 +52,10 @@
     <input type = "hidden" name="view"  value="lower" />
     <input type = "hidden" name="area"  value="rset" />
     <input type = "hidden" name="opt"   value="" />
-    <input type = "hidden" name="form2" value="a⁶ + 2¹3a⁵*b + 3¹5a⁴*b² + 2²5a³*b³ + 3¹5a²*b⁴ + 2¹3a*b⁵ + b⁶" />
+    <input type = "hidden" name="form2" value="2²7" />
     <table cellpadding="0" border="0">
         <tr valign="top">
-            <td><span class="p1">1</span>a⁶ + <span class="p2">2</span>¹<span class="p3">3</span>a⁵*b + <span class="p3">3</span>¹<span class="p5">5</span>a⁴*b² + <span class="p2">2²</span><span class="p5">5</span>a³*b³ + <span class="p3">3</span>¹<span class="p5">5</span>a²*b⁴ + <span class="p2">2</span>¹<span class="p3">3</span>a*b⁵ + <span class="p1">1</span>b⁶<br />a^6 + 6*a^5*b + 15*a^4*b^2 + 20*a^3*b^3 + 15*a^2*b^4 + 6*a*b^5 + b^6</td>
+            <td><span class="p2">2²</span><span class="p7">7</span><br />28</td>
         </tr>
         <tr valign="top">
             <td align="left">

@@ -69,6 +69,7 @@ public class ShuntingYard {
             , IN_NUMBER     // after the first digit of a number
             , IN_EXPONENT   // after the first superscripted digit
             , IN_EXCLAM     // after the first superscripted digit
+            , IN_ARROW      // lambda arrow "->"
             , IN_RELOP      // after first character of a relational or boolean operator, or after '%'
             , IN_CLOSE      // after ')' - eventually insert '*'
             , IN_COMMENT    // after '#' - ignore all up to "\n" or end of string
@@ -143,7 +144,7 @@ public class ShuntingYard {
      *  @return variable name: "a_k" for "a(n-k)", "a__k" for "a(n+k)"
      */
     public String encodeRVar(int k) {
-        return k <= 0 ? ("a_"  + String.valueOf(-k)) 
+        return k <= 0 ? ("a_"  + String.valueOf(-k))
                       : ("a__" + String.valueOf( k));
     } // encodeRVar
 
@@ -243,7 +244,7 @@ public class ShuntingYard {
      *  The precedence of operators (in <em>precOper, operStack</em>) is indicated
      *  by the ASCII order of lowercase letters according to the following table:
      *  <table><caption>Operator Precedence and corresponding Codes</caption>
-     *  <tr><td>,                            </td><td>i</td></tr>
+     *  <tr><td>, ->                         </td><td>i</td></tr>
      *  <tr><td>||                           </td><td>j</td></tr>
      *  <tr><td>&amp;&amp;                   </td><td>k</td></tr>
      *  <tr><td>&lt;= &gt;= == != &gt; &lt;  </td><td>l</td></tr>
@@ -335,7 +336,8 @@ public class ShuntingYard {
                                     popLowerSameAndPushZero("m-"); // unary "-"
                                     // popLowerSameAndPush("x-."); // unary "-"
                                 } else {
-                                    popLowerSameAndPush("m-"); // binary "-"
+                                    // state = State.IN_ARROW;
+                                    popLowerSameAndPush("m-"); // binary "-", left assoc.
                                 }
                                 break;
                             case '/':
@@ -509,7 +511,18 @@ public class ShuntingYard {
                                 break;
                         } // switch ch
                         break; // IN_NUMBER
-
+/* nyi
+                    case IN_ARROW: 
+                        buffer.append(ch);
+                        if (false) {
+                        } else if (buffer.toString().equals("->")) {
+                            popLowerAndPush("i->"); // lambda arrow, right assoc.??
+                        } else {
+                            popLowerSameAndPush("m-"); // binary "-", left assoc.
+                            readOff = false;
+                        }
+                        break;
+*/
                     case IN_RELOP:
                         String oper = null;
                         switch (ch) {
@@ -985,9 +998,9 @@ public class ShuntingYard {
                             state = State.IN_INDEN;
                         } else if (ch >= '0' && ch <= '9') { // digit
                             number = number * 10 + Character.digit(ch, 10);
-                        } else if (ch == '-') { 
+                        } else if (ch == '-') {
                             sign = -1;
-                        } else if (ch == '+') { 
+                        } else if (ch == '+') {
                             sign = +1;
                         } else if (ch == ')' || ch == ']') { // end of index
                             result.append(encodeRVar(sign * number));
@@ -1003,9 +1016,9 @@ public class ShuntingYard {
                             state = State.IN_START;
                         } else if (ch >= '0' && ch <= '9') { // digit
                             number = number * 10 + Character.digit(ch, 10);
-                        } else if (ch == '-') { 
+                        } else if (ch == '-') {
                             sign = -1;
-                        } else if (ch == '+') { 
+                        } else if (ch == '+') {
                             sign = +1;
                         } else if (ch == ')' || ch == ']') { // digit
                             result.append(encodeRVar(sign * number));

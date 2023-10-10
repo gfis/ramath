@@ -34,6 +34,9 @@ CALL Factor
 TEST MO2 monomial
 CALL Monomial
 
+TEST MOP monomial.parse
+CALL Monomial "-x" "+x^3*y^2" "16x" "+16x" "-17x^3*y^2" "-18*x^3*y^2" "+19*x^3*y^2" 
+
 TEST PO1 Pythagoras
 # from AM02: [a^2*m11-b^2*m11+2*a*b*m12+a^2*m13+b^2*m13,a^2*m21-b^2*m21+2*a*b*m22+a^2*m23+b^2*m23,a^2*m31-b^2*m31+2*a*b*m32+a^2*m33+b^2*m33]
 DATA
@@ -117,6 +120,15 @@ CALL Polynomial -derive "x^3 + y*x^2 + y^2" x 3
 
 TEST PDE4 derivative(x,4)
 CALL Polynomial -derive "x^3 + y*x^2 + y^2" x 4
+#--
+TEST PEX1 extractTuple
+CALL Polynomial -extract "-7*h*x^9-7*g*x^8-3*h*x^8-7*f*x^7-3*g*x^7-h*x^7-7*e*x^6-3*f*x^6-g*x^6-7*d*x^5-3*e*x^5-f*x^5-3*d*x^4-e*x^4-d*x^3-14*x^4+15*x^3" "x,y" "3,0"
+
+TEST PEX2 extractTuple
+CALL Polynomial -extract "-7*f*x^3*y^3-7*e*x^3*y^2-2*f*x^3*y^2-7*d*x^3*y-2*e*x^3*y-f*x^2*y^2-2*d*x^3-e*x^2*y+49*x^2*y^2-d*x^2+28*x^2*y+4*x^2" "x,y" "2,1"
+
+TEST PANS getTriangleAnsatz()
+CALL Polynomial -ansatz 6
 #--
 TEST RDE1 derivative()
 CALL RelationSet -derive "x^3 + y*x^2 + y^2; x^4 - y^4"
@@ -496,7 +508,7 @@ TEST PMP8 isMappableTo = null, should be = {a=>1+2*a,b=>2+3*b,c=>c,d=>d} (wrong 
 CALL Polynomial -mappable "5*(9 + 6*a + 12*a^2 + 8*a^3 + 36*b + 54*b^2 + 27*b^3 + c^3 - d^3)" "a^3+b^3+c^3-d^3"
 
 #----------------
-TEST W05 binomial: 6th power with 3 variables
+TEST W05 binomial: 6th power with 2 variables
 HTTP view=upper area=rset opt= form1=%28a%2Bb%29%5E6
 
 TEST PI1 increment for Fermat/Carcavi6

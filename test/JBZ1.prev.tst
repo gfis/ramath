@@ -1,0 +1,15 @@
+# post=n
+# stack[1]=top=<?name=n?>
+# post=2
+# row=2|numb|0|Z.TWO
+# stack[2]=top=Z.TWO
+# post=^
+# row=^|meth|2|op1.pow(op2)
+# stack[1]=top=<?name=n?>.pow(Z.TWO)
+# post=1
+# row=1|numb|0|Z.ONE
+# stack[2]=top=Z.ONE
+# post=+
+# row=+|meth|2|op1.add(op2)
+# stack[1]=top=<?name=n?>.pow(Z.TWO).add(Z.ONE)
+-> <?name=n?>.pow(Z.TWO).add(Z.ONE)

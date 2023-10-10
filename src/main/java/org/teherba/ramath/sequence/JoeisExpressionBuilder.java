@@ -1,5 +1,6 @@
 /*  JoeisExpressionBuilder: build jOEIS expressions (with Z, CR) from a postfix list
  *  @(#) $Id$
+ *  2023-08-30: allow unknown names
  *  2021-11-30: translate(), like getInfix, but with op1, op2 placeholders
  *  2021-07-07: Georg Fischer: copied from JoeisPreparer.java
  */
@@ -181,23 +182,24 @@ public class JoeisExpressionBuilder implements Cloneable, Serializable {
             }
             if (row == null) { // no mapping found
                if (false) { // Caution, order of else-if branches matters here!
-                } else if (post.matches("\\A\\d+\\Z")) {       // unknown number
+                } else if (post.matches("\\d+")) {       // unknown number
                     if (post.length() >= 10) {
-                        post = post + "L"; // int -> long
+                        post = post + "L"; // int -> long constant
                     }
                     row = table.get(NUM_ESCAPE); // must exist in the table
                     stack.push(row.target.replaceAll(NUM_ESCAPE, post));
-                } else if (post.matches("\\A\\w+\\(\\Z")) {   // any function start - ignore
-                } else if (post.matches("\\A(A\\d+_?\\d*)\\)\\Z")) { // A-number - nyi
-                    // ...
-                } else if (post.matches("\\A\\w+\\)\\Z")) {   // unknown function end
-                    post = post.replaceAll("\\)","");
+                } else if (post.matches("A\\w+\\(")) {   // any function start - ignore
+                } else if (post.matches("([Aa]\\d+(_\\d*)?\\)")) { // A-number - nyi
+                    stack.push("<?A-number=" + post + "?>");
+                } else if (post.matches("\\w+\\)")) {   // unknown function end
+                    // post = post.replaceAll("\\)","");
                     elems[0] = stack.empty() ? "" : stack.pop();
-                    stack.push("<?" + post + "(" + elems[0] + ")?>");
-                } else if (post.matches("\\A([A-Za-z]+)__(\\d+)\\Z")) { // function(int), shielded, e.g. zeta(3)
+                    stack.push("<?func)=" + post + "(" + elems[0] + ")?>");
+                } else if (post.matches("([A-Za-z]+)__(\\d+)")) { // function(int), shielded, e.g. zeta(3)
                     stack.push(post.replaceAll("__", "(") + ")"); // unshield
-                } else if (post.matches("\\A[A-Za-z]+\\Z")) { // unknown name
+                } else if (post.matches("[A-Za-z]\\w*")) { // unknown name
                     stack.push("<?name=" + post + "?>");
+                //  stack.push(post);
                 } else if (post.equals(",")) {                // "," = parameter separator - ignore
                 } else {
                     stack.push("<?post=" + post + "?>");
