@@ -830,7 +830,7 @@ public class Polynomial implements Cloneable, Serializable {
      *  @param mono2 subtract this monomial
      *  @return reference to <em>this</em> Polynomial that was modified
      */
-    protected Polynomial subtractFrom(Monomial mono2) {
+    public Polynomial subtractFrom(Monomial mono2) {
         Signature sig2 = mono2.signature();
         Monomial mono1 = monomials.get(sig2);
         if (mono2.isZero()) { // ignore "- 0"
@@ -888,7 +888,7 @@ public class Polynomial implements Cloneable, Serializable {
      *  @param mono2 multiply with this monomial
      *  @return reference to <em>this</em> Polynomial which was modified
      */
-    protected Polynomial multiplyBy(Monomial mono2) {
+    public Polynomial multiplyBy(Monomial mono2) {
         Iterator<Signature> iter = monomials.keySet().iterator();
         if (mono2.isZero()) {
             monomials.clear(); // an empty map indicates constant 0
@@ -1548,7 +1548,7 @@ public class Polynomial implements Cloneable, Serializable {
         String[] names = varList.replaceAll(" ", "").split("\\W");
         Monomial mono2 = new Monomial(names, expos);
         int vlen = names.length;
-        assert expos.length == vlen;
+        // assert expos.length == vlen;
         Polynomial result = new Polynomial();
         Iterator <Signature> titer = this.monomials.keySet().iterator(); // signatures of Monomials
         while (titer.hasNext()) { // over all monomials in this Polynomial
@@ -2194,6 +2194,27 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=&gt; - 2*y + 4*z
         return Polynomial.parse(vmap.substitute(this.toString(1)));
     } // substitute(VariableMap)
 
+    /** Interprete a univariate polynomial <em>variable - value = 0</em> of degree 1
+     *  as an assignment.
+     *  @return a corresponding {@link VariableMap}. 
+     */
+    public VariableMap getVariableAssignment() {
+        // assert this.degree() == 1 : "degree must be 1";
+        // assert ! this.isUniVariate() : "polynomial must be univariate";
+        BigVector  bv = this.getBigVector();
+        BigInteger b0 = bv.getBig(0);
+        BigInteger b1 = bv.getBig(1);
+        assert b1.abs().equals(BigInteger.ONE);
+        BigInteger coeff = b0.signum() == b1.signum() ? b0.abs().negate() : b0.abs();
+/*
+        if (debug >= 1) {
+            System.out.println("# extr3=" + extr);
+            System.out.println("# coeff=" + coeff + ", b0=" + b0 + ", b1=" + b1);
+        }
+*/
+        return this.getVariableMap(coeff.toString());
+    } // getVariableAssignment
+
     /** Compute the (partial) nth order derivative of <em>this</em> {@link Polynomial}
      *  with respect to one variable.
      *  @param varx compute the derivative for this variable
@@ -2454,6 +2475,12 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=&gt; - 2*y + 4*z
                         System.out.println("getTriangleAnsatz(" + rowLen + ") = " + getTriangleAnsatz(rowLen).toString());
                         // -ansatz
 
+
+                    } else if (opt.startsWith("-const")) {
+                        poly1 = Polynomial.parse("4 - a0_0");
+                        poly2 = Polynomial.parse("-4");
+                        System.out.println("(" + poly1 + ").add(" + poly2 + ") = " + poly1.add(poly2));
+                        // -const
 
                     } else if (opt.startsWith("-degree")) {
                         poly1 = Polynomial.parse(args[iarg ++]);

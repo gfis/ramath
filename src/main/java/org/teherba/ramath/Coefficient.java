@@ -32,8 +32,7 @@ import  java.math.BigInteger;
  *  The class serves as a placeholder for, and extends one of these number classes.
  *  @author Dr. Georg Fischer
  */
-public class Coefficient 
-        extends BigInteger // BigRational
+public class Coefficient extends BigInteger // BigRational
         implements Cloneable, Serializable 
         {
     private static final long serialVersionUID = 1L;
@@ -97,11 +96,18 @@ public class Coefficient
     } // valueOf(long)
 
     /** Returns the absolute value of <em>this</em> {@link Coefficient}
-     *  @return positive BigInteger
+     *  @return a non-negative BigInteger
      */
     public BigInteger abs() {
         return super.abs();
     } // abs
+
+    /** Returns the negated value of <em>this</em> {@link Coefficient}
+     *  @return a BigInteger
+     */
+    public BigInteger negate() {
+        return super.negate();
+    } // negate
 
     /** Returns the integral part of <em>this</em> {@link Coefficient},
      *  or +1 if the Coefficient is fractional.

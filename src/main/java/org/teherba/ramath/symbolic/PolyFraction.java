@@ -7,7 +7,7 @@
  *  2019-04-29: Georg Fischer: copied from RelationSet.java
  */
 /*
- * Copyright 2019 Dr. Georg Fischer
+ * Copyright 2019 Dr. Georg Fischer <dr dot georg dot fischer at gmail dot kom>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -126,7 +126,7 @@ public class PolyFraction
         return new PolyFraction(this.getNum().clone(), this.getDen().clone());
     } // clone
 
-    /** Returns a new PolyFraction constructed from a String representation, possibly with an
+    /** Return a new PolyFraction constructed from a String representation, possibly with an
      *  error message inserted at the point where parsing could not proceed.
      *  @param input the input string, with whitespace, for example " + 17*a0^2*a1 + a2^2*a3^3 - 4*b4"
      *  @return a new PolyFraction, or null if no valid fraction could be recognized
@@ -227,35 +227,35 @@ public class PolyFraction
         return polynomials.length;
     } // size
 
-    /** Gets the numerator {@link Polynomial} of the fraction
+    /** Get the numerator {@link Polynomial} of the fraction
      *  @return the Polynomial above the fraction bar
      */
     public Polynomial getNum() {
         return polynomials[0];
     } // getNum
 
-    /** Gets the denominator {@link Polynomial} of the fraction
+    /** Get the denominator {@link Polynomial} of the fraction
      *  @return the Polynomial below the fraction bar
      */
     public Polynomial getDen() {
         return polynomials[1];
     } // getDen
 
-    /** Sets the numerator {@link Polynomial} of the fraction
+    /** Set the numerator {@link Polynomial} of the fraction
      *  @param poly2 the Polynomial to be set above the fraction bar
      */
     public void setNum(Polynomial poly2) {
         polynomials[0] = poly2;
     } // setNum
 
-    /** Sets the denominator {@link Polynomial} of the fraction
+    /** Set the denominator {@link Polynomial} of the fraction
      *  @param poly2 the Polynomial to be set below the fraction bar
      */
     public void setDen(Polynomial poly2) {
         polynomials[1] = poly2;
     } // setDem
 
-    /** Gets the variable names of both Polynomials
+    /** Get the variable names of both Polynomials
      *  in "triangle" order, that is with decreasing degree.
      *  @return array of variable names
      */
@@ -305,7 +305,7 @@ public class PolyFraction
         return this;
     } // shorten
 
-    /** Returns a String representation of <em>this</em> {@link PolyFraction}
+    /** Return a String representation of <em>this</em> {@link PolyFraction}
      *  @param mode 0 = normal, 1 = full (for substitution), 2 = nice / human legible,
      *  3 = with prime factors
      *  @return "(2 - x) / (1 - x - x^2)", for example
@@ -320,7 +320,7 @@ public class PolyFraction
         return buffer.toString();
     } // toString(int)
 
-    /** Returns a string representation of the {@link Polynomial}s in <em>this</em> {@link PolyFraction},
+    /** Return a string representation of the {@link Polynomial}s in <em>this</em> {@link PolyFraction},
      *  with leading signs, in compressed form.
      *  @return "17*a0^2*a1 + a2^2*a3^3; - 4*b4", for example
      */
@@ -328,7 +328,7 @@ public class PolyFraction
         return toString(0);
     } // toString()
 
-    /** Returns two {@link BigVector}s for the numerator and the denominator.
+    /** Return two {@link BigVector}s for the numerator and the denominator.
      *  For multivariate Polynomials, the result is somewhat meaningless,
      *  and null is returned.
      *  @return "[2, -1],[1, -1, -1]" for example
@@ -340,7 +340,7 @@ public class PolyFraction
                 };
     } // toVectors()
 
-    /** Returns a String representation of the coefficients
+    /** Return a String representation of the coefficients
      *  of the numerator and the denominator.
      *  For multivariate Polynomials, the result is somewhat meaningless.
      *  @return "[2, -1],[1, -1, -1]" for example,
@@ -509,7 +509,7 @@ public class PolyFraction
     } // divide(PolyFraction)
 
     /** Expands the fraction into a formal power series and
-     *  returns the coefficients of the powers of the variable.
+     *  return the coefficients of the powers of the variable.
      *  @param numTerms return so many coefficients
      *  @return a {@link BigVector} of numbers
      */
@@ -559,7 +559,7 @@ public class PolyFraction
     } // normalize
 
     /** Expands the multivariate fraction into a formal power series and
-     *  returns the coefficients of the powers of the variables as
+     *  return the coefficients of the powers of the variables as
      *  a flattened triangular array.
      *  @param numTerms return so many coefficients
      *  @param vars names of the variables, for example "x", "y".
@@ -623,7 +623,7 @@ public class PolyFraction
         return result;
     } // getCoefficientTriangle
 
-    /** Returns a PolyFraction which generates a Coxeter group sequence.
+    /** Return a PolyFraction which generates a Coxeter group sequence.
      *  This method corresponds with the Mathematica routine <em>coxG</em>
      *  defined in OEIS <a href="https://oeis.org/A169452" target="_new">A169452</a>:
      * <pre>
@@ -666,7 +666,7 @@ public class PolyFraction
         return new PolyFraction(num, den);
     } // coxG
 
-    /** Returns a PolyFraction which generates a Coxeter group sequence.
+    /** Return a PolyFraction which generates a Coxeter group sequence.
      *  This version has simpler parameters which are directly deduceable
      *  from the name of the OEIS sequence.
      *  @param pwr the exponent

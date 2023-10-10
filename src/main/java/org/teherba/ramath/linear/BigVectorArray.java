@@ -8,7 +8,7 @@
  *  2018-01-24, Georg Fischer: copied from Matrix
  */
 /*
- * Copyright 2020 Dr. Georg Fischer <dr.georg.fischer at gmail.com>
+ * Copyright 2020 Dr. Georg Fischer <dr dot georg dot fischer at gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,6 +44,7 @@ import  java.util.TreeMap;
  *  <li>a univariate RelationSet</li>
  *  <li>a linear recurrence equation</li>
  *  <li>a linear differential equation</li>
+ *  <li>the nominator and denominator coefficient arrays of an ordinary generating function for a triangle</li>
  *  </ul>
  *  @author Georg Fischer
  */
@@ -112,14 +113,14 @@ public class BigVectorArray implements Cloneable, Serializable {
     /*-------------- bean methods, setters and getters -----------------------------*/
     // inherited: size, getRowLen, getColLen
 
-    /** Sets the debugging flag
+    /** Set the debugging flag
      *  @param mode 0=no debugging output, 1=some, 2=more
      */
     public static void setDebug(int mode) {
         debug = mode;
     } // setDebug
 
-    /** Gets an element.
+    /** Get an element.
      *  @param rowNo number of the row, zero based
      *  @param colNo number of the column, zero based
      *  @return value value of the element
@@ -128,7 +129,7 @@ public class BigVectorArray implements Cloneable, Serializable {
         return this.varr.get(rowNo).getBig(colNo);
     } // getBig
 
-    /** Sets an element.
+    /** Set an element.
      *  @param rowNo number of the row, zero based
      *  @param colNo number of the column, zero based
      *  @param value value of the element
@@ -139,7 +140,7 @@ public class BigVectorArray implements Cloneable, Serializable {
         varr.set(rowNo, row);
     } // set
 
-    /** Returns a row as a {@link BigVector}.
+    /** Return a row as a {@link BigVector}.
      *  @param rowNo number of the row, zero based
      *  @return a BigVector containing the elements of the varr' row
      */
@@ -147,7 +148,7 @@ public class BigVectorArray implements Cloneable, Serializable {
         return varr.get(rowNo);
     } // getBigVector
 
-    /** Returns a row as a {@link BigVector}.
+    /** Return a row as a {@link BigVector}.
      *  @param rowNo number of the row, zero based
      *  @return a BigVector containing the elements of the array's row
      */
@@ -155,7 +156,7 @@ public class BigVectorArray implements Cloneable, Serializable {
         return varr.get(rowNo);
     } // get
 
-    /** Sets a row from a {@link BigVector}.
+    /** Set a row from a {@link BigVector}.
      *  @param rowNo number of the row, zero based
      *  @param vect1 BigVector containing the elements of the array's row
      */
@@ -166,7 +167,7 @@ public class BigVectorArray implements Cloneable, Serializable {
         varr.set(rowNo, vect1);
     } // setBigVector
 
-    /** Sets a row from a {@link BigVector}.
+    /** Set a row from a {@link BigVector}.
      *  The array is extended with empty rows as necessary.
      *  @param rowNo number of the row, zero based
      *  @param vect1 BigVector containing the elements of the array's row
@@ -189,14 +190,14 @@ public class BigVectorArray implements Cloneable, Serializable {
         setBigVector(rowNo1, row2);
     } // exchangeVectors
 
-    /** Returns the number of rows
+    /** Return the number of rows
      *  @return a small number
      */
     public int size() {
         return varr.size();
     } // size
 
-    /** Returns a new BigVectorArray constructed from a String representation
+    /** Return a new BigVectorArray constructed from a String representation
      *  of a recurrence equation. This array is suitable as matrix parameter for HolonomicRecurrence.
      *  @param input the input string, for example
      *  <code>"2*n*a(n) +(-23*n+36)*a(n-1) +6*(-2*n+3)*a(n-2)=0"</code>.
@@ -264,7 +265,7 @@ public class BigVectorArray implements Cloneable, Serializable {
 
     /*-------------- lightweight derived methods -----------------------------*/
 
-    /** Returns a string representation of the array
+    /** Return a string representation of the array
      *  with comma separated lists of values for the {@link BigVector}s
      *  enclosed in quare brackets, where the vector expressions
      *  are in turn comma separated and enclosed in square brackets.

@@ -34,7 +34,7 @@ BASE=2
 MAX=32
 
 all: eec
-dist:
+distr:
 	ant dist
 #-------------------------------------------------------------------
 # Perform a regression test 
@@ -105,8 +105,11 @@ RE="n*a(n-1)-a(n)"
 OFFSET=0
 DIST=0
 GFTYPE=0
+#----
 recur:
 	$(JAVA) org.teherba.ramath.linear.BigVectorArray -d $(D) -recur "$(RE)"
+gft:
+	$(JAVA) org.teherba.ramath.linear.GeneratingFunction 2>&1
 #---------------------------------------------------
 runholo:
 	$(JAVA) irvine.test.HolonomicRecurrenceTest -p "$(MATRIX)" -i "$(INIT)" -o $(OFFSET) -d $(D) -n $(NT) -dist $(DIST) -t $(GFTYPE) $(BF)
