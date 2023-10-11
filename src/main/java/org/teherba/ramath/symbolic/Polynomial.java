@@ -1539,7 +1539,7 @@ public class Polynomial implements Cloneable, Serializable {
     } // getSubPolynomial
 
     /** Extracts a new {@link Polynomial} consisting of all {@link Monomial}s
-     *  that involve the variables in <em>varList</em> with corresponding exponents in <em>expos</em>.
+     *  that involve the tuple of variables in <em>varList</em> with corresponding exponents in <em>expos</em>.
      *  @param varList comma-separated list of variable names (usually "x,y" for generating functions of triangles)
      *  @param expos exponents &gt;= 0 of such variables
      *  @return subset Polynomial with Monomials from <em>this</em> Polynomial, divided by the powered variables
@@ -1567,7 +1567,7 @@ public class Polynomial implements Cloneable, Serializable {
             }
         } // while titer
         return result;
-    } // extract
+    } // extractTuple
 
     // Elimination of lower power terms
 

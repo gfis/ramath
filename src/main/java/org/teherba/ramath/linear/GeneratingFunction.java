@@ -20,6 +20,7 @@
 package org.teherba.ramath.linear;
 import  org.teherba.ramath.symbolic.Monomial;
 import  org.teherba.ramath.symbolic.Polynomial;
+import  org.teherba.ramath.symbolic.Signature;
 import  org.teherba.ramath.symbolic.VariableMap;
 import  org.teherba.ramath.linear.BigVector;
 import  org.teherba.ramath.linear.BigVectorArray;
@@ -39,7 +40,7 @@ public class GeneratingFunction extends BigVectorArray {
     public static int debug = 0;
     
     /** Maximum length of triangle sequence. */
-    private static int MAX_TRI = 15;
+    public static int maxTri;
 
     /** No-args Constructor
      */
@@ -55,14 +56,47 @@ public class GeneratingFunction extends BigVectorArray {
         super("[" + num + "],[" + den + "]");
     } // Constructor(String, String)
 
+    /** From a polynomial in x, y and unknown constants ar_c, extract two coefficients before x^r*y^c as Strings:
+     *  first the coefficient before ar_c*x^r*x^c, and second the one before x^r*x^c. 
+     *  @param varList comma-separated list of variable names (usually "x,y" for generating functions of triangles)
+     *  @param expos exponents &gt;= 0 of such variables
+     *  @return subset Polynomial with Monomials from <em>this</em> Polynomial, divided by the powered variables
+     */
+    public String[] extractPair(Polynomial poly, int row, int col) {
+        String[] result = new String[2];
+    /*
+        String[] names = new String[] { "x", "y" };
+        Monomial mono2 = new Monomial(names, expos);
+        int vlen = names.length;
+        // assert expos.length == vlen;
+        Iterator <Signature> titer = poly.monomials.keySet().iterator(); // signatures of Monomials
+        while (titer.hasNext()) { // over all monomials in this Polynomial
+            Signature tsig = titer.next();
+            Monomial mono = this.monomials.get(tsig);
+            boolean busy = true; // assume that all variables occur
+            int ivar = 0;
+            while (busy && ivar < vlen) { // check for proper exponents of all variable names in mono2
+                if (mono.getExponent(names[ivar]) != expos[ivar]) { // exponent differs
+                    busy = false;
+                }
+                ivar ++;
+            } // while checking
+            if (busy) { // all variables occurred
+                result.put(tsig, mono.divide(mono2));
+            }
+        } // while titer
+    */
+        return result;
+    } // extractPair
+
     /** Compute the coefficients of the denominator polynomial in x, y
      *  for a triangle. The nominator is 1.
      *  @param len number of denominator coefficents to be computed
      *  @param terms array of the terms of the resulting triangle, by rows
      *  @return nominator and denominator coefficients
      */
-    public static GeneratingFunction ordinaryTriangle(int len, BigVector terms) {
-        len = Math.min(Math.min(len, MAX_TRI), terms.size());
+    public static BigVector ordinaryTriangle(int len, BigVector num, BigVector terms) {
+        len = Math.min(Math.min(len, maxTri), terms.size());
         ArrayList<BigInteger> den = new ArrayList<>();
         Polynomial rest   = new Polynomial("a0_0"); //q0, q2, q3 ...
         Polynomial ansatz = Polynomial.getTriangleAnsatz(len); // q1
@@ -114,8 +148,9 @@ q5:=expand(q4+q1*((-4)*x^2));
                 System.out.println("#----------------\n# it=" + it + ", row=" + row + ", col=" + col);
                 System.out.println("# nterm="   + nterm + ", extr1=" + extr);
             }
-            Polynomial extr2 = new Polynomial(extr + "+(" + nterm + ")");
+            Polynomial extr2 = new Polynomial(extr + "+(" + nterm + ")"); // why were the constants not summed up?
             VariableMap vmap = extr2.getVariableAssignment();
+            den.add(new BigInteger(vmap.get(vmap.getFirstName())));
             if (debug >= 1) {
                 System.out.println("# extr2="   + extr2);
                 System.out.println("# vmap="    + vmap);
@@ -136,28 +171,54 @@ q5:=expand(q4+q1*((-4)*x^2));
                 col = 0;
             }
         } // for it
-        GeneratingFunction result = new GeneratingFunction();
-        return result;
+        BigInteger list2[] = new BigInteger[den.size()];
+        list2 = den.toArray(list2);
+        return new BigVector(list2);
     } // ordinaryTriangle
 
-    /** Test method, shows a monomial after several operations.
+    /** Test method, shows a the denominator monomial after several operations.
      *  @param args command line arguments - none
      */
     public static void main(String[] args) {
-        if (args.length == 0) {
-            debug = 1;
-            BigVector bv = new BigVector("[1,2,7,4,14,49,8,28,98,343,16,56,196,686,2401]"); // A036565
-            System.out.println("gft=" + ordinaryTriangle(MAX_TRI, bv));
-        } else {
-            int iarg = 0;
-            int len = MAX_TRI; // default
-            try {
-                len = Integer.parseInt(args[iarg ++]);
-            } catch (Exception exc) {
-            }
-            BigVector bv = new BigVector(args[iarg ++]);
-            System.out.println(ordinaryTriangle(len, bv));
+        BigVector num = new BigVector("[1]");
+        BigVector terms = null;
+        String aSeqNo = "Annnnnn";
+        debug = 0;
+        int iarg = 0;
+        maxTri  = 15;
+        int noTerms = 10;
+        try {
+            if (args.length == 0) {
+                aSeqNo = "A036565";
+                terms = new BigVector("[1,2,7,4,14,49,8,28,98,343,16,56,196,686,2401]"); // A036565
+            } else {
+                while (iarg < args.length) { // syntax is: -opt filename
+                    String opt = args[iarg ++];
+                    if (false) {
+                    } else if (opt.equals    ("-a")) {
+                        aSeqNo = args[iarg ++];
+                    } else if (opt.equals    ("-d")) {
+                        debug = Integer.parseInt(args[iarg ++]);
+                    } else if (opt.startsWith("-t")) {
+                        terms = new BigVector(args[iarg ++]);
+                    } else if (opt.equals    ("-m")) {
+                        maxTri  = Integer.parseInt(args[iarg ++]);
+                    } else if (opt.equals    ("-n")) {
+                        noTerms = Integer.parseInt(args[iarg ++]);
+                    } else if (opt.startsWith("-num")) {
+                        num = new BigVector(args[iarg ++]);
+                    } else {
+                        System.out.println("invalid option: \"" + opt + "\"");
+                        iarg ++;
+                    }
+                } // while iarg
+            } // >= 1 args
+        } catch (Exception exc) {
+            System.err.println(exc.getMessage());
         }
+        System.out.println(aSeqNo + "\t" + "trigf\t0\t" + num + "\t" + ordinaryTriangle(noTerms, num, terms));
+        
     } // main
+
 
 } // GeneratingFunction
