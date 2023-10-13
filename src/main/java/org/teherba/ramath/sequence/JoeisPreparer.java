@@ -1,5 +1,6 @@
 /*  JoeisPreparer: prepare *.gen files for joeis-lite
  *  @(#) $Id$
+ *  2023-10-13: -trigf
  *  2021-11-30: -cc trans, like infix, but with op1, op2 placeholders
  *  2021-08-22: -cc post: "~~" is optional
  *  2021-07-29: -cc callcode
@@ -26,7 +27,9 @@
  * limitations under the License.
  */
 package org.teherba.ramath.sequence;
+import  org.teherba.ramath.linear.BigVector;
 import  org.teherba.ramath.linear.BigVectorArray;
+import  org.teherba.ramath.linear.GeneratingFunction;
 import  org.teherba.ramath.linear.Matrix;
 import  org.teherba.ramath.linear.Vector;
 import  org.teherba.ramath.symbolic.PolyFraction;
@@ -156,6 +159,7 @@ public class JoeisPreparer implements Cloneable, Serializable {
      *  <li><code>postf   </code></li>
      *  <li><code>rioarr  </code></li>
      *  <li><code>sage    </code></li>
+     *  <li><code>trigft  </code></li>
      *  <li><code>trans   </code></li>
      *  </ul>
      *  @param iparm first parameter string to be consumed
@@ -403,6 +407,23 @@ public class JoeisPreparer implements Cloneable, Serializable {
             System.out.println(aseqno + "\t" + "coef"
                     + "\t" + pfr1.getSeriesCoefficients(numTerms)
                     );
+
+        } else if (callCode.startsWith("trigf")
+                || argsCode.startsWith("trigf")) {
+            String lens     = parms[iparm + 0];
+            int len = 10;
+            try {
+                len = Integer.parseInt(lens);
+            } catch (Exception exc) {
+            }
+            String num      = parms[iparm + 1];
+            String termList = parms[iparm + 2];
+            GeneratingFunction.maxTri = len;
+            BigVector den   = GeneratingFunction.ordinaryTriangle(len, new BigVector(num), new BigVector(termList));
+            parms[iparm + 0] = num;
+            parms[iparm + 1] = den.toString();
+            parms[iparm + 2] = ""; // termList;
+            reproduce(parms);
 
         } else if (callCode.startsWith("vect")
                 || argsCode.startsWith("vect")) {

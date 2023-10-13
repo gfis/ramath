@@ -170,7 +170,7 @@ public class Monomial implements Cloneable, Serializable {
     } // parse
 
 
-    /** Constructs from variable names; the result is 
+    /** Constructs from variable names; the result is
      *  the product of the variables with coefficient +1 and exponents 1
      *  @param names variable names
      */
@@ -184,7 +184,7 @@ public class Monomial implements Cloneable, Serializable {
         } // while ivar
     } // Constructor([] names)
 
-    /** Constructs from variable names; the result is 
+    /** Constructs from variable names; the result is
      *  the product of the variables with coefficient +1 and the specified exponents
      *  @param names variable names
      *  @param expos exponents of the variables, &gt;= 0
@@ -332,28 +332,28 @@ public class Monomial implements Cloneable, Serializable {
         return vars;
     } // getMap
 
-    /** Sets the internal map of variables.
+    /** Set the internal map of variables.
      *  @param map map from variable names to exponents
      */
     public void setMap(TreeMap<String, Integer> map) {
         vars = map;
     } // setMap
 
-    /** Gets the key set of the internal mapping from variable names to exponents.
+    /** Get the key set of the internal mapping from variable names to exponents.
      *  @return set of variable names
      */
     public Set<String> keySet() {
         return vars.keySet();
     } // keySet
 
-    /** Returns the signum function of the coefficient.
+    /** Return the signum function of the coefficient.
      *  @return -1, 0 or 1 as the value of the coefficient is negative, zero or positive.
      */
     public int signum() {
-        return this.getCoefficient().compareTo(Coefficient.ZERO);
+        return this.getCoefficient().signum();
     } // signum
 
-    /** Determines whether the monomial contains no variables
+    /** Determine whether the monomial contains no variables
      *  @return false if the monomial is constant
      */
     public boolean isConstant() {
@@ -419,6 +419,26 @@ public class Monomial implements Cloneable, Serializable {
      */
     public Signature signature() {
         return characteristic(false, true);
+    } // signature
+
+    /** Create a signature from scratch.
+     *  @param varList comma-separated list of variables
+     *  @param expos exponents in the same order
+     *  @return a signature with variable names, but no coefficient
+     */
+    public static Signature signature(String varList, int... expos) {
+        StringBuilder signat = new StringBuilder(16);
+        String[] names = varList.split("\\, *");
+        for (int iname = 0; iname < names.length; iname ++) {
+            int expon = expos[iname];
+            if (expon > 0) {
+                signat.append('/');
+                signat.append(names[iname]);
+                signat.append('.');
+                signat.append(String.format("%02d", expon));
+            }
+        }
+        return new Signature(signat.toString());
     } // signature
 
     /** Gets some characteristic value which is independant of the variable names,

@@ -560,28 +560,6 @@ public class Polynomial implements Cloneable, Serializable {
         return result.substring(result.startsWith(" + ") ? 3 : 0);
     } // toFactoredString()
 
-    /** Return a Polynomial suitable for the denominator of the generating function
-     *  of a triangle. The variable names contain the exponents.
-     *  @param rowLen number of rows to be generated
-     *  @return "a0_0 + a1_0*x + a1_1*x*y + a2_0*x^2 + a2_1*x^2*y + a2_2*x^2*y^2 + a3_0*x^3 ...
-     */
-    public static Polynomial getTriangleAnsatz(int rowLen) {
-        StringBuilder polys = new StringBuilder(128);
-        for (int row = 0; row < rowLen; row ++) {
-            for (int col = 0; col <= row; col ++) {
-                polys.append("+a");
-                polys.append(row);
-                polys.append('_');
-                polys.append(col);
-                polys.append("*x^");
-                polys.append(row);
-                polys.append("*y^");
-                polys.append(col);
-            } // for col
-        } // for row
-        return parse(polys.toString());
-    } // getTriangleAnsatz
-
     /** Returns an array of the coefficients in the Polynomial
      *  in "triangle" order, with rows for the independant variable ("x")
      *  and columns for the dependant variable ("y"),
@@ -2463,18 +2441,6 @@ after  z, phead=x^2 - 2*y^2 + 9*z^2, pbody=0, ptail=0, vmapt={x=&gt; - 2*y + 4*z
                         } catch (Exception exc) { // take default
                         }
                         // -d
-
-                    } else if (opt.startsWith("-ansatz")) {
-                        int rowLen = 4;
-                        if (args.length > 0) {
-                            try {
-                                rowLen = Integer.parseInt(args[iarg ++]);
-                            } catch (Exception exc) {
-                            }
-                        }
-                        System.out.println("getTriangleAnsatz(" + rowLen + ") = " + getTriangleAnsatz(rowLen).toString());
-                        // -ansatz
-
 
                     } else if (opt.startsWith("-const")) {
                         poly1 = Polynomial.parse("4 - a0_0");

@@ -95,19 +95,26 @@ public class Coefficient extends BigInteger // BigRational
         return new Coefficient(String.valueOf(number));
     } // valueOf(long)
 
-    /** Returns the absolute value of <em>this</em> {@link Coefficient}
+    /** Return the absolute value of <em>this</em> {@link Coefficient}.
      *  @return a non-negative BigInteger
      */
     public BigInteger abs() {
         return super.abs();
     } // abs
 
-    /** Returns the negated value of <em>this</em> {@link Coefficient}
+    /** Return the negated value of <em>this</em> {@link Coefficient}.
      *  @return a BigInteger
      */
     public BigInteger negate() {
         return super.negate();
     } // negate
+
+    /** Return the signum function of <em>this</em> {@link Coefficient}.
+     *  @return -1, 0 or 1 as the value of the coefficient is negative, zero or positive.
+     */
+    public int signum() {
+        return this.compareTo(Coefficient.ZERO);
+    } // signum
 
     /** Returns the integral part of <em>this</em> {@link Coefficient},
      *  or +1 if the Coefficient is fractional.
