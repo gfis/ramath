@@ -1,5 +1,6 @@
 /*  BigVectorArray: an array of BigVectors with possibly different lengths
  *  @(#) $Id: BigVectorArray.java 744 2011-07-26 06:29:20Z gfis $
+ *  2023-11-07: add(vect)
  *  2021-01-28: parseRecurrence reduces dist down to 0
  *  2021-01-20: parseRecurrence rewritten with a_3, a__4
  *  2020-02-11: parseRecurrence
@@ -179,7 +180,7 @@ public class BigVectorArray implements Cloneable, Serializable {
         varr.set(rowNo, vect1);
     } // set
 
-    /** Exchanges two rows in <em>this</em> BigVectorArray.
+    /** Exchange two rows in <em>this</em> BigVectorArray.
      *  @param rowNo1 number of the 1st row
      *  @param rowNo2 number of the 2nd row
      */
@@ -196,6 +197,13 @@ public class BigVectorArray implements Cloneable, Serializable {
     public int size() {
         return varr.size();
     } // size
+
+    /** Append a {@link BigVector}.
+     *  @param vect BigVector to be added to the array
+     */
+    public void add(BigVector vect) {
+        varr.add(vect);
+    } // add
 
     /** Return a new BigVectorArray constructed from a String representation
      *  of a recurrence equation. This array is suitable as matrix parameter for HolonomicRecurrence.
@@ -285,7 +293,7 @@ public class BigVectorArray implements Cloneable, Serializable {
         return result.toString();
     } // toString()
 
-    /** Determines whether the BigVectorArray has a zero element
+    /** Determine whether the BigVectorArray has a zero element
      *  @return true if the array contains a zero, or false otherwise
      */
     public boolean hasZero() {
@@ -298,7 +306,7 @@ public class BigVectorArray implements Cloneable, Serializable {
         return result;
     } // hasZero
 
-    /** Determines whether all elements of the array are zero
+    /** Determine whether all elements of the array are zero
      *  @return true if the array is zero, or false otherwise
      */
     public boolean isZero() {
@@ -311,7 +319,7 @@ public class BigVectorArray implements Cloneable, Serializable {
         return result;
     } // isZero
 
-    /** Compares <em>this</em> array with a second for equal elements
+    /** Compare <em>this</em> array with a second for equal elements
      *  @param varr2 compare with this array
      *  @return true if all elements are equal
      */

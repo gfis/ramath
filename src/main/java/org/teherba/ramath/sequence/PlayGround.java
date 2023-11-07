@@ -19,7 +19,7 @@
  
 package org.teherba.ramath.sequence;
 
-/** This class nothing important.
+/** This class does nothing important.
  *  @author Dr. Georg Fischer
  */
 public class PlayGround{

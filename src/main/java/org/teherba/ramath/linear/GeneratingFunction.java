@@ -346,3 +346,9 @@ q5:=expand(q4+q1*((-4)*x^2));
         System.out.println(aseqno + "\t" + "trigf\t0\t" + num + "\t" + ordinaryTriangle(numTerms, num, terms));
     } // main
 } // GeneratingFunction
+
+/*
+C:\Users\User\work\gits\ramath>java -cp dist/ramath.jar org.teherba.ramath.linear.GeneratingFunction -t "1, 9, 1, 153, 27, 1, 3825, 855, 54, 1, 126225, 32895, 2745, 90, 1, 5175225, 1507815, 150930, 6705, 135,
+1, 253586025, 80565975, 9205245, 499590, 13860, 189, 1, 14454403425, 4926412575, 623675430, 39180645, 1345050, 25578, 252, 1" -m 15 -n 15
+A223511 trigf   0       [1]     [1,-9,-1,-72,-9,0,-1800,-306,-9,0,-64584,-13500,-702,-9,0]
+*/

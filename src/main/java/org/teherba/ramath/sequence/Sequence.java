@@ -25,9 +25,7 @@ import  java.math.BigInteger;
 /** General methods and properties of OEIS sequences.
  *  @author Dr. Georg Fischer
  */
-public class Sequence extends BigVector
-        implements Cloneable, Serializable
-        {
+public class Sequence extends BigVector implements Cloneable, Serializable {
     private static final long serialVersionUID = 1L;
     public final static String CVSID = "@(#) $Id: Sequence.java 231 2009-08-25 08:47:16Z gfis $";
     /** Debugging level: 0 = none, 1 = some, 2 = more */
@@ -116,7 +114,7 @@ public class Sequence extends BigVector
     } // clone()
 
     //--------------------------------------
-    /** Prints the sequence in b-file format.
+    /** Print the sequence in b-file format.
      */
     public void printBFile() {
         int iterm = 0;
@@ -130,14 +128,14 @@ public class Sequence extends BigVector
         } // while iterm
     } // printBFile
 
-    /** Gets a comma separated list of a number of terms
+    /** Get a comma separated list of a number of terms
      *  @return list with all elements
      */
     public String toList() {
         return toList(29061947);
     } // toList()
 
-    /** Gets a comma separated list of a number of terms
+    /** Get a comma separated list of a number of terms
      *  @param termNo number of terms to be concatenated
      *  @return a list with at most <em>termNo</em> elements
      */
