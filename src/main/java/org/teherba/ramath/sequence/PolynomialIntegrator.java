@@ -18,8 +18,11 @@
  * limitations under the License.
  */
 package org.teherba.ramath.sequence;
+import  org.teherba.ramath.BigRational;
 import  org.teherba.ramath.linear.BigVector;
+import  org.teherba.ramath.linear.RationalVector;
 import  org.teherba.ramath.linear.BigVectorArray;
+import  org.teherba.ramath.symbolic.PolyFraction;
 import  org.teherba.ramath.symbolic.Polynomial;
 import  org.teherba.ramath.sequence.Sequence;
 import  org.teherba.ramath.sequence.SequenceReader;
@@ -38,9 +41,17 @@ public class PolynomialIntegrator {
     /** Highest exponent in the polynomial */
     private int order;
 
+    /** First index */
+    protected int offset;
+
+    /** A-number of the sequence */
+    protected String aseqno;
+
     /** No-args Constructor
      */
     public PolynomialIntegrator() {
+        aseqno = "";
+        offset = 0;
     } // Constructor()
 
     /** Compute the leading terms of successive differences.
@@ -64,6 +75,9 @@ public class PolynomialIntegrator {
             } // for iv
             result.setBig(iord, vnew.getBig(0));
             vold = vnew;
+            if (debug >= 1) {
+                System.out.println("iord=" + iord + ", vnew=" + vnew.toString());
+            }
         } // for iord
         if (debug >= 1) {
             System.out.println("getDiffLeads(" + order + ", " + vect.toString() + ") = " + result.toString());
@@ -88,7 +102,7 @@ public class PolynomialIntegrator {
      *   0      28 + 176*n + 112*n^2 +  20*n^3 +  1*n^4
      *  </pre>
      */
-    public Polynomial integrate(int offset, BigVector diffs) {
+    public Polynomial integrate_99(int offset, BigVector diffs) {
         int diffLen = diffs.size();
         int idif = diffLen - 1;
         while (diffs.getBig(idif).equals(BigInteger.ZERO) && idif >= 0) {
@@ -107,8 +121,8 @@ public class PolynomialIntegrator {
                 BigInteger[] quot = coeffs.getBig(jcef).divideAndRemainder(BigInteger.valueOf(nexp));
                 coeffs.setBig(jcef, quot[0]);
                 if (! quot[1].equals(BigInteger.ZERO)) { // remainder != 0
-                    System.err.println("no even division in integrate: " + coeffs.getBig(jcef).toString() + " / " + jcef);
-                    return new Polynomial("0");
+                    System.out.println("# " + aseqno + ": no even division in integrate: " + coeffs.getBig(jcef).toString() + " / " + nexp);
+                    // return new Polynomial("0");
                 }
             } // for jcef
             icef --;
@@ -138,6 +152,60 @@ public class PolynomialIntegrator {
             System.out.println("polys=" + polys.toString());
         }
         return new Polynomial(polys.toString());
+    } // integrate_99
+
+    public PolyFraction integrate(int offset, BigVector diffs) {
+        int diffLen = diffs.size();
+        int idif = diffLen - 1;
+        while (diffs.getBig(idif).equals(BigInteger.ZERO) && idif >= 0) {
+            idif --;
+        } // while
+        // now diffs[idif] != 0
+        RationalVector coeffs = new RationalVector(idif + 1);
+        int icef = idif;
+        while (icef >= 0) { // backwards
+            coeffs.set(icef, BigRational.valueOf(diffs.getBig(icef)));
+            for (int jcef = icef + 2; jcef <= idif; jcef ++) { // extract exponents
+                int nexp = jcef - icef; // new exponent
+                if (debug >= 2) {
+                    System.out.println("icef=" + icef + ", jcef=" + jcef + ", nexp=" + nexp + ", coeffs = " + coeffs.toString());
+                }
+                BigRational quot = coeffs.getRat(jcef).divide(BigInteger.valueOf(nexp));
+                coeffs.set(jcef, quot);
+            /*
+                if (! quot[1].equals(BigInteger.ZERO)) { // remainder != 0
+                    System.out.println("# " + aseqno + ": no even division in integrate: " + coeffs.getBig(jcef).toString() + " / " + nexp);
+                    // return new Polynomial("0");
+                }
+            */
+            } // for jcef
+            icef --;
+        } // while iord
+        if (debug >= 1) {
+            System.out.println("coeffs = " + coeffs.toString());
+        }
+        StringBuilder polys = new StringBuilder();
+        for (int ipol = 0; ipol <= idif; ipol ++) {
+            String coeff = coeffs.getRat(ipol).toString();
+            polys.append(coeff.startsWith("-") ? "" : "+");
+            polys.append(coeff);
+            for (int jpol = 1; jpol <= ipol; jpol ++) {
+                polys.append("*(n-");
+                polys.append(String.valueOf(jpol - 1));
+                if (offset > 0) {
+                    polys.append("-");
+                    polys.append(String.valueOf(  offset));
+                } else if (offset < 0) {
+                    polys.append("+");
+                    polys.append(String.valueOf(- offset));
+                }
+                polys.append(")");
+            } // for jpol
+        } // for ipol
+        if (debug >= 2) {
+            System.out.println("polys=" + polys.toString());
+        }
+        return PolyFraction.parse(polys.toString());
     } // integrate
 
     /** Test method.
@@ -170,6 +238,9 @@ public class PolynomialIntegrator {
                     String oper = args[iarg ++];
                     if (false) {
 
+                    } else if (oper.equals    ("-a")) {
+                        polint.aseqno = args[iarg ++];
+
                     } else if (oper.equals    ("-d")) {
                         polint.debug = Integer.parseInt(args[iarg ++]);
 
@@ -178,9 +249,15 @@ public class PolynomialIntegrator {
                         int order = terms.size();
                         BigVector diffs = polint.getDiffLeads(order, terms);
                         System.out.println("diffs="  + diffs.toString());
+                    /*
                         Polynomial poly = polint.integrate(offset, diffs);
                         System.out.println("poly="   + poly.toString());
                         System.out.println("vector=" + poly.getBigVector().toString());
+                    */
+                        PolyFraction polyf = polint.integrate(offset, diffs);
+                        System.out.println("polyf=" + polyf.toString());
+                        BigVector[] vect2 = polyf.toVectors();
+                        System.out.println("vectors=" + vect2[0].toString() + "/" + vect2[1].toString());
 
                     } else if (oper.equals    ("-o")) {
                         offset       = Integer.parseInt(args[iarg ++]);

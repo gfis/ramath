@@ -187,7 +187,7 @@ public class RationalVector extends BigVector implements Cloneable, Serializable
         vector[icol] = value;
     } // set
 
-    /** Gets the values of <em>this</em> {@link RationalVector} as an <em>BigInteger</em> array.
+    /** Gets the values of <em>this</em> {@link RationalVector} as an <em>BigRational</em> array.
      *  @return array of BigIntegers
      */
     public BigRational[] getRationalValues() {

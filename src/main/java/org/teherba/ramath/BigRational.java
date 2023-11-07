@@ -1,6 +1,6 @@
 /*  BigRational: a fraction as a pair of BigIntegers
  *  @(#) $Id: BigRational.java 231 2009-08-25 08:47:16Z gfis $
- *  2929-03-16: implements Comparator
+ *  2020-03-16: implements Comparator
  *  2019-08-27: MINUS_ONE
  *  2017-05-28: javadoc 1.8
  *  2015-11-14: numerator -&gt; num, denominator -&gt; den (again)
@@ -14,7 +14,7 @@
  *  2008-10-24, Georg Fischer: copied from Series
  */
 /*
- * Copyright 2008 Dr. Georg Fischer <punctum at punctum dot kom>
+ * Copyright 2008 Dr. Georg Fischer <dr dot georg dot fischer at gmail>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,10 +39,7 @@ import  java.util.Comparator;
 /** BigRational - a fraction as a pair of {@link BigInteger}s, and functions for them.
  *  @author Dr. Georg Fischer
  */
-public class BigRational
-        extends BigInteger
-        implements Cloneable, Serializable, Comparator<BigRational>
-        {
+public class BigRational extends BigInteger implements Cloneable, Serializable, Comparator<BigRational> {
     private static final long serialVersionUID = 1L;
     public final static String CVSID = "@(#) $Id: BigRational.java 231 2009-08-25 08:47:16Z gfis $";
 
@@ -298,7 +295,7 @@ public class BigRational
      *  @param val value by which this BigRational is to be divided
      *  @return this / val
      */
-    public BigRational divide  (BigInteger  val) {
+    public BigRational divide(BigInteger  val) {
         return BigRational.valueOf
                 ( (this.num)
                 , (this.den                               ).multiply(val                )

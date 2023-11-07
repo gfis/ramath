@@ -55,8 +55,8 @@ public class BigVector extends Vector implements Cloneable, Serializable {
     protected BigInteger[] vector;
     /** number of elements in <em>vector</em> */
     // inherited: protected int vecLen;
-    /** common denominator or 1 */
-    protected BigInteger comDen;
+    /** common denominator of all elements, or 1 */
+    private BigInteger commonDen;
     /*-------------- construction -----------------------------*/
 
     /** No-args Constructor
@@ -64,7 +64,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
     public BigVector() {
         vecLen  = 1;
         vector  = new BigInteger[] { BigInteger.ZERO };
-        comDen  = BigInteger.ONE;
+        commonDen  = BigInteger.ONE;
     } // no-args Constructor
 
     /** Constructor for a BigVector of some length
@@ -76,7 +76,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
             vecLen ++;
         }
         vector = new BigInteger[vecLen];
-        comDen  = BigInteger.ONE;
+        commonDen  = BigInteger.ONE;
         int icol = 0;
         while (icol < vecLen) {
             vector[icol] = BigInteger.ZERO;
@@ -94,7 +94,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
             vecLen ++;
         }
         vector = new BigInteger[vecLen];
-        comDen  = BigInteger.ONE;
+        commonDen  = BigInteger.ONE;
         for (int icol = 0; icol < vecLen; icol ++) {
             vector[icol] = value;
         } // for icol
@@ -106,7 +106,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
     public BigVector(int[] tuple) {
         this.vecLen = tuple.length;
         this.vector = new BigInteger[this.vecLen];
-        comDen  = BigInteger.ONE;
+        commonDen  = BigInteger.ONE;
         for (int icol = 0; icol < this.vecLen; icol ++) {
             this.vector[icol] = BigInteger.valueOf(tuple[icol]);
         } // for icol
@@ -118,7 +118,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
     public BigVector(Vector tuple) {
         this.vecLen = tuple.size();
         this.vector = new BigInteger[this.vecLen];
-        comDen  = BigInteger.ONE;
+        commonDen  = BigInteger.ONE;
         for (int icol = 0; icol < this.vecLen; icol ++) {
             this.vector[icol] = BigInteger.valueOf(tuple.get(icol));
         } // for icol
@@ -130,7 +130,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
     public BigVector(BigInteger[] tuple) {
         this.vecLen = tuple.length;
         this.vector = new BigInteger[this.vecLen];
-        comDen  = BigInteger.ONE;
+        commonDen  = BigInteger.ONE;
         for (int icol = 0; icol < this.vecLen; icol ++) {
             this.vector[icol] = tuple[icol];
         } // for icol
@@ -164,7 +164,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         try {
             int slashPos = vectExpr.indexOf("/");
             if (slashPos >= 0) {
-                comDen = new BigInteger(vectExpr.substring(slashPos + 1));
+                commonDen = new BigInteger(vectExpr.substring(slashPos + 1));
             } else {
                 slashPos = vectExpr.length();
             }
@@ -214,7 +214,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
 
     /*-------------- bean methods, setters and getters -----------------------------*/
 
-    /** Sets the debugging level
+    /** Set the debugging level
      *  @param debug 0 = none, 1 = some , 2 = more
      */
 /*
@@ -222,21 +222,21 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         this.debug = debug;
     } // setDebug
 */
-    /** Returns the common denominator
+    /** Return the common denominator
      *  @return a number &gt;= 1
      */
     public BigInteger getDen() {
-        return comDen;
+        return commonDen;
     } // getDen
 
-    /** Sets the common denominator
+    /** Set the common denominator
      *  @param den a number &gt;= 1
      */
     public void setDen(BigInteger den) {
-        comDen = den;
+        commonDen = den;
     } // setDen
 
-    /** Returns an element of the Vector
+    /** Return an element of the Vector
      *  @param icol number of the element (zero based)
      *  @return a number
      */
@@ -244,7 +244,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         return vector[icol];
     } // getBig
 
-    /** Sets an element of the BigVector
+    /** Setan element of the BigVector
      *  @param icol number of the element (zero based)
      *  @param value a number
      */
@@ -252,7 +252,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         vector[icol] = value;
     } // set
 
-    /** Sets an element of the BigVector
+    /** Set an element of the BigVector
      *  @param icol number of the element (zero based)
      *  @param value a small number
      */
@@ -260,14 +260,14 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         vector[icol] = value;
     } // set
 
-    /** Gets the values of <em>this</em> {@link BigVector} as an <em>BigInteger</em> array.
+    /** Get the values of <em>this</em> {@link BigVector} as an <em>BigInteger</em> array.
      *  @return array of BigIntegers
      */
     public BigInteger[] getBigValues() {
         return this.vector;
     } // getBigValues
 
-    /** Gets the values of <em>this</em> {@link BigVector} starting at some offset &gt; 0,
+    /** Get the values of <em>this</em> {@link BigVector} starting at some offset &gt; 0,
      *  as an <em>BigInteger</em> array.
      *  @param offset start copy at this index
      *  @return array of BigIntegers
@@ -278,14 +278,14 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         return result;
     } // getBigValues(int)
 
-    /** Gets the last element.
+    /** Get the last element.
      *  @return the last element of <em>this</em> vector
      */
     public BigInteger getLastElement() {
         return vector[vector.length - 1];
     } // getLast
 
-    /** Gets an univariate {@link Polynomial}
+    /** Get an univariate {@link Polynomial}
      *  @return a Polynomial where the elements of <em>this</em> are the coefficients of the variable "x",
      *  and the indices are the exponents.
      */
@@ -300,7 +300,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         return result;
     } // getPolynomial
 
-    /** Returns the number of elements
+    /** Return the number of elements
      *  @return a small number
      */
     public int size() {
@@ -309,7 +309,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
 
     /*-------------- lightweight derived methods -----------------------------*/
 
-    /** Returns a new BigVector which has the highest element &gt; 0, and
+    /** Return a new BigVector which has the highest element &gt; 0, and
      *  all elements are divided by any greatest common divisor;
      *  the common denominator is set to 1.
      *  @return normalized BigVector
@@ -324,7 +324,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         return result;
     } // normalize
 
-    /** Computes the sum of squares of the elements of <em>this</em> BigVector
+    /** Compute the sum of squares of the elements of <em>this</em> BigVector
      *  @return sum of elements^2
      */
     public BigInteger normBig4() {
@@ -337,7 +337,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         return result;
     } // normBig4
 
-    /** Equality of 2 BigVectors
+    /** Determine whether 2 BigVectors are equal.
      *  @param vect2 compare <em>this</em> BigVector with it
      *  @return whether the 2 vectors are equal
      */
@@ -357,7 +357,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         return result;
     } // equals
 
-    /** Whether there is any zero element in the BigVector
+    /** Determine whether there is any zero element in the BigVector.
      *  @return false if all elements are non-zero
      */
     @Override
@@ -371,7 +371,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         return result;
     } // hasZero
 
-    /** Whether the RationalVector is empty or consists of a single constant zero.
+    /** Determine whether the RationalVector is empty or consists of a single constant zero.
      *  @return true if zero
      */
     @Override
@@ -380,7 +380,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         return len == 0 || (len == 1 && getBig(0).equals(BigInteger.ZERO));
     } // isZero
 
-    /** Whether <code>this &lt; 0</code>
+    /** Determine whether <code>this &lt; 0</code>
      *  @return true if the highest element is negative
      */
     public boolean isNegative() {
@@ -391,7 +391,8 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         }
         return result;
     } // isNegative
-    /** Gets the (first) position of an element in <em>this</em> BigVector.
+
+    /** Get the (first) position of an element in <em>this</em> BigVector.
      *  @param elem search for this element
      *  @return index &gt;= 0 of <em>elem</em> in <em>this</em> BigVector, or -1 if not found
      */
@@ -409,7 +410,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
 
     // inherited: contains
 
-    /** Returns a String representation of the BigVector
+    /** Returna String representation of the BigVector
      *  @return a list of the form "[n1,n2,n3]"
      */
     @Override
@@ -417,7 +418,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         return toString(",");
     } // toString()
 
-    /** Returns a String representation of the BigVector
+    /** Return a String representation of the BigVector
      *  @param formatSpec separator or printf spec; "%3d" is converted to "%-3s".
      *  @return a separated list of BigIntegers
      */
@@ -483,6 +484,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
     //========================
     // GCD, LCM and companions
     //========================
+
     /** Greatest common divisor of <em>this</em> BigVector's elements
      *  @return a BigInteger &gt;= 1
      */
@@ -515,7 +517,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         return result;
     } // gcd(array)
 
-    /** Computes the least common multiple (LCM) of 2 integers
+    /** Compute the least common multiple (LCM) of 2 integers
      *  @param a first integer
      *  @param b second integer
      *  @return lcm(a,b)
@@ -578,7 +580,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
     } // extractGcdBig(array)
 
     /*-------------- arithmetic operations -------------------------*/
-    /** Shrinks <em>this</em> BigVector, that is removes zeroes at the tail.
+    /** Shrink <em>this</em> BigVector, that is removes zeroes at the tail.
      *  By default extract a GCD from the vector and the common denominator.
      *  @return the shrinked BigVector
      */
@@ -586,7 +588,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         return shrink(true);
     } // shrink
 
-    /** Shrinks <em>this</em> BigVector, that is removes zeroes at the tail.
+    /** Shrink <em>this</em> BigVector, that is removes zeroes at the tail.
      *  @param reduce whether to remove a GCD from the vector
      *  @return the shrinked BigVector
      */
@@ -604,7 +606,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         return reduce ? result.shorten() : result;
     } // shrink(boolean)
 
-    /** Creates a new BigVector with any GCD of the nominators and the denominator removed
+    /** Create a new BigVector with any GCD of the nominators and the denominator removed.
      *  @return a new, shortened BigVector
      */
     public BigVector shorten() {
@@ -691,7 +693,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         return result;
     } // shift
 
-    /** Gets a new BigVector which is the sum of <em>this</em> and a second
+    /** Get a new BigVector which is the sum of <em>this</em> and a second
      *  BigVector, which may have a differing length.
      *  @param vect2 the BigVector to be added to <em>this</em>.
      *  @return this + vect2
@@ -714,7 +716,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         return result.shrink();
     } // add(BigInteger)
 
-    /** Gets a new BigVector which is the difference of <em>this</em> and a second
+    /** Get a new BigVector which is the difference of <em>this</em> and a second
      *  BigVector, which may have a differing length.
      *  @param vect2 the BigVector to be subtracted from <em>this</em>.
      *  @return this - vect2
@@ -737,7 +739,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         return result.shrink();
     } // subtract(BigInteger)
 
-    /** Gets a new BigVector which is a multiple of <em>this</em> BigVector.
+    /** Get a new BigVector which is a multiple of <em>this</em> BigVector.
      *  @param scale multiply by this BigInteger
      *  @return this * scale,
      *  that is a BigVector where each element is multiplied by <em>scale</em>
@@ -755,7 +757,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         return result.shrink();
     } // multiply(BigInteger)
 
-    /** Gets a new BigVector which is a multiple of <em>this</em> BigVector.
+    /** Get a new BigVector which is a multiple of <em>this</em> BigVector.
      *  @param scale multiply by this int
      *  @return this * scale,
      *  that is a BigVector where each element is multiplied by <em>scale</em>
@@ -764,7 +766,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         return this.multiply(BigInteger.valueOf(scale));
     } // multiply(int)
 
-    /** Gets a new BigVector which is the product of <em>this</em> and a second
+    /** Get a new BigVector which is the product of <em>this</em> and a second
      *  BigVector, which may have a differing length.
      *  @param vect2 multiply by this BigVector
      *  @return this * vect2, that is a BigVector
@@ -799,7 +801,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         return result.shrink();
     } // multiply(BigVector)
 
-    /** Gets a new BigVector which is the negative of <em>this</em> BigVector.
+    /** Get a new BigVector which is the negative of <em>this</em> BigVector.
      *  @return a BigVector where each original element is multiplied by <em>-1</em>
      */
     public BigVector negate() {
@@ -815,7 +817,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         return result;
     } // negate()
 
-    /** Gets the reversed order of <em>this</em> BigVector.
+    /** Get the reversed order of <em>this</em> BigVector.
      *  @return the original BigVector read backwards
      */
     public BigVector reverse() {
@@ -831,7 +833,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         return result;
     } // reverse()
 
-    /** Gets a new BigVector which is the quotient of <em>this</em> BigVector;
+    /** Get a new BigVector which is the quotient of <em>this</em> BigVector;
      *  there may not remain a rest for any element.
      *  @param scale divide by this BigInteger - must be non-zero
      *  @return this / scale,
@@ -850,7 +852,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         return result; // no !! shrink, since that uses this method
     } // divide(BigInteger)
 
-    /** Gets the quotient and the remainder from a division of <em>this</em>
+    /** Get the quotient and the remainder from a division of <em>this</em>
      *  and a second BigVector
      *  @param vect2 the divisor
      *  @return [quotient, remainder]
@@ -941,12 +943,12 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         return new BigVector[] { quot.shrink(), rem1.shrink() };
     } // divideAndRemainder(BigVector)
 
-    /** Determines the quotient of the first elements of <em>this</em> (numerator of the g.f.)
+    /** Determine the quotient of the first elements of <em>this</em> (numerator of the g.f.)
      *  and <em>vect2</em> (the division may not have a rest, and the first element of vect2 must be ONE),
-     *  subtracts the product of <em>vect2 * quotient</em>
+     *  subtract the product of <em>vect2 * quotient</em>
      *  from <em>this</em> (eventually after padding the latter with zeroes),
-     *  removes the first element of <em>this</em> (this is zero then),
-     *  and returns the quotient.
+     *  remove the first element of <em>this</em> (this is zero then),
+     *  and return the quotient.
      *  @param vect2 the divisor (denominator of the g.f.)
      *  @return quotient, coefficient of the series expansion
      */
@@ -1056,7 +1058,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
 
     /*-------------------- Test Driver --------------------*/
 
-    /** Test method, shows some fixed matrices with no arguments, or the
+    /** Test method: Show some fixed matrices with no arguments, or the
      *  matrix resulting from the input formula.
      *  @param args command line arguments: [vect1] oper [vect2] (cf. test/linear.tests)
      */

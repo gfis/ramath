@@ -365,8 +365,15 @@ public class JoeisPreparer implements Cloneable, Serializable {
                 || argsCode.startsWith("polint")) { // derive a polynomial from terms
             BigVector bv = new BigVector(parms[iparm]);
             BigVector diffs = polint.getDiffLeads(bv.size(), bv);
+        /*    
             Polynomial poly = polint.integrate(offset1, diffs);
             parms[iparm + 0] = poly.getBigVector().toString();
+        */
+            PolyFraction polyf = polint.integrate(offset1, diffs);
+            BigVector[] vect2 = polyf.toVectors();
+            String num = vect2[0].toString();
+            String den = vect2[1].toString().replaceAll("[\\[\\]]", "");
+            parms[iparm + 0] = num + (den.equals("1") ? "" : "/" + den);
             reproduce(parms);
 
         } else if (callCode.startsWith("post1")
