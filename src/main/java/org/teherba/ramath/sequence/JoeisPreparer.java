@@ -1,5 +1,6 @@
 /*  JoeisPreparer: prepare *.gen files for joeis-lite
  *  @(#) $Id$
+ *  2023-11-07: -polint
  *  2023-10-13: -trigf
  *  2021-11-30: -cc trans, like infix, but with op1, op2 placeholders
  *  2021-08-22: -cc post: "~~" is optional
@@ -27,6 +28,7 @@
  * limitations under the License.
  */
 package org.teherba.ramath.sequence;
+import  org.teherba.ramath.sequence.PolynomialIntegrator;
 import  org.teherba.ramath.linear.BigVector;
 import  org.teherba.ramath.linear.BigVectorArray;
 import  org.teherba.ramath.linear.GeneratingFunction;
@@ -83,6 +85,9 @@ public class JoeisPreparer implements Cloneable, Serializable {
 
     /** Optional expression builder */
     private JoeisExpressionBuilder builder;
+
+    /** Polynomial integrator */
+    protected PolynomialIntegrator polint;
 
     /** number of terms to be generated */
     private int numTerms;
@@ -356,6 +361,14 @@ public class JoeisPreparer implements Cloneable, Serializable {
                 reproduce(parms);
             }
 
+        } else if (callCode.startsWith("polint")
+                || argsCode.startsWith("polint")) { // derive a polynomial from terms
+            BigVector bv = new BigVector(parms[iparm]);
+            BigVector diffs = polint.getDiffLeads(bv.size(), bv);
+            Polynomial poly = polint.integrate(offset1, diffs);
+            parms[iparm + 0] = poly.getBigVector().toString();
+            reproduce(parms);
+
         } else if (callCode.startsWith("post1")
                 || argsCode.startsWith("post1")) { // translate a single infix expression to postfix
             ShuntingYard parser = new ShuntingYard("\\w+");
@@ -482,6 +495,7 @@ public class JoeisPreparer implements Cloneable, Serializable {
     public static void main(String[] args) {
         int iarg = 0;
         JoeisPreparer jprep = new JoeisPreparer();
+        jprep.polint = new PolynomialIntegrator();
         jprep.numTerms = 16;
         jprep.offset1  = 0;
         jprep.argsCode = ""; // take the cc from the 2nd column of the input file

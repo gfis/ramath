@@ -2,6 +2,7 @@
 <!--
     ant-buildfile for commandline, web application and web service
     @(#) $Id: 08b49ddc73ef271c7054bb70acb278bcff247562 $
+    2023-11-07: Multi-Release: true -> MANFEST:MF
     2022-01-28: prepare: also copy etc/*.xml into the classpath; JDK 1.8
     2016-09-16: manifest("-core"), core.jar, manifest("") for dbat.Configuration.versionString
     2016-09-12: fill.lib depends on clean
@@ -249,6 +250,7 @@
                 for appl.jar     , the property ${core} must be set to ""      
             -->
             <section name="${ant.project.name}">
+                <attribute name="Multi-Release"             value="true" />
                 <attribute name="Specification-Title"       value="${ant.project.name}${core}"/>
                 <attribute name="Specification-Version"     value="${app.version} ${build.jdk}"/>
                 <attribute name="Specification-Vendor"      value="Dr. Georg Fischer, D-79341 Kenzingen, Germany"/>

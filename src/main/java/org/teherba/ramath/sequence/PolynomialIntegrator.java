@@ -72,6 +72,7 @@ public class PolynomialIntegrator {
     } // getDiffLeads
 
     /** Build the {@link Polynomial} in <code>n</code>.
+     *  @param offset first index, starting value of <code>n</code>
      *  @param diffs {@link BigVector} with leading terms of successive differences
      *  @return the {@link Polynommial}
      *  <pre>
@@ -87,7 +88,7 @@ public class PolynomialIntegrator {
      *   0      28 + 176*n + 112*n^2 +  20*n^3 +  1*n^4
      *  </pre>
      */
-    public Polynomial integrate(BigVector diffs) {
+    public Polynomial integrate(int offset, BigVector diffs) {
         int diffLen = diffs.size();
         int idif = diffLen - 1;
         while (diffs.getBig(idif).equals(BigInteger.ZERO) && idif >= 0) {
@@ -100,15 +101,14 @@ public class PolynomialIntegrator {
             coeffs.setBig(icef, diffs.getBig(icef));
             for (int jcef = icef + 2; jcef <= idif; jcef ++) { // extract exponents
                 int nexp = jcef - icef; // new exponent
-            /*
                 if (debug >= 2) {
                     System.out.println("icef=" + icef + ", jcef=" + jcef + ", nexp=" + nexp + ", coeffs = " + coeffs.toString());
                 }
-            */
                 BigInteger[] quot = coeffs.getBig(jcef).divideAndRemainder(BigInteger.valueOf(nexp));
                 coeffs.setBig(jcef, quot[0]);
                 if (! quot[1].equals(BigInteger.ZERO)) { // remainder != 0
-                    System.out.println("no even division in integrate: " + coeffs.getBig(jcef).toString() + " / " + jcef);
+                    System.err.println("no even division in integrate: " + coeffs.getBig(jcef).toString() + " / " + jcef);
+                    return new Polynomial("0");
                 }
             } // for jcef
             icef --;
@@ -118,19 +118,30 @@ public class PolynomialIntegrator {
         }
         StringBuilder polys = new StringBuilder();
         for (int ipol = 0; ipol <= idif; ipol ++) {
-            polys.append("+");
-            polys.append(coeffs.getBig(ipol).toString());
+            String coeff = coeffs.getBig(ipol).toString();
+            polys.append(coeff.startsWith("-") ? "" : "+");
+            polys.append(coeff);
             for (int jpol = 1; jpol <= ipol; jpol ++) {
                 polys.append("*(n-");
                 polys.append(String.valueOf(jpol - 1));
+                if (offset > 0) {
+                    polys.append("-");
+                    polys.append(String.valueOf(  offset));
+                } else if (offset < 0) {
+                    polys.append("+");
+                    polys.append(String.valueOf(- offset));
+                }
                 polys.append(")");
             } // for jpol
         } // for ipol
+        if (debug >= 2) {
+            System.out.println("polys=" + polys.toString());
+        }
         return new Polynomial(polys.toString());
     } // integrate
 
     /** Test method.
-     *  @param args command line arguments: signature init-terms no-of-terms
+     *  @param args command line arguments: -d debug -o offset -comp terms
      *  For example:
      *  <pre>
      *  A001047 a(n) = 3^n - 2^n.
@@ -148,9 +159,9 @@ public class PolynomialIntegrator {
         try {
             if (args.length == 0) {
                 System.out.print("Usage: java org.teherba.ramath.sequence.PolynomialIntegrator [options]\n"
-                        + "    -d debug level (0=none, 1=some, 2=more)\n"
+                        + "    -d debug level (0=none=default, 1=some, 2=more)\n"
+                        + "    -o offset (default 0)\n"
                         + "    -comp terms\n"
-                        + "    -find filename [noterms [start]]\n"
                         );
             } else { // some arguments
                 int termNo = 0;
@@ -166,12 +177,14 @@ public class PolynomialIntegrator {
                         BigVector terms = new BigVector(args[iarg ++]);
                         int order = terms.size();
                         BigVector diffs = polint.getDiffLeads(order, terms);
-                        System.out.println("diffs=" + diffs.toString());
-                        Polynomial protoPoly = polint.integrate(diffs);
-                        System.out.println("protoPoly=" + protoPoly.toString());
+                        System.out.println("diffs="  + diffs.toString());
+                        Polynomial poly = polint.integrate(offset, diffs);
+                        System.out.println("poly="   + poly.toString());
+                        System.out.println("vector=" + poly.getBigVector().toString());
 
-                    } else if (oper.startsWith("-find")) {
-                        String fileName = args[iarg ++];
+                    } else if (oper.equals    ("-o")) {
+                        offset       = Integer.parseInt(args[iarg ++]);
+
                     } else {
                         System.out.println("invalid operation \"" + oper + "\"");
                     }
