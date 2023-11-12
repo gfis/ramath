@@ -1,5 +1,6 @@
 /*  BigVector: a simple, short vector of big numbers
  *  @(#) $Id: BigVector.java 744 2011-07-26 06:29:20Z gfis $
+ *  2023-11-12: getTrimIndex()
  *  2021-01-28: shift
  *  2019-12-10: getBigValues(offset)
  *  2019-10-29: isZero(emptyVector)
@@ -59,7 +60,8 @@ public class BigVector extends Vector implements Cloneable, Serializable {
     private BigInteger commonDen;
     /*-------------- construction -----------------------------*/
 
-    /** No-args Constructor
+    /** No-args Constructor.
+     *  Vector with a single element 0.
      */
     public BigVector() {
         vecLen  = 1;
@@ -67,7 +69,8 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         commonDen  = BigInteger.ONE;
     } // no-args Constructor
 
-    /** Constructor for a BigVector of some length
+    /** Constructor for a BigVector of some length.
+     *  All elements are set to 0.
      *  @param numElems number of elements
      */
     public BigVector(int numElems) {
@@ -244,7 +247,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         return vector[icol];
     } // getBig
 
-    /** Setan element of the BigVector
+    /** Set an element of the BigVector
      *  @param icol number of the element (zero based)
      *  @param value a number
      */
@@ -284,6 +287,17 @@ public class BigVector extends Vector implements Cloneable, Serializable {
     public BigInteger getLastElement() {
         return vector[vector.length - 1];
     } // getLast
+
+    /** Get the position of the last non-zero element in <em>this</em> BigVector, or -1.
+     *  @return index &gt;= -1
+     */
+    public int getTrimIndex() {
+        int icol = this.vecLen - 1;
+        while (icol >= 0 && this.getBig(icol).equals(BigInteger.ZERO)) {
+            icol --;
+        } // while icol
+        return icol;
+    } // getTrimIndex
 
     /** Get an univariate {@link Polynomial}
      *  @return a Polynomial where the elements of <em>this</em> are the coefficients of the variable "x",
@@ -371,7 +385,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         return result;
     } // hasZero
 
-    /** Determine whether the RationalVector is empty or consists of a single constant zero.
+    /** Determine whether <em>this<em> BigVector is empty or consists of a single constant zero.
      *  @return true if zero
      */
     @Override
@@ -593,10 +607,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
      *  @return the shrinked BigVector
      */
     public BigVector shrink(boolean reduce) {
-        int icol = size() - 1;
-        while (icol > 0 && getBig(icol).equals(BigInteger.ZERO)) { // remove leading zeroes
-            icol --;
-        } // while icol
+        int icol = getTrimIndex();
         BigVector result = new BigVector(icol + 1);
         result.setDen(getDen());
         while (icol >= 0) {
@@ -1005,7 +1016,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
     } // divisionStep(BigVector)
 
     /** Euclidian algorithm: Repetitively divide <em>this</em>
-     *  by a second {@link RationalVector},
+     *  by a second {@link BigVector},
      *  then the divisor by the rest, until there is no rest.
      *  @param vect2 the divisor
      *  @return the last divisor which yields no rest,

@@ -4,8 +4,17 @@ vname=a_2, k=-2, kmax=0, kmin=-2, poly= - 2*a_1 + 3*a_2 + 4*a_3
 vname=a_3, k=-3, kmax=0, kmin=-3, poly= - 2*a_1 + 3*a_2 + 4*a_3
 shift by 0
 create bva[5]
+
+shift by 0
+row 0	 dipows=[1]	 binoms=[1]	 result=[-2]
 bva[3]= - 2, vector=[-2], poly=3*a_2 + 4*a_3
+
+shift by 0
+row 0	 dipows=[1]	 binoms=[1]	 result=[3]
 bva[2]=3, vector=[3], poly=4*a_3
+
+shift by 0
+row 0	 dipows=[1]	 binoms=[1]	 result=[4]
 bva[1]=4, vector=[4], poly=0
 bva[0]=0
 result= [[0],[4],[3],[-2]]

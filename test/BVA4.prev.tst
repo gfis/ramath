@@ -5,9 +5,25 @@ vname=a_2, k=-2, kmax=0, kmin=-2, poly=a_0 - a_2 - 2*a_3 - a_1*n + a_2*n + 3*a_3
 vname=a_3, k=-3, kmax=0, kmin=-3, poly=a_0 - a_2 - 2*a_3 - a_1*n + a_2*n + 3*a_3*n - a_3*n^2
 shift by 0
 create bva[5]
+
+shift by 0
+row 0	 dipows=[1]	 binoms=[1]	 result=[1]
 bva[4]=1, vector=[1], poly= - a_2 - 2*a_3 - a_1*n + a_2*n + 3*a_3*n - a_3*n^2
+
+shift by 0
+row 0	 dipows=[1,0]	 binoms=[1,1]	 result=[0,0]
+row 1	 dipows=[1,0]	 binoms=[1,2]	 result=[0,-1]
 bva[3]= - n, vector=[0,-1], poly= - a_2 - 2*a_3 + a_2*n + 3*a_3*n - a_3*n^2
+
+shift by 0
+row 0	 dipows=[1,0]	 binoms=[1,1]	 result=[-1,0]
+row 1	 dipows=[1,0]	 binoms=[1,2]	 result=[-1,1]
 bva[2]= - 1 + n, vector=[-1,1], poly= - 2*a_3 + 3*a_3*n - a_3*n^2
+
+shift by 0
+row 0	 dipows=[1,0,0]	 binoms=[1,1,1]	 result=[-2,0,0]
+row 1	 dipows=[1,0,0]	 binoms=[1,2,3]	 result=[-2,3,0]
+row 2	 dipows=[1,0,0]	 binoms=[1,3,6]	 result=[-2,3,-1]
 bva[1]= - 2 + 3*n - n^2, vector=[-2,3,-1], poly=0
 bva[0]=0
 result= [[0],[-2,3,-1],[-1,1],[0,-1],[1]]

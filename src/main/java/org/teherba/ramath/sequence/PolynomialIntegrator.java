@@ -54,33 +54,66 @@ public class PolynomialIntegrator {
         offset = 0;
     } // Constructor()
 
+    /** A deep step has at least this size. */
+    private static final int DEEP_STEP = 4;
+
     /** Compute the leading terms of successive differences.
-     *  @param order length of the sequence
+     *  An array of successive differences is built until there is a sudden 
+     *  decrease in the length of the non-zero elements (a "deep step").
      *  @param vect {@link BigVector} with existing terms
-     *  @return a {@link BigVector} with the leading terms
+     *  @return a {@link BigVectorArray} with the initial ([0]) and the leading ([1]) terms
      */
-    public BigVector getDiffLeads(int order, BigVector vect) {
-        BigVector result = new BigVector(order + 1);
-        BigVector vold = vect;
-        result.setBig(0, vold.getBig(0)); // first term of the sequence
-        for (int iord = 1; iord <= order; iord ++) { // build successive differences
-            BigVector vnew = new BigVector(order);
-            boolean isZero = true;
-            for (int iv = 0; iv < order - iord - 1; iv ++) {
-                BigInteger diff = vold.getBig(iv + 1).subtract(vold.getBig(iv));
-                if (! diff.equals(BigInteger.ZERO)) {
-                    isZero = false;
-                }
-                vnew.setBig(iv, diff);
-            } // for iv
-            result.setBig(iord, vnew.getBig(0));
-            vold = vnew;
+    public BigVectorArray getDiffLeads(BigVector vect) {
+        int len = vect.size();
+        BigVectorArray diffs = new BigVectorArray(len);
+        BigVector vnew = null; // = diffs[irow]
+        diffs.set(0, vect);
+        int trimIndexOld = vect.getTrimIndex();
+        int trimIndexNew = trimIndexOld;
+        int irow = 1; 
+        boolean busy = true; // while no deep step was found
+        while (busy && irow <= len) { 
+            vnew = new BigVector(len - irow);
+            for (int icol = 0; icol < len - irow - 1; icol ++) { // build the differences
+                BigInteger diff = diffs.getBig(irow - 1, icol + 1).subtract(diffs.getBig(irow - 1, icol));
+                vnew.set(icol, diff);
+            } // for icol
+            diffs.setBigVector(irow, vnew);
+            trimIndexNew = vnew.getTrimIndex();
             if (debug >= 1) {
-                System.out.println("iord=" + iord + ", vnew=" + vnew.toString());
+                System.out.println("irow=" + irow + ", trimIndexNew=" + trimIndexNew + ", vect=" + vnew.toString());
             }
-        } // for iord
+            if (trimIndexOld - trimIndexNew >= DEEP_STEP) {
+                busy = false;
+            } else {
+                trimIndexOld = trimIndexNew;
+                irow ++;
+            }
+        } // while irow
+        int deepRow = irow;
+        BigVectorArray result = new BigVectorArray(2); // initTerms, diffLeads
+        BigVector initTerms = null;
+        if (trimIndexNew < 0) {
+            initTerms = new BigVector(new int[0]); // BigVector(0) returns 1 element 0!
+        } else {
+            initTerms = new BigVector(trimIndexNew + 1);
+            for (int icol = 0; icol <= trimIndexNew; icol ++) {
+                initTerms.set(icol, vect.getBig(icol));
+            } // for icol
+        }
+        result.setBigVector(0, initTerms);
+        if (! busy) { // deep step was found
+            BigVector leads = new BigVector(deepRow + 1);
+            for (irow = 0; irow <= deepRow; irow ++) {
+                leads.setBig(irow, diffs.getBig(irow, trimIndexNew + 1));
+            } // for irow
+            result.setBigVector(1, leads);
+            // deep step was found
+        } else {
+            result.setBigVector(1, new BigVector(new int[0]));
+        }
         if (debug >= 1) {
-            System.out.println("getDiffLeads(" + order + ", " + vect.toString() + ") = " + result.toString());
+            System.out.println("getDiffLeads=" + result.toString());
         }
         return result;
     } // getDiffLeads
@@ -102,10 +135,13 @@ public class PolynomialIntegrator {
      *   0      28 + 176*n + 112*n^2 +  20*n^3 +  1*n^4
      *  </pre>
      */
-    public PolyFraction integrate(int offset, BigVector diffs) {
-        int diffLen = diffs.size();
+    public PolyFraction integrate(int offset, BigVectorArray bva) {
+    	BigVector initTerms = bva.getBigVector(0);
+    	BigVector diffs     = bva.getBigVector(1);
+    	int initLen = initTerms.size();
+        int diffLen = diffs    .size();
         int idif = diffLen - 1;
-        while (diffs.getBig(idif).equals(BigInteger.ZERO) && idif >= 0) {
+        while (idif >= 0 && diffs.getBig(idif).equals(BigInteger.ZERO)) {
             idif --;
         } // while
         // now diffs[idif] != 0
@@ -122,7 +158,7 @@ public class PolynomialIntegrator {
                 coeffs.set(jcef, quot);
             } // for jcef
             icef --;
-        } // while iord
+        } // while icef
         if (debug >= 1) {
             System.out.println("coeffs = " + coeffs.toString());
         }
@@ -141,6 +177,13 @@ public class PolynomialIntegrator {
                     polys.append("+");
                     polys.append(String.valueOf(- offset));
                 }
+                if (initLen > 0) {
+                    polys.append("-");
+                    polys.append(String.valueOf(  initLen));
+                } else if (offset < 0) {
+                    polys.append("+");
+                    polys.append(String.valueOf(- initLen));
+                }
                 polys.append(")");
             } // for jpol
         } // for ipol
@@ -149,6 +192,24 @@ public class PolynomialIntegrator {
         }
         return PolyFraction.parse(polys.toString());
     } // integrate
+
+    /** Return a lambda expression for the polynomial with initial terms.
+     *  @param offset first index
+     *  @param initTerms {@link BigVector} of initial terms
+     *  @param polyf {@link PolynomialFraction} with numerator and common denominator
+     *  @param a lambda expression of the form 
+     *  "n -> (n - offset < initLen) ? Z.valueOf(new long [] { 1,2,3 }[n - offset]) : Z.valueOf(n).pow(2)"
+     */
+    public static String toLambda(int offset, BigVector initTerms, PolyFraction polyf) {
+        String result = polyf.toLambda();
+        String ofs = offset < 0 ? "+" + String.valueOf(-offset) : (offset > 0 ? String.valueOf(-offset) : "");
+        if (initTerms.size() > 0) {
+            result = result.replace("->"
+                , "-> (n" + ofs + " < " + initTerms.size() + ") ? Z.valueOf(new long[] { " 
+                + initTerms.toString().replaceAll("[\\[\\]]", "") + " }[n" + ofs + "]) :");
+        }
+        return result;
+    } // toLambda
 
     /** Test method.
      *  @param args command line arguments: -d debug -o offset -comp terms
@@ -161,9 +222,8 @@ public class PolynomialIntegrator {
      */
     public static void main(String[] args) {
         PolynomialIntegrator.debug = 0;
-        String aNumber = "A000000";
-        SequenceReader reader = new SequenceReader(15);
-        Sequence seq = null;
+        String aNumber = "A346376";
+        BigVector terms = new BigVector("28,204,604,1348,2580,4468,7204,11004,16108,22780,31308,42004,55204,71268,90580,113548,140604,172204,208828,250980,299188,354004");
         PolynomialIntegrator polint = new PolynomialIntegrator();
         int offset = 0;
         try {
@@ -187,19 +247,7 @@ public class PolynomialIntegrator {
                         polint.debug = Integer.parseInt(args[iarg ++]);
 
                     } else if (oper.startsWith("-comp")) {
-                        BigVector terms = new BigVector(args[iarg ++]);
-                        int order = terms.size();
-                        BigVector diffs = polint.getDiffLeads(order, terms);
-                        System.out.println("diffs="  + diffs.toString());
-                    /*
-                        Polynomial poly = polint.integrate(offset, diffs);
-                        System.out.println("poly="   + poly.toString());
-                        System.out.println("vector=" + poly.getBigVector().toString());
-                    */
-                        PolyFraction polyf = polint.integrate(offset, diffs);
-                        System.out.println("polyf=" + polyf.toString());
-                        BigVector[] vect2 = polyf.toVectors();
-                        System.out.println("vectors=" + vect2[0].toString() + "/" + vect2[1].toString());
+                        terms = new BigVector(args[iarg ++]);
 
                     } else if (oper.equals    ("-o")) {
                         offset       = Integer.parseInt(args[iarg ++]);
@@ -212,6 +260,17 @@ public class PolynomialIntegrator {
         } catch (Exception exc) {
             System.err.println(exc.getMessage());
             exc.printStackTrace();
+        }
+        BigVectorArray bva = polint.getDiffLeads(terms); // initTerms, diffLeads
+        System.out.println("bva="       + bva.toString());
+        if (bva.getBigVector(1).size() > 0) {
+            PolyFraction polyf = polint.integrate(offset, bva);
+            System.out.println("polyf="     + polyf.toString());
+            BigVector[] vect2 = polyf.toVectors();
+            System.out.println("vectors="   + vect2[0].toString() + "/" + vect2[1].toString() + ", " + bva.getBigVector(0).toString());
+            System.out.println("lambda="    + polint.toLambda(offset, bva.getBigVector(0), polyf));
+        } else {
+            System.out.println("no deep step found");
         }
     } // main
 

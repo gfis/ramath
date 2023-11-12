@@ -363,15 +363,20 @@ public class JoeisPreparer implements Cloneable, Serializable {
 
         } else if (callCode.startsWith("polint")
                 || argsCode.startsWith("polint")) { // derive a polynomial from terms
-            BigVector bv = new BigVector(parms[iparm]);
-            BigVector diffs = polint.getDiffLeads(bv.size(), bv);
-            PolyFraction polyf = polint.integrate(offset1, diffs);
-            BigVector[] vect2 = polyf.toVectors();
-            String num = vect2[0].toString();
-            String den = vect2[1].toString().replaceAll("[\\[\\]]", "");
-            parms[iparm + 0] = polyf.toLambda();
-            parms[iparm + 1] = num + (den.equals("1") ? "" : "/" + den);
-            reproduce(parms);
+            BigVector vect= new BigVector(parms[iparm]);
+            BigVectorArray bva = polint.getDiffLeads(vect);
+            if (bva.getBigVector(1).size() > 0) {
+                PolyFraction polyf = polint.integrate(offset1, bva);
+                BigVector[] vect2 = polyf.toVectors();
+                String num = vect2[0].toString();
+                String den = vect2[1].toString().replaceAll("[\\[\\]]", "");
+                parms[iparm + 0] = polint.toLambda(offset1, bva.getBigVector(0), polyf);
+                parms[iparm + 1] = bva.getBigVector(0).toString(); // initTerms
+                parms[iparm + 2] = num + (den.equals("1") ? "" : "/" + den);
+                reproduce(parms);
+            } else { 
+                System.out.println("# " + aseqno + ": no deep step found");
+            }
 
         } else if (callCode.startsWith("post1")
                 || argsCode.startsWith("post1")) { // translate a single infix expression to postfix
