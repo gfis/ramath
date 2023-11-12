@@ -417,9 +417,18 @@ CALL HolonomicRecurrenceTest -p "[[0],[1],[-1,-1],[0],[0],[1],[-6,-2],[6,7,1]]" 
 #--------
 PACKAGE=org.teherba.ramath.sequence
 
-TEST PIN1 A346376 
+TEST PIN1 A346376 [28,98,63,14,1]
 CALL PolynomialIntegrator -d 2 -a A346376 -comp "28,204,604,1348,2580,4468,7204,11004"
 
-TEST PIN2 A005286 
+TEST PIN2 A005286 [6,20,9,1]/6
 CALL PolynomialIntegrator -d 2 -a A005286 -comp "1,6,15,29,49,76,111,155,209,274,351,441"
+
+TEST PIN3 missing coefficient (=0) [6,5,0,1]/6	
+CALL PolynomialIntegrator -d 2 -a A000125 -comp "1,2,4,8,15,26,42,64,93,130,176,232,299,378,470"
+
+TEST PIN4 negative offset [24,35,12,1]/6
+CALL PolynomialIntegrator -d 2 -a A000297 -o "-1" -comp "0,4,12,25,44,70,104,147,200,264,340,429,532,650,784"
+
+TEST PIN5 offset > 0 [-6,1,3]/2	
+CALL PolynomialIntegrator -d 2 -a A341740 -o "3"  -comp "12,23,37,54,74,97,123,152,184,219,257,298,342,389,439,492"
 #--------

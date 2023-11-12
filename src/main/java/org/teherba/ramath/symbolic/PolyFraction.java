@@ -1,5 +1,6 @@
 /*  PolyFraction: a fraction of two polynomials
  *  @(#) $Id: PolyFraction.java 970 2012-10-25 16:49:32Z  $
+ *  2023-11-08: toLambda()
  *  2021-01-25: -parse shows vectors and coefficients; -r => disempower
  *  2020-11-29: fractv
  *  2019-11-10: shorten
@@ -353,6 +354,79 @@ public class PolyFraction
                 ? num.toString() + "," + den.toString()
                 : null;
     } // toVectorString()
+
+    /** Convert a {@link BigInteger} to a <code>Z</code>.
+     *  @param number
+     *  @return the number either as int, as long (with "L"), or as "new Z()"
+     */
+    public static String toZ(BigInteger number) {
+        int len = number.bitLength();
+        String result = String.valueOf(number);
+        if (len < 31) {
+            // ok
+        } else if (len < 63) {
+            result += "L";
+        } else {
+            result = "new Z(\"" + result + "\")";
+        }
+        return result;
+    } // toZ
+
+    /** Convert <em>this</em> {@link PolyFraction} with a constant denominator 
+     *  into the right side of a lambda expression.
+     *  @param intN <code>true</code> generates for <code>int n<code>, <code>false</code> generates for <code>Z n</code>
+     *  @return lambda expression
+     *  For example A005286: <code>[6,20,9,1]/[6]</code> is converted into 
+     *  <code>"Z.valueOf(n).multiply(1).add(9).multiply(n).add(20).multiply(n).add(6).divide(6)"</code>
+     */
+    public String toLambda(boolean intN) {
+        BigVector[] vect2 = this.toVectors();
+        StringBuilder result = new StringBuilder();
+        result.append("n -> ");
+        if (intN) {
+            result.append("Z.valueOf(n)");
+        } else {
+            result.append("n");
+        }
+        BigVector num = vect2[0];
+        int iv = num.size() - 1;
+        String numLast = toZ(vect2[0].getBig(iv --));
+        if (! numLast.equals("1")) {
+            result.append(".multiply(");
+            result.append(numLast);
+            result.append(")");
+        }
+        while (iv >= 0) {
+            String addConst = toZ(vect2[0].getBig(iv));
+            if (! addConst.equals("0")) {
+                result.append(".add(");
+                result.append(addConst);
+                result.append(")");
+            } // addConst != 0
+            if (iv > 0) {
+                 result.append(".multiply(n)");
+            }
+            iv --;
+        } // while
+        assert vect2[1].size() == 1 : "getLambda: denominator not constant " + vect2[0].toString() + "/" +vect2[1].toString();
+        String denLast = toZ(vect2[1].getBig(0));
+        if (! denLast.equals("1")) {
+            result.append(".divide(");
+            result.append(denLast);
+            result.append(")");
+        }
+        return result.toString();
+    } // toLambda(boolean)
+
+    /** Convert <em>this</em> {@link PolyFraction} with a constant denominator 
+     *  into the right side of a lambda expression.
+     *  @return lambda expression
+     *  For example A005286: <code>[6,20,9,1]/[6]</code> is converted into 
+     *  <code>"Z.valueOf(n).multiply(1).add(9).multiply(n).add(20).multiply(n).add(6).divide(6)"</code>
+     */
+    public String toLambda() {
+        return toLambda(true);
+    } // toLambda()
 
     /** Determines whether there is exactly one variable in the PolyFraction.
      *  @return true if there is only one variable, false otherwise
@@ -874,6 +948,12 @@ public class PolyFraction
                         System.err.println("exception for pfr1=" + pfr1.toString());
                     } // try
                     // -f
+
+                } else if (opt.startsWith("-lambda")  ) {
+                    pfr1 = new PolyFraction(new BigVector(args[iarg]), new BigVector(args[iarg + 1])); iarg += 2;
+                    System.out.println(pfr1.toString());
+                    System.out.println("lambda:\t" + pfr1.toLambda() + "\t" + pfr1.toLambda(false));
+                    // -lambda
 
                 } else if (opt.equals    ("-n")     ) {
                     numTerms = 16;

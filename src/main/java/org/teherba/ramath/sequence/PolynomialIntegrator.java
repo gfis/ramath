@@ -102,58 +102,6 @@ public class PolynomialIntegrator {
      *   0      28 + 176*n + 112*n^2 +  20*n^3 +  1*n^4
      *  </pre>
      */
-    public Polynomial integrate_99(int offset, BigVector diffs) {
-        int diffLen = diffs.size();
-        int idif = diffLen - 1;
-        while (diffs.getBig(idif).equals(BigInteger.ZERO) && idif >= 0) {
-            idif --;
-        } // while
-        // now diffs[idif] != 0
-        BigVector coeffs = new BigVector(idif + 1);
-        int icef = idif;
-        while (icef >= 0) { // backwards
-            coeffs.setBig(icef, diffs.getBig(icef));
-            for (int jcef = icef + 2; jcef <= idif; jcef ++) { // extract exponents
-                int nexp = jcef - icef; // new exponent
-                if (debug >= 2) {
-                    System.out.println("icef=" + icef + ", jcef=" + jcef + ", nexp=" + nexp + ", coeffs = " + coeffs.toString());
-                }
-                BigInteger[] quot = coeffs.getBig(jcef).divideAndRemainder(BigInteger.valueOf(nexp));
-                coeffs.setBig(jcef, quot[0]);
-                if (! quot[1].equals(BigInteger.ZERO)) { // remainder != 0
-                    System.out.println("# " + aseqno + ": no even division in integrate: " + coeffs.getBig(jcef).toString() + " / " + nexp);
-                    // return new Polynomial("0");
-                }
-            } // for jcef
-            icef --;
-        } // while iord
-        if (debug >= 1) {
-            System.out.println("coeffs = " + coeffs.toString());
-        }
-        StringBuilder polys = new StringBuilder();
-        for (int ipol = 0; ipol <= idif; ipol ++) {
-            String coeff = coeffs.getBig(ipol).toString();
-            polys.append(coeff.startsWith("-") ? "" : "+");
-            polys.append(coeff);
-            for (int jpol = 1; jpol <= ipol; jpol ++) {
-                polys.append("*(n-");
-                polys.append(String.valueOf(jpol - 1));
-                if (offset > 0) {
-                    polys.append("-");
-                    polys.append(String.valueOf(  offset));
-                } else if (offset < 0) {
-                    polys.append("+");
-                    polys.append(String.valueOf(- offset));
-                }
-                polys.append(")");
-            } // for jpol
-        } // for ipol
-        if (debug >= 2) {
-            System.out.println("polys=" + polys.toString());
-        }
-        return new Polynomial(polys.toString());
-    } // integrate_99
-
     public PolyFraction integrate(int offset, BigVector diffs) {
         int diffLen = diffs.size();
         int idif = diffLen - 1;
@@ -172,12 +120,6 @@ public class PolynomialIntegrator {
                 }
                 BigRational quot = coeffs.getRat(jcef).divide(BigInteger.valueOf(nexp));
                 coeffs.set(jcef, quot);
-            /*
-                if (! quot[1].equals(BigInteger.ZERO)) { // remainder != 0
-                    System.out.println("# " + aseqno + ": no even division in integrate: " + coeffs.getBig(jcef).toString() + " / " + nexp);
-                    // return new Polynomial("0");
-                }
-            */
             } // for jcef
             icef --;
         } // while iord

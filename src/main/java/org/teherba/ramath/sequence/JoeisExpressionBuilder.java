@@ -1,11 +1,12 @@
 /*  JoeisExpressionBuilder: build jOEIS expressions (with Z, CR) from a postfix list
  *  @(#) $Id$
+ *  2023-11-08: buildLambda
  *  2023-08-30: allow unknown names
  *  2021-11-30: translate(), like getInfix, but with op1, op2 placeholders
  *  2021-07-07: Georg Fischer: copied from JoeisPreparer.java
  */
 /*
- * Copyright 2021 Dr. Georg Fischer
+ * Copyright 2021 Dr. Georg Fischer <dr dot georg dot fischer at gmail>.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -89,10 +90,10 @@ public class JoeisExpressionBuilder implements Cloneable, Serializable {
         }
     } // class TargetRow
 
-    /** Reads the pattern table from a file
+    /** Read the pattern table from a file
      *  @param fileName name of the input file, or "-" for STDIN
      */
-    private void readTable(String fileName) {
+    private void readTable(String fileName) {   
         BufferedReader lineReader; // Reader for the input file
         String srcEncoding = "UTF-8"; // Encoding of the input file
         String line = null; // current line from text file
