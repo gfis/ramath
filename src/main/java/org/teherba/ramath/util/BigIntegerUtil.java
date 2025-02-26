@@ -1,5 +1,6 @@
 /*  BigIntegerUtil: helper methods for BigInteger
  *  @(#) $Id: BigIntegerUtil.java 231 2009-08-25 08:47:16Z gfis $
+ *  2024-12-27: Javadoc
  *  2018-01-24: Root.java removed; moved from ramath to ramath.util
  *  2017-05-28: javadoc 1.8
  *  2015-08-11: binomial(), THREE
@@ -14,7 +15,7 @@
  *  Computes the n'th root of some BigInteger by Newton-Raphson iteration
  */
 /*
- * Copyright 2013 Dr. Georg Fischer <punctum at punctum dot kom>
+ * Copyright 2013 Dr. Georg Fischer <dr dot georg dot fischer at gmail dot kom>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,7 +49,7 @@ public class BigIntegerUtil {
     /** constant big 3 */
     public static final BigInteger THREE = BigInteger.valueOf(3);
 
-    /** Tries to find an integer root
+    /** Try to find an integer root
      *  (in a very primitive way)
      *  @param power determine the root of this number
      *  @param exp exponent for the result
@@ -74,11 +75,11 @@ public class BigIntegerUtil {
     // the following was taken from
     // http://i12www.ira.uka.de/~bubel/nightly/doc/api/src-html/de/uka/ilkd/key/strategy/termgenerator/RootsGenerator.html
 
-    /** Computes a root
+    /** Compute a root
      *  @param prod product
-     *  @param exp exponent 
-     *  @return a number <tt>res</tt> with the property
-     *  <tt>prod in [res^exp, (res+1)^exp)</tt>
+     *  @param exp exponent
+     *  @return a number <em>res</em> with the property
+     *  <em>prod in [res^exp, (res+1)^exp)</em>
      */
     public static BigInteger root2 (BigInteger prod, int exp) {
         assert exp > 0;
@@ -125,11 +126,11 @@ public class BigIntegerUtil {
         BigInteger res = BigInteger.ONE;
         while (true) {
             if ( exp % 2 != 0 ) {
-            	res = res.multiply ( base );
+                res = res.multiply ( base );
             }
             exp >>= 1;
             if ( exp == 0 ) {
-            	return res;
+                return res;
             }
             base = base.multiply ( base );
         } // while

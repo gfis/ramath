@@ -1,11 +1,12 @@
 /*  Selects the applicable dispenser
     @(#) $Id: DispenserFactory.java 657 2011-03-17 07:56:38Z gfis $
- *  2017-05-28: javadoc 1.8
+    2024-12-27: .getDeclaredConstructor()
+    2017-05-28: javadoc 1.8
     2013-09-10: TreeMap -> LinkedHashMap
     2013-07-04: copied from org.teherba.numword.SpellerFactory
 */
 /*
- * Copyright 2013 Dr. Georg Fischer <punctum at punctum dot kom>
+ * Copyright 2013 Dr. Georg Fischer <dr dot georg dot fischer at gmail dot kom>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +46,8 @@ public class DispenserFactory {
      */
     private void addDispenser(String code, String className) {
         try {
-            Dispenser dispenser = (Dispenser) Class.forName("org.teherba.ramath.util." + className).newInstance();
+            Dispenser dispenser = (Dispenser) Class.forName("org.teherba.ramath.util." + className)
+                    .getDeclaredConstructor().newInstance();
             dispensers.put(code, dispenser);
         } catch (Exception exc) {
             // ignore any error silently - this dispenser will not be known
@@ -101,7 +103,7 @@ public class DispenserFactory {
         return result;
     } // getDispenser
 
-    /** Test method, selects a {@link Dispenser}, 
+    /** Test method, selects a {@link Dispenser},
      *  rolls through some combinations and prints them.
      *  @param args command line arguments: code, width, base, loop
      */

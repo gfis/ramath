@@ -1,9 +1,10 @@
 /*  Derive the formula of a polynomial from a list of terms
  *  @(#) $Id: PolynomialIntegrator.java $
+ *  2024-12-27: Javadoc
  *  2023-11-07, Georg Fischer: copied form LinearRecurrence
  */
 /*
- * Copyright 2023 Dr. Georg Fischer <dr dot georg dot fischer at gmail>
+ * Copyright 2023 Dr. Georg Fischer <dr dot georg dot fischer at gmail dot kom>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +30,7 @@ import  org.teherba.ramath.sequence.SequenceReader;
 import  java.math.BigInteger;
 import  java.util.ArrayList;
 
-/** Take successive differences of a list of terms, and  -if the difference
+/** Take successive differences of a list of terms, and - if the differences
  *  finally become zero - integrate the leading terms to obtain a polynomial formula.
  *  @author Dr. Georg Fischer
  */
@@ -58,7 +59,7 @@ public class PolynomialIntegrator {
     private static final int DEEP_STEP = 4;
 
     /** Compute the leading terms of successive differences.
-     *  An array of successive differences is built until there is a sudden 
+     *  An array of successive differences is built until there is a sudden
      *  decrease in the length of the non-zero elements (a "deep step").
      *  @param vect {@link BigVector} with existing terms
      *  @return a {@link BigVectorArray} with the initial ([0]) and the leading ([1]) terms
@@ -70,9 +71,9 @@ public class PolynomialIntegrator {
         diffs.set(0, vect);
         int trimIndexOld = vect.getTrimIndex();
         int trimIndexNew = trimIndexOld;
-        int irow = 1; 
+        int irow = 1;
         boolean busy = true; // while no deep step was found
-        while (busy && irow <= len) { 
+        while (busy && irow <= len) {
             vnew = new BigVector(len - irow);
             for (int icol = 0; icol < len - irow - 1; icol ++) { // build the differences
                 BigInteger diff = diffs.getBig(irow - 1, icol + 1).subtract(diffs.getBig(irow - 1, icol));
@@ -120,8 +121,8 @@ public class PolynomialIntegrator {
 
     /** Build the {@link Polynomial} in <code>n</code>.
      *  @param offset first index, starting value of <code>n</code>
-     *  @param diffs {@link BigVector} with leading terms of successive differences
-     *  @return the {@link Polynommial}
+     *  @param bva {@link BigVectorArray} with leading terms of successive differences
+     *  @return the {@link Polynomial}
      *  <pre>
      *  Example: A346376, a(n) = n^4 +14*n^3 + 63*n^2 + 98*n + 28
      *  = 28, 204, 604, 1348, 2580, 4468, 7204, 11004, 16108, ...
@@ -136,9 +137,9 @@ public class PolynomialIntegrator {
      *  </pre>
      */
     public PolyFraction integrate(int offset, BigVectorArray bva) {
-    	BigVector initTerms = bva.getBigVector(0);
-    	BigVector diffs     = bva.getBigVector(1);
-    	int initLen = initTerms.size();
+        BigVector initTerms = bva.getBigVector(0);
+        BigVector diffs     = bva.getBigVector(1);
+        int initLen = initTerms.size();
         int diffLen = diffs    .size();
         int idif = diffLen - 1;
         while (idif >= 0 && diffs.getBig(idif).equals(BigInteger.ZERO)) {
@@ -196,16 +197,16 @@ public class PolynomialIntegrator {
     /** Return a lambda expression for the polynomial with initial terms.
      *  @param offset first index
      *  @param initTerms {@link BigVector} of initial terms
-     *  @param polyf {@link PolynomialFraction} with numerator and common denominator
-     *  @param a lambda expression of the form 
-     *  "n -> (n - offset < initLen) ? Z.valueOf(new long [] { 1,2,3 }[n - offset]) : Z.valueOf(n).pow(2)"
+     *  @param polyf {@link PolyFraction} with numerator and common denominator
+     *  @return a lambda expression of the form
+     *  "n -&gt; (n - offset &lt; initLen) ? Z.valueOf(new long [] { 1,2,3 }[n - offset]) : Z.valueOf(n).pow(2)"
      */
     public static String toLambda(int offset, BigVector initTerms, PolyFraction polyf) {
         String result = polyf.toLambda();
         String ofs = offset < 0 ? "+" + String.valueOf(-offset) : (offset > 0 ? String.valueOf(-offset) : "");
         if (initTerms.size() > 0) {
             result = result.replace("->"
-                , "-> (n" + ofs + " < " + initTerms.size() + ") ? Z.valueOf(new long[] { " 
+                , "-> (n" + ofs + " < " + initTerms.size() + ") ? Z.valueOf(new long[] { "
                 + initTerms.toString().replaceAll("[\\[\\]]", "") + " }[n" + ofs + "]) :");
         }
         return result;

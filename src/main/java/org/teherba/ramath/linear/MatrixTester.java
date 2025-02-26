@@ -1,11 +1,12 @@
 /*  MatrixTester: commandline interface to various Matrix methods
  *  @(#) $Id: Matrix.java 744 2011-07-26 06:29:20Z gfis $
+ *  2024-12-27: deprecations
  *  2017-05-28: javadoc 1.8
  *  2016-10-04: -negate
  *  2015-04-17, Georg Fischer: extracted from Matrix
  */
 /*
- * Copyright 2015 Dr. Georg Fischer <punctum at punctum dot kom>
+ * Copyright 2015 Dr. Georg Fischer <dr dot georg dot fischer at gmail dot kom>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -253,7 +254,7 @@ public class MatrixTester implements Serializable {
         HashMap<String, Integer> map = new HashMap<String, Integer>(MAX_QUEUE);
         base = new Vector(new int[] { 3,4,5,6 });
         queue.add(base);
-        map.put(base.toString(","), new Integer(-1));
+        map.put(base.toString(","), Integer.valueOf(-1));
         System.out.println("process queue, base=" + base.toString("(,)")
                 + ", " + marr.length + " matrices, \n[0]=" + marr[0].toString("(,)")
                 );
@@ -271,7 +272,7 @@ public class MatrixTester implements Serializable {
                                 + " =" + imarr + "==> " + vect1.toString("(,)")
                                 );
                         queue.add(vect1);
-                        map.put(vect1.toString(","), new Integer(imarr));
+                        map.put(vect1.toString(","), Integer.valueOf(imarr));
                         System.out.println(" >>>");
                     } else {
                         // System.out.println(".");
@@ -508,9 +509,9 @@ public class MatrixTester implements Serializable {
                     }
                     vect1 = new Vector(args[iarg ++]); // may not contain spaces
                     amat  = Matrix.band(dim, vect1.getValues());
-                    System.out.println("-band "  + amat.toString(",")); 
-                    System.out.println("trace: " + amat.trace()); 
-                    System.out.println("characteristicPolynomial: " + amat.characteristicPolynomial().toString(",")); 
+                    System.out.println("-band "  + amat.toString(","));
+                    System.out.println("trace: " + amat.trace());
+                    System.out.println("characteristicPolynomial: " + amat.characteristicPolynomial().toString(","));
                     // opt -band
 
                 } else if (opt.equals("-chain")) {
@@ -532,8 +533,8 @@ public class MatrixTester implements Serializable {
                         } catch (Exception exc) {
                         }
                     }
-                    System.out.println("-chain " + amat.toString(",") + " " 
-                            + vect1.toString(",") + " " + left + " " + right); 
+                    System.out.println("-chain " + amat.toString(",") + " "
+                            + vect1.toString(",") + " " + left + " " + right);
                     printPreservedChain(amat, vect1, 0, left, right);
                     // opt -chain
 

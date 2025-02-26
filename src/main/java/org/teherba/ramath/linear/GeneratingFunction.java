@@ -1,5 +1,6 @@
 /*  GeneratingFunction: "guess" (compute) linear or triangle o.g.f.s from sequence data
  *  @(#) $Id$
+ *  2024-12-27: Javadoc
  *  2023-10-10, Georg Fischer
  */
 /*
@@ -94,9 +95,10 @@ public class GeneratingFunction extends BigVectorArray {
     } // getTriangleAnsatz
 
     /** From a polynomial in x, y and unknown constants ar_c, extract two coefficients before x^r*y^c as Strings:
-     *  first the coefficient before ar_c*x^r*x^c, and second the one before x^r*x^c. 
-     *  @param varList comma-separated list of variable names (usually "x,y" for generating functions of triangles)
-     *  @param expos exponents &gt;= 0 of such variables
+     *  first the coefficient before ar_c*x^r*x^c, and second the one before x^r*x^c.
+     *  @param poly a Polynomial
+     *  @param row row number
+     *  @param col column number
      *  @return subset Polynomial with Monomials from <em>this</em> Polynomial, divided by the powered variables
      */
     public static String[] extractPair(Polynomial poly, int row, int col) {
@@ -118,7 +120,7 @@ public class GeneratingFunction extends BigVectorArray {
             System.out.println("# coeff0=" + coeff0 + ", coeff1=" + coeff1);
         }
     /*
-        String 
+        String
         name   = xyPow(row, col, true);
         name   = ph + "*" + name;
 
@@ -150,60 +152,6 @@ public class GeneratingFunction extends BigVectorArray {
     */
         return pair;
     } // extractPair
-
-    /** Compute the coefficients of the denominator polynomial in x, y
-     *  for a triangle. The nominator is 1.
-     *  @param len number of denominator coefficents to be computed
-     *  @param terms array of the terms of the resulting triangle, by rows
-     *  @return nominator and denominator coefficients
-     */
-    public static BigVector ordinaryTriangle99(int len, BigVector num, BigVector terms) {
-        len = Math.min(Math.min(len, maxTri), terms.size());
-        ArrayList<BigInteger> den = new ArrayList<>();
-        Polynomial rest   = new Polynomial("a0_0"); //q0, q2, q3 ...
-        Polynomial ansatz = getTriangleAnsatz(len); // q1
-        if (debug >= 2) {
-            System.out.println("# rest=" + rest);
-            System.out.println("# ansatz=" + ansatz);
-        }
-        int row = 0;
-        int col = 0;
-        String varList = "x,y";
-        for (int it = 0; it < len; it ++) { // run through columns row by row
-            Polynomial nterm = new Polynomial(terms.getBig(it).negate().toString());
-            Polynomial extr = null;
-            String[] pair = extractPair(rest, row, col);
-            if (debug >= 2) {
-                System.out.println("#----------------\n# it=" + it + ", row=" + row + ", col=" + col);
-                System.out.println("# nterm="   + nterm + ", extr1=" + extr);
-            }
-            Polynomial extr2 = new Polynomial(extr + "+(" + nterm + ")"); // why were the constants not summed up?
-            VariableMap vmap = extr2.getVariableAssignment();
-            den.add(new BigInteger(vmap.get(vmap.getFirstName())));
-            if (debug >= 1) {
-                System.out.println("# extr2="   + extr2);
-                System.out.println("# vmap="    + vmap);
-                System.out.println("# rest1="   + rest);
-            }
-            rest   = rest  .substitute(vmap);
-            ansatz = ansatz.substitute(vmap);
-            Polynomial mult = nterm.multiply(new Polynomial("x^" + row + "*y^" + col));
-            rest   = rest.add(ansatz.multiply(mult));
-            if (debug >= 2) {
-                System.out.println("# ansatz="  + ansatz);
-                System.out.println("# mult="    + mult);
-                System.out.println("# rest2="   + rest);
-            }
-            col ++;
-            if (col > row) {
-                row ++;
-                col = 0;
-            }
-        } // for it
-        BigInteger list2[] = new BigInteger[den.size()];
-        list2 = den.toArray(list2);
-        return new BigVector(list2);
-    } // ordinaryTriangle
 
 /*
 A036565 Triangle of numbers in which i-th row is {2^(i-j)*7^j, 0<=j<=i}; i >= 0.
@@ -242,6 +190,7 @@ q5:=expand(q4+q1*((-4)*x^2));
     /** Compute the coefficients of the denominator polynomial in x, y
      *  for a triangle. The nominator is 1.
      *  @param len number of denominator coefficents to be computed
+     *  @param num numerator Polynomial
      *  @param terms array of the terms of the resulting triangle, by rows
      *  @return nominator and denominator coefficients
      */

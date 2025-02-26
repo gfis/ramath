@@ -1017,7 +1017,7 @@ public class Polynomial implements Cloneable, Serializable {
     public Polynomial divide(Polynomial poly2) {
         Polynomial result = this.clone();
         if (poly2.keySet().size() != 1) {
-            throw new IllegalArgumentException("divisor may have only one monomial");
+            System.out.println("divisor may have only one monomial");
         } else {
             result.divideBy(poly2.getMonomials().firstEntry().getValue()); // it is the only one
         }
@@ -1494,6 +1494,7 @@ public class Polynomial implements Cloneable, Serializable {
         } else {
             System.err.println("** Polynomial.getBigVector(" + this.toString() + "): not univariate");
             result = new BigVector();
+            // throw new RuntimeException("** Polynomial.getBigVector(" + this.toString() + "): not univariate");
         }
         return result;
     } // getBigVector

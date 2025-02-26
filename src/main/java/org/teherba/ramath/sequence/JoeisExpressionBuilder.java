@@ -189,8 +189,8 @@ public class JoeisExpressionBuilder implements Cloneable, Serializable {
                     }
                     row = table.get(NUM_ESCAPE); // must exist in the table
                     stack.push(row.target.replaceAll(NUM_ESCAPE, post));
-                } else if (post.matches("A\\w+\\(")) {   // any function start - ignore
-                } else if (post.matches("([Aa]\\d+(_\\d*)?\\)")) { // A-number - nyi
+                } else if (post.matches("[A-Za-z]\\w*\\(")) {   // any function start - ignore
+                } else if (post.matches("[Aa]\\d+(_\\d*)?\\(")) { // A-number - nyi
                     stack.push("<?A-number=" + post + "?>");
                 } else if (post.matches("\\w+\\)")) {   // unknown function end
                     // post = post.replaceAll("\\)","");

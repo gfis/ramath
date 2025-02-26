@@ -1,5 +1,6 @@
 /*  Vector: a simple, short vector of small numbers
  *  @(#) $Id: Vector.java 744 2011-07-26 06:29:20Z gfis $
+ *  2024-12-27: deprecations
  *  2020-03-20: ZERO
  *  2019-10-29: isZero(emptyVector)
  *  2018-01-22: more /+Type+/
@@ -12,7 +13,7 @@
  *  2013-07-27, Georg Fischer: copied from Vector
  */
 /*
- * Copyright 2013 Dr. Georg Fischer <punctum at punctum dot kom>
+ * Copyright 2013 Dr. Georg Fischer <dr dot georg dot fischer at gmail dot kom>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,7 +58,7 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
 
     /** Constant zero */
     protected final static int ZERO = 0;
-    
+
     /*-------------- construction -----------------------------*/
     /** No-args Constructor
      */
@@ -111,7 +112,7 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
     } // Constructor(3)
 
     /** Constructor for a Vector from a vector expression
-     *  @param vectExpr an array of comma or space-separated elements 
+     *  @param vectExpr an array of comma or space-separated elements
      *  (optionally in square brackets),
      *  for example "[3, 4, 5]" or "3 4 5"
      */
@@ -167,7 +168,7 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
                 imax = ielem;
             }
         } // for ielem
-        if (this.vector[imax] < 0) { 
+        if (this.vector[imax] < 0) {
             Arrays.sort(result); // max is first
             for (int ielem = 0; ielem < this.vecLen; ielem ++) {
                 result[ielem] = - result[ielem];
@@ -186,7 +187,7 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
 
     /** Compute a permutation of <em>this</em> Vector
      *  @param meter definition of the permutation, result of {@link org.teherba.ramath.util.Permutator},
-     *  a permutation of the numbers [0 : n-1] defining, for each element, the 
+     *  a permutation of the numbers [0 : n-1] defining, for each element, the
      *  position of the element of <em>this</em> Vector to be taken
      *  For example, [0,1,2,3] yields the identical vector, and [3,2,1,0] reverses the vector.
      *  @return reference to a new Vector
@@ -215,7 +216,7 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
             while (matcher.find()) {
                 String part = line.substring(matcher.start(), matcher.end());
                 temp = Integer.parseInt(part);
-                alist.add(new Integer(temp));
+                alist.add(Integer.valueOf(temp));
             }  // while tokens
         } catch (Exception exc) {
             throw new IllegalArgumentException(exc.getMessage());
@@ -362,7 +363,7 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
         return this.indexOf(elem) >= 0;
     } // contains
 
-    /** Computes the norm, that is the square root of 
+    /** Computes the norm, that is the square root of
      *  the innerproduct of the Vector with itself.
      *  @return sqrt(sum of all elements^2)
      */
@@ -418,7 +419,7 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
                 result = -1;
             } else if (normt >  norm2) {
                 result = 1;
-            } 
+            }
         } else {
             throw new IllegalArgumentException("cannot compare two vectors of different size " + this.vecLen);
         }
@@ -743,7 +744,7 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
         boolean result = leftSum == rightSum;
         return result;
     } // isPowerSum
-    
+
     /** Test whether <em>this</em> Vector contains a sum of like powers.
      *  @param exp exponent
      *  @param left  number of leading  elements which represent the left  side
@@ -759,9 +760,9 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
                 sum += vector[ielem];
             } // for ielem
             result = sum != 0;
-        } 
+        }
         return result;
-    } // isNonTrivialPowerSum    
+    } // isNonTrivialPowerSum
 
     /** Computes a sum of like powers from <em>this</em> Vector.
      *  Usual combinations of the parameters are:
@@ -844,7 +845,7 @@ public class Vector implements Cloneable, Comparable<Vector>, Serializable {
             for (int icol = 0; icol < vecLen; icol ++) {
                 result.append(String.format(formatSpec, vector[icol]));
             } // for icol
-        } else { 
+        } else {
             if (formatSpec.indexOf(sep) >= 0) {
                 result.append('[');
             }

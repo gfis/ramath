@@ -1,10 +1,11 @@
 /*  Options: methods for the access to command line arguments
  *  @(#) $Id: Options.java 744 2011-07-26 06:29:20Z gfis $
+ *  2024-12-27: deprecations
  *  2017-05-28: javadoc 1.8
  *  2015-04-05: Georg Fischer: copied from Matrix
  */
 /*
- * Copyright 2015 Dr. Georg Fischer <punctum at punctum dot kom>
+ * Copyright 2015 Dr. Georg Fischer <dr dot georg dot fischer at gmail dot kom>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -300,7 +301,7 @@ public class Options {
             while (matcher.find()) {
                 String part = line.substring(matcher.start(), matcher.end());
                 temp = Integer.parseInt(part);
-                alist.add(new Integer(temp));
+                alist.add(Integer.valueOf(temp));
             }  // while tokens
         } catch (Exception exc) {
             throw new IllegalArgumentException(exc.getMessage());

@@ -1,5 +1,6 @@
 /*  ShuntingYard: parser for the recognition of arithmetic and boolean expressions
  *  @(#) $Id: ShuntingYard.java gfis $
+ *  2024-12-27: Javadoc
  *  2022-04-03: "!" -> factorial() or "!="
  *  2021-12-03: appendError
  *  2021-01-20: parseRecurrence
@@ -12,7 +13,7 @@
  *  2009-07-01, Georg Fischer: copied from Polynomial
  */
 /*
- * Copyright 2019 Dr. Georg Fischer <dr.georg.fischer(at)gmail.com>
+ * Copyright 2019 Dr. Georg Fischer <dr dot georg dot fischer at gmail dot kom>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -244,7 +245,7 @@ public class ShuntingYard {
      *  The precedence of operators (in <em>precOper, operStack</em>) is indicated
      *  by the ASCII order of lowercase letters according to the following table:
      *  <table><caption>Operator Precedence and corresponding Codes</caption>
-     *  <tr><td>, ->                         </td><td>i</td></tr>
+     *  <tr><td>, -&gt;                      </td><td>i</td></tr>
      *  <tr><td>||                           </td><td>j</td></tr>
      *  <tr><td>&amp;&amp;                   </td><td>k</td></tr>
      *  <tr><td>&lt;= &gt;= == != &gt; &lt;  </td><td>l</td></tr>
@@ -512,7 +513,7 @@ public class ShuntingYard {
                         } // switch ch
                         break; // IN_NUMBER
 /* nyi
-                    case IN_ARROW: 
+                    case IN_ARROW:
                         buffer.append(ch);
                         if (false) {
                         } else if (buffer.toString().equals("->")) {

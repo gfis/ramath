@@ -11,7 +11,7 @@
  *  2011-07-23, Dr. Georg Fischer: copied from ModoMeter
  */
 /*
- * Copyright 2011 Dr. Georg Fischer <punctum at punctum dot kom>
+ * Copyright 2011 Dr. Georg Fischer <dr dot georg dot fischer at gmail dot kom>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -248,7 +248,7 @@ public abstract class Dispenser implements Iterator<int[]>, Serializable {
     public int[] toArray() {
         int[] result = new int[width];
         int im = 0;
-        while (im < width) { 
+        while (im < width) {
             result[im] = meter[im];
             im ++;
         } // while im
@@ -269,7 +269,7 @@ public abstract class Dispenser implements Iterator<int[]>, Serializable {
      *  @return an array with the <em>original</em> digits tuple <em>before</em> rolling
      */
     public abstract int[] next();
-    
+
     /** Needed for Iterator interface, not implemented -
      *  Dispensers do never change the underlying data structure.
      */

@@ -1,5 +1,6 @@
 /*  BigVector: a simple, short vector of big numbers
  *  @(#) $Id: BigVector.java 744 2011-07-26 06:29:20Z gfis $
+ *  2024-12-27: Javadoc
  *  2023-11-12: getTrimIndex()
  *  2021-01-28: shift
  *  2019-12-10: getBigValues(offset)
@@ -385,7 +386,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         return result;
     } // hasZero
 
-    /** Determine whether <em>this<em> BigVector is empty or consists of a single constant zero.
+    /** Determine whether <em>this</em> BigVector is empty or consists of a single constant zero.
      *  @return true if zero
      */
     @Override
@@ -655,7 +656,7 @@ public class BigVector extends Vector implements Cloneable, Serializable {
         BigVector binoms = new BigVector(len, BigInteger.ONE);
         if (debug >= 1) {
             System.out.println("\nshift by " + bdist);
-        } 
+        }
 /*
     a0*d^0 + a1*n^1     + a2*n^2     + a3*n^3     + a4*n^4
     a0*d^0 + a1*(n+d)^1 + a2*(n+d)^2 + a3*(n+d)^3 + a4*(n+d)^4
@@ -684,19 +685,19 @@ public class BigVector extends Vector implements Cloneable, Serializable {
             BigInteger sum = BigInteger.ZERO; // a[i]*d^0
             for (int icol = irow; icol < len; icol ++) {
                 if (debug >= 2) {
-                     System.out.println("  icol=" + icol + "\tsum= " + sum 
+                     System.out.println("  icol=" + icol + "\tsum= " + sum
                         + "\t + this(" + icol + ")=" + getBig(icol)
-                        + "\t * dipows(" + String.valueOf(icol - irow) + ")=" + dipows.getBig(icol - irow).toString() 
-                        + "\t * binoms(" + String.valueOf(icol - irow) + ")=" + binoms.getBig(icol - irow).toString() 
+                        + "\t * dipows(" + String.valueOf(icol - irow) + ")=" + dipows.getBig(icol - irow).toString()
+                        + "\t * binoms(" + String.valueOf(icol - irow) + ")=" + binoms.getBig(icol - irow).toString()
                         );
                 }
                 sum = sum.add(getBig(icol).multiply(dipows.getBig(icol - irow)).multiply(binoms.getBig(icol - irow)));
             } // for icol
             result.set(irow, sum);
             if (debug >= 1) {
-                System.out.println("row " + irow 
-                        + "\t dipows=" + dipows.toString() 
-                        + "\t binoms=" + binoms.toString() 
+                System.out.println("row " + irow
+                        + "\t dipows=" + dipows.toString()
+                        + "\t binoms=" + binoms.toString()
                         + "\t result=" + result.toString()
                         );
             }

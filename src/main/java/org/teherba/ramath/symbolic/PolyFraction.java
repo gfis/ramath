@@ -1,5 +1,6 @@
 /*  PolyFraction: a fraction of two polynomials
  *  @(#) $Id: PolyFraction.java 970 2012-10-25 16:49:32Z  $
+ *  2024-12-27: Javadoc
  *  2023-11-08: toLambda()
  *  2021-01-25: -parse shows vectors and coefficients; -r => disempower
  *  2020-11-29: fractv
@@ -356,7 +357,7 @@ public class PolyFraction
     } // toVectorString()
 
     /** Convert a {@link BigInteger} to a <code>Z</code>.
-     *  @param number
+     *  @param number source number
      *  @return the number either as int, as long (with "L"), or as "new Z()"
      */
     public static String toZ(BigInteger number) {
@@ -372,11 +373,11 @@ public class PolyFraction
         return result;
     } // toZ
 
-    /** Convert <em>this</em> {@link PolyFraction} with a constant denominator 
+    /** Convert <em>this</em> {@link PolyFraction} with a constant denominator
      *  into the right side of a lambda expression.
-     *  @param intN <code>true</code> generates for <code>int n<code>, <code>false</code> generates for <code>Z n</code>
+     *  @param intN <code>true</code> generates for <code>int n</code>, <code>false</code> generates for <code>Z n</code>
      *  @return lambda expression
-     *  For example A005286: <code>[6,20,9,1]/[6]</code> is converted into 
+     *  For example A005286: <code>[6,20,9,1]/[6]</code> is converted into
      *  <code>"Z.valueOf(n).multiply(1).add(9).multiply(n).add(20).multiply(n).add(6).divide(6)"</code>
      */
     public String toLambda(boolean intN) {
@@ -418,10 +419,10 @@ public class PolyFraction
         return result.toString();
     } // toLambda(boolean)
 
-    /** Convert <em>this</em> {@link PolyFraction} with a constant denominator 
+    /** Convert <em>this</em> {@link PolyFraction} with a constant denominator
      *  into the right side of a lambda expression.
      *  @return lambda expression
-     *  For example A005286: <code>[6,20,9,1]/[6]</code> is converted into 
+     *  For example A005286: <code>[6,20,9,1]/[6]</code> is converted into
      *  <code>"Z.valueOf(n).multiply(1).add(9).multiply(n).add(20).multiply(n).add(6).divide(6)"</code>
      */
     public String toLambda() {
@@ -435,9 +436,9 @@ public class PolyFraction
         VariableMap numMap = polynomials[0].getVariableMap();
         VariableMap denMap = polynomials[1].getVariableMap();
         int sum  = numMap.size() + denMap.size();
-        return     numMap.size() + denMap.size() <= 1 
-                || numMap.size() == 1 
-                && denMap.size() == 1 
+        return     numMap.size() + denMap.size() <= 1
+                || numMap.size() == 1
+                && denMap.size() == 1
                 && numMap.firstEntry().getValue().equals(denMap.firstEntry().getValue());
     } // isUniVariate
 
@@ -916,7 +917,7 @@ public class PolyFraction
                                             System.out.print(aseqno + "\t" + "fractv" + "\t" + offset1
                                                     + "\t\"" + bvecs[0].toString() + "\",\"" + bvecs[1].toString() + "\""
                                                     + "\t" + String.valueOf(bvecs[1].size())
-                                                    + "\t" + parms[iparm] 
+                                                    + "\t" + parms[iparm]
                                                     );
                                             while (++ iparm < parms.length) {
                                                 System.out.print("\t" + parms[iparm]);

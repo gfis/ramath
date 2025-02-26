@@ -1,5 +1,6 @@
 /*  JoeisDialog.java - translations for jOEIS
  *  @(#) $Id$
+ *  2024-12-27: Javadoc
  *  2023-08-03: Dr. Georg Fischer: copied from IndexPage
  */
 /*
@@ -55,9 +56,6 @@ public class JoeisDialog implements Serializable {
      *  @param response response with writer
      *  @param basePage refrence to common methods and error messages
      *  @param language 2-letter code en, de etc.
-     *  @param aseqno OEIS A-number
-     *  @param callCode type of operation
-     *  @param offset1 first index of the sequence <code>aseqno</code>
      *  @param parmsIn input parameters
      *  @throws IOException for IO errors
      */
@@ -120,12 +118,12 @@ public class JoeisDialog implements Serializable {
             while (        iparm < parmLen) {
             out.write("    <tr valign=\"top\">\n");
             out.write("      <td align=\"left\" colspan=\"2\">\n");
-            out.write("        <textarea name=\"parm" + String.valueOf(iparm - istart + 1) + "\" wrap=\"virtual\" cols=\"" + width + "\" rows=\"" + height + "\">"
+            out.write("        <textarea name=\"parm" + String.valueOf(iparm - istart + 1) + "\" wrap=\"virtual\" cols=\"" + width + "\" rows=\"" + (iparm == 0 ? 4 : height) + "\">"
                                     + parmsIn[iparm] + "</textarea>\n");
             out.write("      </td>\n");
             out.write("    </tr>\n");
             iparm ++;
-            } 
+            }
 
             out.write("    <tr valign=\"top\">\n");
             out.write("      <td align=\"left\" colspan=\"2\">\n");
@@ -134,11 +132,11 @@ public class JoeisDialog implements Serializable {
             out.write("  </tr>\n");
             out.write("  </table>\n");
             out.write("</form><!-- joeis -->\n");
-            
+
             // Processing
             iparm = 3;
             joeisPrep.processRecord(callCode, iparm, parmsIn);
-            
+
             out.write("<div>\n"); // output parameters
             out.write("  <table cellpadding=\"0\" border=\"" + border + "\">\n");
 

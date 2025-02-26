@@ -1,5 +1,6 @@
 /*  JoeisPreparer: prepare *.gen files for joeis-lite
  *  @(#) $Id$
+ *  2024-12-27, -h/--help, -ci -co logic
  *  2023-11-07: -polint
  *  2023-10-13: -trigf
  *  2021-11-30: -cc trans, like infix, but with op1, op2 placeholders
@@ -14,7 +15,7 @@
  *  2019-12-04: Georg Fischer: copied from PolyFraction.java
  */
 /*
- * Copyright 2019 Dr. Georg Fischer
+ * Copyright 2019 Dr. Georg Fischer <dr dot georg dot fischer at gmail dot kom>.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -72,10 +73,12 @@ public class JoeisPreparer implements Cloneable, Serializable {
     /** A-number of the OEIS sequence */
     private String aseqno;
 
-    /** Code for a specific generation process in joeis-lite, given behind commandline option -cc */
+    /** Code for a specific generation process in joeis-lite, given behind commandline option -cc or -ci */
     protected String argsCode;
+    /** Code for a specific generation process in joeis-lite, given behind commandline option -co */
+    private   String coutCode;
     /** Code for a specific generation process in joeis-lite, taken from 2nd column of the input file */
-    private String callCode;
+    private   String callCode;
 
     /** Whether the class is intantiated from a servlet */
     private boolean webCall;
@@ -108,7 +111,7 @@ public class JoeisPreparer implements Cloneable, Serializable {
         webCall = false;
     } // Constructor()
 
-    /** 
+    /**
      * Constructor with call type parameter
      * @param webCall whether the class is intantiated from a servlet
      */
@@ -120,21 +123,26 @@ public class JoeisPreparer implements Cloneable, Serializable {
     } // Constructor()
 
     /**
-     * Reproduces the record with the (maybe modified) parameters.
-     * @param parms array of parameter Strings: aseqno, callcode, offset1, parm1, parm2 
+     * Reproduce the record with the (maybe modified) parameters.
+     * @param parms array of parameter Strings: aseqno, callcode, offset1, parm1, parm2
      */
     protected void reproduce(String[] parms) {
         reproduce(parms.length, parms);
     } // reproduce
 
     /**
-     * Reproduces part of the the record with the (maybe modified) parameters.
+     * Reproduce part of the the record with the (maybe modified) parameters.
      * @param num print only so many parameters.
-     * @param parms array of parameter Strings: aseqno, callcode, offset1, parm1, parm2 
+     * @param parms array of parameter Strings: aseqno, callcode, offset1, parm1, parm2
      */
     protected void reproduce(int num, String[] parms) {
         if (! webCall) {
-            parms[1] = callCode;
+            parms[0] = aseqno;
+            if (parms[1].equals(argsCode)) {
+                parms[1] = coutCode;
+            } else {
+                parms[1] = callCode;
+            }
             int j = 0;
             while (j < num && j < parms.length) {
                 if (j > 0) {
@@ -148,6 +156,7 @@ public class JoeisPreparer implements Cloneable, Serializable {
     } // reproduce(int)
 
     /** Process one input line, and determine whether it should be written to the output.
+     *  @param callCode indicator for the action to be taken
      *  The following <code>callCode</code>s are processed:
      *  <ul>
      *  <li><code>bva     </code></li>
@@ -180,9 +189,10 @@ public class JoeisPreparer implements Cloneable, Serializable {
 
         } else if (callCode.startsWith("bva")
                 || argsCode.startsWith("bva")) { // OEIS-mat/linrec/makefile.rectab
-            parms[1] = "holos";
+            callCode = "holost";
             BigVectorArray bva = BigVectorArray.parseRecurrence(parms[iparm]);
-            parms[iparm] = bva.toString();
+            parms[iparm++] = "\"" + bva.toString() + "\"";
+            parms[iparm++] = String.valueOf(bva.size());
             reproduce(parms);
 
         } else if (callCode.startsWith("coxf")
@@ -282,7 +292,7 @@ public class JoeisPreparer implements Cloneable, Serializable {
                 parms[iparm + 0] = pfr1.getNum().toTriangleList(vars);
                 parms[iparm + 1] = pfr1.getDen().toTriangleList(vars);
                 parms[1] = "fract21"; // with lexicographically ordered variables
-                
+
                 reproduce(parms);
                 String temp = vars[0]; vars[0] = vars[1]; vars[1] = temp;
                 parms[iparm + 0] = pfr1.getNum().toTriangleList(vars);
@@ -342,8 +352,9 @@ public class JoeisPreparer implements Cloneable, Serializable {
             parms[iparm + 0] = builder.getInfix(postfix, 0, postfix.length);
             reproduce(parms);
 
-        } else if (callCode.startsWith("lingf")
-                || argsCode.startsWith("lingf")) {
+        } else if (callCode.startsWith("lingf") || callCode.startsWith("ogf")
+                || argsCode.startsWith("lingf") || argsCode.startsWith("ogf")) {
+            callCode = "lingf";
             pfr1 = PolyFraction.parse(parms[iparm]);
             if (pfr1 != null) { // parse ok
                 pfr1 = pfr1.normalize();
@@ -374,7 +385,7 @@ public class JoeisPreparer implements Cloneable, Serializable {
                 parms[iparm + 1] = bva.getBigVector(0).toString(); // initTerms
                 parms[iparm + 2] = num + (den.equals("1") ? "" : "/" + den);
                 reproduce(parms);
-            } else { 
+            } else {
                 System.out.println("# " + aseqno + ": no deep step found");
             }
 
@@ -457,17 +468,21 @@ public class JoeisPreparer implements Cloneable, Serializable {
                 System.err.println("# " + aseqno + " error in JoeisPreparer.vect: " + parms[iparm]);
             }
 
+        } else {
+            reproduce(parms);
+
         } // switch callCode
         return iparm;
     } // processRecord
 
-    /** Filters a file and writes the modified output lines.
+    /** Filter a file and writes the modified output lines.
      *  @param fileName name of the input file, or "-" for STDIN
      */
     private void processFile(String fileName) {
         BufferedReader lineReader; // Reader for the input file
         String srcEncoding = "UTF-8"; // Encoding of the input file
         String line = null; // current line from text file
+        String old_line = null;
         try {
             if (fileName == null || fileName.length() <= 0 || fileName.equals("-")) {
                 lineReader = new BufferedReader(new InputStreamReader(System.in, srcEncoding));
@@ -476,29 +491,31 @@ public class JoeisPreparer implements Cloneable, Serializable {
                 lineReader = new BufferedReader(Channels.newReader(lineChannel , srcEncoding));
             }
             while ((line = lineReader.readLine()) != null) { // read and process lines
-                if (! line.matches("\\s*#.*")) { // is not a comment
-                    parms = (line + "\t0").split("\\t");
+                if (line.matches("\\AA\\d+\\s.*")) { // begins with A-number
+                    parms = (line + "\t\t\t\t\t0").split("\\t");
                     if (debug >= 1) {
                         System.out.println(line); // repeat it unchanged
                     }
                     iparm = 0;
                     aseqno   = parms[iparm ++];
                     callCode = parms[iparm ++];
+                    offset1 = 0;
                     try {
-                        offset1 = 0;
                         offset1 = Integer.parseInt(parms[iparm ++]);
                     } catch (Exception exc) {
                     }
                     processRecord(callCode, iparm, parms);
                 } // is not a comment
+                old_line = line;
             } // while ! eof
             lineReader.close();
         } catch (Exception exc) {
             log.error(exc.getMessage(), exc);
+            System.err.println("# offending line: \"" + line + "\", previous=\"" + old_line + "\"");
         } // try
     } // processFile
 
-    /** Main method, filters a file and writes the copy to STDOUT.
+    /** Main method, filter a file and writes the copy to STDOUT.
      *  @param args command line arguments: filename, or "-" or none for STDIN
      */
     public static void main(String[] args) {
@@ -507,14 +524,21 @@ public class JoeisPreparer implements Cloneable, Serializable {
         jprep.polint = new PolynomialIntegrator();
         jprep.numTerms = 16;
         jprep.offset1  = 0;
-        jprep.argsCode = ""; // take the cc from the 2nd column of the input file
+        jprep.argsCode = ""; // take the callcode from the 2nd column of the input file
+        jprep.coutCode = ""; // take the callcode from the 2nd column of the input file
         String fileName = "-"; // assume STDIN
         String patternName = null; // default, in current directory
         while (iarg < args.length) { // consume all arguments
             String opt = args[iarg ++];
             if (false) {
             } else if (opt.equals    ("-cc")     ) {
-                jprep.argsCode = args[iarg ++]; // select a specific cc
+                jprep.argsCode = args[iarg ++];  // select a specific callcode for input and output
+                jprep.coutCode = jprep.argsCode; // default: same as -cc
+            } else if (opt.equals    ("-ci")     ) {
+                jprep.argsCode = args[iarg ++];  // select a specific callcode for input
+                jprep.coutCode = jprep.argsCode; // default: same as -ci
+            } else if (opt.equals    ("-co")     ) {
+                jprep.coutCode = args[iarg ++];  // select a specific callcode for output
             } else if (opt.equals    ("-d")     ) {
                 debug = 1;
                 try {
@@ -523,6 +547,43 @@ public class JoeisPreparer implements Cloneable, Serializable {
                 }
             } else if (opt.equals    ("-f")     ) {
                 fileName = args[iarg ++];
+            } else if (opt.equals    ("-h") || opt.equals("--help")) {
+                System.out.println("Prepare jOEIS sequences\n"
+                    + "Usage: java -cp ramath/dist/ramath.jar org.teherba.ramath.sequence.JoeisPreparer"
+                    + " [-d mode] {{-cc|-ci|-co} callcode}* [-n numterms] [-p pattern] [-f infile]"
+                    + " infile.seq4 > outfile.seq4\n"
+                    + "    -d  debugging mode\n"
+                    + "    -f  input file\n"
+                    + "    -n  number of terms to be computed\n"
+                    + "    -p  pattern/table file for the translation\n"
+                    + "    -ci callcode to be processed in infile\n"
+                    + "    -co different resulting callcode in outfile\n"
+                    + "    -cc callcode to be processed (unchanged)\n"
+                    + "Callcodes:\n"
+                    + "    bva      convert $(PARM1=recurrence expression) into $(PARM1=matrix for HolonomicRecurrenceSequence)\n"
+                    + "    coxf     \n"
+                    + "    circdiff \n"
+                    + "    dex      \n"
+                    + "    dhd      \n"
+                    + "    fract1   \n"
+                    + "    fract2   \n"
+                    + "    fract    \n"
+                    + "    holo     convert $(PARM1=recurrence expression) into $(PARM1=matrix for HolonomicRecurrenceSequence)\n"
+                    + "    homgf    \n"
+                    + "    trans    translate from postfix to target expression with a *.ttab table\n"
+                    + "    postrans translate infix to postfix to target expression with a *.ttab table\n"
+                    + "    infix    translate from infix to postfix to target expression with a *.xpat table\n"
+                    + "    lingf    \n"
+                    + "    ogf      \n"
+                    + "    polint   derive a polynomial from terms\n"
+                    + "    post1    translate a single infix expression to postfix\n"
+                    + "    post     general parsing into postfix notation\n"
+                    + "    rioarr   \n"
+                    + "    sage     \n"
+                    + "    trigf    \n"
+                    + "    vect     \n"
+                    );
+                    System.exit(0);
             } else if (opt.equals    ("-n")     ) {
                 try {
                     jprep.numTerms = Integer.parseInt(args[iarg ++]);

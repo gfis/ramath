@@ -1,12 +1,13 @@
 /*  Prime Factorization of BigIntegers
  *  @(#) $Id: PrimeFactorization.java 231 2009-08-25 08:47:16Z gfis $
+ *  2024-12-27: deprecations
  *  2018-01-24: moved from ramath to ramath.util
  *  2018-01-21: incomplete decomposition for big numbers
  *  2017-05-28: javadoc 1.8
  *  2015-08-11, Georg Fischer: copied from BigIntegerUtil
  */
 /*
- * Copyright 2015 Dr. Georg Fischer <punctum at punctum dot kom>
+ * Copyright 2015 Dr. Georg Fischer <dr dot georg dot fischer at gmail dot kom>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +36,7 @@ import  java.util.TreeMap;
  *  ZERO and ONE are represented by an empty map.
  *  @author Dr. Georg Fischer
  */
-public class PrimeFactorization extends TreeMap<BigInteger, Integer> 
+public class PrimeFactorization extends TreeMap<BigInteger, Integer>
         implements Cloneable, Serializable {
     public final static String CVSID = "@(#) $Id: PrimeFactorization.java 231 2009-08-25 08:47:16Z gfis $";
 
@@ -46,18 +47,18 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
     } // no-args Constructor
 
     /** Constructor for a positive BigInteger.
-     *  This code was adapted from 
+     *  This code was adapted from
      *  <a href="http://stackoverflow.com/questions/16802233/faster-prime-factorization-for-huge-bigintegers-in-java">stackoverflow.com</a>
      *  @param number number to be factored
      *  The decomposition is only reasonable fast for factors up to 17 decimal digits.
-     *  Therefore, at this size the loop is broken, 
+     *  Therefore, at this size the loop is broken,
      *  and a pseudo prime factor of 1^1 is inserted which indicates the incomplete decomposition.
      */
     public PrimeFactorization(BigInteger number) {
         super();
         Integer oldExp = null;
         if (number.compareTo(BigIntegerUtil.THREE) <= 0) {
-            this.put(number, new Integer(1));
+            this.put(number, Integer.valueOf(1));
         } else { // > 3
             while (number.mod(BigIntegerUtil.TWO).equals(BigInteger.ZERO)) { // remove powers of 2 first
                 oldExp = this.put(BigIntegerUtil.TWO, 1);
@@ -66,7 +67,7 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
                 }
                 number = number.divide(BigIntegerUtil.TWO);
             } // while 2**x
-        
+
             if (number.compareTo(BigInteger.ONE) > 0) { // any rest after removing 2^n
                 BigInteger factor = BigIntegerUtil.THREE;
                 BigInteger factor2 = factor.multiply(factor);
@@ -82,8 +83,8 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
                         factor = factor.add(BigIntegerUtil.TWO);
                         factor2 = factor.multiply(factor);
                         if (factor2.bitLength() >= 40) { // about 13 decimal digits 14890026433468471
-                        	busy = false;
-                        	this.put(BigInteger.ONE, 1); // "prime" factor 1 indicates incomplete decomposition
+                            busy = false;
+                            this.put(BigInteger.ONE, 1); // "prime" factor 1 indicates incomplete decomposition
                         }
                     } // not divisible
                 } // while factor <= number
@@ -137,7 +138,7 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
 
     /** Multiplies two {@link PrimeFactorization}s by merging the
      *  two TreeMaps and adding the exponents
-     *  @param primfn2 second PrimeFactorization 
+     *  @param primfn2 second PrimeFactorization
      *  @return resulting product as PrimeFactorization
      */
     public PrimeFactorization multiply(PrimeFactorization primfn2) {
@@ -149,13 +150,13 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
             Integer exp2 = primfn2.get(prime2);
             oldExp = result.put(prime2, exp2);
             if (oldExp != null) {
-                result.put(prime2, new Integer(oldExp.intValue() + exp2.intValue()));
+                result.put(prime2, Integer.valueOf(oldExp.intValue() + exp2.intValue()));
             }
         } // while iter2
         return result;
     } // multiply
 
-    /** Get the rests of the prime factors (without exponent) 
+    /** Get the rests of the prime factors (without exponent)
      *  with respect to some divisor
      *  @param divisor compute the rests for this divisor
      *  @return a {@link Vector} of rests
@@ -174,7 +175,7 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
     } // modulus
 
     /** Returns the least number which turns <em>this</em>
-     *  {@link PrimeFactorization} into some power number, 
+     *  {@link PrimeFactorization} into some power number,
      *  or 1 if the PrimeFactorization represents already such a power
      *  @param power widen the number to this power &gt;= 2
      *  @return 3*5 for 2^2*3*5 = 60 and power 2, 1 for 64 and power 6
@@ -223,7 +224,7 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
     } // root
 
     /** Divides a <em>this</em> number by the maximum factor which is a power
-     *  @param power the maximum factor taken to this power 
+     *  @param power the maximum factor taken to this power
      *  must still evenly divide <em>this</em> number
      *  @return []{2^3, 2^1} for this=2^7 and power=2
      */
@@ -241,18 +242,18 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
                     int equot  = pexp / power; // 3
                     if (equot > 0) {
                         rootv = rootv.multiply(equot == 1 ? prime : prime.pow(equot));
-                    } 
+                    }
                     int erest = pexp % power; // 1
                     if (erest > 0) {
                         rfact = rfact.multiply(erest == 1 ? prime : prime.pow(erest));
-                    } 
+                    }
                 } // prime > 1
             } // while iter
         } // if size
         return new BigInteger[] { rootv, rfact };
     } // reducePowerOf
 
-    /** Returns a String representation of the {@link PrimeFactorization} 
+    /** Returns a String representation of the {@link PrimeFactorization}
      *  @param mode 0 = normal, 1 = full (for substitution), 2 = nice / human legible,
      *  3 = with prime factors, 4 = with HTML coloring
      *  @return "2^2*3*5" for 60 and mode=0
@@ -282,7 +283,7 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
                 } // switch mode
             }
             int exp = this.get(prime);
-            if (prime != null && mode == 4) { 
+            if (prime != null && mode == 4) {
                 result.append("<span class=\"p");
                 result.append(prime.compareTo(BigInteger.TEN) < 0 ? prime.toString() : "1"); // classes .p2,.p3,.p5,.p7
                 result.append("\">");
@@ -299,7 +300,7 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
         return result.toString();
     } // toString(mode)
 
-    /** Returns a string representation of the {@link PrimeFactorization} 
+    /** Returns a string representation of the {@link PrimeFactorization}
      *  @return "2^2*3*5" for 60
      */
     public String toString() {
@@ -333,7 +334,7 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
                 result.append('(');
                 result.append(pmod.toString());
                 result.append(modStr);
-            } 
+            }
             iprime ++;
         } // while iter
         return result.toString();
@@ -346,7 +347,7 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
     public static void main(String[] args) {
         BigInteger number  = new BigInteger(args[0]);
         BigInteger number2 = args.length > 1 ? new BigInteger(args[1]) : BigIntegerUtil.TWO;
-            
+
         PrimeFactorization primfn1 = new PrimeFactorization(number);
         System.out.println("PrimeFactorization(" + number.toString() + ") = " + primfn1.toString());
         System.out.println(".toString(3) = " + primfn1.toString(3));
@@ -359,7 +360,7 @@ public class PrimeFactorization extends TreeMap<BigInteger, Integer>
         System.out.println(".multiply(same) = " + primfn2.toString());
         System.out.println(".valueOf() = " + primfn2.valueOf().toString());
         BigInteger[] rpair = primfn1.reducePowerOf(number2.intValue());
-        System.out.println(primfn1.valueOf().toString() + ".reducePowerOf(" + number2.toString() + ") = " 
+        System.out.println(primfn1.valueOf().toString() + ".reducePowerOf(" + number2.toString() + ") = "
                 + rpair[0].toString() + ", " + rpair[1].toString());
         Vector mods = primfn1.modulus(4);
         System.out.println(primfn1.valueOf().toString() + ".modulus(4) = " + mods.toString());
