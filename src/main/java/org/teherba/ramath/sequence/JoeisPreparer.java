@@ -189,10 +189,13 @@ public class JoeisPreparer implements Cloneable, Serializable {
 
         } else if (callCode.startsWith("bva")
                 || argsCode.startsWith("bva")) { // OEIS-mat/linrec/makefile.rectab
-            callCode = "holost";
+            callCode = "holos";
+            coutCode = "holos";
             BigVectorArray bva = BigVectorArray.parseRecurrence(parms[iparm]);
-            parms[iparm++] = "\"" + bva.toString() + "\"";
-            parms[iparm++] = String.valueOf(bva.size());
+            parms[iparm++] = bva.toString().replaceAll("\\\"", "");
+            parms[iparm++] = "1"; // String.valueOf(bva.size());
+            parms[iparm++] = "0"; // String.valueOf(bva.size());
+            parms[iparm++] = "0"; // String.valueOf(bva.size());
             reproduce(parms);
 
         } else if (callCode.startsWith("coxf")
@@ -397,6 +400,14 @@ public class JoeisPreparer implements Cloneable, Serializable {
             parms[iparm + 0] = result;
             reproduce(parms);
 
+        } else if (callCode.startsWith("post2")
+                || argsCode.startsWith("post2")) { // translate $(PARM2) = infix expression to postfix
+            ShuntingYard parser = new ShuntingYard("\\w+");
+            parser.setDebug(debug);
+            String result = parser.getPostfixString(",", parms[iparm + 1]);
+            parms[iparm + 1] = result;
+            reproduce(parms);
+
         } else if (callCode.startsWith("post")
                 || argsCode.startsWith("post")) { // general parsing into postfix notation
             String exprList = parms[iparm + 0]; // $(PARM1) = list of expressions, starting with a String of identical separator characters
@@ -594,7 +605,7 @@ public class JoeisPreparer implements Cloneable, Serializable {
                 jprep.builder = new JoeisExpressionBuilder(patternName);
                 jprep.builder.setDebug(debug);
             } else {
-                System.err.println("??? invalid option: \"" + opt + "\"");
+                System.err.println("** JoeisPreparer: invalid option: \"" + opt + "\"");
             }
         } // while args
 
