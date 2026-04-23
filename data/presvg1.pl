@@ -68,7 +68,7 @@ my $inode = 0; # number of current node in SVG row
 my @mirror = ();
 my $nomirror = 0;
 
-while (<>) { # read output of TreeSolver, c.f. <DATA> below
+while (<DATA>) { # read output of TreeSolver, c.f. <DATA> below
     $line = $_;
     $line =~ s/\s+\Z//; # chompr
     $line =~ s/\A\s+//; # leading spaces

@@ -294,13 +294,13 @@ public class JoeisPreparer implements Cloneable, Serializable {
                 String[] vars = pfr1.getVariables();
                 parms[iparm + 0] = pfr1.getNum().toTriangleList(vars);
                 parms[iparm + 1] = pfr1.getDen().toTriangleList(vars);
-                parms[1] = "fract21"; // with lexicographically ordered variables
+                callCode = "fract21"; // with lexicographically ordered variables
 
                 reproduce(parms);
                 String temp = vars[0]; vars[0] = vars[1]; vars[1] = temp;
                 parms[iparm + 0] = pfr1.getNum().toTriangleList(vars);
                 parms[iparm + 1] = pfr1.getDen().toTriangleList(vars);
-                parms[1] = "fract22"; // with exchanged variables
+                callCode = "fract22"; // with exchanged variables
                 reproduce(parms);
             }
 
