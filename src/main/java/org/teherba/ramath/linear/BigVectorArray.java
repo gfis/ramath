@@ -1,5 +1,6 @@
 /*  BigVectorArray: an array of BigVectors with possibly different lengths
  *  @(#) $Id: BigVectorArray.java 744 2011-07-26 06:29:20Z gfis $
+ *  2026-05-10: .replaceAll("\\\\", ""); *DS~=62
  *  2023-11-07: add(vect)
  *  2021-01-28: parseRecurrence reduces dist down to 0
  *  2021-01-20: parseRecurrence rewritten with a_3, a__4
@@ -219,7 +220,7 @@ public class BigVectorArray implements Cloneable, Serializable {
             System.out.println("BigVectorArray.parseRecurrence(\"" + input + "\")");
         }
         ShuntingYard parser = new ShuntingYard();
-        Polynomial poly = new Polynomial(parser.parseRecurrence(input.replaceAll("\\=\\=","=")));
+        Polynomial poly = new Polynomial(parser.parseRecurrence(input.replaceAll("\\=\\=","=")).replaceAll("\\\\", ""));
         VariableMap vmap = poly.getVariableMap(); // size is 1 (for n) + number of a_* variables
         int kmin = 1;
         int kmax = 0;
