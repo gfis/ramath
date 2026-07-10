@@ -1,5 +1,6 @@
 /*  JoeisPreparer: prepare *.gen files for joeis-lite
  *  @(#) $Id$
+ *  2026-07-09: bva - keep parm2=inits, only set it if it was empty
  *  2024-12-27, -h/--help, -ci -co logic
  *  2023-11-07: -polint
  *  2023-10-13: -trigf
@@ -191,11 +192,12 @@ public class JoeisPreparer implements Cloneable, Serializable {
                 || argsCode.startsWith("bva")) { // OEIS-mat/linrec/makefile.rectab
             callCode = "holos";
             coutCode = "holos";
+            String inits = parms[iparm + 1]; // behind recurrence
             BigVectorArray bva = BigVectorArray.parseRecurrence(parms[iparm]);
             parms[iparm++] = bva.toString().replaceAll("\\\"", "");
-            parms[iparm++] = "1"; // String.valueOf(bva.size());
-            parms[iparm++] = "0"; // String.valueOf(bva.size());
-            parms[iparm++] = "0"; // String.valueOf(bva.size());
+            parms[iparm++] = inits.trim().length() == 0 ? String.valueOf(bva.size()) : inits;
+            parms[iparm++] = "0"; // dist
+            parms[iparm++] = "0"; // gfType
             reproduce(parms);
 
         } else if (callCode.startsWith("coxf")

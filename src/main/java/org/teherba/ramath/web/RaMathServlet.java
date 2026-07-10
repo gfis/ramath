@@ -162,7 +162,7 @@ public class RaMathServlet extends HttpServlet {
                 int parmNo = 7;
                 String[] parmsIn = new String[parmNo];
                 int iparm = 0; // parm1-4
-                String mode       = BasePage.getInputField(request, "mode"    , "seq4");
+                String mode       = BasePage.getInputField(request, "mode"    , "html"); // "seq4");
                 parmsIn[iparm ++] = BasePage.getInputField(request, "aseqno"  , "A");
                 parmsIn[iparm ++] = BasePage.getInputField(request, "callcode", "bva");
                 parmsIn[iparm ++] = BasePage.getInputField(request, "offset1" , "0");

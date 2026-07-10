@@ -1,5 +1,6 @@
 /*  JoeisDialog.java - translations for jOEIS
  *  @(#) $Id$
+ *  2026-05-31: with ClipBoard; *GP=83
  *  2024-12-27: Javadoc
  *  2023-08-03: Dr. Georg Fischer: copied from IndexPage
  */
@@ -20,6 +21,7 @@
  */
 package org.teherba.ramath.web;
 import  org.teherba.ramath.sequence.JoeisPreparer;
+import  org.teherba.common.ClipBoard;
 import  org.teherba.common.web.BasePage;
 import  java.io.IOException;
 import  java.io.PrintWriter;
@@ -73,7 +75,7 @@ public class JoeisDialog implements Serializable {
             out.write("</head>\n<body>\n");
             String border = "0";
             int width  = 100;
-            int height = 2;
+            int height = 4;
             String[] optCC    = new String []
                     { "bva"      // 0
                     , "fract"    // 1

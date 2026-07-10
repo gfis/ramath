@@ -1,10 +1,11 @@
 /*  RaMath.java - Mathematics with Rational Numbers
  *  @(#) $Id: RaMath.java 233 2009-09-01 15:05:11Z gfis $
+ *  2026-05-31: LF, no CR; *GP=83
  *  2015-06-17: BigRational extends BigInteger
  *  2008-10-07, Georg Fischer
  */
 /*
- * Copyright 2008 Dr. Georg Fischer <punctum at punctum dot kom>
+ * Copyright 2008 Dr. Georg Fischer <dr dot georg dot fischer at gmail...>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
